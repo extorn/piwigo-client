@@ -1,0 +1,1 @@
+This is an amazing project to allow manipulation of a PIWIGO server from an android device
