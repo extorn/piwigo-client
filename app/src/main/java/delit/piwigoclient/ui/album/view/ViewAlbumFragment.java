@@ -603,7 +603,19 @@ public class ViewAlbumFragment extends MyFragment {
             @Override
             public void onResult(AlertDialog dialog, boolean positiveAnswer) {
                 if(positiveAnswer) {
-                    addActiveServiceCall(R.string.progress_delete_album, PiwigoAccessService.startActionDeleteGallery(album.getId(),getContext()));
+                    String msg = String.format(getString(R.string.alert_confirm_really_really_delete_album_from_server_pattern),album.getName(), album.getPhotoCount(), album.getSubCategories(), album.getTotalPhotos() - album.getPhotoCount());
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
+                        @Override
+                        public void onDismiss(AlertDialog dialog) {
+                        }
+
+                        @Override
+                        public void onResult(AlertDialog dialog, boolean positiveAnswer) {
+                            if(positiveAnswer) {
+                                addActiveServiceCall(R.string.progress_delete_album, PiwigoAccessService.startActionDeleteGallery(album.getId(),getContext()));
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -665,7 +677,7 @@ public class ViewAlbumFragment extends MyFragment {
 
     private void loadAlbumResourcesPage(int pageToLoad) {
         synchronized (loadingMessageIds) {
-            Set<String> activeCalls = new HashSet<String>(loadingMessageIds.values());
+            Set<String> activeCalls = new HashSet<>(loadingMessageIds.values());
             if (activeCalls.contains(String.valueOf(pageToLoad))) {
                 // already loading this page, ignore the request.
                 return;
@@ -763,7 +775,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        galleryEditFieldsView = (View) bottomSheet.findViewById(R.id.gallery_details_edit_fields);
+        galleryEditFieldsView = bottomSheet.findViewById(R.id.gallery_details_edit_fields);
 
         if (PiwigoAlbum.ROOT_ALBUM == gallery) {
             galleryEditFieldsView.setVisibility(GONE);
@@ -777,7 +789,7 @@ public class ViewAlbumFragment extends MyFragment {
         allowedGroupsField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                HashSet<Long> groups = new HashSet<Long>();
+                HashSet<Long> groups = new HashSet<>();
                 if(currentGroups != null) {
                     for (long groupId : currentGroups) {
                         groups.add(groupId);
@@ -796,7 +808,7 @@ public class ViewAlbumFragment extends MyFragment {
             public void onClick(View v) {
                 if(currentGroups == null || currentGroups.length == 0 || userIdsInSelectedGroups != null) {
                     if(userIdsInSelectedGroups == null) {
-                        userIdsInSelectedGroups = new HashSet<Long>(0);
+                        userIdsInSelectedGroups = new HashSet<>(0);
                     }
                     HashSet<Long> preselectedUsernames = getSetFromArray(currentUsers);
                     UsernameSelectionNeededEvent usernameSelectionNeededEvent = new UsernameSelectionNeededEvent(true, editingItemDetails, userIdsInSelectedGroups, preselectedUsernames);
@@ -1083,7 +1095,7 @@ public class ViewAlbumFragment extends MyFragment {
 
 
     private HashSet<Long> buildPreselectedUserIds(List<Username> selectedUsernames) {
-        HashSet<Long> preselectedUsernames = null;
+        HashSet<Long> preselectedUsernames;
         if (selectedUsernames != null) {
             preselectedUsernames = new HashSet<>(selectedUsernames.size());
             int i = 0;
@@ -1115,7 +1127,7 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     private HashSet<Long> getSetFromArray(long[] itemIds) {
-        HashSet<Long> itemIdsSet = null;
+        HashSet<Long> itemIdsSet;
         itemIdsSet = new HashSet<>(itemIds != null ? itemIds.length : 0);
         if (itemIds != null) {
             int i = 0;

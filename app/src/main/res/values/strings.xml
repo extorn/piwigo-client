@@ -969,7 +969,8 @@ SOFTWARE.
     <string name="alert_message_select_album">Please select the album from the list below</string>
     <string name="alert_title_set_album_thumbnail">Update album thumbnail?</string>
     <string name="alert_message_set_album_thumbnail">Update album thumbnail to this image?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Are you sure you wish to delete the album (%s) and all content permanently?</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Are you sure you wish to delete the album (%1$s) and all content permanently?</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Are you absolutely certain you want to delete album (%1$s) with %2$d photos, and %3$d child albums containing a further %4$d photos for ever (even if linked to albums elsewhere in the gallery)? - There is no undo feature for this action.</string>
     <string name="alert_confirm_copy_items_here_pattern">Copy the %1$d item(s) in the basket here (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Move the %1$d item(s) in the basket here (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Linked Albums</string>
