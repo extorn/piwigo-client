@@ -298,6 +298,7 @@ Release 1.3.44 - Changes:
                     - Add "unlink from album" option for the delete of multiple resources
                     - Improve management of credentials
                     - Improve memory use further
+                    - Improve the long click delete album functionality
 
 
 Released:
