@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="preference_caching_level_values" translatable="false">
+        <item>disabled</item>
+        <item>memory</item>
+        <item>disk</item>
+    </string-array>
+    <string-array name="preference_caching_level_items">
+        <item>Caching Disabled</item>
+        <item>Cache to Memory</item>
+        <item>Cache to Disk</item>
+    </string-array>
+    <string-array name="preference_gallery_item_slideshow_image_size_array">
+        <item>best-fit</item>
+        <item>square</item>
+        <item>thumb</item>
+        <item>2small</item>
+        <item>xsmall</item>
+        <item>small</item>
+        <item>medium</item>
+        <item>large</item>
+        <item>xlarge</item>
+        <item>xxlarge</item>
+    </string-array>
+
+    <string-array name="preference_gallery_item_slideshow_image_size_array_values" translatable="false">
+        <item>best-fit</item>
+        <item>square</item>
+        <item>thumb</item>
+        <item>2small</item>
+        <item>xsmall</item>
+        <item>small</item>
+        <item>medium</item>
+        <item>large</item>
+        <item>xlarge</item>
+        <item>xxlarge</item>
+    </string-array>
+
+    <string-array name="preference_gallery_item_thumbnail_size_array">
+        <item>square</item>
+        <item>thumb</item>
+        <item>2small</item>
+        <item>xsmall</item>
+    </string-array>
+
+    <string-array name="preference_gallery_item_thumbnail_size_array_values" translatable="false">
+        <item>square</item>
+        <item>thumb</item>
+        <item>2small</item>
+        <item>xsmall</item>
+    </string-array>
+    <string-array name="preference_gallery_sortOrder_entries">
+        <item>Resource ID</item>
+        <item>Resource Filename</item>
+        <item>Resource Name</item>
+        <item>Number of hits</item>
+        <item>Average Rating Score</item>
+        <item>Creation Date</item>
+        <item>Date available</item>
+        <item>random</item>
+    </string-array>
+    <string-array name="preference_gallery_sortOrder_entryValues" translatable="false">
+        <item>id</item>
+        <item>file</item>
+        <item>name</item>
+        <item>hit</item>
+        <item>rating_score</item>
+        <item>date_creation</item>
+        <item>date_available</item>
+        <item>random</item>
+    </string-array>
+    <string-array name="server_ssl_certificate_hostname_verification_entries">
+        <item>Strict</item>
+        <item>Browser Compatible</item>
+        <item>Off</item>
+    </string-array>
+    <string-array name="server_ssl_certificate_hostname_verification_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="user_types_array">
+        <item>webmaster</item>
+        <item>admin</item>
+        <item>normal</item>
+        <item>generic</item>
+        <item>guest</item>
+    </string-array>
+
+    <string-array name="user_types_values_array" translatable="false">
+        <item>webmaster</item>
+        <item>admin</item>
+        <item>normal</item>
+        <item>generic</item>
+        <item>guest</item>
+    </string-array>
+
+    <string-array name="privacy_levels_groups_array">
+        <item>Admins</item>
+        <item>Admins, Family</item>
+        <item>Admins, Family, Friends</item>
+        <item>Admins, Family, Friends, Contacts</item>
+        <item>Everybody</item>
+    </string-array>
+
+    <string-array name="privacy_levels_array" translatable="false">
+        <item>Admins</item>
+        <item>Family</item>
+        <item>Friends</item>
+        <item>Contacts</item>
+        <item>------</item>
+    </string-array>
+
+    <integer-array name="privacy_levels_values_array" translatable="false">
+        <item>8</item>
+        <item>4</item>
+        <item>2</item>
+        <item>1</item>
+        <item>0</item>
+    </integer-array>
+
+    <string-array name="rotation_array">
+        <item>Left 90 degrees</item>
+        <item>None</item>
+        <item>Right 90 degrees</item>
+        <item>Right 180 degrees</item>
+    </string-array>
+
+    <integer-array name="rotation_values_array" translatable="false">
+        <item>-90</item>
+        <item>0</item>
+        <item>90</item>
+        <item>180</item>
+    </integer-array>
+</resources>

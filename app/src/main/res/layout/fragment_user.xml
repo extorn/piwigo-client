@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical"
+    android:padding="20dp">
+
+    <RelativeLayout
+        android:id="@+id/user_edit_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <delit.piwigoclient.ui.common.CustomImageButton
+            android:id="@+id/user_action_edit_button"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+
+        <delit.piwigoclient.ui.common.CustomImageButton
+            android:id="@+id/user_action_save_button"
+            android:layout_toRightOf="@id/user_action_edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_save_black_24dp"/>
+
+        <delit.piwigoclient.ui.common.CustomImageButton
+            android:id="@+id/user_action_discard_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_undo_black_24dp"
+            android:layout_toRightOf="@id/user_action_save_button"/>
+
+        <delit.piwigoclient.ui.common.CustomImageButton
+            android:id="@+id/user_action_delete_button"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_delete_black_24px" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/user_edit_scrollview"
+        android:layout_below="@id/user_edit_controls"
+        android:layout_above="@+id/user_adView"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/user_username_heading"
+                style="@style/Base.TextAppearance.AppCompat.Headline"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7px"
+                android:text="@string/user_user_heading" />
+
+            <TextView
+                android:id="@+id/user_username_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="7dp"
+                android:text="@string/user_username_title" />
+
+            <EditText
+                android:id="@+id/user_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:clickable="true"
+                android:inputType="text|textNoSuggestions"
+                android:maxLines="1"
+                android:textColor="@drawable/edit_text_color_selector" />
+
+            <TextView
+                android:id="@+id/user_password_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="7dp"
+                android:text="@string/user_password_title" />
+
+            <EditText
+                android:id="@+id/user_password_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:clickable="true"
+                android:inputType="textWebPassword"
+                android:maxLines="1"
+                android:textColor="@drawable/edit_text_color_selector" />
+
+            <TextView
+                android:id="@+id/user_usertype_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="7dp"
+                android:text="@string/user_usertype_title" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/user_usertype"
+                android:layout_margin="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"/>
+
+            <TextView
+                android:id="@+id/user_privacy_level_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="7dp"
+                android:text="@string/user_privacy_level_title" />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/user_privacy_level"
+                android:layout_margin="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/btn_dropdown"/>
+
+            <TextView
+                android:id="@+id/user_email_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="7dp"
+                android:inputType="textWebEmailAddress"
+                android:text="@string/user_email_title" />
+
+            <EditText
+                android:id="@+id/user_email_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:clickable="true"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@drawable/edit_text_color_selector" />
+
+
+            <TextView
+                android:id="@+id/user_lastvisit_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="7dp"
+                android:text="@string/user_lastvisit_title" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/user_lastvisit"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text|textNoSuggestions"
+                android:textColor="@drawable/edit_text_color_selector"
+                android:background="?attr/editTextBackground"
+                android:gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="some text"/>
+
+
+
+            <CheckBox
+                android:id="@+id/user_high_definition_field"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="7dp"
+                android:button="@null"
+                android:textColor="@drawable/edit_text_color_selector"
+                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:text="@string/user_high_definition_title" />
+
+            <TextView
+                android:id="@+id/user_groups_label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="7dp"
+                android:text="@string/user_groups_title" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/user_groups"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:textColor="@drawable/edit_text_color_selector"
+            android:background="?attr/editTextBackground"
+            android:gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/none_selected" />
+
+
+            <TextView
+                android:id="@+id/user_access_rights_label"
+                android:text="@string/user_access_rights_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginBottom="3dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+            <ListView
+                android:id="@+id/user_access_rights"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:clickable="true"
+                android:layout_height="160dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/user_adView"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/ad_id_user_edit_banner">
+    </com.google.android.gms.ads.AdView>
+
+</RelativeLayout>

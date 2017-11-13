@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/gallery_adView"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/ad_id_album_banner">
+        </com.google.android.gms.ads.AdView>
+
+
+        <RelativeLayout
+            android:id="@+id/album_header_bar"
+            android:layout_below="@+id/gallery_adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/colorAccent">
+
+            <TextView
+                android:id="@+id/gallery_details_name_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gallery name"
+                android:layout_alignParentLeft="true"
+                android:layout_margin="5dp"
+                style="@style/Base.TextAppearance.AppCompat.Body1"
+                />
+
+            <TextView
+                android:id="@+id/gallery_details_description_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Gallery Description"
+                android:layout_below="@+id/gallery_details_name_header"
+                android:layout_margin="5dp"
+                />
+
+            <ImageButton
+                android:id="@+id/gallery_details_description_dropdown_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="?android:selectableItemBackground"
+                app:srcCompat="@drawable/ic_more_horiz_black_24px"/>
+
+        </RelativeLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/gallery_retryAction_actionButton"
+            android:layout_below="@id/album_header_bar"
+            app:srcCompat="@drawable/ic_refresh_black_24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            app:fabSize="mini" />
+
+
+        <TextView
+            android:id="@+id/album_empty_content"
+            android:layout_below="@id/album_header_bar"
+            android:visibility="visible"
+            style="@style/Base.TextAppearance.AppCompat.Headline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:text="A Reason that this gallery is empty or which calls need repeating"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/gallery_list"
+            android:layout_below="@id/album_header_bar"
+            android:name="delit.piwigoclient.GalleryFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            tools:context=".ui.album.view.ViewAlbumFragment"/>
+
+        <include layout="@layout/basket_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_below="@id/album_header_bar"/>
+
+        <RelativeLayout
+
+            android:id="@+id/gallery_actions_bulk_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:layout_gravity="end|bottom" >
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/gallery_action_paste_bulk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginRight="10dp"
+                app:srcCompat="@drawable/ic_content_paste_black_24dp"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/gallery_action_cut_bulk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/gallery_action_paste_bulk"
+                android:layout_marginRight="10dp"
+                app:srcCompat="@drawable/ic_content_cut_black_24px"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/gallery_action_copy_bulk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/gallery_action_cut_bulk"
+                android:layout_marginRight="10dp"
+                app:srcCompat="@drawable/ic_content_copy_black_24px"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/gallery_action_delete_bulk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/gallery_action_copy_bulk"
+                android:layout_marginRight="10dp"
+                app:srcCompat="@drawable/ic_delete_black_24px"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/gallery_bottom_sheet"
+        android:clickable="true"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="350dp"
+        app:layout_behavior="@string/custom_bottom_sheet_behavior">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/gallery_actionButton_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="-20dp"
+            android:clickable="true"
+            app:fabSize="mini" />
+
+        <LinearLayout
+            android:id="@+id/gallery_bottom_sheet_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="14dp">
+
+                <delit.piwigoclient.ui.common.CustomImageButton
+                    android:id="@+id/gallery_details_edit_button"
+                    android:layout_alignParentLeft="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+
+                <delit.piwigoclient.ui.common.CustomImageButton
+                    android:id="@+id/gallery_details_save_button"
+                    android:layout_toRightOf="@+id/gallery_details_edit_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_save_black_24dp" />
+
+                <delit.piwigoclient.ui.common.CustomImageButton
+                    android:id="@+id/gallery_details_discard_button"
+                    android:layout_toRightOf="@+id/gallery_details_save_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_undo_black_24dp" />
+
+                <delit.piwigoclient.ui.common.CustomImageButton
+                    android:id="@+id/album_add_new_album_button"
+                    android:layout_toLeftOf="@+id/gallery_action_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_create_new_folder_black_24dp"/>
+
+                <delit.piwigoclient.ui.common.CustomImageButton
+                    android:id="@+id/gallery_action_paste"
+                    android:layout_toLeftOf="@+id/gallery_action_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_content_paste_black_24dp" />
+
+                <delit.piwigoclient.ui.common.CustomImageButton
+                    android:id="@+id/gallery_action_cut"
+                    android:layout_toLeftOf="@+id/gallery_action_paste"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_content_cut_black_24px" />
+
+                <delit.piwigoclient.ui.common.CustomImageButton
+                    android:id="@+id/gallery_action_delete"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_delete_black_24px" />
+
+
+                <LinearLayout
+                    android:layout_below="@+id/gallery_action_delete"
+                    android:id="@+id/gallery_details_edit_fields"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/gallery_details_name_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gallery_details_name_title" />
+
+                    <EditText
+                        android:id="@+id/gallery_details_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:clickable="true"
+                        android:maxLines="3"
+                        android:textColor="@drawable/edit_text_color_selector"/>
+
+                    <TextView
+                        android:id="@+id/gallery_details_description_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gallery_details_description_title" />
+
+                    <EditText
+                        android:id="@+id/gallery_details_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:maxLines="10"
+                        android:textColor="@drawable/edit_text_color_selector"/>
+
+                    <TextView
+                        android:id="@+id/gallery_details_status_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gallery_details_status_title" />
+
+                    <Switch
+                        android:id="@+id/gallery_details_status"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:showText="true"
+                        android:textColor="@drawable/edit_text_color_selector"
+                        android:text="@string/gallery_details_status"
+                        android:textOff="@string/gallery_details_status_galleryIsPublic"
+                        android:textOn="@string/gallery_details_status_galleryIsPrivate"/>
+
+                    <TextView
+                        android:id="@+id/gallery_details_allowed_groups_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gallery_details_allowed_groups_title" />
+
+                    <TextView
+                        android:id="@+id/gallery_details_allowed_groups"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/click_to_view"
+                        android:textColor="@drawable/edit_text_color_selector"/>
+
+                    <TextView
+                        android:id="@+id/gallery_details_allowed_users_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gallery_details_allowed_users_title" />
+
+                    <TextView
+                        android:id="@+id/gallery_details_allowed_users"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/click_to_view"
+                        android:textColor="@drawable/edit_text_color_selector"/>
+
+                </LinearLayout>
+
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
+

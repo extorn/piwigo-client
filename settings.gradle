@@ -1,0 +1,3 @@
+include ':app'
+include ':androidMultiplefileSelectorDialogmaster'
+include ':google-licencing-library'

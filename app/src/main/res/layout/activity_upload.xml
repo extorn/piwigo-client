@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="delit.piwigoclient.ui.UploadActivity">
+
+    <TextView
+        android:id="@+id/upload_username_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="7dp"
+        android:text="@string/upload_username_title" />
+
+    <TextView
+        android:id="@+id/upload_username"
+        android:layout_below="@+id/upload_username_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="username"
+        android:textColor="@drawable/edit_text_color_selector" />
+
+    <FrameLayout
+        android:id="@+id/upload_details"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@+id/upload_username"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+
+</RelativeLayout>

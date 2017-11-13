@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical"
+    android:padding="20dp">
+
+    <RelativeLayout
+        android:id="@+id/user_edit_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <delit.piwigoclient.ui.common.CustomImageButton
+            android:id="@+id/group_action_edit_button"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+
+        <delit.piwigoclient.ui.common.CustomImageButton
+            android:id="@+id/group_action_save_button"
+            android:layout_toRightOf="@id/group_action_edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_save_black_24dp"/>
+
+        <delit.piwigoclient.ui.common.CustomImageButton
+            android:id="@+id/group_action_discard_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_undo_black_24dp"
+            android:layout_toRightOf="@id/group_action_save_button"/>
+
+        <delit.piwigoclient.ui.common.CustomImageButton
+            android:id="@+id/group_action_delete_button"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_delete_black_24px" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/group_heading"
+        android:text="@string/group_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20px"
+        style="@style/Base.TextAppearance.AppCompat.Headline"/>
+
+    <TextView
+        android:id="@+id/group_name_label"
+        android:text="@string/group_name_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="7dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+    <EditText
+        android:id="@+id/group_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:clickable="true"
+        android:inputType="text|textNoSuggestions"
+        android:maxLines="1"
+        android:textColor="@drawable/edit_text_color_selector" />
+
+    <CheckBox
+        android:id="@+id/group_is_default"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="7dp"
+        android:button="@null"
+        android:textColor="@drawable/edit_text_color_selector"
+        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+        android:text="@string/group_is_default_title"/>
+
+    <TextView
+        android:id="@+id/group_members_label"
+        android:text="@string/group_members_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="7dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/group_members"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine|textNoSuggestions"
+        android:textColor="@drawable/edit_text_color_selector"
+        android:background="?attr/editTextBackground"
+        android:gravity="center_vertical"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/none_selected" />
+
+    <TextView
+        android:id="@+id/group_access_rights_label"
+        android:text="@string/group_access_rights_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="7dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+    <ListView
+        android:id="@+id/group_access_rights"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clickable="true"/>
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/group_adView"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/ad_id_group_edit_banner">
+    </com.google.android.gms.ads.AdView>
+
+</LinearLayout>

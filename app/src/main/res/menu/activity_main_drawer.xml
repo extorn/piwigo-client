@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/gallery_menu_title" />
+
+        <item
+            android:id="@+id/nav_upload"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/upload_menu_title" />
+
+        <item
+            android:id="@+id/nav_users"
+            android:icon="@drawable/ic_person_black_24dp"
+            android:title="@string/users_menu_title" />
+
+        <item
+            android:id="@+id/nav_groups"
+            android:icon="@drawable/ic_group_black_24dp"
+            android:title="@string/groups_menu_title" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/settings_menu_title" />
+
+        <item
+            android:id="@+id/nav_top_tips"
+            android:icon="@drawable/ic_help_black_24px"
+            android:title="@string/top_tips_menu_title" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_help_black_24px"
+            android:title="@string/about_menu_title" />
+
+        <item
+            android:id="@+id/nav_licences"
+            android:icon="@drawable/ic_help_black_24px"
+            android:title="@string/licences_menu_title" />
+
+        <item
+            android:id="@+id/nav_eula"
+            android:icon="@drawable/ic_help_black_24px"
+            android:title="@string/eula_menu_title" />
+
+        <item
+            android:id="@+id/nav_lock"
+            android:icon="@drawable/ic_lock_black_24dp"
+            android:title="@string/lock_menu_title" />
+
+        <item
+            android:id="@+id/nav_unlock"
+            android:icon="@drawable/ic_lock_open_black_24dp"
+            android:title="@string/unlock_menu_title" />
+    </group>
+</menu>
