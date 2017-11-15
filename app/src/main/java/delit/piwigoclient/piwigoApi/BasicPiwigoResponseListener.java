@@ -88,10 +88,12 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     }
 
     protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
+        //TODO allow retry by resubmitting the handler. - Convert to question - retry? yes / no
         showOrQueueDialogMessage(R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_prefix) + msg.getPiwigoErrorCode() + " (" + msg.getPiwigoErrorMessage() + ")");
     }
 
     protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
+        //TODO allow retry by resubmitting the handler. - Convert to question - retry? yes / no
         if(msg.getStatusCode() < 0) {
             showOrQueueDialogMessage(R.string.alert_title_error_talking_to_server, msg.getErrorMessage());
         } else if(msg.getStatusCode() == 0) {
@@ -102,6 +104,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     }
 
     protected void handlePiwigoUnexpectedReplyErrorResponse(PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse msg) {
+        //TODO allow retry by resubmitting the handler. - Convert to question - retry? yes / no
         switch (msg.getRequestOutcome()) {
             case PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN:
                 showOrQueueDialogMessage(R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_prefix) + " (" + msg.getRawResponse() + ")");
@@ -113,8 +116,6 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
                 showOrQueueDialogMessage(R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_prefix) + " (" + msg.getRawResponse() + ")");
         }
     }
-
-
 
     @Override
     public boolean canHandlePiwigoResponseNow(PiwigoResponseBufferingHandler.Response response) {

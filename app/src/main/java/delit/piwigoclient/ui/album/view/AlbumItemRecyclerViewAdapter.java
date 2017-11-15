@@ -335,6 +335,14 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         return selectedResourceIds;
     }
 
+    public HashSet<ResourceItem> getSelectedItems() {
+        HashSet<ResourceItem> selectedItems = new HashSet<>();
+        for(Long selectedItemId : selectedResourceIds) {
+            selectedItems.add(gallery.getResourceItemById(selectedItemId));
+        }
+        return selectedItems;
+    }
+
     public void clearSelectedItemIds() {
         selectedResourceIds.clear();
         notifyItemRangeChanged(0, getItemCount());

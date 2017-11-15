@@ -32,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import cz.msebera.android.httpclient.client.cache.Resource;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -95,6 +97,7 @@ public class ViewAlbumFragment extends MyFragment {
     private static final String STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED = "movedResourceParentUpdateRequired";
     public static final String STATE_UPDATE_ALBUM_DETAILS_PROGRESS = "updateAlbumDetailsProgress";
     public static final String STATE_USERNAME_SELECTION_WANTED_NEXT = "usernameSelectionWantedNext";
+    public static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final int UPDATE_IN_PROGRESS = 1;
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
@@ -147,6 +150,7 @@ public class ViewAlbumFragment extends MyFragment {
     private boolean usernameSelectionWantedNext;
     private CustomImageButton addNewAlbumButton;
     private int colsOnScreen;
+    private DeleteActionData deleteActionData;
 
 
     /**
@@ -232,6 +236,7 @@ public class ViewAlbumFragment extends MyFragment {
         outState.putBoolean(STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED, movedResourceParentUpdateRequired);
         outState.putInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS, updateAlbumDetailsProgress);
         outState.putBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT, usernameSelectionWantedNext);
+        outState.putSerializable(STATE_DELETE_ACTION_DATA, deleteActionData);
     }
 
     @Nullable
@@ -256,6 +261,7 @@ public class ViewAlbumFragment extends MyFragment {
             movedResourceParentUpdateRequired = savedInstanceState.getBoolean(STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED);
             updateAlbumDetailsProgress = savedInstanceState.getInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS);
             usernameSelectionWantedNext = savedInstanceState.getBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT);
+            deleteActionData = (DeleteActionData) savedInstanceState.getSerializable(STATE_DELETE_ACTION_DATA);
         }
         if(galleryModel == null) {
             galleryIsDirty = true;
@@ -402,12 +408,8 @@ public class ViewAlbumFragment extends MyFragment {
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-                if(bulkActionsAllowed && event.getActionMasked() == MotionEvent.ACTION_UP){
-                    HashSet<Long> selectedItems = viewAdapter.getSelectedItemIds();
-                    if(selectedItems.size() > 0) {
-                        onDeleteResources(selectedItems);
-                    }
+                if(event.getActionMasked() == MotionEvent.ACTION_UP) {
+                    onBulkActionDeleteButtonPressed();
                 }
                 return true; // consume the event
             }
@@ -462,8 +464,8 @@ public class ViewAlbumFragment extends MyFragment {
                         }
 
                         @Override
-                        public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                            if(positiveAnswer) {
+                        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                            if(Boolean.TRUE == positiveAnswer) {
                                 if(basket.getAction() == Basket.ACTION_COPY) {
                                     HashSet<ResourceItem> itemsToCopy = basket.getContents();
                                     CategoryItem copyToAlbum = gallery;
@@ -507,6 +509,24 @@ public class ViewAlbumFragment extends MyFragment {
         updateInformationShowingStatus();
 
         return view;
+    }
+
+    private void onBulkActionDeleteButtonPressed() {
+        boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+        if(bulkActionsAllowed){
+            HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
+            if(deleteActionData != null && selectedItemIds.equals(deleteActionData.getSelectedItemIds())) {
+                //continue with previous action
+                onDeleteResources(deleteActionData);
+            } else if(selectedItemIds.size() > 0) {
+                HashSet<ResourceItem> selectedItems = viewAdapter.getSelectedItems();
+                DeleteActionData deleteActionData = new DeleteActionData(selectedItemIds, selectedItems);
+                if(!deleteActionData.isResourceInfoAvailable()) {
+                    this.deleteActionData = deleteActionData;
+                }
+                onDeleteResources(deleteActionData);
+            }
+        }
     }
 
     private int getAlbumsPerRow() {
@@ -601,8 +621,8 @@ public class ViewAlbumFragment extends MyFragment {
             }
 
             @Override
-            public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                if(positiveAnswer) {
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if(Boolean.TRUE == positiveAnswer) {
                     String msg = String.format(getString(R.string.alert_confirm_really_really_delete_album_from_server_pattern),album.getName(), album.getPhotoCount(), album.getSubCategories(), album.getTotalPhotos() - album.getPhotoCount());
                     getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
                         @Override
@@ -610,8 +630,8 @@ public class ViewAlbumFragment extends MyFragment {
                         }
 
                         @Override
-                        public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                            if(positiveAnswer) {
+                        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                            if(Boolean.TRUE == positiveAnswer) {
                                 addActiveServiceCall(R.string.progress_delete_album, PiwigoAccessService.startActionDeleteGallery(album.getId(),getContext()));
                             }
                         }
@@ -621,7 +641,111 @@ public class ViewAlbumFragment extends MyFragment {
         });
     }
 
-    private void onDeleteResources(final HashSet<Long> selectedItemIds) {
+    private static class DeleteActionData implements Serializable {
+        final HashSet<Long> selectedItemIds;
+        final HashSet<Long> itemsUpdated;
+        final HashSet<ResourceItem> selectedItems;
+        boolean resourceInfoAvailable;
+        private ResourceItem[] itemsWithoutLinkedAlbumData;
+
+        public DeleteActionData(HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
+            this.selectedItemIds = selectedItemIds;
+            this.selectedItems = selectedItems;
+            this.resourceInfoAvailable = false; //FIXME when Piwigo provides this info as standard, this can be removed and the method simplified.
+            itemsUpdated = new HashSet<>(selectedItemIds.size());
+        }
+
+        public void updateLinkedAlbums(ResourceItem item) {
+            itemsUpdated.add(item.getId());
+            if(itemsUpdated.size() == selectedItemIds.size()) {
+                resourceInfoAvailable = true;
+            }
+            selectedItems.add(item); // will replace the previous with this one.
+        }
+
+        public boolean isResourceInfoAvailable() {
+            return resourceInfoAvailable;
+        }
+
+        public HashSet<Long> getSelectedItemIds() {
+            return selectedItemIds;
+        }
+
+        public HashSet<ResourceItem> getSelectedItems() {
+            return selectedItems;
+        }
+
+        public void clear() {
+            selectedItemIds.clear();
+            selectedItems.clear();
+            itemsUpdated.clear();
+        }
+
+        public Set<ResourceItem> getItemsWithoutLinkedAlbumData() {
+            if(itemsUpdated.size() == 0) {
+                return selectedItems;
+            }
+            Set<ResourceItem> itemsWithoutLinkedAlbumData = new HashSet<>();
+            for(ResourceItem r : selectedItems) {
+                if(!itemsUpdated.contains(r.getId())) {
+                    itemsWithoutLinkedAlbumData.add(r);
+                }
+            }
+            return itemsWithoutLinkedAlbumData;
+        }
+    }
+
+    private void onDeleteResources(final DeleteActionData deleteActionData) {
+        final HashSet<ResourceItem> sharedResources = new HashSet();
+        if (deleteActionData.isResourceInfoAvailable()) {
+            //TODO currently, this won't work. No piwigo support
+            for (ResourceItem item : deleteActionData.getSelectedItems()) {
+                if (item.getLinkedAlbums().size() > 1) {
+                    sharedResources.add(item);
+                }
+            }
+        } else {
+            for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
+                addActiveServiceCall(R.string.progress_loading_resource_details, PiwigoAccessService.startActionGetResourceInfo(item, getContext()));
+            }
+            return;
+        }
+        if (sharedResources.size() > 0) {
+            String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern, sharedResources.size());
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_unlink, R.string.button_delete, new UIHelper.QuestionResultListener() {
+                @Override
+                public void onDismiss(AlertDialog dialog) {
+
+                }
+
+                @Override
+                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                    if (Boolean.TRUE == positiveAnswer) {
+                        addActiveServiceCall(R.string.progress_delete_resources, PiwigoAccessService.startActionDeleteGalleryItemsFromServer(deleteActionData.getSelectedItemIds(), getContext()));
+                    } else if (Boolean.FALSE == positiveAnswer) {
+                        HashSet<Long> itemIdsForPermananentDelete = (HashSet<Long>) deleteActionData.getSelectedItemIds().clone();
+                        HashSet<ResourceItem> itemsForPermananentDelete = (HashSet<ResourceItem>) deleteActionData.getSelectedItems().clone();
+                        for (ResourceItem item : sharedResources) {
+                            itemIdsForPermananentDelete.remove(item.getId());
+                            itemsForPermananentDelete.remove(item);
+                            item.getLinkedAlbums().remove(gallery.getId());
+                            addActiveServiceCall(R.string.progress_unlink_resources, PiwigoAccessService.startActionUpdateResourceInfo(item, getContext()));
+                        }
+                        //now we need to delete the rest.
+                        deleteResourcesFromServerForever(itemIdsForPermananentDelete, itemsForPermananentDelete);
+                    }
+                }
+            });
+        } else {
+            deleteResourcesFromServerForever(deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
+        }
+
+    }
+
+    public void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
+        //TODO cleaning this variable up here is messy.
+        deleteActionData.clear();
+        deleteActionData = null;
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
             @Override
@@ -630,8 +754,8 @@ public class ViewAlbumFragment extends MyFragment {
             }
 
             @Override
-            public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                if(positiveAnswer) {
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if(Boolean.TRUE == positiveAnswer) {
                     addActiveServiceCall(R.string.progress_delete_resources, PiwigoAccessService.startActionDeleteGalleryItemsFromServer(selectedItemIds, getContext()));
                 }
             }
@@ -892,8 +1016,8 @@ public class ViewAlbumFragment extends MyFragment {
             }
 
             @Override
-            public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                if(positiveAnswer) {
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if(Boolean.TRUE == positiveAnswer) {
                     addActiveServiceCall(R.string.progress_delete_album, PiwigoAccessService.startActionDeleteGallery(gallery.getId(),getContext()));
                 }
             }
@@ -1069,6 +1193,8 @@ public class ViewAlbumFragment extends MyFragment {
                     onAlbumPermissionsAdded((PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse)response);
                 } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoRemoveAlbumPermissionsResponse) {
                     onAlbumPermissionsRemoved((PiwigoResponseBufferingHandler.PiwigoRemoveAlbumPermissionsResponse)response);
+                } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse) {
+                    onResouceInfoRetrieved((PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse)response);
                 } else {
                     String failedCall = loadingMessageIds.get(response.getMessageId());
                     if(failedCall == null) {
@@ -1091,7 +1217,12 @@ public class ViewAlbumFragment extends MyFragment {
         }
     }
 
-
+    private void onResouceInfoRetrieved(PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse response) {
+        this.deleteActionData.updateLinkedAlbums(response.getResource());
+        if(this.deleteActionData.isResourceInfoAvailable()) {
+            onDeleteResources(deleteActionData);
+        }
+    }
 
 
     private HashSet<Long> buildPreselectedUserIds(List<Username> selectedUsernames) {
@@ -1345,8 +1476,8 @@ public class ViewAlbumFragment extends MyFragment {
                     }
 
                     @Override
-                    public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                        if (positiveAnswer) {
+                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                        if(Boolean.TRUE == positiveAnswer) {
                             addingAlbumPermissions();
                         }
                     }
@@ -1367,8 +1498,8 @@ public class ViewAlbumFragment extends MyFragment {
                             }
 
                             @Override
-                            public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                                if (positiveAnswer) {
+                            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                                if(Boolean.TRUE == positiveAnswer) {
                                     addActiveServiceCall(R.string.gallery_details_updating_progress_title, PiwigoAccessService.startActionAddAlbumPermissions(gallery, newlyAddedGroups, newlyAddedUsers, true, getContext()));
                                 }
                             }
@@ -1383,8 +1514,8 @@ public class ViewAlbumFragment extends MyFragment {
                             }
 
                             @Override
-                            public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                                if (positiveAnswer) {
+                            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                                if(Boolean.TRUE == positiveAnswer) {
                                     addActiveServiceCall(R.string.gallery_details_updating_progress_title, PiwigoAccessService.startActionAddAlbumPermissions(gallery, newlyAddedGroups, newlyAddedUsers, true, getContext()));
                                 } else {
                                     addActiveServiceCall(R.string.gallery_details_updating_progress_title, PiwigoAccessService.startActionAddAlbumPermissions(gallery, newlyAddedGroups, newlyAddedUsers, false, getContext()));
@@ -1420,12 +1551,11 @@ public class ViewAlbumFragment extends MyFragment {
                 getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
                     @Override
                     public void onDismiss(AlertDialog dialog) {
-
                     }
 
                     @Override
-                    public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                        if(positiveAnswer) {
+                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                        if(Boolean.TRUE == positiveAnswer) {
                             addActiveServiceCall(R.string.gallery_details_updating_progress_title, PiwigoAccessService.startActionRemoveAlbumPermissions(gallery, newlyRemovedGroups, newlyRemovedUsers, getContext()));
                         } else {
                             onAlbumUpdateFinished();

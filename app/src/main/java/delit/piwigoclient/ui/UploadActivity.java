@@ -138,7 +138,7 @@ public class UploadActivity extends MyActivity {
             }
 
             @Override
-            public void onResult(AlertDialog dialog, boolean positiveAnswer) {
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 // don't care
             }
         });

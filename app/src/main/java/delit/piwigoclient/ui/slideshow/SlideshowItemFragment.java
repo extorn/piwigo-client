@@ -39,6 +39,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.List;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -194,8 +195,8 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
                     }
 
                     @Override
-                    public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                        if(positiveAnswer) {
+                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                        if(Boolean.TRUE == positiveAnswer) {
                             long albumId = model.getParentId();
                             Long albumParentId = model.getParentageChain().size() > 1? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
                             addActiveServiceCall(R.string.progress_resource_details_updating, PiwigoAccessService.startActionUpdateAlbumThubnail(albumId, albumParentId, model.getId(), getContext()));
@@ -507,8 +508,8 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             }
 
             @Override
-            public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                if(positiveAnswer) {
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if(Boolean.TRUE == positiveAnswer) {
                     AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
                     getUiHelper().setTrackingRequest(event.getActionId());
                     EventBus.getDefault().post(event);
@@ -780,13 +781,13 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             HashSet<Long> newAlbums = updatedLinkedAlbumSet;
 
             // check the original and new set aren't the same before updating the server.
-            HashSet<Long> curAlbCpy = new HashSet<>(currentAlbums);
-            curAlbCpy.removeAll(newAlbums); // to give those status altered in the old set (removed).
-            HashSet<Long> newAlbCpy = new HashSet<>(newAlbums);
-            newAlbCpy.removeAll(currentAlbums); // to give those status altered in the new set (added).
+            HashSet<Long> albumsRemoved = new HashSet<>(currentAlbums);
+            albumsRemoved.removeAll(newAlbums); // to give those status altered in the old set (removed).
+            HashSet<Long> albumsAdded = new HashSet<>(newAlbums);
+            albumsAdded.removeAll(currentAlbums); // to give those status altered in the new set (added).
             HashSet<Long> changedAlbums = new HashSet<>();
-            changedAlbums.addAll(newAlbCpy);
-            changedAlbums.addAll(curAlbCpy);
+            changedAlbums.addAll(albumsAdded);
+            changedAlbums.addAll(albumsRemoved);
 
             if(changedAlbums.size() == 0) {
                 // no changes
@@ -806,8 +807,16 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
                     }
                 }
                 // If we remove an album, update the parent chain from here (to ensure things are in-sync if inefficiently)
-                if(curAlbCpy.size() > 0) {
-                    albumsRequiringReload.addAll(model.getParentageChain());
+                if(albumsRemoved.size() > 0) {
+                    List<Long> parentageOfItem = model.getParentageChain();
+                    HashSet<Long> albumsToNotify = new HashSet<>();
+                    for(int i = parentageOfItem.size() - 1; i >= 0; i--) {
+                        if(albumsRemoved.contains(parentageOfItem.get(i))) {
+                            albumsToNotify.addAll(parentageOfItem.subList(0, i));
+                            break;
+                        }
+                    }
+                    albumsRequiringReload.addAll(albumsToNotify);
                 }
             }
         }

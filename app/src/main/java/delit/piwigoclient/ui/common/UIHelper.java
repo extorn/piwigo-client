@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -46,7 +45,6 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.util.SerializablePair;
 import delit.piwigoclient.util.X509Utils;
 
 /**
@@ -144,15 +142,30 @@ public abstract class UIHelper<T> {
 
         private final int negativeButtonTextId;
         private final int layoutId;
+        private final int neutralButtonTextId;
 
         public QueuedQuestionMessage(int titleId, String message, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
             this(titleId, message, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, listener);
         }
 
         public QueuedQuestionMessage(int titleId, String message, int layoutId, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
+            this(titleId, message, layoutId, positiveButtonTextId, negativeButtonTextId, Integer.MIN_VALUE, listener);
+        }
+
+        public QueuedQuestionMessage(int titleId, String message, int layoutId, int positiveButtonTextId, int negativeButtonTextId, int neutralButtonTextId, QuestionResultListener listener) {
+
             super(titleId, message, positiveButtonTextId, false, listener);
             this.negativeButtonTextId = negativeButtonTextId;
             this.layoutId = layoutId;
+            this.neutralButtonTextId = neutralButtonTextId;
+        }
+
+        public boolean isShowNeutralButton() {
+            return neutralButtonTextId != Integer.MIN_VALUE;
+        }
+
+        public int getNeutralButtonTextId() {
+            return neutralButtonTextId;
         }
 
         public int getNegativeButtonTextId() {
@@ -269,6 +282,14 @@ public abstract class UIHelper<T> {
                 nextMessage.getListener().onResult(alertDialog, false);
             }
         });
+        if(nextMessage.isShowNeutralButton()) {
+            alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, context.getString(nextMessage.getNeutralButtonTextId()), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    nextMessage.getListener().onResult(alertDialog, null);
+                }
+            });
+        }
         dismissListener.setListener(nextMessage.getListener());
         dismissListener.setBuildNewDialogOnDismiss(nextMessage.getLayoutId() != Integer.MIN_VALUE);
         alertDialog.show();
@@ -486,7 +507,7 @@ public abstract class UIHelper<T> {
 
     public interface QuestionResultListener extends Serializable {
         void onDismiss(AlertDialog dialog);
-        void onResult(AlertDialog dialog, boolean positiveAnswer);
+        void onResult(AlertDialog dialog, Boolean positiveAnswer);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -537,8 +558,8 @@ public abstract class UIHelper<T> {
             public void onDismiss(AlertDialog dialog){}
 
             @Override
-            public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                if(positiveAnswer) {
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if(Boolean.TRUE == positiveAnswer) {
                     KeyStore trustStore = X509Utils.loadTrustedCaKeystore(context);
                     try {
                         for(Map.Entry<String,X509Certificate> entry : event.getUntrustedCerts().entrySet()) {
@@ -564,6 +585,10 @@ public abstract class UIHelper<T> {
 
     public void showOrQueueDialogQuestion(int titleId, String message, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, positiveButtonTextId, negativeButtonTextId, listener));
+    }
+
+    public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener, int neutralButtonTextId) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, layoutId, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
     }
 
     public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {

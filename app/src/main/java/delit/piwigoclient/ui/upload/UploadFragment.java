@@ -422,8 +422,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                     }
 
                     @Override
-                    public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                        if(positiveAnswer) {
+                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                        if(Boolean.TRUE == positiveAnswer) {
                             for(File file : filesToDelete) {
                                 onRemove(filesToUploadAdapter, file, false);
                             }
@@ -454,7 +454,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         boolean jobIsRunningNow = uploadJob != null && uploadJob.isRunningNow();
         boolean jobIsSubmitted = uploadJob != null && uploadJob.isSubmitted();
 
-        uploadFilesNowButton.setEnabled(filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !jobIsSubmitted || !jobIsRunningNow));
+        uploadFilesNowButton.setEnabled(filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow)));
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         newGalleryButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         selectedGallerySpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
@@ -556,8 +556,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                         }
 
                         @Override
-                        public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                            if(positiveAnswer) {
+                        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                            if(Boolean.TRUE == positiveAnswer) {
                                 activeJob.cancelFileUpload(itemToRemove);
                                 adapter.remove(itemToRemove);
                             }
@@ -585,8 +585,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                     }
 
                     @Override
-                    public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                        if(positiveAnswer) {
+                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                        if(Boolean.TRUE == positiveAnswer) {
                             adapter.clear();
                             uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
                         }

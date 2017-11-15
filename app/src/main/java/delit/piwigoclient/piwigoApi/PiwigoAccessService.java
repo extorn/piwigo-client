@@ -27,7 +27,9 @@ import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
+import delit.piwigoclient.piwigoApi.handlers.AbstractBasicPiwigoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumAddPermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
@@ -577,6 +579,17 @@ public class PiwigoAccessService {
         }.start(messageId);
     }
 
+    public static <T extends AbstractPiwigoDirectResponseHandler> long rerunHandler(final T handler, Context context) {
+        long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
+        return new Worker(context) {
+
+            @Override
+            protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
+                return handler;
+            }
+        }.start(messageId);
+    }
+
     public static <T extends ResourceItem> long startActionGetResourceInfo(final T model, Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
@@ -587,7 +600,6 @@ public class PiwigoAccessService {
             }
         }.start(messageId);
     }
-
 
     public static long startActionDeleteGroup(final long groupId, Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();

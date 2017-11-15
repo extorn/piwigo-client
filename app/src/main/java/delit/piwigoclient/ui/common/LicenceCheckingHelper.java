@@ -70,8 +70,8 @@ public class LicenceCheckingHelper {
             }
 
             @Override
-            public void onResult(android.app.AlertDialog dialog, boolean positiveAnswer) {
-                if(positiveAnswer) {
+            public void onResult(android.app.AlertDialog dialog, Boolean positiveAnswer) {
+                if(Boolean.TRUE == positiveAnswer) {
                     if (showRetryButton) {
                         doCheck();
                     } else {

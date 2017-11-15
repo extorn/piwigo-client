@@ -86,8 +86,16 @@ public class PiwigoResponseBufferingHandler {
                 }
             }
         }
+        // check which handlers are not listening for anything else
         for(Long responseId : responsesMappingsToRemove) {
-            handlerResponseMap.remove(responseId);
+            Long thisHandlerId = handlerResponseMap.remove(responseId);
+            if(!handlerResponseMap.containsValue(thisHandlerId)) {
+                handlersToRemove.add(thisHandlerId);
+            }
+        }
+        // remove all the dead handlers.
+        for(Long handlerId : handlersToRemove) {
+            handlers.remove(handlerId);
         }
     }
 

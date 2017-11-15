@@ -154,8 +154,8 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             }
 
             @Override
-            public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                if(positiveAnswer) {
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if(Boolean.TRUE == positiveAnswer) {
                     EditText passwordEdit = (EditText) dialog.findViewById(R.id.password);
                     String password = passwordEdit.getText().toString();
                     EventBus.getDefault().post(new UnlockAppEvent(password));
@@ -212,8 +212,8 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             }
 
             @Override
-            public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                if(positiveAnswer) {
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if(Boolean.TRUE == positiveAnswer) {
                     EventBus.getDefault().post(new LockAppEvent());
                 }
             }

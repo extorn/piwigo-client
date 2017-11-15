@@ -51,7 +51,9 @@
     <string name="alert_error_login_failed">Login failed.</string>
     <string name="button_retry">Retry</string>
     <string name="button_cancel">Cancel</string>
-    <string name="button_close">close</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_unlink">UnLink</string>
+    <string name="button_close">Close</string>
     <string name="alert_userTypePrefix">User Type</string>
     <string name="tools_menu_title">Tools</string>
     <string name="settings_menu_title">App Settings</string>
@@ -146,6 +148,7 @@
     <string name="alert_confirm_title">Confirm</string>
     <string name="alert_confirm_really_delete_from_server">This will delete the item permanently from the server. Continue?</string>
     <string name="alert_confirm_really_delete_items_from_server">This will delete the items permanently from the server. Continue?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">You\'ve requested to delete %1$d resources that are shared with other albums. Do you wish to delete these from all albums (and the server - permanently), or just unlink them from this album?</string>
     <string name="about_menu_title">About</string>
     <string name="licences_menu_title">Licence</string>
     <string name="about_heading">About This App</string>
@@ -278,13 +281,13 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.46 - Changes:
+Release 1.3.48 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.45 - Changes:
+Release 1.3.47 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for paging of groups and users (support >100 of each)
@@ -292,14 +295,29 @@ Release 1.3.45 - Changes:
                     - Possibly - Better support for the "admin mode" on the webserver.
                     - Possibly - allow linking the upload process to a compression routine for videos
 
-Release 1.3.44 - Changes:
+Release 1.3.46 - Changes:
+                    - Upload - Allow linking a resource to upload album if already uploaded
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
-                    - Add "unlink from album" option for the delete of multiple resources
-                    - Improve management of credentials
-                    - Improve memory use further
-                    - Improve the long click delete album functionality
 
+Release 1.3.45 - Changes:
+                    - Improve management of credentials where possible
+                    - Improve memory use further
+                    - Possibly - Enable user driven retry for any failed server request at point of failure
+
+WIP
+
+Release 1.3.44 - Changes:
+                    - Added "unlink from album" option for the delete of multiple resources - Will require a change to piwigo 2.9.2 to be efficient (ticket raised).
+                    - Improve the long click delete album functionality
+                    - TODO: add warning about http hosted piwigo server
+                    - TODO: Test the release - particularly delete functionality
+                - Bugfix:
+                    - Update positively affected albums correctly after linking a resource to one
+                    - Correctly disable upload button when pressed
+                    - Fixed memory leak
+                    - Corrected wording of album delete to reflect action
+                    - TODO: look at crashes reported and investigate / fix
 
 Released:
 
@@ -912,6 +930,7 @@ SOFTWARE.
     <string name="progress_delete_album">Deleting album and content</string>
     <string name="progress_delete_resource">Deleting resource</string>
     <string name="progress_delete_resources">Deleting resources</string>
+    <string name="progress_unlink_resources">Unlinking resources</string>
     <string name="progress_copy_resources">Copying resources</string>
     <string name="progress_move_resources">Moving resources</string>
     <string name="progress_checking_with_server">Checking credentials with server</string>
@@ -969,8 +988,8 @@ SOFTWARE.
     <string name="alert_message_select_album">Please select the album from the list below</string>
     <string name="alert_title_set_album_thumbnail">Update album thumbnail?</string>
     <string name="alert_message_set_album_thumbnail">Update album thumbnail to this image?</string>
-    <string name="alert_confirm_really_delete_album_from_server_pattern">Are you sure you wish to delete the album (%1$s) and all content permanently?</string>
-    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Are you absolutely certain you want to delete album (%1$s) with %2$d photos, and %3$d child albums containing a further %4$d photos for ever (even if linked to albums elsewhere in the gallery)? - There is no undo feature for this action.</string>
+    <string name="alert_confirm_really_delete_album_from_server_pattern">Are you sure you wish to delete the album (%1$s) and all content permanently (unless linked to albums elsewhere)?</string>
+    <string name="alert_confirm_really_really_delete_album_from_server_pattern">Are you absolutely certain you want to delete album (%1$s) with %2$d photos, and %3$d child albums containing a further %4$d photos for ever? Note that photos linked to other albums will remain there, but any others are deleted forever. There is no undo feature for this action.</string>
     <string name="alert_confirm_copy_items_here_pattern">Copy the %1$d item(s) in the basket here (%2$s)?</string>
     <string name="alert_confirm_move_items_here_pattern">Move the %1$d item(s) in the basket here (%2$s)?</string>
     <string name="slideshow_image_details_linked_albums_title">Linked Albums</string>

@@ -148,4 +148,16 @@ public class PiwigoAlbum implements Serializable {
             Collections.sort(items, itemComparator);
         }
     }
+
+    public ResourceItem getResourceItemById(long selectedItemId) {
+        for (GalleryItem item : items) {
+            if(item.getId() == selectedItemId) {
+                if(item instanceof ResourceItem) {
+                    return (ResourceItem) item;
+                }
+                throw new RuntimeException("Item is present, but is not an album resource, is a " + item.getClass().getName());
+            }
+        }
+        throw new IllegalArgumentException("No resource item present with id : " + selectedItemId);
+    }
 }

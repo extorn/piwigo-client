@@ -177,8 +177,8 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                     }
 
                     @Override
-                    public void onResult(AlertDialog dialog, boolean positiveAnswer) {
-                        if(positiveAnswer) {
+                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                        if(Boolean.TRUE == positiveAnswer) {
                             clearCacheAndRestartVideo();
                         }
                     }
