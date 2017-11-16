@@ -97,7 +97,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     protected void onPostExecute(Set<String> aliases) {
                         if (!isCancelled()) {
                             prefs.edit().putStringSet(getString(R.string.preference_pre_user_notified_certificates_key), aliases).commit();
-                            preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_select_trusted_certificate_key)).setEnabled(val);
+                            preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_select_trusted_certificate_key)).setEnabled(true);
                             if (!initialising) {
                                 // clear the existing session - it's not valid any more.
                                 forkLogoutIfNeeded();
@@ -200,8 +200,12 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             String stringValue = value.toString();
             preference.setSummary(stringValue);
             String val = stringValue.toLowerCase();
-            if(!(val.startsWith("http://") || val.startsWith("https://"))) {
+            boolean isHttps = val.startsWith("https://");
+            boolean isHttp = val.startsWith("http://");
+            if(!(isHttp || isHttps)) {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
+            } else if(isHttp) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
             }
             if (!initialising) {
                 // clear the existing session - it's not valid any more.

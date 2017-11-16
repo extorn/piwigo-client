@@ -305,21 +305,17 @@ Release 1.3.45 - Changes:
                     - Improve memory use further
                     - Possibly - Enable user driven retry for any failed server request at point of failure
 
-WIP
+Released:
 
 Release 1.3.44 - Changes:
                     - Added "unlink from album" option for the delete of multiple resources - Will require a change to piwigo 2.9.2 to be efficient (ticket raised).
                     - Improve the long click delete album functionality
-                    - TODO: add warning about http hosted piwigo server
-                    - TODO: Test the release - particularly delete functionality
+                    - Added warning about http hosted piwigo server
                 - Bugfix:
                     - Update positively affected albums correctly after linking a resource to one
                     - Correctly disable upload button when pressed
-                    - Fixed memory leak
+                    - Fixed a memory leak
                     - Corrected wording of album delete to reflect action
-                    - TODO: look at crashes reported and investigate / fix
-
-Released:
 
 Release 1.3.43 - Bugfix:
                     - Allow guest users (of the piwigo server) to log in again
@@ -1045,6 +1041,7 @@ SOFTWARE.
     <string name="alert_trusted_certificates_polling">Untrusted certificates supplied by the server upon connection will be presented to you so as you may choose to add these to the trust store. If you decline, you will not be prompted again for the same certificate. In order to be prompted again, deselect and reselect the option to use a custom trusted certificate store.</string>
     <string name="button_copy_link">Copy Link</string>
     <string name="download_link_clipboard_data_desc">Download link for %1$s</string>
+    <string name="alert_http_scheme_specified">Your server is using http. This is not a good idea because the username and password are transmitted to the server in plain text. I strongly recommend you change your server to use https.</string>
 
 
 </resources>

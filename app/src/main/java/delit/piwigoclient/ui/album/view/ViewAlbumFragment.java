@@ -744,7 +744,6 @@ public class ViewAlbumFragment extends MyFragment {
 
     public void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         //TODO cleaning this variable up here is messy.
-        deleteActionData.clear();
         deleteActionData = null;
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
@@ -971,7 +970,7 @@ public class ViewAlbumFragment extends MyFragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onDeleteGallery(gallery);
+                onAlbumDeleteRequest(gallery);
             }
         });
 
@@ -995,33 +994,6 @@ public class ViewAlbumFragment extends MyFragment {
 
     private void loadAlbumPermissions() {
         addActiveServiceCall(R.string.progress_loading_album_permissions, PiwigoAccessService.startActionGetAlbumPermissions(gallery, getContext()));
-    }
-
-    private void onDeleteGallery(final CategoryItem gallery) {
-//        if (gallery.subCategories > 0) {
-//            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.gallery_action_delete_error_subcategories_present));
-//            //TODO allow choosing to orphan / delete all content. IF POSSIBLE....
-//        } else if (gallery.photos > 0) {
-//            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.gallery_action_delete_error_photos_present));
-//            //TODO allow choosing to orphan / delete all content.
-//        } else {
-//            addActiveServiceCall(R.string.gallery_action_delete_progress_title, PiwigoAccessService.startActionDeleteGallery(gallery.getId(), getContext()));
-//        }
-
-        String message = String.format(getString(R.string.alert_confirm_really_delete_album_from_server_pattern),gallery.getName());
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
-
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if(Boolean.TRUE == positiveAnswer) {
-                    addActiveServiceCall(R.string.progress_delete_album, PiwigoAccessService.startActionDeleteGallery(gallery.getId(),getContext()));
-                }
-            }
-        });
     }
 
     private void fillGalleryEditFields() {
@@ -1270,7 +1242,7 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     private void onThumbnailUpdated(PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse response) {
-        if(response.getAlbumParentIdAltered() != null && response.getAlbumParentIdAltered().longValue() == gallery.getId()) {
+        if(response.getAlbumParentIdAltered() != null && response.getAlbumParentIdAltered() == gallery.getId()) {
             // need to refresh this gallery content.
             galleryIsDirty = true;
             reloadAlbumContent();
