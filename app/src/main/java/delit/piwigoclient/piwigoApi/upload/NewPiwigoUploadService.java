@@ -557,7 +557,7 @@ public class NewPiwigoUploadService extends IntentService {
 
     private PiwigoResponseBufferingHandler.BaseResponse updateImageInfoAndPermissions(UploadJob thisUploadJob, File fileForUpload, ResourceItem uploadedResource) {
         int allowedAttempts = 2;
-        uploadedResource.getLinkedAlbums().clear();
+//        uploadedResource.getLinkedAlbums().clear();
         uploadedResource.getLinkedAlbums().add(thisUploadJob.getUploadToCategory());
         ImageUpdateInfoResponseHandler handler = new ImageUpdateInfoResponseHandler(uploadedResource);
 
