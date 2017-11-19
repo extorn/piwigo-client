@@ -41,13 +41,13 @@ public class ImageCheckFilesResponseHandler<T extends ResourceItem> extends Abst
         fileMatches = same;
 
         if(!getUseSynchronousMode()) {
-            PiwigoResponseBufferingHandler.PiwigoResourceCheckRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceCheckRetrievedResponse<T>(getMessageId(), getPiwigoMethod(), resourceItem, same);
+            PiwigoResponseBufferingHandler.PiwigoResourceCheckRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceCheckRetrievedResponse<>(getMessageId(), getPiwigoMethod(), resourceItem, same);
             storeResponse(r);
         }
     }
 
     public boolean isFileMatch() {
-        return fileMatches != null && fileMatches.booleanValue() == true;
+        return fileMatches != null && fileMatches;
     }
 
 }

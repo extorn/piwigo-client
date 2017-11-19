@@ -60,7 +60,6 @@ import delit.piwigoclient.util.X509Utils;
  */
 
 public abstract class KeyStorePreference extends DialogPreference {
-    private final String tag;
     private boolean justKeysWanted;
     private KeyStore mValue;
     private boolean mValueSet;
@@ -72,7 +71,7 @@ public abstract class KeyStorePreference extends DialogPreference {
 
     public KeyStorePreference(String tag, Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.tag = tag;
+        String tag1 = tag;
     }
 
     public KeyStorePreference(String tag, Context context, AttributeSet attrs) {
@@ -145,7 +144,7 @@ public abstract class KeyStorePreference extends DialogPreference {
     private View buildCertificateListView() {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_recycler_list, null, false);
 
-        AdView adView = (AdView)view.findViewById(R.id.list_adView);
+        AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
@@ -156,17 +155,17 @@ public abstract class KeyStorePreference extends DialogPreference {
         view.findViewById(R.id.list_action_cancel_button).setVisibility(View.GONE);
         view.findViewById(R.id.list_action_toggle_all_button).setVisibility(View.GONE);
 
-        TextView heading = (TextView) view.findViewById(R.id.heading);
+        TextView heading = view.findViewById(R.id.heading);
         heading.setText(R.string.certificates_heading);
         heading.setVisibility(View.VISIBLE);
 
-        certificateList = (RecyclerView) view.findViewById(R.id.list);
+        certificateList = view.findViewById(R.id.list);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         certificateList.setLayoutManager(mLayoutManager);
         KeyStoreContentsAdapter adapter = new KeyStoreContentsAdapter(getContext(), X509Utils.cloneKeystore(mValue));
         certificateList.setAdapter(adapter);
 
-        CustomImageButton addListItemButton = (CustomImageButton) view.findViewById(R.id.list_action_add_item_button);
+        CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(View.VISIBLE);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +174,7 @@ public abstract class KeyStorePreference extends DialogPreference {
             }
         });
 
-        Button saveChangesButton = (Button) view.findViewById(R.id.list_action_save_button);
+        Button saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.GONE);
 
         return view;
@@ -413,11 +412,11 @@ public abstract class KeyStorePreference extends DialogPreference {
 
         public KeyStoreCertificateItemViewHolder(View itemView) {
             super(itemView);
-            certNameField = (TextView) itemView.findViewById(R.id.x509_cert_identity);
-            certVerifiedByField = (TextView) itemView.findViewById(R.id.x509_cert_verified_by);
-            certValidFromField = (TextView) itemView.findViewById(R.id.x509_cert_valid_from);
-            certValidToField = (TextView) itemView.findViewById(R.id.x509_cert_valid_to);
-            deleteButton = (ImageButton) itemView.findViewById(R.id.list_item_delete_button);
+            certNameField = itemView.findViewById(R.id.x509_cert_identity);
+            certVerifiedByField = itemView.findViewById(R.id.x509_cert_verified_by);
+            certValidFromField = itemView.findViewById(R.id.x509_cert_valid_from);
+            certValidToField = itemView.findViewById(R.id.x509_cert_valid_to);
+            deleteButton = itemView.findViewById(R.id.list_item_delete_button);
         }
     }
 
@@ -428,8 +427,8 @@ public abstract class KeyStorePreference extends DialogPreference {
 
         public KeyStorePrivateKeyItemViewHolder(View itemView) {
             super(itemView);
-            keyTypeField = (TextView) itemView.findViewById(R.id.x509_key_type);
-            keyStrengthField = (TextView) itemView.findViewById(R.id.x509_key_strength);
+            keyTypeField = itemView.findViewById(R.id.x509_key_type);
+            keyStrengthField = itemView.findViewById(R.id.x509_key_strength);
         }
     }
 
@@ -541,7 +540,7 @@ public abstract class KeyStorePreference extends DialogPreference {
 
         private String getIsolatedCnFieldIfPossible(X500Principal principal) {
             String val = principal.toString();
-            Pattern p = Pattern.compile(".*(CN=)(.*?)(?<![\\\\]{1}),.*$");
+            Pattern p = Pattern.compile(".*(CN=)(.*?)(?<![\\\\]),.*$");
             Matcher m = p.matcher(val);
             if(m.matches()) {
                 return m.group(2);

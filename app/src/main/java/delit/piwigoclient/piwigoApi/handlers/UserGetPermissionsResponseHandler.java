@@ -37,7 +37,7 @@ public class UserGetPermissionsResponseHandler extends AbstractPiwigoWsResponseH
         for (int i = 0; i < cats.length(); i++) {
             JSONObject cat = (JSONObject) cats.get(i);
 
-            long category = (long) cat.getLong("id");
+            long category = cat.getLong("id");
 
             JSONArray allowedUsers = cat.getJSONArray("users");
             for (int j = 0; j < allowedUsers.length(); j++) {

@@ -11,19 +11,6 @@ import android.view.View;
 
 public abstract class CustomClickTouchListener implements View.OnTouchListener {
 
-    private final GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
-
-        @Override
-        public final boolean onSingleTapUp(MotionEvent e) {
-            return onClick();
-        }
-
-        @Override
-        public final void onLongPress(MotionEvent e) {
-            onLongClick();
-        }
-    };
-
     public boolean onClick() {
         return false;
     }
@@ -31,6 +18,18 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
     private final GestureDetector detector;
 
     public CustomClickTouchListener(Context context) {
+        GestureDetector.SimpleOnGestureListener listener = new GestureDetector.SimpleOnGestureListener() {
+
+            @Override
+            public final boolean onSingleTapUp(MotionEvent e) {
+                return onClick();
+            }
+
+            @Override
+            public final void onLongPress(MotionEvent e) {
+                onLongClick();
+            }
+        };
         detector = new GestureDetector(context, listener);
     }
 

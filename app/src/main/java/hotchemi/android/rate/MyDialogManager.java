@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
 
-import delit.piwigoclient.*;
-
 import static hotchemi.android.rate.IntentHelper.createIntentForAmazonAppstore;
 import static hotchemi.android.rate.IntentHelper.createIntentForGooglePlay;
 import static hotchemi.android.rate.PreferenceHelper.setAgreeShowDialog;

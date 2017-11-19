@@ -17,8 +17,8 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
 import cz.msebera.android.httpclient.protocol.HttpCoreContext;
 
 class RetryHandler implements HttpRequestRetryHandler {
-    private final static HashSet<Class<?>> exceptionWhitelist = new HashSet<Class<?>>();
-    private final static HashSet<Class<?>> exceptionBlacklist = new HashSet<Class<?>>();
+    private final static HashSet<Class<?>> exceptionWhitelist = new HashSet<>();
+    private final static HashSet<Class<?>> exceptionBlacklist = new HashSet<>();
 
     static {
         // Retry if the server dropped connection on us

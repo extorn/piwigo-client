@@ -87,7 +87,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {}
 
-    protected void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {};
+    protected void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {}
 
     public void setCallDetails(Context parentContext, String piwigoServerUrl, boolean useAsyncMode) {
         setCallDetails(parentContext, piwigoServerUrl, useAsyncMode, true);

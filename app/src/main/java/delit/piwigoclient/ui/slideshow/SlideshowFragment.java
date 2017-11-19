@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -52,7 +53,6 @@ public class SlideshowFragment extends MyFragment {
     private CustomViewPager viewPager;
     private PiwigoAlbum gallery;
     private int rawCurrentGalleryItemPosition;
-    private ViewPager.OnPageChangeListener slideshowPageChangeListener;
 
 
     public static SlideshowFragment newInstance(PiwigoAlbum gallery, GalleryItem currentGalleryItem) {
@@ -85,7 +85,7 @@ public class SlideshowFragment extends MyFragment {
 
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
-        AdView adView = (AdView)view.findViewById(R.id.slideshow_adView);
+        AdView adView = view.findViewById(R.id.slideshow_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()
                 && getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
             adView.loadAd(new AdRequest.Builder().build());
@@ -98,7 +98,7 @@ public class SlideshowFragment extends MyFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         if(savedInstanceState != null) {
@@ -106,14 +106,14 @@ public class SlideshowFragment extends MyFragment {
             rawCurrentGalleryItemPosition = savedInstanceState.getInt(STATE_GALLERY_ITEM_DISPLAYED);
         }
 
-        viewPager = (CustomViewPager) view.findViewById(R.id.slideshow_viewpager);
+        viewPager = view.findViewById(R.id.slideshow_viewpager);
         boolean shouldShowVideos = prefs.getBoolean(getString(R.string.preference_gallery_include_videos_in_slideshow_key), getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
         shouldShowVideos &= prefs.getBoolean(getString(R.string.preference_gallery_enable_video_playback_key), getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
         GalleryItemAdapter galleryItemAdapter = new GalleryItemAdapter(viewPager, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
 
         viewPager.setAdapter(galleryItemAdapter);
 
-        slideshowPageChangeListener = new ViewPager.OnPageChangeListener() {
+        ViewPager.OnPageChangeListener slideshowPageChangeListener = new ViewPager.OnPageChangeListener() {
 
             int lastPage = -1;
 
@@ -227,7 +227,7 @@ public class SlideshowFragment extends MyFragment {
         }
 
         @Override
-        public int getItemPosition(Object item) {
+        public int getItemPosition(@NonNull Object item) {
             ResourceItem model = ((SlideshowItemFragment) item).getModel();
             int fullGalleryIdx = gallery.getItems().indexOf(model);
             int newIndexPosition = galleryResourceItems.indexOf(fullGalleryIdx);

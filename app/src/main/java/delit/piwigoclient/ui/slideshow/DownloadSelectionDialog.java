@@ -14,7 +14,6 @@ import android.widget.TextView;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import cz.msebera.android.httpclient.client.utils.URIBuilder;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
@@ -40,7 +39,7 @@ class DownloadSelectionDialog {
 
         View view = LayoutInflater.from(context).inflate(R.layout.download_dialog_layout, null, false);
         ((TextView) view.findViewById(R.id.alertMessage)).setText(R.string.alert_image_download_message);
-        final ListView fileSelectList = (ListView) view.findViewById(R.id.fileSelectList);
+        final ListView fileSelectList = view.findViewById(R.id.fileSelectList);
         fileSelectList.setAdapter(adapter);
         fileSelectList.setItemChecked(adapter.getCount() - 1, true);
         builder1.setView(view);

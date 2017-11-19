@@ -49,17 +49,6 @@ public class PreferencesFragment extends MyFragment {
 
     static final String LOG_TAG = "PreferencesFragment";
 
-    /**
-     * A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
-     * above, but is designed to give continuous feedback to the user when scrolling.
-     */
-    private SlidingTabLayout mSlidingTabLayout;
-
-    /**
-     * A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
-     */
-    private ViewPager mViewPager;
-
     public PreferencesFragment() {
         // Required empty public constructor
     }
@@ -90,7 +79,7 @@ public class PreferencesFragment extends MyFragment {
         }
         View v = inflater.inflate(R.layout.activity_preferences, container, false);
 
-        AdView adView = (AdView)v.findViewById(R.id.prefs_adView);
+        AdView adView = v.findViewById(R.id.prefs_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
@@ -99,12 +88,19 @@ public class PreferencesFragment extends MyFragment {
         }
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        mViewPager = (ViewPager) v.findViewById(R.id.viewpager);
+        /*
+      A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
+     */
+        ViewPager mViewPager = v.findViewById(R.id.viewpager);
         mViewPager.setAdapter(new SamplePagerAdapter(getChildFragmentManager()));
 
         // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
         // it's PagerAdapter set.
-        mSlidingTabLayout = (SlidingTabLayout) v.findViewById(R.id.sliding_tabs);
+        /*
+      A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
+      above, but is designed to give continuous feedback to the user when scrolling.
+     */
+        SlidingTabLayout mSlidingTabLayout = v.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
         return v;
     }

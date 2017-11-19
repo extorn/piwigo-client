@@ -69,8 +69,8 @@
 
 -keepclassmembers class com.google.android.gms.dynamite.DynamiteModule$DynamiteLoaderClassLoader { java.lang.ClassLoader sClassLoader; }
 
--keepclassmembernames class delit.piwigoclient.ui.MainActivity {
 # Needed because we do reflection on the showXyz methods.
+-keepclassmembernames class delit.piwigoclient.ui.MainActivity {
     public <methods>;
 }
 

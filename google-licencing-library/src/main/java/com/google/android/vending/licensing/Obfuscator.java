@@ -16,8 +16,6 @@
 
 package com.google.android.vending.licensing;
 
-import android.content.SharedPreferences;
-
 /**
  * Interface used as part of a {@link Policy} to allow application authors to obfuscate
  * licensing data that will be stored into a SharedPreferences file.

@@ -3,7 +3,6 @@ package delit.piwigoclient.piwigoApi.handlers;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;

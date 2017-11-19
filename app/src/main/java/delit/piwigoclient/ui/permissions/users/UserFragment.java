@@ -91,9 +91,7 @@ public class UserFragment extends MyFragment {
     private CustomImageButton deleteButton;
     private Spinner userPrivacyLevelField;
     private TextView userGroupsField;
-    private TextView passwordFieldLabel;
     private EditText passwordField;
-    private RelativeLayout userEditControls;
     private TextView lastVisitedFieldLabel;
 
     // other stuff
@@ -101,9 +99,7 @@ public class UserFragment extends MyFragment {
 
     // field value options
     private int[] userPrivacyLevelValues;
-    private List<String> userTypes;
     private List<String> userTypeValues;
-    private List<String> userPrivacyLevels;
 
     // following fields are stored in state
     private User newUser;
@@ -251,7 +247,7 @@ public class UserFragment extends MyFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_user, container, false);
 
-        AdView adView = (AdView)v.findViewById(R.id.user_adView);
+        AdView adView = v.findViewById(R.id.user_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
@@ -274,16 +270,16 @@ public class UserFragment extends MyFragment {
             selectGroupsActionId = savedInstanceState.getInt(STATE_SELECT_GROUPS_ACTION_ID);
         }
 
-        userEditControls = (RelativeLayout)v.findViewById(R.id.user_edit_controls);
+        RelativeLayout userEditControls = v.findViewById(R.id.user_edit_controls);
 
-        editButton = (CustomImageButton)v.findViewById(R.id.user_action_edit_button);
+        editButton = v.findViewById(R.id.user_action_edit_button);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFieldsEditable(true);
             }
         });
-        discardButton = (CustomImageButton)v.findViewById(R.id.user_action_discard_button);
+        discardButton = v.findViewById(R.id.user_action_discard_button);
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -295,14 +291,14 @@ public class UserFragment extends MyFragment {
                 setFieldsEditable(user.getId() < 0);
             }
         });
-        saveButton = (CustomImageButton)v.findViewById(R.id.user_action_save_button);
+        saveButton = v.findViewById(R.id.user_action_save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveUserChanges();
             }
         });
-        deleteButton = (CustomImageButton)v.findViewById(R.id.user_action_delete_button);
+        deleteButton = v.findViewById(R.id.user_action_delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -310,40 +306,40 @@ public class UserFragment extends MyFragment {
             }
         });
 
-        usernameField = (EditText) v.findViewById(R.id.user_username);
+        usernameField = v.findViewById(R.id.user_username);
 
-        usertypeField = (Spinner) v.findViewById(R.id.user_usertype);
+        usertypeField = v.findViewById(R.id.user_usertype);
         userTypeValues = Arrays.asList(getResources().getStringArray(R.array.user_types_array));
-        userTypes = Arrays.asList(getResources().getStringArray(R.array.user_types_array));
-        ArrayAdapter<String> userTypesAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, userTypes);
+        List<String> userTypes = Arrays.asList(getResources().getStringArray(R.array.user_types_array));
+        ArrayAdapter<String> userTypesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, userTypes);
         userTypesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         usertypeField.setAdapter(userTypesAdapter);
 
-        userPrivacyLevelField = (Spinner) v.findViewById(R.id.user_privacy_level);
+        userPrivacyLevelField = v.findViewById(R.id.user_privacy_level);
         userPrivacyLevelValues = getResources().getIntArray(R.array.privacy_levels_values_array);
-        userPrivacyLevels = Arrays.asList(getResources().getStringArray(R.array.privacy_levels_array));
-        ArrayAdapter<String> userPrivacyLevelsAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, userPrivacyLevels);
+        List<String> userPrivacyLevels = Arrays.asList(getResources().getStringArray(R.array.privacy_levels_array));
+        ArrayAdapter<String> userPrivacyLevelsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, userPrivacyLevels);
         userPrivacyLevelsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         userPrivacyLevelField.setAdapter(userPrivacyLevelsAdapter);
 
 
-        emailField = (EditText) v.findViewById(R.id.user_email_field);
+        emailField = v.findViewById(R.id.user_email_field);
 
-        lastVisitedFieldLabel = (TextView) v.findViewById(R.id.user_lastvisit_label);
-        lastVisitedField = (TextView) v.findViewById(R.id.user_lastvisit);
+        lastVisitedFieldLabel = v.findViewById(R.id.user_lastvisit_label);
+        lastVisitedField = v.findViewById(R.id.user_lastvisit);
 
-        passwordFieldLabel = (TextView)v.findViewById(R.id.user_password_label);
-        passwordField = (EditText)v.findViewById(R.id.user_password_field);
+        TextView passwordFieldLabel = v.findViewById(R.id.user_password_label);
+        passwordField = v.findViewById(R.id.user_password_field);
 
         if(user.getId() < 0) {
             // this is a new user creation.
             fieldsEditable = true;
-            currentGroupMembership = new HashSet<Group>(0);
+            currentGroupMembership = new HashSet<>(0);
         }
 
-        highDefinitionEnabled = (CheckBox) v.findViewById(R.id.user_high_definition_field);
+        highDefinitionEnabled = v.findViewById(R.id.user_high_definition_field);
 
-        userGroupsField = (TextView) v.findViewById(R.id.user_groups);
+        userGroupsField = v.findViewById(R.id.user_groups);
         userGroupsField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -351,7 +347,7 @@ public class UserFragment extends MyFragment {
             }
         });
 
-        albumPermissionsField = (ListView) v.findViewById(R.id.user_access_rights);
+        albumPermissionsField = v.findViewById(R.id.user_access_rights);
         albumPermissionsField.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         albumPermissionsField.setOnTouchListener(new CustomClickTouchListener(getContext()) {
             @Override
@@ -373,15 +369,15 @@ public class UserFragment extends MyFragment {
         }
 
         if(user.getId() < 0) {
-            currentGroupMembership = new HashSet<Group>();
-            currentDirectAlbumPermissions = new HashSet<Long>();
-            currentIndirectAlbumPermissions = new HashSet<Long>();
+            currentGroupMembership = new HashSet<>();
+            currentDirectAlbumPermissions = new HashSet<>();
+            currentIndirectAlbumPermissions = new HashSet<>();
         } else {
             if (currentGroupMembership == null) {
                 if (user.getGroups().size() > 0) {
                     addActiveServiceCall(R.string.progress_loading_user_details, PiwigoAccessService.startActionGetGroupsList(user.getGroups(), 0, 100, getContext()));
                 } else {
-                    currentGroupMembership = new HashSet<Group>();
+                    currentGroupMembership = new HashSet<>();
                 }
             }
             fillGroupMembershipField();
@@ -390,7 +386,7 @@ public class UserFragment extends MyFragment {
             }
         }
 
-        ScrollView scrollview = (ScrollView)v.findViewById(R.id.user_edit_scrollview);
+        ScrollView scrollview = v.findViewById(R.id.user_edit_scrollview);
         scrollview.fullScroll(View.FOCUS_UP);
 
         return v;

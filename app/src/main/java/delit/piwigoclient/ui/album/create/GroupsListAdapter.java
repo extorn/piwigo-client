@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.album.create;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,8 +28,9 @@ public class GroupsListAdapter extends ArrayAdapter<Group> {
         return getItem(position).getId();
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 //        View v = super.getView(position, view, parent); (just does a toString on the items.)
         //Override the toString text.
         View v;
@@ -39,7 +41,7 @@ public class GroupsListAdapter extends ArrayAdapter<Group> {
             v = convertView;
         }
         Group thisItem = getItem(position);
-        TextView txtTitle = (TextView) v.findViewById(R.id.txt);
+        TextView txtTitle = v.findViewById(R.id.txt);
         txtTitle.setText(thisItem.getName());
         return v;
     }

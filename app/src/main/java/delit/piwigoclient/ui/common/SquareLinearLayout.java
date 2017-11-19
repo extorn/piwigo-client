@@ -24,6 +24,7 @@ public class SquareLinearLayout extends LinearLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        //noinspection SuspiciousNameCombination
         super.onMeasure(widthMeasureSpec, widthMeasureSpec);
 //        int width = MeasureSpec.getSize(widthMeasureSpec);
 //        int height = MeasureSpec.getSize(heightMeasureSpec);

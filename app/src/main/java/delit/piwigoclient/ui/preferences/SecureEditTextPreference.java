@@ -1,13 +1,9 @@
 package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-
-import java.util.Set;
 
 /**
  * Created by gareth on 04/11/17.

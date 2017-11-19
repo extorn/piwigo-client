@@ -83,8 +83,6 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
     private T model;
     private ControllableBottomSheetBehavior<View> bottomSheetBehavior;
     private RatingBar averageRatingsBar;
-    private RelativeLayout itemContentLayout;
-    private LinearLayout bottomSheetLayout;
     private ProgressBar progressIndicator;
     private RatingBar ratingsBar;
     private Spinner privacyLevelSpinner;
@@ -172,10 +170,10 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             v.setBackgroundColor(Color.BLACK);
         }
 
-        itemContentLayout = (RelativeLayout) v.findViewById(R.id.slideshow_item_content_layout);
-        progressIndicator = (ProgressBar) v.findViewById(R.id.slideshow_image_loadingIndicator);
+        RelativeLayout itemContentLayout = v.findViewById(R.id.slideshow_item_content_layout);
+        progressIndicator = v.findViewById(R.id.slideshow_image_loadingIndicator);
 
-        setAsAlbumThumbnail = (CustomImageButton)v.findViewById(R.id.slideshow_resource_action_use_for_album_thumbnail);
+        setAsAlbumThumbnail = v.findViewById(R.id.slideshow_resource_action_use_for_album_thumbnail);
         setAsAlbumThumbnail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -212,8 +210,8 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             itemContentLayout.addView(itemContent, 0);
         }
 
-        averageRatingsBar = (RatingBar) v.findViewById(R.id.slideshow_image_average_ratingBar);
-        ratingsBar = (RatingBar) v.findViewById(R.id.slideshow_image_ratingBar);
+        averageRatingsBar = v.findViewById(R.id.slideshow_image_average_ratingBar);
+        ratingsBar = v.findViewById(R.id.slideshow_image_ratingBar);
         ratingsBar.setRating(model.getYourRating());
         ratingsBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -231,9 +229,9 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
 //                    PiwigoAccessService.startActionSetIsFavorite(model, isChecked, this);
 //                }
 //            });
-        FloatingActionButton actionButton = (FloatingActionButton) v.findViewById(R.id.slideshow_image_actionButton_details);
+        FloatingActionButton actionButton = v.findViewById(R.id.slideshow_image_actionButton_details);
 
-        bottomSheetLayout = (LinearLayout) v.findViewById(R.id.slideshow_image_bottom_sheet);
+        LinearLayout bottomSheetLayout = v.findViewById(R.id.slideshow_image_bottom_sheet);
         bottomSheetBehavior = ControllableBottomSheetBehavior.from((View) bottomSheetLayout);
 
         int bottomSheetOffsetDp = prefs.getInt(getString(R.string.preference_gallery_detail_sheet_offset_key), getResources().getInteger(R.integer.preference_gallery_detail_sheet_offset_default));
@@ -285,7 +283,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
     }
 
     private void setupImageDetailPopup(View v, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        resourceNameView = (EditText) v.findViewById(R.id.slideshow_image_details_name);
+        resourceNameView = v.findViewById(R.id.slideshow_image_details_name);
         resourceNameView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -296,7 +294,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
                 return false;
             }
         });
-        resourceDescriptionView = (EditText) v.findViewById(R.id.slideshow_image_details_description);
+        resourceDescriptionView = v.findViewById(R.id.slideshow_image_details_description);
         resourceDescriptionView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -307,7 +305,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             }
         });
 
-        linkedAlbumsField = (TextView)v.findViewById(R.id.slideshow_image_details_linked_albums);
+        linkedAlbumsField = v.findViewById(R.id.slideshow_image_details_linked_albums);
         linkedAlbumsField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -321,7 +319,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             }
         });
 
-        privacyLevelSpinner = (Spinner) v.findViewById(R.id.privacy_level);
+        privacyLevelSpinner = v.findViewById(R.id.privacy_level);
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> privacyLevelOptionsAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.privacy_levels_groups_array, R.layout.dark_spinner_item);
@@ -330,7 +328,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
 // Apply the adapter to the spinner
         privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
 
-        saveButton = (ImageButton) v.findViewById(R.id.slideshow_resource_action_save_button);
+        saveButton = v.findViewById(R.id.slideshow_resource_action_save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -338,7 +336,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
                 addActiveServiceCall(R.string.progress_resource_details_updating, PiwigoAccessService.startActionUpdateResourceInfo(model, getContext()));
             }
         });
-        discardButton = (ImageButton) v.findViewById(R.id.slideshow_resource_action_discard_button);
+        discardButton = v.findViewById(R.id.slideshow_resource_action_discard_button);
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -348,7 +346,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             }
         });
 
-        editButton = (ImageButton) v.findViewById(R.id.slideshow_resource_action_edit_button);
+        editButton = v.findViewById(R.id.slideshow_resource_action_edit_button);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -358,28 +356,28 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         });
 
 
-        downloadButton = (ImageButton) v.findViewById(R.id.slideshow_resource_action_download);
+        downloadButton = v.findViewById(R.id.slideshow_resource_action_download);
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDownloadItem(model);
             }
         });
-        deleteButton = (ImageButton) v.findViewById(R.id.slideshow_resource_action_delete);
+        deleteButton = v.findViewById(R.id.slideshow_resource_action_delete);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onDeleteItem(model);
             }
         });
-        moveButton = (ImageButton) v.findViewById(R.id.slideshow_resource_action_move);
+        moveButton = v.findViewById(R.id.slideshow_resource_action_move);
         moveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onMoveItem(model);
             }
         });
-        copyButton = (ImageButton) v.findViewById(R.id.slideshow_resource_action_copy);
+        copyButton = v.findViewById(R.id.slideshow_resource_action_copy);
         copyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -387,7 +385,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             }
         });
 
-        ratingBar = (RatingBar) v.findViewById(R.id.slideshow_image_ratingBar);
+        ratingBar = v.findViewById(R.id.slideshow_image_ratingBar);
 
         fillResourceEditFields();
     }
@@ -563,7 +561,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         Bitmap largeIcon = BitmapFactory.decodeResource(getContext().getResources(),
                 R.drawable.ic_notifications_black_24dp);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext())
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), null)
                 .setLargeIcon(largeIcon)
                 .setContentTitle(getString(R.string.notification_download_event))
                 .setContentText(downloadedFile.getAbsolutePath())

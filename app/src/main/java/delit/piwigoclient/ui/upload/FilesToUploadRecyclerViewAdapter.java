@@ -31,7 +31,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
     private boolean useDarkMode;
     private final ArrayList<File> filesToUpload;
-    private final Context context;
     private final HashMap<File, Integer> fileUploadProgress = new HashMap<>();
     private RemoveListener listener;
     public static final int VIEW_TYPE_LIST = 0;
@@ -47,7 +46,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
     public FilesToUploadRecyclerViewAdapter(ArrayList<File> filesToUpload, @NonNull Context context, RemoveListener listener) {
         this.listener = listener;
-        this.context = context;
+        Context context1 = context;
         this.filesToUpload = filesToUpload;
         this.setHasStableIds(true);
     }
@@ -243,10 +242,10 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            progressBar = (ProgressBar) itemView.findViewById(R.id.file_for_upload_progress);
-            fileNameField = (TextView) itemView.findViewById(R.id.file_for_upload_txt);
-            deleteButton = (ImageButton) itemView.findViewById(R.id.file_for_upload_delete_button);
-            fileForUploadImageView = (AppCompatImageView) itemView.findViewById(R.id.file_for_upload_img);
+            progressBar = itemView.findViewById(R.id.file_for_upload_progress);
+            fileNameField = itemView.findViewById(R.id.file_for_upload_txt);
+            deleteButton = itemView.findViewById(R.id.file_for_upload_delete_button);
+            fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
 
             imageLoader = new ResizingPicassoLoader(fileForUploadImageView, 0, 0);
         }

@@ -18,8 +18,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.AndroidCharacter;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -39,10 +39,9 @@ public class FolderSelectionActivity extends Activity {
     private ArrayList<File> resultFileList;
 
     private ListView directoryView;
-    private ArrayList<File> directoryList = new ArrayList<File>();
-    private ArrayList<String> directoryNames = new ArrayList<String>();
-    private ArrayList<File> fileList = new ArrayList<File>();
-    private ArrayList<String> fileNames = new ArrayList<String>();
+    private ArrayList<File> directoryList = new ArrayList<>();
+    private ArrayList<String> directoryNames = new ArrayList<>();
+    private ArrayList<String> fileNames = new ArrayList<>();
     Button ok, all,cancel,storage,New;
     TextView path;
 
@@ -63,13 +62,13 @@ public class FolderSelectionActivity extends Activity {
         setContentView(R.layout.activity_file_selection);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        directoryView = (ListView)findViewById(R.id.directorySelectionList);
-        ok = (Button)findViewById(R.id.ok);
-        all = (Button)findViewById(R.id.all);
-        cancel = (Button)findViewById(R.id.cancel);
-        storage = (Button)findViewById(R.id.storage);
-        New = (Button)findViewById(R.id.New);
-        path = (TextView)findViewById(R.id.folderpath);
+        directoryView = findViewById(R.id.directorySelectionList);
+        ok = findViewById(R.id.ok);
+        all = findViewById(R.id.all);
+        cancel = findViewById(R.id.cancel);
+        storage = findViewById(R.id.storage);
+        New = findViewById(R.id.New);
+        path = findViewById(R.id.folderpath);
 
         all.setEnabled(false);
 
@@ -128,7 +127,9 @@ public class FolderSelectionActivity extends Activity {
                         storage.setText(getString(R.string.ext));
                     }
                 }catch (Throwable e){
-
+                    if(BuildConfig.DEBUG) {
+                        Log.e(TAG, "Setting onClickListener", e);
+                    }
                 }
             }
         });
@@ -180,7 +181,9 @@ public class FolderSelectionActivity extends Activity {
             }
 
         }catch (Throwable e){
-
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "backPressed", e);
+            }
         }
     }
 
@@ -217,13 +220,13 @@ public class FolderSelectionActivity extends Activity {
         }
 
 
-        directoryList = new ArrayList<File>();
-            directoryNames = new ArrayList<String>();
+        directoryList = new ArrayList<>();
+            directoryNames = new ArrayList<>();
             for(File file: tempDirectoryList){
                 directoryList.add(file);
                 directoryNames.add(file.getName());
             }
-            ArrayAdapter<String> directoryAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, directoryNames);
+            ArrayAdapter<String> directoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, directoryNames);
             directoryView.setAdapter(directoryAdapter);
 
             //Lista de ficheros
@@ -238,8 +241,8 @@ public class FolderSelectionActivity extends Activity {
             });
         }
 
-            fileList = new ArrayList<File>();
-            fileNames = new ArrayList<String>();
+        ArrayList<File> fileList = new ArrayList<>();
+            fileNames = new ArrayList<>();
             for(File file : tempFileList){
                 fileList.add(file);
                 fileNames.add(file.getName());
@@ -307,7 +310,7 @@ public class FolderSelectionActivity extends Activity {
      */
     public static String[] getStorageDirectories(Context context) {
         // Final set of paths
-        final Set<String> rv = new HashSet<String>();
+        final Set<String> rv = new HashSet<>();
         // Primary physical SD-CARD (not emulated)
         final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
         // All Secondary SD-CARDs (all exclude primary) separated by ":"

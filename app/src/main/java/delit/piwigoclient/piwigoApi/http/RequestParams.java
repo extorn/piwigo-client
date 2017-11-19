@@ -84,11 +84,11 @@ public class RequestParams implements Serializable {
             "application/json";
 
     protected final static String LOG_TAG = "RequestParams";
-    protected final ConcurrentHashMap<String, String> urlParams = new ConcurrentHashMap<String, String>();
-    protected final ConcurrentHashMap<String, StreamWrapper> streamParams = new ConcurrentHashMap<String, StreamWrapper>();
-    protected final ConcurrentHashMap<String, FileWrapper> fileParams = new ConcurrentHashMap<String, FileWrapper>();
-    protected final ConcurrentHashMap<String, List<FileWrapper>> fileArrayParams = new ConcurrentHashMap<String, List<FileWrapper>>();
-    protected final ConcurrentHashMap<String, Object> urlParamsWithObjects = new ConcurrentHashMap<String, Object>();
+    protected final ConcurrentHashMap<String, String> urlParams = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<String, StreamWrapper> streamParams = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<String, FileWrapper> fileParams = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<String, List<FileWrapper>> fileArrayParams = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<String, Object> urlParamsWithObjects = new ConcurrentHashMap<>();
     protected boolean isRepeatable;
     protected boolean forceMultipartEntity = false;
     protected boolean useJsonStreamer;
@@ -210,7 +210,7 @@ public class RequestParams implements Serializable {
     public void put(String key, File files[], String contentType, String customFileName) throws FileNotFoundException {
 
         if (key != null) {
-            List<FileWrapper> fileWrappers = new ArrayList<FileWrapper>();
+            List<FileWrapper> fileWrappers = new ArrayList<>();
             for (File file : files) {
                 if (file == null || !file.exists()) {
                     throw new FileNotFoundException();
@@ -597,7 +597,7 @@ public class RequestParams implements Serializable {
     }
 
     protected List<BasicNameValuePair> getParamsList() {
-        List<BasicNameValuePair> lparams = new LinkedList<BasicNameValuePair>();
+        List<BasicNameValuePair> lparams = new LinkedList<>();
 
         for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
             lparams.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
@@ -609,7 +609,7 @@ public class RequestParams implements Serializable {
     }
 
     private List<BasicNameValuePair> getParamsList(String key, Object value) {
-        List<BasicNameValuePair> params = new LinkedList<BasicNameValuePair>();
+        List<BasicNameValuePair> params = new LinkedList<>();
         if (value instanceof Map) {
             Map map = (Map) value;
             List list = new ArrayList<Object>(map.keySet());

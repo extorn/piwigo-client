@@ -30,7 +30,7 @@ public class AboutFragment extends MyFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_about, container, false);
 
-        AdView adView = (AdView)view.findViewById(R.id.about_adView);
+        AdView adView = view.findViewById(R.id.about_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);

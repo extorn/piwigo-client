@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.File;
@@ -27,9 +28,7 @@ import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
-import delit.piwigoclient.piwigoApi.handlers.AbstractBasicPiwigoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumAddPermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
@@ -90,11 +89,11 @@ public class PiwigoAccessService {
     private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
     private static final int KEEP_ALIVE_SECONDS = 30;
     private static final BlockingQueue<Runnable> sPoolWorkQueue =
-            new LinkedBlockingQueue<Runnable>(128);
+            new LinkedBlockingQueue<>(128);
     private static final ThreadFactory sThreadFactory = new ThreadFactory() {
         private final AtomicInteger mCount = new AtomicInteger(1);
 
-        public Thread newThread(Runnable r) {
+        public Thread newThread(@NonNull Runnable r) {
             return new Thread(r, "AsyncTask #" + mCount.getAndIncrement());
         }
     };
@@ -279,7 +278,7 @@ public class PiwigoAccessService {
     }
 
     public static long startActionGetAllAlbumPermissionsForGroup(long groupId, final Context context) {
-        HashSet<Long> groupIds = new HashSet<Long>(1);
+        HashSet<Long> groupIds = new HashSet<>(1);
         groupIds.add(groupId);
         return startActionGetAllAlbumPermissionsForGroups(groupIds, context);
     }
@@ -596,7 +595,7 @@ public class PiwigoAccessService {
 
             @Override
             protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
-                return new ImageGetInfoResponseHandler<T>(model);
+                return new ImageGetInfoResponseHandler<>(model);
             }
         }.start(messageId);
     }

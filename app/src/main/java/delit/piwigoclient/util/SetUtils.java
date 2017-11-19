@@ -1,7 +1,6 @@
 package delit.piwigoclient.util;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,7 +41,7 @@ public class SetUtils {
         long[] arr = new long[items.size()];
         int i = 0;
         for(Long id : items) {
-            arr[i++] = id.longValue();
+            arr[i++] = id;
         }
         return arr;
     }

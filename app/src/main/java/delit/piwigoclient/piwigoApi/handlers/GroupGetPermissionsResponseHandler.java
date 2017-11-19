@@ -50,7 +50,7 @@ public class GroupGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
                 }
             }
             if (found) {
-                long category = (long) cat.getLong("id");
+                long category = cat.getLong("id");
                 allowedAlbums.add(category);
             }
         }

@@ -23,7 +23,7 @@ import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class MyActivity extends AppCompatActivity {
+public abstract class MyActivity extends AppCompatActivity {
 
     private static final String STATE_TRACKED_ACTION_TO_INTENTS_MAP = "trackedActionIntentsMap";
     protected SharedPreferences prefs;
@@ -99,7 +99,7 @@ public class MyActivity extends AppCompatActivity {
         if(intentType == null) {
             return -1;
         } else {
-            return intentType.intValue();
+            return intentType;
         }
     }
 

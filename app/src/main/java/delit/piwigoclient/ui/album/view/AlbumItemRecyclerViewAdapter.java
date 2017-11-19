@@ -303,11 +303,11 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         }
 
         if (holder.mItem.getType() == GalleryItem.PICTURE_RESOURCE_TYPE) {
-            ImageView imgView = (ImageView) holder.itemView.findViewById(R.id.movie_indicator);
+            ImageView imgView = holder.itemView.findViewById(R.id.movie_indicator);
             imgView.setVisibility(GONE);
         }
         if (holder.mItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
-            ImageView imgView = (ImageView) holder.itemView.findViewById(R.id.movie_indicator);
+            ImageView imgView = holder.itemView.findViewById(R.id.movie_indicator);
             imgView.setVisibility(View.VISIBLE);
         }
     }
@@ -380,14 +380,14 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 
         public ViewHolder(View view) {
             super(view);
-            checkBox = (AppCompatCheckBox)view.findViewById(R.id.checked);
-            mNameView = (TextView) view.findViewById(R.id.gallery_name);
-            mPhotoCountView = (TextView) view.findViewById(R.id.gallery_photoCount);
-            mSubCategoriesView = (TextView) view.findViewById(R.id.gallery_subCategories);
+            checkBox = view.findViewById(R.id.checked);
+            mNameView = view.findViewById(R.id.gallery_name);
+            mPhotoCountView = view.findViewById(R.id.gallery_photoCount);
+            mSubCategoriesView = view.findViewById(R.id.gallery_subCategories);
 //            mDescriptionView = (TextView) view.findViewById(R.id.gallery_description);
-            mImageView = (AppCompatImageView) view.findViewById(R.id.gallery_thumbnail);
-            mRecentlyAlteredMarkerView = (ImageView) view.findViewById(R.id.newly_altered_marker_image);
-            mImageContainer = (SquareLinearLayout)view.findViewById(R.id.thumbnail_container);
+            mImageView = view.findViewById(R.id.gallery_thumbnail);
+            mRecentlyAlteredMarkerView = view.findViewById(R.id.newly_altered_marker_image);
+            mImageContainer = view.findViewById(R.id.thumbnail_container);
 
         }
 

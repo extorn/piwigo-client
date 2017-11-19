@@ -354,8 +354,7 @@ public class NewPiwigoUploadService extends IntentService {
                 if(thisUploadJob.needsVerification(fileFoundOnServer) || thisUploadJob.isUploadingData(fileFoundOnServer)) {
                     thisUploadJob.markFileAsVerified(fileFoundOnServer);
                 } else if(thisUploadJob.needsConfiguration(fileFoundOnServer)) {
-                    // we know this exists, but it isn't configured yet.
-                    continue;
+                    // we know this exists, but it isn't configured yet just move to analyse the next file.
                 } else {
                     // mark this file as needing configuration (probably uploaded by ?someone else? or a different upload mechanism anyway)
                     thisUploadJob.markFileAsVerified(fileFoundOnServer);
@@ -695,7 +694,7 @@ public class NewPiwigoUploadService extends IntentService {
             }
         }
 
-        return new SerializablePair<Boolean,ResourceItem>(handler.isSuccess(), uploadedResource);
+        return new SerializablePair<>(handler.isSuccess(), uploadedResource);
     }
 
 

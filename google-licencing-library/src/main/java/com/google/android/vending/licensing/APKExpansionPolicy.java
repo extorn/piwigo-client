@@ -69,9 +69,9 @@ public class APKExpansionPolicy implements Policy {
     private long mLastResponseTime = 0;
     private int mLastResponse;
     private PreferenceObfuscator mPreferences;
-    private Vector<String> mExpansionURLs = new Vector<String>();
-    private Vector<String> mExpansionFileNames = new Vector<String>();
-    private Vector<Long> mExpansionFileSizes = new Vector<Long>();
+    private Vector<String> mExpansionURLs = new Vector<>();
+    private Vector<String> mExpansionFileNames = new Vector<>();
+    private Vector<Long> mExpansionFileSizes = new Vector<>();
 
     /**
      * The design of the protocol supports n files. Currently the market can
@@ -240,7 +240,7 @@ public class APKExpansionPolicy implements Policy {
             // No response or not parseable, expire immediately
             Log.w(TAG, "License retry timestamp (GT) missing, grace period disabled");
             retryUntil = "0";
-            lRetryUntil = 0l;
+            lRetryUntil = 0L;
         }
 
         mRetryUntil = lRetryUntil;
@@ -266,7 +266,7 @@ public class APKExpansionPolicy implements Policy {
             // No response or not parseable, expire immediately
             Log.w(TAG, "Licence retry count (GR) missing, grace period disabled");
             maxRetries = "0";
-            lMaxRetries = 0l;
+            lMaxRetries = 0L;
         }
 
         mMaxRetries = lMaxRetries;
@@ -375,7 +375,7 @@ public class APKExpansionPolicy implements Policy {
     }
 
     private Map<String, String> decodeExtras(String extras) {
-        Map<String, String> results = new HashMap<String, String>();
+        Map<String, String> results = new HashMap<>();
         try {
             URI rawExtras = new URI("?" + extras);
             List<NameValuePair> extraList = URLEncodedUtils.parse(rawExtras, "UTF-8");

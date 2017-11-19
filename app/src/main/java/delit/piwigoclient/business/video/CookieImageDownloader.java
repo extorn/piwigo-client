@@ -96,18 +96,17 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
         String redirectTo = query.substring("redirect=".length());
 
         openConnection(Uri.parse(newUri));
-        StringBuilder postBody = new StringBuilder("login=Submit");
-        postBody.append("&username=");
-        postBody.append(URLEncoder.encode(username, "UTF-8"));
-        postBody.append("&password=");
-        postBody.append(URLEncoder.encode(password, "UTF-8"));
-        postBody.append("&redirect=");
-        postBody.append(redirectTo);
+        String postBody = "login=Submit" + "&username=" +
+                URLEncoder.encode(username, "UTF-8") +
+                "&password=" +
+                URLEncoder.encode(password, "UTF-8") +
+                "&redirect=" +
+                redirectTo;
         lastConn.setRequestMethod("POST");
         OutputStream os = lastConn.getOutputStream();
         BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(os, "UTF-8"));
-        writer.write(postBody.toString());
+        writer.write(postBody);
         writer.flush();
         writer.close();
         os.close();

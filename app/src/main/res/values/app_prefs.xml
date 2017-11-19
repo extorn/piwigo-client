@@ -103,7 +103,7 @@
 
     <string name="preference_video_cache_enabled_key">preference_video_cache_enabled</string>
     <string name="preference_video_cache_enabled_title">Cache videos viewed to file</string>
-    <string name="preference_video_cache_enabled_summmary">When enabled, any streamed videos will be cached for later playback</string>
+    <string name="preference_video_cache_enabled_summary">When enabled, any streamed videos will be cached for later playback</string>
     <bool name="preference_video_cache_enabled_default">false</bool>
 
     <string name="preference_video_cache_maxsize_mb_key">preference_video_cache_maxsize_mb</string>

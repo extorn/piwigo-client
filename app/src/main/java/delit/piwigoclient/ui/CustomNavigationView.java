@@ -75,14 +75,14 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
         final String appVersion = ProjectUtils.getVersionName(getContext());
 
-        TextView appName = (TextView)headerView.findViewById(R.id.app_name);
+        TextView appName = headerView.findViewById(R.id.app_name);
         if(BuildConfig.PAID_VERSION) {
             appName.setText(String.format(getResources().getString(R.string.app_paid_name_and_version_pattern), appVersion));
         } else {
             appName.setText(String.format(getResources().getString(R.string.app_name_and_version_pattern), appVersion));
         }
 
-        final TextView email = (TextView) headerView.findViewById(R.id.admin_email);
+        final TextView email = headerView.findViewById(R.id.admin_email);
 
         final Activity activity = MyApplication.getInstance().getCurrentActivity();
 
@@ -156,7 +156,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if(Boolean.TRUE == positiveAnswer) {
-                    EditText passwordEdit = (EditText) dialog.findViewById(R.id.password);
+                    EditText passwordEdit = dialog.findViewById(R.id.password);
                     String password = passwordEdit.getText().toString();
                     EventBus.getDefault().post(new UnlockAppEvent(password));
                 }

@@ -18,6 +18,7 @@ package delit.piwigoclient.ui.common;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -74,8 +75,8 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
     private final FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction = null;
 
-    private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<Fragment.SavedState>();
-    private ArrayList<Fragment> mFragments = new ArrayList<Fragment>();
+    private ArrayList<Fragment.SavedState> mSavedState = new ArrayList<>();
+    private ArrayList<Fragment> mFragments = new ArrayList<>();
     private Fragment mCurrentPrimaryItem = null;
 
     public MyFragmentStatePagerAdapter(FragmentManager fm) {
@@ -85,15 +86,16 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
     public abstract Fragment createNewItem(int position);
 
     @Override
-    public void startUpdate(ViewGroup container) {
+    public void startUpdate(@NonNull ViewGroup container) {
         if (container.getId() == View.NO_ID) {
             throw new IllegalStateException("ViewPager with adapter " + this
                     + " requires a view id");
         }
     }
 
+    @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
         // If we already have this item instantiated, there is nothing
         // to do.  This can happen when we are restoring the entire pager
         // from its saved state, where the fragment manager has already
@@ -133,7 +135,7 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         Fragment fragment = (Fragment) object;
 
         if (mCurTransaction == null) {
@@ -152,7 +154,7 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         Fragment fragment = (Fragment)object;
         if (fragment != mCurrentPrimaryItem) {
             if (mCurrentPrimaryItem != null) {
@@ -168,7 +170,7 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public void finishUpdate(ViewGroup container) {
+    public void finishUpdate(@NonNull ViewGroup container) {
         if (mCurTransaction != null) {
             mCurTransaction.commitNowAllowingStateLoss();
             mCurTransaction = null;
@@ -176,7 +178,7 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public boolean isViewFromObject(View view, Object object) {
+    public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return ((Fragment)object).getView() == view;
     }
 
@@ -211,8 +213,8 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
             mSavedState.clear();
             mFragments.clear();
             if (fss != null) {
-                for (int i=0; i<fss.length; i++) {
-                    mSavedState.add((Fragment.SavedState)fss[i]);
+                for (Parcelable fs : fss) {
+                    mSavedState.add((Fragment.SavedState) fs);
                 }
             }
             Iterable<String> keys = bundle.keySet();

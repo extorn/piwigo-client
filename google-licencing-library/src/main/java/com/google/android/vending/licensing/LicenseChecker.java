@@ -31,17 +31,12 @@ import android.os.RemoteException;
 import android.provider.Settings.Secure;
 import android.util.Log;
 
-import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
 import java.util.HashSet;
@@ -88,8 +83,8 @@ public class LicenseChecker implements ServiceConnection {
     private Handler mHandler;
     private final String mPackageName;
     private final String mVersionCode;
-    private final Set<LicenseValidator> mChecksInProgress = new HashSet<LicenseValidator>();
-    private final Queue<LicenseValidator> mPendingChecks = new LinkedList<LicenseValidator>();
+    private final Set<LicenseValidator> mChecksInProgress = new HashSet<>();
+    private final Queue<LicenseValidator> mPendingChecks = new LinkedList<>();
 
     /**
      * @param context a Context

@@ -2,7 +2,6 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,13 +10,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.NumberPicker;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.ortiz.touch.TouchImageView;
 
@@ -73,7 +66,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
 
-        CustomImageButton directDownloadButton = (CustomImageButton)container.findViewById(R.id.slideshow_resource_action_direct_download);
+        CustomImageButton directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
         directDownloadButton.setVisibility(View.GONE);
 
         loader = new PicassoLoader(imageView) {

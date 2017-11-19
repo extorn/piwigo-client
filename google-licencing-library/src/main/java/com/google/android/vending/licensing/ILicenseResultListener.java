@@ -3,16 +3,13 @@
  * Original file: aidl/ILicenseResultListener.aidl
  */
 package com.google.android.vending.licensing;
-import java.lang.String;
-import android.os.RemoteException;
+
 import android.os.IBinder;
-import android.os.IInterface;
-import android.os.Binder;
-import android.os.Parcel;
+
 public interface ILicenseResultListener extends android.os.IInterface
 {
 /** Local-side IPC implementation stub class. */
-public static abstract class Stub extends android.os.Binder implements com.google.android.vending.licensing.ILicenseResultListener
+abstract class Stub extends android.os.Binder implements com.google.android.vending.licensing.ILicenseResultListener
 {
 private static final java.lang.String DESCRIPTOR = "com.android.vending.licensing.ILicenseResultListener";
 /** Construct the stub at attach it to the interface. */
@@ -29,7 +26,7 @@ public static com.google.android.vending.licensing.ILicenseResultListener asInte
 if ((obj==null)) {
 return null;
 }
-android.os.IInterface iin = (android.os.IInterface)obj.queryLocalInterface(DESCRIPTOR);
+android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);
 if (((iin!=null)&&(iin instanceof com.google.android.vending.licensing.ILicenseResultListener))) {
 return ((com.google.android.vending.licensing.ILicenseResultListener)iin);
 }
@@ -93,7 +90,7 @@ _data.recycle();
 }
 }
 }
-static final int TRANSACTION_verifyLicense = (IBinder.FIRST_CALL_TRANSACTION + 0);
+static final int TRANSACTION_verifyLicense = (IBinder.FIRST_CALL_TRANSACTION);
 }
-public void verifyLicense(int responseCode, java.lang.String signedData, java.lang.String signature) throws android.os.RemoteException;
+void verifyLicense(int responseCode, java.lang.String signedData, java.lang.String signature) throws android.os.RemoteException;
 }

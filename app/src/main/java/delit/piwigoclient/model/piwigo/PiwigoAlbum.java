@@ -137,7 +137,7 @@ public class PiwigoAlbum implements Serializable {
 
     public void setSpacerAlbumCount(int spacerAlbumsNeeded) {
         // remove all spacers
-        while(items.remove(CategoryItem.BLANK)){};
+        while(items.remove(CategoryItem.BLANK)){}
         spacerAlbums = spacerAlbumsNeeded;
         if(spacerAlbumsNeeded > 0) {
             // add correct number of spacers

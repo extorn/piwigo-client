@@ -167,7 +167,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
 
-        AdView adView = (AdView)view.findViewById(R.id.upload_adView);
+        AdView adView = view.findViewById(R.id.upload_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
@@ -175,7 +175,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             adView.setVisibility(View.GONE);
         }
 
-        selectedGallerySpinner = (AppCompatSpinner) view.findViewById(R.id.selected_gallery);
+        selectedGallerySpinner = view.findViewById(R.id.selected_gallery);
         availableGalleries = new AvailableAlbumsListAdapter(currentGallery, getContext(), android.R.layout.simple_spinner_item);
         availableGalleries.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         selectedGallerySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -190,7 +190,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         });
         selectedGallerySpinner.setAdapter(availableGalleries);
 
-        fileSelectButton = (CustomImageButton) view.findViewById(R.id.select_files_for_upload_button);
+        fileSelectButton = view.findViewById(R.id.select_files_for_upload_button);
         fileSelectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -202,7 +202,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             }
         });
 
-        newGalleryButton = (CustomImageButton) view.findViewById(R.id.add_new_gallery_button);
+        newGalleryButton = view.findViewById(R.id.add_new_gallery_button);
         newGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,9 +213,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             }
         });
 
-        filesForUploadView = (RecyclerView) view.findViewById(R.id.selected_files_for_upload);
+        filesForUploadView = view.findViewById(R.id.selected_files_for_upload);
 
-        privacyLevelSpinner = (Spinner) view.findViewById(R.id.privacy_level);
+        privacyLevelSpinner = view.findViewById(R.id.privacy_level);
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> privacyLevelOptionsAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.privacy_levels_groups_array, android.R.layout.simple_spinner_item);
@@ -236,7 +236,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         });
         privacyLevelSpinner.setSelection(0);
 
-        uploadFilesNowButton = (Button) view.findViewById(R.id.upload_files_button);
+        uploadFilesNowButton = view.findViewById(R.id.upload_files_button);
         uploadFilesNowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -256,7 +256,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             subCategoryNamesActionId = savedInstanceState.getLong(SAVED_SUB_CAT_NAMES_ACTION_ID);
         }
 
-        retryRetrieveAlbumNamesButton = (FloatingActionButton)view.findViewById(R.id.upload_retryAction_actionButton);
+        retryRetrieveAlbumNamesButton = view.findViewById(R.id.upload_retryAction_actionButton);
         retryRetrieveAlbumNamesButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -398,7 +398,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             ArrayList<File> filesForUpload = fileListAdapter.getFiles();
 
             int maxUploadSizeWantedThresholdMB = prefs.getInt(getString(R.string.preference_data_upload_max_filesize_mb_key), getResources().getInteger(R.integer.preference_data_upload_max_filesize_mb_default));
-            final Set<File> filesForReview = new HashSet<File>();
+            final Set<File> filesForReview = new HashSet<>();
             StringBuilder filenameListStrB = new StringBuilder();
             for(File f : filesForUpload) {
                 double fileLengthMB = ((double)f.length()) / 1024 / 1024;
@@ -512,7 +512,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
     private void notifyUserUploadStatus(Context ctx, String message) {
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx, null)
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle(ctx.getString(R.string.notification_upload_event))
                 .setContentText(message)

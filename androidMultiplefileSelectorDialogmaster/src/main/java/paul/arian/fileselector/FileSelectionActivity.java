@@ -40,17 +40,17 @@ public class FileSelectionActivity extends Activity {
     private static final String TAG = "FileSelection";
     public static final String SELECTED_FILES = "selectedFiles";
     private File mainPath = Environment.getExternalStorageDirectory();
-    private ArrayList<File> resultFileList;
     public static final String ARG_ALLOWED_FILE_TYPES = "ARG_ALLOWED_FILE_TYPES";
     public static final String ARG_SORT_A_TO_Z = "ARG_SORT_A_TO_Z";
 
     private ListView directoryView;
-    private ArrayList<File> directoryList = new ArrayList<File>();
-    private ArrayList<String> directoryNames = new ArrayList<String>();
+    private ArrayList<File> directoryList = new ArrayList<>();
+    private ArrayList<String> directoryNames = new ArrayList<>();
     //private ListView fileView;
-    private ArrayList<File> fileList = new ArrayList<File>();
-    private ArrayList<String> fileNames = new ArrayList<String>();
-    private Button ok, all, cancel, storage , New;
+    private ArrayList<File> fileList = new ArrayList<>();
+    private ArrayList<String> fileNames = new ArrayList<>();
+    private Button all;
+    private Button storage;
 
     private TextView path;
     private Boolean Switch = false;
@@ -140,17 +140,17 @@ public class FileSelectionActivity extends Activity {
 
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        directoryView = (ListView)findViewById(R.id.directorySelectionList);
-        ok = (Button)findViewById(R.id.ok);
-        all = (Button)findViewById(R.id.all);
-        cancel = (Button)findViewById(R.id.cancel);
-        storage = (Button)findViewById(R.id.storage);
-        New = (Button)findViewById(R.id.New);
-        path = (TextView)findViewById(R.id.folderpath);
+        directoryView = findViewById(R.id.directorySelectionList);
+        Button ok = findViewById(R.id.ok);
+        all = findViewById(R.id.all);
+        Button cancel = findViewById(R.id.cancel);
+        storage = findViewById(R.id.storage);
+        Button aNew = findViewById(R.id.New);
+        path = findViewById(R.id.folderpath);
 
 
         loadLists();
-        New.setEnabled(false);
+        aNew.setEnabled(false);
 
 
         ExtStorageSearch();
@@ -209,7 +209,9 @@ public class FileSelectionActivity extends Activity {
                         storage.setText(getString(R.string.ext));
                     }
                 }catch (Throwable e){
-
+                    if(BuildConfig.DEBUG) {
+                        Log.e(TAG, "Setting onClickListener", e);
+                    }
                 }
             }
         });
@@ -247,7 +249,9 @@ public class FileSelectionActivity extends Activity {
             }
 
         }catch (Throwable e){
-
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "onBackPressed", e);
+            }
         }
     }
 
@@ -255,7 +259,7 @@ public class FileSelectionActivity extends Activity {
         Log.d(TAG, "Upload clicked, finishing activity");
 
 
-        resultFileList = new ArrayList<File>();
+        ArrayList<File> resultFileList = new ArrayList<>();
 
         for(int i = 0 ; i < directoryView.getCount(); i++){
             if(directoryView.isItemChecked(i)){
@@ -266,7 +270,7 @@ public class FileSelectionActivity extends Activity {
             Log.d(TAG, "Nada seleccionado");
             finish();
         }
-        Log.d(TAG, "Files: "+resultFileList.toString());
+        Log.d(TAG, "Files: "+ resultFileList.toString());
         Intent result = this.getIntent();
         result.putExtra(SELECTED_FILES, resultFileList);
         setResult(Activity.RESULT_OK, result);
@@ -308,15 +312,15 @@ public class FileSelectionActivity extends Activity {
             });
         }
 
-        directoryList = new ArrayList<File>();
-        directoryNames = new ArrayList<String>();
+        directoryList = new ArrayList<>();
+        directoryNames = new ArrayList<>();
         if(tempDirectoryList != null) {
             for (File file : tempDirectoryList) {
                 directoryList.add(file);
                 directoryNames.add(file.getName());
             }
         }
-        ArrayAdapter<String> directoryAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, directoryNames);
+        ArrayAdapter<String> directoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, directoryNames);
 
 
         //Lista de ficheros
@@ -331,8 +335,8 @@ public class FileSelectionActivity extends Activity {
             });
         }
 
-        fileList = new ArrayList<File>();
-        fileNames = new ArrayList<String>();
+        fileList = new ArrayList<>();
+        fileNames = new ArrayList<>();
         if (tempFileList != null) {
             for (File file : tempFileList) {
                 fileList.add(file);
@@ -419,7 +423,7 @@ public class FileSelectionActivity extends Activity {
      */
     public static String[] getStorageDirectories(Context context) {
         // Final set of paths
-        final Set<String> rv = new HashSet<String>();
+        final Set<String> rv = new HashSet<>();
         // Primary physical SD-CARD (not emulated)
         final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
         // All Secondary SD-CARDs (all exclude primary) separated by ":"
@@ -523,8 +527,6 @@ public class FileSelectionActivity extends Activity {
                 // permission denied, boo! Disable the
                 // functionality that depends on this permission.
             }
-            return;
-
         }
     }
 

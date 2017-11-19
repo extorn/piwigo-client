@@ -34,7 +34,6 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.OverScroller;
 import android.widget.Scroller;
 
@@ -63,7 +62,8 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     //
 	private Matrix matrix, prevMatrix;
 
-    private static enum State { NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM };
+    private enum State { NONE, DRAG, ZOOM, FLING, ANIMATE_ZOOM }
+
     private State state;
 
     private float minScale;
@@ -805,7 +805,7 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     }
     
     public interface OnTouchImageViewListener {
-    	public void onMove();
+    	void onMove();
     }
     
     /**
@@ -1133,7 +1133,7 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     			minY = maxY = startY;
     		}
     		
-    		scroller.fling(startX, startY, (int) velocityX, (int) velocityY, minX,
+    		scroller.fling(startX, startY, velocityX, velocityY, minX,
                     maxX, minY, maxY);
     		currX = startX;
     		currY = startY;

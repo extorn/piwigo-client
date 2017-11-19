@@ -611,7 +611,7 @@ public abstract class UIHelper<T> {
         showOrQueueDialogMessage(new QueuedMessage(titleId, message));
     }
 
-    public <T extends QueuedMessage> void showOrQueueDialogMessage(T message) {
+    public <S extends QueuedMessage> void showOrQueueDialogMessage(S message) {
         if (alertDialog != null && !alertDialog.isShowing() && canShowDialog()) {
             QueuedMessage nextMessage = messageQueue.peek();
             if(nextMessage instanceof QueuedQuestionMessage) {

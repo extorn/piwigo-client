@@ -1,8 +1,5 @@
 package delit.piwigoclient.ui.events;
 
-import android.app.Activity;
-import android.content.Context;
-
 import delit.piwigoclient.ui.events.trackable.TrackableResponseEvent;
 
 /**

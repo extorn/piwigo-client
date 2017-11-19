@@ -37,8 +37,6 @@ public class PicassoFactory {
         return instance;
     }
 
-    ;
-
     public synchronized static PicassoFactory getInstance(Context context) {
         if(instance == null) {
             initialise(context);
@@ -64,7 +62,7 @@ public class PicassoFactory {
         public boolean canHandleRequest(Request data)
         {
             MimeTypeMap map = MimeTypeMap.getSingleton();
-            String ext = map.getFileExtensionFromUrl(data.uri.getPath());
+            String ext = MimeTypeMap.getFileExtensionFromUrl(data.uri.getPath());
             String mimeType = map.getMimeTypeFromExtension(ext);
             String scheme = data.uri.getScheme();
             boolean mimeTypeMatches = false;

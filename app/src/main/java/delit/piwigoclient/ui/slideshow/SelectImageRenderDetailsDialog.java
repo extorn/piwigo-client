@@ -44,7 +44,7 @@ class SelectImageRenderDetailsDialog {
 
         View view = LayoutInflater.from(context).inflate(R.layout.zoom_control_dialog_layout, null, false);
 
-        imageRotation = (Spinner)view.findViewById(R.id.imageRotationField);
+        imageRotation = view.findViewById(R.id.imageRotationField);
 
         imageRotation.setAdapter(ArrayAdapter.createFromResource(context, R.array.rotation_array, R.layout.dark_spinner_item));
         rotationValues = context.getResources().getIntArray(R.array.rotation_values_array);
@@ -54,12 +54,12 @@ class SelectImageRenderDetailsDialog {
                 break;
             }
         }
-        maxZoomPicker = (NumberPicker)view.findViewById(R.id.maxZoomValueField);
+        maxZoomPicker = view.findViewById(R.id.maxZoomValueField);
         maxZoomPicker.setMaxValue(100);
         maxZoomPicker.setMinValue(3);
         maxZoomPicker.setValue((int)Math.rint(currentMaxZoom));
         maxZoomPicker.setWrapSelectorWheel(true);
-        fileSelectList = (ListView) view.findViewById(R.id.fileSelectList);
+        fileSelectList = view.findViewById(R.id.fileSelectList);
         fileSelectList.setAdapter(adapter);
         AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
             @Override

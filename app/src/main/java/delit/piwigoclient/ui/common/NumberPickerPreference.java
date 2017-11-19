@@ -43,9 +43,6 @@ import delit.piwigoclient.R;
  * See android.R.styleable#EditText EditText Attributes.
  */
 public class NumberPickerPreference extends DialogPreference {
-    private final int DEFAULT_maxValue = 100;
-    private final int DEFAULT_minValue = 0;
-    private final int DEFAULT_multiplier = 1;
     private final int maxValue;
     private final int minValue;
     private final boolean setDefaultOnAttach;
@@ -63,8 +60,11 @@ public class NumberPickerPreference extends DialogPreference {
         setPositiveButtonText(android.R.string.ok);
         setNegativeButtonText(android.R.string.cancel);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.NumberPickerPreference);
+        int DEFAULT_maxValue = 100;
         maxValue = a.getInt(R.styleable.NumberPickerPreference_maxValue, DEFAULT_maxValue);
+        int DEFAULT_minValue = 0;
         minValue = a.getInt(R.styleable.NumberPickerPreference_minValue, DEFAULT_minValue);
+        int DEFAULT_multiplier = 1;
         multiplier = a.getInt(R.styleable.NumberPickerPreference_multiplier, DEFAULT_multiplier);
         mNumber = a.getInt(R.styleable.NumberPickerPreference_defaultValue, 0);
         setDefaultOnAttach = a.getBoolean(R.styleable.NumberPickerPreference_setDefaultOnAttach, true);

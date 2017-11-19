@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +37,9 @@ public class UsersListAdapter extends ArrayAdapter<User> {
         return getItem(position).getId();
     }
 
+    @NonNull
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
 //        View v = super.getView(position, view, parent); (just does a toString on the items.)
         //Override the toString text.
         View v;
@@ -48,15 +50,15 @@ public class UsersListAdapter extends ArrayAdapter<User> {
             v = convertView;
         }
         final User thisItem = getItem(position);
-        TextView txtTitle = (TextView) v.findViewById(R.id.name);
+        TextView txtTitle = v.findViewById(R.id.name);
         txtTitle.setText(thisItem.getUsername());
 
-        TextView detailsTitle = (TextView) v.findViewById(R.id.details);
+        TextView detailsTitle = v.findViewById(R.id.details);
 
         String userType = userTypes.get(userTypeValues.indexOf(thisItem.getUserType()));
         detailsTitle.setText(userType);
 
-        ImageButton deleteButton = (ImageButton) v.findViewById(R.id.list_item_delete_button);
+        ImageButton deleteButton = v.findViewById(R.id.list_item_delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

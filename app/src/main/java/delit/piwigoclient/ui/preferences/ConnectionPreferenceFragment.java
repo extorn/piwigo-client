@@ -232,6 +232,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             if (preference.getKey().toLowerCase().contains("password")) {
                 // For all other activity_preferences, set the summary to the value's
                 // simple string representation.
+                //noinspection ReplaceAllDot
                 preference.setSummary(stringValue.replaceAll(".", "*"));
             } else {
                 preference.setSummary(stringValue);

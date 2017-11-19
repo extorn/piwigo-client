@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
@@ -15,19 +16,24 @@ import android.view.WindowManager;
 
 import java.lang.reflect.InvocationTargetException;
 
+import delit.piwigoclient.BuildConfig;
+
 /**
  * Created by gareth on 30/05/17.
  */
 
 public class DisplayUtils {
+
+    private static final String TAG = "displayUtils";
+
     public static int dpToPx(Context context, int dp) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return Math.round(dp * ((float)displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     public static int pxToDp(Context context, int px) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return Math.round((float)px / ((float)displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return Math.round((float)px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     public static boolean isRunningOnUIThread() {
@@ -143,8 +149,17 @@ public class DisplayUtils {
                 size.x = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
                 size.y = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
             } catch (IllegalAccessException e) {
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Getting screen size", e);
+                }
             } catch (InvocationTargetException e) {
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Getting screen size", e);
+                }
             } catch (NoSuchMethodException e) {
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Getting screen size", e);
+                }
             }
         }
 

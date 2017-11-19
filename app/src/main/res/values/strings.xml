@@ -1,7 +1,7 @@
 <resources>
     <string name="ad_app_id" translatable="false">ca-app-pub-1408465472557768~4878187139</string>
     <string name="licencing_api_key" translatable="false">AIzaSyBNP-kanV3Cf2bzhZdWYmqWq_v1d35_pcA</string>
-    <string name="checking_license">Checking license...</string>
+    <string name="checking_license">Checking license…</string>
     <string name="dont_allow">Don\'t allow the user access</string>
     <string name="allow">Allow the user access</string>
     <string name="alert_licence_dont_allow_access">Licence check failed - Access to app is forbidden</string>
@@ -598,7 +598,7 @@ Release 1.3.2 - Fixed a bug that was reported by a user as causing an applicatio
 "</string>
     <string name="licences_heading">Licences for resources used within this App</string>
     <string name="licences_content"  formatted="false">"*** Touch Image View - com.ortiz.touch.
-MIT License - Copyright (c) 2012 Michael Ortiz
+MIT License - Copyright © 2012 Michael Ortiz
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -999,8 +999,8 @@ SOFTWARE.
     <string name="slideshow_image_details_linked_albums_title">Linked Albums</string>
     <string name="progress_update_linked_albums">Updating linked albums</string>
     <string name="list_ok_button">OK</string>
-    <string name="alert_confirm_really_remove_album_permissions_pattern">You\'ve selected to remove access to this album and nagivable access to all child albums from %1$d groups and %2$d users. Continue with this action?</string>
-    <string name="alert_confirm_add_album_permissions_recrusively_pattern">You\'ve selected to add access to this album for %1$d groups and %2$d users. Would you like to apply these changes to the %3$d child albums?</string>
+    <string name="alert_confirm_really_remove_album_permissions_pattern">You\'ve selected to remove access to this album and navigable access to all child albums from %1$d groups and %2$d users. Continue with this action?</string>
+    <string name="alert_confirm_add_album_permissions_recursively_pattern">You\'ve selected to add access to this album for %1$d groups and %2$d users. Would you like to apply these changes to the %3$d child albums?</string>
     <string name="alert_information_own_user_readded_to_permissions_list_for_safety">Your changes may have prevented you accessing this album. Your username has been added to the list of those with explicit permission.</string>
     <string name="alert_information_own_user_readded_to_permissions_list">Your changes would have prevented you accessing this album. Your username has been added to the list of those with explicit permission.</string>
     <string name="alert_information_add_album_permissions_recursively_pattern">Adding permissions to %1$d child albums too.</string>
@@ -1021,7 +1021,7 @@ SOFTWARE.
     <string name="error_insufficient_permissions_for_cache_folder">Read write access to the cache folder is needed. Check app settings.</string>
     <string name="alert_title_error_talking_to_server">Error talking to server</string>
     <string name="alert_title_error_connecting_to_server">Error connecting to server</string>
-    <string name="alert_warning_message_self_signed_certificates">Self signed SSL certificates should not be used on a public facing server (on the internet) - investigate at https://letsencrypy.org or similar. This is for testing purposes only.</string>
+    <string name="alert_warning_message_self_signed_certificates">Self signed SSL certificates should not be used on a public facing server (on the internet) - investigate at https://letsencrypt.org or similar. This is for testing purposes only.</string>
     <string name="alert_error_adding_certificate_to_truststore">Error adding certificate to trust store</string>
     <string name="alert_add_cert_to_truststore_pattern">Add Certificate chain to list of trusted CAs?\n\n</string>
     <string name="certificate_summary_pattern">Subject: %1$s\nValid: %2$s - %3$s\nSerial: %4$s</string>

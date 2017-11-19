@@ -111,7 +111,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public synchronized PiwigoResponseListener registerResponseHandler(long messageId, final PiwigoResponseListener h) {
-        PiwigoResponseListener oldHandler = (PiwigoResponseListener) handlers.put(h.getHandlerId(), h);
+        PiwigoResponseListener oldHandler = handlers.put(h.getHandlerId(), h);
         handlerResponseMap.put(messageId, h.getHandlerId());
         final Response r = responses.remove(messageId);
         if (r != null) {
@@ -259,7 +259,7 @@ public class PiwigoResponseBufferingHandler {
     /**
      * Marker interface
      */
-    public static interface ErrorResponse {}
+    public interface ErrorResponse {}
 
     public static class PiwigoServerErrorResponse extends BasePiwigoResponse implements ErrorResponse {
         private String piwigoMethod;
@@ -698,7 +698,7 @@ public class PiwigoResponseBufferingHandler {
         }
 
         public boolean isFileMatch() {
-            return fileMatches != null && fileMatches.booleanValue() == true;
+            return fileMatches != null && fileMatches;
         }
 
         public T getResource() {
@@ -1317,7 +1317,7 @@ public class PiwigoResponseBufferingHandler {
             if(groupIds.size() != 1) {
                 throw new IllegalStateException("Can only use this method when there is known to be a single group id");
             }
-            return groupIds.iterator().next().longValue();
+            return groupIds.iterator().next();
         }
 
         public HashSet<Long> getGroupIds() {

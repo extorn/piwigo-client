@@ -2,9 +2,7 @@ package delit.piwigoclient.ui;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -12,10 +10,8 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.TextView;
 
@@ -103,8 +99,8 @@ public class UploadActivity extends MyActivity {
     }
 
     private void addUploadingAsFieldsIfAppropriate() {
-        TextView uploadingAsLabelField = (TextView)findViewById(R.id.upload_username_label);
-        TextView uploadingAsField = (TextView)findViewById(R.id.upload_username);
+        TextView uploadingAsLabelField = findViewById(R.id.upload_username_label);
+        TextView uploadingAsField = findViewById(R.id.upload_username);
         if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
             uploadingAsField.setText(PiwigoSessionDetails.getInstance().getUsername());
             uploadingAsField.setVisibility(View.VISIBLE);
@@ -230,7 +226,7 @@ public class UploadActivity extends MyActivity {
     }
 
     private ArrayList<File> handleSendImage(Intent intent) {
-        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         ArrayList<File> filesToUpload;
         if (imageUri != null) {
             filesToUpload = new ArrayList<>(1);

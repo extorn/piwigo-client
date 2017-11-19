@@ -43,7 +43,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import cz.msebera.android.httpclient.client.cache.Resource;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -104,12 +103,10 @@ public class ViewAlbumFragment extends MyFragment {
     private static final int UPDATE_NOT_RUNNING = 0;
     private AlbumItemRecyclerViewAdapter viewAdapter;
     private FloatingActionButton retryActionButton;
-    private RecyclerView recyclerView;
     private ControllableBottomSheetBehavior<View> bottomSheetBehavior;
     private TextView galleryNameHeader;
     private TextView galleryDescriptionHeader;
     private ImageButton descriptionDropdownButton;
-    private View galleryEditFieldsView;
     private EditText galleryNameView;
     private EditText galleryDescriptionView;
     private CustomImageButton saveButton;
@@ -121,10 +118,8 @@ public class ViewAlbumFragment extends MyFragment {
     private Switch galleryPrivacyStatusField;
     private TextView allowedGroupsField;
     private TextView allowedUsersField;
-    private EndlessRecyclerViewScrollListener scrollListener;
     private RelativeLayout bulkActionsContainer;
     private FloatingActionButton bulkActionButtonDelete;
-    private View bottomSheet;
     private FloatingActionButton bulkActionButtonCopy;
     private FloatingActionButton bulkActionButtonCut;
     private FloatingActionButton bulkActionButtonPaste;
@@ -279,7 +274,7 @@ public class ViewAlbumFragment extends MyFragment {
 
         initialiseBasketView(view);
 
-        retryActionButton = (FloatingActionButton)view.findViewById(R.id.gallery_retryAction_actionButton);
+        retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
         retryActionButton.setVisibility(GONE);
         retryActionButton.setOnClickListener(new View.OnClickListener() {
 
@@ -289,16 +284,16 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        emptyGalleryLabel = (TextView)view.findViewById(R.id.album_empty_content);
+        emptyGalleryLabel = view.findViewById(R.id.album_empty_content);
         emptyGalleryLabel.setText(R.string.gallery_empty_text);
         emptyGalleryLabel.setVisibility(GONE);
 
-        bulkActionsContainer = (RelativeLayout) view.findViewById(R.id.gallery_actions_bulk_container);
+        bulkActionsContainer = view.findViewById(R.id.gallery_actions_bulk_container);
 
         AlbumSelectedEvent event = new AlbumSelectedEvent(gallery);
         EventBus.getDefault().post(event);
 
-        AdView adView = (AdView)view.findViewById(R.id.gallery_adView);
+        AdView adView = view.findViewById(R.id.gallery_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.setVisibility(VISIBLE);
             adView.loadAd(new AdRequest.Builder().build());
@@ -306,15 +301,15 @@ public class ViewAlbumFragment extends MyFragment {
             adView.setVisibility(GONE);
         }
 
-        galleryNameHeader = (TextView) view.findViewById(R.id.gallery_details_name_header);
-        galleryDescriptionHeader = (TextView) view.findViewById(R.id.gallery_details_description_header);
-        descriptionDropdownButton = (ImageButton) view.findViewById(R.id.gallery_details_description_dropdown_button);
+        galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
+        galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
+        descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
 
         setGalleryHeadings();
 
-        FloatingActionButton actionButton = (FloatingActionButton) view.findViewById(R.id.gallery_actionButton_details);
+        FloatingActionButton actionButton = view.findViewById(R.id.gallery_actionButton_details);
 
-        bottomSheet = view.findViewById(R.id.gallery_bottom_sheet);
+        View bottomSheet = view.findViewById(R.id.gallery_bottom_sheet);
         bottomSheetBehavior = ControllableBottomSheetBehavior.from(bottomSheet);
 
         int bottomSheetOffsetDp = prefs.getInt(getString(R.string.preference_gallery_detail_sheet_offset_key), getResources().getInteger(R.integer.preference_gallery_detail_sheet_offset_default));
@@ -356,7 +351,7 @@ public class ViewAlbumFragment extends MyFragment {
 
         boolean showLargeAlbumThumbnails = prefs.getBoolean(getString(R.string.preference_gallery_show_large_thumbnail_key), getResources().getBoolean(R.bool.preference_gallery_show_large_thumbnail_default));
 
-        recyclerView = (RecyclerView) galleryListView;
+        RecyclerView recyclerView = (RecyclerView) galleryListView;
 
         if (!galleryIsDirty) {
             emptyGalleryLabel.setVisibility(galleryModel.getItems().size() == 0 ? VISIBLE : GONE);
@@ -403,7 +398,7 @@ public class ViewAlbumFragment extends MyFragment {
 
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()||getBasket().getItemCount() > 0?VISIBLE:GONE);
 
-        bulkActionButtonDelete = (FloatingActionButton)bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
+        bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
         bulkActionButtonDelete.setVisibility(viewAdapter.isItemSelectionAllowed() && basket.getItemCount() == 0?VISIBLE:GONE);
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -415,7 +410,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        bulkActionButtonCopy = (FloatingActionButton)bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
+        bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
         bulkActionButtonCopy.setVisibility(viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
         bulkActionButtonCopy.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -428,7 +423,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        bulkActionButtonCut = (FloatingActionButton)bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
+        bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
         bulkActionButtonCut.setVisibility(viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
         bulkActionButtonCut.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -441,7 +436,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        bulkActionButtonPaste = (FloatingActionButton)bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
+        bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
         bulkActionButtonPaste.setVisibility(!viewAdapter.isItemSelectionAllowed() && basket.getItemCount() > 0 && gallery.getId() != PiwigoAlbum.ROOT_ALBUM.getId() && gallery.getId() != basket.getContentParentId()?VISIBLE:GONE);
         bulkActionButtonPaste.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -490,7 +485,7 @@ public class ViewAlbumFragment extends MyFragment {
         recyclerView.setAdapter(viewAdapter);
 
 
-        scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutMan) {
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 int pageToLoad = galleryModel.getPagesLoaded();
@@ -550,7 +545,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        AppCompatImageView clearButton = (AppCompatImageView)basketView.findViewById(R.id.basket_clear_button);
+        AppCompatImageView clearButton = basketView.findViewById(R.id.basket_clear_button);
         clearButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -593,10 +588,10 @@ public class ViewAlbumFragment extends MyFragment {
             basketView.setVisibility(GONE);
         } else {
             basketView.setVisibility(VISIBLE);
-            AppCompatTextView basketItemCountField = (AppCompatTextView)basketView.findViewById(R.id.basket_item_count);
+            AppCompatTextView basketItemCountField = basketView.findViewById(R.id.basket_item_count);
             basketItemCountField.setText(String.valueOf(basketItemCount));
 
-            AppCompatImageView actionIndicatorImg = (AppCompatImageView)basketView.findViewById(R.id.basket_action_indicator);
+            AppCompatImageView actionIndicatorImg = basketView.findViewById(R.id.basket_action_indicator);
             if(basket.getAction() == Basket.ACTION_COPY) {
                 actionIndicatorImg.setImageResource(R.drawable.ic_content_copy_black_24px);
             } else {
@@ -836,7 +831,7 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     private void setupBottomSheet(final View bottomSheet) {
-        galleryNameView = (EditText) bottomSheet.findViewById(R.id.gallery_details_name);
+        galleryNameView = bottomSheet.findViewById(R.id.gallery_details_name);
         galleryNameView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -847,7 +842,7 @@ public class ViewAlbumFragment extends MyFragment {
                 return false;
             }
         });
-        galleryDescriptionView = (EditText) bottomSheet.findViewById(R.id.gallery_details_description);
+        galleryDescriptionView = bottomSheet.findViewById(R.id.gallery_details_description);
         galleryDescriptionView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -858,7 +853,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        saveButton = (CustomImageButton) bottomSheet.findViewById(R.id.gallery_details_save_button);
+        saveButton = bottomSheet.findViewById(R.id.gallery_details_save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -868,7 +863,7 @@ public class ViewAlbumFragment extends MyFragment {
                 updateAlbumDetails();
             }
         });
-        discardButton = (CustomImageButton) bottomSheet.findViewById(R.id.gallery_details_discard_button);
+        discardButton = bottomSheet.findViewById(R.id.gallery_details_discard_button);
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -878,7 +873,7 @@ public class ViewAlbumFragment extends MyFragment {
                 fillGalleryEditFields();
             }
         });
-        editButton = (CustomImageButton) bottomSheet.findViewById(R.id.gallery_details_edit_button);
+        editButton = bottomSheet.findViewById(R.id.gallery_details_edit_button);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -887,7 +882,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        addNewAlbumButton = (CustomImageButton)bottomSheet.findViewById(R.id.album_add_new_album_button);
+        addNewAlbumButton = bottomSheet.findViewById(R.id.album_add_new_album_button);
         addNewAlbumButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -898,7 +893,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        galleryEditFieldsView = bottomSheet.findViewById(R.id.gallery_details_edit_fields);
+        View galleryEditFieldsView = bottomSheet.findViewById(R.id.gallery_details_edit_fields);
 
         if (PiwigoAlbum.ROOT_ALBUM == gallery) {
             galleryEditFieldsView.setVisibility(GONE);
@@ -907,8 +902,8 @@ public class ViewAlbumFragment extends MyFragment {
             galleryEditFieldsView.setVisibility(View.VISIBLE);
         }
 
-        allowedGroupsFieldLabel = (TextView) bottomSheet.findViewById(R.id.gallery_details_allowed_groups_label);
-        allowedGroupsField = (TextView) bottomSheet.findViewById(R.id.gallery_details_allowed_groups);
+        allowedGroupsFieldLabel = bottomSheet.findViewById(R.id.gallery_details_allowed_groups_label);
+        allowedGroupsField = bottomSheet.findViewById(R.id.gallery_details_allowed_groups);
         allowedGroupsField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -924,8 +919,8 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        allowedUsersFieldLabel = (TextView) bottomSheet.findViewById(R.id.gallery_details_allowed_users_label);
-        allowedUsersField = (TextView) bottomSheet.findViewById(R.id.gallery_details_allowed_users);
+        allowedUsersFieldLabel = bottomSheet.findViewById(R.id.gallery_details_allowed_users_label);
+        allowedUsersField = bottomSheet.findViewById(R.id.gallery_details_allowed_users);
         allowedUsersField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -948,7 +943,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        galleryPrivacyStatusField = (Switch) bottomSheet.findViewById(R.id.gallery_details_status);
+        galleryPrivacyStatusField = bottomSheet.findViewById(R.id.gallery_details_status);
         galleryPrivacyStatusField.setChecked(gallery.isPrivate());
         checkedListener = new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -966,7 +961,7 @@ public class ViewAlbumFragment extends MyFragment {
         };
         galleryPrivacyStatusField.setOnCheckedChangeListener(checkedListener);
 
-        deleteButton = (CustomImageButton) bottomSheet.findViewById(R.id.gallery_action_delete);
+        deleteButton = bottomSheet.findViewById(R.id.gallery_action_delete);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -974,14 +969,14 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        pasteButton = (CustomImageButton) bottomSheet.findViewById(R.id.gallery_action_paste);
+        pasteButton = bottomSheet.findViewById(R.id.gallery_action_paste);
         pasteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onMoveItem(gallery);
             }
         });
-        cutButton = (CustomImageButton) bottomSheet.findViewById(R.id.gallery_action_cut);
+        cutButton = bottomSheet.findViewById(R.id.gallery_action_cut);
         cutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1478,7 +1473,7 @@ public class ViewAlbumFragment extends MyFragment {
                         });
                     } else {
 
-                        String msg = String.format(getString(R.string.alert_confirm_add_album_permissions_recrusively_pattern), newlyAddedGroups.size(), newlyAddedUsers.size(), gallery.getSubCategories());
+                        String msg = String.format(getString(R.string.alert_confirm_add_album_permissions_recursively_pattern), newlyAddedGroups.size(), newlyAddedUsers.size(), gallery.getSubCategories());
                         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
                             @Override
                             public void onDismiss(AlertDialog dialog) {

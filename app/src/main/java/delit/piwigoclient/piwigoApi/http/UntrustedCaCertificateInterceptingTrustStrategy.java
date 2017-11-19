@@ -25,6 +25,7 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
 
     public UntrustedCaCertificateInterceptingTrustStrategy(KeyStore trustedCAKeystore, Set<String> preNotifiedCerts) {
         certThumbprints = X509Utils.listAliasesInStore(trustedCAKeystore);
+        //FIXME - this is probably dangerous.
         this.preNotifiedCerts = new ConcurrentSkipListSet<>(preNotifiedCerts);
     }
 

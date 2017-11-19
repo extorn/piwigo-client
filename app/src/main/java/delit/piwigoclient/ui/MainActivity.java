@@ -86,7 +86,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     // these fields are persisted.
     private CategoryItem currentAlbum = PiwigoAlbum.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
-    private ArrayList<Serializable> onLoginActionParams = new ArrayList<Serializable>();
+    private ArrayList<Serializable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
 
     @Override
@@ -110,7 +110,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         }
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         toolbar.setVisibility(prefs.getBoolean(getString(R.string.preference_app_show_toolbar_key), true) ? View.VISIBLE : View.GONE);
@@ -127,10 +127,10 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
             }
         });*/
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         if(!hasAgreedToEula()) {
@@ -181,15 +181,15 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         }
 
         boolean preferencesShowing = false;
-        Fragment myFragment = (Fragment)getSupportFragmentManager().findFragmentByTag(PreferencesFragment.class.getName());
+        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(PreferencesFragment.class.getName());
         preferencesShowing = myFragment != null && myFragment.isVisible();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (preferencesShowing) {
 
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            Toolbar toolbar = findViewById(R.id.toolbar);
             toolbar.setVisibility(prefs.getBoolean(getString(R.string.preference_app_show_toolbar_key), true) ? View.VISIBLE : View.GONE);
 
             if(!"".equals(prefs.getString(getString(R.string.preference_piwigo_server_address_key), "").trim())) {
@@ -354,7 +354,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
             default:
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
 
@@ -694,7 +694,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(EulaAgreedEvent event) {
         // unlock the drawer.
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
         if (prefs.getString(getApplicationContext().getString(R.string.preference_piwigo_server_address_key), "").trim().isEmpty()) {
@@ -735,13 +735,13 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ThemeAlteredEvent event) {
-        CustomNavigationView navigationView = (CustomNavigationView) findViewById(R.id.nav_view);
+        CustomNavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.updateTheme();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PiwigoLoginSuccessEvent event) {
-        CustomNavigationView navigationView = (CustomNavigationView) findViewById(R.id.nav_view);
+        CustomNavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setMenuVisibilityToMatchSessionState();
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.

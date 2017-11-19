@@ -43,7 +43,7 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-        loginButton = (Button) view.findViewById(R.id.loginButton);
+        loginButton = view.findViewById(R.id.loginButton);
         loginButton.setEnabled(true);
         loginButton.setOnClickListener(this);
         return view;

@@ -53,7 +53,7 @@ public abstract class AlbumAlterPermissionsResponseHandler extends AbstractPiwig
             }
         }
         if(recursive) {
-            params.put("recursive", Boolean.toString(recursive));
+            params.put("recursive", "true");
         }
         params.put("pwg_token", sessionToken);
         return params;

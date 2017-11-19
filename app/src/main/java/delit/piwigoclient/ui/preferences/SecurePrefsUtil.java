@@ -2,17 +2,13 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.vending.licensing.AESObfuscator;
-import com.google.android.vending.licensing.BuildConfig;
 import com.google.android.vending.licensing.ValidationException;
 
 import java.util.Random;
-
-import delit.piwigoclient.ui.common.LicenceCheckingHelper;
 
 /**
  * Created by gareth on 04/11/17.

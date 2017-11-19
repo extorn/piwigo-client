@@ -54,7 +54,6 @@ public final class PausableLoadControl implements LoadControl {
     private int targetBufferSize;
     private boolean isBuffering;
     private boolean paused;
-    private String srcUri;
 
     /**
      * Constructs a pkg instance, using the {@code DEFAULT_*} constants defined in this class.
@@ -122,7 +121,7 @@ public final class PausableLoadControl implements LoadControl {
     }
 
     public void setSrcUri(String srcUri) {
-        this.srcUri = srcUri;
+        String srcUri1 = srcUri;
     }
 
     @Override

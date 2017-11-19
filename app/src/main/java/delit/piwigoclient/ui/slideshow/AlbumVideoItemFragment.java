@@ -2,7 +2,6 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -58,7 +57,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private SimpleExoPlayer player;
     private CustomHttpDataSourceFactory dataSourceFactory;
     private PausableLoadControl loadControl;
-    private SimpleExoPlayerView simpleExoPlayerView;
     private long seekToPosition;
     private CustomImageButton directDownloadButton;
     private boolean resetPlayerDatasource;
@@ -148,7 +146,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
         hideProgressIndicator();
 
-        directDownloadButton = (CustomImageButton)container.findViewById(R.id.slideshow_resource_action_direct_download);
+        directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
         directDownloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,7 +158,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             buildPlayer(model);
         }
 
-        simpleExoPlayerView = new SimpleExoPlayerView(getContext());
+        SimpleExoPlayerView simpleExoPlayerView = new SimpleExoPlayerView(getContext());
 
         simpleExoPlayerView.setPlayer(player);
 
@@ -240,7 +238,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         player.stop();
         resetPlayerDatasource = true;
         seekToPosition = 0;
-        while(player.getPlaybackState() != ExoPlayer.STATE_READY) {
+        while(player.getPlaybackState() != Player.STATE_READY) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {

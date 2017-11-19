@@ -47,7 +47,7 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
             int level = -1;
             if (parentId != null) {
                 Integer mappedLevel = itemIdToLevelMap.get(parentId);
-                level = mappedLevel != null ? mappedLevel.intValue() : -1;
+                level = mappedLevel != null ? mappedLevel : -1;
             }
             itemIdToLevelMap.put(id, level + 1);
         }
@@ -95,7 +95,7 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
     }
 
     private HashMap<Long, Integer> buildIdPositionMap() {
-        idPositionMap = new HashMap<Long, Integer>();
+        idPositionMap = new HashMap<>();
         for (int i = 0; i < getCount(); i++) {
             T thisItem = getItem(i);
             idPositionMap.put(getItemId(thisItem), i);
@@ -121,7 +121,7 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
 
         setViewContentForItemDisplay(view, item, levelInTreeOfItem);
 
-        final ThreeStateCheckbox imageView = (ThreeStateCheckbox) view.findViewById(R.id.permission_status_icon);
+        final ThreeStateCheckbox imageView = view.findViewById(R.id.permission_status_icon);
         imageView.setAlwaysChecked(indirectlySelectedItems != null && indirectlySelectedItems.contains(thisItemId));
 
         // return the view, populated with data, for display
@@ -138,7 +138,7 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
     protected void setViewContentForItemDisplay(View view, T item, int levelInTreeOfItem) {
         int px = DisplayUtils.dpToPx(view.getContext(), levelInTreeOfItem * 15);
 
-        TextView textField = (TextView) view.findViewById(R.id.permission_text);
+        TextView textField = view.findViewById(R.id.permission_text);
         textField.setPadding(px, 0, 0, 0);
 
         textField.setText(item.toString());

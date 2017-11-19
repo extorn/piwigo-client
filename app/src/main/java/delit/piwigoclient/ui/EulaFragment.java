@@ -42,7 +42,7 @@ public class EulaFragment extends MyFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_eula, container, false);
 
-        AdView adView = (AdView)view.findViewById(R.id.eula_adView);
+        AdView adView = view.findViewById(R.id.eula_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
@@ -53,8 +53,8 @@ public class EulaFragment extends MyFragment {
         int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);
         int currentEulaVersion = getResources().getInteger(R.integer.eula_version);
         boolean agreedEula = agreedEulaVersion >= currentEulaVersion;
-        Button cancelButton = (Button) view.findViewById(R.id.eula_cancel_button);
-        Button agreeButton = (Button) view.findViewById(R.id.eula_agree_button);
+        Button cancelButton = view.findViewById(R.id.eula_cancel_button);
+        Button agreeButton = view.findViewById(R.id.eula_agree_button);
         if(agreedEula) {
             cancelButton.setVisibility(View.GONE);
             agreeButton.setVisibility(View.GONE);
@@ -77,7 +77,7 @@ public class EulaFragment extends MyFragment {
 
         final String appVersion = ProjectUtils.getVersionName(getContext());
 
-        final TextView email = (TextView) view.findViewById(R.id.eula_admin_email);
+        final TextView email = view.findViewById(R.id.eula_admin_email);
 
         final Activity activity = MyApplication.getInstance().getCurrentActivity();
 

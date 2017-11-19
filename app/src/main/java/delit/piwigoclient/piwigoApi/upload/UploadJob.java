@@ -72,7 +72,7 @@ public class UploadJob implements Serializable {
 
     public synchronized boolean needsUpload(File fileForUpload) {
         Integer status = fileUploadStatus.get(fileForUpload);
-        return status == null || status == UPLOADING;
+        return status == null || UPLOADING.equals(status);
     }
 //
 //    public synchronized boolean isUploadOfFileInProgress(File fileForUpload) {
@@ -80,11 +80,11 @@ public class UploadJob implements Serializable {
 //        return status != null && status != CONFIGURED && status != DELETED && status != CANCELLED;
 //    }
 
-    public Collection<?> getFilesProcessedToEnd() {
+    public HashSet<File> getFilesProcessedToEnd() {
         HashSet<File> filesProcessedToEnd = new HashSet<>();
         for(Map.Entry<File,Integer> fileStatusEntry : fileUploadStatus.entrySet()) {
             Integer status = fileStatusEntry.getValue();
-            if(status == CONFIGURED || status == DELETED || status == CANCELLED) {
+            if(CONFIGURED.equals(status) || DELETED.equals(status) || CANCELLED.equals(status)) {
                 filesProcessedToEnd.add(fileStatusEntry.getKey());
             }
         }
@@ -92,28 +92,28 @@ public class UploadJob implements Serializable {
     }
 
     public synchronized boolean needsVerification(File fileForUpload) {
-        return UPLOADED == fileUploadStatus.get(fileForUpload);
+        return UPLOADED.equals(fileUploadStatus.get(fileForUpload));
     }
 
     public boolean isUploadingData(File fileForUpload) {
-        return UPLOADING == fileUploadStatus.get(fileForUpload);
+        return UPLOADING.equals(fileUploadStatus.get(fileForUpload));
     }
 
     public synchronized boolean needsConfiguration(File fileForUpload) {
-        return VERIFIED == fileUploadStatus.get(fileForUpload);
+        return VERIFIED.equals(fileUploadStatus.get(fileForUpload));
     }
 
     public synchronized boolean needsDelete(File fileForUpload) {
-        return REQUIRES_DELETE == fileUploadStatus.get(fileForUpload);
+        return REQUIRES_DELETE.equals(fileUploadStatus.get(fileForUpload));
     }
 
     public synchronized boolean isFileUploadComplete(File fileForUpload) {
-        return CONFIGURED == fileUploadStatus.get(fileForUpload);
+        return CONFIGURED.equals(fileUploadStatus.get(fileForUpload));
     }
 
     public synchronized boolean uploadItemRequiresAction(File file) {
         Integer uploadStatus = fileUploadStatus.get(file);
-        return !(uploadStatus == null || uploadStatus == CONFIGURED || uploadStatus == CANCELLED || uploadStatus == DELETED);
+        return !(uploadStatus == null || CONFIGURED.equals(uploadStatus) || CANCELLED.equals(uploadStatus) || DELETED.equals(uploadStatus));
     }
 
     public long getResponseHandlerId() {
@@ -128,10 +128,7 @@ public class UploadJob implements Serializable {
     public synchronized boolean cancelFileUpload(File f) {
         Integer status = fileUploadStatus.get(f);
         fileUploadStatus.put(f, CANCELLED);
-        if(status != null) {
-            return false;
-        }
-        return true;
+        return status == null;
     }
 
     public long getJobId() {
@@ -148,7 +145,7 @@ public class UploadJob implements Serializable {
 
     public synchronized boolean isFileUploadStillWanted(File file) {
         Integer status = fileUploadStatus.get(file);
-        return status == null || status != CANCELLED;
+        return !CANCELLED.equals(status);
     }
 
     public long getUploadToCategory() {
@@ -165,8 +162,11 @@ public class UploadJob implements Serializable {
 //        private static final Integer REQUIRES_DELETE = 4;
 //        private static final Integer DELETED = 5;
         Integer status = fileUploadStatus.get(f);
+        if(status == null) {
+            status = Integer.MIN_VALUE;
+        }
         int progress = 0;
-        if(status == UPLOADING) {
+        if(UPLOADING.equals(status)) {
 
             PartialUploadData progressData = filePartialUploadProgress.get(f);
             if (progressData == null) {

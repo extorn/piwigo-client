@@ -49,7 +49,6 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
     private ArrayList<Group> availableGroups;
     private ListView list;
     private ConcurrentHashMap<Long, Group> deleteActionsPending = new ConcurrentHashMap<>();
-    private CustomImageButton addListItemButton;
     private FloatingActionButton retryActionButton;
 
     public static GroupsListFragment newInstance() {
@@ -91,7 +90,7 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
 
         View view = inflater.inflate(R.layout.layout_fullsize_list, container, false);
 
-        AdView adView = (AdView)view.findViewById(R.id.list_adView);
+        AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
@@ -99,11 +98,11 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
             adView.setVisibility(View.GONE);
         }
 
-        TextView heading = (TextView) view.findViewById(R.id.heading);
+        TextView heading = view.findViewById(R.id.heading);
         heading.setText(R.string.groups_heading);
         heading.setVisibility(View.VISIBLE);
 
-        list = (ListView) view.findViewById(R.id.list);
+        list = view.findViewById(R.id.list);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -113,16 +112,16 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
             }
         });
 
-        Button cancelButton = (Button) view.findViewById(R.id.list_action_cancel_button);
+        Button cancelButton = view.findViewById(R.id.list_action_cancel_button);
         cancelButton.setVisibility(View.GONE);
 
-        Button toggleAllButton = (Button) view.findViewById(R.id.list_action_toggle_all_button);
+        Button toggleAllButton = view.findViewById(R.id.list_action_toggle_all_button);
         toggleAllButton.setVisibility(View.GONE);
 
-        Button saveButton = (Button) view.findViewById(R.id.list_action_save_button);
+        Button saveButton = view.findViewById(R.id.list_action_save_button);
         saveButton.setVisibility(View.GONE);
 
-        addListItemButton = (CustomImageButton)view.findViewById(R.id.list_action_add_item_button);
+        CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(View.VISIBLE);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +130,7 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
             }
         });
 
-        retryActionButton = (FloatingActionButton)view.findViewById(R.id.list_retryAction_actionButton);
+        retryActionButton = view.findViewById(R.id.list_retryAction_actionButton);
         retryActionButton.setOnClickListener(new View.OnClickListener() {
 
             @Override

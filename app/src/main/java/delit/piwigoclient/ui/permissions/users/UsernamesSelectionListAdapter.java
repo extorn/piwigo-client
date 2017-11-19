@@ -30,7 +30,7 @@ public class UsernamesSelectionListAdapter extends MultiSourceListAdapter<Userna
     @Override
     protected void setViewContentForItemDisplay(View view, Username item, int levelInTreeOfItem) {
 //        super.setViewContentForItemDisplay(view, item, levelInTreeOfItem);
-        TextView textField = (TextView) view.findViewById(R.id.permission_text);
+        TextView textField = view.findViewById(R.id.permission_text);
         textField.setText(item.getUsername());
     }
 }

@@ -1,7 +1,5 @@
 package paul.arian.fileselector;
-/**
- * Created by Paul on 3/7/14.
- */
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,7 +79,7 @@ public class CheckableRelativeLayout extends RelativeLayout implements
      */
     private void initialise(AttributeSet attrs) {
         this.isChecked = false;
-        this.checkableViews = new ArrayList<Checkable>(5);
+        this.checkableViews = new ArrayList<>(5);
     }
 
     /**

@@ -33,8 +33,9 @@ public abstract class CustomSelectListAdapter<T> extends ArrayAdapter<T> impleme
         return aView;
     }
 
+    @NonNull
     @Override
-    public View getView(final int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, @NonNull ViewGroup parent) {
         View aView = super.getView(position, view, parent);
         if(idPositionMap == null) {
             idPositionMap = buildIdPositionMap();
@@ -54,7 +55,7 @@ public abstract class CustomSelectListAdapter<T> extends ArrayAdapter<T> impleme
     }
 
     private HashMap<Long, Integer> buildIdPositionMap() {
-        idPositionMap = new HashMap<Long, Integer>();
+        idPositionMap = new HashMap<>();
         for (int i = 0; i < getCount(); i++) {
             T thisItem = getItem(i);
             idPositionMap.put(getItemId(thisItem), i);

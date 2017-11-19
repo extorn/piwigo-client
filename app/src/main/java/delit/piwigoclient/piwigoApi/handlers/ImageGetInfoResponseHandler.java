@@ -63,7 +63,7 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
         int usersRated = rates.getInt("count");
         resourceItem.setRatingsGiven(usersRated);
 
-        PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<T>(getMessageId(), getPiwigoMethod(), resourceItem);
+        PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<>(getMessageId(), getPiwigoMethod(), resourceItem);
         storeResponse(r);
     }
 

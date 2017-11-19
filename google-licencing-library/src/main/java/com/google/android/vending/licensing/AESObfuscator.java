@@ -16,8 +16,6 @@
 
 package com.google.android.vending.licensing;
 
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.util.Log;
 
 import com.google.android.vending.licensing.util.Base64;

@@ -158,7 +158,7 @@ public class GroupFragment extends MyFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_group, container, false);
 
-        AdView adView = (AdView)v.findViewById(R.id.group_adView);
+        AdView adView = v.findViewById(R.id.group_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
@@ -180,17 +180,17 @@ public class GroupFragment extends MyFragment {
             selectUsersActionId = savedInstanceState.getInt(STATE_SELECT_USERS_ACTION_ID);
         }
 
-        groupNameField = (TextView) v.findViewById(R.id.group_name);
-        membersField = (TextView) v.findViewById(R.id.group_members);
+        groupNameField = v.findViewById(R.id.group_name);
+        membersField = v.findViewById(R.id.group_members);
         membersField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectGroupMembers();
             }
         });
-        isDefaultField = (CheckBox) v.findViewById(R.id.group_is_default);
+        isDefaultField = v.findViewById(R.id.group_is_default);
 
-        albumAccessRightsField = (ListView) v.findViewById(R.id.group_access_rights);
+        albumAccessRightsField = v.findViewById(R.id.group_access_rights);
         albumAccessRightsField.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         albumAccessRightsField.setOnTouchListener(new CustomClickTouchListener(getContext()) {
             @Override
@@ -200,14 +200,14 @@ public class GroupFragment extends MyFragment {
             }
         });
 
-        editButton = (CustomImageButton)v.findViewById(R.id.group_action_edit_button);
+        editButton = v.findViewById(R.id.group_action_edit_button);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFieldsEditable(true);
             }
         });
-        discardButton = (CustomImageButton)v.findViewById(R.id.group_action_discard_button);
+        discardButton = v.findViewById(R.id.group_action_discard_button);
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,14 +219,14 @@ public class GroupFragment extends MyFragment {
                 setFieldsEditable(currentGroup.getId() < 0);
             }
         });
-        saveButton = (CustomImageButton)v.findViewById(R.id.group_action_save_button);
+        saveButton = v.findViewById(R.id.group_action_save_button);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 saveGroupChanges();
             }
         });
-        deleteButton = (CustomImageButton)v.findViewById(R.id.group_action_delete_button);
+        deleteButton = v.findViewById(R.id.group_action_delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -572,7 +572,7 @@ public class GroupFragment extends MyFragment {
     private ArrayList<Username> getLatestGroupMembers() {
         ArrayList<Username> latestGroupMembers;
         if(currentGroup.getId() < 0) {
-            currentGroupMembers = new ArrayList<Username>(0);
+            currentGroupMembers = new ArrayList<>(0);
         }
         latestGroupMembers = currentGroupMembers;
         if(newGroupMembers != null) {

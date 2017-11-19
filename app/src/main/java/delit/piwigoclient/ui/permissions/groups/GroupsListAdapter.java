@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +32,9 @@ public class GroupsListAdapter extends ArrayAdapter<Group> {
         return getItem(position).getId();
     }
 
+    @NonNull
     @Override
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
 //        View v = super.getView(position, view, parent); (just does a toString on the items.)
         //Override the toString text.
         View v;
@@ -43,13 +45,13 @@ public class GroupsListAdapter extends ArrayAdapter<Group> {
             v = convertView;
         }
         final Group thisItem = getItem(position);
-        TextView txtTitle = (TextView) v.findViewById(R.id.name);
+        TextView txtTitle = v.findViewById(R.id.name);
         txtTitle.setText(thisItem.getName());
 
-        TextView detailsTitle = (TextView) v.findViewById(R.id.details);
+        TextView detailsTitle = v.findViewById(R.id.details);
         detailsTitle.setText(String.format(getContext().getString(R.string.group_members_pattern), thisItem.getMemberCount()));
 
-        ImageButton deleteButton = (ImageButton) v.findViewById(R.id.list_item_delete_button);
+        ImageButton deleteButton = v.findViewById(R.id.list_item_delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

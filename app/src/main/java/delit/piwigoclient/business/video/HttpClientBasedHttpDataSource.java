@@ -70,14 +70,12 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
     private final int readTimeoutMillis;
     private final String userAgent;
     private final Predicate<String> contentTypePredicate;
-    private final RequestProperties defaultRequestProperties;
     private final RequestProperties requestProperties;
     private final TransferListener<? super HttpClientBasedHttpDataSource> listener;
     private final boolean cachingEnabled;
     private boolean notifyCacheListenerImmediatelyIfCached;
     private PersistentCookieStore cookieStore;
     private CachingSyncHttpClient client;
-    private final SharedPreferences prefs;
     private final Context context;
 
     private DataSpec dataSpec;
@@ -90,7 +88,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
     private long bytesSkipped;
     private long bytesRead;
     private HttpResponse httpResponse;
-    private CustomResponseHandler responseHandler;
     private String connectedToFile;
     private RandomAccessFile localCacheFile;
     private CachedContent cacheFileContent;
@@ -165,8 +162,8 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         this.requestProperties = new RequestProperties();
         this.connectTimeoutMillis = connectTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
-        this.defaultRequestProperties = defaultRequestProperties;
-        prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        RequestProperties defaultRequestProperties1 = defaultRequestProperties;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         this.context = context;
         this.cachingEnabled = cachingEnabled;
         this.notifyCacheListenerImmediatelyIfCached = notifyCacheListenerImmediatelyIfCached;
@@ -391,16 +388,16 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         }
 
         // Do I need to hard close this resource?
-        try {
+//        try {
             // must not close this as it will stop it working for all future videos.
 //            if (client != null) {
 //                client.cancelAllRequests(true);
 //                client.close();
 //                client = null;
 //            }
-        } /*catch (IOException e) {
-            throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_CLOSE);
-        }*/ finally {
+//        } /*catch (IOException e) {
+//            throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_CLOSE);
+//        }*/ finally {
             try {
                 if (inputStream != null) {
                     try {
@@ -419,7 +416,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
                     }
                 }
             }
-        }
+//        }
     }
 
     /**
@@ -498,7 +495,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
             headers.add(new BasicHeader("Accept-Encoding", "identity"));
         }
         client.setEnableRedirects(true);
-        responseHandler = new CustomResponseHandler();
+        CustomResponseHandler responseHandler = new CustomResponseHandler();
 
         client.get(context, dataSpec.uri.toString(), headers.toArray(new Header[headers.size()]), null, responseHandler);
     }
@@ -724,7 +721,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
 
     }
 
-    public static interface CacheListener {
+    public interface CacheListener {
         void onFullyCached(File cacheContent);
     }
 }

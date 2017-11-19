@@ -67,6 +67,8 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
         int screenWidth = point.x;
         int screenHeight = point.y;
         if (screenHeight < screenWidth) {
+            //Assume portrait mode
+            //TODO is this right?
             screenHeight = point.x;
             screenWidth = point.y;
         }
@@ -138,10 +140,10 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
             if (m.matches()) {
                 //TODO why must we do something special for the privacy plugin?
                 // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
-                String mediaFile = originalResourceUrl.replaceFirst("^.*(\\/upload\\/.*)", "$1");
+                String mediaFile = originalResourceUrl.replaceFirst("^.*(/upload/.*)", "$1");
                 thumbnail = derivatives.getJSONObject("thumb").getString("url");
-                if (thumbnail.matches(".*piwigo_privacy\\/get\\.php\\?.*")) {
-                    originalResourceUrl = thumbnail.replaceFirst("(^.*file\\=)([^&]*)(.*)", "$1." + mediaFile + "$3");
+                if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
+                    originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
                 }
                 item = new VideoResourceItem(id, name, description, dateLastAltered, thumbnail);
                 ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", originalResourceUrl, originalResourceUrlWidth, originalResourceUrlHeight);

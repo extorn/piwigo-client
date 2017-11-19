@@ -11,7 +11,6 @@ import com.loopj.android.http.PersistentCookieStore;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -19,24 +18,17 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.X509KeyManager;
 
 import cz.msebera.android.httpclient.auth.AuthScope;
-import cz.msebera.android.httpclient.conn.ssl.PrivateKeyDetails;
-import cz.msebera.android.httpclient.conn.ssl.PrivateKeyStrategy;
 import cz.msebera.android.httpclient.conn.ssl.SSLConnectionSocketFactory;
 import cz.msebera.android.httpclient.conn.ssl.SSLContextBuilder;
 import cz.msebera.android.httpclient.conn.ssl.TrustStrategy;
 import cz.msebera.android.httpclient.conn.ssl.X509HostnameVerifier;
-import cz.msebera.android.httpclient.impl.auth.BasicScheme;
 import cz.msebera.android.httpclient.util.TextUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.video.CacheUtils;
@@ -210,7 +202,7 @@ public class HttpClientFactory {
     }
 
     private int extractPort(String serverAddress) {
-        Pattern p = Pattern.compile("http[s]{0,1}://[^:]*:(\\d*).*");
+        Pattern p = Pattern.compile("http[s]?://[^:]*:(\\d*).*");
         Matcher m = p.matcher(serverAddress);
         if(m.matches()) {
             String portStr = m.group(1);
@@ -262,7 +254,7 @@ public class HttpClientFactory {
         KeyStore trustedCAKeystore = null; // use the system keystore.
         if(prefs.getBoolean(context.getString(R.string.preference_server_use_custom_trusted_ca_certs_key), context.getResources().getBoolean(R.bool.preference_server_use_custom_trusted_ca_certs_default))) {
             trustedCAKeystore = X509Utils.loadTrustedCaKeystore(context);
-            Set<String> preNotifiedCerts = new HashSet<String>(prefs.getStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>()));
+            Set<String> preNotifiedCerts = new HashSet<>(prefs.getStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>()));
             trustStrategy = new UntrustedCaCertificateInterceptingTrustStrategy(trustedCAKeystore, preNotifiedCerts);
         }
         KeyStore clientKeystore = null;

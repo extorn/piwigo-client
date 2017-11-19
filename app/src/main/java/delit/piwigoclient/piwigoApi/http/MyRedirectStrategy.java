@@ -1,7 +1,6 @@
 package delit.piwigoclient.piwigoApi.http;
 
 
-import cz.msebera.android.httpclient.impl.client.DefaultRedirectStrategy;
 import cz.msebera.android.httpclient.impl.client.LaxRedirectStrategy;
 
 /**

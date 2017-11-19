@@ -46,9 +46,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
     private boolean multiSelectEnabled;
     private int actionId;
     private HashSet<Long> currentSelection;
-    private CustomImageButton addListItemButton;
     private boolean editingEnabled;
-    private Button cancelChangesButton;
     private Button toggleAllSelectionButton;
     private boolean selectToggle;
 
@@ -127,7 +125,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
 
         View view = inflater.inflate(R.layout.layout_fullsize_list, container, false);
 
-        AdView adView = (AdView)view.findViewById(R.id.list_adView);
+        AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
@@ -136,12 +134,12 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
         }
 
 
-        TextView headingField = (TextView) view.findViewById(R.id.heading);
+        TextView headingField = view.findViewById(R.id.heading);
         setPageHeading(headingField);
 
-        list = (ListView) view.findViewById(R.id.list);
+        list = view.findViewById(R.id.list);
 
-        addListItemButton = (CustomImageButton)view.findViewById(R.id.list_action_add_item_button);
+        CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(View.GONE);
 //        addListItemButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -149,7 +147,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
 //                addAlbum();
 //            }
 //        });
-        cancelChangesButton = (Button)view.findViewById(R.id.list_action_cancel_button);
+        Button cancelChangesButton = view.findViewById(R.id.list_action_cancel_button);
         cancelChangesButton.setVisibility(View.VISIBLE);
         cancelChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,7 +156,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
             }
         });
 
-        toggleAllSelectionButton = (Button)view.findViewById(R.id.list_action_toggle_all_button);
+        toggleAllSelectionButton = view.findViewById(R.id.list_action_toggle_all_button);
         toggleAllSelectionButton.setVisibility(multiSelectEnabled?View.VISIBLE:View.GONE);
         toggleAllSelectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,7 +165,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
             }
         });
 
-        saveChangesButton = (Button)view.findViewById(R.id.list_action_save_button);
+        saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.VISIBLE);
         saveChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,7 +174,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
             }
         });
 
-        reloadListButton = (FloatingActionButton)view.findViewById(R.id.list_retryAction_actionButton);
+        reloadListButton = view.findViewById(R.id.list_retryAction_actionButton);
         reloadListButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

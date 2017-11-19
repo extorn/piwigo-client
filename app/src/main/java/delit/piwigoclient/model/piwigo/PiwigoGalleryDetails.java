@@ -24,7 +24,7 @@ public class PiwigoGalleryDetails implements Serializable {
 
     public PiwigoGalleryDetails(CategoryItemStub parentGallery, Long galleryId, String galleryName, String galleryDescription, boolean userCommentsAllowed, boolean isPrivate) {
         this.parentGallery = parentGallery;
-        parentageChain = new ArrayList<Long>(parentGallery.getParentageChain());
+        parentageChain = new ArrayList<>(parentGallery.getParentageChain());
         parentageChain.add(parentGallery.getId());
         this.galleryName = galleryName;
         this.galleryId = galleryId;

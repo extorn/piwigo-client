@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;

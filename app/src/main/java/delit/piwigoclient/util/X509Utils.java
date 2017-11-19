@@ -243,10 +243,10 @@ public class X509Utils {
         MessageDigest md = MessageDigest.getInstance("SHA1");
         byte[] publicKey = md.digest(x509Certificate.getPublicKey().getEncoded());
 
-        StringBuffer hexString = new StringBuffer();
-        for (int i=0;i<publicKey.length;i++) {
-            String appendString = Integer.toHexString(0xFF & publicKey[i]);
-            if(appendString.length()==1) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte aPublicKey : publicKey) {
+            String appendString = Integer.toHexString(0xFF & aPublicKey);
+            if (appendString.length() == 1) {
                 hexString.append("0");
             }
             hexString.append(appendString);
@@ -257,7 +257,7 @@ public class X509Utils {
     }
 
     public static HashSet<X509Certificate> loadCertificatesFromKeystore(KeyStore keystore) {
-        HashSet<X509Certificate> certs = new HashSet<X509Certificate>();
+        HashSet<X509Certificate> certs = new HashSet<>();
         try {
             Enumeration<String> aliases = keystore.aliases();
             while (aliases.hasMoreElements()) {
@@ -271,7 +271,7 @@ public class X509Utils {
     }
 
     public static Set<String> listAliasesInStore(KeyStore keystore) {
-        Set<String> aliases = new HashSet<String>();
+        Set<String> aliases = new HashSet<>();
         try {
             Enumeration<String> aliasesEnum = keystore.aliases();
             while (aliasesEnum.hasMoreElements()) {
@@ -363,7 +363,7 @@ public class X509Utils {
             char[] blankKey = new char[0];
             while (e.hasMoreElements()) {
                 String alias = (String) e.nextElement();
-                Certificate[] certChain = (Certificate[]) keystore.getCertificateChain(alias);
+                Certificate[] certChain = keystore.getCertificateChain(alias);
                 Key key = keystore.getKey(alias, blankKey);
                 if(key == null) {
                     //TODO check this is the right cert

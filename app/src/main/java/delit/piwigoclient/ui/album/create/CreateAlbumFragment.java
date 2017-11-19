@@ -214,7 +214,7 @@ public class CreateAlbumFragment extends MyFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_new_gallery, container, false);
 
-        AdView adView = (AdView)view.findViewById(R.id.createGallery_adView);
+        AdView adView = view.findViewById(R.id.createGallery_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
@@ -222,10 +222,10 @@ public class CreateAlbumFragment extends MyFragment {
             adView.setVisibility(View.GONE);
         }
 
-        galleryNameEditField = (TextView) view.findViewById(R.id.createGallery_galleryName);
-        galleryDescriptionEditField = (TextView) view.findViewById(R.id.createGallery_galleryDescription);
-        galleryCommentsAllowedSwitchField = (Switch) view.findViewById(R.id.createGallery_galleryCommentsAllowed);
-        galleryIsPrivateSwitchField = (Switch) view.findViewById(R.id.createGallery_galleryIsPrivate);
+        galleryNameEditField = view.findViewById(R.id.createGallery_galleryName);
+        galleryDescriptionEditField = view.findViewById(R.id.createGallery_galleryDescription);
+        galleryCommentsAllowedSwitchField = view.findViewById(R.id.createGallery_galleryCommentsAllowed);
+        galleryIsPrivateSwitchField = view.findViewById(R.id.createGallery_galleryIsPrivate);
         privateGalleryConfigView = view.findViewById(R.id.createGallery_privatePermissions);
         galleryIsPrivateSwitchField.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -234,7 +234,7 @@ public class CreateAlbumFragment extends MyFragment {
             }
         });
         ((TextView) view.findViewById(R.id.createGallery_parentGallery)).setText(parentGallery.getName());
-        allowedGroupsTextView = (AppCompatTextView) view.findViewById(R.id.createGallery_permissions_allowedGroups);
+        allowedGroupsTextView = view.findViewById(R.id.createGallery_permissions_allowedGroups);
         allowedGroupsTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,13 +253,13 @@ public class CreateAlbumFragment extends MyFragment {
             }
         });
         setAllowedGroupsText();
-        allowedUsernamesTextView = (AppCompatTextView) view.findViewById(R.id.createGallery_permissions_allowedUsers);
+        allowedUsernamesTextView = view.findViewById(R.id.createGallery_permissions_allowedUsers);
         allowedUsernamesTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(selectedGroups == null || selectedGroups.size() == 0 || userIdsInSelectedGroups != null) {
                     if(selectedGroups == null || selectedGroups.size() == 0) {
-                        userIdsInSelectedGroups = new HashSet<Long>(0);
+                        userIdsInSelectedGroups = new HashSet<>(0);
                     }
 
                     HashSet<Long> preselectedUsernames = buildPreselectedUserIds(selectedUsernames);
@@ -269,7 +269,7 @@ public class CreateAlbumFragment extends MyFragment {
                     EventBus.getDefault().post(usernameSelectionNeededEvent);
 
                 } else {
-                    ArrayList<Long> selectedGroupIds = new ArrayList<Long>(selectedGroups.size());
+                    ArrayList<Long> selectedGroupIds = new ArrayList<>(selectedGroups.size());
                     for(Group g : selectedGroups) {
                         selectedGroupIds.add(g.getId());
                     }
@@ -278,7 +278,7 @@ public class CreateAlbumFragment extends MyFragment {
             }
         });
         setAllowedUsernamesText();
-        Button createGalleryButton = (Button) view.findViewById(R.id.createGallery_createGalleryButton);
+        Button createGalleryButton = view.findViewById(R.id.createGallery_createGalleryButton);
         createGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

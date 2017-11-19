@@ -33,7 +33,7 @@ class SimpleMultipartEntity implements HttpEntity {
     private final String boundary;
     private final byte[] boundaryLine;
     private final byte[] boundaryEnd;
-    private final List<FilePart> fileParts = new ArrayList<FilePart>();
+    private final List<FilePart> fileParts = new ArrayList<>();
     // The buffer we use for building the message excluding files and the last
     // boundary
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
