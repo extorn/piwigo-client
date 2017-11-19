@@ -293,7 +293,7 @@ public class PiwigoUploadService extends IntentService {
                             fileBytesUploaded += bytesOfData;
                             final int progress = Math.round(((float) fileBytesUploaded) / totalBytesInFile * 100);
                             long chunkSuccessMessageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
-                            PiwigoResponseBufferingHandler.PiwigoUploadFileChunkSuccessResponse r1 = new PiwigoResponseBufferingHandler.PiwigoUploadFileChunkSuccessResponse(chunkSuccessMessageId, currentUploadFileFragment.getOriginalFile(), progress);
+                            PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse r1 = new PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse(chunkSuccessMessageId, currentUploadFileFragment.getOriginalFile(), progress);
                             PiwigoResponseBufferingHandler.getDefault().preRegisterResponseHandlerForNewMessage(thisUploadJob.getJobId(), chunkSuccessMessageId);
                             PiwigoResponseBufferingHandler.getDefault().processResponse(r1);
                         }

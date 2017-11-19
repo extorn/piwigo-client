@@ -572,7 +572,7 @@ public abstract class UIHelper<T> {
                     preNotifiedCerts.addAll(event.getUntrustedCerts().keySet());
                     prefs.edit().putStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
                     long messageId = PiwigoAccessService.startActionCleanupHttpConnections(context);
-                    PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(new BasicPiwigoResponseListener() {
+                    PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
                         @Override
                         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
                             showOrQueueDialogMessage(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));

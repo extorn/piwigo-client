@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -78,7 +79,9 @@ public class PiwigoResponseBufferingHandler {
                 if(r != null) {
                     if(handler.canHandlePiwigoResponseNow(r)) {
                         handler.handlePiwigoResponse(r);
-                        responsesMappingsToRemove.add(responseMessageId);
+                        if(r.isEndResponse()) {
+                            responsesMappingsToRemove.add(responseMessageId);
+                        }
                     } else {
                         // add it back to the queue.
                         responses.put(r.getMessageId(), r);
@@ -197,10 +200,6 @@ public class PiwigoResponseBufferingHandler {
     public void replaceHandler(BasicPiwigoResponseListener newHandler) {
         handlers.put(newHandler.getHandlerId(), newHandler);
     }
-
-    public void registerResponseHandler(BasicPiwigoResponseListener basicPiwigoResponseListener) {
-    }
-
 
     public interface PiwigoResponse extends Response {
         String getPiwigoMethod();
@@ -830,14 +829,14 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoFindExistingImagesResponse extends BasePiwigoResponse {
 
-        private ArrayList<String> existingImages;
+        private HashMap<String, Long> existingImages;
 
-        public PiwigoFindExistingImagesResponse(long messageId, String piwigoMethod, ArrayList<String> existingImages) {
+        public PiwigoFindExistingImagesResponse(long messageId, String piwigoMethod, HashMap<String, Long> existingImages) {
             super(messageId, piwigoMethod, true);
             this.existingImages = existingImages;
         }
 
-        public ArrayList<String> getExistingImages() {
+        public HashMap<String, Long> getExistingImages() {
             return existingImages;
         }
     }
@@ -1132,12 +1131,12 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoUploadFileChunkSuccessResponse extends BaseResponse {
+    public static class PiwigoUploadProgressUpdateResponse extends BaseResponse {
 
         private final int progress;
         private final File fileForUpload;
 
-        public PiwigoUploadFileChunkSuccessResponse(long jobId, File fileForUpload, int progress) {
+        public PiwigoUploadProgressUpdateResponse(long jobId, File fileForUpload, int progress) {
             super(jobId, true);
             this.progress = progress;
             this.fileForUpload = fileForUpload;

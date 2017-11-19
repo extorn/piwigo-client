@@ -156,11 +156,33 @@ public class UploadJob implements Serializable {
     }
 
     public synchronized int getUploadProgress(File f) {
-        PartialUploadData progressData = filePartialUploadProgress.get(f);
-        if(progressData == null) {
-            return 0;
+
+//        private static final Integer CANCELLED = -1;
+//        private static final Integer UPLOADING = 0;
+//        private static final Integer UPLOADED = 1;
+//        private static final Integer VERIFIED = 2;
+//        private static final Integer CONFIGURED = 3;
+//        private static final Integer REQUIRES_DELETE = 4;
+//        private static final Integer DELETED = 5;
+        Integer status = fileUploadStatus.get(f);
+        int progress = 0;
+        if(status == UPLOADING) {
+
+            PartialUploadData progressData = filePartialUploadProgress.get(f);
+            if (progressData == null) {
+                progress = 0;
+            }
+            progress = Math.round((float) (((double) progressData.getBytesUploaded()) / f.length() * 90));
         }
-        final int progress = Math.round((float)(((double) progressData.getBytesUploaded()) / f.length() * 100));
+        if(status >= UPLOADED) {
+            progress = 90;
+        }
+        if(status >= VERIFIED) {
+            progress+=5;
+        }
+        if(status >= CONFIGURED) {
+            progress += 5;
+        }
         return progress;
     }
 

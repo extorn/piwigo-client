@@ -21,6 +21,7 @@ import java.io.ObjectOutputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageFindExistingImagesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.ImageCheckFilesResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.NewImageUploadFileChunkResponseHandler;
@@ -96,7 +98,7 @@ public class NewPiwigoUploadService extends IntentService {
             }
         }
         UploadJob job = loadStateFromDisk(context);
-        if(job.getJobId() != jobId) {
+        if(job != null && job.getJobId() != jobId) {
             throw new RuntimeException("Job exists on disk, but it doesn't match that expected by the app");
         }
         return job;
@@ -339,26 +341,46 @@ public class NewPiwigoUploadService extends IntentService {
     }
 
     private void processFindPreexistingImagesResponse(UploadJob thisUploadJob, PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse response) {
-        ArrayList<String> preexistingItemChecksums = response.getExistingImages();
+        HashMap<String, Long> preexistingItemsMap = response.getExistingImages();
         ArrayList<File> filesExistingOnServerAlready = new ArrayList<>();
+        HashMap<File, Long> resourcesToRetrieve = new HashMap<>();
         for (Map.Entry<File, String> fileCheckSumEntry : thisUploadJob.getFileChecksums().entrySet()) {
-            if (preexistingItemChecksums.contains(fileCheckSumEntry.getValue())) {
+            if (preexistingItemsMap.containsKey(fileCheckSumEntry.getValue())) {
                 File fileFoundOnServer = fileCheckSumEntry.getKey();
+                ResourceItem resourceItem = thisUploadJob.getUploadedFileResource(fileFoundOnServer);
+                if(resourceItem == null) {
+                    resourcesToRetrieve.put(fileFoundOnServer, preexistingItemsMap.get(fileCheckSumEntry.getValue()));
+                }
                 if(thisUploadJob.needsVerification(fileFoundOnServer) || thisUploadJob.isUploadingData(fileFoundOnServer)) {
                     thisUploadJob.markFileAsVerified(fileFoundOnServer);
                 } else if(thisUploadJob.needsConfiguration(fileFoundOnServer)) {
                     // we know this exists, but it isn't configured yet.
                     continue;
                 } else {
+                    // mark this file as needing configuration (probably uploaded by ?someone else? or a different upload mechanism anyway)
+                    thisUploadJob.markFileAsVerified(fileFoundOnServer);
                     filesExistingOnServerAlready.add(fileFoundOnServer);
                 }
             }
         }
 
         if (filesExistingOnServerAlready.size() > 0) {
-
-            thisUploadJob.getFilesForUpload().removeAll(filesExistingOnServerAlready);
+//            thisUploadJob.getFilesForUpload().removeAll(filesExistingOnServerAlready);
             postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadFileFilesExistAlreadyResponse(getNextMessageId(), filesExistingOnServerAlready));
+        }
+
+        for(Map.Entry<File,Long> entry : resourcesToRetrieve.entrySet()) {
+            ImageGetInfoResponseHandler handler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null));
+            int allowedAttempts = 2;
+            while (!handler.isSuccess() && allowedAttempts > 0) {
+                allowedAttempts--;
+                // this is blocking
+                callPiwigoServer(handler);
+                if (handler.isSuccess()) {
+                    PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse rsp =(PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse)handler.getResponse();
+                    thisUploadJob.addFileUploaded(entry.getKey(), rsp.getResource());
+                }
+            }
         }
     }
 
@@ -416,19 +438,19 @@ public class NewPiwigoUploadService extends IntentService {
         if (thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
 
             ResourceItem uploadedResource = thisUploadJob.getUploadedFileResource(fileForUpload);
+            if(uploadedResource != null) {
+                PiwigoResponseBufferingHandler.BaseResponse response = updateImageInfoAndPermissions(thisUploadJob, fileForUpload, uploadedResource);
 
-            PiwigoResponseBufferingHandler.BaseResponse response = updateImageInfoAndPermissions(thisUploadJob, fileForUpload, uploadedResource);
+                if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
 
-            if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
+                    // notify the listener of the final error we received from the server
+                    postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse(getNextMessageId(), fileForUpload, response));
 
-                // notify the listener of the final error we received from the server
-                postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse(getNextMessageId(), fileForUpload, response));
-
-            } else {
-                thisUploadJob.markFileAsConfigured(fileForUpload);
-                postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumSuccessResponse(getNextMessageId(), fileForUpload));
+                } else {
+                    thisUploadJob.markFileAsConfigured(fileForUpload);
+                    postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumSuccessResponse(getNextMessageId(), fileForUpload));
+                }
             }
-
         } else {
             thisUploadJob.markFileAsNeedsDelete(fileForUpload);
         }
@@ -615,7 +637,7 @@ public class NewPiwigoUploadService extends IntentService {
                             fileBytesUploaded += bytesOfDataInChunk;
                             thisUploadJob.markFileAsPartiallyUploaded(fileForUpload, uploadToFilename, fileBytesUploaded, chunkId);
                             saveStateToDisk(thisUploadJob);
-                            postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadFileChunkSuccessResponse(getNextMessageId(), currentUploadFileChunk.getOriginalFile(), thisUploadJob.getUploadProgress(currentUploadFileChunk.getOriginalFile())));
+                            postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse(getNextMessageId(), currentUploadFileChunk.getOriginalFile(), thisUploadJob.getUploadProgress(currentUploadFileChunk.getOriginalFile())));
                         } else {
                             bytesOfDataInChunk = -1; // don't upload the rest of the chunks.
                         }

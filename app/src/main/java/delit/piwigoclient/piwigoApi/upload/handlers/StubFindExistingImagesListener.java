@@ -2,6 +2,7 @@ package delit.piwigoclient.piwigoApi.upload.handlers;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +31,10 @@ public class StubFindExistingImagesListener extends BaseStubPiwigoResponseListen
 
     @Override
     protected void withSuccessResponse(PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse response) {
-        ArrayList<String> preexistingItemChecksums = response.getExistingImages();
+        HashMap<String, Long> preexistingItemChecksums = response.getExistingImages();
         filesExistingOnServerAlready = new ArrayList<>();
         for (Map.Entry<File, String> fileCheckSumEntry : thisUploadJob.getFileChecksums().entrySet()) {
-            if (preexistingItemChecksums.contains(fileCheckSumEntry.getValue())) {
+            if (preexistingItemChecksums.containsKey(fileCheckSumEntry.getValue())) {
                 filesExistingOnServerAlready.add(fileCheckSumEntry.getKey());
             }
         }

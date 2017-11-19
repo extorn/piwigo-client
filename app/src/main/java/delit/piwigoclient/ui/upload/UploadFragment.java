@@ -637,8 +637,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                 onUploadComplete(context, ((PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse)response).getJob());
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse) {
                 onPrepareUploadFailed(context, (PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileChunkSuccessResponse) {
-                onChunkUploaded(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileChunkSuccessResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) {
+                onChunkUploaded(context, (PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumSuccessResponse) {
                 onFileUploadComplete(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumSuccessResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse) {
@@ -738,7 +738,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
     }
 
-    public void onChunkUploaded(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileChunkSuccessResponse response) {
+    public void onChunkUploaded(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
         if(isAdded()) {
             FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
             adapter.updateProgressBar(response.getFileForUpload(), response.getProgress());
@@ -773,9 +773,15 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
     public void onFilesSelectedForUploadAlreadyExistOnServer(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileFilesExistAlreadyResponse response) {
         if(isAdded()) {
-            FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
-            for (File existingFile : response.getExistingFiles()) {
-                adapter.remove(existingFile);
+            UploadJob uploadJob = getActiveJob(context);
+
+            if(uploadJob != null) {
+                FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
+                for (File existingFile : response.getExistingFiles()) {
+                    int progress = uploadJob.getUploadProgress(existingFile);
+                    adapter.updateProgressBar(existingFile, progress);
+//                    adapter.remove(existingFile);
+                }
             }
         }
         String message = String.format(context.getString(R.string.alert_items_for_upload_already_exist_message_pattern), response.getExistingFiles().size());

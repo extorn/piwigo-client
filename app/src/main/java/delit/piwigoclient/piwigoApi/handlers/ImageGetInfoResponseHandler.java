@@ -34,6 +34,7 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
     protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
         JSONObject result = rsp.getJSONObject("result");
         int privacyLevel = result.getInt("level");
+        resourceItem.setName(result.getString("name"));
         resourceItem.setPrivacyLevel(privacyLevel);
         JSONObject rates = result.getJSONObject("rates");
         if (!rates.isNull("score")) {

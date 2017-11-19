@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -44,7 +45,7 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
     @Override
     protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
 
-        final ArrayList<String> preexistingItems = new ArrayList<>();
+        final HashMap<String, Long> preexistingItems = new HashMap<>();
 
         Object result = rsp.get("result");
         if(result instanceof JSONObject) {
@@ -52,9 +53,8 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
             Iterator<String> resultsIter = results.keys();
             while (resultsIter.hasNext()) {
                 String key = resultsIter.next();
-                if (!"null".equals(results.getString(key))) { // item is on the server
-                    preexistingItems.add(key);
-                }
+                Long imageId = results.getLong(key);
+                preexistingItems.put(key, imageId);
             }
         }
         PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse r = new PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse(getMessageId(), getPiwigoMethod(), preexistingItems);

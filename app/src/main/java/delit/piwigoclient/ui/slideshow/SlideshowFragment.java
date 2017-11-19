@@ -270,7 +270,9 @@ public class SlideshowFragment extends MyFragment {
             if(managedFragments.size() > position) {
                 // if this slideshow item still exists (not been deleted by user)
                 SlideshowItemFragment selectedPage = (SlideshowItemFragment)managedFragments.get(position);
-                selectedPage.onPageDeselected();
+                if(selectedPage != null) {
+                    selectedPage.onPageDeselected();
+                }
             }
         }
 
