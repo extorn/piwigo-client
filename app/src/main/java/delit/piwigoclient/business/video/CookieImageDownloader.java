@@ -53,9 +53,9 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
     }
 
     @Override
-    public Response load(Uri uri, boolean localCacheOnly) throws IOException {
+    public Response load(Uri uri, int networkPolicy) throws IOException {
         try {
-            Response r = super.load(uri, localCacheOnly);
+            Response r = super.load(uri, networkPolicy);
             if (r.getContentLength() == -1) {
                 if (!lastConn.getURL().toString().equals(uri.toString())) {
 
@@ -70,7 +70,7 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
                         int httpStatusCode = followRedirectAndLoginToServer(lastConn.getURL());
                         if (httpStatusCode == 200) {
                             // get the resource again directly - not this method to avoid infinite recursion
-                            return super.load(uri, localCacheOnly);
+                            return super.load(uri, networkPolicy);
                         }
                     } else {
                         return r;

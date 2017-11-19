@@ -74,7 +74,7 @@ public class PicassoFactory {
         }
 
         @Override
-        public Result load(Request data) throws IOException
+        public Result load(Request data, int networkPolicy) throws IOException
         {
             Bitmap bm = ThumbnailUtils.createVideoThumbnail(data.uri.getPath(), MediaStore.Images.Thumbnails.MINI_KIND);
             return new Result(bm, Picasso.LoadedFrom.DISK);
@@ -92,7 +92,7 @@ public class PicassoFactory {
             return data.resourceId != 0 || "android.resource".equals(data.uri.getScheme());
         }
 
-        public Result load(Request data) throws IOException {
+        public Result load(Request data, int networkPolicy) throws IOException {
             Drawable d = ContextCompat.getDrawable(context, data.resourceId);
             return new Result(drawableToBitmap(d), Picasso.LoadedFrom.DISK);
         }

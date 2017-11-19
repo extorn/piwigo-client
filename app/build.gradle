@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 
+
 android {
+
+    flavorDimensions "tier"
+
     signingConfigs {
         config {
             keyAlias 'piwigo-client-upload-key'
@@ -10,7 +14,7 @@ android {
         }
     }
     compileSdkVersion 27
-    buildToolsVersion "25.0.3"
+    buildToolsVersion '27.0.1'
     defaultConfig {
         applicationId "delit.piwigoclient"
         minSdkVersion 17
@@ -46,15 +50,23 @@ android {
             // this boolean can be accessed in java classes by using BuildConfig class
             // and now you can identify if your app is the paid version or not
             buildConfigField "boolean", "PAID_VERSION", "false"
+            // Assigns this product flavor to the "tier" flavor dimension. Specifying
+            // this property is optional if you are using only one dimension.
+            dimension "tier"
         }
         paid {
             applicationId "delit.piwigoclient.paid"
             buildConfigField "boolean", "PAID_VERSION", "true"
+            // Assigns this product flavor to the "tier" flavor dimension. Specifying
+            // this property is optional if you are using only one dimension.
+            dimension "tier"
         }
     }
 }
 
 dependencies {
+    compile project(path: ':androidMultiplefileSelectorDialogmaster')
+    compile project(path: ':google-licencing-library')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -62,22 +74,28 @@ dependencies {
     // third party libraries
 //    compile 'com.squareup.okhttp:okhttp:1.6.0'
 //    compile 'com.squareup.okhttp:okhttp-urlconnection:1.6.0'
-    compile 'com.squareup.picasso:picasso:2.4.0'
-    compile 'org.greenrobot:eventbus:3.0.0'
+    //compile 'com.squareup.picasso:picasso:2.4.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'org.greenrobot:eventbus:3.1.1'
     compile 'com.github.machinarius:preferencefragment:0.1.1'
     compile 'com.github.hotchemi:android-rate:1.0.1'
     compile 'com.loopj.android:android-async-http:1.4.9'
-    compile 'com.squareup.picasso:picasso:2.4.0'
-    compile 'com.google.android.exoplayer:exoplayer:r2.4.0'
+    compile 'com.google.android.exoplayer:exoplayer:r2.5.4'
     // Core libraries
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support:support-vector-drawable:25.3.1'
-    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:support-v4:27.0.1'
+    //compile 'com.android.support:preference-v7:27.0.1'
+    //compile 'com.android.support:support-compat:27.0.1'
+    //compile 'com.android.support:support-annotations:27.0.1'
+    //compile 'com.android.support:support-vector-drawable:27.0.1'
+    compile 'com.android.support:exifinterface:27.0.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
-    compile 'com.google.android.gms:play-services-ads:11.0.4'
-    compile project(path: ':androidMultiplefileSelectorDialogmaster')
-    compile project(path: ':google-licencing-library')
+    compile 'com.android.support:recyclerview-v7:27.0.1'
+    compile 'com.android.support:design:27.0.1'
+    compile 'com.android.support:appcompat-v7:27.0.1'
+    // You can't use preference-v14 because it collides with support-v4 preferences component!
+    //compile 'com.android.support:preference-v14:27.0.1'
+
+    compile 'com.google.android.gms:play-services-ads:11.6.0'
+
     testCompile 'junit:junit:4.12'
 }

@@ -29,9 +29,8 @@ public class CustomImageDownloader implements Downloader {
     }
 
     @Override
-    public Response load(Uri uri, boolean loadFromCache) throws IOException {
+    public Response load(Uri uri, int networkPolicy) throws IOException {
 
-        //TODO enable caching of images.
         String uriToCall = uri.toString();
         ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(uriToCall);
         String piwigoServerUrl = prefs.getString(context.getString(R.string.preference_piwigo_server_address_key), null);
@@ -40,7 +39,8 @@ public class CustomImageDownloader implements Downloader {
         handler.runCall();
 
         if(!handler.isSuccess()) {
-            throw new ResponseException("Error downloading " + uri.toString() + " : " + handler.getError());
+            PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse)handler.getResponse();
+            throw new ResponseException("Error downloading " + uri.toString() + " : " + handler.getError(), networkPolicy, errorResponse.getStatusCode());
         }
         byte[] imageData = ((PiwigoResponseBufferingHandler.UrlSuccessResponse)handler.getResponse()).getData();
         return new Downloader.Response(new ByteArrayInputStream(imageData), false, imageData.length);
