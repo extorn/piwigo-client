@@ -638,9 +638,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse) {
                 onPrepareUploadFailed(context, (PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) {
-                onChunkUploaded(context, (PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumSuccessResponse) {
-                onFileUploadComplete(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumSuccessResponse) response);
+                onFileUploadProgressUpdate(context, (PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse) {
                 onLocalFileError(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileFilesExistAlreadyResponse) {
@@ -738,10 +736,13 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
     }
 
-    public void onChunkUploaded(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
+    public void onFileUploadProgressUpdate(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
         if(isAdded()) {
             FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
             adapter.updateProgressBar(response.getFileForUpload(), response.getProgress());
+        }
+        if(response.getProgress() == 100) {
+            onFileUploadComplete(context, response);
         }
     }
 
@@ -755,7 +756,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         return uploadJob;
     }
 
-    public void onFileUploadComplete(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumSuccessResponse response) {
+    public void onFileUploadComplete(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
 
         UploadJob uploadJob = getActiveJob(context);
 

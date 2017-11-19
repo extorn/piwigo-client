@@ -52,8 +52,10 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
             Iterator<String> resultsIter = results.keys();
             while (resultsIter.hasNext()) {
                 String key = resultsIter.next();
-                Long imageId = results.getLong(key);
-                preexistingItems.put(key, imageId);
+                if(!results.isNull(key)) {
+                    Long imageId = results.getLong(key);
+                    preexistingItems.put(key, imageId);
+                }
             }
         }
         PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse r = new PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse(getMessageId(), getPiwigoMethod(), preexistingItems);

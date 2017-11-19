@@ -1228,25 +1228,6 @@ public class PiwigoResponseBufferingHandler {
     }
 
 
-    public static class PiwigoUploadFileAddToAlbumSuccessResponse extends BaseResponse {
-
-        private final File fileForUpload;
-
-        public PiwigoUploadFileAddToAlbumSuccessResponse(long jobId, File fileForUpload) {
-            super(jobId, true);
-            this.fileForUpload = fileForUpload;
-        }
-
-        public File getFileForUpload() {
-            return fileForUpload;
-        }
-
-        public long getJobId() {
-            return getMessageId();
-        }
-    }
-
-
     public static class PiwigoUploadFileFilesExistAlreadyResponse extends BaseResponse {
 
         private final ArrayList<File> existingFiles;

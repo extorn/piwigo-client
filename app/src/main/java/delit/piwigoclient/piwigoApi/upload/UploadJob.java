@@ -216,12 +216,22 @@ public class UploadJob implements Serializable {
     }
 
     public synchronized void addFileUploaded(File fileForUpload, ResourceItem itemOnServer) {
-        filePartialUploadProgress.get(fileForUpload).setUploadedItem(itemOnServer);
+        PartialUploadData uploadData = filePartialUploadProgress.get(fileForUpload);
+        if(uploadData == null) {
+            filePartialUploadProgress.put(fileForUpload, new PartialUploadData(itemOnServer));
+        } else {
+            uploadData.setUploadedItem(itemOnServer);
+        }
         fileUploadStatus.put(fileForUpload, UPLOADED);
     }
 
     public synchronized ResourceItem getUploadedFileResource(File fileUploaded) {
-        return filePartialUploadProgress.get(fileUploaded).getUploadedItem();
+        PartialUploadData partialUploadData = filePartialUploadProgress.get(fileUploaded);
+        if(partialUploadData == null) {
+            // this file has been uploaded before by a different job.
+            return null;
+        }
+        return partialUploadData.getUploadedItem();
     }
 
     public boolean hasJobCompletedAllActionsSuccessfully() {
@@ -295,6 +305,11 @@ public class UploadJob implements Serializable {
         private String uploadName;
         private String fileChecksum;
         private ResourceItem uploadedItem;
+
+        public PartialUploadData(ResourceItem uploadedItem) {
+            this.uploadName = uploadedItem.getName();
+            this.uploadedItem = uploadedItem;
+        }
 
         public PartialUploadData(String uploadName, String fileChecksum, long bytesUploaded, long countChunksUploaded) {
             this.fileChecksum = fileChecksum;

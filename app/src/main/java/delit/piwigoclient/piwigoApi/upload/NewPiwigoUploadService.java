@@ -447,7 +447,7 @@ public class NewPiwigoUploadService extends IntentService {
 
                 } else {
                     thisUploadJob.markFileAsConfigured(fileForUpload);
-                    postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumSuccessResponse(getNextMessageId(), fileForUpload));
+                    postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse(getNextMessageId(), fileForUpload, thisUploadJob.getUploadProgress(fileForUpload)));
                 }
             }
         } else {
@@ -465,6 +465,7 @@ public class NewPiwigoUploadService extends IntentService {
                 notifyListenersOfCustomErrorUploadingFile(thisUploadJob, fileForUpload, errorMsg);
             } else if (verifiedUploadedFile) {
                 thisUploadJob.markFileAsVerified(fileForUpload);
+                postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse(getNextMessageId(), fileForUpload, thisUploadJob.getUploadProgress(fileForUpload)));
             }
         } else {
             thisUploadJob.markFileAsNeedsDelete(fileForUpload);
