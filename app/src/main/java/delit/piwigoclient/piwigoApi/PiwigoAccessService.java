@@ -567,7 +567,7 @@ public class PiwigoAccessService {
         }.start(messageId);
     }
 
-    public static long startActionDeleteGalleryItemsFromServer(final Set<Long> itemIds, Context context) {
+    public static long startActionDeleteGalleryItemsFromServer(final HashSet<Long> itemIds, Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 

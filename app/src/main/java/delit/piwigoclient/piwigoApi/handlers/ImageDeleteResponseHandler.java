@@ -3,6 +3,7 @@ package delit.piwigoclient.piwigoApi.handlers;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -14,9 +15,9 @@ public class ImageDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
     private static final String TAG = "DeleteImageRspHdlr";
 
     private long itemId = -1;
-    private Set<Long> itemIds;
+    private HashSet<Long> itemIds;
 
-    public ImageDeleteResponseHandler(Set<Long> itemIds) {
+    public ImageDeleteResponseHandler(HashSet<Long> itemIds) {
         super("pwg.images.delete", TAG);
         this.itemIds = itemIds;
     }
@@ -50,7 +51,7 @@ public class ImageDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
 
     @Override
     protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse r = new PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse(getMessageId(), getPiwigoMethod());
+        PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse r = new PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse(getMessageId(), getPiwigoMethod(), itemIds);
         storeResponse(r);
     }
 

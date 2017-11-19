@@ -587,7 +587,7 @@ public abstract class UIHelper<T> {
         showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, positiveButtonTextId, negativeButtonTextId, listener));
     }
 
-    public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener, int neutralButtonTextId) {
+    public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int neutralButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, layoutId, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
     }
 

@@ -256,7 +256,11 @@ public class ViewAlbumFragment extends MyFragment {
             movedResourceParentUpdateRequired = savedInstanceState.getBoolean(STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED);
             updateAlbumDetailsProgress = savedInstanceState.getInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS);
             usernameSelectionWantedNext = savedInstanceState.getBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT);
-            deleteActionData = (DeleteActionData) savedInstanceState.getSerializable(STATE_DELETE_ACTION_DATA);
+            if(deleteActionData != null && deleteActionData.isEmpty()) {
+                deleteActionData = null;
+            } else {
+                deleteActionData = (DeleteActionData) savedInstanceState.getSerializable(STATE_DELETE_ACTION_DATA);
+            }
         }
         if(galleryModel == null) {
             galleryIsDirty = true;
@@ -688,6 +692,31 @@ public class ViewAlbumFragment extends MyFragment {
             }
             return itemsWithoutLinkedAlbumData;
         }
+
+        public boolean removeProcessedResource(ResourceItem resource) {
+            selectedItemIds.remove(resource.getId());
+            selectedItems.remove(resource);
+            itemsUpdated.remove(resource.getId());
+            return selectedItemIds.size() == 0;
+        }
+
+        public boolean removeProcessedResources(HashSet<Long> deletedItemIds) {
+            for(Long deletedResourceId : deletedItemIds) {
+                selectedItemIds.remove(deletedResourceId);
+                itemsUpdated.remove(deletedResourceId);
+            }
+            for (Iterator<ResourceItem> it = selectedItems.iterator(); it.hasNext(); ) {
+                ResourceItem r = it.next();
+                if(deletedItemIds.contains(r.getId())) {
+                    it.remove();
+                }
+            }
+            return selectedItemIds.size() == 0;
+        }
+
+        public boolean isEmpty() {
+            return selectedItemIds.isEmpty();
+        }
     }
 
     private void onDeleteResources(final DeleteActionData deleteActionData) {
@@ -707,7 +736,7 @@ public class ViewAlbumFragment extends MyFragment {
         }
         if (sharedResources.size() > 0) {
             String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern, sharedResources.size());
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_unlink, R.string.button_delete, new UIHelper.QuestionResultListener() {
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new UIHelper.QuestionResultListener() {
                 @Override
                 public void onDismiss(AlertDialog dialog) {
 
@@ -738,8 +767,6 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     public void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
-        //TODO cleaning this variable up here is messy.
-        deleteActionData = null;
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
             @Override
@@ -1134,8 +1161,8 @@ public class ViewAlbumFragment extends MyFragment {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             synchronized (loadingMessageIds) {
 
-                if(response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse) {
-                    onResourcesDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse)response);
+                if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse) {
+                    onResourcesDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse) response);
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsResponse) {
                     onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsResponse) response);
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) {
@@ -1149,23 +1176,28 @@ public class ViewAlbumFragment extends MyFragment {
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateAlbumContentResponse) {
                     onAlbumContentAltered((PiwigoResponseBufferingHandler.PiwigoUpdateAlbumContentResponse) response);
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) {
-                    onResourceMoved((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse)response);
+                    if (deleteActionData != null && !deleteActionData.isEmpty()) {
+                        //currently mid delete of resources.
+                        onResourceUnlinked((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) response);
+                    } else {
+                        onResourceMoved((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) response);
+                    }
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse) {
-                    onThumbnailUpdated((PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse)response);
-                } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) {
-                    onUsernamesRetrievedForSelectedGroups((PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse)response);
-                } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse) {
-                    onAlbumStatusUpdated((PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse)response);
-                } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse) {
-                    onAlbumPermissionsAdded((PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse)response);
-                } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoRemoveAlbumPermissionsResponse) {
-                    onAlbumPermissionsRemoved((PiwigoResponseBufferingHandler.PiwigoRemoveAlbumPermissionsResponse)response);
-                } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse) {
-                    onResouceInfoRetrieved((PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse)response);
+                    onThumbnailUpdated((PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse) response);
+                } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) {
+                    onUsernamesRetrievedForSelectedGroups((PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) response);
+                } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse) {
+                    onAlbumStatusUpdated((PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse) response);
+                } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse) {
+                    onAlbumPermissionsAdded((PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse) response);
+                } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoRemoveAlbumPermissionsResponse) {
+                    onAlbumPermissionsRemoved((PiwigoResponseBufferingHandler.PiwigoRemoveAlbumPermissionsResponse) response);
+                } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse) {
+                    onResouceInfoRetrieved((PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse) response);
                 } else {
                     String failedCall = loadingMessageIds.get(response.getMessageId());
-                    if(failedCall == null) {
-                        if(editingItemDetails) {
+                    if (failedCall == null) {
+                        if (editingItemDetails) {
                             failedCall = "U";
                         } else {
                             failedCall = "P";
@@ -1184,11 +1216,14 @@ public class ViewAlbumFragment extends MyFragment {
         }
     }
 
+    private void onResourceUnlinked(PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse response) {
+        deleteActionData.removeProcessedResource(response.getResource());
+    }
+
     private void onResouceInfoRetrieved(PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse response) {
         this.deleteActionData.updateLinkedAlbums(response.getResource());
-        if(this.deleteActionData.isResourceInfoAvailable()) {
-            onDeleteResources(deleteActionData);
-        }
+        this.deleteActionData.isResourceInfoAvailable();
+        onDeleteResources(deleteActionData);
     }
 
 
@@ -1277,6 +1312,9 @@ public class ViewAlbumFragment extends MyFragment {
         viewAdapter.toggleItemSelection();
         // now update this album view to reflect the server content
         galleryIsDirty = true;
+        if(deleteActionData.removeProcessedResources(response.getDeletedItemIds())) {
+            deleteActionData = null;
+        }
         reloadAlbumContent();
         // Now ensure any parents are also updated when next shown
         for(Long itemParent : gallery.getParentageChain()) {

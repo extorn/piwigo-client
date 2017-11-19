@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -576,14 +577,22 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoDeleteImageResponse extends BasePiwigoResponse {
-        public PiwigoDeleteImageResponse(long messageId, String piwigoMethod) {
+
+        private HashSet<Long> deletedItemIds;
+
+        public PiwigoDeleteImageResponse(long messageId, String piwigoMethod, HashSet<Long> itemIds) {
             super(messageId, piwigoMethod, true);
+            this.deletedItemIds = itemIds;
+        }
+
+        public HashSet<Long> getDeletedItemIds() {
+            return deletedItemIds;
         }
     }
 
     public static class PiwigoDeleteUserResponse extends BasePiwigoResponse {
         public PiwigoDeleteUserResponse(long messageId, String piwigoMethod) {
-            super(messageId, piwigoMethod, true);
+            super(messageId, piwigoMethod);
         }
     }
 
