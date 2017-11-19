@@ -521,13 +521,6 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         return model;
     }
 
-//    private void clearNotifications() {
-//        int mNotificationId = 1;
-//        // Gets an instance of the NotificationManager service
-//        NotificationManager mNotifyMgr = (NotificationManager) getContext().getSystemService(NOTIFICATION_SERVICE);
-//        mNotifyMgr.cancel(TAG, mNotificationId);
-//    }
-
     private void notifyUserFileDownloadComplete(File downloadedFile) {
 
         Intent notificationIntent;
@@ -561,7 +554,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         Bitmap largeIcon = BitmapFactory.decodeResource(getContext().getResources(),
                 R.drawable.ic_notifications_black_24dp);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), null)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), getUiHelper().getDefaultNotificationChannelId())
                 .setLargeIcon(largeIcon)
                 .setContentTitle(getString(R.string.notification_download_event))
                 .setContentText(downloadedFile.getAbsolutePath())
@@ -576,13 +569,9 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
         }
 
-        // Sets an ID for the notification
-        int mNotificationId = 1;
-        // Gets an instance of the NotificationManager service
-        NotificationManager mNotifyMgr = (NotificationManager) getContext().getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.cancel(TAG, mNotificationId);
-        // Builds the notification and issues it.
-        mNotifyMgr.notify(TAG, mNotificationId, mBuilder.build());
+        getUiHelper().clearNotification(TAG, 1);
+        getUiHelper().showNotification(TAG, 1, mBuilder.build());
+
     }
 
     public final void onGalleryItemActionFinished() {

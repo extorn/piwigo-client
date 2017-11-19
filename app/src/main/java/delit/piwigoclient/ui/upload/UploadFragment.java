@@ -3,7 +3,6 @@ package delit.piwigoclient.ui.upload;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -503,30 +502,18 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
     }
 
-    private void clearNotifications() {
-        int mNotificationId = 1;
-        // Gets an instance of the NotificationManager service
-        NotificationManager mNotifyMgr = (NotificationManager) getContext().getSystemService(NOTIFICATION_SERVICE);
-        mNotifyMgr.cancel(TAG, mNotificationId);
-    }
-
     private void notifyUserUploadStatus(Context ctx, String message) {
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx, null)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx, getUiHelper().getDefaultNotificationChannelId())
                 .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle(ctx.getString(R.string.notification_upload_event))
                 .setContentText(message)
                 .setCategory(Notification.CATEGORY_PROGRESS)
                 .setAutoCancel(true);
-        // Sets an ID for the notification
 
-        int mNotificationId = 1;
-        // Gets an instance of the NotificationManager service
-        NotificationManager mNotifyMgr = (NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
-//        // Clear the last notification
-        mNotifyMgr.cancel(TAG, mNotificationId);
-        // Builds the notification and issues it.
-        mNotifyMgr.notify(TAG, mNotificationId, mBuilder.build());
+//      Clear the last notification
+        getUiHelper().clearNotification(TAG, 1);
+        getUiHelper().showNotification(TAG, 1, mBuilder.build());
     }
 
     private int getPrivacyLevelWanted() {

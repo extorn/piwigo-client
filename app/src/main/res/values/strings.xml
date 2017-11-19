@@ -299,7 +299,6 @@ Release 1.3.48 - Changes:
                     - Possibly - allow linking the upload process to a compression routine for videos
 
 Release 1.3.47 - Changes:
-                    - Upload - Allow linking a resource to upload album if already uploaded
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
 
@@ -316,6 +315,7 @@ Release 1.3.45 - Changes:
                     - Altered EULA to allow use of the app commercially
                - Bugfix:
                     - Fixed a couple of causes of crash (slideshow and upload)
+                    - Notifications not working on Oreo and above.
 
 Release 1.3.44 - Changes:
                     - Added "unlink from album" option for the delete of multiple resources - Will require a change to piwigo 2.9.2 to be efficient (ticket raised).

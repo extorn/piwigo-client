@@ -91,4 +91,7 @@
      <fields>;
 }
 
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+# We're not using the okhttp library at the moment so we don't need it on the classpath.
+-dontwarn com.squareup.okhttp.**
+
+#-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement

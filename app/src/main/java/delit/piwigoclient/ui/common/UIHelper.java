@@ -2,6 +2,9 @@ package delit.piwigoclient.ui.common;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -47,12 +50,15 @@ import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.X509Utils;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+
 /**
  * Created by gareth on 13/10/17.
  */
 
 public abstract class UIHelper<T> {
 
+    private static final String TAG = "UiHelper";
     private static final String STATE_UIHELPER = "uiHelperState";
     private static final String ACTIVE_SERVICE_CALLS = "activeServiceCalls";
     private static final String STATE_TRACKED_REQUESTS = "trackedRequests";
@@ -70,12 +76,42 @@ public abstract class UIHelper<T> {
     private int trackedRequest = -1;
     private BasicPiwigoResponseListener piwigoResponseListener;
     private int permissionsNeededReason;
+    private NotificationManager notificationManager;
 
     public UIHelper(T parent, SharedPreferences prefs, Context context) {
         this.context = context;
         this.prefs = prefs;
         this.parent = parent;
         setupDialogBoxes();
+        setupNotificationsManager();
+    }
+
+    private void setupNotificationsManager() {
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String name = context.getString(R.string.app_name);
+            NotificationChannel channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
+            if(channel == null) {
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                channel = new NotificationChannel(getDefaultNotificationChannelId(), name, importance);
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+
+    }
+
+    public void clearNotification(String source, int notificationId) {
+        notificationManager.cancel(source, notificationId);
+    }
+
+    public void showNotification(String source, int notificationId, Notification notification) {
+        // Builds the notification and issues it.
+        notificationManager.notify(source, notificationId, notification);
+    }
+
+    public String getDefaultNotificationChannelId() {
+        return context.getString(R.string.app_name) + "_Misc";
     }
 
     private static class QueuedMessage implements Serializable {
