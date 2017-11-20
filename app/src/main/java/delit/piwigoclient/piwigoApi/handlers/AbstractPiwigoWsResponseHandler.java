@@ -24,6 +24,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     private String piwigoMethod;
     private RequestParams requestParams;
+    private String nestedFailureMethod;
 
     public AbstractPiwigoWsResponseHandler(String piwigoMethod, String tag) {
         super(tag);
@@ -43,6 +44,16 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     public abstract RequestParams buildRequestParameters();
+
+    @Override
+    public void clearCallDetails() {
+        nestedFailureMethod = null;
+        super.clearCallDetails();
+    }
+
+    public String getNestedFailureMethod() {
+        return nestedFailureMethod;
+    }
 
     @Override
     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
@@ -114,6 +125,13 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         }
     }
 
+    protected void reportNestedFailure(AbstractBasicPiwigoResponseHandler nestedHandler) {
+        if(nestedHandler instanceof AbstractPiwigoWsResponseHandler) {
+            nestedFailureMethod = ((AbstractPiwigoWsResponseHandler)nestedHandler).getPiwigoMethod();
+        }
+        super.reportNestedFailure(nestedHandler);
+    }
+
     protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
         PiwigoResponseBufferingHandler.PiwigoSuccessResponse r = new PiwigoResponseBufferingHandler.PiwigoSuccessResponse(getMessageId(), piwigoMethod, rsp);
         storeResponse(r);
@@ -131,6 +149,11 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             Log.e(getTag(), "onFailure: " + errorBody, error);
         }
         String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
+        if(getNestedFailureMethod() != null) {
+            errorMsg = getNestedFailureMethod() + " : " + errorMsg;
+        } else {
+            errorMsg = getPiwigoMethod() + " : " + errorMsg;
+        }
         PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(getMessageId(), piwigoMethod, statusCode, errorMsg, error.getMessage());
         storeResponse(r);
     }

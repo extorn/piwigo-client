@@ -32,7 +32,6 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private final boolean built;
     private boolean allowSessionRefreshAttempt;
     private String sessionToken;
-    private Throwable error;
     private boolean triedLoggingInAgain;
     private HttpClientFactory httpClientFactory;
     private boolean isSuccess;
@@ -43,6 +42,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private boolean rerunningCall;
     private Context context;
     private String tag;
+    private Throwable error;
+    private int statusCode;
+    private Header[] headers;
+    private byte[] responseBody;
 
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
@@ -125,6 +128,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         this.allowSessionRefreshAttempt = false;
         this.sessionToken = null;
         this.error = null;
+        this.responseBody = null;
+        this.headers = null;
+        this.statusCode = -1;
         this.triedLoggingInAgain = false;
         this.httpClientFactory = null;
         this.isSuccess = false;
@@ -150,20 +156,31 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 synchronized (LoginResponseHandler.class) {
                     String newToken = PiwigoSessionDetails.getActiveSessionToken();
                     if (newToken != null && !newToken.equals(sessionToken)) {
+                        // ensure we ignore this error (if it errors again, we'll capture that one)
+                        tryingAgain = true;
                         // just run the original call again (another thread has retrieved a new session
                         rerunCall();
-                    } else {
+                    } else if(!(PiwigoSessionDetails.isLoggedIn() && !PiwigoSessionDetails.isFullyLoggedIn())) {
+                        // ensure we ignore this error (if it errors again, we'll capture that one)
+                        tryingAgain = true;
+                        // if we're not trying to get a new login at the moment. (otherwise this recurses).
                         getNewLogin();
                     }
                 }
-                // ensure we ignore this error (if it errors again, we'll capture that one)
-                tryingAgain = true;
+
             }
         }
         if(!tryingAgain) {
+            this.statusCode = statusCode;
+            this.headers = headers;
+            this.responseBody = responseBody;
             this.error = error;
             onFailure(statusCode, headers, responseBody, error, triedLoggingInAgain);
         }
+    }
+
+    protected void reportNestedFailure(AbstractBasicPiwigoResponseHandler nestedHandler) {
+        onFailure(nestedHandler.statusCode, nestedHandler.headers, nestedHandler.responseBody, nestedHandler.error, triedLoggingInAgain);
     }
 
     protected void onGetNewSessionSuccess() {

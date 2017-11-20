@@ -86,7 +86,8 @@ public class PiwigoSessionDetails {
     }
 
     public static boolean isFullyLoggedIn() {
-        return (isLoggedInWithSessionDetails() && isGuest()) || isLoggedInAndHaveSessionAndUserDetails();
+        //TODO fix this.
+        return (isLoggedInWithSessionDetails() && !isAdminUser()) || isLoggedInAndHaveSessionAndUserDetails();
     }
 
     public static boolean isAdminUser() {

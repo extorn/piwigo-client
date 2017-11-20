@@ -59,6 +59,8 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             runAndWaitForHandlerToFinish(sessionLoadHandler);
             if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
                 r.setSessionRetrieved();
+            } else {
+                reportNestedFailure(sessionLoadHandler);
             }
         }
         if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
@@ -83,6 +85,8 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
                 EventBus.getDefault().post(new UserNotUniqueWarningEvent(userDetails, response.getUsers()));
             }
             sessionDetails.setUserDetails(userDetails);
+        } else {
+            reportNestedFailure(userInfoHandler);
         }
     }
 
