@@ -302,12 +302,12 @@ Release 1.3.48 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
 
-Release 1.3.47 - Changes:
-                    - Improve management of credentials where possible
-                    - Improve memory use further
-                    - Possibly - Enable user driven retry for any failed server request at point of failure
-
 Released:
+
+Release 1.3.47 - Changes:
+                    - TODO Improve management of credentials where possible
+                    - TODO Improve memory use further
+                    - Enable user driven retry for any failed server request at point of failure
 
 Release 1.3.46 - Bugfix:
                     - Log in as a normal (non admin or webmaster) user was broken. Thanks Olivier for pointing this out!
