@@ -846,7 +846,7 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     private void updateInformationShowingStatus() {
-        if (informationShowing) {
+        if (informationShowing  ) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             if (currentGroups == null) {
                 // haven't yet loaded the existing permissions - do this now.
@@ -1205,8 +1205,19 @@ public class ViewAlbumFragment extends MyFragment {
                     }
                     synchronized (itemsToLoad) {
                         itemsToLoad.add(failedCall);
-                        emptyGalleryLabel.setText(R.string.gallery_load_failed_text);
+                        switch(failedCall) {
+                            case "U":
+                                emptyGalleryLabel.setText(R.string.gallery_update_failed_text);
+                                break;
+                            case "P":
+                                emptyGalleryLabel.setText(R.string.gallery_permissions_load_failed_text);
+                            default:
+                                // Could be 'C' or a number of current image page being loaded.
+                                emptyGalleryLabel.setText(R.string.gallery_album_content_load_failed_text);
+                                break;
+                        }
                         if (itemsToLoad.size() > 0) {
+                            emptyGalleryLabel.setVisibility(VISIBLE);
                             retryActionButton.setVisibility(VISIBLE);
                         }
                     }
@@ -1342,6 +1353,7 @@ public class ViewAlbumFragment extends MyFragment {
 
     public void onReloadAlbum() {
         retryActionButton.setVisibility(GONE);
+        emptyGalleryLabel.setVisibility(GONE);
         synchronized (itemsToLoad) {
             while (itemsToLoad.size() > 0) {
                 String itemToLoad = itemsToLoad.remove(0);
@@ -1385,9 +1397,6 @@ public class ViewAlbumFragment extends MyFragment {
             }
             galleryModel.setSpacerAlbumCount(spacerAlbumsNeeded);
             viewAdapter.notifyDataSetChanged();
-            if(loadingMessageIds.size() == 1) { // this is the last call in progress
-                emptyGalleryLabel.setVisibility(galleryModel.getItems().size() == 0 ? VISIBLE : GONE);
-            }
         }
     }
 
@@ -1395,9 +1404,6 @@ public class ViewAlbumFragment extends MyFragment {
         synchronized (galleryModel) {
             galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
             viewAdapter.notifyDataSetChanged();
-            if(loadingMessageIds.size() == 1) { // this is the last call in progress
-                emptyGalleryLabel.setVisibility(galleryModel.getItems().size() == 0 ? VISIBLE : GONE);
-            }
         }
     }
 

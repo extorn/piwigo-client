@@ -66,7 +66,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             if (BuildConfig.DEBUG) {
                 Log.e(getTag(), "onSuccess: ", e);
             }
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(getMessageId(), piwigoMethod, statusCode, e.getMessage());
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
             storeResponse(r);
         }
     }
@@ -82,7 +82,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             if (BuildConfig.DEBUG) {
                 Log.e(getTag(), "onReceiveResult: ", e);
             }
-            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(messageId, piwigoMethod, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, jsonResponse);
+            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, jsonResponse);
             storeResponse(r);
             return;
         }
@@ -94,13 +94,13 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                     }
                     int errorCode = rsp.getInt("err");
                     String errorMessage = rsp.getString("message");
-                    PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(messageId, piwigoMethod, errorCode, errorMessage);
+                    PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, errorCode, errorMessage);
                     storeResponse(r);
                 } catch (JSONException e) {
                     if (BuildConfig.DEBUG) {
                         Log.e(getTag(), "onReceiveResult: ", e);
                     }
-                    PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(messageId, piwigoMethod, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, jsonResponse);
+                    PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, jsonResponse);
                     storeResponse(r);
                 }
                 break;
@@ -111,7 +111,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                     if (BuildConfig.DEBUG) {
                         Log.e(getTag(), "onReceiveResult: ", e);
                     }
-                    PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(messageId, piwigoMethod, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_SUCCESS, jsonResponse);
+                    PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_SUCCESS, jsonResponse);
                     storeResponse(r);
                 }
                 break;
@@ -119,7 +119,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 if (BuildConfig.DEBUG) {
                     Log.e(getTag(), "onReceiveResult: " + jsonResponse);
                 }
-                PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(messageId, piwigoMethod, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, jsonResponse);
+                PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, jsonResponse);
                 storeResponse(r);
                 break;
         }
@@ -154,7 +154,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         } else {
             errorMsg = getPiwigoMethod() + " : " + errorMsg;
         }
-        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(getMessageId(), piwigoMethod, statusCode, errorMsg, error.getMessage());
+        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, error.getMessage());
         storeResponse(r);
     }
 

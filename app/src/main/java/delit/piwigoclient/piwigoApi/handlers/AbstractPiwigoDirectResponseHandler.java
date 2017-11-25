@@ -32,7 +32,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     }
 
     public void setMessageId(long messageId) {
-        if(this.messageId < 0) {
+        if(this.messageId < 0 || this.messageId == messageId) {
             this.messageId = messageId;
         } else {
             throw new IllegalArgumentException("Message ID can only be set once for a handler");

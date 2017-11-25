@@ -225,6 +225,20 @@ public abstract class UIHelper<T> {
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
+    /**
+     * Called when retrying a failed call.
+     */
+    public void addActiveServiceCall(long messageId) {
+        activeServiceCalls.add(messageId);
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        if (progressDialog != null && !progressDialog.isShowing()) {
+            // assume it still has the correct text... (fingers crossed)
+            if(canShowDialog()) {
+                showProgressDialog();
+            }
+        }
+    }
+
     public void addActiveServiceCall(String titleString, long messageId) {
         activeServiceCalls.add(messageId);
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
