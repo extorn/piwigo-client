@@ -35,6 +35,19 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Gallery Settings";
 
+    private transient Preference.OnPreferenceChangeListener useMasonryViewPreferenceListener = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object value) {
+            final Boolean val = (Boolean) value;
+            boolean enabled = Boolean.TRUE.equals(val);
+            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key)).setEnabled(!enabled);
+            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_gallery_albums_preferredColumnsPortrait_key)).setEnabled(!enabled);
+            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_gallery_show_large_thumbnail_key)).setEnabled(!enabled);
+            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_gallery_show_image_name_key)).setEnabled(!enabled);
+            return true;
+        }
+    };
+
     private Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(final Preference preference, Object value) {
@@ -289,6 +302,10 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         videoCacheEnabledPref.setOnPreferenceChangeListener(videoCacheEnabledPrefListener);
         videoCacheEnabledPrefListener.onPreferenceChange(videoCacheEnabledPref, getBooleanPreferenceValue(videoCacheEnabledPref.getKey()));
         bindIntPreferenceSummaryToValue(findPreference(R.string.preference_video_cache_maxsize_mb_key));
+
+        Preference useMasonryViewPref = findPreference(R.string.preference_gallery_masonry_view_key);
+        useMasonryViewPref.setOnPreferenceChangeListener(useMasonryViewPreferenceListener);
+        useMasonryViewPreferenceListener.onPreferenceChange(useMasonryViewPref, getBooleanPreferenceValue(useMasonryViewPref.getKey()));
     }
 
     @Override

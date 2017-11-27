@@ -9,6 +9,11 @@
             android:summary="@string/preference_app_show_toolbar_summary"
             android:title="@string/preference_app_show_toolbar_title" />
         <SwitchPreference
+            android:defaultValue="@bool/preference_gallery_masonry_view_default"
+            android:key="@string/preference_gallery_masonry_view_key"
+            android:summary="@string/preference_gallery_masonry_view_summary"
+            android:title="@string/preference_gallery_masonry_view_title" />
+        <SwitchPreference
             android:defaultValue="@bool/preference_gallery_show_large_thumbnail_default"
             android:key="@string/preference_gallery_show_large_thumbnail_key"
             android:summary="@string/preference_gallery_show_large_thumbnail_summary"

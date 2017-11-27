@@ -297,18 +297,20 @@ Release 1.3.49 - Changes:
                     - Possibly - Support for user comments
                     - Possibly - Better support for the "admin mode" on the webserver.
                     - Possibly - allow linking the upload process to a compression routine for videos
+                    - Possibly - Support for the PIWIGO community plug-in - user request
 
 Release 1.3.48 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
+                    - Improve management of credentials where possible
+                    - Improve memory use further
+                    - Investigate serialization of app pages (crashes reported in this area)
 
 Released:
 
 Release 1.3.47 - Changes:
-                    - TODO Improve management of credentials where possible
-                    - TODO Improve memory use further
-                    - TODO Investigate serialization again - too big transactions again....
                     - Enable user driven retry for any failed server request at point of failure
+                    - Added masonry style layout (disabled by default) - user request
 
 Release 1.3.46 - Bugfix:
                     - Log in as a normal (non admin or webmaster) user was broken. Thanks Olivier for pointing this out!
@@ -1060,6 +1062,5 @@ SOFTWARE.
     <string name="alert_http_scheme_specified">Your server is using http. This is not a good idea because the username and password are transmitted to the server in plain text. I strongly recommend you change your server to use https.</string>
     <string name="service_target_heading">Service :</string>
     <string name="error_detail_heading">Detail :</string>
-
 
 </resources>

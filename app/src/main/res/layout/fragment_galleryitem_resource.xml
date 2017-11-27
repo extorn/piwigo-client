@@ -33,7 +33,7 @@
         app:srcCompat="@drawable/ic_star_yellow_24dp" />
 
     <ImageView
-        android:id="@+id/movie_indicator"
+        android:id="@+id/type_indicator"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_alignBottom="@+id/thumbnail_container"

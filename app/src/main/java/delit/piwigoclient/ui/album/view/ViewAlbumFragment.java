@@ -13,6 +13,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -342,11 +343,7 @@ public class ViewAlbumFragment extends MyFragment {
         int imagesOnScreen = selectBestColumnCountForScreenSize();
         albumsPerRow = getAlbumsPerRow();
         colsOnScreen = imagesOnScreen;
-        if(imagesOnScreen % albumsPerRow > 0) {
-            colsOnScreen = imagesOnScreen * albumsPerRow;
-        }
-        int colsPerAlbum = colsOnScreen / albumsPerRow;
-        int colsPerImage = colsOnScreen / imagesOnScreen;
+
 
 //        viewInOrientation = getResources().getConfiguration().orientation;
 
@@ -361,10 +358,26 @@ public class ViewAlbumFragment extends MyFragment {
             emptyGalleryLabel.setVisibility(galleryModel.getItems().size() == 0 ? VISIBLE : GONE);
         }
 
+        boolean useMasonryStyle = prefs.getBoolean(getString(R.string.preference_gallery_masonry_view_key), getResources().getBoolean(R.bool.preference_gallery_masonry_view_default));
+
         // need to wait for the gallery model to be initialised.
-        GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
+        RecyclerView.LayoutManager gridLayoutMan;
+        if(useMasonryStyle) {
+            gridLayoutMan = new StaggeredGridLayoutManager(colsOnScreen, StaggeredGridLayoutManager.VERTICAL);
+        } else {
+            if(imagesOnScreen % albumsPerRow > 0) {
+                colsOnScreen = imagesOnScreen * albumsPerRow;
+            }
+            gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
+        }
+
         recyclerView.setLayoutManager(gridLayoutMan);
-        gridLayoutMan.setSpanSizeLookup(new SpanSizeLookup(galleryModel, colsPerAlbum, colsPerImage));
+
+        if(!useMasonryStyle) {
+            int colsPerAlbum = colsOnScreen / albumsPerRow;
+            int colsPerImage = colsOnScreen / imagesOnScreen;
+            ((GridLayoutManager)gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(galleryModel, colsPerAlbum, colsPerImage));
+        }
 
         int recentlyAlteredThresholdAge = prefs.getInt(getString(R.string.preference_gallery_recentlyAlteredAgeMillis_key), getResources().getInteger(R.integer.preference_gallery_recentlyAlteredAgeMillis_default));
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
@@ -395,6 +408,7 @@ public class ViewAlbumFragment extends MyFragment {
         viewAdapter.setUseDarkMode(useDarkMode);
         viewAdapter.setShowLargeAlbumThumbnails(showLargeAlbumThumbnails);
         viewAdapter.setShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
+        viewAdapter.setMasonryStyle(useMasonryStyle);
         viewAdapter.setAlbumWidth(getScreenWidth() / albumsPerRow);
         viewAdapter.setShowResourceNames(showResourceNames);
 
