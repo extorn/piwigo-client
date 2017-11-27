@@ -352,29 +352,15 @@ public class CreateAlbumFragment extends MyFragment {
         }
 
         @Override
-        protected void handlePiwigoUnexpectedReplyErrorResponse(PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse msg) {
-
-            switch (msg.getRequestOutcome()) {
-                case PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_SUCCESS:
-                    showOrQueueDialogMessage(R.string.alert_title_error_handling_response, getString(R.string.alert_error_handling_response_prefix) + " (" + msg.getRawResponse() + ")");
-                    break;
-                default:
-                    super.handlePiwigoUnexpectedReplyErrorResponse(msg);
-            }
-        }
-
-        @Override
-        protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
-            if (msg.getMessageId() == createGalleryMessageId) {
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response.getMessageId() == createGalleryMessageId) {
                 // error action failed and server state unchanged.
                 showDialogBox(R.string.alert_failure, getString(R.string.album_create_failed));
-            } else if (msg.getMessageId() == setGalleryPermissionsMessageId) {
+            } else if (response.getMessageId() == setGalleryPermissionsMessageId) {
                 deleteGalleryMessageId = PiwigoAccessService.startActionDeleteGallery(newAlbum.getGalleryId(), getContext());
                 addActiveServiceCall(deleteGalleryMessageId);
-            } else if (msg.getMessageId() == deleteGalleryMessageId) {
+            } else if (response.getMessageId() == deleteGalleryMessageId) {
                 showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
-            } else {
-                super.handlePiwigoServerErrorResponse(msg);
             }
         }
     }
