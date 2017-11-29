@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,7 +104,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_START_ON_RESUME, startOnResume);
         outState.putBoolean(STATE_CONTINUE_PLAYBACK, continuePlayback);

@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.piwigoApi.handlers.AbstractBasicPiwigoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 

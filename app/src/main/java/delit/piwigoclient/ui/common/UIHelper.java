@@ -50,8 +50,6 @@ import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.X509Utils;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
-
 /**
  * Created by gareth on 13/10/17.
  */

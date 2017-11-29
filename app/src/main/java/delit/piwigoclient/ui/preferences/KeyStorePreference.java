@@ -220,8 +220,7 @@ public abstract class KeyStorePreference extends DialogPreference {
             @Override
             protected void onProgressUpdate(Integer... values) {
                 for(Integer i : values) {
-
-                    if(getDialog().isShowing() && getDialog().getOwnerActivity() != null) {
+                    if(getDialog() != null && getDialog().isShowing() && getDialog().getOwnerActivity() != null) {
                         buildProgressDialog(getDialog().getContext());
                         progressDialog.setProgress(i);
                         progressDialog.show();

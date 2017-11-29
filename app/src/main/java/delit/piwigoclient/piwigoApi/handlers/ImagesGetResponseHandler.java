@@ -68,8 +68,9 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
         int screenHeight = point.y;
         if (screenHeight < screenWidth) {
             //Assume portrait mode
-            //TODO is this right?
+            //noinspection SuspiciousNameCombination
             screenHeight = point.x;
+            //noinspection SuspiciousNameCombination
             screenWidth = point.y;
         }
 

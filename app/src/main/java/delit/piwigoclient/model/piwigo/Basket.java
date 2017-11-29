@@ -22,7 +22,7 @@ public class Basket implements Serializable {
             contents.clear();
         }
         // only allow items from the same album to be added to the clipboard
-        if(contents.size() > 0 && contents.iterator().next().getParentId() != item.getParentId()) {
+        if(contents.size() > 0 && !contents.iterator().next().getParentId().equals(item.getParentId())) {
             contents.clear();
         }
 

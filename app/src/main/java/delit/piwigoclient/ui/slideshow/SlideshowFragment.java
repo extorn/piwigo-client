@@ -65,7 +65,7 @@ public class SlideshowFragment extends MyFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_GALLERY, gallery);
         outState.putInt(STATE_GALLERY_ITEM_DISPLAYED, rawCurrentGalleryItemPosition);
@@ -80,7 +80,7 @@ public class SlideshowFragment extends MyFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
@@ -173,7 +173,7 @@ public class SlideshowFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onGalleryItemActionStartedEvent(AlbumItemActionStartedEvent event) {
-        if(event.getItem().getParentId() == gallery.getId()) {
+        if(event.getItem().getParentId().equals(gallery.getId())) {
             getUiHelper().setTrackingRequest(event.getActionId());
             viewPager.setEnabled(false);
         }
@@ -181,7 +181,7 @@ public class SlideshowFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemActionFinishedEvent event) {
-        if(event.getItem().getParentId() == gallery.getId() && getUiHelper().isTrackingRequest(event.getActionId())) {
+        if(event.getItem().getParentId().equals(gallery.getId()) && getUiHelper().isTrackingRequest(event.getActionId())) {
             viewPager.setEnabled(true);
         }
     }
@@ -198,7 +198,7 @@ public class SlideshowFragment extends MyFragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((GalleryItemAdapter) viewPager.getAdapter()).onResume(viewPager.getCurrentItem());
+        ((GalleryItemAdapter) viewPager.getAdapter()).onResume();
     }
 
     class GalleryItemAdapter extends MyFragmentStatePagerAdapter {
@@ -315,12 +315,18 @@ public class SlideshowFragment extends MyFragment {
             }
         }
 
-        public void onResume(int currentItemIndex) {
-            Fragment selectedPage = (Fragment)instantiateItem(viewPager, currentItemIndex);
-            if(selectedPage.isAdded()) {
-                if (selectedPage instanceof AlbumVideoItemFragment) {
-                    ((AlbumVideoItemFragment) selectedPage).onManualResume();
+        public void onResume() {
+            int pageToShow = Math.max(0, viewPager.getCurrentItem());
+            if(pageToShow < galleryResourceItems.size() && pageToShow >= 0) {
+                Fragment selectedPage = (Fragment)instantiateItem(viewPager, pageToShow);
+                if(selectedPage.isAdded()) {
+                    if (selectedPage instanceof AlbumVideoItemFragment) {
+                        ((AlbumVideoItemFragment) selectedPage).onManualResume();
+                    }
                 }
+            } else {
+                // immediately leave this screen. For whatever reason, we can't show a valid item.
+                getFragmentManager().popBackStack();
             }
         }
     }

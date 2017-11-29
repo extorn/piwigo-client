@@ -64,7 +64,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
         } catch (UnsupportedEncodingException e) {
             if (BuildConfig.DEBUG) {
-                Log.e(getTag(), "onSuccess: ", e);
+                Log.e(getTag(), piwigoMethod + " onSuccess: " + response, e);
             }
             PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
             storeResponse(r);
@@ -80,7 +80,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             status = rsp.getString("stat");
         } catch (JSONException e) {
             if (BuildConfig.DEBUG) {
-                Log.e(getTag(), "onReceiveResult: ", e);
+                Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n', e);
             }
             PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, jsonResponse);
             storeResponse(r);
@@ -90,7 +90,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             case "fail":
                 try {
                     if (BuildConfig.DEBUG) {
-                        Log.e(getTag(), "onReceiveResult: " + jsonResponse);
+                        Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n' + jsonResponse);
                     }
                     int errorCode = rsp.getInt("err");
                     String errorMessage = rsp.getString("message");
@@ -98,7 +98,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                     storeResponse(r);
                 } catch (JSONException e) {
                     if (BuildConfig.DEBUG) {
-                        Log.e(getTag(), "onReceiveResult: ", e);
+                        Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n', e);
                     }
                     PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, jsonResponse);
                     storeResponse(r);
@@ -109,7 +109,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                     onPiwigoSuccess(rsp);
                 } catch (JSONException e) {
                     if (BuildConfig.DEBUG) {
-                        Log.e(getTag(), "onReceiveResult: ", e);
+                        Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n', e);
                     }
                     PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_SUCCESS, jsonResponse);
                     storeResponse(r);
@@ -117,7 +117,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 break;
             default:
                 if (BuildConfig.DEBUG) {
-                    Log.e(getTag(), "onReceiveResult: " + jsonResponse);
+                    Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n' + jsonResponse);
                 }
                 PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, jsonResponse);
                 storeResponse(r);
@@ -146,7 +146,12 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             if(responseBody != null) {
                 errorBody = new String(responseBody);
             }
-            Log.e(getTag(), "onFailure: " + errorBody, error);
+
+            if(getNestedFailureMethod() != null) {
+                Log.e(getTag(), getNestedFailureMethod() + " onFailure: \n" + errorBody, error);
+            } else {
+                Log.e(getTag(), piwigoMethod + " onFailure: \n" + getRequestParameters() + '\n' + errorBody, error);
+            }
         }
         String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
         if(getNestedFailureMethod() != null) {

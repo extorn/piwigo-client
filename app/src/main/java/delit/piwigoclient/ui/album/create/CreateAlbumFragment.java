@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.album.create;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
@@ -183,7 +184,7 @@ public class CreateAlbumFragment extends MyFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putSerializable(STATE_UPLOAD_TO_GALLERY, parentGallery);
         outState.putSerializable(STATE_NEW_GALLERY, newAlbum);
         outState.putLong(STATE_CREATE_GALLERY_CALL_ID, createGalleryMessageId);
@@ -195,7 +196,7 @@ public class CreateAlbumFragment extends MyFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (PiwigoSessionDetails.isFullyLoggedIn() && (!PiwigoSessionDetails.isAdminUser() || isAppInReadOnlyMode())) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();

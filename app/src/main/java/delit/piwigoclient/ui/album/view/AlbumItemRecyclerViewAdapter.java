@@ -253,7 +253,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
                 CategoryItem category = (CategoryItem) holder.mItem;
 
                 if (category.getPhotoCount() > 0) {
-                    holder.mPhotoCountView.setText(String.format(resources.getString(R.string.gallery_photos_summary_text_pattern), category.getPhotoCount()));
+                    holder.mPhotoCountView.setText(resources.getString(R.string.gallery_photos_summary_text_pattern, category.getPhotoCount()));
                     holder.mPhotoCountView.setVisibility(View.VISIBLE);
                 } else {
                     holder.mPhotoCountView.setVisibility(View.GONE);
@@ -261,7 +261,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
                 if (category.getSubCategories() > 0) {
                     holder.mSubCategoriesView.setVisibility(View.VISIBLE);
                     long subAlbumPhotos = category.getTotalPhotos() - category.getPhotoCount();
-                    holder.mSubCategoriesView.setText(String.format(resources.getString(R.string.gallery_subcategory_summary_text_pattern), category.getSubCategories(), subAlbumPhotos));
+                    holder.mSubCategoriesView.setText(resources.getString(R.string.gallery_subcategory_summary_text_pattern, category.getSubCategories(), subAlbumPhotos));
                 } else {
                     holder.mSubCategoriesView.setVisibility(View.GONE);
                 }

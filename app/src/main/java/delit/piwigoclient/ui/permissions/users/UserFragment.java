@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.permissions.users;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -157,7 +158,7 @@ public class UserFragment extends MyFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(CURRENT_GROUP_MEMBERSHIPS, currentGroupMembership);
         outState.putSerializable(CURRENT_DIRECT_ALBUM_PERMISSIONS, currentDirectAlbumPermissions);
@@ -238,7 +239,7 @@ public class UserFragment extends MyFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if((!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
