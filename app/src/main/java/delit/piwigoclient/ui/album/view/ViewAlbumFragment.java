@@ -99,10 +99,12 @@ public class ViewAlbumFragment extends MyFragment {
     public static final String STATE_UPDATE_ALBUM_DETAILS_PROGRESS = "updateAlbumDetailsProgress";
     public static final String STATE_USERNAME_SELECTION_WANTED_NEXT = "usernameSelectionWantedNext";
     public static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
+    private static final String STATE_USER_GUID = "userGuid";
     private static final int UPDATE_IN_PROGRESS = 1;
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
     private static final int UPDATE_NOT_RUNNING = 0;
+
     private AlbumItemRecyclerViewAdapter viewAdapter;
     private FloatingActionButton retryActionButton;
     private ControllableBottomSheetBehavior<View> bottomSheetBehavior;
@@ -148,6 +150,7 @@ public class ViewAlbumFragment extends MyFragment {
     private CustomImageButton addNewAlbumButton;
     private int colsOnScreen;
     private DeleteActionData deleteActionData;
+    private long userGuid;
 
 
     /**
@@ -252,6 +255,8 @@ public class ViewAlbumFragment extends MyFragment {
             galleryModel = (PiwigoAlbum) savedInstanceState.getSerializable(STATE_GALLERY_MODEL);
             gallery = (CategoryItem) savedInstanceState.getSerializable(ARG_GALLERY);
             // if galleryIsDirty then this fragment was updated while on the backstack - need to refresh it.
+            userGuid = savedInstanceState.getLong(STATE_USER_GUID);
+            galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid() != userGuid;
             galleryIsDirty = galleryIsDirty || savedInstanceState.getBoolean(STATE_GALLERY_DIRTY);
             loadingMessageIds = (HashMap)savedInstanceState.getSerializable(STATE_GALLERY_ACTIVE_LOAD_THREADS);
             itemsToLoad = (ArrayList)savedInstanceState.getSerializable(STATE_GALLERY_LOADS_TO_RETRY);
@@ -264,6 +269,7 @@ public class ViewAlbumFragment extends MyFragment {
                 deleteActionData = (DeleteActionData) savedInstanceState.getSerializable(STATE_DELETE_ACTION_DATA);
             }
         }
+        userGuid = PiwigoSessionDetails.getUserGuid();
         if(galleryModel == null) {
             galleryIsDirty = true;
             galleryModel = new PiwigoAlbum();

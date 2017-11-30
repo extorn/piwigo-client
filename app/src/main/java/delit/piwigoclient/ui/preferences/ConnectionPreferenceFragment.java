@@ -26,6 +26,7 @@ import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
+import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.NumberPickerPreference;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
@@ -202,14 +203,17 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             String val = stringValue.toLowerCase();
             boolean isHttps = val.startsWith("https://");
             boolean isHttp = val.startsWith("http://");
-            if(!(isHttp || isHttps)) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
-            } else if(isHttp) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
-            }
+
             if (!initialising) {
+                if(!(isHttp || isHttps)) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
+                } else if(isHttp) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
+                }
+
                 // clear the existing session - it's not valid any more.
                 forkLogoutIfNeeded();
+                AdsManager.getInstance().updateShowAdvertsSetting();
             }
 
             return true;
@@ -450,7 +454,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     }
 
     private boolean forkLogoutIfNeeded() {
-        //FIXME - if logout fails - e.g. 401 response, then the flush of the client and cache and new login never occurs.
         String serverUri = prefs.getString(getString(R.string.preference_piwigo_server_address_key), null);
         if (PiwigoSessionDetails.isLoggedIn()) {
             getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), serverUri), PiwigoAccessService.startActionLogout(getContext()));
