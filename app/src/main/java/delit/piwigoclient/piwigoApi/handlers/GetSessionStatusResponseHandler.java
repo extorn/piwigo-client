@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.piwigoclient.ui.AdsManager;
 
 public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -41,6 +42,8 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         }
 
         PiwigoSessionDetails sessionDetails;
+        String serverUrl = getPiwigoServerUrl();
+        long userGuid = serverUrl.hashCode() + user.hashCode() + userStatus.hashCode();
 
         if (userStatus.equals("admin") || userStatus.equals("webmaster")) {
             Long uploadChunkSize = result.getLong("upload_form_chunk_size");
@@ -50,9 +53,9 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
             while (st.hasMoreTokens()) {
                 uploadFileTypesSet.add(st.nextToken());
             }
-            sessionDetails = new PiwigoSessionDetails(user, userStatus, piwigoVersion, availableSizes, uploadFileTypesSet, uploadChunkSize, token);
+            sessionDetails = new PiwigoSessionDetails(userGuid, user, userStatus, piwigoVersion, availableSizes, uploadFileTypesSet, uploadChunkSize, token);
         } else {
-            sessionDetails = new PiwigoSessionDetails(user, userStatus, piwigoVersion, availableSizes, token);
+            sessionDetails = new PiwigoSessionDetails(userGuid, user, userStatus, piwigoVersion, availableSizes, token);
         }
 
         PiwigoSessionDetails.setInstance(sessionDetails);

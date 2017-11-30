@@ -14,6 +14,7 @@ import delit.piwigoclient.ui.MyApplication;
 public class PiwigoSessionDetails {
     private static PiwigoSessionDetails instance;
 
+    private long userGuid;
     private String username;
     private String userType;
     private String piwigoVersion;
@@ -24,12 +25,8 @@ public class PiwigoSessionDetails {
     private User userDetails;
     private int loginStatus = 0;
 
-    public PiwigoSessionDetails(String username) {
-        this.username = username;
-        this.loginStatus = 1;
-    }
-
-    public PiwigoSessionDetails(String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
+    public PiwigoSessionDetails(long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
+        this.userGuid = userGuid;
         this.username = username;
         this.userType = userType;
         this.piwigoVersion = piwigoVersion;
@@ -38,7 +35,8 @@ public class PiwigoSessionDetails {
         this.loginStatus = 2;
     }
 
-    public PiwigoSessionDetails(String username, String userType, String piwigoVersion, Set<String> availableImageSizes, Set<String> allowedFileTypes, long webInterfaceUploadChunkSizeKB, String sessionToken) {
+    public PiwigoSessionDetails(long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, Set<String> allowedFileTypes, long webInterfaceUploadChunkSizeKB, String sessionToken) {
+        this.userGuid = userGuid;
         this.username = username;
         this.userType = userType;
         this.piwigoVersion = piwigoVersion;
@@ -51,6 +49,10 @@ public class PiwigoSessionDetails {
 
     public static boolean isLoggedInAndHaveSessionAndUserDetails() {
         return instance != null && instance.loginStatus == 3;
+    }
+
+    public static long getUserGuid() {
+        return instance != null ? instance.userGuid : -1;
     }
 
     public static boolean isLoggedIn() {
@@ -67,9 +69,6 @@ public class PiwigoSessionDetails {
 
     public synchronized static void setInstance(PiwigoSessionDetails sessionDetails) {
         instance = sessionDetails;
-        if(sessionDetails != null) {
-            AdsManager.getInstance().updateShowAdvertsSetting();
-        }
     }
 
     public synchronized static String getActiveSessionToken() {
@@ -86,7 +85,6 @@ public class PiwigoSessionDetails {
     }
 
     public static boolean isFullyLoggedIn() {
-        //TODO fix this.
         return (isLoggedInWithSessionDetails() && !isAdminUser()) || isLoggedInAndHaveSessionAndUserDetails();
     }
 

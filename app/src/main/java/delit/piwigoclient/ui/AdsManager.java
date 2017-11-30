@@ -1,7 +1,10 @@
 package delit.piwigoclient.ui;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 
 import com.google.android.gms.ads.AdListener;
@@ -83,6 +86,13 @@ public class AdsManager {
             albumBrowsingAd.setAdUnitId(context.getString(R.string.ad_id_album_interstitial));
             albumBrowsingAd.loadAd(new AdRequest.Builder().build());
             albumBrowsingAd.setAdListener(new MyAdListener(albumBrowsingAd));
+        } else if(showAds) {
+            if(!selectFileToUploadAd.isLoading() && ! selectFileToUploadAd.isLoaded()) {
+                selectFileToUploadAd.loadAd(new AdRequest.Builder().build());
+            }
+            if(!albumBrowsingAd.isLoading() && ! albumBrowsingAd.isLoaded()) {
+                albumBrowsingAd.loadAd(new AdRequest.Builder().build());
+            }
         }
     }
 
@@ -92,9 +102,13 @@ public class AdsManager {
 
     private synchronized boolean acceptableToShowAdvert(InterstitialAd ad, long minDelayBetweenAds) {
         long currentTime = System.currentTimeMillis();
-        if (showAds && ad != null && ad.isLoaded() && currentTime - lastShowedAdvert > minDelayBetweenAds) {
-            lastShowedAdvert = currentTime;
-            return true;
+        if (showAds && ad != null) {
+            if(ad.isLoaded() && currentTime - lastShowedAdvert > minDelayBetweenAds) {
+                lastShowedAdvert = currentTime;
+                return true;
+            } else if(!ad.isLoaded() && !ad.isLoading()){
+                ad.loadAd(new AdRequest.Builder().build());
+            }
         }
         return false;
     }
@@ -102,7 +116,7 @@ public class AdsManager {
     public boolean showFileToUploadAdvertIfAppropriate() {
         if (acceptableToShowAdvert(selectFileToUploadAd, 24 * 60 * 60000)) {
             selectFileToUploadAd.show();
-            // every 5 seconds
+            // show every 24 hours
             return true;
         }
         return false;
@@ -111,7 +125,7 @@ public class AdsManager {
     public boolean showAlbumBrowsingAdvertIfAppropriate() {
         if (acceptableToShowAdvert(albumBrowsingAd, 24 * 60 * 60000)) {
             albumBrowsingAd.show();
-            // show every 5 minutes.
+            // show every 24 hours
             return true;
         }
         return false;
@@ -120,13 +134,34 @@ public class AdsManager {
     class MyAdListener extends AdListener {
 
         private final InterstitialAd ad;
+        private int onCloseActionId = -1;
+        private Intent onCloseIntent;
 
         public MyAdListener(InterstitialAd ad) {
             this.ad = ad;
         }
         @Override
         public void onAdClosed() {
-            ad.loadAd(new AdRequest.Builder().build());
+            if(onCloseIntent != null) {
+                Activity activity = (Activity)context;
+                activity.startActivityForResult(onCloseIntent, onCloseActionId);
+                onCloseIntent = null;
+                onCloseActionId = -1;
+            }
+            Handler mainHandler = new Handler(context.getMainLooper());
+            Runnable myRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    ad.loadAd(new AdRequest.Builder().build());
+                }
+            };
+            mainHandler.post(myRunnable);
+
+        }
+
+        public void addAdCloseAction(Intent intent, int actionId) {
+            onCloseIntent = intent;
+            onCloseActionId = actionId;
         }
     }
 }

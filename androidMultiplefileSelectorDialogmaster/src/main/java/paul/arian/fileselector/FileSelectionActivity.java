@@ -23,6 +23,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -30,11 +31,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.commonsware.cwac.merge.MergeAdapter;
 
-public class FileSelectionActivity extends Activity {
+public class FileSelectionActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 101;
     private static final String TAG = "FileSelection";
@@ -135,8 +137,8 @@ public class FileSelectionActivity extends Activity {
 
     private void buildView() {
         setContentView(R.layout.activity_file_selection);
-
-        checkPermissionsNeeded(findViewById(R.id.fileSelectionContainer).getContext());
+        LinearLayout layout = findViewById(R.id.fileSelectionContainer);
+        checkPermissionsNeeded(layout.getContext());
 
         //getActionBar().setDisplayHomeAsUpEnabled(true);
 

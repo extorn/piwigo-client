@@ -33,4 +33,9 @@
         <item name="android:textSize">13sp</item>
     </style>
 
+    <style name="Theme.Translucent" parent="Theme.Translucent">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 </resources>
