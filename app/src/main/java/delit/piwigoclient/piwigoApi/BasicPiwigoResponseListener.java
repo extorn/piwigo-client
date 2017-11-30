@@ -1,12 +1,14 @@
 package delit.piwigoclient.piwigoApi;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 
 /**
@@ -64,6 +66,31 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         uiHelper.showOrQueueDialogMessage(title, message);
     }
 
+    private void showOrQueueRetryDialogMessage(final PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg) {
+        if(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
+            final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse = (PiwigoResponseBufferingHandler.RemoteErrorResponse) response;
+            final AbstractPiwigoDirectResponseHandler handler = errorResponse.getHttpResponseHandler();
+            uiHelper.showOrQueueDialogQuestion(title, msg, R.string.button_cancel, R.string.button_retry, new UIHelper.QuestionResultListener() {
+                @Override
+                public void onDismiss(AlertDialog dialog) {
+                    // don't care
+                }
+
+                @Override
+                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                    if(positiveAnswer) {
+                        uiHelper.addActiveServiceCall(handler.getMessageId());
+                        PiwigoAccessService.rerunHandler(handler, uiHelper.getContext());
+                    } else {
+                        onAfterHandlePiwigoResponse(response);
+                    }
+                }
+            });
+        } else {
+            showOrQueueDialogMessage(title, msg);
+        }
+    }
+
     public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {}
 
     public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {}
@@ -84,36 +111,37 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             handlePiwigoServerErrorResponse((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) response);
         }
 
-        onAfterHandlePiwigoResponse(response);
+        if(!(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse)) {
+            // don't call user code if we may be re-trying. The outcome is not yet know.
+            onAfterHandlePiwigoResponse(response);
+        }
     }
 
     protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
-        //TODO allow retry by resubmitting the handler. - Convert to question - retry? yes / no
-        showOrQueueDialogMessage(R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_prefix) + msg.getPiwigoErrorCode() + " (" + msg.getPiwigoErrorMessage() + ")");
+        showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, msg.getPiwigoErrorCode(), msg.getPiwigoErrorMessage()));
     }
 
     protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
-        //TODO allow retry by resubmitting the handler. - Convert to question - retry? yes / no
+
         if(msg.getStatusCode() < 0) {
-            showOrQueueDialogMessage(R.string.alert_title_error_talking_to_server, msg.getErrorMessage());
+            showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage());
         } else if(msg.getStatusCode() == 0) {
-            showOrQueueDialogMessage(R.string.alert_title_error_connecting_to_server, msg.getErrorMessage());
+            showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage());
         } else {
-            showOrQueueDialogMessage(R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_prefix) + msg.getStatusCode() + " (" + msg.getErrorMessage() + ")");
+            showOrQueueRetryDialogMessage(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode() ,msg.getErrorMessage()));
         }
     }
 
     protected void handlePiwigoUnexpectedReplyErrorResponse(PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse msg) {
-        //TODO allow retry by resubmitting the handler. - Convert to question - retry? yes / no
         switch (msg.getRequestOutcome()) {
             case PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN:
-                showOrQueueDialogMessage(R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_prefix) + " (" + msg.getRawResponse() + ")");
+                showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, -1,msg.getRawResponse()));
                 break;
             case PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED:
-                showOrQueueDialogMessage(R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_prefix) + " (" + msg.getRawResponse() + ")");
+                showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, -1, msg.getRawResponse()));
                 break;
             case PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_SUCCESS:
-                showOrQueueDialogMessage(R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_prefix) + " (" + msg.getRawResponse() + ")");
+                showOrQueueDialogMessage(R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, -1, msg.getRawResponse()));
         }
     }
 

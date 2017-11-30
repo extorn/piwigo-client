@@ -27,7 +27,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Category
 
     @NonNull
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(int position, View view, @NonNull ViewGroup parent) {
         TextView v = (TextView) super.getView(position, view, parent);
         v.setPadding(0,0,0,0);
         return v;

@@ -579,14 +579,13 @@ public class PiwigoAccessService {
     }
 
     public static <T extends AbstractPiwigoDirectResponseHandler> long rerunHandler(final T handler, Context context) {
-        long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 
             @Override
             protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
                 return handler;
             }
-        }.start(messageId);
+        }.start(handler.getMessageId());
     }
 
     public static <T extends ResourceItem> long startActionGetResourceInfo(final T model, Context context) {

@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.common;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
@@ -92,7 +93,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_ALLOW_MULTISELECT, multiSelectEnabled);
         outState.putInt(STATE_ACTION_ID, actionId);
@@ -111,7 +112,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
 

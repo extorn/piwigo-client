@@ -60,7 +60,7 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/gallery_retryAction_actionButton"
-            android:layout_below="@id/album_header_bar"
+            android:layout_alignTop="@+id/gallery_list"
             app:srcCompat="@drawable/ic_refresh_black_24dp"
             android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
@@ -84,7 +84,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/gallery_list"
-            android:layout_below="@id/album_header_bar"
+            android:layout_below="@id/album_empty_content"
             android:name="delit.piwigoclient.GalleryFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

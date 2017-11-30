@@ -50,8 +50,6 @@ import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.X509Utils;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
-
 /**
  * Created by gareth on 13/10/17.
  */
@@ -223,6 +221,20 @@ public abstract class UIHelper<T> {
 
     public void addBackgroundServiceCall(long messageId) {
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+    }
+
+    /**
+     * Called when retrying a failed call.
+     */
+    public void addActiveServiceCall(long messageId) {
+        activeServiceCalls.add(messageId);
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        if (progressDialog != null && !progressDialog.isShowing()) {
+            // assume it still has the correct text... (fingers crossed)
+            if(canShowDialog()) {
+                showProgressDialog();
+            }
+        }
     }
 
     public void addActiveServiceCall(String titleString, long messageId) {

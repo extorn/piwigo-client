@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -58,8 +59,6 @@ import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileListSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 
 /**
@@ -120,7 +119,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(SAVED_STATE_CURRENT_GALLERY, currentGallery);
         outState.putInt(SAVED_STATE_PRIVACY_LEVEL_WANTED, privacyLevelWantedSelection);
@@ -154,7 +153,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if ((!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode()) {
             // immediately leave this screen.

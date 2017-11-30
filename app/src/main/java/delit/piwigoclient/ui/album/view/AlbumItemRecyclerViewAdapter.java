@@ -60,6 +60,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
     public static final int SCALING_QUALITY_VLOW = 60;
     private int scalingQuality = SCALING_QUALITY_MEDIUM;
     private boolean showResourceNames;
+    private boolean useMasonryStyle;
 
     public AlbumItemRecyclerViewAdapter(final PiwigoAlbum gallery, Date recentlyAlteredThresholdDate, MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
         this.gallery = gallery;
@@ -75,6 +76,10 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 
     public void setShowAlbumThumbnailsZoomed(boolean showAlbumThumbnailsZoomed) {
         this.showAlbumThumbnailsZoomed = showAlbumThumbnailsZoomed;
+    }
+
+    public void setMasonryStyle(boolean useMasonryStyle) {
+        this.useMasonryStyle = useMasonryStyle;
     }
 
     public void setCaptureActionClicks(boolean captureActionClicks) {
@@ -95,7 +100,10 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        if (viewType == GalleryItem.CATEGORY_TYPE) {
+        if(useMasonryStyle) {
+            view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.fragment_galleryitem_masonry, parent, false);
+        } else if (viewType == GalleryItem.CATEGORY_TYPE) {
             if(showLargeAlbumThumbnails) {
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.fragment_galleryitem_category_grid, parent, false);
@@ -214,22 +222,9 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         if(holder.mItem.getType() == GalleryItem.PICTURE_RESOURCE_TYPE || holder.mItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
             holder.checkBox.setVisibility(allowItemSelection ? View.VISIBLE : GONE);
             holder.checkBox.setChecked(selectedResourceIds.contains(holder.mItem.getId()));
-        } else if (holder.mItem.getType() == GalleryItem.CATEGORY_TYPE) {
-            CategoryItem category = (CategoryItem) holder.mItem;
-
-            if (category.getPhotoCount() > 0) {
-                holder.mPhotoCountView.setText(String.format(resources.getString(R.string.gallery_photos_summary_text_pattern), category.getPhotoCount()));
-                holder.mPhotoCountView.setVisibility(View.VISIBLE);
-            } else {
-                holder.mPhotoCountView.setVisibility(View.GONE);
-            }
-            if (category.getSubCategories() > 0) {
-                holder.mSubCategoriesView.setVisibility(View.VISIBLE);
-                long subAlbumPhotos = category.getTotalPhotos() - category.getPhotoCount();
-                holder.mSubCategoriesView.setText(String.format(resources.getString(R.string.gallery_subcategory_summary_text_pattern), category.getSubCategories(), subAlbumPhotos));
-            } else {
-                holder.mSubCategoriesView.setVisibility(View.GONE);
-            }
+        } else if(holder.checkBox != null) {
+            // only in masonry view mode at the moment.
+            holder.checkBox.setVisibility(GONE);
         }
 
         if(holder.mRecentlyAlteredMarkerView != null) {
@@ -241,43 +236,67 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
             }
         }
 
-        if (!(holder.mItem.getName() == null || holder.mItem.getName().isEmpty())) {
-            if(showResourceNames || holder.mItem.getType() == GalleryItem.CATEGORY_TYPE) {
-                holder.mNameView.setVisibility(View.VISIBLE);
-                holder.mNameView.setText(holder.mItem.getName());
-            } else {
-                holder.mNameView.setVisibility(GONE);
-            }
-
-            if(holder.mItem.getType() == GalleryItem.CATEGORY_TYPE) {
-                if (showLargeAlbumThumbnails) {
-                    if (albumWidth > 3) {
-                        holder.mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
-                    } else if (albumWidth > 2.4) {
-                        holder.mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
-                    } else if (albumWidth > 1.8) {
-                        holder.mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                    } else {
-                        holder.mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-                    }
+        if(useMasonryStyle) {
+            if (holder.mItem.getType() == GalleryItem.CATEGORY_TYPE) {
+                CategoryItem catItem = (CategoryItem)holder.mItem;
+                if(catItem.isPrivate()) {
+                    holder.mTypeIndicatorImg.setImageResource(R.drawable.ic_folder_black_24dp);
                 } else {
-                    holder.mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                    holder.mTypeIndicatorImg.setImageResource(R.drawable.ic_folder_shared_black_24dp);
+                }
+                holder.mTypeIndicatorImg.setVisibility(View.VISIBLE);
+            }
+        } else {
+
+
+            if (holder.mItem.getType() == GalleryItem.CATEGORY_TYPE) {
+                CategoryItem category = (CategoryItem) holder.mItem;
+
+                if (category.getPhotoCount() > 0) {
+                    holder.mPhotoCountView.setText(resources.getString(R.string.gallery_photos_summary_text_pattern, category.getPhotoCount()));
+                    holder.mPhotoCountView.setVisibility(View.VISIBLE);
+                } else {
+                    holder.mPhotoCountView.setVisibility(View.GONE);
+                }
+                if (category.getSubCategories() > 0) {
+                    holder.mSubCategoriesView.setVisibility(View.VISIBLE);
+                    long subAlbumPhotos = category.getTotalPhotos() - category.getPhotoCount();
+                    holder.mSubCategoriesView.setText(resources.getString(R.string.gallery_subcategory_summary_text_pattern, category.getSubCategories(), subAlbumPhotos));
+                } else {
+                    holder.mSubCategoriesView.setVisibility(View.GONE);
                 }
             }
 
-        } else {
-            holder.mNameView.setVisibility(GONE);
+
+            if (!(holder.mItem.getName() == null || holder.mItem.getName().isEmpty())) {
+                if (showResourceNames || holder.mItem.getType() == GalleryItem.CATEGORY_TYPE) {
+                    holder.mNameView.setVisibility(View.VISIBLE);
+                    holder.mNameView.setText(holder.mItem.getName());
+                } else {
+                    holder.mNameView.setVisibility(GONE);
+                }
+
+                if (holder.mItem.getType() == GalleryItem.CATEGORY_TYPE) {
+                    if (showLargeAlbumThumbnails) {
+                        if (albumWidth > 3) {
+                            holder.mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
+                        } else if (albumWidth > 2.4) {
+                            holder.mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+                        } else if (albumWidth > 1.8) {
+                            holder.mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                        } else {
+                            holder.mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                        }
+                    } else {
+                        holder.mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                    }
+                }
+
+            } else {
+                holder.mNameView.setVisibility(GONE);
+            }
         }
 
-//        if (!(holder.mItem.getDescription() == null || holder.mItem.getDescription().isEmpty())) {
-//            //TODO get the short description from the extended description plugin.
-//            //            holder.mDescriptionView.setText(holder.mItem.description);
-//            //            holder.mDescriptionView.setVisibility(View.VISIBLE);
-//            holder.mDescriptionView.setVisibility(GONE);
-//        } else {
-//            holder.mDescriptionView.setVisibility(GONE);
-//        }
-        //holder.mImageView.setImageURI(Uri.parse(mValues.get(position).thumbnailUrl));
         if (holder.mItem.getThumbnailUrl() != null) {
 
             if (holder.mItem instanceof CategoryItem) {
@@ -303,11 +322,12 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         }
 
         if (holder.mItem.getType() == GalleryItem.PICTURE_RESOURCE_TYPE) {
-            ImageView imgView = holder.itemView.findViewById(R.id.movie_indicator);
+            AppCompatImageView imgView = holder.mTypeIndicatorImg;
             imgView.setVisibility(GONE);
         }
         if (holder.mItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
-            ImageView imgView = holder.itemView.findViewById(R.id.movie_indicator);
+            AppCompatImageView imgView = holder.mTypeIndicatorImg;
+            imgView.setImageResource(R.drawable.ic_movie_filter_black_24px);
             imgView.setVisibility(View.VISIBLE);
         }
     }
@@ -374,6 +394,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 //        public final TextView mDescriptionView;
         public final ImageView mRecentlyAlteredMarkerView;
         private final SquareLinearLayout mImageContainer;
+        public final AppCompatImageView mTypeIndicatorImg;
         private ResizingPicassoLoader imageLoader;
         public GalleryItem mItem;
         public CustomClickListener itemActionListener;
@@ -388,7 +409,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
             mImageView = view.findViewById(R.id.gallery_thumbnail);
             mRecentlyAlteredMarkerView = view.findViewById(R.id.newly_altered_marker_image);
             mImageContainer = view.findViewById(R.id.thumbnail_container);
-
+            mTypeIndicatorImg = view.findViewById(R.id.type_indicator);
         }
 
         @Override

@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +14,7 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -217,7 +219,7 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(ARG_GALLERY, gallery);
         outState.putSerializable(STATE_GALLERY_MODEL, galleryModel);
@@ -236,7 +238,7 @@ public class ViewAlbumFragment extends MyFragment {
 
     @Nullable
     @Override
-    public View onCreateView(final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         if(!PiwigoSessionDetails.isFullyLoggedIn()) {
             // force a reload of the gallery if the session has been destroyed.
@@ -342,11 +344,7 @@ public class ViewAlbumFragment extends MyFragment {
         int imagesOnScreen = selectBestColumnCountForScreenSize();
         albumsPerRow = getAlbumsPerRow();
         colsOnScreen = imagesOnScreen;
-        if(imagesOnScreen % albumsPerRow > 0) {
-            colsOnScreen = imagesOnScreen * albumsPerRow;
-        }
-        int colsPerAlbum = colsOnScreen / albumsPerRow;
-        int colsPerImage = colsOnScreen / imagesOnScreen;
+
 
 //        viewInOrientation = getResources().getConfiguration().orientation;
 
@@ -361,10 +359,26 @@ public class ViewAlbumFragment extends MyFragment {
             emptyGalleryLabel.setVisibility(galleryModel.getItems().size() == 0 ? VISIBLE : GONE);
         }
 
+        boolean useMasonryStyle = prefs.getBoolean(getString(R.string.preference_gallery_masonry_view_key), getResources().getBoolean(R.bool.preference_gallery_masonry_view_default));
+
         // need to wait for the gallery model to be initialised.
-        GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
+        RecyclerView.LayoutManager gridLayoutMan;
+        if(useMasonryStyle) {
+            gridLayoutMan = new StaggeredGridLayoutManager(colsOnScreen, StaggeredGridLayoutManager.VERTICAL);
+        } else {
+            if(imagesOnScreen % albumsPerRow > 0) {
+                colsOnScreen = imagesOnScreen * albumsPerRow;
+            }
+            gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
+        }
+
         recyclerView.setLayoutManager(gridLayoutMan);
-        gridLayoutMan.setSpanSizeLookup(new SpanSizeLookup(galleryModel, colsPerAlbum, colsPerImage));
+
+        if(!useMasonryStyle) {
+            int colsPerAlbum = colsOnScreen / albumsPerRow;
+            int colsPerImage = colsOnScreen / imagesOnScreen;
+            ((GridLayoutManager)gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(galleryModel, colsPerAlbum, colsPerImage));
+        }
 
         int recentlyAlteredThresholdAge = prefs.getInt(getString(R.string.preference_gallery_recentlyAlteredAgeMillis_key), getResources().getInteger(R.integer.preference_gallery_recentlyAlteredAgeMillis_default));
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
@@ -395,6 +409,7 @@ public class ViewAlbumFragment extends MyFragment {
         viewAdapter.setUseDarkMode(useDarkMode);
         viewAdapter.setShowLargeAlbumThumbnails(showLargeAlbumThumbnails);
         viewAdapter.setShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
+        viewAdapter.setMasonryStyle(useMasonryStyle);
         viewAdapter.setAlbumWidth(getScreenWidth() / albumsPerRow);
         viewAdapter.setShowResourceNames(showResourceNames);
 
@@ -846,7 +861,7 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     private void updateInformationShowingStatus() {
-        if (informationShowing) {
+        if (informationShowing  ) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
             if (currentGroups == null) {
                 // haven't yet loaded the existing permissions - do this now.
@@ -1205,8 +1220,19 @@ public class ViewAlbumFragment extends MyFragment {
                     }
                     synchronized (itemsToLoad) {
                         itemsToLoad.add(failedCall);
-                        emptyGalleryLabel.setText(R.string.gallery_load_failed_text);
+                        switch(failedCall) {
+                            case "U":
+                                emptyGalleryLabel.setText(R.string.gallery_update_failed_text);
+                                break;
+                            case "P":
+                                emptyGalleryLabel.setText(R.string.gallery_permissions_load_failed_text);
+                            default:
+                                // Could be 'C' or a number of current image page being loaded.
+                                emptyGalleryLabel.setText(R.string.gallery_album_content_load_failed_text);
+                                break;
+                        }
                         if (itemsToLoad.size() > 0) {
+                            emptyGalleryLabel.setVisibility(VISIBLE);
                             retryActionButton.setVisibility(VISIBLE);
                         }
                     }
@@ -1342,6 +1368,7 @@ public class ViewAlbumFragment extends MyFragment {
 
     public void onReloadAlbum() {
         retryActionButton.setVisibility(GONE);
+        emptyGalleryLabel.setVisibility(GONE);
         synchronized (itemsToLoad) {
             while (itemsToLoad.size() > 0) {
                 String itemToLoad = itemsToLoad.remove(0);
@@ -1385,9 +1412,6 @@ public class ViewAlbumFragment extends MyFragment {
             }
             galleryModel.setSpacerAlbumCount(spacerAlbumsNeeded);
             viewAdapter.notifyDataSetChanged();
-            if(loadingMessageIds.size() == 1) { // this is the last call in progress
-                emptyGalleryLabel.setVisibility(galleryModel.getItems().size() == 0 ? VISIBLE : GONE);
-            }
         }
     }
 
@@ -1395,9 +1419,6 @@ public class ViewAlbumFragment extends MyFragment {
         synchronized (galleryModel) {
             galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
             viewAdapter.notifyDataSetChanged();
-            if(loadingMessageIds.size() == 1) { // this is the last call in progress
-                emptyGalleryLabel.setVisibility(galleryModel.getItems().size() == 0 ? VISIBLE : GONE);
-            }
         }
     }
 

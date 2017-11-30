@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +57,7 @@ public class UsernameSelectFragment extends LongSetSelectFragment<UsernamesSelec
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_AVAILABLE_ITEMS, availableItems);
         outState.putSerializable(STATE_INDIRECT_SELECTION, indirectSelection);
@@ -66,7 +67,7 @@ public class UsernameSelectFragment extends LongSetSelectFragment<UsernamesSelec
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
