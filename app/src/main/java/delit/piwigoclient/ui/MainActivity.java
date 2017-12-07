@@ -746,8 +746,8 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.
             showGallery(PiwigoAlbum.ROOT_ALBUM);
-            AdsManager.getInstance().updateShowAdvertsSetting();
         }
+        AdsManager.getInstance().updateShowAdvertsSetting();
         VersionCompatability.INSTANCE.runTests();
         if (!VersionCompatability.INSTANCE.isSupportedVersion()) {
             String serverVersion = VersionCompatability.INSTANCE.getServerVersionString();
