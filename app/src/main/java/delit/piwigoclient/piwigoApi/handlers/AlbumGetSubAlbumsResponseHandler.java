@@ -18,11 +18,13 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
     private static final String TAG = "GetSubGalleriesRspHdlr";
     private final CategoryItem parentAlbum;
     private final boolean recursive;
+    private final String thumbnailSize;
 
-    public AlbumGetSubAlbumsResponseHandler(CategoryItem parentAlbum, boolean recursive) {
+    public AlbumGetSubAlbumsResponseHandler(CategoryItem parentAlbum, String thumbnailSize, boolean recursive) {
         super("pwg.categories.getList", TAG);
         this.parentAlbum = parentAlbum;
         this.recursive = recursive;
+        this.thumbnailSize = thumbnailSize;
     }
 
     @Override
@@ -31,6 +33,9 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         params.put("method", getPiwigoMethod());
         if (!parentAlbum.isRoot()) {
             params.put("cat_id", String.valueOf(parentAlbum.getId()));
+        }
+        if(thumbnailSize != null) {
+            params.put("thumbnail_size", thumbnailSize);
         }
         params.put("recursive", String.valueOf(recursive));
         return params;

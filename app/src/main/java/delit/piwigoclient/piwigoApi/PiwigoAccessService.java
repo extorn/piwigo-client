@@ -393,13 +393,13 @@ public class PiwigoAccessService {
         }.start(messageId);
     }
 
-    public static long startActionGetSubCategories(final CategoryItem parentCategory, final boolean recursive, Context context) {
+    public static long startActionGetSubCategories(final CategoryItem parentCategory, final String thumbnailSize, final boolean recursive, Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 
             @Override
             protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
-                return new AlbumGetSubAlbumsResponseHandler(parentCategory, recursive);
+                return new AlbumGetSubAlbumsResponseHandler(parentCategory, thumbnailSize, recursive);
             }
         }.start(messageId);
 

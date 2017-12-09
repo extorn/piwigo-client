@@ -151,6 +151,7 @@ public class ViewAlbumFragment extends MyFragment {
     private int colsOnScreen;
     private DeleteActionData deleteActionData;
     private long userGuid;
+    private String preferredThumbnailSize;
 
 
     /**
@@ -277,6 +278,7 @@ public class ViewAlbumFragment extends MyFragment {
 
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
+        preferredThumbnailSize = prefs.getString(getContext().getString(R.string.preference_gallery_item_thumbnail_size_key), getContext().getString(R.string.preference_gallery_item_thumbnail_size_default));
         boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
         boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
 
@@ -860,7 +862,7 @@ public class ViewAlbumFragment extends MyFragment {
     private void loadAlbumSubCategories() {
         synchronized (loadingMessageIds) {
             boolean recursive = false;
-            long loadingMessageId = PiwigoAccessService.startActionGetSubCategories(gallery, recursive, getContext());
+            long loadingMessageId = PiwigoAccessService.startActionGetSubCategories(gallery, preferredThumbnailSize, recursive, getContext());
             loadingMessageIds.put(loadingMessageId, "C");
             addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
         }
