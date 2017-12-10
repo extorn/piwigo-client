@@ -7,8 +7,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
@@ -53,7 +53,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
                 CategoryItemStub parentAlbum = availableGalleriesMap.get(parentId);
                 album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
             } else {
-                album.setParentageChain(PiwigoAlbum.ROOT_ALBUM.getParentageChain(), PiwigoAlbum.ROOT_ALBUM.getId());
+                album.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
             }
             availableGalleries.add(album);
             availableGalleriesMap.put(album.getId(), album);

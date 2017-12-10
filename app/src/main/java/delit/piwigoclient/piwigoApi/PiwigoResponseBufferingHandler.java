@@ -21,6 +21,7 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Group;
+import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
@@ -1117,6 +1118,18 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
+    public static class PiwigoGetSubAlbumsAdminResponse extends BasePiwigoResponse {
+        PiwigoAlbumAdminList adminList;
+
+        public PiwigoGetSubAlbumsAdminResponse(long messageId, String piwigoMethod, PiwigoAlbumAdminList adminList) {
+            super(messageId, piwigoMethod, true);
+            this.adminList = adminList;
+        }
+
+        public PiwigoAlbumAdminList getAdminList() {
+            return adminList;
+        }
+    }
 
     public static class PiwigoGetSubAlbumsResponse extends BasePiwigoResponse {
         private ArrayList<CategoryItem> albums;

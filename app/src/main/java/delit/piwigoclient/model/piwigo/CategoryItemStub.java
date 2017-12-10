@@ -7,7 +7,7 @@ import java.util.List;
 
 public class CategoryItemStub implements Serializable {
 
-    public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(PiwigoAlbum.ROOT_ALBUM.getName(), PiwigoAlbum.ROOT_ALBUM.getId());
+    public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId());
     private final String name;
     private final long id;
     private ArrayList<Long> parentageChain;

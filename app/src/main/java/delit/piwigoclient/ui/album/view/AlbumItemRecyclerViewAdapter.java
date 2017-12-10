@@ -229,7 +229,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 
         if(holder.mRecentlyAlteredMarkerView != null) {
             if (holder.mItem.getLastAltered() != null) {
-                // is null for blank categories (dummmy spacers)
+                // is null for blank categories (dummmy spacers) and also for categories only visible because this is an admin user (without explicit access)
                 holder.mRecentlyAlteredMarkerView.setVisibility(holder.mItem.getLastAltered().compareTo(recentlyAlteredThresholdDate) > 0 ? View.VISIBLE : GONE);
             } else {
                 holder.mRecentlyAlteredMarkerView.setVisibility(GONE);

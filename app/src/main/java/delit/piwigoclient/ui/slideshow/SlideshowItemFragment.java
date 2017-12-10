@@ -42,8 +42,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
@@ -178,7 +178,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             public boolean onLongClick(View v) {
                 // Invoke call to retrieve all album names (will show a dialog once this is done).
                 boolean recursive = true;
-                addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetSubCategoryNames(PiwigoAlbum.ROOT_ALBUM.getId(), recursive, getContext()));
+                addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetSubCategoryNames(CategoryItem.ROOT_ALBUM.getId(), recursive, getContext()));
                 return true;
             }
         });

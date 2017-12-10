@@ -34,6 +34,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetPermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumRemovePermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumSetStatusResponseHandler;
@@ -391,6 +392,18 @@ public class PiwigoAccessService {
                 return new AlbumGetSubAlbumNamesResponseHandler(parentAlbumId, recursive);
             }
         }.start(messageId);
+    }
+
+    public static long startActionGetAlbumsAdmin(Context context) {
+        long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
+        return new Worker(context) {
+
+            @Override
+            protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
+                return new AlbumGetSubAlbumsAdminResponseHandler();
+            }
+        }.start(messageId);
+
     }
 
     public static long startActionGetSubCategories(final CategoryItem parentCategory, final String thumbnailSize, final boolean recursive, Context context) {

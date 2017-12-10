@@ -40,7 +40,6 @@ import java.util.Set;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
@@ -259,8 +258,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    final boolean recursive = true;
-                    subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetSubCategoryNames(PiwigoAlbum.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive, getContext()));
+                    invokeRetrieveSubCategoryNamesCall();
                     retryRetrieveAlbumNamesButton.setVisibility(View.GONE);
                 }
                 return true;
@@ -299,8 +297,16 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     public void onResume() {
         super.onResume();
         if(subCategoryNamesActionId < 0) {
+            invokeRetrieveSubCategoryNamesCall();
+        }
+    }
+
+    private void invokeRetrieveSubCategoryNamesCall() {
+        if(PiwigoSessionDetails.isAdminUser()) {
+            subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetAlbumsAdmin(getContext()));
+        } else {
             final boolean recursive = true;
-            subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetSubCategoryNames(PiwigoAlbum.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive, getContext()));
+            subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetSubCategoryNames(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive, getContext()));
         }
     }
 
@@ -388,7 +394,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         } else {
             FilesToUploadRecyclerViewAdapter fileListAdapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
 
-            if (fileListAdapter == null || uploadToAlbumId == null || uploadToAlbumId == PiwigoAlbum.ROOT_ALBUM.getId()) {
+            if (fileListAdapter == null || uploadToAlbumId == null || uploadToAlbumId == CategoryItem.ROOT_ALBUM.getId()) {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
                 return;
             }
@@ -585,7 +591,15 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
     }
 
+    private void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse response) {
+        updateSpinnerWithNewAlbumsList(response.getAdminList().flattenTree());
+    }
+
     private void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+        updateSpinnerWithNewAlbumsList(response.getAlbumNames());
+    }
+
+    private void updateSpinnerWithNewAlbumsList(ArrayList<CategoryItemStub> albums) {
         this.availableGalleries.clear();
         if (currentGallery.getId() == 0) {
             this.availableGalleries.add(CategoryItemStub.ROOT_GALLERY);
@@ -593,7 +607,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         if(uploadToAlbumId == null) {
             uploadToAlbumId = currentGallery.getId();
         }
-        this.availableGalleries.addAll(response.getAlbumNames());
+        this.availableGalleries.addAll(albums);
         int position = availableGalleries.getPosition(uploadToAlbumId);
         if(position >= 0) {
             selectedGallerySpinner.setSelection(position);
@@ -635,6 +649,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                 onAddUploadedFileToAlbumFailure(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
                 onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
+                onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) response);
             } else if(response instanceof PiwigoResponseBufferingHandler.FileUploadCancelledResponse) {
                 onRequestedFileUploadCancelComplete(context, ((PiwigoResponseBufferingHandler.FileUploadCancelledResponse)response).getCancelledFile());
             } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoStartUploadFileResponse) {
@@ -655,6 +671,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             return canHandle || (response.getMessageId() != subCategoryNamesActionId);
         }
     }
+
+
 
 
     private void onRequestedFileUploadCancelComplete(Context context, File cancelledFile) {

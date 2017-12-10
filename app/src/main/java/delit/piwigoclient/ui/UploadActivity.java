@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
+import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
@@ -150,7 +150,7 @@ public class UploadActivity extends MyActivity {
     private void showUploadFragment() {
         if(PiwigoSessionDetails.isAdminUser()) {
             fileSelectionEventId = TrackableRequestEvent.getNextEventId();
-            Fragment f = UploadFragment.newInstance(PiwigoAlbum.ROOT_ALBUM, fileSelectionEventId);
+            Fragment f = UploadFragment.newInstance(CategoryItem.ROOT_ALBUM, fileSelectionEventId);
             showFragmentNow(f);
         } else {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
