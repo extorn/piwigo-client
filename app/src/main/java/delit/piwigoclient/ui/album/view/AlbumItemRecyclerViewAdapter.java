@@ -202,7 +202,14 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         }
 
         if(useDarkMode) {
-            viewHolder.itemView.setBackgroundColor(Color.WHITE);
+            if(useMasonryStyle) {
+                // needed for the background behind the title text
+                viewHolder.itemView.setBackgroundColor(resources.getColor(R.color.black_overlay_dark));
+                // needed for images that don't load correctly.
+                viewHolder.mImageView.setBackgroundColor(Color.WHITE);
+            } else {
+                viewHolder.itemView.setBackgroundColor(Color.WHITE);
+            }
             if(viewHolder.mImageContainer != null) {
                 // will be null for categories in list view.
                 viewHolder.mImageContainer.setBackgroundColor(resources.getColor(R.color.black_overlay_dark));

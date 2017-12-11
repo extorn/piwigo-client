@@ -7,22 +7,15 @@
     android:layout_marginTop="8dp"
     android:background="@color/black_overlay">
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/resource_thumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter" />
-
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/resource_name"
-        android:layout_margin="7dp"
+        android:layout_alignParentTop="true"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Album Title"
         android:background="#AAFFFFFF"
@@ -31,6 +24,25 @@
         android:textSize="16sp"
         android:shadowColor="#FFFFFF"
         android:shadowRadius="1" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/thumbnail_container_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:layout_below="@+id/resource_name"
+        android:background="@color/black_overlay">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/resource_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter" />
+    </RelativeLayout>
+
+
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/newly_altered_marker_image"
@@ -44,7 +56,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@id/resource_thumbnail"
+        android:layout_alignBottom="@id/thumbnail_container_layout"
         android:background="#AAFFFFFF"
         android:layout_margin="7dp">
 
