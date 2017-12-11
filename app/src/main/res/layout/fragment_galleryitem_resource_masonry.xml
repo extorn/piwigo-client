@@ -8,12 +8,11 @@
     android:background="@color/black_overlay">
 
     <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/gallery_thumbnail"
+        android:id="@+id/resource_thumbnail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter" />
-
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/newly_altered_marker_image"
@@ -26,8 +25,8 @@
         android:id="@+id/type_indicator"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@id/resource_thumbnail"
+        android:layout_alignRight="@id/resource_thumbnail"
         android:layout_margin="0.5dp"
         android:alpha="0.9"
         android:visibility="visible"
@@ -38,5 +37,14 @@
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/resource_name"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/resource_thumbnail"
+        android:textAppearance="?attr/textAppearanceListItem" />
 
 </RelativeLayout>
