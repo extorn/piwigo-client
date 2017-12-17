@@ -40,6 +40,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumRemovePermissionsResponseHandl
 import delit.piwigoclient.piwigoApi.handlers.AlbumSetStatusResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumThumbnailUpdatedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumUpdateInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupAddMembersResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupDeleteResponseHandler;
@@ -379,6 +380,17 @@ public class PiwigoAccessService {
             @Override
             protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
                 return new LogoutResponseHandler();
+            }
+        }.start(messageId);
+    }
+
+    public static long startActionCommunityGetSubCategoryNames(final long parentAlbumId, final boolean recursive, Context context) {
+        long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
+        return new Worker(context) {
+
+            @Override
+            protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
+                return new CommunityGetSubAlbumNamesResponseHandler(parentAlbumId, recursive);
             }
         }.start(messageId);
     }

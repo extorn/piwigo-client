@@ -90,22 +90,6 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
     }
 
-    private void runAndWaitForHandlerToFinish(AbstractPiwigoWsResponseHandler handler) {
-        handler.setCallDetails(getContext(), getPiwigoServerUrl(), !getUseSynchronousMode());
-        handler.setPublishResponses(false);
-        handler.runCall();
-        while(handler.isRunning()) {
-            if(isCancelCallAsap()) {
-                handler.cancelCallAsap();
-            }
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                handler.cancelCallAsap();
-            }
-        }
-    }
-
     public boolean isLoginSuccess() {
         return loginSuccess;
     }

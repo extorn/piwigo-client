@@ -154,7 +154,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if ((!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode()) {
+        if ((!PiwigoSessionDetails.isAdminUser() && !PiwigoSessionDetails.getInstance().isUseCommunityPlugin()) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -304,6 +304,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     private void invokeRetrieveSubCategoryNamesCall() {
         if(PiwigoSessionDetails.isAdminUser()) {
             subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetAlbumsAdmin(getContext()));
+        } else if(PiwigoSessionDetails.getInstance().isUseCommunityPlugin()) {
+            final boolean recursive = true;
+            subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionCommunityGetSubCategoryNames(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive, getContext()));
         } else {
             final boolean recursive = true;
             subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetSubCategoryNames(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive, getContext()));

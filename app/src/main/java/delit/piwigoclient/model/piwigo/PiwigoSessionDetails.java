@@ -24,6 +24,7 @@ public class PiwigoSessionDetails {
     private String sessionToken;
     private User userDetails;
     private int loginStatus = 0;
+    private Boolean useCommunityPlugin;
 
     public PiwigoSessionDetails(long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
         this.userGuid = userGuid;
@@ -60,7 +61,7 @@ public class PiwigoSessionDetails {
     }
 
     public static boolean isLoggedInWithSessionDetails() {
-        return instance != null && instance.loginStatus >= 2;
+        return instance != null && instance.loginStatus >= 2 && instance.isCommunityPluginStatusAvailable();
     }
 
     public synchronized static PiwigoSessionDetails getInstance() {
@@ -90,6 +91,10 @@ public class PiwigoSessionDetails {
 
     public static boolean isAdminUser() {
         return instance != null && ("webmaster".equals(instance.userType) || "admin".equals(instance.userType));
+    }
+
+    public static boolean isUseCommunityPlugin() {
+        return instance != null && Boolean.TRUE.equals(instance.useCommunityPlugin);
     }
 
     public String getUsername() {
@@ -138,5 +143,17 @@ public class PiwigoSessionDetails {
     public void setUserDetails(User userDetails) {
         this.userDetails = userDetails;
         this.loginStatus = 3;
+    }
+
+    public boolean isCommunityPluginStatusAvailable() {
+        return useCommunityPlugin != null;
+    }
+
+    public void setUseCommunityPlugin(boolean useCommunityPlugin) {
+        this.useCommunityPlugin = useCommunityPlugin;
+    }
+
+    public void updateUserType(String realUserStatus) {
+        this.userType = realUserStatus;
     }
 }

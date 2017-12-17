@@ -552,6 +552,24 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
+    public static class PiwigoCommunitySessionStatusResponse extends BasePiwigoResponse {
+
+        private final String categoryListMethod;
+
+        public PiwigoCommunitySessionStatusResponse(long messageId, String piwigoMethod, String categoryListMethod) {
+            super(messageId, piwigoMethod, true);
+            this.categoryListMethod = categoryListMethod;
+        }
+
+        public String getCategoryListMethod() {
+            return categoryListMethod;
+        }
+
+        public boolean isAvailable() {
+            return categoryListMethod != null;
+        }
+    }
+
     public static class PiwigoAlbumCreatedResponse extends BasePiwigoResponse {
 
         private final PiwigoGalleryDetails albumDetails;
