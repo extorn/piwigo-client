@@ -63,9 +63,9 @@ public class NewPiwigoUploadService extends IntentService {
         super(TAG);
     }
 
-    public static UploadJob createUploadJob(Context context, ArrayList<File> filesForUpload, CategoryItemStub category, int uploadedFilePrivacyLevel, long responseHandlerId) {
+    public static UploadJob createUploadJob(Context context, ArrayList<File> filesForUpload, CategoryItemStub category, int uploadedFilePrivacyLevel, long responseHandlerId, boolean useTempFolder) {
         long jobId = getNextMessageId();
-        UploadJob uploadJob = new UploadJob(jobId, responseHandlerId, filesForUpload, category, uploadedFilePrivacyLevel);
+        UploadJob uploadJob = new UploadJob(jobId, responseHandlerId, filesForUpload, category, uploadedFilePrivacyLevel, useTempFolder);
         activeUploadJobs.add(uploadJob);
         return uploadJob;
     }
@@ -178,8 +178,8 @@ public class NewPiwigoUploadService extends IntentService {
                 return;
             }
 
-            // create a secure folder to upload to
-            if(!createTemporaryUploadAlbum(thisUploadJob)) {
+            // create a secure folder to upload to if required
+            if(thisUploadJob.isUseTempFolder() && !createTemporaryUploadAlbum(thisUploadJob)) {
                 return;
             }
 
@@ -316,6 +316,7 @@ public class NewPiwigoUploadService extends IntentService {
     }
 
     private boolean createTemporaryUploadAlbum(UploadJob thisUploadJob) {
+
         long uploadAlbumId = thisUploadJob.getTemporaryUploadAlbum();
 
         if(uploadAlbumId < 0) {
@@ -630,7 +631,12 @@ public class NewPiwigoUploadService extends IntentService {
 //                        String data = Base64.encodeToString(buffer, 0, bytesOfData, Base64.DEFAULT);
                         ByteArrayInputStream data = new ByteArrayInputStream(uploadChunkBuffer, 0, bytesOfDataInChunk);
 
-                        UploadFileChunk currentUploadFileChunk = new UploadFileChunk(thisUploadJob.getJobId(), fileForUpload, uploadToFilename, thisUploadJob.getTemporaryUploadAlbum(), data, chunkId, chunkCount, fileMimeType);
+                        long uploadToAlbumId = thisUploadJob.getTemporaryUploadAlbum();
+                        if(uploadToAlbumId < 0) {
+                            uploadToAlbumId = thisUploadJob.getUploadToCategory();
+                        }
+
+                        UploadFileChunk currentUploadFileChunk = new UploadFileChunk(thisUploadJob.getJobId(), fileForUpload, uploadToFilename, uploadToAlbumId, data, chunkId, chunkCount, fileMimeType);
                         lastChunkUploadResult = uploadStreamChunk(thisUploadJob, currentUploadFileChunk, maxChunkUploadAutoRetries);
 
                         chunkId++;

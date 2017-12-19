@@ -446,7 +446,10 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
                 return;
             }
-            UploadJob uploadJob = NewPiwigoUploadService.createUploadJob(getContext(), filesForUpload, uploadToCategory, getPrivacyLevelWanted(), handlerId);
+
+            boolean useTempFolder = !PiwigoSessionDetails.isUseCommunityPlugin();
+
+            UploadJob uploadJob = NewPiwigoUploadService.createUploadJob(getContext(), filesForUpload, uploadToCategory, getPrivacyLevelWanted(), handlerId, useTempFolder);
             uploadJobId = uploadJob.getJobId();
             getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, Manifest.permission.WAKE_LOCK, getString(R.string.alert_wake_lock_permission_needed_to_keep_upload_job_running_with_screen_off));
         }
@@ -603,18 +606,36 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     }
 
     private void updateSpinnerWithNewAlbumsList(ArrayList<CategoryItemStub> albums) {
+
         this.availableGalleries.clear();
+
+        boolean autoSelectCommunityAlbum = PiwigoSessionDetails.isFullyLoggedIn() && PiwigoSessionDetails.isUseCommunityPlugin();
+
         if (currentGallery.getId() == 0) {
             this.availableGalleries.add(CategoryItemStub.ROOT_GALLERY);
         }
+
         if(uploadToAlbumId == null) {
             uploadToAlbumId = currentGallery.getId();
         }
+
         this.availableGalleries.addAll(albums);
         int position = availableGalleries.getPosition(uploadToAlbumId);
+
         if(position >= 0) {
             selectedGallerySpinner.setSelection(position);
         }
+
+        if(autoSelectCommunityAlbum) {
+            for(CategoryItemStub album : albums) {
+                if(album.getName().equals(PiwigoSessionDetails.getInstance().getUsername())) {
+                    position = availableGalleries.getPosition(album);
+                    selectedGallerySpinner.setSelection(position);
+                    break;
+                }
+            }
+        }
+
         subCategoryNamesActionId = -1;
         UploadJob uploadJob = getActiveJob(getContext());
         allowUserUploadConfiguration(uploadJob);
