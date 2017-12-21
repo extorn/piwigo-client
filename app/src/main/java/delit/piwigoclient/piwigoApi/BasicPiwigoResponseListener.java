@@ -157,6 +157,8 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             return !((AppCompatActivity)parent).isFinishing();
         } else if(parent instanceof ViewGroup) {
             return ((ViewGroup)parent).isShown();
+        } else if(parent == null){
+            throw new IllegalArgumentException("Unsupported parent type " + parent);
         } else {
             throw new IllegalArgumentException("Unsupported parent type " + parent);
         }

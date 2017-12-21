@@ -68,7 +68,7 @@ public abstract class UIHelper<T> {
     private DismissListener dismissListener;
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
-    private Queue<QueuedMessage> messageQueue = new LinkedBlockingQueue<>(5);
+    private Queue<QueuedMessage> messageQueue = new LinkedBlockingQueue<>(100);
     private HashSet<Long> activeServiceCalls = new HashSet<>(3);
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;

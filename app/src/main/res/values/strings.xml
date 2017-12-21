@@ -1010,7 +1010,7 @@ SOFTWARE.
     <string name="alert_image_show_image_select_rotation">Rotate Image</string>
     <string name="top_tips_menu_title">Top Tips</string>
     <string name="top_tips_heading">Top Tips</string>
-    <string name="top_tip_1">Long click on an image that has failed to load in order to retrieve it again</string>
+    <string name="top_tip_1">Long click on an image (either thumbnail or slideshow item) that has failed to load in order to retrieve it again</string>
     <string name="top_tip_2">Long click on an album to delete that album and all content</string>
     <string name="top_tip_3">Long click on an album image to enable bulk selection of images for an action</string>
     <string name="top_tip_4">When viewing any image in the slideshow, long click to rotate / change image size shown / allow further zooming</string>
@@ -1018,7 +1018,9 @@ SOFTWARE.
     <string name="top_tip_6">If the image / album details drawer action button is not shown (or positioned incorrectly), try adjusting the offset in the preferences.</string>
     <string name="top_tip_7">When logged in as an administrator, before handing your device to a friend to view your photos, engage the application lock feature to prevent inadvertent changes being made to your gallery</string>
     <string name="top_tip_8">Once you have viewed an entire video, if local file caching is enabled, it is possible to save that video to your downloads folder</string>
-    <string name="top_tip_9">Long click delete button on a file for upload to delete all files for upload when job is not in progress</string>
+    <string name="top_tip_9">Long click delete button on a \'file for upload\' to delete all files to be uploaded (when job is not in progress)</string>
+    <string name="top_tip_10">As of 21/12/2017, the PIWIGO community plugin is NOT compatible with the piwigo privacy plugin (not an app fault)</string>
+    <string name="top_tip_11">As of 21/12/2017, The PIWIGO community plugin does not allow you to see any albums other than those you can upload to (using the web api)</string>
     <string name="alert_error_please_select_upload_album">Please select an album to upload to</string>
     <string name="preference_connections_category_advanced">Advanced Settings</string>
     <string name="alert_title_select_album">Select Album</string>
