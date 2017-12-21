@@ -84,7 +84,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     private static final String TAG = "mainActivity";
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     // these fields are persisted.
-    private CategoryItem currentAlbum = PiwigoAlbum.ROOT_ALBUM;
+    private CategoryItem currentAlbum = CategoryItem.ROOT_ALBUM;
     private String onLoginActionMethodName = null;
     private ArrayList<Serializable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
@@ -208,7 +208,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
                         }
                     }
                     // we have been logged in before, and are now not logged in - need a new session.
-                    showGallery(PiwigoAlbum.ROOT_ALBUM);
+                    showGallery(CategoryItem.ROOT_ALBUM);
                 } else {
                     // pop the current fragment off, close app if it is the last one
                     doDefaultBackOperation();
@@ -289,7 +289,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
             onLoginActionParams.add(gallery);
             showLoginFragment();
         } else {
-            if(PiwigoAlbum.ROOT_ALBUM.equals(gallery)) {
+            if(CategoryItem.ROOT_ALBUM.equals(gallery)) {
                 // check if we've shown any albums before. If so, pop everything off the stack.
                 boolean found = false;
                 int i = 0;
@@ -337,7 +337,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
                 showTopTips();
                 break;
             case R.id.nav_gallery:
-                showGallery(PiwigoAlbum.ROOT_ALBUM);
+                showGallery(CategoryItem.ROOT_ALBUM);
                 break;
             case R.id.nav_about:
                 showAboutFragment();
@@ -700,7 +700,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         if (prefs.getString(getApplicationContext().getString(R.string.preference_piwigo_server_address_key), "").trim().isEmpty()) {
             showPreferences();
         } else {
-            showGallery(PiwigoAlbum.ROOT_ALBUM);
+            showGallery(CategoryItem.ROOT_ALBUM);
         }
     }
 
@@ -745,9 +745,9 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         navigationView.setMenuVisibilityToMatchSessionState();
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.
-            showGallery(PiwigoAlbum.ROOT_ALBUM);
-            AdsManager.getInstance().updateShowAdvertsSetting();
+            showGallery(CategoryItem.ROOT_ALBUM);
         }
+        AdsManager.getInstance().updateShowAdvertsSetting();
         VersionCompatability.INSTANCE.runTests();
         if (!VersionCompatability.INSTANCE.isSupportedVersion()) {
             String serverVersion = VersionCompatability.INSTANCE.getServerVersionString();

@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.Group;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
@@ -331,7 +331,7 @@ public class GroupFragment extends MyFragment {
         }
 
         if (availableGalleries == null) {
-            addActiveServiceCall(R.string.progress_loading_group_details, PiwigoAccessService.startActionGetSubCategoryNames(PiwigoAlbum.ROOT_ALBUM.getId(), true, getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details, PiwigoAccessService.startActionGetSubCategoryNames(CategoryItem.ROOT_ALBUM.getId(), true, getContext()));
         }
 
         if (currentAccessibleAlbumIds == null) {

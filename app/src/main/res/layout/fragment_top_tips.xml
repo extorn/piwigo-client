@@ -81,6 +81,17 @@
                 android:layout_height="wrap_content"
                 android:text="@string/top_tip_9"/>
 
+            <TextView
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/top_tip_10"/>
+
+            <TextView
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/top_tip_11"/>
         </LinearLayout>
 
     </ScrollView>

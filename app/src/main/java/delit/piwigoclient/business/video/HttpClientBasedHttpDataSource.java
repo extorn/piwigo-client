@@ -481,13 +481,14 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
 
         List<Header> headers = new ArrayList<>();
 
-        if (!(position == 0 && length == C.LENGTH_UNSET)) {
+        if(position == 0 && length == C.LENGTH_UNSET) {
+            // pass the request through without range header
+            headers.add(new BasicHeader("Range", "bytes=" + position + "-" + 10240)); // 100kb (for the headers
+        } else {
             String rangeRequest = "bytes=" + position + "-";
             if (length != C.LENGTH_UNSET) {
                 rangeRequest += (position + length - 1);
-            } /*else {
-                rangeRequest += (position + 102400 - 1); //100Kb if player isn't specific.
-            }*/
+            }
             headers.add(new BasicHeader("Range", rangeRequest));
         }
         headers.add(new BasicHeader("User-Agent", userAgent));
@@ -522,7 +523,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
             }
         }
         header = httpResponse.getFirstHeader("Content-Range");
-        String contentRangeHeader = header.getValue();
+        String contentRangeHeader = header != null ? header.getValue() : null;
         if (!TextUtils.isEmpty(contentRangeHeader)) {
             Matcher matcher = CONTENT_RANGE_HEADER.matcher(contentRangeHeader);
             if (matcher.find()) {
@@ -534,7 +535,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
                     }
 
                     long contentLengthFromRange =
-                            totalContentBytes - Long.parseLong(matcher.group(1)) + 1;
+                            (totalContentBytes - Long.parseLong(matcher.group(1))) + 1;
                     if (contentLength < 0) {
                         // Some proxy servers strip the Content-Length header. Fall back to the length
                         // calculated here in this case.

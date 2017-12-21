@@ -6,20 +6,21 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
-public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
 
-    private static final String TAG = "GetSubGalleryNamesRspHdlr";
+    private static final String TAG = "CommunityAlbLstRspHdlr";
     private final long parentAlbumId;
     private final boolean recursive;
 
-    public AlbumGetSubAlbumNamesResponseHandler(long parentAlbumId, boolean recursive) {
-        super("pwg.categories.getList", TAG);
+    public CommunityGetSubAlbumNamesResponseHandler(long parentAlbumId, boolean recursive) {
+        super("community.categories.getList", TAG);
         this.parentAlbumId = parentAlbumId;
         this.recursive = recursive;
     }
@@ -45,8 +46,12 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
             Long id = category.getLong("id");
             String name = category.getString("name");
             Long parentId = null;
-            if (!"null".equals(category.getString("id_uppercat"))) {
-                parentId = category.getLong("id_uppercat");
+//            if (!"null".equals(category.getString("id_uppercat"))) {
+//                parentId = category.getLong("id_uppercat");
+//            }
+            String[] parentage = category.getString("uppercats").split(",");
+            if(parentage.length >= 2) {
+                parentId = Long.valueOf(parentage[parentage.length - 2]);
             }
             CategoryItemStub album = new CategoryItemStub(name, id);
             if(parentId != null) {

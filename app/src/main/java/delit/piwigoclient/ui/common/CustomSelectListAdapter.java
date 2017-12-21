@@ -72,7 +72,8 @@ public abstract class CustomSelectListAdapter<T> extends ArrayAdapter<T> impleme
     public long getItemId(int position) {
         int itemCount = getCount();
         if(itemCount > position) {
-            return getItemId(getItem(position));
+            T item = getItem(position);
+            return getItemId(item);
         } else {
             throw new IllegalStateException("The adapter is out of sync with the screen for some reason. Wanted item at position " + position + " but there are only " + getCount() + " items in the adapter. The local id map contains " + (idPositionMap!=null?idPositionMap.size():0) + " items");
         }

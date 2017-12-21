@@ -6,11 +6,6 @@
     android:layout_marginRight="16dp"
     android:background="@color/black_overlay">
 
-    <!--<android.support.v7.widget.AppCompatCheckBox-->
-        <!--android:id="@+id/checked"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
-
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/newly_altered_marker_image"
         android:layout_alignParentRight="true"
@@ -19,7 +14,7 @@
         app:srcCompat="@drawable/ic_star_yellow_24dp"/>
 
     <ImageView
-        android:id="@+id/gallery_thumbnail"
+        android:id="@+id/resource_thumbnail"
         android:layout_width="66dp"
         android:layout_height="66dp"
         android:layout_margin="3dp"
@@ -27,32 +22,26 @@
         />
 
     <TextView
-        android:id="@+id/gallery_name"
-        android:layout_toRightOf="@+id/gallery_thumbnail"
+        android:id="@+id/resource_name"
+        android:layout_toRightOf="@id/resource_thumbnail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <TextView
-        android:id="@+id/gallery_photoCount"
-        android:layout_toRightOf="@+id/gallery_thumbnail"
-        android:layout_below="@id/gallery_name"
+        android:id="@+id/album_photoCount"
+        android:layout_toRightOf="@id/resource_thumbnail"
+        android:layout_below="@id/resource_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <TextView
-        android:id="@+id/gallery_subCategories"
+        android:id="@+id/album_subCategories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/gallery_photoCount"
-        android:layout_toRightOf="@+id/gallery_thumbnail"
+        android:layout_below="@id/album_photoCount"
+        android:layout_toRightOf="@id/resource_thumbnail"
         android:textAppearance="?attr/textAppearanceListItem" />
 
-    <!--<TextView
-        android:layout_below="@+id/gallery_thumbnail"
-        android:id="@+id/gallery_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceListItem" />-->
 </RelativeLayout>

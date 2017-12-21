@@ -89,13 +89,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         switch (status) {
             case "fail":
                 try {
-                    if (BuildConfig.DEBUG) {
-                        Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n' + jsonResponse);
-                    }
-                    int errorCode = rsp.getInt("err");
-                    String errorMessage = rsp.getString("message");
-                    PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, errorCode, errorMessage);
-                    storeResponse(r);
+                    onPiwigoFailure(rsp);
                 } catch (JSONException e) {
                     if (BuildConfig.DEBUG) {
                         Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n', e);
@@ -123,6 +117,29 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 storeResponse(r);
                 break;
         }
+    }
+
+    protected void runAndWaitForHandlerToFinish(AbstractPiwigoWsResponseHandler handler) {
+        handler.setCallDetails(getContext(), getPiwigoServerUrl(), !getUseSynchronousMode());
+        handler.setPublishResponses(false);
+        handler.runCall();
+        while(handler.isRunning()) {
+            if(isCancelCallAsap()) {
+                handler.cancelCallAsap();
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                handler.cancelCallAsap();
+            }
+        }
+    }
+
+    protected void onPiwigoFailure(JSONObject rsp) throws JSONException {
+        int errorCode = rsp.getInt("err");
+        String errorMessage = rsp.getString("message");
+        PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, errorCode, errorMessage);
+        storeResponse(r);
     }
 
     protected void reportNestedFailure(AbstractBasicPiwigoResponseHandler nestedHandler) {
@@ -159,7 +176,8 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         } else {
             errorMsg = getPiwigoMethod() + " : " + errorMsg;
         }
-        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, error.getMessage());
+        String errorDetail = error != null ? error.getMessage() : "";
+        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, errorDetail);
         storeResponse(r);
     }
 

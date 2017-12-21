@@ -10,19 +10,20 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
-public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsResponseHandler {
 
-    private static final String TAG = "GetSubGalleriesRspHdlr";
+    private static final String TAG = "CommunityGetAlbumsRspHdlr";
+
     private final CategoryItem parentAlbum;
     private final boolean recursive;
     private final String thumbnailSize;
 
-    public AlbumGetSubAlbumsResponseHandler(CategoryItem parentAlbum, String thumbnailSize, boolean recursive) {
-        super("pwg.categories.getList", TAG);
+    public CommunityAlbumGetSubAlbumsAdminResponseHandler(CategoryItem parentAlbum, String thumbnailSize, boolean recursive) {
+        super("community.categories.getList", TAG);
         this.parentAlbum = parentAlbum;
         this.recursive = recursive;
         this.thumbnailSize = thumbnailSize;
@@ -38,16 +39,13 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         if(thumbnailSize != null) {
             params.put("thumbnail_size", thumbnailSize);
         }
-        if(recursive == true || !PiwigoSessionDetails.isUseCommunityPlugin()) {
-            // community plugin is very broken!
-            params.put("recursive", String.valueOf(recursive));
-        }
+        params.put("recursive", String.valueOf(recursive));
         return params;
     }
 
     @Override
     protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-            JSONArray categories = rsp.getJSONObject("result").getJSONArray("categories");
+        JSONArray categories = rsp.getJSONObject("result").getJSONArray("categories");
         ArrayList<CategoryItem> availableGalleries = new ArrayList<>(categories.length());
 
         SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -60,17 +58,12 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             long totalPhotos = category.getLong("total_nb_images");
             long subCategories = category.getLong("nb_categories");
             String description = category.getString("comment");
-            boolean isPublic = false;
-            //TODO No support in community plugin for anything except private albums for PIWIGO API.
-            if(!PiwigoSessionDetails.isUseCommunityPlugin() || PiwigoSessionDetails.isAdminUser()) {
-                isPublic = "public".equals(category.getString("status"));
-            }
+            boolean isPublic = "public".equals(category.getString("status"));
             String dateLastAlteredStr = category.getString("max_date_last");
             String thumbnail = null;
             Long representativePictureId = null;
             try {
                 representativePictureId = category.getLong("representative_picture_id");
-                thumbnail = category.getString("tn_url");
             } catch(JSONException e) {
                 // no representative picture ID
             }
@@ -97,6 +90,9 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             }
             availableGalleries.add(item);
         }
+
+        //TODO now go and get all the thumbnail urls for those albums.... or maybe get it on demand later?
+
         PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsResponse r = new PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
         storeResponse(r);
     }

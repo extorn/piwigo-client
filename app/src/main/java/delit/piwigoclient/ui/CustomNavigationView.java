@@ -251,8 +251,9 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         Menu m = getMenu();
         if (m != null) {
             boolean isAdminUser = PiwigoSessionDetails.isAdminUser();
+            boolean hasCommunityPlugin = PiwigoSessionDetails.isUseCommunityPlugin();
 //            m.findItem(R.id.nav_gallery).setVisible(PiwigoSessionDetails.isLoggedInAndHaveSessionAndUserDetails());
-            m.findItem(R.id.nav_upload).setVisible(isAdminUser && !isReadOnly);
+            m.findItem(R.id.nav_upload).setVisible((isAdminUser || hasCommunityPlugin) && !isReadOnly);
             m.findItem(R.id.nav_groups).setVisible(isAdminUser && !isReadOnly);
             m.findItem(R.id.nav_users).setVisible(isAdminUser && !isReadOnly);
 

@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -75,10 +75,10 @@ public class AlbumSelectFragment extends LongSetSelectFragment<AvailableAlbumsLi
     @Override
     protected void populateListWithItems() {
         if (availableAlbums == null) {
-            addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetSubCategoryNames(PiwigoAlbum.ROOT_ALBUM.getId(), true, getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetSubCategoryNames(CategoryItem.ROOT_ALBUM.getId(), true, getContext()));
         } else if(getListAdapter() == null) {
             int listItemLayout = isMultiSelectEnabled()? android.R.layout.simple_list_item_multiple_choice : android.R.layout.simple_list_item_single_choice;
-            AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(PiwigoAlbum.ROOT_ALBUM, getContext(), listItemLayout);
+            AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(CategoryItem.ROOT_ALBUM, getContext(), listItemLayout);
             availableGalleries.clear();
             // leaving the root album out prevents it's selection (not wanted).
 //            availableGalleries.add(CategoryItemStub.ROOT_GALLERY);

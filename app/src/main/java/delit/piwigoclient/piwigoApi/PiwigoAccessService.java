@@ -34,11 +34,13 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetPermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumRemovePermissionsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumSetStatusResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumThumbnailUpdatedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumUpdateInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupAddMembersResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupDeleteResponseHandler;
@@ -382,6 +384,17 @@ public class PiwigoAccessService {
         }.start(messageId);
     }
 
+    public static long startActionCommunityGetSubCategoryNames(final long parentAlbumId, final boolean recursive, Context context) {
+        long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
+        return new Worker(context) {
+
+            @Override
+            protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
+                return new CommunityGetSubAlbumNamesResponseHandler(parentAlbumId, recursive);
+            }
+        }.start(messageId);
+    }
+
     public static long startActionGetSubCategoryNames(final long parentAlbumId, final boolean recursive, Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
@@ -393,13 +406,25 @@ public class PiwigoAccessService {
         }.start(messageId);
     }
 
-    public static long startActionGetSubCategories(final CategoryItem parentCategory, final boolean recursive, Context context) {
+    public static long startActionGetAlbumsAdmin(Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 
             @Override
             protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
-                return new AlbumGetSubAlbumsResponseHandler(parentCategory, recursive);
+                return new AlbumGetSubAlbumsAdminResponseHandler();
+            }
+        }.start(messageId);
+
+    }
+
+    public static long startActionGetSubCategories(final CategoryItem parentCategory, final String thumbnailSize, final boolean recursive, Context context) {
+        long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
+        return new Worker(context) {
+
+            @Override
+            protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
+                return new AlbumGetSubAlbumsResponseHandler(parentCategory, thumbnailSize, recursive);
             }
         }.start(messageId);
 

@@ -16,8 +16,6 @@ import java.util.TreeSet;
  */
 public class PiwigoAlbum implements Serializable {
 
-    public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
-
     private int subAlbumCount;
     private int spacerAlbums;
     private int advertCount;
@@ -160,4 +158,27 @@ public class PiwigoAlbum implements Serializable {
         }
         throw new IllegalArgumentException("No resource item present with id : " + selectedItemId);
     }
+
+    public boolean addMissingAlbums(List<CategoryItem> adminCategories) {
+        if(adminCategories == null) {
+            return false;
+        }
+        boolean changed = false;
+        for(CategoryItem c : adminCategories) {
+            if(!items.contains(c)) {
+                addItem(c);
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+    public void updateSpacerAlbumCount(int albumsPerRow) {
+        int spacerAlbumsNeeded = getSubAlbumCount() % albumsPerRow;
+        if(spacerAlbumsNeeded > 0) {
+            spacerAlbumsNeeded = albumsPerRow - spacerAlbumsNeeded;
+        }
+        setSpacerAlbumCount(spacerAlbumsNeeded);
+    }
+
 }

@@ -12,6 +12,9 @@ USER:
 
 'community.session.getStatus',
 
+NOT INSTALLED
+{"stat":"fail","err":501,"message":"Method name is not valid"}
+
 ADMIN:
 {"stat":"ok","result":{"real_user_status":"webmaster","upload_categories_getList_method":"pwg.categories.getAdminList"}}
 

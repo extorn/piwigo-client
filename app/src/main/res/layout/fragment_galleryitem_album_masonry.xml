@@ -1,45 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:layout_marginRight="16dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="8dp"
     android:background="@color/black_overlay">
 
-    <delit.piwigoclient.ui.common.SquareLinearLayout
-        android:id="@+id/thumbnail_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="2dp"
-        android:background="@color/black_overlay"
-        android:orientation="vertical">
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/gallery_thumbnail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:minHeight="120px"
-            android:minWidth="120px"
-            android:scaleType="fitCenter" />
-
-    </delit.piwigoclient.ui.common.SquareLinearLayout>
-
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/newly_altered_marker_image"
-        android:layout_alignParentRight="true"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        app:srcCompat="@drawable/ic_star_yellow_24dp"/>
-
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/gallery_name"
-        android:layout_margin="7dp"
+        android:id="@+id/resource_name"
+        android:layout_alignParentTop="true"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Album Title"
         android:background="#AAFFFFFF"
@@ -49,17 +25,43 @@
         android:shadowColor="#FFFFFF"
         android:shadowRadius="1" />
 
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/thumbnail_container_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="0dp"
+        android:layout_below="@+id/resource_name"
+        android:background="@color/black_overlay">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/resource_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter" />
+    </RelativeLayout>
+
+
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/newly_altered_marker_image"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentRight="true"
+        app:srcCompat="@drawable/ic_star_yellow_24dp" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentEnd="true"
-        android:layout_alignBottom="@+id/thumbnail_container"
+        android:layout_alignBottom="@id/thumbnail_container_layout"
         android:background="#AAFFFFFF"
         android:layout_margin="7dp">
 
         <TextView
-            android:id="@+id/gallery_photoCount"
+            android:id="@+id/album_photoCount"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:layout_marginBottom="3dp"
@@ -70,7 +72,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Small.AlbumDetails" />
 
         <TextView
-            android:id="@+id/gallery_subCategories"
+            android:id="@+id/album_subCategories"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
             android:layout_marginBottom="3dp"

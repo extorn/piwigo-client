@@ -204,7 +204,7 @@
 
     <string name="preference_pre_user_notified_certificates_key">preference_pre_user_notified_certificates</string>
 
-    <string name="preference_gallery_masonry_view_title">Use Masonry Style Layout</string>
+    <string name="preference_gallery_masonry_view_title">Use Masonry Style Layout (experimental)</string>
     <string name="preference_gallery_masonry_view_summary">Best fit album content in a tapestry effect</string>
     <string name="preference_gallery_masonry_view_key">preference_gallery_masonry_view</string>
     <bool name="preference_gallery_masonry_view_default">false</bool>

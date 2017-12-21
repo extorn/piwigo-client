@@ -285,29 +285,43 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.52 - Changes:
+Release 1.3.55 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.51 - Changes:
+Release 1.3.54 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for paging of groups and users (support >100 of each)
                     - Possibly - Support for user comments
-                    - Possibly - Better support for the "admin mode" on the webserver.
                     - Possibly - allow linking the upload process to a compression routine for videos
-                    - Possibly - Support for the PIWIGO community plug-in - user request
 
-Release 1.3.50 - Changes:
+Release 1.3.53 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
                     - Improve management of credentials where possible
                     - Improve memory use further
                     - Investigate serialization of app pages (crashes reported in this area)
+                    - Possibly - Support for the PIWIGO community plug-in - user request
 
 Released:
+
+Release 1.3.52 - Changes:
+                    - Added support for the PIWIGO community plug-in as per user request - N.B. This plugin is NOT compatible with the pwigio_privacy plugin.
+                    - NOTE: that community plugin API support seems to be very poor from what I've seen so far. You get a very different experience to the website.
+
+Release 1.3.51 - Changes:
+                    - Added support for admin users to see albums they don't have explicit permission to see
+                    - Add support for admin users to upload to albums they don't have explicit permission to see
+                    - Tidied up the masonry view a bit
+                 Bugfix:
+                    - Album thumbnails now downloaded to match size of image thumbnails
+                    - User and groups access permissions setting of album had been broken (does no-one use this?)
+
+Release 1.3.50 - Bugfix:
+                    - Bug in video range requests prevented videos playing for some people
 
 Release 1.3.49 - Bugfix:
                     - Better fix for the full screen advert causing a crash
@@ -996,7 +1010,7 @@ SOFTWARE.
     <string name="alert_image_show_image_select_rotation">Rotate Image</string>
     <string name="top_tips_menu_title">Top Tips</string>
     <string name="top_tips_heading">Top Tips</string>
-    <string name="top_tip_1">Long click on an image that has failed to load in order to retrieve it again</string>
+    <string name="top_tip_1">Long click on an image (either thumbnail or slideshow item) that has failed to load in order to retrieve it again</string>
     <string name="top_tip_2">Long click on an album to delete that album and all content</string>
     <string name="top_tip_3">Long click on an album image to enable bulk selection of images for an action</string>
     <string name="top_tip_4">When viewing any image in the slideshow, long click to rotate / change image size shown / allow further zooming</string>
@@ -1004,7 +1018,9 @@ SOFTWARE.
     <string name="top_tip_6">If the image / album details drawer action button is not shown (or positioned incorrectly), try adjusting the offset in the preferences.</string>
     <string name="top_tip_7">When logged in as an administrator, before handing your device to a friend to view your photos, engage the application lock feature to prevent inadvertent changes being made to your gallery</string>
     <string name="top_tip_8">Once you have viewed an entire video, if local file caching is enabled, it is possible to save that video to your downloads folder</string>
-    <string name="top_tip_9">Long click delete button on a file for upload to delete all files for upload when job is not in progress</string>
+    <string name="top_tip_9">Long click delete button on a \'file for upload\' to delete all files to be uploaded (when job is not in progress)</string>
+    <string name="top_tip_10">As of 21/12/2017, the PIWIGO community plugin is NOT compatible with the piwigo privacy plugin (not an app fault)</string>
+    <string name="top_tip_11">As of 21/12/2017, The PIWIGO community plugin does not allow you to see any albums other than those you can upload to (using the web api)</string>
     <string name="alert_error_please_select_upload_album">Please select an album to upload to</string>
     <string name="preference_connections_category_advanced">Advanced Settings</string>
     <string name="alert_title_select_album">Select Album</string>
@@ -1071,5 +1087,6 @@ SOFTWARE.
     <string name="alert_http_scheme_specified">Your server is using http. This is not a good idea because the username and password are transmitted to the server in plain text. I strongly recommend you change your server to use https.</string>
     <string name="service_target_heading">Service :</string>
     <string name="error_detail_heading">Detail :</string>
+    <string name="gallery_admin_albums_list_load_failed_text">Failed to load the full administrative list of albums</string>
 
 </resources>
