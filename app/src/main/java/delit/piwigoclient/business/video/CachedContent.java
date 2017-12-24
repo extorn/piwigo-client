@@ -14,6 +14,7 @@ import java.util.Date;
 
 public class CachedContent implements Serializable {
 
+    private static final long serialVersionUID = -5756180868306113659L;
     private String cacheDataFilename;
     private Date lastAccessed;
     private ArrayList<SerializableRange> cachedRanges = new ArrayList<>();
@@ -109,6 +110,7 @@ public class CachedContent implements Serializable {
 
     public class SerializableRange implements Serializable, Comparable<SerializableRange> {
 
+        private static final long serialVersionUID = -2497952683249597933L;
         private long upper;
         private long lower;
         private long bytes;
