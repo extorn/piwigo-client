@@ -18,7 +18,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.IOException;
+
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.MyPreferenceFragment;
@@ -57,6 +60,9 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
             } else {
                 getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
             }
+
+            Preference videoCacheFlushButton = findPreference(R.string.preference_gallery_clearVideoCache_key);
+            videoCacheFlushButton.setEnabled(Boolean.TRUE.equals(val));
             return true;
         }
     };
@@ -292,7 +298,41 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
             }
         });
+
+        Preference videoCacheFlushButton = findPreference(R.string.preference_gallery_clearVideoCache_key);
+        setVideoCacheButtonText(videoCacheFlushButton);
+        videoCacheFlushButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                try {
+                    CacheUtils.clearVideoCache(getContext());
+                    getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.videoCacheCleared_message));
+                } catch(IOException e) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.videoCacheClearFailed_message));
+                }
+                setVideoCacheButtonText(preference);
+                return true;
+
+            }
+        });
         return v;
+    }
+
+    private void setVideoCacheButtonText(Preference videoCacheFlushButton) {
+        double cacheBytes = CacheUtils.getVideoCacheSize(getContext());
+        long KB = 1024;
+        long MB = KB * 1024;
+        String spaceSuffix = " ";
+        if(cacheBytes < KB) {
+            spaceSuffix += String.format("(%1$.0f Bytes)", cacheBytes);
+        } else if(cacheBytes < MB) {
+            double kb = (cacheBytes / KB);
+            spaceSuffix += String.format("(%1$.1f KB)", kb);
+        } else {
+            double mb = (cacheBytes / MB);
+            spaceSuffix += String.format("(%1$.1f MB)", mb);
+        }
+        videoCacheFlushButton.setTitle(getString(R.string.preference_gallery_clearVideoCache_title) + spaceSuffix);
     }
 
     @Override
@@ -306,6 +346,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         Preference useMasonryViewPref = findPreference(R.string.preference_gallery_masonry_view_key);
         useMasonryViewPref.setOnPreferenceChangeListener(useMasonryViewPreferenceListener);
         useMasonryViewPreferenceListener.onPreferenceChange(useMasonryViewPref, getBooleanPreferenceValue(useMasonryViewPref.getKey()));
+
     }
 
     @Override

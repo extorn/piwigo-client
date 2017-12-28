@@ -168,6 +168,10 @@
     <string name="preference_gallery_clearMemoryCache_key" translatable="false">preference_gallery_clearMemoryCache</string>
     <string name="preference_gallery_clearMemoryCache_summary">Deletes all images cached in memory</string>
 
+    <string name="preference_gallery_clearVideoCache_title">Clear Video Cache</string>
+    <string name="preference_gallery_clearVideoCache_key" translatable="false">preference_gallery_clearVideoCache</string>
+    <string name="preference_gallery_clearVideoCache_summary">Deletes all videos cached to disk</string>
+
     <string name="preference_app_read_only_mode_key">readOnlyMode</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_key">preference_gallery_recentlyAlteredAgeMillis</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Max age recent items (days)</string>

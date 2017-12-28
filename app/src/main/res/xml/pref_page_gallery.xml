@@ -134,6 +134,11 @@
             android:summary="@string/preference_video_cache_enabled_summary"
             android:title="@string/preference_video_cache_enabled_title" />
 
+        <Preference
+            android:title="@string/preference_gallery_clearVideoCache_title"
+            android:key="@string/preference_gallery_clearVideoCache_key"
+            android:summary="@string/preference_gallery_clearVideoCache_summary"/>
+
         <delit.piwigoclient.ui.common.NumberPickerPreference
             android:defaultValue="@integer/preference_video_cache_maxsize_mb_default"
             app:defaultValue="@integer/preference_video_cache_maxsize_mb_default"

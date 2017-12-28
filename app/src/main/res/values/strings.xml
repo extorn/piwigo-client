@@ -65,6 +65,8 @@
     <string name="upload_file_privacy_level_title">File Privacy Level</string>
     <string name="cacheCleared_title">Cache</string>
     <string name="cacheCleared_message">Cache cleared. All images will be downloaded from the remote server when next requested.</string>
+    <string name="videoCacheCleared_message">Video Cache cleared. All videos will be downloaded from the remote server when next requested.</string>
+    <string name="videoCacheClearFailed_message">Video Cache could not be cleared at this time. If the problem continues, please report the error.</string>
 
     <string name="title_activity_view_gallery">View Gallery</string>
     <string name="dummy_button">Dummy Button</string>

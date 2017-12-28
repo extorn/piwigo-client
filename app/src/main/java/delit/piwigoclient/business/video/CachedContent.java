@@ -153,7 +153,7 @@ public class CachedContent implements Serializable {
         }
 
         public long available(long position) {
-            return (this.upper - position)  + 1 ;
+            return (this.upper - position);
         }
     }
 }

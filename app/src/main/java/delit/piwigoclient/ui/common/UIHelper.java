@@ -746,7 +746,6 @@ public abstract class UIHelper<T> {
                     permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
                     requestId);
         }
-
     }
 
     public boolean completePermissionsWantedRequest(PermissionsWantedResponse response) {
