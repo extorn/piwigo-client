@@ -290,6 +290,11 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesForUploadAdapter);
 
+        FileListSelectionCompleteEvent event = EventBus.getDefault().getStickyEvent(FileListSelectionCompleteEvent.class);
+        if(event != null && getUiHelper().isTrackingRequest(event.getActionId())) {
+            EventBus.getDefault().removeStickyEvent(event);
+            updateFilesForUploadList(event.getSelectedFiles());
+        }
         return view;
     }
 
@@ -486,8 +491,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             if (event.areAllPermissionsGranted()) {
                 keepDeviceAwake = true;
             }
-            NewPiwigoUploadService.startActionRunOrReRunUploadJob(getContext(), activeJob, keepDeviceAwake);
+            //ensure the handler is actively listening before the job starts.
             getUiHelper().addBackgroundServiceCall(uploadJobId);
+            NewPiwigoUploadService.startActionRunOrReRunUploadJob(getContext(), activeJob, keepDeviceAwake);
             allowUserUploadConfiguration(activeJob);
         }
     }

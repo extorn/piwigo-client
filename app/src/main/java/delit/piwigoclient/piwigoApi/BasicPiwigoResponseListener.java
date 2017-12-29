@@ -33,9 +33,6 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     }
 
     public void switchHandlerId(long newHandlerId) {
-        if(uiHelper.isServiceCallInProgress()) {
-            throw new IllegalStateException("Cannot change handler ID at the moment - responses would be lost for in-flight requests");
-        }
         handlerId = newHandlerId;
     }
 

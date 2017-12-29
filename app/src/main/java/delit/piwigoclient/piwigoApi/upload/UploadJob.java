@@ -178,8 +178,9 @@ public class UploadJob implements Serializable {
             PartialUploadData progressData = filePartialUploadProgress.get(f);
             if (progressData == null) {
                 progress = 0;
+            } else {
+                progress = Math.round((float) (((double) progressData.getBytesUploaded()) / f.length() * 90));
             }
-            progress = Math.round((float) (((double) progressData.getBytesUploaded()) / f.length() * 90));
         }
         if(status >= UPLOADED) {
             progress = 90;

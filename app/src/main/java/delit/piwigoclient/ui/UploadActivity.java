@@ -81,6 +81,8 @@ public class UploadActivity extends MyActivity {
 
         if(savedInstanceState != null) {
             fileSelectionEventId = savedInstanceState.getInt(STATE_FILE_SELECT_EVENT_ID);
+        } else {
+            fileSelectionEventId = TrackableRequestEvent.getNextEventId();
         }
 
         if(!hasAgreedToEula() || prefs.getString(getApplicationContext().getString(R.string.preference_piwigo_server_address_key), "").isEmpty()) {
@@ -148,8 +150,10 @@ public class UploadActivity extends MyActivity {
     }
 
     private void showUploadFragment() {
-        if(PiwigoSessionDetails.isAdminUser()) {
-            fileSelectionEventId = TrackableRequestEvent.getNextEventId();
+        boolean isAdminUser = PiwigoSessionDetails.isAdminUser();
+        boolean hasCommunityPlugin = PiwigoSessionDetails.isUseCommunityPlugin();
+
+        if(isAdminUser || hasCommunityPlugin) {
             Fragment f = UploadFragment.newInstance(CategoryItem.ROOT_ALBUM, fileSelectionEventId);
             showFragmentNow(f);
         } else {
@@ -276,7 +280,11 @@ public class UploadActivity extends MyActivity {
             if (resultCode == RESULT_OK) {
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectionActivity.SELECTED_FILES);
                 FileListSelectionCompleteEvent event = new FileListSelectionCompleteEvent(requestCode, filesForUpload);
-                EventBus.getDefault().post(event);
+                if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+                    EventBus.getDefault().postSticky(event);
+                } else {
+                    EventBus.getDefault().post(event);
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -307,7 +315,11 @@ public class UploadActivity extends MyActivity {
         if(getUiHelper().completePermissionsWantedRequest(event)) {
             if(event.areAllPermissionsGranted()) {
                 FileListSelectionCompleteEvent evt = new FileListSelectionCompleteEvent(fileSelectionEventId, handleSentFiles());
-                EventBus.getDefault().post(evt);
+                if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+                    EventBus.getDefault().postSticky(evt);
+                } else {
+                    EventBus.getDefault().post(evt);
+                }
             } else {
                 createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
             }
