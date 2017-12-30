@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 
@@ -34,23 +36,23 @@ public class GroupGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        JSONArray cats = result.getJSONArray("categories");
-        HashSet<Long> allowedAlbums = new HashSet<>(cats.length());
-        for (int i = 0; i < cats.length(); i++) {
-            JSONObject cat = (JSONObject) cats.get(i);
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonArray cats = result.get("categories").getAsJsonArray();
+        HashSet<Long> allowedAlbums = new HashSet<>(cats.size());
+        for (int i = 0; i < cats.size(); i++) {
+            JsonObject cat = (JsonObject) cats.get(i);
 
             boolean found = false;
-            JSONArray allowedGroups = cat.getJSONArray("groups");
-            for (int j = 0; j < allowedGroups.length(); j++) {
-                if (groupIds.contains(allowedGroups.getLong(j))) {
+            JsonArray allowedGroups = cat.get("groups").getAsJsonArray();
+            for (int j = 0; j < allowedGroups.size(); j++) {
+                if (groupIds.contains(allowedGroups.get(j).getAsLong())) {
                     found = true;
                     break;
                 }
             }
             if (found) {
-                long category = cat.getLong("id");
+                long category = cat.get("id").getAsLong();
                 allowedAlbums.add(category);
             }
         }

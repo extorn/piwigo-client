@@ -1,7 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,7 +47,7 @@ public class ImageSetLinkedAlbumsResponseHandler<T extends ResourceItem> extends
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         piwigoResource.setLinkedAlbums(linkedAlbums);
         PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse r = new PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse(getMessageId(), getPiwigoMethod(), piwigoResource);
         storeResponse(r);

@@ -1,7 +1,9 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -31,11 +33,9 @@ public class AlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-
-
-        JSONObject galleryCreateResponse = rsp.getJSONObject("result");
-        long newAlbumnId = galleryCreateResponse.getLong("id");
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        long newAlbumnId = result.get("id").getAsLong();
         newAlbum.setGalleryId(newAlbumnId);
 
         PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse r = new PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse(getMessageId(), getPiwigoMethod(), newAlbum);

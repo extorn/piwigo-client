@@ -1,7 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -47,7 +48,7 @@ public class ImageUpdateInfoResponseHandler<T extends ResourceItem> extends Abst
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource);
         storeResponse(r);
     }

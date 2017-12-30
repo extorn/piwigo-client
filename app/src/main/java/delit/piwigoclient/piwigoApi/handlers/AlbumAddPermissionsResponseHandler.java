@@ -1,7 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 
@@ -27,7 +28,7 @@ public class AlbumAddPermissionsResponseHandler extends AlbumAlterPermissionsRes
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse r = new PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse(getMessageId(), getPiwigoMethod(), getNewAllowedGroups(), getNewAllowedUsers());
         storeResponse(r);
     }

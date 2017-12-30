@@ -1,7 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 
@@ -53,7 +54,7 @@ public class UserUpdateInfoResponseHandler<T extends ResourceItem> extends Abstr
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         if(user.getGroups() == null) {
             user.setGroups(new HashSet<Long>(0));
         }

@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -41,33 +43,33 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        JSONObject pagingObj = result.getJSONObject("paging");
-        int page = pagingObj.getInt("page");
-        int pageSize = pagingObj.getInt("per_page");
-        int itemsOnPage = pagingObj.getInt("count");
-        JSONArray groupsObj = result.getJSONArray("groups");
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonObject pagingObj = result.get("paging").getAsJsonObject();
+        int page = pagingObj.get("page").getAsInt();
+        int pageSize = pagingObj.get("per_page").getAsInt();
+        int itemsOnPage = pagingObj.get("count").getAsInt();
+        JsonArray groupsObj = result.get("groups").getAsJsonArray();
         HashSet<Group> groups = parseGroupsFromJson(groupsObj);
         PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, groups);
         storeResponse(r);
     }
 
-    public static HashSet<Group> parseGroupsFromJson(JSONArray groupsObj) throws JSONException {
-        HashSet<Group> groups = new HashSet<>(groupsObj.length());
-        for (int i = 0; i < groupsObj.length(); i++) {
-            JSONObject groupObj = groupsObj.getJSONObject(i);
+    public static HashSet<Group> parseGroupsFromJson(JsonArray groupsObj) throws JSONException {
+        HashSet<Group> groups = new HashSet<>(groupsObj.size());
+        for (int i = 0; i < groupsObj.size(); i++) {
+            JsonObject groupObj = groupsObj.get(i).getAsJsonObject();
             Group g = parseGroupFromJson(groupObj);
             groups.add(g);
         }
         return groups;
     }
 
-    public static Group parseGroupFromJson(JSONObject groupObj) throws JSONException {
-        long id = groupObj.getLong("id");
-        String name = groupObj.getString("name");
-        boolean isDefault = groupObj.getBoolean("is_default");
-        int memberCount = groupObj.getInt("nb_users");
+    public static Group parseGroupFromJson(JsonObject groupObj) throws JSONException {
+        long id = groupObj.get("id").getAsLong();
+        String name = groupObj.get("name").getAsString();
+        boolean isDefault = groupObj.get("is_default").getAsBoolean();
+        int memberCount = groupObj.get("nb_users").getAsInt();
         return new Group(id, name, isDefault, memberCount);
     }
 }

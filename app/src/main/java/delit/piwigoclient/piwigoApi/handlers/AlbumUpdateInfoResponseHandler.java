@@ -1,7 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -18,7 +19,7 @@ public class AlbumUpdateInfoResponseHandler extends AbstractPiwigoWsResponseHand
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         PiwigoResponseBufferingHandler.PiwigoUpdateAlbumInfoResponse r = new PiwigoResponseBufferingHandler.PiwigoUpdateAlbumInfoResponse(getMessageId(), getPiwigoMethod(), album);
         storeResponse(r);
     }

@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
@@ -44,33 +45,36 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONArray categories = rsp.getJSONObject("result").getJSONArray("categories");
-        ArrayList<CategoryItem> availableGalleries = new ArrayList<>(categories.length());
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonArray categories = result.get("categories").getAsJsonArray();
+        ArrayList<CategoryItem> availableGalleries = new ArrayList<>(categories.size());
 
         SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        for (int i = 0; i < categories.length(); i++) {
-            JSONObject category = (JSONObject) categories.get(i);
-            long id = category.getLong("id");
-            String name = category.getString("name");
-            long photos = category.getLong("nb_images");
-            long totalPhotos = category.getLong("total_nb_images");
-            long subCategories = category.getLong("nb_categories");
-            String description = category.getString("comment");
-            boolean isPublic = "public".equals(category.getString("status"));
-            String dateLastAlteredStr = category.getString("max_date_last");
+        for (int i = 0; i < categories.size(); i++) {
+            JsonObject category = (JsonObject) categories.get(i);
+            long id = category.get("id").getAsLong();
+            String name = category.get("name").getAsString();
+            long photos = category.get("nb_images").getAsLong();
+            long totalPhotos = category.get("total_nb_images").getAsLong();
+            long subCategories = category.get("nb_categories").getAsLong();
+            String description = category.get("comment").getAsString();
+            boolean isPublic = "public".equals(category.get("status").getAsString());
+            JsonElement maxDateLastJsonElem = category.get("max_date_last");
+            String dateLastAlteredStr = null;
+            if(maxDateLastJsonElem != null && !maxDateLastJsonElem.isJsonNull()) {
+                dateLastAlteredStr = maxDateLastJsonElem.getAsString();
+            }
             String thumbnail = null;
             Long representativePictureId = null;
-            try {
-                representativePictureId = category.getLong("representative_picture_id");
-            } catch(JSONException e) {
-                // no representative picture ID
+            if(category.has("representative_picture_id") && !category.get("representative_picture_id").isJsonNull()) {
+                representativePictureId = category.get("representative_picture_id").getAsLong();
             }
 
             Date dateLastAltered = null;
             try {
-                if ("null".equals(dateLastAlteredStr)) {
+                if (dateLastAlteredStr == null) {
                     dateLastAltered = new Date(0);
                 } else {
                     dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);

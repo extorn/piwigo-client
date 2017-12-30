@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -27,35 +29,35 @@ public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        JSONArray cats = result.getJSONArray("categories");
-        if (cats.length() > 1) {
-            throw new JSONException("Expected details for exactly one category to be returned, but got " + cats.length());
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonArray cats = result.get("categories").getAsJsonArray();
+        if (cats.size() > 1) {
+            throw new JSONException("Expected details for exactly one category to be returned, but got " + cats.size());
         }
 
         long[] groups;
         long[] users;
-        if(cats.length() == 0) {
+        if(cats.size() == 0) {
             // no privacy settings exist yet for this album.
             groups = new long[0];
             users = new long[0];
         } else {
-            JSONObject cat = (JSONObject) cats.get(0);
-            if (cat.getLong("id") != album.getId()) {
+            JsonObject cat = (JsonObject) cats.get(0);
+            if (cat.get("id").getAsLong() != album.getId()) {
                 throw new JSONException("Expected details for category requested, but details for a different category were returned by the server");
             }
-            JSONArray usersArr = cat.getJSONArray("users");
-            users = new long[usersArr.length()];
-            for (int i = 0; i < usersArr.length(); i++) {
-                long user = usersArr.getLong(i);
+            JsonArray usersArr = cat.get("users").getAsJsonArray();
+            users = new long[usersArr.size()];
+            for (int i = 0; i < usersArr.size(); i++) {
+                long user = usersArr.get(i).getAsLong();
                 users[i] = user;
             }
 
-            JSONArray groupsArr = cat.getJSONArray("groups");
-            groups = new long[groupsArr.length()];
-            for (int i = 0; i < groupsArr.length(); i++) {
-                long group = groupsArr.getLong(i);
+            JsonArray groupsArr = cat.get("groups").getAsJsonArray();
+            groups = new long[groupsArr.size()];
+            for (int i = 0; i < groupsArr.size(); i++) {
+                long group = groupsArr.get(i).getAsLong();
                 groups[i] = group;
             }
         }

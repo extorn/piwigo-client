@@ -1,7 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -33,7 +34,7 @@ public class GroupDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse r = new PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse(getMessageId(), getPiwigoMethod());
         storeResponse(r);
     }

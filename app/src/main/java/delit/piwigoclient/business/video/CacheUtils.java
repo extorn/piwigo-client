@@ -41,6 +41,11 @@ public class CacheUtils {
         return f;
     }
 
+    public static void clearResponseCache(Context c) throws IOException {
+        File cacheDir = getBasicCacheFolder(c);
+        deleteQuietly(cacheDir);
+    }
+
     public static void clearVideoCache(Context c) throws IOException {
         File cacheDir = getVideoCacheFolder(c);
         deleteQuietly(cacheDir);
@@ -268,6 +273,15 @@ public class CacheUtils {
             throw new SecurityException(context.getString(R.string.error_insufficient_permissions_for_cache_folder));
         }
         return cacheFolder;
+    }
+
+    public static long getResponseCacheSize(Context context) {
+        try {
+            File responseCacheFolder = getBasicCacheFolder(context);
+            return folderSize(responseCacheFolder);
+        } catch (SecurityException e) {
+            return 0;
+        }
     }
 
     public static long getVideoCacheSize(Context context) {

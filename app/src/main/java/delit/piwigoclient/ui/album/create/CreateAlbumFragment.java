@@ -327,7 +327,7 @@ public class CreateAlbumFragment extends MyFragment {
 
         newAlbum = new PiwigoGalleryDetails(parentGallery, null, galleryName, galleryDescription, userCommentsAllowed, isPrivate);
 
-        createGalleryMessageId = PiwigoAccessService.startActionAddGallery(newAlbum, getContext());
+        createGalleryMessageId = PiwigoAccessService.startActionAddAlbum(newAlbum, getContext());
         addActiveServiceCall(R.string.progress_creating_album, createGalleryMessageId);
     }
 
@@ -354,14 +354,17 @@ public class CreateAlbumFragment extends MyFragment {
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response.getMessageId() == createGalleryMessageId) {
-                // error action failed and server state unchanged.
-                showDialogBox(R.string.alert_failure, getString(R.string.album_create_failed));
-            } else if (response.getMessageId() == setGalleryPermissionsMessageId) {
-                deleteGalleryMessageId = PiwigoAccessService.startActionDeleteGallery(newAlbum.getGalleryId(), getContext());
-                addActiveServiceCall(deleteGalleryMessageId);
-            } else if (response.getMessageId() == deleteGalleryMessageId) {
-                showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
+            if(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
+                if (response.getMessageId() == createGalleryMessageId) {
+                    // error action failed and server state unchanged.
+                    showDialogBox(R.string.alert_failure, getString(R.string.album_create_failed));
+                } else if (response.getMessageId() == setGalleryPermissionsMessageId) {
+//                    deleteGalleryMessageId = PiwigoAccessService.startActionDeleteAlbum(newAlbum.getGalleryId(), getContext());
+//                    addActiveServiceCall(deleteGalleryMessageId);
+                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
+                } else if (response.getMessageId() == deleteGalleryMessageId) {
+//                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
+                }
             }
         }
     }
@@ -409,7 +412,7 @@ public class CreateAlbumFragment extends MyFragment {
             addActiveServiceCall(setGalleryPermissionsMessageId);
         } else {
             //TODO why are we doing this unnecessary call?
-            setGalleryPermissionsMessageId = PiwigoAccessService.startActionSetGalleryStatus(newAlbum, getContext());
+            setGalleryPermissionsMessageId = PiwigoAccessService.startActionSetAlbumStatus(newAlbum, getContext());
             addActiveServiceCall(setGalleryPermissionsMessageId);
         }
 

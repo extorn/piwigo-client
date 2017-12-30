@@ -669,7 +669,7 @@ public class ViewAlbumFragment extends MyFragment {
                         @Override
                         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                             if(Boolean.TRUE == positiveAnswer) {
-                                addActiveServiceCall(R.string.progress_delete_album, PiwigoAccessService.startActionDeleteGallery(album.getId(),getContext()));
+                                addActiveServiceCall(R.string.progress_delete_album, PiwigoAccessService.startActionDeleteAlbum(album.getId(),getContext()));
                             }
                         }
                     });
@@ -783,7 +783,7 @@ public class ViewAlbumFragment extends MyFragment {
                 @Override
                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                     if (Boolean.TRUE == positiveAnswer) {
-                        addActiveServiceCall(R.string.progress_delete_resources, PiwigoAccessService.startActionDeleteGalleryItemsFromServer(deleteActionData.getSelectedItemIds(), getContext()));
+                        addActiveServiceCall(R.string.progress_delete_resources, PiwigoAccessService.startActionDeleteAlbumItemsFromServer(deleteActionData.getSelectedItemIds(), getContext()));
                     } else if (Boolean.FALSE == positiveAnswer) {
                         HashSet<Long> itemIdsForPermananentDelete = (HashSet<Long>) deleteActionData.getSelectedItemIds().clone();
                         HashSet<ResourceItem> itemsForPermananentDelete = (HashSet<ResourceItem>) deleteActionData.getSelectedItems().clone();
@@ -815,7 +815,7 @@ public class ViewAlbumFragment extends MyFragment {
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if(Boolean.TRUE == positiveAnswer) {
-                    addActiveServiceCall(R.string.progress_delete_resources, PiwigoAccessService.startActionDeleteGalleryItemsFromServer(selectedItemIds, getContext()));
+                    addActiveServiceCall(R.string.progress_delete_resources, PiwigoAccessService.startActionDeleteAlbumItemsFromServer(selectedItemIds, getContext()));
                 }
             }
         });
@@ -1410,7 +1410,7 @@ public class ViewAlbumFragment extends MyFragment {
             case UPDATE_IN_PROGRESS:
             case UPDATE_NOT_RUNNING:
                 updateAlbumDetailsProgress = UPDATE_IN_PROGRESS;
-                addActiveServiceCall(R.string.gallery_details_updating_progress_title, PiwigoAccessService.startActionUpdateGalleryInfo(gallery, getContext()));
+                addActiveServiceCall(R.string.gallery_details_updating_progress_title, PiwigoAccessService.startActionUpdateAlbumInfo(gallery, getContext()));
                 break;
             case UPDATE_SETTING_ADDING_PERMISSIONS:
                 addingAlbumPermissions();

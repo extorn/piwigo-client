@@ -1,7 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload.handlers;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONException;import com.google.gson.JsonElement;import com.google.gson.JsonObject;import com.google.gson.JsonArray;
 
 import java.security.SecureRandom;
 
@@ -34,12 +33,10 @@ public class UploadAlbumCreateResponseHandler extends AbstractPiwigoWsResponseHa
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
 
-
-        JSONObject galleryCreateResponse = rsp.getJSONObject("result");
-        long newAlbumnId = galleryCreateResponse.getLong("id");
-
+        JsonObject result = rsp.getAsJsonObject();
+        long newAlbumnId = result.get("id").getAsLong();
         PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse r = new PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse(getMessageId(), getPiwigoMethod(), newAlbumnId);
         storeResponse(r);
     }

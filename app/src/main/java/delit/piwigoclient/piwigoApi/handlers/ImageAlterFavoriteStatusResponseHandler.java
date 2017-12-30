@@ -1,7 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -27,7 +28,7 @@ public class ImageAlterFavoriteStatusResponseHandler extends AbstractPiwigoWsRes
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         //TODO implement this
         PiwigoResponseBufferingHandler.PiwigoFavoriteStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoFavoriteStatusResponse(getMessageId(), getPiwigoMethod(), piwigoResource);
         storeResponse(r);

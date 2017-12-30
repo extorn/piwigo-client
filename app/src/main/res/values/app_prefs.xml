@@ -62,6 +62,10 @@
     <string name="preference_server_ssl_certificate_hostname_verification_title">SSL Certificate Hostname validation</string>
     <string name="preference_server_ssl_certificate_hostname_verification_default" translatable="false">1</string>
 
+    <string name="preference_caching_clearResponseCache_title">Clear Server Response Cache</string>
+    <string name="preference_caching_clearResponseCache_key" translatable="false">preference_caching_clearResponseCache</string>
+    <string name="preference_caching_clearResponseCache_summary">Deletes all server responses cached to disk</string>
+
     <string name="preference_caching_level_key">preference_caching_level</string>
     <string name="preference_caching_level_title">Response Cache Level</string>
     <string name="preference_caching_level_default">disk</string>

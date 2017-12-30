@@ -161,8 +161,14 @@ public class PiwigoAccessService {
         }
 
         protected boolean executeCall(long messageId) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            String piwigoServerUrl = prefs.getString(context.getString(R.string.preference_piwigo_server_address_key), null);
+            SharedPreferences prefs = null;
+            if(context != null) {
+                prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            }
+            String piwigoServerUrl = null;
+            if(prefs != null) {
+                piwigoServerUrl = prefs.getString(context.getString(R.string.preference_piwigo_server_address_key), null);
+            }
             AbstractPiwigoDirectResponseHandler handler = buildHandler(prefs);
             if(handler != null) {
                 this.tag = handler.getTag();
@@ -268,7 +274,7 @@ public class PiwigoAccessService {
     }
 
     //TODO this seems totally superfluous to requirements.
-    public static long startActionSetGalleryStatus(final PiwigoGalleryDetails gallery, final Context context) {
+    public static long startActionSetAlbumStatus(final PiwigoGalleryDetails gallery, final Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 
@@ -351,7 +357,7 @@ public class PiwigoAccessService {
         }.start(messageId);
     }
 
-    public static long startActionDeleteGallery(final long galleryId, final Context context) {
+    public static long startActionDeleteAlbum(final long galleryId, final Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 
@@ -362,7 +368,7 @@ public class PiwigoAccessService {
         }.start(messageId);
     }
 
-    public static long startActionAddGallery(final PiwigoGalleryDetails newAlbum, final Context context) {
+    public static long startActionAddAlbum(final PiwigoGalleryDetails newAlbum, final Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 
@@ -520,7 +526,7 @@ public class PiwigoAccessService {
         }.start(messageId);
     }
 
-    public static long startActionUpdateGalleryInfo(final CategoryItem piwigoResource, Context context) {
+    public static long startActionUpdateAlbumInfo(final CategoryItem piwigoResource, Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 
@@ -581,7 +587,7 @@ public class PiwigoAccessService {
         }.start(messageId);
     }
 
-    public static long startActionDeleteGalleryItemFromServer(final long itemId, Context context) {
+    public static long startActionDeleteAlbumItemFromServer(final long itemId, Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 
@@ -592,7 +598,7 @@ public class PiwigoAccessService {
         }.start(messageId);
     }
 
-    public static long startActionDeleteGalleryItemsFromServer(final HashSet<Long> itemIds, Context context) {
+    public static long startActionDeleteAlbumItemsFromServer(final HashSet<Long> itemIds, Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 

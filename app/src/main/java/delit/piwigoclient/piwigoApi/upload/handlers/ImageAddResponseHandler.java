@@ -1,7 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload.handlers;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONException;import com.google.gson.JsonElement;import com.google.gson.JsonObject;import com.google.gson.JsonArray;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
@@ -35,7 +34,7 @@ public class ImageAddResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         PiwigoResponseBufferingHandler.PiwigoAddImageResponse r = new PiwigoResponseBufferingHandler.PiwigoAddImageResponse(getMessageId(), getPiwigoMethod());
         storeResponse(r);
     }

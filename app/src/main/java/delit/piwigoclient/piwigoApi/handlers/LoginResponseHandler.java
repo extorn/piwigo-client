@@ -1,10 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.User;
@@ -47,7 +47,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         onLogin();
     }
 
