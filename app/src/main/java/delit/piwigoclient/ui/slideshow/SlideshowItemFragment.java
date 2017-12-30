@@ -510,7 +510,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
                     AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
                     getUiHelper().setTrackingRequest(event.getActionId());
                     EventBus.getDefault().post(event);
-                    addActiveServiceCall(R.string.progress_delete_resource, PiwigoAccessService.startActionDeleteGalleryItemFromServer(model.getId(), getContext()));
+                    addActiveServiceCall(R.string.progress_delete_resource, PiwigoAccessService.startActionDeleteAlbumItemFromServer(model.getId(), getContext()));
                 }
             }
         });

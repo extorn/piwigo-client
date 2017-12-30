@@ -2,9 +2,11 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.support.annotation.NonNull;
 
-import org.json.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -42,47 +44,48 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        JSONObject pagingObj = result.getJSONObject("paging");
-        int page = pagingObj.getInt("page");
-        int pageSize = pagingObj.getInt("per_page");
-        int itemsOnPage = pagingObj.getInt("count");
-        JSONArray usersObj = result.getJSONArray("users");
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonObject pagingObj = result.get("paging").getAsJsonObject();
+        int page = pagingObj.get("page").getAsInt();
+        int pageSize = pagingObj.get("per_page").getAsInt();
+        int itemsOnPage = pagingObj.get("count").getAsInt();
+        JsonArray usersObj = result.get("users").getAsJsonArray();
         ArrayList<User> users = parseUsersFromJson(usersObj);
         PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse r = new PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
         storeResponse(r);
     }
 
-    public static ArrayList<User> parseUsersFromJson(JSONArray usersObj) throws JSONException {
-        ArrayList<User> users = new ArrayList<>(usersObj.length());
+    public static ArrayList<User> parseUsersFromJson(JsonArray usersObj) throws JSONException {
+        ArrayList<User> users = new ArrayList<>(usersObj.size());
 
         SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        for (int i = 0; i < usersObj.length(); i++) {
-            JSONObject userObj = usersObj.getJSONObject(i);
+        for (int i = 0; i < usersObj.size(); i++) {
+            JsonObject userObj = usersObj.get(i).getAsJsonObject();
             User user = parseUserFromJson(userObj, piwigoDateFormat);
             users.add(user);
         }
         return users;
     }
 
-    public static User parseUserFromJson(JSONObject userObj, SimpleDateFormat piwigoDateFormat) throws JSONException {
-        long id = userObj.getLong("id");
-        String username = userObj.getString("username");
-        String userType = userObj.getString("status");
-        int privacyLevel = userObj.getInt("level");
-        String email = userObj.getString("email");
-        if ("null".equals(email)) {
-            email = null;
+    public static User parseUserFromJson(JsonObject userObj, SimpleDateFormat piwigoDateFormat) throws JSONException {
+        long id = userObj.get("id").getAsLong();
+        String username = userObj.get("username").getAsString();
+        String userType = userObj.get("status").getAsString();
+        int privacyLevel = userObj.get("level").getAsInt();
+        JsonElement emailJsonElem = userObj.get("email");
+        String email = null;
+        if (emailJsonElem != null && !emailJsonElem.isJsonNull()) {
+            email = emailJsonElem.getAsString();
         }
         boolean highDefEnabled = false;
         if(userObj.has("enabled_high")) {
-            highDefEnabled = userObj.getBoolean("enabled_high");
+            highDefEnabled = userObj.get("enabled_high").getAsBoolean();
         }
         Date lastVisitDate = null;
-        if(userObj.has("last_visit")) {
-            String lastVisitDateStr = userObj.getString("last_visit");
+        if(userObj.has("last_visit") && !userObj.get("last_visit").isJsonNull()) {
+            String lastVisitDateStr = userObj.get("last_visit").getAsString();
             if (lastVisitDateStr != null) {
                 try {
                     lastVisitDate = piwigoDateFormat.parse(lastVisitDateStr);
@@ -91,10 +94,10 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
                 }
             }
         }
-        JSONArray groupsArr = userObj.getJSONArray("groups");
-        HashSet<Long> groups = new HashSet<>(groupsArr.length());
-        for (int j = 0; j < groupsArr.length(); j++) {
-            long groupId = groupsArr.getLong(j);
+        JsonArray groupsArr = userObj.get("groups").getAsJsonArray();
+        HashSet<Long> groups = new HashSet<>(groupsArr.size());
+        for (int j = 0; j < groupsArr.size(); j++) {
+            long groupId = groupsArr.get(j).getAsLong();
             groups.add(groupId);
         }
 

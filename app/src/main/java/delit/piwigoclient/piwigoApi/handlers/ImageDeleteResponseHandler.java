@@ -1,7 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 
@@ -49,7 +50,7 @@ public class ImageDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse r = new PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse(getMessageId(), getPiwigoMethod(), itemIds);
         storeResponse(r);
     }

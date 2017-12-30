@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 
@@ -46,9 +48,9 @@ public class GroupUpdateInfoResponseHandler<T extends ResourceItem> extends Abst
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        JSONArray groupsObj = result.getJSONArray("groups");
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonArray groupsObj = result.get("groups").getAsJsonArray();
         HashSet<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
         if(groups.size() != 1) {
             throw new JSONException("Expected one group to be returned, but there were " + groups.size());

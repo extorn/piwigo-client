@@ -2,15 +2,23 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.util.Log;
 
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 import cz.msebera.android.httpclient.Header;
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
 import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
@@ -25,6 +33,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     private String piwigoMethod;
     private RequestParams requestParams;
     private String nestedFailureMethod;
+    private Gson gson;
 
     public AbstractPiwigoWsResponseHandler(String piwigoMethod, String tag) {
         super(tag);
@@ -55,67 +64,57 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         return nestedFailureMethod;
     }
 
+    protected Gson buildGson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+        Gson gson = gsonBuilder.create();
+        return gson;
+    }
+
+    protected Gson getGson() {
+        if(gson == null) {
+            gson = buildGson();
+        }
+        return gson;
+    }
+
     @Override
     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
         String response = null;
         try {
-            response = responseBody == null ? null : new String(responseBody, getCharset());
-            processJsonResponse(getMessageId(), piwigoMethod, response);
 
-        } catch (UnsupportedEncodingException e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(getTag(), piwigoMethod + " onSuccess: " + response, e);
-            }
+            PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(new ByteArrayInputStream(responseBody)), PiwigoJsonResponse.class);
+            processJsonResponse(getMessageId(), piwigoMethod, piwigoResponse, responseBody);
+
+        } catch (JsonSyntaxException e) {
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
+            storeResponse(r);
+        } catch (JsonIOException e) {
             PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
             storeResponse(r);
         }
     }
 
-    private void processJsonResponse(long messageId, String piwigoMethod, String jsonResponse) {
-        // JSON Object
-        JSONObject rsp;
-        String status;
+    private void processJsonResponse(long messageId, String piwigoMethod, PiwigoJsonResponse jsonResponse, byte[] rawData) {
         try {
-            rsp = new JSONObject(jsonResponse);
-            status = rsp.getString("stat");
+            switch (jsonResponse.getStat()) {
+                case "fail":
+                    onPiwigoFailure(jsonResponse);
+                    break;
+                case "ok":
+                    onPiwigoSuccess(jsonResponse.getResult());
+                    break;
+                default:
+                    throw new JSONException("Unexpected piwigo response code");
+            }
         } catch (JSONException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n', e);
             }
-            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, jsonResponse);
+            String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
+            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
             storeResponse(r);
             return;
-        }
-        switch (status) {
-            case "fail":
-                try {
-                    onPiwigoFailure(rsp);
-                } catch (JSONException e) {
-                    if (BuildConfig.DEBUG) {
-                        Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n', e);
-                    }
-                    PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, jsonResponse);
-                    storeResponse(r);
-                }
-                break;
-            case "ok":
-                try {
-                    onPiwigoSuccess(rsp);
-                } catch (JSONException e) {
-                    if (BuildConfig.DEBUG) {
-                        Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n', e);
-                    }
-                    PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_SUCCESS, jsonResponse);
-                    storeResponse(r);
-                }
-                break;
-            default:
-                if (BuildConfig.DEBUG) {
-                    Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n' + jsonResponse);
-                }
-                PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, jsonResponse);
-                storeResponse(r);
-                break;
         }
     }
 
@@ -135,10 +134,8 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         }
     }
 
-    protected void onPiwigoFailure(JSONObject rsp) throws JSONException {
-        int errorCode = rsp.getInt("err");
-        String errorMessage = rsp.getString("message");
-        PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, errorCode, errorMessage);
+    protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
+        PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, rsp.getErr(), rsp.getMessage());
         storeResponse(r);
     }
 
@@ -149,7 +146,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         super.reportNestedFailure(nestedHandler);
     }
 
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         PiwigoResponseBufferingHandler.PiwigoSuccessResponse r = new PiwigoResponseBufferingHandler.PiwigoSuccessResponse(getMessageId(), piwigoMethod, rsp);
         storeResponse(r);
     }

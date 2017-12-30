@@ -15,11 +15,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.IOException;
 import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
@@ -130,6 +132,10 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     forkLogoutIfNeeded();
                 }
             }
+
+            Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
+            responseCacheFlushButton.setEnabled("disk".equals(newValue));
+
             getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entries_key)).setEnabled(!"disabled".equals(newValue));
             getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entry_size_key)).setEnabled(!"disabled".equals(newValue));
             updateSummary(preference, newValue);
@@ -398,6 +404,24 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         bindIntPreferenceSummaryToValue(findPreference(R.string.preference_caching_max_cache_entries_key));
         bindIntPreferenceSummaryToValue(findPreference(R.string.preference_caching_max_cache_entry_size_key));
 
+        Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
+        setResponseCacheButtonText(responseCacheFlushButton);
+        responseCacheFlushButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                try {
+                    CacheUtils.clearResponseCache(getContext());
+                    testLogin();
+                    getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
+                } catch(IOException e) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheClearFailed_message));
+                }
+                setResponseCacheButtonText(preference);
+                return true;
+
+            }
+        });
+
         bindIntPreferenceSummaryToValue(findPreference(R.string.preference_server_socketTimeout_millisecs_key));
         bindIntPreferenceSummaryToValue(findPreference(R.string.preference_server_connection_retries_key));
 
@@ -413,6 +437,23 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             }
         });
         return v;
+    }
+
+    private void setResponseCacheButtonText(Preference responseCacheFlushButton) {
+        double cacheBytes = CacheUtils.getResponseCacheSize(getContext());
+        long KB = 1024;
+        long MB = KB * 1024;
+        String spaceSuffix = " ";
+        if(cacheBytes < KB) {
+            spaceSuffix += String.format("(%1$.0f Bytes)", cacheBytes);
+        } else if(cacheBytes < MB) {
+            double kb = (cacheBytes / KB);
+            spaceSuffix += String.format("(%1$.1f KB)", kb);
+        } else {
+            double mb = (cacheBytes / MB);
+            spaceSuffix += String.format("(%1$.1f MB)", mb);
+        }
+        responseCacheFlushButton.setTitle(getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload.handlers;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONException;import com.google.gson.JsonElement;import com.google.gson.JsonObject;import com.google.gson.JsonArray;
 
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -29,9 +28,9 @@ public class ImageCheckFilesResponseHandler<T extends ResourceItem> extends Abst
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.optJSONObject("result");
-        String testResult = result.getString("file");
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        String testResult = result.get("file").getAsString();
         Boolean same = null;
         if("equals".equals(testResult)) {
             same = true;

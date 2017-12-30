@@ -1,7 +1,9 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -28,11 +30,11 @@ public class ImageAlterRatingResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        float rating = (float) result.getDouble("score");
-        float averageRating = (float) result.getDouble("average");
-        int usersRated = result.getInt("count");
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        float rating = (float) result.get("score").getAsDouble();
+        float averageRating = (float) result.get("average").getAsDouble();
+        int usersRated = result.get("count").getAsInt();
         piwigoResource.setYourRating(rating);
         piwigoResource.setAverageRating(averageRating);
         piwigoResource.setRatingsGiven(usersRated);

@@ -27,16 +27,11 @@
 #-keep class okio.** { *; }
 #-dontwarn com.squareup.okhttp.internal.okio.DeflaterSink
 
-#-keep class com.squareup.okhttp.** { *; }
-
 -keep class com.squareup.picasso.** { *; }
 #-dontwarn com.squareup.picasso.**
 
 -keep class com.commonsware.cwac.merge.** { *; }
 #-dontwarn com.commonsware.cwac.merge.**
-
--keep class com.google.android.exoplayer2.ext.** { public *; }
-#-dontwarn com.google.android.exoplayer2.ext.**
 
 -keep class delit.piwigoclient.ui.events.**
 
@@ -90,6 +85,8 @@
 -keep class **.R$* {
      <fields>;
 }
+
+-keep class delit.piwigoclient.business.video.CachedContent
 
 # We're not using the okhttp library at the moment so we don't need it on the classpath.
 -dontwarn com.squareup.okhttp.**

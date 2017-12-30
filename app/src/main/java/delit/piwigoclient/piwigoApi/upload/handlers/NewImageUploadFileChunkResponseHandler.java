@@ -1,7 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload.handlers;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONException;import com.google.gson.JsonElement;import com.google.gson.JsonObject;import com.google.gson.JsonArray;
 
 import java.util.HashSet;
 
@@ -54,15 +53,15 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         ResourceItem uploadedResource = null;
-        JSONObject result = rsp.optJSONObject("result");
-        if(result != null) {
-            long imageId = result.getLong("image_id");
-            String imageName = result.getString("name");
-            String thumbnailUrl = result.getString("src");
-            JSONObject categeoryObj = result.getJSONObject("category");
-            long albumId = categeoryObj.getLong("id");
+        if(rsp != null && !rsp.isJsonNull()) {
+            JsonObject result = rsp.getAsJsonObject();
+            long imageId = result.get("image_id").getAsLong();
+            String imageName = result.get("name").getAsString();
+            String thumbnailUrl = result.get("src").getAsString();
+            JsonObject categeoryObj = result.get("category").getAsJsonObject();
+            long albumId = categeoryObj.get("id").getAsLong();
             uploadedResource = new ResourceItem(imageId, imageName, null, null, thumbnailUrl);
             HashSet<Long> linkedAlbums = new HashSet<>(1);
             linkedAlbums.add(albumId);

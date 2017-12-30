@@ -126,6 +126,10 @@
             android:entryValues="@array/preference_caching_level_values"
             android:entries="@array/preference_caching_level_items"
             android:defaultValue="@string/preference_caching_level_default"/>
+        <Preference
+            android:title="@string/preference_caching_clearResponseCache_title"
+            android:key="@string/preference_caching_clearResponseCache_key"
+            android:summary="@string/preference_caching_clearResponseCache_summary"/>
         <delit.piwigoclient.ui.common.NumberPickerPreference
             android:defaultValue="@integer/preference_caching_max_cache_entries_default"
             app:defaultValue="@integer/preference_caching_max_cache_entries_default"

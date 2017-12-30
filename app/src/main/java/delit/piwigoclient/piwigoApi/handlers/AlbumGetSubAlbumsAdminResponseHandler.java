@@ -1,16 +1,12 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonElement;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import org.json.JSONException;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.StringTokenizer;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
@@ -33,22 +29,23 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-            JSONArray categories = rsp.getJSONObject("result").getJSONArray("categories");
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonArray categories = result.get("categories").getAsJsonArray();
 
         PiwigoAlbumAdminList adminList = new PiwigoAlbumAdminList();
 
-        for (int i = 0; i < categories.length(); i++) {
-            JSONObject category = (JSONObject) categories.get(i);
-            long id = category.getLong("id");
-            String name = category.getString("name");
-            long photos = category.getLong("nb_images");
-            String description = category.getString("comment");
-            boolean isPublic = "public".equals(category.getString("status"));
+        for (int i = 0; i < categories.size(); i++) {
+            JsonObject category = (JsonObject) categories.get(i);
+            long id = category.get("id").getAsLong();
+            String name = category.get("name").getAsString();
+            long photos = category.get("nb_images").getAsLong();
+            String description = category.get("comment").getAsString();
+            boolean isPublic = "public".equals(category.get("status").getAsString());
 
             CategoryItem item = new CategoryItem(id, name, description, !isPublic, null, photos, photos, 0, null);
 
-            String[] parentage = category.getString("uppercats").split(",");
+            String[] parentage = category.get("uppercats").getAsString().split(",");
             ArrayList<Long> parentageChain = new ArrayList<>(parentage.length);
             // Add root category first (all are children of root)
             parentageChain.add(0L);

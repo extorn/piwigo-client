@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -40,9 +42,9 @@ public class UserAddResponseHandler<T extends ResourceItem> extends AbstractPiwi
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        JSONArray usersObj = result.getJSONArray("users");
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonArray usersObj = result.get("users").getAsJsonArray();
         ArrayList<User> users = UsersGetListResponseHandler.parseUsersFromJson(usersObj);
         if(users.size() != 1) {
             throw new JSONException("Expected one user to be returned, but there were " + users.size());

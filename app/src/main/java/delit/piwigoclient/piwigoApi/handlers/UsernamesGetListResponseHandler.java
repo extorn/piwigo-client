@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,19 +51,19 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        JSONObject pagingObj = result.getJSONObject("paging");
-        int page = pagingObj.getInt("page");
-        int pageSize = pagingObj.getInt("per_page");
-        int itemsOnPage = pagingObj.getInt("count");
-        JSONArray usersObj = result.getJSONArray("users");
-        ArrayList<Username> usernames = new ArrayList<>(usersObj.length());
-        for (int i = 0; i < usersObj.length(); i++) {
-            JSONObject userObj = usersObj.getJSONObject(i);
-            long id = userObj.getLong("id");
-            String username = userObj.getString("username");
-            String userType = userObj.getString("status");
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonObject pagingObj = result.get("paging").getAsJsonObject();
+        int page = pagingObj.get("page").getAsInt();
+        int pageSize = pagingObj.get("per_page").getAsInt();
+        int itemsOnPage = pagingObj.get("count").getAsInt();
+        JsonArray usersObj = result.get("users").getAsJsonArray();
+        ArrayList<Username> usernames = new ArrayList<>(usersObj.size());
+        for (int i = 0; i < usersObj.size(); i++) {
+            JsonObject userObj = usersObj.get(i).getAsJsonObject();
+            long id = userObj.get("id").getAsLong();
+            String username = userObj.get("username").getAsString();
+            String userType = userObj.get("status").getAsString();
             usernames.add(new Username(id, username, userType));
         }
         PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse r = new PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, usernames);

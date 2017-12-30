@@ -1,10 +1,11 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +16,6 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
-import delit.piwigoclient.ui.AdsManager;
 
 public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -43,7 +43,7 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         PiwigoSessionDetails.setInstance(parseSessionDetails(rsp));
 
         PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod());
@@ -62,16 +62,16 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         }
     }
 
-    private PiwigoSessionDetails parseSessionDetails(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        String user = result.getString("username");
-        String userStatus = result.getString("status");
-        String token = result.getString("pwg_token");
-        String piwigoVersion = result.getString("version");
+    private PiwigoSessionDetails parseSessionDetails(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        String user = result.get("username").getAsString();
+        String userStatus = result.get("status").getAsString();
+        String token = result.get("pwg_token").getAsString();
+        String piwigoVersion = result.get("version").getAsString();
         Set<String> availableSizes = new HashSet<>();
-        JSONArray availableSizesArr = result.getJSONArray("available_sizes");
-        for (int i = 0; i < availableSizesArr.length(); i++) {
-            availableSizes.add(availableSizesArr.getString(i));
+        JsonArray availableSizesArr = result.get("available_sizes").getAsJsonArray();
+        for (int i = 0; i < availableSizesArr.size(); i++) {
+            availableSizes.add(availableSizesArr.get(i).getAsString());
         }
 
         PiwigoSessionDetails sessionDetails;
@@ -79,8 +79,8 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         long userGuid = serverUrl.hashCode() + user.hashCode() + userStatus.hashCode();
 
         if (userStatus.equals("admin") || userStatus.equals("webmaster")) {
-            Long uploadChunkSize = result.getLong("upload_form_chunk_size");
-            String uploadFileTypes = result.getString("upload_file_types");
+            Long uploadChunkSize = result.get("upload_form_chunk_size").getAsLong();
+            String uploadFileTypes = result.get("upload_file_types").getAsString();
             StringTokenizer st = new StringTokenizer(uploadFileTypes, ",");
             Set<String> uploadFileTypesSet = new HashSet<>(st.countTokens());
             while (st.hasMoreTokens()) {

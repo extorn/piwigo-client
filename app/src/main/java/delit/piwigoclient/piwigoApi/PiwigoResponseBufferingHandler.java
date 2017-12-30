@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import org.json.JSONObject;
+import com.google.gson.JsonElement;import com.google.gson.JsonObject;import com.google.gson.JsonArray;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -247,14 +247,14 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoSuccessResponse extends BasePiwigoResponse {
 
-        private final JSONObject response;
+        private final JsonElement response;
 
-        public PiwigoSuccessResponse(long messageId, String piwigoMethod, JSONObject response) {
+        public PiwigoSuccessResponse(long messageId, String piwigoMethod, JsonElement response) {
             super(messageId, piwigoMethod);
             this.response = response;
         }
 
-        public JSONObject getResponse() {
+        public JsonElement getResponse() {
             return response;
         }
     }

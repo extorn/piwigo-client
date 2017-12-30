@@ -5,9 +5,11 @@ import android.graphics.Point;
 import android.view.Display;
 import android.view.WindowManager;
 
-import org.json.JSONArray;
+import com.google.gson.JsonElement;
+
 import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,7 +61,8 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point point = new Point();
@@ -95,21 +98,26 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
         SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        JSONArray images = rsp.getJSONObject("result").getJSONArray("images");
-        for (int i = 0; i < images.length(); i++) {
-            JSONObject image = (JSONObject) images.get(i);
-            long id = image.getLong("id");
+        JsonObject result = rsp.getAsJsonObject();
+        JsonArray images = result.get("images").getAsJsonArray();
+        for (int i = 0; i < images.size(); i++) {
+            JsonObject image = (JsonObject) images.get(i);
+            long id = image.get("id").getAsLong();
 
-            String name = image.getString("name");
-            if ("null".equals(name)) {
-                name = null;
+            String name = null;
+            JsonElement nameJsonElem = image.get("name");
+            if (!nameJsonElem.isJsonNull()) {
+                name = nameJsonElem.getAsString();
             }
-            String description = image.getString("comment");
-            if ("null".equals(description)) {
-                description = null;
+
+            String description = null;
+            JsonElement descJsonElem = image.get("comment");
+            if (!descJsonElem.isJsonNull()) {
+                description = descJsonElem.getAsString();
             }
-            String originalResourceUrl = image.getString("element_url");
-            JSONObject derivatives = image.getJSONObject("derivatives");
+
+            String originalResourceUrl = image.get("element_url").getAsString();
+            JsonObject derivatives = image.get("derivatives").getAsJsonObject();
             String thumbnail = null;
             ResourceItem item;
 
@@ -119,7 +127,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                 m.reset(originalResourceUrl);
             }
 
-            String dateLastAlteredStr = image.getString("date_available");
+            String dateLastAlteredStr = image.get("date_available").getAsString();
             Date dateLastAltered = null;
             try {
                 dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
@@ -128,21 +136,27 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
             }
 
             HashSet<Long> linkedAlbums = new HashSet<>();
-            JSONArray linkedAlbumsJsonArr = image.getJSONArray("categories");
-            for(int j = 0; j < linkedAlbumsJsonArr.length(); j++) {
-                JSONObject catJsonObj = linkedAlbumsJsonArr.getJSONObject(j);
-                linkedAlbums.add(catJsonObj.getLong("id"));
+            JsonArray linkedAlbumsJsonArr = image.get("categories").getAsJsonArray();
+            for(int j = 0; j < linkedAlbumsJsonArr.size(); j++) {
+                JsonObject catJsonObj = linkedAlbumsJsonArr.get(j).getAsJsonObject();
+                linkedAlbums.add(catJsonObj.get("id").getAsLong());
             }
 
-            int originalResourceUrlWidth = image.optInt("width", 0);
-            int originalResourceUrlHeight = image.optInt("height", 0);
+            int originalResourceUrlWidth = 0;
+            if(image.has("width") && !image.get("width").isJsonNull()) {
+                originalResourceUrlWidth = image.get("width").getAsInt();
+            }
 
+            int originalResourceUrlHeight = 0;
+            if(image.has("height") && !image.get("height").isJsonNull()) {
+                originalResourceUrlHeight = image.get("height").getAsInt();
+            }
 
             if (m.matches()) {
                 //TODO why must we do something special for the privacy plugin?
                 // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
                 String mediaFile = originalResourceUrl.replaceFirst("^.*(/upload/.*)", "$1");
-                thumbnail = derivatives.getJSONObject("thumb").getString("url");
+                thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
                 if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
                 }
@@ -159,8 +173,8 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                 ResourceItem.ResourceFile thumbnailImg = null;
                 ResourceItem.ResourceFile fullScreenImage = null;
 
-                Iterator<String> imageSizeKeys = derivatives.keys();
-                thumbnail = derivatives.getJSONObject("thumb").getString("url");
+                Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
+                thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
 
                 PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateLastAltered, thumbnail);
 
@@ -169,10 +183,10 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
                 while (imageSizeKeys.hasNext()) {
                     String imageSizeKey = imageSizeKeys.next();
-                    JSONObject imageSizeObj = derivatives.getJSONObject(imageSizeKey);
-                    String url = imageSizeObj.getString("url");
-                    int thisWidth = imageSizeObj.getInt("width");
-                    int thisHeight = imageSizeObj.getInt("height");
+                    JsonObject imageSizeObj = derivatives.get(imageSizeKey).getAsJsonObject();
+                    String url = imageSizeObj.get("url").getAsString();
+                    int thisWidth = imageSizeObj.get("width").getAsInt();
+                    int thisHeight = imageSizeObj.get("height").getAsInt();
                     ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(imageSizeKey, url, thisWidth, thisHeight);
                     picItem.addResourceFile(img);
 

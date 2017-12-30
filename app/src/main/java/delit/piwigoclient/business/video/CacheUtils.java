@@ -10,6 +10,11 @@ import java.io.IOException;
 import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -34,6 +39,11 @@ public class CacheUtils {
             }
         }
         return f;
+    }
+
+    public static void clearResponseCache(Context c) throws IOException {
+        File cacheDir = getBasicCacheFolder(c);
+        deleteQuietly(cacheDir);
     }
 
     public static void clearVideoCache(Context c) throws IOException {
@@ -263,5 +273,37 @@ public class CacheUtils {
             throw new SecurityException(context.getString(R.string.error_insufficient_permissions_for_cache_folder));
         }
         return cacheFolder;
+    }
+
+    public static long getResponseCacheSize(Context context) {
+        try {
+            File responseCacheFolder = getBasicCacheFolder(context);
+            return folderSize(responseCacheFolder);
+        } catch (SecurityException e) {
+            return 0;
+        }
+    }
+
+    public static long getVideoCacheSize(Context context) {
+        try {
+            File videoCacheFolder = getVideoCacheFolder(context);
+            return folderSize(videoCacheFolder);
+        } catch (IOException e) {
+            return 0;
+        }
+    }
+
+    public static long folderSize(File directory) {
+        long length = 0;
+        File[] fileList = directory.listFiles();
+        if(fileList != null) {
+            for (File file : fileList) {
+                if (file.isFile())
+                    length += file.length();
+                else
+                    length += folderSize(file);
+            }
+        }
+        return length;
     }
 }

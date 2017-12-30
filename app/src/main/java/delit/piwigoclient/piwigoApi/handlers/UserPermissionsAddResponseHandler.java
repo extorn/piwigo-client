@@ -1,7 +1,9 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 
@@ -43,8 +45,8 @@ public class UserPermissionsAddResponseHandler extends AbstractPiwigoWsResponseH
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
 
         PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse r = new PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse(getMessageId(), getPiwigoMethod(), userId, newAlbumsAllowedAccessTo);
         storeResponse(r);

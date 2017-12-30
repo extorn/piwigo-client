@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 
@@ -28,28 +30,28 @@ public class UserGetPermissionsResponseHandler extends AbstractPiwigoWsResponseH
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        JSONArray cats = result.getJSONArray("categories");
-        HashSet<Long> allowedDirectAlbums = new HashSet<>(cats.length());
-        HashSet<Long> allowedIndirectAlbums = new HashSet<>(cats.length());
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonArray cats = result.get("categories").getAsJsonArray();
+        HashSet<Long> allowedDirectAlbums = new HashSet<>(cats.size());
+        HashSet<Long> allowedIndirectAlbums = new HashSet<>(cats.size());
 
-        for (int i = 0; i < cats.length(); i++) {
-            JSONObject cat = (JSONObject) cats.get(i);
+        for (int i = 0; i < cats.size(); i++) {
+            JsonObject cat = (JsonObject) cats.get(i);
 
-            long category = cat.getLong("id");
+            long category = cat.get("id").getAsLong();
 
-            JSONArray allowedUsers = cat.getJSONArray("users");
-            for (int j = 0; j < allowedUsers.length(); j++) {
-                if (allowedUsers.getLong(j) == userId) {
+            JsonArray allowedUsers = cat.get("users").getAsJsonArray();
+            for (int j = 0; j < allowedUsers.size(); j++) {
+                if (allowedUsers.get(j).getAsLong() == userId) {
                     allowedDirectAlbums.add(category);
                     break;
                 }
             }
             // check indirect permissions
-            JSONArray allowedUsersIndirect = cat.getJSONArray("users_indirect");
-            for (int j = 0; j < allowedUsersIndirect.length(); j++) {
-                if (allowedUsersIndirect.getLong(j) == userId) {
+            JsonArray allowedUsersIndirect = cat.get("users_indirect").getAsJsonArray();
+            for (int j = 0; j < allowedUsersIndirect.size(); j++) {
+                if (allowedUsersIndirect.get(j).getAsLong() == userId) {
                     allowedIndirectAlbums.add(category);
                     break;
                 }

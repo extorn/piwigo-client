@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,17 +38,19 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONArray categories = rsp.getJSONObject("result").getJSONArray("categories");
-        HashMap<Long, CategoryItemStub> availableGalleriesMap = new HashMap<>(categories.length());
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonArray categories = result.get("categories").getAsJsonArray();
+        HashMap<Long, CategoryItemStub> availableGalleriesMap = new HashMap<>(categories.size());
         ArrayList<CategoryItemStub> availableGalleries = new ArrayList<>();
-        for (int i = 0; i < categories.length(); i++) {
-            JSONObject category = (JSONObject) categories.get(i);
-            Long id = category.getLong("id");
-            String name = category.getString("name");
+        for (int i = 0; i < categories.size(); i++) {
+            JsonObject category = (JsonObject) categories.get(i);
+            long id = category.get("id").getAsLong();
+            String name = category.get("name").getAsString();
             Long parentId = null;
-            if (!"null".equals(category.getString("id_uppercat"))) {
-                parentId = category.getLong("id_uppercat");
+            if(category.has("id_uppercat")
+                && !category.get("id_uppercat").isJsonNull()) {
+                parentId = category.get("id_uppercat").getAsLong();
             }
             CategoryItemStub album = new CategoryItemStub(name, id);
             if(parentId != null) {

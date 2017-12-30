@@ -234,10 +234,11 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
                 this.bytesRead = 0;
                 this.bytesSkipped = 0;
 
-                return bytesAvailable;
+                if(cacheFileContent.isComplete()) {
+                    return bytesAvailable;
+                }
             }
         }
-
 
         startClient(); //TODO pointless as occurs when object is created.
         this.dataSpec = dataSpec;
@@ -461,6 +462,13 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         long length = dataSpec.length;
         boolean allowGzip = dataSpec.isFlagSet(DataSpec.FLAG_ALLOW_GZIP);
 
+        if(cacheFileContent != null) {
+            CachedContent.SerializableRange range = cacheFileContent.getRangeContaining(position);
+            if(range != null) {
+                position += range.available(position);
+            }
+        }
+
         makeConnection(url, postBody, position, length, allowGzip);
     }
 
@@ -528,14 +536,13 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
             Matcher matcher = CONTENT_RANGE_HEADER.matcher(contentRangeHeader);
             if (matcher.find()) {
                 try {
-                    long totalContentBytes = Long.parseLong(matcher.group(2));
+                    long totalFileContentBytes = Long.parseLong(matcher.group(3));
 
-                    if(cachingEnabled) {
-                        cacheFileContent.setTotalBytes(totalContentBytes);
-                    }
+                    long totalContentBytes = Long.parseLong(matcher.group(2));
 
                     long contentLengthFromRange =
                             (totalContentBytes - Long.parseLong(matcher.group(1))) + 1;
+
                     if (contentLength < 0) {
                         // Some proxy servers strip the Content-Length header. Fall back to the length
                         // calculated here in this case.
@@ -548,6 +555,10 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
                         Log.w(TAG, "Inconsistent headers [" + contentLengthHeader + "] [" + contentRangeHeader
                                 + "]");
                         contentLength = Math.max(contentLength, contentLengthFromRange);
+                    }
+
+                    if(cachingEnabled) {
+                        cacheFileContent.setTotalBytes(totalFileContentBytes);
                     }
                 } catch (NumberFormatException e) {
                     Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
@@ -611,6 +622,10 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
      */
     private int readInternal(byte[] buffer, int offset, int readLength) throws IOException {
 
+        if (readLength == 0) {
+            return 0;
+        }
+
         if(inputStream == null) {
             // check what can be read from the local cache and return if the answer is nothing
             long maxReadLen = Math.min(readLength, cachedRange.available(dataSpec.position + bytesRead));
@@ -630,45 +645,56 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
             }
             bytesRead += read;
             return read;
-        }
-
-        if (readLength == 0) {
-            return 0;
-        }
-        if (bytesToRead != C.LENGTH_UNSET) {
-            long bytesRemaining = bytesToRead - bytesRead;
-            if (bytesRemaining == 0) {
-                return C.RESULT_END_OF_INPUT;
+        } else {
+            long maxReadLen = readLength;
+            // read these bytes from the cache if they are present
+            if(cachedRange != null) {
+                long cachedBytes = cachedRange.available(dataSpec.position + bytesRead);
+                if (cachedBytes > 0) {
+                    //read from local cache
+                    localCacheFile.seek(dataSpec.position + bytesRead);
+                    maxReadLen = Math.min(readLength, cachedBytes);
+                    int read = localCacheFile.read(buffer, offset, (int) maxReadLen);
+                    bytesRead += read;
+                    if (read == maxReadLen) {
+                        return read;
+                    }
+                    maxReadLen -= read;
+                }
             }
-            readLength = (int) Math.min(readLength, bytesRemaining);
-        }
-
-        int read = inputStream.read(buffer, offset, readLength);
-        if (read == -1) {
             if (bytesToRead != C.LENGTH_UNSET) {
-                // End of stream reached having not read sufficient data.
-                throw new EOFException();
+                long bytesRemaining = bytesToRead - bytesRead;
+                if (bytesRemaining == 0) {
+                    return C.RESULT_END_OF_INPUT;
+                }
+                maxReadLen = (int) Math.min(maxReadLen, bytesRemaining);
             }
-            return C.RESULT_END_OF_INPUT;
-        }
 
-        if(cachingEnabled) {
-            localCacheFile.seek(dataSpec.position + bytesRead);
-            localCacheFile.write(buffer, offset, read);
-            cacheFileContent.addRange(dataSpec.position, dataSpec.position + bytesRead + read - 1);
-            if (cacheFileContent.isComplete() && cacheListener != null) {
-                cacheListener.onFullyCached(cacheFileContent.getCachedDataFile());
-                // discard what was just read and force use of local cache
+            int read = inputStream.read(buffer, offset, (int)maxReadLen);
+            if (read == -1) {
+                if (bytesToRead != C.LENGTH_UNSET) {
+                    // End of stream reached having not read sufficient data.
+                    throw new EOFException();
+                }
                 return C.RESULT_END_OF_INPUT;
             }
-        }
+            if(cachingEnabled) {
+                localCacheFile.seek(dataSpec.position + bytesRead);
+                localCacheFile.write(buffer, offset, read);
+                cacheFileContent.addRange(dataSpec.position, dataSpec.position + bytesRead + read);
+                if (cacheFileContent.isComplete() && cacheListener != null) {
+                    cacheListener.onFullyCached(cacheFileContent.getCachedDataFile());
+                    // discard what was just read and force use of local cache
+                    return C.RESULT_END_OF_INPUT;
+                }
+            }
+            bytesRead += read;
+            if (listener != null) {
+                listener.onBytesTransferred(this, read);
+            }
 
-        bytesRead += read;
-        if (listener != null) {
-            listener.onBytesTransferred(this, read);
+            return read;
         }
-
-        return read;
     }
 
     /**

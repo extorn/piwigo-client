@@ -3,133 +3,23 @@
 
     <string name="preferences_overall_heading">Settings</string>
 
-    <string name="preference_page_connection">Connection</string>
-    <string name="preference_page_gallery">Gallery</string>
-    <string name="preference_page_upload">Upload</string>
+    <!-- Non editable preferences -->
 
-    <string name="preference_gallery_category_multimedia">Multimedia</string>
-    <string name="preference_gallery_category_general">General</string>
-    <string name="preference_connections_category_piwigo">Piwigo</string>
-    <string name="preference_connections_category_server_basic_auth">Server Basic Authentication</string>
-    <string name="preference_connections_category_data_upload_display">Visual settings</string>
-    <string name="preference_connections_category_data_upload">Data Upload</string>
-
+    <string name="preference_agreed_eula_version_key">preference_agreed_eula_version</string>
     <string name="preference_app_prefs_version_key">preference_app_prefs_version</string>
 
-    <string name="preference_app_show_toolbar_key">preference_app_show_toolbar</string>
-    <string name="preference_app_show_toolbar_title">Show App Toolbar</string>
-    <string name="preference_app_show_toolbar_summary">Show the toolbar at the top of the application</string>
-    <bool name="preference_app_show_toolbar_default">true</bool>
+    <!-- Server Page -->
+
+    <string name="preference_page_connection">Connection</string>
+    <string name="preference_connections_category_piwigo">Piwigo</string>
+    <string name="preference_connections_category_server_basic_auth">Server Basic Authentication</string>
+
+    <!-- prefs -->
 
     <string name="preference_server_connection_allow_redirects_key">preference_server_connection_allow_redirects</string>
     <string name="preference_server_connection_allow_redirects_title">Allow server redirects</string>
     <string name="preference_server_connection_allow_redirects_summary">Follow http 3xx responses</string>
     <bool name="preference_server_connection_allow_redirects_default">false</bool>
-
-    <string name="preference_data_upload_chunkSizeKb_key" translatable="false">preference_data_upload_chunkSizeKb</string>
-    <string name="preference_data_upload_chunkSizeKb_title">Max Upload Chunk Size (KB)</string>
-    <integer name="preference_data_upload_chunkSizeKb_default">512</integer>
-
-    <string name="preference_data_upload_chunk_auto_retries_key" translatable="false">preference_data_upload_chunk_auto_retries</string>
-    <string name="preference_data_upload_chunk_auto_retries_title">Max automatic file chunk upload retries</string>
-    <integer name="preference_data_upload_chunk_auto_retries_default">1</integer>
-
-    <string name="preference_gallery_category_layout">Layout</string>
-
-    <string name="preference_gallery_albums_preferredColumnsLandscape_key" translatable="false">preference_gallery_albums_preferredColumnsLandscape</string>
-    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Landscape: Columns of Albums to show</string>
-
-    <string name="preference_gallery_show_image_name_key">preference_gallery_show_image_name</string>
-    <string name="preference_gallery_show_image_name_title">Show image names in album</string>
-    <string name="preference_gallery_show_image_name_summary">Shows the name of the image under each image</string>
-    <bool name="preference_gallery_show_image_name_default">true</bool>
-
-    <string name="preference_gallery_images_preferredColumnsLandscape_key" translatable="false">preference_gallery_images_preferredColumnsLandscape</string>
-    <string name="preference_gallery_images_preferredColumnsLandscape_title">Landscape: Columns of Images to show</string>
-
-    <string name="preference_gallery_detail_sheet_offset_key" translatable="false">preference_gallery_detail_sheet_offset</string>
-    <string name="preference_gallery_detail_sheet_offset_title">Detail sheet toggle - offset (dp)</string>
-    <integer name="preference_gallery_detail_sheet_offset_default">20</integer>
-
-    <string name="preference_gallery_use_dark_mode_key" translatable="false">preference_gallery_use_dark_mode</string>
-    <string name="preference_gallery_use_dark_mode_title">Use Dark Theme</string>
-    <string name="preference_gallery_use_dark_mode_summary">Select app theme</string>
-    <bool name="preference_gallery_use_dark_mode_default">true</bool>
-
-    <string name="preference_gallery_show_album_thumbnail_zoomed_key" translatable="false">preference_gallery_show_album_thumbnail_zoomed</string>
-    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Show Zoomed Album Thumbnail</string>
-    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Album thumbnails are center cropped</string>
-    <bool name="preference_gallery_show_album_thumbnail_zoomed_default">false</bool>
-
-    <string name="preference_gallery_albums_preferredColumnsPortrait_key" translatable="false">preference_gallery_albums_preferredColumnsPortrait</string>
-    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrait: Columns of Albums to show</string>
-
-    <string name="preference_gallery_images_preferredColumnsPortrait_key" translatable="false">preference_gallery_images_preferredColumnsPortrait</string>
-    <string name="preference_gallery_images_preferredColumnsPortrait_title">Portrait: Columns of Images to show</string>
-
-    <string name="preference_gallery_show_large_thumbnail_key" translatable="false">preference_gallery_show_large_thumbnail</string>
-    <string name="preference_gallery_show_large_thumbnail_title">Display albums with large thumbnail</string>
-    <string name="preference_gallery_show_large_thumbnail_summary">Image thumbnails fill the column</string>
-    <bool name="preference_gallery_show_large_thumbnail_default">false</bool>
-
-    <string name="preference_data_upload_large_thumbnail_key" translatable="false">preference_data_upload_large_thumbnail</string>
-    <string name="preference_data_upload_large_thumbnail_title">Display files with large thumbnail</string>
-    <string name="preference_data_upload_large_thumbnail_summary">Image thumbnails fill the column</string>
-    <bool name="preference_data_upload_large_thumbnail_default">true</bool>
-
-    <string name="preference_data_upload_preferredColumnsPortrait_key" translatable="false">preference_data_upload_preferredColumnsPortrait</string>
-    <string name="preference_data_upload_preferredColumnsPortrait_title">Portrait: Columns of Images to show</string>
-
-    <string name="preference_data_upload_preferredColumnsLandscape_key" translatable="false">preference_data_upload_preferredColumnsLandscape</string>
-    <string name="preference_data_upload_preferredColumnsLandscape_title">Landscape: Columns of Images to show</string>
-
-    <string name="preference_data_upload_max_filesize_mb_key">preference_data_upload_max_filesize_mb</string>
-    <string name="preference_data_upload_max_filesize_mb_title">Max Filesize to upload without warning you (in MB)</string>
-    <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
-
-    <string name="preference_gallery_include_videos_in_slideshow_key" translatable="false">preference_gallery_include_videos_in_slideshow</string>
-    <string name="preference_gallery_include_videos_in_slideshow_title">Show videos in Slideshow</string>
-    <string name="preference_gallery_include_videos_in_slideshow_summary">Should videos be shown when browsing a gallery in slideshow mode?</string>
-    <bool name="preference_gallery_include_videos_in_slideshow_default">false</bool>
-
-    <string name="preference_gallery_enable_video_playback_key" translatable="false">preference_gallery_enable_video_playback</string>
-    <string name="preference_gallery_enable_video_playback_title">Allow video playback</string>
-    <string name="preference_gallery_enable_video_playback_summary">Enable if you want to download and play videos on demand</string>
-    <bool name="preference_gallery_enable_video_playback_default">true</bool>
-
-    <string name="preference_piwigo_playable_media_extensions_key" translatable="false">preference_piwigo_playable_media_extensions</string>
-    <string name="preference_piwigo_playable_media_extensions_title">Supported multimedia extensions (CSV list)</string>
-    <string name="preference_piwigo_playable_media_extensions_default">mpg,avi,mp3,ogg,mp4</string>
-
-    <string name="preference_video_cache_enabled_key">preference_video_cache_enabled</string>
-    <string name="preference_video_cache_enabled_title">Cache videos viewed to file</string>
-    <string name="preference_video_cache_enabled_summary">When enabled, any streamed videos will be cached for later playback</string>
-    <bool name="preference_video_cache_enabled_default">false</bool>
-
-    <string name="preference_video_cache_maxsize_mb_key">preference_video_cache_maxsize_mb</string>
-    <string name="preference_video_cache_maxsize_mb_title">Maximum Video Cache Size (MB)</string>
-    <integer name="preference_video_cache_maxsize_mb_default">512</integer>
-
-    <string name="preference_gallery_sortOrder_key" translatable="false">preference_gallery_sortOrder</string>
-    <string name="preference_gallery_sortOrder_title">Album sort order</string>
-    <string name="preference_gallery_sortOrder_default" translatable="false">name</string>
-
-
-    <string name="preference_gallery_clearMemoryCache_title">Clear In-Memory Cache</string>
-    <string name="preference_gallery_clearMemoryCache_key" translatable="false">preference_gallery_clearMemoryCache</string>
-    <string name="preference_gallery_clearMemoryCache_summary">Deletes all images cached in memory</string>
-
-    <string name="preference_app_read_only_mode_key">readOnlyMode</string>
-    <string name="preference_gallery_recentlyAlteredAgeMillis_key">preference_gallery_recentlyAlteredAgeMillis</string>
-    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Max age recent items (days)</string>
-    <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
-    <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
-
-    <string name="preference_album_request_pagesize_key">preference_album_request_pagesize</string>
-    <string name="preference_album_request_pagesize_title">Album server request page-size</string>
-    <integer name="preference_album_request_pagesize_default">20</integer>
-
-    <string name="preference_agreed_eula_version_key">preference_agreed_eula_version</string>
 
     <string name="preference_server_socketTimeout_millisecs_key">preference_server_socketTimeout_millisecs</string>
     <string name="preference_server_socketTimeout_millisecs_title">Connection timeout (milliseconds)</string>
@@ -172,6 +62,10 @@
     <string name="preference_server_ssl_certificate_hostname_verification_title">SSL Certificate Hostname validation</string>
     <string name="preference_server_ssl_certificate_hostname_verification_default" translatable="false">1</string>
 
+    <string name="preference_caching_clearResponseCache_title">Clear Server Response Cache</string>
+    <string name="preference_caching_clearResponseCache_key" translatable="false">preference_caching_clearResponseCache</string>
+    <string name="preference_caching_clearResponseCache_summary">Deletes all server responses cached to disk</string>
+
     <string name="preference_caching_level_key">preference_caching_level</string>
     <string name="preference_caching_level_title">Response Cache Level</string>
     <string name="preference_caching_level_default">disk</string>
@@ -179,14 +73,6 @@
     <string name="preference_caching_max_cache_entries_key">preference_caching_max_cache_entries</string>
     <string name="preference_caching_max_cache_entries_title">Max number cache entries</string>
     <integer name="preference_caching_max_cache_entries_default">1000</integer>
-
-    <string name="preference_gallery_item_thumbnail_size_title">GalleryItem thumbnail image</string>
-    <string name="preference_gallery_item_thumbnail_size_key">gallery_item_thumbnail_size</string>
-    <string name="preference_gallery_item_thumbnail_size_default" translatable="false">thumb</string>
-
-    <string name="preference_gallery_item_slideshow_image_size_title">Slideshow default image size</string>
-    <string name="preference_gallery_item_slideshow_image_size_key">preference_gallery_item_slideshow_image_size</string>
-    <string name="preference_gallery_item_slideshow_image_size_default" translatable="false">best-fit</string>
 
     <string name="preference_caching_max_cache_entry_size_key">preference_caching_max_cache_entry_size</string>
     <string name="preference_caching_max_cache_entry_size_title">Max Cache Entry size (KB)</string>
@@ -204,9 +90,144 @@
 
     <string name="preference_pre_user_notified_certificates_key">preference_pre_user_notified_certificates</string>
 
+    <!-- Gallery Page -->
+
+    <string name="preference_page_gallery">Gallery</string>
+    <string name="preference_gallery_category_multimedia">Multimedia</string>
+    <string name="preference_gallery_category_general">General</string>
+
+    <!-- prefs -->
+
+    <string name="preference_app_show_toolbar_key">preference_app_show_toolbar</string>
+    <string name="preference_app_show_toolbar_title">Show App Toolbar</string>
+    <string name="preference_app_show_toolbar_summary">Show the toolbar at the top of the application</string>
+    <bool name="preference_app_show_toolbar_default">true</bool>
+
+
+    <string name="preference_gallery_albums_preferredColumnsLandscape_key" translatable="false">preference_gallery_albums_preferredColumnsLandscape</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_title">Landscape: Columns of Albums to show</string>
+
+    <string name="preference_gallery_show_image_name_key">preference_gallery_show_image_name</string>
+    <string name="preference_gallery_show_image_name_title">Show image names in album</string>
+    <string name="preference_gallery_show_image_name_summary">Shows the name of the image under each image</string>
+    <bool name="preference_gallery_show_image_name_default">true</bool>
+
+    <string name="preference_gallery_images_preferredColumnsLandscape_key" translatable="false">preference_gallery_images_preferredColumnsLandscape</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_title">Landscape: Columns of Images to show</string>
+
+    <string name="preference_gallery_detail_sheet_offset_key" translatable="false">preference_gallery_detail_sheet_offset</string>
+    <string name="preference_gallery_detail_sheet_offset_title">Detail sheet toggle - offset (dp)</string>
+    <integer name="preference_gallery_detail_sheet_offset_default">20</integer>
+
+    <string name="preference_gallery_use_dark_mode_key" translatable="false">preference_gallery_use_dark_mode</string>
+    <string name="preference_gallery_use_dark_mode_title">Use Dark Theme</string>
+    <string name="preference_gallery_use_dark_mode_summary">Select app theme</string>
+    <bool name="preference_gallery_use_dark_mode_default">true</bool>
+
+    <string name="preference_gallery_show_album_thumbnail_zoomed_key" translatable="false">preference_gallery_show_album_thumbnail_zoomed</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_title">Show Zoomed Album Thumbnail</string>
+    <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Album thumbnails are center cropped</string>
+    <bool name="preference_gallery_show_album_thumbnail_zoomed_default">false</bool>
+
+    <string name="preference_gallery_albums_preferredColumnsPortrait_key" translatable="false">preference_gallery_albums_preferredColumnsPortrait</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrait: Columns of Albums to show</string>
+
+    <string name="preference_gallery_images_preferredColumnsPortrait_key" translatable="false">preference_gallery_images_preferredColumnsPortrait</string>
+    <string name="preference_gallery_images_preferredColumnsPortrait_title">Portrait: Columns of Images to show</string>
+
+    <string name="preference_gallery_show_large_thumbnail_key" translatable="false">preference_gallery_show_large_thumbnail</string>
+    <string name="preference_gallery_show_large_thumbnail_title">Display albums with large thumbnail</string>
+    <string name="preference_gallery_show_large_thumbnail_summary">Image thumbnails fill the column</string>
+    <bool name="preference_gallery_show_large_thumbnail_default">false</bool>
+
+    <string name="preference_gallery_include_videos_in_slideshow_key" translatable="false">preference_gallery_include_videos_in_slideshow</string>
+    <string name="preference_gallery_include_videos_in_slideshow_title">Show videos in Slideshow</string>
+    <string name="preference_gallery_include_videos_in_slideshow_summary">Should videos be shown when browsing a gallery in slideshow mode?</string>
+    <bool name="preference_gallery_include_videos_in_slideshow_default">false</bool>
+
+    <string name="preference_gallery_enable_video_playback_key" translatable="false">preference_gallery_enable_video_playback</string>
+    <string name="preference_gallery_enable_video_playback_title">Allow video playback</string>
+    <string name="preference_gallery_enable_video_playback_summary">Enable if you want to download and play videos on demand</string>
+    <bool name="preference_gallery_enable_video_playback_default">true</bool>
+
+    <string name="preference_piwigo_playable_media_extensions_key" translatable="false">preference_piwigo_playable_media_extensions</string>
+    <string name="preference_piwigo_playable_media_extensions_title">Supported multimedia extensions (CSV list)</string>
+    <string name="preference_piwigo_playable_media_extensions_default">mpg,avi,mp3,ogg,mp4</string>
+
+    <string name="preference_video_cache_enabled_key">preference_video_cache_enabled</string>
+    <string name="preference_video_cache_enabled_title">Cache videos viewed to file</string>
+    <string name="preference_video_cache_enabled_summary">When enabled, any streamed videos will be cached for later playback</string>
+    <bool name="preference_video_cache_enabled_default">false</bool>
+
+    <string name="preference_video_cache_maxsize_mb_key">preference_video_cache_maxsize_mb</string>
+    <string name="preference_video_cache_maxsize_mb_title">Maximum Video Cache Size (MB)</string>
+    <integer name="preference_video_cache_maxsize_mb_default">512</integer>
+
+    <string name="preference_gallery_sortOrder_key" translatable="false">preference_gallery_sortOrder</string>
+    <string name="preference_gallery_sortOrder_title">Album sort order</string>
+    <string name="preference_gallery_sortOrder_default" translatable="false">name</string>
+
+
+    <string name="preference_gallery_clearMemoryCache_title">Clear In-Memory Cache</string>
+    <string name="preference_gallery_clearMemoryCache_key" translatable="false">preference_gallery_clearMemoryCache</string>
+    <string name="preference_gallery_clearMemoryCache_summary">Deletes all images cached in memory</string>
+
+    <string name="preference_gallery_clearVideoCache_title">Clear Video Cache</string>
+    <string name="preference_gallery_clearVideoCache_key" translatable="false">preference_gallery_clearVideoCache</string>
+    <string name="preference_gallery_clearVideoCache_summary">Deletes all videos cached to disk</string>
+
+    <string name="preference_app_read_only_mode_key">readOnlyMode</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_key">preference_gallery_recentlyAlteredAgeMillis</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_title">Max age recent items (days)</string>
+    <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
+    <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
+
+    <string name="preference_album_request_pagesize_key">preference_album_request_pagesize</string>
+    <string name="preference_album_request_pagesize_title">Album server request page-size</string>
+    <integer name="preference_album_request_pagesize_default">20</integer>
+
+    <string name="preference_gallery_item_thumbnail_size_title">GalleryItem thumbnail image</string>
+    <string name="preference_gallery_item_thumbnail_size_key">gallery_item_thumbnail_size</string>
+    <string name="preference_gallery_item_thumbnail_size_default" translatable="false">thumb</string>
+
+    <string name="preference_gallery_item_slideshow_image_size_title">Slideshow default image size</string>
+    <string name="preference_gallery_item_slideshow_image_size_key">preference_gallery_item_slideshow_image_size</string>
+    <string name="preference_gallery_item_slideshow_image_size_default" translatable="false">best-fit</string>
+
     <string name="preference_gallery_masonry_view_title">Use Masonry Style Layout (experimental)</string>
     <string name="preference_gallery_masonry_view_summary">Best fit album content in a tapestry effect</string>
     <string name="preference_gallery_masonry_view_key">preference_gallery_masonry_view</string>
     <bool name="preference_gallery_masonry_view_default">false</bool>
+
+    <!-- Data Upload page -->
+
+    <string name="preference_page_upload">Upload</string>
+    <string name="preference_connections_category_data_upload_display">Visual settings</string>
+    <string name="preference_connections_category_data_upload">Data Upload</string>
+
+    <!-- prefs -->
+
+    <string name="preference_data_upload_chunkSizeKb_key" translatable="false">preference_data_upload_chunkSizeKb</string>
+    <string name="preference_data_upload_chunkSizeKb_title">Max Upload Chunk Size (KB)</string>
+    <integer name="preference_data_upload_chunkSizeKb_default">512</integer>
+
+    <string name="preference_data_upload_chunk_auto_retries_key" translatable="false">preference_data_upload_chunk_auto_retries</string>
+    <string name="preference_data_upload_chunk_auto_retries_title">Max automatic file chunk upload retries</string>
+    <integer name="preference_data_upload_chunk_auto_retries_default">1</integer>
+
+    <string name="preference_data_upload_large_thumbnail_key" translatable="false">preference_data_upload_large_thumbnail</string>
+    <string name="preference_data_upload_large_thumbnail_title">Display files with large thumbnail</string>
+    <string name="preference_data_upload_large_thumbnail_summary">Image thumbnails fill the column</string>
+    <bool name="preference_data_upload_large_thumbnail_default">true</bool>
+
+    <string name="preference_data_upload_preferredColumnsPortrait_key" translatable="false">preference_data_upload_preferredColumnsPortrait</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_title">Portrait: Columns of Images to show</string>
+
+    <string name="preference_data_upload_preferredColumnsLandscape_key" translatable="false">preference_data_upload_preferredColumnsLandscape</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_title">Landscape: Columns of Images to show</string>
+
+    <string name="preference_data_upload_max_filesize_mb_key">preference_data_upload_max_filesize_mb</string>
+    <string name="preference_data_upload_max_filesize_mb_title">Max Filesize to upload without warning you (in MB)</string>
+    <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
 
 </resources>

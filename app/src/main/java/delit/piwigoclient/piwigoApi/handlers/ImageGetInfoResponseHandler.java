@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import org.json.JSONArray;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashSet;
 
@@ -31,36 +33,38 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
     }
 
     @Override
-    protected void onPiwigoSuccess(JSONObject rsp) throws JSONException {
-        JSONObject result = rsp.getJSONObject("result");
-        int privacyLevel = result.getInt("level");
-        resourceItem.setName(result.getString("name"));
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        int privacyLevel = result.get("level").getAsInt();
+        resourceItem.setName(result.get("name").getAsString());
         resourceItem.setPrivacyLevel(privacyLevel);
-        JSONObject rates = result.getJSONObject("rates");
-        if (!rates.isNull("score")) {
-            float rating = (float) rates.getDouble("score");
+        JsonObject rates = result.get("rates").getAsJsonObject();
+        JsonElement scoreJsonElem = rates.get("score");
+        if (scoreJsonElem != null && !scoreJsonElem.isJsonNull()) {
+            float rating = scoreJsonElem.getAsFloat();
             resourceItem.setYourRating(rating);
         }
-        if (!rates.isNull("average")) {
-            float averageRating = (float) rates.getDouble("average");
+        JsonElement averageJsonElem = rates.get("average");
+        if (averageJsonElem != null && !averageJsonElem.isJsonNull()) {
+            float averageRating = averageJsonElem.getAsFloat();
             resourceItem.setAverageRating(averageRating);
         }
 
-        String fileChecksum = result.getString("md5sum");
+        String fileChecksum = result.get("md5sum").getAsString();
 
         resourceItem.setFileChecksum(fileChecksum);
 
 
         // we reload this because when retrieving all images for an album, it returns incorrect results.
         HashSet<Long> linkedAlbums = new HashSet<>();
-        JSONArray linkedAlbumsJsonArr = result.getJSONArray("categories");
-        for(int j = 0; j < linkedAlbumsJsonArr.length(); j++) {
-            JSONObject catJsonObj = linkedAlbumsJsonArr.getJSONObject(j);
-            linkedAlbums.add(catJsonObj.getLong("id"));
+        JsonArray linkedAlbumsJsonArr = result.get("categories").getAsJsonArray();
+        for(int j = 0; j < linkedAlbumsJsonArr.size(); j++) {
+            JsonObject catJsonObj = linkedAlbumsJsonArr.get(j).getAsJsonObject();
+            linkedAlbums.add(catJsonObj.get("id").getAsLong());
         }
         resourceItem.setLinkedAlbums(linkedAlbums);
 
-        int usersRated = rates.getInt("count");
+        int usersRated = rates.get("count").getAsInt();
         resourceItem.setRatingsGiven(usersRated);
 
         PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<>(getMessageId(), getPiwigoMethod(), resourceItem);
