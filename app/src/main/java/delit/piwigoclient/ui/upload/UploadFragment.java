@@ -192,10 +192,15 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             @Override
             public void onClick(View v) {
                 FileListSelectionNeededEvent event = new FileListSelectionNeededEvent();
-                ArrayList<String> allowedFileTypes = new ArrayList<>(PiwigoSessionDetails.getInstance().getAllowedFileTypes());
-                event.setAllowedFileTypes(allowedFileTypes);
-                getUiHelper().setTrackingRequest(event.getActionId());
-                EventBus.getDefault().post(event);
+                if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+                    String serverUri = prefs.getString(getString(R.string.preference_piwigo_server_address_key), "");
+                    getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri),PiwigoAccessService.startActionLogin(getContext()));
+                } else {
+                    ArrayList<String> allowedFileTypes = new ArrayList<>(PiwigoSessionDetails.getInstance().getAllowedFileTypes());
+                    event.setAllowedFileTypes(allowedFileTypes);
+                    getUiHelper().setTrackingRequest(event.getActionId());
+                    EventBus.getDefault().post(event);
+                }
             }
         });
 
