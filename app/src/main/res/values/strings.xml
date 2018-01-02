@@ -288,13 +288,13 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.60 - Changes:
+Release 1.3.61 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.59 - Changes:
+Release 1.3.60 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for paging of groups and users (support >100 of each)
@@ -302,7 +302,7 @@ Release 1.3.59 - Changes:
                     - Possibly - allow linking the upload process to a compression routine for videos
                     - Possibly - add support for multiple piwigo galleries to be configured
 
-Release 1.3.58 - Changes:
+Release 1.3.59 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
                     - Improve management of user credentials where possible
@@ -310,6 +310,9 @@ Release 1.3.58 - Changes:
                     - Investigate serialization of app pages (crashes reported in this area)
 
 Released:
+
+Release 1.3.58 - Bugfix:
+                    - Corrected bug where app crashes due to UI component being detached from the server response listener
 
 Release 1.3.57 - Bugfix:
                     - Corrected bug in the proguard file stopping the released version from working.
