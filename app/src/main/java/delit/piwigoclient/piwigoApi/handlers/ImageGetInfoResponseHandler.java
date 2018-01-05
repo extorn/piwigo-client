@@ -36,7 +36,10 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         int privacyLevel = result.get("level").getAsInt();
-        resourceItem.setName(result.get("name").getAsString());
+        JsonElement nameJsonElem = result.get("name");
+        if(nameJsonElem != null && !nameJsonElem.isJsonNull()) {
+            resourceItem.setName(nameJsonElem.getAsString());
+        }
         resourceItem.setPrivacyLevel(privacyLevel);
         JsonObject rates = result.get("rates").getAsJsonObject();
         JsonElement scoreJsonElem = rates.get("score");
