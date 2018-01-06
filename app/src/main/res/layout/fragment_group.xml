@@ -69,7 +69,7 @@
         android:maxLines="1"
         android:textColor="@drawable/edit_text_color_selector" />
 
-    <CheckBox
+    <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/group_is_default"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:layout_width="match_parent"
@@ -80,7 +80,7 @@
         android:layout_marginTop="7dp"
         android:button="@null"
         android:textColor="@drawable/edit_text_color_selector"
-        android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+        android:drawableRight="@drawable/always_clear_checkbox"
         android:text="@string/group_is_default_title"/>
 
     <TextView

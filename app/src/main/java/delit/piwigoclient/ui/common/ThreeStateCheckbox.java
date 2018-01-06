@@ -36,11 +36,15 @@ public class ThreeStateCheckbox extends AppCompatImageView implements Checkable 
     @Override
     public void setChecked(boolean checked) {
         this.checked = checked;
+        int drawableId = R.drawable.ic_check_box_black_24dp;
+        if(isEnabled()) {
+            drawableId = R.drawable.ic_check_box_accent_24dp;
+        }
         if(checked) {
             setAlpha(1f);
-            setImageResource(R.drawable.ic_check_box_black_24dp);
+            setImageResource(drawableId);
         } else if(alwaysChecked) {
-            setImageResource(R.drawable.ic_check_box_black_24dp);
+            setImageResource(drawableId);
             setAlpha(0.5f);
         } else {
             setAlpha(1f);

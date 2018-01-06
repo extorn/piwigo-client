@@ -122,6 +122,7 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
         setViewContentForItemDisplay(view, item, levelInTreeOfItem);
 
         final ThreeStateCheckbox imageView = view.findViewById(R.id.permission_status_icon);
+        imageView.setEnabled(enabled);
         imageView.setAlwaysChecked(indirectlySelectedItems != null && indirectlySelectedItems.contains(thisItemId));
 
         // return the view, populated with data, for display

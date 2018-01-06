@@ -4,14 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants">
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/checked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:checked="false"
+        android:clickable="false"
+        android:focusable="false"
+        android:button="@drawable/always_clear_checkbox"/>
     <TextView
         android:id="@+id/name"
         android:layout_marginLeft="5dp"
         android:layout_width="match_parent"
         android:layout_marginTop="15dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_toRightOf="@id/checked"
         android:layout_toLeftOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
         android:text="dummy text"/>
@@ -22,8 +31,7 @@
         android:layout_marginBottom="15dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_toRightOf="@id/checked"
         android:layout_toLeftOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
         android:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"/>

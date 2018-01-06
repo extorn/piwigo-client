@@ -76,6 +76,20 @@
             app:maxValue="500"
             android:key="@string/preference_album_request_pagesize_key"
             android:title="@string/preference_album_request_pagesize_title" />
+        <delit.piwigoclient.ui.common.NumberPickerPreference
+            android:defaultValue="@integer/preference_users_request_pagesize_default"
+            app:defaultValue="@integer/preference_users_request_pagesize_default"
+            app:minValue="5"
+            app:maxValue="500"
+            android:key="@string/preference_users_request_pagesize_key"
+            android:title="@string/preference_users_request_pagesize_title" />
+        <delit.piwigoclient.ui.common.NumberPickerPreference
+            android:defaultValue="@integer/preference_groups_request_pagesize_default"
+            app:defaultValue="@integer/preference_groups_request_pagesize_default"
+            app:minValue="5"
+            app:maxValue="500"
+            android:key="@string/preference_groups_request_pagesize_key"
+            android:title="@string/preference_groups_request_pagesize_title" />
 
         <ListPreference
             android:entries="@array/preference_gallery_item_thumbnail_size_array"

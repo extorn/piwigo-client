@@ -6,12 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
@@ -21,18 +21,18 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.Group;
+import delit.piwigoclient.model.piwigo.PiwigoGroups;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomImageButton;
+import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -44,13 +44,15 @@ import delit.piwigoclient.ui.events.ViewGroupEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class GroupsListFragment extends MyFragment implements GroupsListAdapter.GroupActionListener {
+public class GroupsListFragment extends MyFragment {
 
-    private static final String AVAILABLE_GROUPS = "availableGroups";
-    private ArrayList<Group> availableGroups;
-    private ListView list;
+    private static final String GROUPS_MODEL = "groupsModel";
+    private static final String GROUPS_PAGE_BEING_LOADED = "groupsPageBeingLoaded";
     private ConcurrentHashMap<Long, Group> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
+    private PiwigoGroups groupsModel = new PiwigoGroups();
+    private GroupRecyclerViewAdapter viewAdapter;
+    private int pageToLoadNow = -1;
 
     public static GroupsListFragment newInstance() {
         GroupsListFragment fragment = new GroupsListFragment();
@@ -72,7 +74,8 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(AVAILABLE_GROUPS, availableGroups);
+        outState.putSerializable(GROUPS_MODEL, groupsModel);
+        outState.putInt(GROUPS_PAGE_BEING_LOADED, pageToLoadNow);
     }
 
     @Nullable
@@ -86,10 +89,11 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
         super.onCreateView(inflater, container, savedInstanceState);
 
         if (savedInstanceState != null) {
-            availableGroups = (ArrayList) savedInstanceState.getSerializable(AVAILABLE_GROUPS);
+            groupsModel = (PiwigoGroups) savedInstanceState.getSerializable(GROUPS_MODEL);
+            pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
         }
 
-        View view = inflater.inflate(R.layout.layout_fullsize_list, container, false);
+        View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
@@ -102,16 +106,6 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
         TextView heading = view.findViewById(R.id.heading);
         heading.setText(R.string.groups_heading);
         heading.setVisibility(View.VISIBLE);
-
-        list = view.findViewById(R.id.list);
-
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Group selectedGroup = (Group) list.getAdapter().getItem(position);
-                onGroupSelected(selectedGroup);
-            }
-        });
 
         Button cancelButton = view.findViewById(R.id.list_action_cancel_button);
         cancelButton.setVisibility(View.GONE);
@@ -137,18 +131,67 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
             @Override
             public void onClick(View v) {
                 retryActionButton.setVisibility(View.GONE);
-                addActiveServiceCall(R.string.progress_loading_groups,PiwigoAccessService.startActionGetGroupsList(0, 100, getContext()));
+                loadGroupsPage(pageToLoadNow);
             }
         });
 
-        if (availableGroups == null) {
-            //TODO FEATURE: Support groups paging (load page size from settings)
-            addActiveServiceCall(R.string.progress_loading_groups,PiwigoAccessService.startActionGetGroupsList(0, 100, getContext()));
-        } else {
-            populateListWithGroups();
-        }
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+
+        RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
+
+        recyclerView.setLayoutManager(layoutMan);
+
+        boolean allowMultiselection = false;
+
+        viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusListener() {
+            @Override
+            public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
+            }
+
+            @Override
+            public void onItemSelectionCountChanged(int size) {
+            }
+
+            @Override
+            public void onItemDeleteRequested(Group g) {
+                onDeleteGroup(g);
+            }
+        }, allowMultiselection);
+        viewAdapter.setEnabled(true);
+        viewAdapter.setAllowItemDeletion(true);
+
+        recyclerView.setAdapter(viewAdapter);
+
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                int pageToLoad = groupsModel.getPagesLoaded();
+                if (pageToLoad == 0 || groupsModel.isFullyLoaded()) {
+                    // already load this one by default so lets not double load it (or we've already loaded all items).
+                    return;
+                }
+                loadGroupsPage(pageToLoad);
+            }
+        };
+        scrollListener.configure(groupsModel.getPagesLoaded(), groupsModel.getItems().size());
+        recyclerView.addOnScrollListener(scrollListener);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(groupsModel.getPagesLoaded() == 0) {
+            viewAdapter.notifyDataSetChanged();
+            loadGroupsPage(0);
+        }
+    }
+
+    private void loadGroupsPage(int pageToLoad) {
+        this.pageToLoadNow = pageToLoad;
+        int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
+        addActiveServiceCall(R.string.progress_loading_groups,PiwigoAccessService.startActionGetGroupsList(pageToLoad, pageSize, getContext()));
     }
 
     private void addNewGroup() {
@@ -160,13 +203,7 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
 //        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_information_coming_soon));
     }
 
-    private void populateListWithGroups() {
-        list.setAdapter(new GroupsListAdapter(getContext(), availableGroups, this));
-        list.requestLayout();
-    }
-
-    @Override
-    public void onDeleteItem(int position, final Group thisItem) {
+    public void onDeleteGroup(final Group thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_group);
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
             @Override
@@ -236,64 +273,30 @@ public class GroupsListFragment extends MyFragment implements GroupsListAdapter.
         }
     }
 
-
-
-
     public void onGroupsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
+        synchronized (groupsModel) {
+            pageToLoadNow = -1;
+            retryActionButton.setVisibility(View.GONE);
+            int firstIdxAdded = groupsModel.addItemPage(response.getPage(), response.getPageSize(), response.getGroups());
+            viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());
 
-        getUiHelper().dismissProgressDialog();
-        if (response.getItemsOnPage() == response.getPageSize()) {
-            //TODO FEATURE: Support groups paging
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_title_error_too_many_groups, getString(R.string.alert_error_too_many_groups_message));
         }
-        availableGroups = new ArrayList<>(response.getGroups());
-        populateListWithGroups();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GroupDeletedEvent event) {
-        ((GroupsListAdapter) list.getAdapter()).remove(event.getGroup());
+        viewAdapter.remove(event.getGroup());
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), event.getGroup().getName()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GroupUpdatedEvent event) {
-        ListIterator<Group> iter = availableGroups.listIterator();
-
-        boolean newGroupAdded = false;
-        while(iter.hasNext()) {
-            Group g = iter.next();
-            if (g.getId() == event.group.getId()) {
-                iter.remove();
-                if(g.getName().equals(event.group.getName())) {
-                    iter.add(event.group);
-                    newGroupAdded = true;
-                }
-                break;
-            }
-        }
-        if(!newGroupAdded) {
-            //add new group.
-            iter = availableGroups.listIterator();
-            while(iter.hasNext()) {
-                if(iter.next().getName().compareTo(event.group.getName()) > 0) {
-                    iter.previous();
-                    iter.add(event.group);
-                    newGroupAdded = true;
-                    break;
-                }
-            }
-            if(!newGroupAdded) {
-                // just add it to the end.
-                availableGroups.add(event.group);
-            }
-        }
-        list.setAdapter(new GroupsListAdapter(getContext(), availableGroups, this));
+        viewAdapter.replaceOrAddItem(event.getGroup());
     }
 
     public void onGroupDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse response) {
         Group group = deleteActionsPending.remove(response.getMessageId());
-        ((GroupsListAdapter) list.getAdapter()).remove(group);
+        viewAdapter.remove(group);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), group.getName()));
     }
 

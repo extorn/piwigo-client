@@ -182,6 +182,14 @@
     <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
     <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
 
+    <string name="preference_groups_request_pagesize_key">preference_groups_request_pagesize</string>
+    <string name="preference_groups_request_pagesize_title">Groups server request page-size</string>
+    <integer name="preference_groups_request_pagesize_default">20</integer>
+
+    <string name="preference_users_request_pagesize_key">preference_users_request_pagesize</string>
+    <string name="preference_users_request_pagesize_title">Users server request page-size</string>
+    <integer name="preference_users_request_pagesize_default">20</integer>
+
     <string name="preference_album_request_pagesize_key">preference_album_request_pagesize</string>
     <string name="preference_album_request_pagesize_title">Album server request page-size</string>
     <integer name="preference_album_request_pagesize_default">20</integer>

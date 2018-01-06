@@ -119,8 +119,6 @@
     <string name="alert_server_error_pattern">Server returned HTTP error: %1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Error parsing piwigo response</string>
     <string name="alert_error_handling_response_pattern">Unparsable response: %1$d (%2$s)</string>
-    <string name="alert_title_error_too_many_groups">Error</string>
-    <string name="alert_error_too_many_groups_message">Too many groups to handle. Please submit an enhancement request to enable paging of groups.</string>
     <string name="none_selected">None</string>
     <string name="alert_title_error_too_many_users">Error</string>
     <string name="alert_error_too_many_users_message">Too many users to handle. Please submit an enhancement request to enable paging of users.</string>
@@ -271,7 +269,7 @@ I have been testing with a copy of the piwigo_privacy plugin installed and also 
 I have a copy of the Extended Description plugin installed, but unfortunately, this functionality is not yet exposed via the PIWIGO API.
 I\'d like to include support for "favorite" photos but this functionality does not yet appear to be exposed via the PIWIGO API.
 
-NOTE: If you have more than 100 users or 100 groups, you won't see them all. Please contact me if this affects you and I'll add support for larger numbers. My server has just a few users and groups.
+NOTE: If you have more than 100 users, you won't see them all except on the main "users list" page. Also the album details page is not designed with large numbers of users in mind. Please contact me if this affects you and I'll add support for larger numbers. My server has just a handful of users.
     : PIWIGO community plugin is NOT supported by this app at present and a user has notified me of issues when trying to use this app against a 'community enabled' PIWIGO server.
 
 Please report any drop me an email if you encounter any bugs. I\'ve tested this on the android emulator, a Samsung phone and a Samsung tablet, but it\'s my first app so I\'m sure things will go wrong for someone.
@@ -297,7 +295,6 @@ Release 1.3.61 - Changes:
 Release 1.3.60 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
-                    - Possibly - Support for paging of groups and users (support >100 of each)
                     - Possibly - Support for user comments
                     - Possibly - allow linking the upload process to a compression routine for videos
                     - Possibly - add support for multiple piwigo galleries to be configured
@@ -311,8 +308,15 @@ Release 1.3.59 - Changes:
 
 Released:
 
-Release 1.3.58 - Bugfix:
+Release 1.3.58 - Changes:
+                    - Added support for paging of users and groups
+                    - TODO: Complete support for user numbers above 100 (including improving the album details in this area)
+                    - TODO: Update the about text in this file and on the google app store.
+                    - Altered color of checkboxes to make it more obvious when their state can be changed
+                 Bugfix:
                     - Corrected bug where app crashes due to UI component being detached from the server response listener
+                    - Corrected bug retrieving resource details if resource has no name set
+                    - Crash on file upload if an error occurred and the upload screen wasn't shown
 
 Release 1.3.57 - Bugfix:
                     - Corrected bug in the proguard file stopping the released version from working.

@@ -187,8 +187,11 @@ public class NewPiwigoUploadService extends IntentService {
 
             uploadFilesInJob(maxChunkUploadAutoRetries, thisUploadJob);
 
-            if(thisUploadJob.getTemporaryUploadAlbum() > 0) {
-                deleteTemporaryUploadAlbum(thisUploadJob);
+            if(thisUploadJob.getFilesNotYetUploaded().size() == 0 && thisUploadJob.getTemporaryUploadAlbum() > 0) {
+                boolean success = deleteTemporaryUploadAlbum(thisUploadJob);
+                if(!success) {
+                    return;
+                }
             }
 
             if(thisUploadJob.hasJobCompletedAllActionsSuccessfully()) {
@@ -294,25 +297,27 @@ public class NewPiwigoUploadService extends IntentService {
         }
     }
 
-    private void deleteTemporaryUploadAlbum(UploadJob thisUploadJob) {
+    private boolean deleteTemporaryUploadAlbum(UploadJob thisUploadJob) {
         int allowedAttempts;
         if (thisUploadJob.getFilesNotYetUploaded().size() == 0 && thisUploadJob.getTemporaryUploadAlbum() > 0) {
-            // all files were uploaded successfully.
-            //delete temporary hidden album
-            AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(thisUploadJob.getTemporaryUploadAlbum());
-            allowedAttempts = 2;
-            while (!albumDelHandler.isSuccess() && allowedAttempts > 0) {
-                allowedAttempts--;
-                // this is blocking
-                callPiwigoServer(albumDelHandler);
-            }
-            if (!albumDelHandler.isSuccess()) {
-                // notify the listener of the final error we received from the server
-                postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), albumDelHandler.getResponse()));
-            } else {
-                thisUploadJob.setTemporaryUploadAlbum(-1);
-            }
+            throw new IllegalStateException("Cannot delete upload album when job is still incomplete");
         }
+        // all files were uploaded successfully.
+        //delete temporary hidden album
+        AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(thisUploadJob.getTemporaryUploadAlbum());
+        allowedAttempts = 2;
+        while (!albumDelHandler.isSuccess() && allowedAttempts > 0) {
+            allowedAttempts--;
+            // this is blocking
+            callPiwigoServer(albumDelHandler);
+        }
+        if (!albumDelHandler.isSuccess()) {
+            // notify the listener of the final error we received from the server
+            postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), albumDelHandler.getResponse()));
+        } else {
+            thisUploadJob.setTemporaryUploadAlbum(-1);
+        }
+        return albumDelHandler.isSuccess();
     }
 
     private boolean createTemporaryUploadAlbum(UploadJob thisUploadJob) {

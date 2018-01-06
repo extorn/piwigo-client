@@ -12,7 +12,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/myCheckBox"/>
-    <CheckBox
+    <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/myCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,5 +20,6 @@
         android:clickable="false"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:button="@drawable/always_clear_checkbox"
         />
 </paul.arian.fileselector.CheckableRelativeLayout>

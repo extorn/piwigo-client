@@ -21,6 +21,7 @@ import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.LongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 
@@ -28,7 +29,7 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class UsernameSelectFragment extends LongSetSelectFragment<UsernamesSelectionListAdapter> {
+public class UsernameSelectFragment extends ListViewLongSetSelectFragment<UsernamesSelectionListAdapter> {
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";

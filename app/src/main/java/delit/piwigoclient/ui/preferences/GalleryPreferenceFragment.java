@@ -287,6 +287,8 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         bindStringPreferenceSummaryToValue(findPreference(R.string.preference_gallery_item_thumbnail_size_key));
         bindStringPreferenceSummaryToValue(findPreference(R.string.preference_gallery_item_slideshow_image_size_key));
         bindIntPreferenceSummaryToValue(findPreference(R.string.preference_album_request_pagesize_key));
+        bindIntPreferenceSummaryToValue(findPreference(R.string.preference_users_request_pagesize_key));
+        bindIntPreferenceSummaryToValue(findPreference(R.string.preference_groups_request_pagesize_key));
 
         Preference button = findPreference(R.string.preference_gallery_clearMemoryCache_key);
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

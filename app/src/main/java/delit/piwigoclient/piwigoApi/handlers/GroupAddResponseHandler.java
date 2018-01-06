@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import delit.piwigoclient.model.piwigo.Group;

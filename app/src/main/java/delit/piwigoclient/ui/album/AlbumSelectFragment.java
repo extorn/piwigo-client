@@ -22,6 +22,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.LongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
 import delit.piwigoclient.ui.upload.AvailableAlbumsListAdapter;
@@ -30,7 +31,7 @@ import delit.piwigoclient.ui.upload.AvailableAlbumsListAdapter;
  * Created by gareth on 26/05/17.
  */
 
-public class AlbumSelectFragment extends LongSetSelectFragment<AvailableAlbumsListAdapter> {
+public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private ArrayList<CategoryItemStub> availableAlbums;
