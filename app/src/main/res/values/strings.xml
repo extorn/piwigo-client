@@ -269,9 +269,6 @@ I have been testing with a copy of the piwigo_privacy plugin installed and also 
 I have a copy of the Extended Description plugin installed, but unfortunately, this functionality is not yet exposed via the PIWIGO API.
 I\'d like to include support for "favorite" photos but this functionality does not yet appear to be exposed via the PIWIGO API.
 
-NOTE: If you have more than 100 users, you won't see them all except on the main "users list" page. Also the album details page is not designed with large numbers of users in mind. Please contact me if this affects you and I'll add support for larger numbers. My server has just a handful of users.
-    : PIWIGO community plugin is NOT supported by this app at present and a user has notified me of issues when trying to use this app against a 'community enabled' PIWIGO server.
-
 Please report any drop me an email if you encounter any bugs. I\'ve tested this on the android emulator, a Samsung phone and a Samsung tablet, but it\'s my first app so I\'m sure things will go wrong for someone.
 
 A big thank you to everyone who has emailed me with suggestions or bugs. I will endeavor to address all of your suggestions as soon as practical.
@@ -310,8 +307,6 @@ Released:
 
 Release 1.3.58 - Changes:
                     - Added support for paging of users and groups
-                    - TODO: Complete support for user numbers above 100 (including improving the album details in this area)
-                    - TODO: Update the about text in this file and on the google app store.
                     - Altered color of checkboxes to make it more obvious when their state can be changed
                  Bugfix:
                     - Corrected bug where app crashes due to UI component being detached from the server response listener
