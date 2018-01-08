@@ -143,7 +143,7 @@ public class UsersListFragment extends MyFragment {
 
         boolean allowMultiselection = false;
 
-        viewAdapter = new UserRecyclerViewAdapter(container.getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusListener() {
+        viewAdapter = new UserRecyclerViewAdapter(container.getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusListener<User>() {
             @Override
             public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
             }
@@ -155,6 +155,16 @@ public class UsersListFragment extends MyFragment {
             @Override
             public void onItemDeleteRequested(User u) {
                 onDeleteUser(u);
+            }
+
+            @Override
+            public void onItemClick(User item) {
+                EventBus.getDefault().post(new ViewUserEvent(item));
+            }
+
+            @Override
+            public void onItemLongClick(User item) {
+
             }
         }, allowMultiselection);
         viewAdapter.setEnabled(true);

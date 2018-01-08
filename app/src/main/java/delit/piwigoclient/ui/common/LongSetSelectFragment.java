@@ -99,7 +99,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_ALLOW_MULTISELECT, multiSelectEnabled);
         outState.putInt(STATE_ACTION_ID, actionId);
-        outState.putSerializable(STATE_CURRENT_SELECTION, currentSelection);
+        outState.putSerializable(STATE_CURRENT_SELECTION, getCurrentSelection());
         outState.putBoolean(STATE_ALLOW_EDITING, editingEnabled);
         outState.putBoolean(STATE_SELECT_TOGGLE, selectToggle);
     }
@@ -223,6 +223,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     public void setListAdapter(X listAdapter) {
         this.listAdapter = listAdapter;
+        if(listAdapter instanceof SelectableItemsAdapter) {
+            ((SelectableItemsAdapter)listAdapter).setSelectedItems(currentSelection);
+        }
     }
 
     protected void onListItemLoadFailed() {
@@ -265,6 +268,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     }
 
     public HashSet<Long> getCurrentSelection() {
+        if(listAdapter != null && listAdapter instanceof SelectableItemsAdapter) {
+            currentSelection = ((SelectableItemsAdapter)listAdapter).getSelectedItemIds();
+        }
         return currentSelection;
     }
 

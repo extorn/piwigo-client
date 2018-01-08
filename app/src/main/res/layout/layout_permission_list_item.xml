@@ -4,12 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <delit.piwigoclient.ui.common.ThreeStateCheckbox
+    <delit.piwigoclient.ui.common.AppCompatCheckboxTriState
         android:id="@+id/permission_status_icon"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:button="@drawable/always_clear_checkbox"/>
 
     <TextView
         android:id="@+id/permission_text"

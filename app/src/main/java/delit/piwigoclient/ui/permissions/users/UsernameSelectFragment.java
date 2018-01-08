@@ -4,42 +4,45 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.PiwigoUsernames;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
-import delit.piwigoclient.ui.common.LongSetSelectFragment;
+import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class UsernameSelectFragment extends ListViewLongSetSelectFragment<UsernamesSelectionListAdapter> {
+public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter> {
 
-    private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
-    private static final String STATE_AVAILABLE_ITEMS = "availableItems";
-    private ArrayList<Username> availableItems;
+    private static final String USER_NAMES_MODEL = "usernamesModel";
+    private static final String USER_NAMES_PAGE_BEING_LOADED = "usernamesPageBeingLoaded";
+    private static final String STATE_INDIRECT_SELECTION = "indirectlySelectedUsernames";
+    private PiwigoUsernames usernamesModel = new PiwigoUsernames();
+    private int pageToLoadNow = -1;
     private HashSet<Long> indirectSelection;
 
     public static UsernameSelectFragment newInstance(boolean multiSelectEnabled, boolean allowEditing, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
         UsernameSelectFragment fragment = new UsernameSelectFragment();
         Bundle args = buildArgsBundle(multiSelectEnabled, allowEditing, actionId, initialSelection);
-        if(indirectSelection != null) {
+        if (indirectSelection != null) {
             args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
             args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>());
@@ -60,10 +63,10 @@ public class UsernameSelectFragment extends ListViewLongSetSelectFragment<Userna
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_AVAILABLE_ITEMS, availableItems);
+        outState.putSerializable(USER_NAMES_MODEL, usernamesModel);
+        outState.putInt(USER_NAMES_PAGE_BEING_LOADED, pageToLoadNow);
         outState.putSerializable(STATE_INDIRECT_SELECTION, indirectSelection);
     }
-
 
 
     @Nullable
@@ -72,9 +75,61 @@ public class UsernameSelectFragment extends ListViewLongSetSelectFragment<Userna
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
+        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+        UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(getContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusListener<Username>() {
+            @Override
+            public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
+            }
+
+            @Override
+            public void onItemSelectionCountChanged(int size) {
+            }
+
+            @Override
+            public void onItemDeleteRequested(Username item) {
+
+            }
+
+            @Override
+            public void onItemClick(Username item) {
+
+            }
+
+            @Override
+            public void onItemLongClick(Username item) {
+
+            }
+
+        }, captureActionClicks);
+        if (!viewAdapter.isItemSelectionAllowed()) {
+            viewAdapter.toggleItemSelection();
+        }
+
+        setListAdapter(viewAdapter);
+
+        RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());
+        getList().setLayoutManager(layoutMan);
+        getList().setAdapter(viewAdapter);
+
+
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                int pageToLoad = usernamesModel.getPagesLoaded();
+                if (pageToLoad == 0 || usernamesModel.isFullyLoaded()) {
+                    // already load this one by default so lets not double load it (or we've already loaded all items).
+                    return;
+                }
+                loadUsernamesPage(pageToLoad);
+            }
+        };
+        scrollListener.configure(usernamesModel.getPagesLoaded(), usernamesModel.getItems().size());
+        getList().addOnScrollListener(scrollListener);
+
         if (savedInstanceState != null) {
-            availableItems = (ArrayList) savedInstanceState.getSerializable(STATE_AVAILABLE_ITEMS);
-            indirectSelection = (HashSet<Long>) savedInstanceState.getSerializable(STATE_INDIRECT_SELECTION);
+            usernamesModel = (PiwigoUsernames) savedInstanceState.getSerializable(USER_NAMES_MODEL);
+            pageToLoadNow = savedInstanceState.getInt(USER_NAMES_PAGE_BEING_LOADED
+            );
         }
 
         return v;
@@ -89,47 +144,36 @@ public class UsernameSelectFragment extends ListViewLongSetSelectFragment<Userna
     @Override
     public void onResume() {
         super.onResume();
-        populateListWithItems();
+        if (usernamesModel.getPagesLoaded() == 0) {
+            getListAdapter().notifyDataSetChanged();
+            loadUsernamesPage(0);
+        }
+    }
+
+    private void loadUsernamesPage(int pageToLoad) {
+        this.pageToLoadNow = pageToLoad;
+        int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
+        addActiveServiceCall(R.string.progress_loading_users, PiwigoAccessService.startActionGetUsernamesList(pageToLoad, pageSize, getContext()));
     }
 
     @Override
     protected void populateListWithItems() {
-        if (availableItems == null) {
-            //TODO FEATURE: Support usernames paging (load page size from settings)
-            addActiveServiceCall(R.string.progress_loading_users,PiwigoAccessService.startActionGetUsernamesList(0, 100, this.getContext()));
-        } else if(getListAdapter() == null) {
-            //TODO use list item layout as per AvailableAlbumsListAdapter
-//            int listItemLayout = isMultiSelectEnabled()? android.R.layout.simple_list_item_multiple_choice : android.R.layout.simple_list_item_single_choice;
-
-            UsernamesSelectionListAdapter availableItemsAdapter = new UsernamesSelectionListAdapter(getContext(), availableItems, indirectSelection, isEditingEnabled());
-            ListView listView = getList();
-            listView.setAdapter(availableItemsAdapter);
-            listView.requestLayout();
-            if(isMultiSelectEnabled()) {
-                listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-            } else {
-                listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-            }
-
-            for(Long selectedItemId : getCurrentSelection()) {
-                int itemPos = availableItemsAdapter.getPosition(selectedItemId);
-                if(itemPos >= 0) {
-                    listView.setItemChecked(itemPos, true);
-                }
-            }
-
-            setListAdapter(availableItemsAdapter);
-            setAppropriateComponentState();
+        if (pageToLoadNow > 0) {
+            loadUsernamesPage(pageToLoadNow);
         }
     }
 
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
-        HashSet<Username> selectedItems = new HashSet<>(selectedIdsSet.size());
-        UsernamesSelectionListAdapter listAdapter = getListAdapter();
-        for(Long selectedId : selectedIdsSet) {
-            selectedItems.add(listAdapter.getItemById(selectedId));
+        UsernameRecyclerViewAdapter listAdapter = getListAdapter();
+        HashSet<Long> usernamesNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
+        if(usernamesNeededToBeLoaded.size() > 0) {
+            //TODO what if there are more than the max page size?! Paging needed :-(
+            pageToLoadNow = Integer.MAX_VALUE; // flag that this is a special one off load.
+            addActiveServiceCall(R.string.progress_loading_users, PiwigoAccessService.startActionGetUsernamesList(usernamesNeededToBeLoaded, getContext()));
+            return;
         }
+        HashSet<Username> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new UsernameSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
         getFragmentManager().popBackStackImmediate();
@@ -153,12 +197,31 @@ public class UsernameSelectFragment extends ListViewLongSetSelectFragment<Userna
 
 
     public void onUsernamesLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse response) {
-        getUiHelper().dismissProgressDialog();
-        if (response.getItemsOnPage() == response.getPageSize()) {
-            //TODO FEATURE: Support groups paging
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));
+        synchronized (usernamesModel) {
+            if(pageToLoadNow == Integer.MAX_VALUE) {
+                // this is a special page of all missing items from those selected.
+                pageToLoadNow = -1;
+                int firstIdxAdded = usernamesModel.addItemPage(usernamesModel.getPagesLoaded(), response.getPageSize(), response.getUsernames());
+                HashSet<Long> selectedItemIds = getAdapter().getSelectedItemIds();
+                for (Long selectedItemId : selectedItemIds) {
+                    getAdapter().setItemSelected(selectedItemId);
+                }
+                getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getUsernames().size());
+                onListItemLoadSuccess();
+                setAppropriateComponentState();
+                onSelectActionComplete(getAdapter().getSelectedItemIds());
+                return;
+            }
+
+            pageToLoadNow = -1;
+            int firstIdxAdded = usernamesModel.addItemPage(response.getPage(), response.getPageSize(), response.getUsernames());
+            HashSet<Long> selectedItemIds = getAdapter().getSelectedItemIds();
+            for (Long selectedItemId : selectedItemIds) {
+                getAdapter().setItemSelected(selectedItemId);
+            }
+            getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getUsernames().size());
+            onListItemLoadSuccess();
+            setAppropriateComponentState();
         }
-        availableItems = response.getUsernames();
-        populateListWithItems();
     }
 }

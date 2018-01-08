@@ -21,4 +21,10 @@
     <declare-styleable name="ClientCertificatePreference">
     </declare-styleable>
 
+    <declare-styleable name="AlwaysCheckedState">
+        <attr name="state_always_checked" format="boolean"/>
+    </declare-styleable>
+
+
+
 </resources>

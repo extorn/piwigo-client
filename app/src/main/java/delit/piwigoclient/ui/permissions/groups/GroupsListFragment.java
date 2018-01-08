@@ -143,7 +143,7 @@ public class GroupsListFragment extends MyFragment {
 
         boolean allowMultiselection = false;
 
-        viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusListener() {
+        viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusListener<Group>() {
             @Override
             public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
             }
@@ -153,9 +153,19 @@ public class GroupsListFragment extends MyFragment {
             }
 
             @Override
-            public void onItemDeleteRequested(Group g) {
-                onDeleteGroup(g);
+            public void onItemDeleteRequested(Group item) {
+                onDeleteGroup(item);
             }
+
+            @Override
+            public void onItemClick(Group item) {
+                EventBus.getDefault().post(new ViewGroupEvent(item));
+            }
+
+            @Override
+            public void onItemLongClick(Group item) {
+            }
+
         }, allowMultiselection);
         viewAdapter.setEnabled(true);
         viewAdapter.setAllowItemDeletion(true);

@@ -4,11 +4,15 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import java.util.HashMap;
+import java.util.HashSet;
+
+import delit.piwigoclient.BuildConfig;
 
 /**
  * Created by gareth on 13/06/17.
@@ -105,6 +109,11 @@ public abstract class CustomSelectListAdapter<T> extends ArrayAdapter<T> impleme
         return enabled;
     }
 
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public T getItemById(Long selectedId) {
         int pos = getPosition(selectedId);
         if(pos < 0) {
@@ -112,4 +121,5 @@ public abstract class CustomSelectListAdapter<T> extends ArrayAdapter<T> impleme
         }
         return getItem(pos);
     }
+
 }

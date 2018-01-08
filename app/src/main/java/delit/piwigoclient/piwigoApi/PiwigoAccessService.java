@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -446,6 +447,16 @@ public class PiwigoAccessService {
             }
         }.start(messageId);
 
+    }
+
+    public static long startActionGetUsernamesList(final Collection<Long> userIds, Context context) {
+        long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
+        return new Worker(context) {
+            @Override
+            protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
+                return new UsernamesGetListResponseHandler(userIds);
+            }
+        }.start(messageId);
     }
 
     public static long startActionGetUsernamesList(final List<Long> groupIds, final int page, final int pageSize, Context context) {

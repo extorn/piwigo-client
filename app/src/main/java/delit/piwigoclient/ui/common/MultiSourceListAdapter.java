@@ -121,7 +121,7 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
 
         setViewContentForItemDisplay(view, item, levelInTreeOfItem);
 
-        final ThreeStateCheckbox imageView = view.findViewById(R.id.permission_status_icon);
+        final AppCompatCheckboxTriState imageView = view.findViewById(R.id.permission_status_icon);
         imageView.setEnabled(enabled);
         imageView.setAlwaysChecked(indirectlySelectedItems != null && indirectlySelectedItems.contains(thisItemId));
 
@@ -148,6 +148,11 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override

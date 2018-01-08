@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import delit.piwigoclient.model.piwigo.Username;
@@ -18,18 +19,29 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
     private static final String TAG = "UsernamesListRspHdlr";
     private final long page;
     private final long pageSize;
-    private final List<Long> groupIds;
+    private final Collection<Long> groupIds;
+    private final Collection<Long> userIds;
 
-    public UsernamesGetListResponseHandler(List<Long> groupIds, long page, long pageSize) {
+    public UsernamesGetListResponseHandler(Collection<Long> groupIds, long page, long pageSize) {
         super("pwg.users.getList", TAG);
         this.groupIds = groupIds;
+        this.userIds = null;
         this.page = page;
         this.pageSize = pageSize;
+    }
+
+    public UsernamesGetListResponseHandler(Collection<Long> userIds) {
+        super("pwg.users.getList", TAG);
+        this.userIds = userIds;
+        this.groupIds = null;
+        page = 0;
+        pageSize = userIds.size();
     }
 
     public UsernamesGetListResponseHandler(long page, long pageSize) {
         super("pwg.users.getList", TAG);
         this.groupIds = null;
+        this.userIds = null;
         this.page = page;
         this.pageSize = pageSize;
     }
@@ -44,6 +56,11 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
         if(groupIds != null) {
             for (Long groupId : groupIds) {
                 params.add("group_id[]", String.valueOf(groupId));
+            }
+        }
+        if(userIds != null) {
+            for (Long userId : userIds) {
+                params.add("user_id[]", String.valueOf(userId));
             }
         }
         params.put("order", "username"); // user name
