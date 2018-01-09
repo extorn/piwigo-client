@@ -299,7 +299,7 @@ public class NewPiwigoUploadService extends IntentService {
 
     private boolean deleteTemporaryUploadAlbum(UploadJob thisUploadJob) {
         int allowedAttempts;
-        if (thisUploadJob.getFilesNotYetUploaded().size() == 0 && thisUploadJob.getTemporaryUploadAlbum() > 0) {
+        if (thisUploadJob.getFilesNotYetUploaded().size() == 0 && thisUploadJob.getTemporaryUploadAlbum() < 0) {
             throw new IllegalStateException("Cannot delete upload album when job is still incomplete");
         }
         // all files were uploaded successfully.
