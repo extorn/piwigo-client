@@ -55,11 +55,23 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
         for (int i = 0; i < categories.size(); i++) {
             JsonObject category = (JsonObject) categories.get(i);
             long id = category.get("id").getAsLong();
-            String name = category.get("name").getAsString();
+
+            JsonElement nameElem = category.get("name");
+            String name = null;
+            if(nameElem != null && !nameElem.isJsonNull()) {
+                name = category.get("name").getAsString();
+            }
+
             long photos = category.get("nb_images").getAsLong();
             long totalPhotos = category.get("total_nb_images").getAsLong();
             long subCategories = category.get("nb_categories").getAsLong();
-            String description = category.get("comment").getAsString();
+
+            JsonElement commentElem = category.get("comment");
+            String description = null;
+            if(commentElem != null && !commentElem.isJsonNull()) {
+                description = commentElem.getAsString();
+            }
+
             boolean isPublic = "public".equals(category.get("status").getAsString());
             JsonElement maxDateLastJsonElem = category.get("max_date_last");
             String dateLastAlteredStr = null;

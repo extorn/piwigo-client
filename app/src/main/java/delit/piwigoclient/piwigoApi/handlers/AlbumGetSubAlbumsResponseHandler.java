@@ -56,29 +56,45 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         for (int i = 0; i < categories.size(); i++) {
+
             JsonObject category = (JsonObject) categories.get(i);
             long id = category.get("id").getAsLong();
-            String name = category.get("name").getAsString();
+
+            JsonElement nameElem = category.get("name");
+            String name = null;
+            if(nameElem != null && !nameElem.isJsonNull()) {
+                name = nameElem.getAsString();
+            }
+
             long photos = category.get("nb_images").getAsLong();
             long totalPhotos = category.get("total_nb_images").getAsLong();
             long subCategories = category.get("nb_categories").getAsLong();
-            String description = category.get("comment").getAsString();
+
+            JsonElement descriptionElem = category.get("comment");
+            String description = null;
+            if(descriptionElem != null && !descriptionElem.isJsonNull()) {
+                description = descriptionElem.getAsString();
+            }
+
             boolean isPublic = false;
             //TODO No support in community plugin for anything except private albums for PIWIGO API.
             if(!PiwigoSessionDetails.isUseCommunityPlugin() || PiwigoSessionDetails.isAdminUser()) {
                 isPublic = "public".equals(category.get("status").getAsString());
             }
+
             JsonElement maxDateLastJsonElem = category.get("max_date_last");
             String dateLastAlteredStr = null;
             if(maxDateLastJsonElem != null && !maxDateLastJsonElem.isJsonNull()) {
                 dateLastAlteredStr = maxDateLastJsonElem.getAsString();
             }
+
             String thumbnail = null;
             Long representativePictureId = null;
             if(category.has("representative_picture_id") && !category.get("representative_picture_id").isJsonNull()) {
                 representativePictureId = category.get("representative_picture_id").getAsLong();
                 thumbnail = category.get("tn_url").getAsString();
             }
+
             Date dateLastAltered = null;
             try {
                 if (null == dateLastAlteredStr) {

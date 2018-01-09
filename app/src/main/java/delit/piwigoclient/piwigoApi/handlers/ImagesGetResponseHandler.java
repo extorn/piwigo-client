@@ -106,13 +106,13 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
             String name = null;
             JsonElement nameJsonElem = image.get("name");
-            if (!nameJsonElem.isJsonNull()) {
+            if (nameJsonElem != null && !nameJsonElem.isJsonNull()) {
                 name = nameJsonElem.getAsString();
             }
 
             String description = null;
             JsonElement descJsonElem = image.get("comment");
-            if (!descJsonElem.isJsonNull()) {
+            if (descJsonElem != null && !descJsonElem.isJsonNull()) {
                 description = descJsonElem.getAsString();
             }
 
