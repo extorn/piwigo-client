@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 
 import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.NoHttpResponseException;
 import cz.msebera.android.httpclient.client.HttpRequestRetryHandler;
@@ -90,7 +91,7 @@ class RetryHandler implements HttpRequestRetryHandler {
 
     protected boolean isInList(HashSet<Class<?>> list, Throwable error) {
         for (Class<?> aList : list) {
-            if (aList.isInstance(error)) {
+            if (aList.isAssignableFrom(error.getClass())) {
                 return true;
             }
         }

@@ -161,8 +161,11 @@ public class NewPiwigoUploadService extends IntentService {
 
             thisUploadJob.calculateChecksums();
 
+            // is name or md5sum used for uniqueness on this server?
+            boolean nameUnique = "name".equals(prefs.getString(getString(R.string.preference_gallery_unique_id_key), getResources().getString(R.string.preference_gallery_unique_id_default)));
+
             // remove any files that already exist on the server from the upload.
-            ImageFindExistingImagesResponseHandler handler = new ImageFindExistingImagesResponseHandler(thisUploadJob.getFileChecksums().values());
+            ImageFindExistingImagesResponseHandler handler = new ImageFindExistingImagesResponseHandler(thisUploadJob.getFileChecksums().values(), nameUnique);
             int allowedAttempts = 2;
             while (!handler.isSuccess() && allowedAttempts > 0) {
                 allowedAttempts--;

@@ -457,7 +457,7 @@ public abstract class KeyStorePreference extends DialogPreference {
             return aliasesList.size();
         }
 
-        private char[] getKeyPass(String alias) {
+        protected char[] getKeyPass(String alias) {
             return new char[0];
         }
 
@@ -505,7 +505,7 @@ public abstract class KeyStorePreference extends DialogPreference {
                     throw new IllegalArgumentException("Keystore does not contain that many entries");
                 }
                 String alias = aliasesList.get(position);
-                return (T)backingObjectStore.getEntry(alias, new KeyStore.PasswordProtection(getKeyPass(alias)));
+                return getItem(backingObjectStore, alias);
             } catch (KeyStoreException e) {
                 throw new RuntimeException(e);
             } catch (UnrecoverableEntryException e) {
@@ -513,6 +513,15 @@ public abstract class KeyStorePreference extends DialogPreference {
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        protected <T extends KeyStore.Entry> T getItem(KeyStore keystore, String alias) throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException {
+            char[] pass = getKeyPass(alias);
+            KeyStore.PasswordProtection protection = null;
+            if(pass != null && pass.length > 0) {
+                protection = new KeyStore.PasswordProtection(pass);
+            }
+            return (T)keystore.getEntry(alias, protection);
         }
 
         @Override

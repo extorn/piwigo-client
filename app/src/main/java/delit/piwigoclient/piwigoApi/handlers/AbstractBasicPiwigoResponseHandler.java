@@ -12,6 +12,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.greenrobot.eventbus.EventBus;
 
 import java.net.SocketTimeoutException;
+import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpStatus;
@@ -141,7 +142,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     @Override
     public final void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+        isSuccess = false;
         boolean tryingAgain = false;
         if (!cancelCallAsap && allowSessionRefreshAttempt &&
                 ((statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && error.getMessage().equalsIgnoreCase("Access denied"))

@@ -1,5 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +11,8 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import delit.piwigoclient.BuildConfig;
+
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
@@ -16,6 +20,7 @@ import java.util.TreeSet;
  */
 public class PiwigoAlbum implements Serializable {
 
+    private static final String TAG = "piwigoAlbum";
     private int subAlbumCount;
     private int spacerAlbums;
     private int advertCount;
@@ -91,22 +96,27 @@ public class PiwigoAlbum implements Serializable {
     }
 
     public void addItemPage(int page, int pageSize, List<GalleryItem> newItems) {
-
-        if(newItems.size() > 0) {
-            int insertPosition = earlierLoadedPages(page) * pageSize;
-            insertPosition += subAlbumCount;
-            insertPosition += spacerAlbums;
-            insertPosition += advertCount;
-            id = newItems.get(0).getParentId();
-            for (GalleryItem item : newItems) {
-                if(item == GalleryItem.ADVERT) {
-                    advertCount++;
+        try {
+            if (newItems.size() > 0) {
+                int insertPosition = earlierLoadedPages(page) * pageSize;
+                insertPosition += subAlbumCount;
+                insertPosition += spacerAlbums;
+                insertPosition += advertCount;
+                id = newItems.get(0).getParentId();
+                for (GalleryItem item : newItems) {
+                    if (item == GalleryItem.ADVERT) {
+                        advertCount++;
+                    }
+                    items.add(insertPosition, item);
+                    insertPosition++;
                 }
-                items.add(insertPosition, item);
-                insertPosition++;
+            }
+            pagesLoaded.add(page);
+        } catch(IllegalArgumentException e) {
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "page already loaded", e);
             }
         }
-        pagesLoaded.add(page);
     }
 
     public void clear() {

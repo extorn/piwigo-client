@@ -34,6 +34,12 @@
             android:entryValues="@array/preference_gallery_sortOrder_entryValues"
             android:key="@string/preference_gallery_sortOrder_key"
             android:title="@string/preference_gallery_sortOrder_title" />
+        <ListPreference
+            android:defaultValue="@string/preference_gallery_unique_id_default"
+            android:entries="@array/preference_gallery_unique_id_entries"
+            android:entryValues="@array/preference_gallery_unique_id_entryValues"
+            android:key="@string/preference_gallery_unique_id_key"
+            android:title="@string/preference_gallery_unique_id_title" />
         <delit.piwigoclient.ui.common.NumberPickerPreference
             app:minValue="1"
             app:maxValue="10"

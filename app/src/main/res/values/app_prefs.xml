@@ -16,6 +16,10 @@
 
     <!-- prefs -->
 
+    <string name="preference_server_connection_max_redirects_key">preference_server_connection_max_redirects</string>
+    <string name="preference_server_connection_max_redirects_title">Max server redirects</string>
+    <integer name="preference_server_connection_max_redirects_default">5</integer>
+
     <string name="preference_server_connection_allow_redirects_key">preference_server_connection_allow_redirects</string>
     <string name="preference_server_connection_allow_redirects_title">Allow server redirects</string>
     <string name="preference_server_connection_allow_redirects_summary">Follow http 3xx responses</string>
@@ -167,6 +171,9 @@
     <string name="preference_gallery_sortOrder_title">Album sort order</string>
     <string name="preference_gallery_sortOrder_default" translatable="false">name</string>
 
+    <string name="preference_gallery_unique_id_key" translatable="false">preference_gallery_unique_id</string>
+    <string name="preference_gallery_unique_id_title">Unique Identifier for images</string>
+    <string name="preference_gallery_unique_id_default" translatable="false">md5sum</string>
 
     <string name="preference_gallery_clearMemoryCache_title">Clear In-Memory Cache</string>
     <string name="preference_gallery_clearMemoryCache_key" translatable="false">preference_gallery_clearMemoryCache</string>

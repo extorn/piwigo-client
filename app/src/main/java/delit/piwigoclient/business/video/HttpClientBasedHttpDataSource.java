@@ -93,6 +93,8 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
     private CachedContent cacheFileContent;
     private CacheListener cacheListener;
     private CachedContent.SerializableRange cachedRange;
+    private int maxRedirects;
+    private boolean enableRedirects;
 
 
     /**
@@ -503,7 +505,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         if (!allowGzip) {
             headers.add(new BasicHeader("Accept-Encoding", "identity"));
         }
-        client.setEnableRedirects(true);
+        client.setEnableRedirects(enableRedirects, maxRedirects);
         CustomResponseHandler responseHandler = new CustomResponseHandler();
 
         client.get(context, dataSpec.uri.toString(), headers.toArray(new Header[headers.size()]), null, responseHandler);
@@ -722,6 +724,14 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
             headerValues.add(header.getValue());
         }
         return headersMap;
+    }
+
+    public void setEnableRedirects(boolean enableRedirects) {
+        this.enableRedirects = enableRedirects;
+    }
+
+    public void setMaxRedirects(int maxRedirects) {
+        this.maxRedirects = maxRedirects;
     }
 
     private class CustomResponseHandler extends DataAsyncHttpResponseHandler {

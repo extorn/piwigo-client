@@ -189,6 +189,21 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     };
 
+    private transient Preference.OnPreferenceChangeListener redirectsPreferenceListener = new Preference.OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object value) {
+
+            Boolean val = (Boolean) value;
+            preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_server_connection_max_redirects_key)).setEnabled(val);
+
+            if (!initialising) {
+                // clear the existing session - it's not valid any more.
+                forkLogoutIfNeeded();
+            }
+            return true;
+        }
+    };
+
     private transient Preference.OnPreferenceChangeListener simplePreferenceListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
@@ -426,7 +441,9 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         bindIntPreferenceSummaryToValue(findPreference(R.string.preference_server_connection_retries_key));
 
         Preference allowRedirectsPref = findPreference(R.string.preference_server_connection_allow_redirects_key);
-        allowRedirectsPref.setOnPreferenceChangeListener(simplePreferenceListener);
+        allowRedirectsPref.setOnPreferenceChangeListener(redirectsPreferenceListener);
+
+        bindIntPreferenceSummaryToValue(findPreference(R.string.preference_server_connection_max_redirects_key));
 
         Preference button = findPreference("piwigo_connection");
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -531,10 +548,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     onLogin();
                 }
             } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse) {
-                if(loginOnLogout) {
-                    loginOnLogout = false;
-                    testLogin();
-                }
+                getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), PiwigoAccessService.startActionCleanupHttpConnections(getContext()));
             } else if(response instanceof PiwigoResponseBufferingHandler.HttpClientsShutdownResponse) {
                 if(loginOnLogout) {
                     loginOnLogout = false;

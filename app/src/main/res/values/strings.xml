@@ -265,6 +265,8 @@ My test gallery contains .jpg and .mp4 files only. If yours contains others, you
 
 WARNING: Versions of Piwigo below 1.9.2 - upload of videos is I think dependent on fix #756 being applied to your server.
 
+WARNING2: I have noted that an assumption is made that the server is using md5sums for uniqueness tests. Be aware of this if you use the upload feature.
+
 I have been testing with a copy of the piwigo_privacy plugin installed and also the VideoJS plugin installed.
 I have a copy of the Extended Description plugin installed, but unfortunately, this functionality is not yet exposed via the PIWIGO API.
 I\'d like to include support for "favorite" photos but this functionality does not yet appear to be exposed via the PIWIGO API.
@@ -283,20 +285,20 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.63 - Changes:
+Release 1.3.65 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.62 - Changes:
+Release 1.3.64 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
                     - Possibly - allow linking the upload process to a compression routine for videos
                     - Possibly - add support for multiple piwigo galleries to be configured
 
-Release 1.3.61 - Changes:
+Release 1.3.63 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
                     - Improve management of user credentials where possible
@@ -304,6 +306,25 @@ Release 1.3.61 - Changes:
                     - Investigate serialization of app pages (crashes reported in this area)
 
 Released:
+
+Release 1.3.62 - Changes:
+                    - Added support for servers using file name as unique identififer for resources (new gallery preference)
+                    - Added support for the Log_Failed_Logins Plugin when misconfigured prepending debug text to json response
+                    - Added configuration preference for max number of server redirects
+                    - Enabled redirection configuration for the video downloads
+               - Bugfix:
+                    - Added support for servers not returning md5sums for resources
+                    - Ensure picasso loader always reset when altering connection settings
+                    - Problem retrieving trusted certificates in preferences page
+                    - Reduced max default server redirects when enabled to 5
+                    - Obscure crash in area of server response handling
+                    - Silently ignore a page of resources double loaded
+
+Release 1.3.61 - Bugfix:
+                    - Prevented requests resulting in SSL Handshake error automatically retrying.
+                    - Ensured md5sum is treated as optional when retrieving resource information
+                - Warning:
+                    - I have noted that an assumption is made that the server is using md5sums for uniqueness tests. Be aware of this if you use the upload feature. This is existing functionality, nothing new.
 
 Release 1.3.60 - Bugfix:
                     - Re-added defensive coding around data retrieval server calls

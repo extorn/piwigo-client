@@ -100,6 +100,14 @@
             android:summary="@string/preference_server_connection_allow_redirects_summary"
             android:title="@string/preference_server_connection_allow_redirects_title" />
         <delit.piwigoclient.ui.common.NumberPickerPreference
+            android:defaultValue="@integer/preference_server_connection_max_redirects_default"
+            app:defaultValue="@integer/preference_server_connection_max_redirects_default"
+            app:minValue="0"
+            app:maxValue="100"
+            app:wrapPickList="false"
+            android:key="@string/preference_server_connection_max_redirects_key"
+            android:title="@string/preference_server_connection_max_redirects_title" />
+        <delit.piwigoclient.ui.common.NumberPickerPreference
             android:defaultValue="@integer/preference_server_socketTimeout_millisecs_default"
             app:defaultValue="@integer/preference_server_socketTimeout_millisecs_default"
             app:minValue="1000"

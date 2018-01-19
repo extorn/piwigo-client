@@ -284,6 +284,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         bindIntPreferenceSummaryToValue(findPreference(R.string.preference_gallery_recentlyAlteredAgeMillis_key));
         bindStringPreferenceSummaryToValue(findPreference(R.string.preference_piwigo_playable_media_extensions_key));
         bindListPreferenceSummaryToValue(findPreference(R.string.preference_gallery_sortOrder_key));
+        bindListPreferenceSummaryToValue(findPreference(R.string.preference_gallery_unique_id_key));
         bindStringPreferenceSummaryToValue(findPreference(R.string.preference_gallery_item_thumbnail_size_key));
         bindStringPreferenceSummaryToValue(findPreference(R.string.preference_gallery_item_slideshow_image_size_key));
         bindIntPreferenceSummaryToValue(findPreference(R.string.preference_album_request_pagesize_key));

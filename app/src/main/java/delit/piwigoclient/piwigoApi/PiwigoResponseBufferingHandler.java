@@ -126,8 +126,9 @@ public class PiwigoResponseBufferingHandler {
         if(handlerId == null) {
             // record the parentage for processing when a handler is re-addded.
             parkChildMessageId(currentMessageId, newMessageId);
+        } else {
+            handlerResponseMap.put(newMessageId, handlerId);
         }
-        handlerResponseMap.put(newMessageId, handlerId);
     }
 
     public synchronized PiwigoResponseListener registerResponseHandler(long messageId, final PiwigoResponseListener h) {

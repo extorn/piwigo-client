@@ -175,7 +175,10 @@ public class HttpClientFactory {
         int connectRetries = prefs.getInt(context.getString(R.string.preference_server_connection_retries_key), defaultConnectRetries);
         client.setMaxRetriesAndTimeout(connectRetries, AsyncHttpClient.DEFAULT_RETRY_SLEEP_TIME_MILLIS);
         boolean defaultAllowRedirects = context.getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default);
-        client.setEnableRedirects(prefs.getBoolean(context.getString(R.string.preference_server_connection_allow_redirects_key), defaultAllowRedirects));
+        boolean allowRedirects = prefs.getBoolean(context.getString(R.string.preference_server_connection_allow_redirects_key), defaultAllowRedirects);
+        int defaultMaxRedirects = context.getResources().getInteger(R.integer.preference_server_connection_max_redirects_default);
+        int maxRedirects = prefs.getInt(context.getString(R.string.preference_server_connection_max_redirects_key), defaultMaxRedirects);
+        client.setEnableRedirects(allowRedirects, maxRedirects);
         client.setCookieStore(cookieStore);
 
         if(!forceDisableCache) {

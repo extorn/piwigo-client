@@ -15,6 +15,7 @@ import org.json.JSONException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
 import delit.piwigoclient.BuildConfig;
@@ -67,6 +68,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     protected Gson buildGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+        gsonBuilder.setLenient();
         Gson gson = gsonBuilder.create();
         return gson;
     }
@@ -87,12 +89,34 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             processJsonResponse(getMessageId(), piwigoMethod, piwigoResponse, responseBody);
 
         } catch (JsonSyntaxException e) {
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
-            storeResponse(r);
+            boolean handled = handleLogLoginFailurePluginResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
+            if(!handled) {
+                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
+                storeResponse(r);
+            }
         } catch (JsonIOException e) {
             PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
             storeResponse(r);
         }
+    }
+
+    private boolean handleLogLoginFailurePluginResponse(int statusCode, Header[] headers, byte[] responseBody, JsonSyntaxException e, boolean hasBrandNewSession) {
+        if(e.getMessage().equals("java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")) {
+            int idx = 0;
+            for(int i = responseBody.length - 1; i > 0; i--) {
+                if('{' == responseBody[i]) {
+                    idx = i;
+                    break;
+                }
+            }
+            if(idx > 0) {
+                byte[] actualJson = Arrays.copyOfRange(responseBody, idx, responseBody.length);
+                onSuccess(statusCode, headers, actualJson, hasBrandNewSession);
+                // skip remaining method code.
+                return true;
+            }
+        }
+        return false;
     }
 
     private void processJsonResponse(long messageId, String piwigoMethod, PiwigoJsonResponse jsonResponse, byte[] rawData) {

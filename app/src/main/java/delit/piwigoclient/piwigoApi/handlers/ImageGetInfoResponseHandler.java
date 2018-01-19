@@ -65,7 +65,11 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
             resourceItem.setAverageRating(averageRating);
         }
 
-        String fileChecksum = result.get("md5sum").getAsString();
+        JsonElement checksumJsonElem = result.get("md5sum");
+        String fileChecksum = null;
+        if(checksumJsonElem != null && !checksumJsonElem.isJsonNull()) {
+            fileChecksum = checksumJsonElem.getAsString();
+        }
 
         resourceItem.setFileChecksum(fileChecksum);
 
