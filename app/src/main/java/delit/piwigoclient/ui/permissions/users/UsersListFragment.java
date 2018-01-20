@@ -25,8 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.model.piwigo.PiwigoUsers;
+import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;

@@ -265,8 +265,6 @@ My test gallery contains .jpg and .mp4 files only. If yours contains others, you
 
 WARNING: Versions of Piwigo below 1.9.2 - upload of videos is I think dependent on fix #756 being applied to your server.
 
-WARNING2: I have noted that an assumption is made that the server is using md5sums for uniqueness tests. Be aware of this if you use the upload feature.
-
 I have been testing with a copy of the piwigo_privacy plugin installed and also the VideoJS plugin installed.
 I have a copy of the Extended Description plugin installed, but unfortunately, this functionality is not yet exposed via the PIWIGO API.
 I\'d like to include support for "favorite" photos but this functionality does not yet appear to be exposed via the PIWIGO API.
@@ -285,30 +283,32 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.65 - Changes:
+Release 1.3.66 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.64 - Changes:
+Release 1.3.65 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
                     - Possibly - allow linking the upload process to a compression routine for videos
                     - Possibly - add support for multiple piwigo galleries to be configured
 
-Release 1.3.63 - Changes:
+Release 1.3.64 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
-                    - Improve management of user credentials where possible
                     - Improve memory use further (app crashes are generally that it runs out of memory)
                     - Investigate serialization of app pages (crashes reported in this area)
 
 Released:
 
+Release 1.3.63 - Bugfix:
+                    - Bug in the identification of unique files for upload (filename mode only)
+
 Release 1.3.62 - Changes:
-                    - Added support for servers using file name as unique identififer for resources (new gallery preference)
+                    - Added support for servers using file name as unique identifier for resources (new gallery preference)
                     - Added support for the Log_Failed_Logins Plugin when misconfigured prepending debug text to json response
                     - Added configuration preference for max number of server redirects
                     - Enabled redirection configuration for the video downloads

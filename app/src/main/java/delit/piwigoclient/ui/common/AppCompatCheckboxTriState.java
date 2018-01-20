@@ -2,10 +2,7 @@ package delit.piwigoclient.ui.common;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
-import android.widget.Checkable;
-import android.widget.CompoundButton;
 
 import delit.piwigoclient.R;
 

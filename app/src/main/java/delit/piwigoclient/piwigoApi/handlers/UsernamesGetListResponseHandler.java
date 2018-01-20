@@ -8,7 +8,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;

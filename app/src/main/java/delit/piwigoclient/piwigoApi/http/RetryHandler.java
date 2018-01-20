@@ -9,7 +9,6 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 
 import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.NoHttpResponseException;
 import cz.msebera.android.httpclient.client.HttpRequestRetryHandler;

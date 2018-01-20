@@ -21,6 +21,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -163,9 +164,14 @@ public class NewPiwigoUploadService extends IntentService {
 
             // is name or md5sum used for uniqueness on this server?
             boolean nameUnique = "name".equals(prefs.getString(getString(R.string.preference_gallery_unique_id_key), getResources().getString(R.string.preference_gallery_unique_id_default)));
-
+            Collection<String> uniqueIdsList;
+            if(nameUnique) {
+                uniqueIdsList = thisUploadJob.getFileToFilenamesMap().values();
+            } else {
+                uniqueIdsList = thisUploadJob.getFileChecksums().values();
+            }
             // remove any files that already exist on the server from the upload.
-            ImageFindExistingImagesResponseHandler handler = new ImageFindExistingImagesResponseHandler(thisUploadJob.getFileChecksums().values(), nameUnique);
+            ImageFindExistingImagesResponseHandler handler = new ImageFindExistingImagesResponseHandler(uniqueIdsList, nameUnique);
             int allowedAttempts = 2;
             while (!handler.isSuccess() && allowedAttempts > 0) {
                 allowedAttempts--;
@@ -355,7 +361,17 @@ public class NewPiwigoUploadService extends IntentService {
         HashMap<String, Long> preexistingItemsMap = response.getExistingImages();
         ArrayList<File> filesExistingOnServerAlready = new ArrayList<>();
         HashMap<File, Long> resourcesToRetrieve = new HashMap<>();
-        for (Map.Entry<File, String> fileCheckSumEntry : thisUploadJob.getFileChecksums().entrySet()) {
+
+        // is name or md5sum used for uniqueness on this server?
+        boolean nameUnique = "name".equals(prefs.getString(getString(R.string.preference_gallery_unique_id_key), getResources().getString(R.string.preference_gallery_unique_id_default)));
+        Map<File, String> uniqueIdsSet;
+        if(nameUnique) {
+            uniqueIdsSet = thisUploadJob.getFileToFilenamesMap();
+        } else {
+            uniqueIdsSet = thisUploadJob.getFileChecksums();
+        }
+
+        for (Map.Entry<File, String> fileCheckSumEntry : uniqueIdsSet.entrySet()) {
             if (preexistingItemsMap.containsKey(fileCheckSumEntry.getValue())) {
                 File fileFoundOnServer = fileCheckSumEntry.getKey();
                 ResourceItem resourceItem = thisUploadJob.getUploadedFileResource(fileFoundOnServer);

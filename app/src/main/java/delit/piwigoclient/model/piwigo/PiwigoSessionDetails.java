@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
-import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.MyApplication;
 
 /**

@@ -5,11 +5,11 @@ import android.graphics.Point;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
