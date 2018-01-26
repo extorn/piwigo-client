@@ -72,6 +72,16 @@ public class MyFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        // This block wrapper is to hopefully protect against a WindowManager$BadTokenException when showing a dialog as part of this call.
+        if(getActivity().isDestroyed() || getActivity().isFinishing()) {
+            return;
+        }
+
+        Context context = getContext();
+        if (uiHelper.isContextOutOfSync(context)) {
+            uiHelper.swapToNewContext(context);
+        }
         uiHelper.handleAnyQueuedPiwigoMessages();
         uiHelper.showNextQueuedMessage();
     }

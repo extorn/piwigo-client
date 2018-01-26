@@ -307,7 +307,14 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     @Override
     public void onResume() {
         super.onResume();
-        if(subCategoryNamesActionId < 0) {
+
+        // This block is to hopefully protect against a WindowManager$BadTokenException when showing a dialog as part of this call.
+        if(getActivity().isDestroyed() || getActivity().isFinishing()) {
+            return;
+        }
+
+        // don't do this if the activity is finished of finishing.
+        if (subCategoryNamesActionId < 0) {
             invokeRetrieveSubCategoryNamesCall();
         }
     }

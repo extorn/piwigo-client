@@ -41,6 +41,7 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
@@ -62,7 +63,7 @@ public abstract class UIHelper<T> {
     private static final String STATE_TRACKED_REQUESTS = "trackedRequests";
     private static final String STATE_RUN_WITH_PERMS_LIST = "runWithPermsList";
     private static final String STATE_PERMS_FOR_REASON = "reasonForPermissionsRequired";
-    private final Context context;
+    private Context context;
     private final T parent;
     private final SharedPreferences prefs;
     private DismissListener dismissListener;
@@ -80,6 +81,19 @@ public abstract class UIHelper<T> {
         this.context = context;
         this.prefs = prefs;
         this.parent = parent;
+        setupDialogBoxes();
+        setupNotificationsManager();
+    }
+
+    public void swapToNewContext(Context c) {
+        try {
+            closeAllDialogs();
+        } catch(RuntimeException e) {
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "unable to flush old dialogs", e);
+            }
+        }
+        this.context = context;
         setupDialogBoxes();
         setupNotificationsManager();
     }
@@ -110,6 +124,10 @@ public abstract class UIHelper<T> {
 
     public String getDefaultNotificationChannelId() {
         return context.getString(R.string.app_name) + "_Misc";
+    }
+
+    public boolean isContextOutOfSync(Context context) {
+        return this.context != context;
     }
 
     private static class QueuedMessage implements Serializable {
