@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.UploadFileChunk;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -107,7 +108,7 @@ public class NewPiwigoUploadService extends IntentService {
     }
 
     private long callPiwigoServer(AbstractPiwigoWsResponseHandler handler) {
-        String piwigoServerUrl = prefs.getString(getApplicationContext().getString(R.string.preference_piwigo_server_address_key), null);
+        String piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, getApplicationContext());
         // need to start the calls async as otherwise their responses wont be placed on the queue to be handled.
         boolean isAsyncMode = true;
         handler.setCallDetails(getApplicationContext(), piwigoServerUrl, isAsyncMode);

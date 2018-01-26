@@ -31,6 +31,7 @@ import cz.msebera.android.httpclient.conn.ssl.TrustStrategy;
 import cz.msebera.android.httpclient.conn.ssl.X509HostnameVerifier;
 import cz.msebera.android.httpclient.util.TextUtils;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.CachingSyncHttpClient;
@@ -143,17 +144,17 @@ public class HttpClientFactory {
 
         int httpPort = 80;
         int httpsPort = 443;
-        String serverAddress = prefs.getString(context.getString(R.string.preference_piwigo_server_address_key), "").toLowerCase();
+        String piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
 
-        if(serverAddress.trim().length() == 0) {
+        if(piwigoServerUrl == null || piwigoServerUrl.trim().length() == 0) {
             return null;
         }
-
-        int port = extractPort(serverAddress);
+        piwigoServerUrl = piwigoServerUrl.toLowerCase();
+        int port = extractPort(piwigoServerUrl);
         if(port > 0) {
-            if (serverAddress.startsWith("http://")) {
+            if (piwigoServerUrl.startsWith("http://")) {
                 httpPort = port;
-            } else if (serverAddress.startsWith("https://")) {
+            } else if (piwigoServerUrl.startsWith("https://")) {
                 httpsPort = port;
             }
         }
@@ -167,17 +168,13 @@ public class HttpClientFactory {
         } else {
             client = new CachingSyncHttpClient(sslSocketFactory);
         }
-        int defaultConnectTimeoutMillis = context.getResources().getInteger(R.integer.preference_server_socketTimeout_millisecs_default);
-        int connectTimeoutMillis = prefs.getInt(context.getString(R.string.preference_server_socketTimeout_millisecs_key), defaultConnectTimeoutMillis);
+        int connectTimeoutMillis = ConnectionPreferences.getServerConnectTimeout(prefs, context);
         client.setConnectTimeout(connectTimeoutMillis);
         client.setMaxConcurrentConnections(2);
-        int defaultConnectRetries = context.getResources().getInteger(R.integer.preference_server_connection_retries_default);
-        int connectRetries = prefs.getInt(context.getString(R.string.preference_server_connection_retries_key), defaultConnectRetries);
+        int connectRetries = ConnectionPreferences.getMaxServerConnectRetries(prefs, context);
         client.setMaxRetriesAndTimeout(connectRetries, AsyncHttpClient.DEFAULT_RETRY_SLEEP_TIME_MILLIS);
-        boolean defaultAllowRedirects = context.getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default);
-        boolean allowRedirects = prefs.getBoolean(context.getString(R.string.preference_server_connection_allow_redirects_key), defaultAllowRedirects);
-        int defaultMaxRedirects = context.getResources().getInteger(R.integer.preference_server_connection_max_redirects_default);
-        int maxRedirects = prefs.getInt(context.getString(R.string.preference_server_connection_max_redirects_key), defaultMaxRedirects);
+        boolean allowRedirects = ConnectionPreferences.getFollowHttpRedirects(prefs, context);
+        int maxRedirects = ConnectionPreferences.getMaxHttpRedirects(prefs, context);
         client.setEnableRedirects(allowRedirects, maxRedirects);
         client.setCookieStore(cookieStore);
 
@@ -215,14 +212,16 @@ public class HttpClientFactory {
     }
 
     protected void configureBasicServerAuthentication(Context context, CachingAsyncHttpClient client) {
-        if (prefs.getBoolean(context.getString(R.string.preference_server_use_basic_auth_key), false)) {
-            Uri serverUri = Uri.parse(prefs.getString(context.getString(R.string.preference_piwigo_server_address_key), ""));
-            SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-            String username = prefUtil.readSecureStringPreference(prefs, context.getString(R.string.preference_server_basic_auth_username_key), "");
-            String password = prefUtil.readSecureStringPreference(prefs, context.getString(R.string.preference_server_basic_auth_password_key), "");
-            client.setBasicAuth(username, password, new AuthScope(serverUri.getHost(), serverUri.getPort(), null, "BASIC"));
-            client.setBasicAuth(username, password, new AuthScope(serverUri.getHost(), serverUri.getPort(), null, "DIGEST"));
-            client.setBasicAuth(username, password, new AuthScope(serverUri.getHost(), serverUri.getPort(), null, "KERBEROS"));
+        if (ConnectionPreferences.getUseBasicAuthentication(prefs, context)) {
+            String piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
+            if(piwigoServerUrl != null) {
+                Uri serverUri = Uri.parse(piwigoServerUrl);
+                String username = ConnectionPreferences.getBasicAuthenticationUsername(prefs, context);
+                String password = ConnectionPreferences.getBasicAuthenticationPassword(prefs, context);
+                client.setBasicAuth(username, password, new AuthScope(serverUri.getHost(), serverUri.getPort(), null, "BASIC"));
+                client.setBasicAuth(username, password, new AuthScope(serverUri.getHost(), serverUri.getPort(), null, "DIGEST"));
+                client.setBasicAuth(username, password, new AuthScope(serverUri.getHost(), serverUri.getPort(), null, "KERBEROS"));
+            }
         }
     }
 
@@ -236,7 +235,7 @@ public class HttpClientFactory {
 
     private SSLConnectionSocketFactory buildHttpsSocketFactory(Context context) {
 
-        String hostnameVerificationLevelStr = prefs.getString(context.getString(R.string.preference_server_ssl_certificate_hostname_verification_key), context.getResources().getString(R.string.preference_server_ssl_certificate_hostname_verification_default));
+        String hostnameVerificationLevelStr = ConnectionPreferences.getCertificateHostnameVerificationLevel(prefs, context);
         int hostnameVerificationLevel = Integer.parseInt(hostnameVerificationLevelStr);
         X509HostnameVerifier hostnameVerifier;
         switch (hostnameVerificationLevel) {
@@ -255,13 +254,13 @@ public class HttpClientFactory {
         TrustStrategy trustStrategy = null;
 
         KeyStore trustedCAKeystore = null; // use the system keystore.
-        if(prefs.getBoolean(context.getString(R.string.preference_server_use_custom_trusted_ca_certs_key), context.getResources().getBoolean(R.bool.preference_server_use_custom_trusted_ca_certs_default))) {
+        if(ConnectionPreferences.getUsePinnedServerCertificates(prefs, context)) {
             trustedCAKeystore = X509Utils.loadTrustedCaKeystore(context);
-            Set<String> preNotifiedCerts = new HashSet<>(prefs.getStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>()));
+            Set<String> preNotifiedCerts = new HashSet<>(ConnectionPreferences.getUserPreNotifiedCerts(prefs, context));
             trustStrategy = new UntrustedCaCertificateInterceptingTrustStrategy(trustedCAKeystore, preNotifiedCerts);
         }
         KeyStore clientKeystore = null;
-        if(prefs.getBoolean(context.getString(R.string.preference_server_use_client_certs_key), context.getResources().getBoolean(R.bool.preference_server_use_client_certs_default))) {
+        if(ConnectionPreferences.getUseClientCertificates(prefs, context)) {
             clientKeystore = X509Utils.loadClientKeystore(context);
         }
         //TODO protect the key with a password?

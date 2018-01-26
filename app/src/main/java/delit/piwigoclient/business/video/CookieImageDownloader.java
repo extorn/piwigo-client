@@ -19,6 +19,7 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.cookie.Cookie;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 /**
@@ -85,9 +86,8 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
 
     private int followRedirectAndLoginToServer(URL url) throws IOException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-        String username = prefUtil.readSecureStringPreference(prefs, context.getString(R.string.preference_piwigo_server_username_key), null);
-        String password = prefUtil.readSecureStringPreference(prefs, context.getString(R.string.preference_piwigo_server_password_key), null);
+        String username = ConnectionPreferences.getPiwigoUsername(prefs, context);
+        String password = ConnectionPreferences.getPiwigoPassword(prefs, context);
         String path = lastConn.getURL().getPath();
         String query = lastConn.getURL().getQuery();
 

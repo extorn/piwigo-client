@@ -9,6 +9,9 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="SecureEditTextPreference">
+    </declare-styleable>
+
     <declare-styleable name="NumberPickerPreference">
         <attr name="maxValue" format="integer"/>
         <attr name="minValue" format="integer"/>
@@ -25,6 +28,9 @@
         <attr name="state_always_checked" format="boolean"/>
     </declare-styleable>
 
-
+    <declare-styleable name="EditableListPreference">
+        <attr name="entriesPref" format="reference"/>
+        <attr name="allowItemEdit" format="boolean"/>
+    </declare-styleable>
 
 </resources>

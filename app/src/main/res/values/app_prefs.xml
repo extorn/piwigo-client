@@ -18,6 +18,7 @@
 
     <string name="preference_server_connection_max_redirects_key">preference_server_connection_max_redirects</string>
     <string name="preference_server_connection_max_redirects_title">Max server redirects</string>
+    <string name="preference_server_connection_max_redirects_summary">%1$d</string>
     <integer name="preference_server_connection_max_redirects_default">5</integer>
 
     <string name="preference_server_connection_allow_redirects_key">preference_server_connection_allow_redirects</string>
@@ -27,10 +28,12 @@
 
     <string name="preference_server_socketTimeout_millisecs_key">preference_server_socketTimeout_millisecs</string>
     <string name="preference_server_socketTimeout_millisecs_title">Connection timeout (milliseconds)</string>
+    <string name="preference_server_socketTimeout_millisecs_summary">%1$d millisecs</string>
     <integer name="preference_server_socketTimeout_millisecs_default">10000</integer>
 
     <string name="preference_server_connection_retries_key">preference_server_connection_retries</string>
     <string name="preference_server_connection_retries_title">Connection retries before failure</string>
+    <string name="preference_server_connection_retries_summary">%1$d</string>
     <integer name="preference_server_connection_retries_default">3</integer>
 
     <string name="preference_server_basic_auth_username_key">basic_auth_username</string>
@@ -53,17 +56,30 @@
     <string name="preference_select_client_certificate_title">Client Certificates (and Private Keys)</string>
     <string name="preference_select_client_certificate_summary">Select Client certificate for authentication</string>
 
+    <string name="preference_piwigo_connection_profile_key">preference_piwigo_connection_profile</string>
+    <string name="preference_piwigo_connection_profile_title">Select Connection Profile</string>
+    <string name="preference_piwigo_connection_profile_summary">Active connection profile (%1$s)</string>
+
+    <!-- list of connection profiles to select from -->
+    <string name="preference_piwigo_connection_profile_list_key">preference_select_piwigo_connection_profile</string>
+
+
     <string name="preference_piwigo_server_address_key">piwigo_server_address</string>
     <string name="preference_piwigo_server_address_title">Server Address</string>
+    <string name="preference_piwigo_server_address_summary">%1$s</string>
 
     <string name="preference_piwigo_server_username_key">piwigo_username</string>
     <string name="preference_piwigo_server_username_title">Username</string>
+    <string name="preference_piwigo_server_username_summary">%1$s</string>
+
 
     <string name="preference_piwigo_server_password_key">piwigo_password</string>
     <string name="preference_piwigo_server_password_title">Password</string>
+    <string name="preference_piwigo_server_password_summary">%1$s</string>
 
     <string name="preference_server_ssl_certificate_hostname_verification_key">preference_server_ssl_certificate_hostname_verification</string>
     <string name="preference_server_ssl_certificate_hostname_verification_title">SSL Certificate Hostname validation</string>
+    <string name="preference_server_ssl_certificate_hostname_verification_summary">%1$s</string>
     <string name="preference_server_ssl_certificate_hostname_verification_default" translatable="false">1</string>
 
     <string name="preference_caching_clearResponseCache_title">Clear Server Response Cache</string>
@@ -72,14 +88,17 @@
 
     <string name="preference_caching_level_key">preference_caching_level</string>
     <string name="preference_caching_level_title">Response Cache Level</string>
+    <string name="preference_caching_level_summary">%1$s</string>
     <string name="preference_caching_level_default">disk</string>
 
     <string name="preference_caching_max_cache_entries_key">preference_caching_max_cache_entries</string>
-    <string name="preference_caching_max_cache_entries_title">Max number cache entries</string>
+    <string name="preference_caching_max_cache_entries_title">Max number cache entriesList</string>
+    <string name="preference_caching_max_cache_entries_summary">%1$d</string>
     <integer name="preference_caching_max_cache_entries_default">1000</integer>
 
     <string name="preference_caching_max_cache_entry_size_key">preference_caching_max_cache_entry_size</string>
     <string name="preference_caching_max_cache_entry_size_title">Max Cache Entry size (KB)</string>
+    <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     <integer name="preference_caching_max_cache_entry_size_default">1024</integer>
 
     <string name="preference_connections_category_trusted_server_ca">Trusted Server Certificate CAs</string>
@@ -110,6 +129,7 @@
 
     <string name="preference_gallery_albums_preferredColumnsLandscape_key" translatable="false">preference_gallery_albums_preferredColumnsLandscape</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_title">Landscape: Columns of Albums to show</string>
+    <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
 
     <string name="preference_gallery_show_image_name_key">preference_gallery_show_image_name</string>
     <string name="preference_gallery_show_image_name_title">Show image names in album</string>
@@ -118,9 +138,11 @@
 
     <string name="preference_gallery_images_preferredColumnsLandscape_key" translatable="false">preference_gallery_images_preferredColumnsLandscape</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_title">Landscape: Columns of Images to show</string>
+    <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
     <string name="preference_gallery_detail_sheet_offset_key" translatable="false">preference_gallery_detail_sheet_offset</string>
     <string name="preference_gallery_detail_sheet_offset_title">Detail sheet toggle - offset (dp)</string>
+    <string name="preference_gallery_detail_sheet_offset_summary">%1$d</string>
     <integer name="preference_gallery_detail_sheet_offset_default">20</integer>
 
     <string name="preference_gallery_use_dark_mode_key" translatable="false">preference_gallery_use_dark_mode</string>
@@ -135,9 +157,11 @@
 
     <string name="preference_gallery_albums_preferredColumnsPortrait_key" translatable="false">preference_gallery_albums_preferredColumnsPortrait</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrait: Columns of Albums to show</string>
+    <string name="preference_gallery_albums_preferredColumnsPortrait_summary">%1$d</string>
 
     <string name="preference_gallery_images_preferredColumnsPortrait_key" translatable="false">preference_gallery_images_preferredColumnsPortrait</string>
     <string name="preference_gallery_images_preferredColumnsPortrait_title">Portrait: Columns of Images to show</string>
+    <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
 
     <string name="preference_gallery_show_large_thumbnail_key" translatable="false">preference_gallery_show_large_thumbnail</string>
     <string name="preference_gallery_show_large_thumbnail_title">Display albums with large thumbnail</string>
@@ -156,6 +180,7 @@
 
     <string name="preference_piwigo_playable_media_extensions_key" translatable="false">preference_piwigo_playable_media_extensions</string>
     <string name="preference_piwigo_playable_media_extensions_title">Supported multimedia extensions (CSV list)</string>
+    <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
     <string name="preference_piwigo_playable_media_extensions_default">mpg,avi,mp3,ogg,mp4</string>
 
     <string name="preference_video_cache_enabled_key">preference_video_cache_enabled</string>
@@ -165,14 +190,17 @@
 
     <string name="preference_video_cache_maxsize_mb_key">preference_video_cache_maxsize_mb</string>
     <string name="preference_video_cache_maxsize_mb_title">Maximum Video Cache Size (MB)</string>
+    <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
     <integer name="preference_video_cache_maxsize_mb_default">512</integer>
 
     <string name="preference_gallery_sortOrder_key" translatable="false">preference_gallery_sortOrder</string>
     <string name="preference_gallery_sortOrder_title">Album sort order</string>
+    <string name="preference_gallery_sortOrder_summary">%1$s</string>
     <string name="preference_gallery_sortOrder_default" translatable="false">name</string>
 
     <string name="preference_gallery_unique_id_key" translatable="false">preference_gallery_unique_id</string>
     <string name="preference_gallery_unique_id_title">Unique Identifier for images</string>
+    <string name="preference_gallery_unique_id_summary">%1$s</string>
     <string name="preference_gallery_unique_id_default" translatable="false">md5sum</string>
 
     <string name="preference_gallery_clearMemoryCache_title">Clear In-Memory Cache</string>
@@ -186,27 +214,33 @@
     <string name="preference_app_read_only_mode_key">readOnlyMode</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_key">preference_gallery_recentlyAlteredAgeMillis</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Max age recent items (days)</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d days</string>
     <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
     <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
 
     <string name="preference_groups_request_pagesize_key">preference_groups_request_pagesize</string>
     <string name="preference_groups_request_pagesize_title">Groups server request page-size</string>
+    <string name="preference_groups_request_pagesize_summary">%1$d items</string>
     <integer name="preference_groups_request_pagesize_default">20</integer>
 
     <string name="preference_users_request_pagesize_key">preference_users_request_pagesize</string>
     <string name="preference_users_request_pagesize_title">Users server request page-size</string>
+    <string name="preference_users_request_pagesize_summary">%1$d items</string>
     <integer name="preference_users_request_pagesize_default">20</integer>
 
     <string name="preference_album_request_pagesize_key">preference_album_request_pagesize</string>
     <string name="preference_album_request_pagesize_title">Album server request page-size</string>
+    <string name="preference_album_request_pagesize_summary">%1$d items</string>
     <integer name="preference_album_request_pagesize_default">20</integer>
 
     <string name="preference_gallery_item_thumbnail_size_title">GalleryItem thumbnail image</string>
     <string name="preference_gallery_item_thumbnail_size_key">gallery_item_thumbnail_size</string>
+    <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
     <string name="preference_gallery_item_thumbnail_size_default" translatable="false">thumb</string>
 
     <string name="preference_gallery_item_slideshow_image_size_title">Slideshow default image size</string>
     <string name="preference_gallery_item_slideshow_image_size_key">preference_gallery_item_slideshow_image_size</string>
+    <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
     <string name="preference_gallery_item_slideshow_image_size_default" translatable="false">best-fit</string>
 
     <string name="preference_gallery_masonry_view_title">Use Masonry Style Layout (experimental)</string>
@@ -224,10 +258,12 @@
 
     <string name="preference_data_upload_chunkSizeKb_key" translatable="false">preference_data_upload_chunkSizeKb</string>
     <string name="preference_data_upload_chunkSizeKb_title">Max Upload Chunk Size (KB)</string>
+    <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
     <integer name="preference_data_upload_chunkSizeKb_default">512</integer>
 
     <string name="preference_data_upload_chunk_auto_retries_key" translatable="false">preference_data_upload_chunk_auto_retries</string>
     <string name="preference_data_upload_chunk_auto_retries_title">Max automatic file chunk upload retries</string>
+    <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     <integer name="preference_data_upload_chunk_auto_retries_default">1</integer>
 
     <string name="preference_data_upload_large_thumbnail_key" translatable="false">preference_data_upload_large_thumbnail</string>
@@ -237,12 +273,15 @@
 
     <string name="preference_data_upload_preferredColumnsPortrait_key" translatable="false">preference_data_upload_preferredColumnsPortrait</string>
     <string name="preference_data_upload_preferredColumnsPortrait_title">Portrait: Columns of Images to show</string>
+    <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
 
     <string name="preference_data_upload_preferredColumnsLandscape_key" translatable="false">preference_data_upload_preferredColumnsLandscape</string>
     <string name="preference_data_upload_preferredColumnsLandscape_title">Landscape: Columns of Images to show</string>
+    <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
     <string name="preference_data_upload_max_filesize_mb_key">preference_data_upload_max_filesize_mb</string>
     <string name="preference_data_upload_max_filesize_mb_title">Max Filesize to upload without warning you (in MB)</string>
+    <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
 
 </resources>

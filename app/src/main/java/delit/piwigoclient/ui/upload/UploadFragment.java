@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -193,7 +194,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             public void onClick(View v) {
                 FileListSelectionNeededEvent event = new FileListSelectionNeededEvent();
                 if(!PiwigoSessionDetails.isFullyLoggedIn()) {
-                    String serverUri = prefs.getString(getString(R.string.preference_piwigo_server_address_key), "");
+                    String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
                     getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri),PiwigoAccessService.startActionLogin(getContext()));
                 } else {
                     ArrayList<String> allowedFileTypes = new ArrayList<>(PiwigoSessionDetails.getInstance().getAllowedFileTypes());

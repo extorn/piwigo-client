@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package delit.piwigoclient.ui.common;
+package delit.piwigoclient.ui.preferences;
 
 
 import android.content.Context;
@@ -22,6 +22,7 @@ import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
@@ -151,5 +152,23 @@ public class NumberPickerPreference extends DialogPreference {
     @Override
     protected void onAttachedToHierarchy(PreferenceManager preferenceManager) {
         super.onAttachedToHierarchy(preferenceManager);
+    }
+
+    /**
+     * Returns the summary of this ListPreference. If the summary
+     * has a {@linkplain java.lang.String#format String formatting}
+     * marker in it (i.e. "%s" or "%1$s"), then the current entry
+     * value will be substituted in its place.
+     *
+     * @return the summary with appropriate string substitution
+     */
+    @Override
+    public CharSequence getSummary() {
+        int adjustedValue = (int) Math.round((double) mNumber / getMultiplier());
+        CharSequence summary = super.getSummary();
+        if (summary != null) {
+            return String.format(summary.toString(), adjustedValue);
+        }
+        return summary;
     }
 }

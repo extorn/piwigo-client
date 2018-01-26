@@ -33,7 +33,7 @@ public class CustomImageDownloader implements Downloader {
 
         String uriToCall = uri.toString();
         ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(uriToCall);
-        String piwigoServerUrl = prefs.getString(context.getString(R.string.preference_piwigo_server_address_key), null);
+        String piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
         boolean asyncMode = false;
         handler.setCallDetails(context, piwigoServerUrl, asyncMode);
         handler.runCall();

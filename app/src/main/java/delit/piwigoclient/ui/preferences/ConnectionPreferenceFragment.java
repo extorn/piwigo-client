@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
@@ -30,7 +31,6 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.MyPreferenceFragment;
-import delit.piwigoclient.ui.common.NumberPickerPreference;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.SetUtils;
@@ -46,21 +46,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     private static final String STATE_RELOGIN_NEEDED = "loginNeeded";
     private boolean initialising = false;
     private boolean loginOnLogout;
-
-    private transient Preference.OnPreferenceChangeListener clientCertificateAuthPreferenceListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            Boolean val = (Boolean) value;
-            preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_select_client_certificate_key)).setEnabled(val);
-
-            if (!initialising) {
-                // clear the existing session - it's not valid any more.
-                forkLogoutIfNeeded();
-            }
-
-            return true;
-        }
-    };
 
     private transient Preference.OnPreferenceChangeListener trustedCertsAuthPreferenceListener = new Preference.OnPreferenceChangeListener() {
 
@@ -138,22 +123,8 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
             getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entries_key)).setEnabled(!"disabled".equals(newValue));
             getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entry_size_key)).setEnabled(!"disabled".equals(newValue));
-            updateSummary(preference, newValue);
-
 
             return true;
-        }
-
-
-        private void updateSummary(Preference preference, String newValue) {
-            ListPreference pref = (ListPreference)preference;
-            CharSequence[] values = pref.getEntryValues();
-            for(int i = 0; i < values.length; i++) {
-                if(values[i].equals(newValue)) {
-                    preference.setSummary(pref.getEntries()[i]);
-                    break;
-                }
-            }
         }
     };
 
@@ -173,37 +144,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private transient Preference.OnPreferenceChangeListener basicAuthPreferenceListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            Boolean val = (Boolean) value;
-            preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_server_basic_auth_username_key)).setEnabled(val);
-            preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_server_basic_auth_password_key)).setEnabled(val);
-
-            if (!initialising) {
-                // clear the existing session - it's not valid any more.
-                forkLogoutIfNeeded();
-            }
-
-            return true;
-        }
-    };
-
-    private transient Preference.OnPreferenceChangeListener redirectsPreferenceListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-
-            Boolean val = (Boolean) value;
-            preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_server_connection_max_redirects_key)).setEnabled(val);
-
-            if (!initialising) {
-                // clear the existing session - it's not valid any more.
-                forkLogoutIfNeeded();
-            }
-            return true;
-        }
-    };
-
     private transient Preference.OnPreferenceChangeListener simplePreferenceListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
@@ -220,7 +160,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
-            preference.setSummary(stringValue);
             String val = stringValue.toLowerCase();
             boolean isHttps = val.startsWith("https://");
             boolean isHttp = val.startsWith("http://");
@@ -241,120 +180,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     };
 
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its pkg value.
-     */
-    private transient Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-
-            if(initialising && preference instanceof SecurePreference) {
-                stringValue = ((SecurePreference<String>)preference).decrypt(stringValue, "");
-            }
-
-            if (preference.getKey().toLowerCase().contains("password")) {
-                // For all other activity_preferences, set the summary to the value's
-                // simple string representation.
-                //noinspection ReplaceAllDot
-                preference.setSummary(stringValue.replaceAll(".", "*"));
-            } else {
-                preference.setSummary(stringValue);
-            }
-
-
-            if (!initialising) {
-                // clear the existing session - it's not valid any more.
-                forkLogoutIfNeeded();
-            }
-
-            return true;
-        }
-    };
-
-    /**
-     * A preference value change listener that updates the preference's summary
-     * to reflect its pkg value.
-     */
-    private transient Preference.OnPreferenceChangeListener bindListPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-
-            ListPreference pref = (ListPreference)preference;
-            CharSequence[] values = pref.getEntryValues();
-            for(int i = 0; i < values.length; i++) {
-                if(values[i].equals(stringValue)) {
-                    preference.setSummary(pref.getEntries()[i]);
-                    break;
-                }
-            }
-
-            if (!initialising) {
-                // clear the existing session - it's not valid any more.
-                forkLogoutIfNeeded();
-            }
-
-            return true;
-        }
-    };
-
-
-    /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of value below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #sBindPreferenceSummaryToValueListener
-     */
-    private void bindPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                prefs.getString(preference.getKey(), ""));
-    }
-
-    private void bindIntPreferenceSummaryToValue(Preference preference) {
-
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        int storedValue = getPreferenceManager().getSharedPreferences().getInt(preference.getKey(), 0);
-
-        if (preference instanceof NumberPickerPreference) {
-            storedValue = (int) Math.round((double) storedValue / ((NumberPickerPreference) preference).getMultiplier());
-        }
-
-        sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, storedValue);
-    }
-
-    /**
-     * Binds a preference's summary to its value. More specifically, when the
-     * preference's value is changed, its summary (line of value below the
-     * preference title) is updated to reflect the value. The summary is also
-     * immediately updated upon calling this method. The exact display format is
-     * dependent on the type of preference.
-     *
-     * @see #sBindPreferenceSummaryToValueListener
-     */
-    private void bindListPreferenceSummaryToValue(Preference preference) {
-        // Set the listener to watch for value changes.
-        preference.setOnPreferenceChangeListener(bindListPreferenceSummaryToValueListener);
-
-        // Trigger the listener immediately with the preference's
-        // current value.
-        bindListPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                prefs.getString(preference.getKey(), ""));
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -366,6 +191,11 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     @Override
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
         View v = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
+        buildPreferencesViewAndInitialise();
+        return v;
+    }
+
+    private void buildPreferencesViewAndInitialise() {
         addPreferencesFromResource(R.xml.pref_page_connection);
         setHasOptionsMenu(true);
 
@@ -377,18 +207,52 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         Preference serverAddressPref = findPreference(R.string.preference_piwigo_server_address_key);
         serverAddressPref.setOnPreferenceChangeListener(serverAddressPrefListener);
         serverAddressPrefListener.onPreferenceChange(serverAddressPref, prefs.getString(serverAddressPref.getKey(), ""));
-        bindPreferenceSummaryToValue(findPreference(R.string.preference_piwigo_server_username_key));
-        bindPreferenceSummaryToValue(findPreference(R.string.preference_piwigo_server_password_key));
+        findPreference(R.string.preference_piwigo_server_username_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_piwigo_server_password_key).setOnPreferenceChangeListener(simplePreferenceListener);
 
         Preference basicAuthPref = findPreference(R.string.preference_server_use_basic_auth_key);
-        basicAuthPref.setOnPreferenceChangeListener(basicAuthPreferenceListener);
-        basicAuthPreferenceListener.onPreferenceChange(basicAuthPref, getBooleanPreferenceValue(basicAuthPref.getKey()));
-        bindPreferenceSummaryToValue(findPreference(R.string.preference_server_basic_auth_username_key));
-        bindPreferenceSummaryToValue(findPreference(R.string.preference_server_basic_auth_password_key));
+        basicAuthPref.setOnPreferenceChangeListener(simplePreferenceListener);
+        simplePreferenceListener.onPreferenceChange(basicAuthPref, getBooleanPreferenceValue(basicAuthPref.getKey()));
+        findPreference(R.string.preference_server_basic_auth_username_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_server_basic_auth_password_key).setOnPreferenceChangeListener(simplePreferenceListener);
+
+        EditableListPreference connectionProfilePref = (EditableListPreference) findPreference(R.string.preference_piwigo_connection_profile_key);
+        connectionProfilePref.setListener(new EditableListPreference.EditableListPreferenceChangeAdapter() {
+
+            @Override
+            public void onItemSelectionChanged(String oldSelection, String newSelection, boolean oldSelectionExists) {
+                if(oldSelection != null) {
+                    // clone the current working copy of prefs to the previous active selection
+                    ConnectionPreferences.clonePreferences(prefs, getContext(), null, oldSelection);
+//                    if(!oldSelectionExists) {
+//                        ConnectionPreferences.deletePreferences(prefs, getContext(), oldSelection);
+//                    }
+                    // copy those profile values to the working app copy of prefs
+                    ConnectionPreferences.clonePreferences(prefs, getContext(), newSelection, null);
+
+                    // refresh all preference values on the page.
+                    setPreferenceScreen(null);
+                    buildPreferencesViewAndInitialise();
+                    initialising = false;
+                }
+
+            }
+
+            @Override
+            public void onItemAltered(String oldValue, String newValue) {
+                ConnectionPreferences.clonePreferences(prefs, getContext(), oldValue, newValue);
+                ConnectionPreferences.deletePreferences(prefs, getContext(), oldValue);
+            }
+
+            @Override
+            public void onItemRemoved(String oldValue) {
+                ConnectionPreferences.deletePreferences(prefs, getContext(), oldValue);
+            }
+        });
 
         Preference clientCertPref = findPreference(R.string.preference_server_use_client_certs_key);
-        clientCertPref.setOnPreferenceChangeListener(clientCertificateAuthPreferenceListener);
-        clientCertificateAuthPreferenceListener.onPreferenceChange(clientCertPref, getBooleanPreferenceValue(clientCertPref.getKey()));
+        clientCertPref.setOnPreferenceChangeListener(simplePreferenceListener);
+        simplePreferenceListener.onPreferenceChange(clientCertPref, getBooleanPreferenceValue(clientCertPref.getKey()));
 //            ClientCertificatePreference clientCertsPref = (ClientCertificatePreference) findPreference(R.string.preference_select_client_certificate_key);
 
         Preference useCustomTrustedCertsPref = findPreference(R.string.preference_server_use_custom_trusted_ca_certs_key);
@@ -414,10 +278,10 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         ClientCertificatePreference clientCertificatePreference = (ClientCertificatePreference)findPreference(R.string.preference_select_client_certificate_key);
         clientCertificatePreference.setOnPreferenceChangeListener(simplePreferenceListener);
 
-        bindListPreferenceSummaryToValue(findPreference(R.string.preference_server_ssl_certificate_hostname_verification_key));
-        bindListPreferenceSummaryToValue(findPreference(R.string.preference_caching_level_key));
-        bindIntPreferenceSummaryToValue(findPreference(R.string.preference_caching_max_cache_entries_key));
-        bindIntPreferenceSummaryToValue(findPreference(R.string.preference_caching_max_cache_entry_size_key));
+        findPreference(R.string.preference_server_ssl_certificate_hostname_verification_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_caching_level_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_caching_max_cache_entries_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_caching_max_cache_entry_size_key).setOnPreferenceChangeListener(simplePreferenceListener);
 
         Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
         setResponseCacheButtonText(responseCacheFlushButton);
@@ -437,13 +301,13 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             }
         });
 
-        bindIntPreferenceSummaryToValue(findPreference(R.string.preference_server_socketTimeout_millisecs_key));
-        bindIntPreferenceSummaryToValue(findPreference(R.string.preference_server_connection_retries_key));
+        findPreference(R.string.preference_server_socketTimeout_millisecs_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_server_connection_retries_key).setOnPreferenceChangeListener(simplePreferenceListener);
 
         Preference allowRedirectsPref = findPreference(R.string.preference_server_connection_allow_redirects_key);
-        allowRedirectsPref.setOnPreferenceChangeListener(redirectsPreferenceListener);
+        allowRedirectsPref.setOnPreferenceChangeListener(simplePreferenceListener);
 
-        bindIntPreferenceSummaryToValue(findPreference(R.string.preference_server_connection_max_redirects_key));
+        findPreference(R.string.preference_server_connection_max_redirects_key).setOnPreferenceChangeListener(simplePreferenceListener);
 
         Preference button = findPreference("piwigo_connection");
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -453,7 +317,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                 return true;
             }
         });
-        return v;
     }
 
     private void setResponseCacheButtonText(Preference responseCacheFlushButton) {
@@ -512,7 +375,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     }
 
     private boolean forkLogoutIfNeeded() {
-        String serverUri = prefs.getString(getString(R.string.preference_piwigo_server_address_key), null);
+        String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
         if (PiwigoSessionDetails.isLoggedIn()) {
             getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), serverUri), PiwigoAccessService.startActionLogout(getContext()));
             return true;
@@ -525,7 +388,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
 
     private void testLogin() {
-        String serverUri = prefs.getString(getString(R.string.preference_piwigo_server_address_key), null);
+        String serverUri = ConnectionPreferences.getPiwigoServerAddress(prefs, getContext());
         if(forkLogoutIfNeeded()) {
             loginOnLogout = true;
         } else {

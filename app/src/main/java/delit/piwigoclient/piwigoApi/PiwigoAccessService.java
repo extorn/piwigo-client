@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
@@ -168,7 +169,7 @@ public class PiwigoAccessService {
             }
             String piwigoServerUrl = null;
             if(prefs != null) {
-                piwigoServerUrl = prefs.getString(context.getString(R.string.preference_piwigo_server_address_key), null);
+                piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
             }
             AbstractPiwigoDirectResponseHandler handler = buildHandler(prefs);
             if(handler != null) {
@@ -261,7 +262,7 @@ public class PiwigoAccessService {
             @Override
             protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
                 SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-                String username = prefUtil.readSecureStringPreference(prefs, context.getString(R.string.preference_piwigo_server_username_key), null);
+                String username = ConnectionPreferences.getPiwigoUsername(prefs, context);
                 return new LoginResponseHandler(username, password);
             }
         }.start(messageId);
@@ -269,8 +270,7 @@ public class PiwigoAccessService {
 
     public static long startActionLogin(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-        String password = prefUtil.readSecureStringPreference(prefs, context.getString(R.string.preference_piwigo_server_password_key), null);
+        String password = ConnectionPreferences.getPiwigoPassword(prefs, context);
         return startActionLogin(context, password);
     }
 

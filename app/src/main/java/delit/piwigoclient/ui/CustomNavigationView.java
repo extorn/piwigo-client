@@ -26,6 +26,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
@@ -146,7 +147,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             username = sessionDetails.getUsername();
         } else {
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(getContext());
-            username = prefUtil.readSecureStringPreference(prefs, getContext().getString(R.string.preference_piwigo_server_username_key), null);
+            username = ConnectionPreferences.getPiwigoUsername(prefs, getContext());
         }
         uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.password_entry_layout, R.string.button_cancel, R.string.button_unlock, new UIHelper.QuestionResultListener() {
             @Override
@@ -222,8 +223,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UnlockAppEvent event) {
-        SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(getContext());
-        String savedPassword = prefUtil.readSecureStringPreference(prefs, getContext().getString(R.string.preference_piwigo_server_password_key), "");// use empty string to avoid inadvertent NPE.
+        String savedPassword = ConnectionPreferences.getPiwigoPasswordNotNull(prefs, getContext());
         if (savedPassword.equals(event.getPassword())) {
             lockAppInReadOnlyMode(false);
             uiHelper.showOrQueueDialogMessage(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));

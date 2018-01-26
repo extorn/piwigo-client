@@ -283,26 +283,29 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.66 - Changes:
+Release 1.3.67 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.65 - Changes:
+Release 1.3.66 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
                     - Possibly - allow linking the upload process to a compression routine for videos
-                    - Possibly - add support for multiple piwigo galleries to be configured
 
-Release 1.3.64 - Changes:
+Release 1.3.65 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
                     - Improve memory use further (app crashes are generally that it runs out of memory)
                     - Investigate serialization of app pages (crashes reported in this area)
 
 Released:
+
+Release 1.3.64 - Changes:
+                    - Added support for multiple galleries to be configured (connection profiles in settings)
+                        - This allows better use of the community plugin as you can log in as guest to see your uploaded pics
 
 Release 1.3.63 - Bugfix:
                     - Bug in the identification of unique files for upload (filename mode only)
@@ -1144,5 +1147,7 @@ SOFTWARE.
     <string name="service_target_heading">Service :</string>
     <string name="error_detail_heading">Detail :</string>
     <string name="gallery_admin_albums_list_load_failed_text">Failed to load the full administrative list of albums</string>
+    <string name="title_adding_item">Adding Item</string>
+    <string name="alert_error_item_not_unique">Sorry, that item already exists.</string>
 
 </resources>

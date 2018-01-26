@@ -37,6 +37,15 @@ public class SetUtils {
         return difference;
     }
 
+    public static String[] asStringArray(Collection<String> items) {
+        String[] arr = new String[items.size()];
+        int i = 0;
+        for(String id : items) {
+            arr[i++] = id;
+        }
+        return arr;
+    }
+
     public static long[] asArray(Collection<Long> items) {
         long[] arr = new long[items.size()];
         int i = 0;
