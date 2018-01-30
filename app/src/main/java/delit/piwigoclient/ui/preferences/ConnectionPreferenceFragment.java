@@ -233,6 +233,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     // refresh all preference values on the page.
                     setPreferenceScreen(null);
                     buildPreferencesViewAndInitialise();
+                    forkLogoutIfNeeded();
                     initialising = false;
                 }
 
@@ -375,9 +376,8 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     }
 
     private boolean forkLogoutIfNeeded() {
-        String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
         if (PiwigoSessionDetails.isLoggedIn()) {
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), serverUri), PiwigoAccessService.startActionLogout(getContext()));
+            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), PiwigoSessionDetails.getInstance().getServerUrl()), PiwigoAccessService.startActionLogout(getContext()));
             return true;
         } else if(HttpClientFactory.getInstance(getContext()).isInitialised()) {
             getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), PiwigoAccessService.startActionCleanupHttpConnections(getContext()));
@@ -389,11 +389,15 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
     private void testLogin() {
         String serverUri = ConnectionPreferences.getPiwigoServerAddress(prefs, getContext());
-        if(forkLogoutIfNeeded()) {
-            loginOnLogout = true;
+        if(serverUri == null || serverUri.trim().isEmpty()) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
-            HttpClientFactory.getInstance(getContext()).clearCachedClients();
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), PiwigoAccessService.startActionLogin(getContext()));
+            if (forkLogoutIfNeeded()) {
+                loginOnLogout = true;
+            } else {
+                HttpClientFactory.getInstance(getContext()).clearCachedClients();
+                getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), PiwigoAccessService.startActionLogin(getContext()));
+            }
         }
     }
 
@@ -432,7 +436,11 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
 
     public void onLogin() {
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_title_connectionTest, getString(R.string.alert_success) + '\n' + getString(R.string.alert_userTypePrefix) + ':' + PiwigoSessionDetails.getInstance().getUserType());
+        String msg = getString(R.string.alert_message_success_connectionTest, PiwigoSessionDetails.getInstance().getUserType());
+        if(PiwigoSessionDetails.getInstance().getAvailableImageSizes().size() == 0) {
+            msg += '\n' + getString(R.string.alert_message_no_available_image_sizes);
+        }
+        getUiHelper().showOrQueueDialogMessage(R.string.alert_title_connectionTest, msg);
         EventBus.getDefault().post(new PiwigoLoginSuccessEvent(false));
     }
 }

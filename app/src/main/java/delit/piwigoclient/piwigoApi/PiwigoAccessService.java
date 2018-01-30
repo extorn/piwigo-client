@@ -28,6 +28,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
@@ -168,7 +169,9 @@ public class PiwigoAccessService {
                 prefs = PreferenceManager.getDefaultSharedPreferences(context);
             }
             String piwigoServerUrl = null;
-            if(prefs != null) {
+            if(PiwigoSessionDetails.isLoggedIn()) {
+                piwigoServerUrl = PiwigoSessionDetails.getInstance().getServerUrl();
+            } else if(prefs != null) {
                 piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
             }
             AbstractPiwigoDirectResponseHandler handler = buildHandler(prefs);

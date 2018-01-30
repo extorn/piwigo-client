@@ -43,6 +43,8 @@
     <string name="gallery_subcategory_summary_text_pattern">%2$d in %1$d sub-albums</string>
     <string name="admin_email" translatable="false"><a href="mailto:gd_apps-piwigoclient@yahoo.co.uk">gd_apps-piwigoclient@yahoo.co.uk</a></string>
     <string name="alert_title_connectionTest">Connection Test</string>
+    <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>
+    <string name="alert_message_no_available_image_sizes">Warning\nServer did not report available image sizes.</string>
     <string name="alert_success">SUCCESS!</string>
     <string name="alert_partial_success">INCOMPLETE</string>
     <string name="alert_error">Error</string>
@@ -283,25 +285,33 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.67 - Changes:
+Release 1.3.68 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.66 - Changes:
+Release 1.3.67 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
                     - Possibly - allow linking the upload process to a compression routine for videos
 
-Release 1.3.65 - Changes:
+Release 1.3.66 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
                     - Improve memory use further (app crashes are generally that it runs out of memory)
                     - Investigate serialization of app pages (crashes reported in this area)
+                    - Check for and remove any calls to Thread.sleep
 
 Released:
+
+Release 1.3.65 - Changes:
+                    - Added extra error handling around login and logout on the connection preferences page
+                    - Logout triggered if you change the connection profile in use
+                 Bugfix:
+                    - Added resilience for servers that don't report available image sizes in session status.
+                    - Fixed logout code so it sends the request to the correct url
 
 Release 1.3.64 - Changes:
                     - Added support for multiple galleries to be configured (connection profiles in settings)
@@ -1149,5 +1159,6 @@ SOFTWARE.
     <string name="gallery_admin_albums_list_load_failed_text">Failed to load the full administrative list of albums</string>
     <string name="title_adding_item">Adding Item</string>
     <string name="alert_error_item_not_unique">Sorry, that item already exists.</string>
+    <string name="alert_warning_no_server_url_specified">No server uri specified. Please add the location of your server and retry.</string>
 
 </resources>
