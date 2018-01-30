@@ -192,9 +192,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="some text"/>
 
-
-
-            <CheckBox
+            <android.support.v7.widget.AppCompatCheckBox
                 android:id="@+id/user_high_definition_field"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="match_parent"
@@ -205,7 +203,7 @@
                 android:layout_marginTop="7dp"
                 android:button="@null"
                 android:textColor="@drawable/edit_text_color_selector"
-                android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+                android:drawableRight="@drawable/always_clear_checkbox"
                 android:text="@string/user_high_definition_title" />
 
             <TextView

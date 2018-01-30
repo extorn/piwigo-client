@@ -1,6 +1,8 @@
 package delit.piwigoclient.piwigoApi.upload.handlers;
 
-import org.json.JSONException;import com.google.gson.JsonElement;import com.google.gson.JsonObject;import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+
+import org.json.JSONException;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;

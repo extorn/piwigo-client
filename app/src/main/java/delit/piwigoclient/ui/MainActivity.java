@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -142,7 +143,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         if (savedInstanceState == null) {
             if (!hasAgreedToEula()) {
                 showEula();
-            } else if (prefs.getString(getApplicationContext().getString(R.string.preference_piwigo_server_address_key), "").isEmpty()) {
+            } else if (ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
                 showPreferences();
             } else {
                 showGallery(currentAlbum);
@@ -192,7 +193,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
             Toolbar toolbar = findViewById(R.id.toolbar);
             toolbar.setVisibility(prefs.getBoolean(getString(R.string.preference_app_show_toolbar_key), true) ? View.VISIBLE : View.GONE);
 
-            if(!"".equals(prefs.getString(getString(R.string.preference_piwigo_server_address_key), "").trim())) {
+            if(!"".equals(ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
                 // Can and need to login to the server, so lets do that.
                 boolean haveBeenLoggedIn = null != getSupportFragmentManager().findFragmentByTag(LoginFragment.class.getName());
 
@@ -697,7 +698,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-        if (prefs.getString(getApplicationContext().getString(R.string.preference_piwigo_server_address_key), "").trim().isEmpty()) {
+        if (ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
             showPreferences();
         } else {
             showGallery(CategoryItem.ROOT_ALBUM);

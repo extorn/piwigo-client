@@ -16,6 +16,7 @@ import java.net.URI;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 
 /**
  * Created by gareth on 12/07/17.
@@ -59,11 +60,11 @@ public class AdsManager {
     }
 
     public synchronized void updateShowAdvertsSetting() {
-        String serverAddress = getPrefs().getString(context.getString(R.string.preference_piwigo_server_address_key), null);
+        String serverAddress = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(getPrefs(), context);
         showAds = !BuildConfig.PAID_VERSION;
         if(showAds) {
             // can we disable the ads another way?
-            if (serverAddress != null && !serverAddress.trim().equals("")) {
+            if (!serverAddress.equals("")) {
                 try {
                     String host = URI.create(serverAddress).getHost();
                     showAds = !"sail2port.ddns.net".equals(host);

@@ -22,14 +22,14 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.ui.common.LongSetSelectFragment;
+import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class AlbumSelectFragment extends LongSetSelectFragment<AlbumSelectionListAdapter> {
+public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSelectionListAdapter> {
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";

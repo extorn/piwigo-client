@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.common;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +11,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
@@ -32,14 +32,14 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class LongSetSelectFragment<X extends Enableable> extends MyFragment {
+public abstract class LongSetSelectFragment<Y extends View, X extends Enableable> extends MyFragment {
 
     private static final String STATE_ALLOW_MULTISELECT = "multiSelectEnabled";
     private static final String STATE_ALLOW_EDITING = "editingEnabled";
     private static final String STATE_CURRENT_SELECTION = "currentSelection";
     private static final String STATE_ACTION_ID = "actionId";
     private static final String STATE_SELECT_TOGGLE = "selectToggle";
-    private ListView list;
+    private Y list;
     private X listAdapter;
     private Button saveChangesButton;
     private FloatingActionButton reloadListButton;
@@ -60,7 +60,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
         return args;
     }
 
-    public ListView getList() {
+    public Y getList() {
         return list;
     }
 
@@ -97,7 +97,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_ALLOW_MULTISELECT, multiSelectEnabled);
         outState.putInt(STATE_ACTION_ID, actionId);
-        outState.putSerializable(STATE_CURRENT_SELECTION, currentSelection);
+        outState.putSerializable(STATE_CURRENT_SELECTION, getCurrentSelection());
         outState.putBoolean(STATE_ALLOW_EDITING, editingEnabled);
         outState.putBoolean(STATE_SELECT_TOGGLE, selectToggle);
     }
@@ -109,6 +109,9 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
     public boolean isMultiSelectEnabled() {
         return multiSelectEnabled;
     }
+
+    @LayoutRes
+    protected abstract int getViewId();
 
     @Nullable
     @Override
@@ -124,7 +127,7 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
             selectToggle = savedInstanceState.getBoolean(STATE_SELECT_TOGGLE);
         }
 
-        View view = inflater.inflate(R.layout.layout_fullsize_list, container, false);
+        View view = inflater.inflate(getViewId(), container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
@@ -192,18 +195,9 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
 
     protected abstract void setPageHeading(TextView headingField);
 
-    protected void selectAllListItems() {
-        for (int i = 0; i < list.getCount(); i++) {
-            list.setItemChecked(i, true);
-        }
-//        list.deferNotifyDataSetChanged();
-    }
+    protected abstract void selectAllListItems();
 
-    protected void selectNoneListItems() {
-        for (int i = 0; i < list.getCount(); i++) {
-            list.setItemChecked(i, false);
-        }
-    }
+    protected abstract void selectNoneListItems();
 
     private void onToggleAllSelection() {
         if (!selectToggle) {
@@ -227,16 +221,25 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
 
     public void setListAdapter(X listAdapter) {
         this.listAdapter = listAdapter;
+        if(listAdapter instanceof SelectableItemsAdapter) {
+            ((SelectableItemsAdapter)listAdapter).setSelectedItems(currentSelection);
+        }
     }
 
     protected void onListItemLoadFailed() {
         reloadListButton.setVisibility(View.VISIBLE);
     }
 
+    protected void onListItemLoadSuccess() {
+        reloadListButton.setVisibility(View.GONE);
+    }
+
     protected abstract void populateListWithItems();
 
+    protected abstract long[] getSelectedItemIds();
+
     private void onSaveChanges() {
-        long[] selectedItemIds = list.getCheckedItemIds();
+        long[] selectedItemIds = getSelectedItemIds();
 
         // convert the array of long to a set of Long
         HashSet<Long> selectedIdsSet = new HashSet<>(selectedItemIds.length);
@@ -263,6 +266,9 @@ public abstract class LongSetSelectFragment<X extends Enableable> extends MyFrag
     }
 
     public HashSet<Long> getCurrentSelection() {
+        if(listAdapter != null && listAdapter instanceof SelectableItemsAdapter) {
+            currentSelection = ((SelectableItemsAdapter)listAdapter).getSelectedItemIds();
+        }
         return currentSelection;
     }
 

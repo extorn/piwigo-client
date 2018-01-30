@@ -37,6 +37,8 @@ public final class CustomHttpDataSourceFactory extends BaseFactory {
     private HttpClientBasedHttpDataSource.CacheListener cacheListener;
     private boolean cachingEnabled;
     private boolean notifyCacheListenerImmediatelyIfCached = true;
+    private boolean redirectsAllowed;
+    private int maxRedirects;
 
     /**
      * Constructs a CustomHttpDataSourceNewFactory. Sets {@link
@@ -95,6 +97,8 @@ public final class CustomHttpDataSourceFactory extends BaseFactory {
                 readTimeoutMillis, allowCrossProtocolRedirects, defaultRequestProperties, cachingEnabled, notifyCacheListenerImmediatelyIfCached);
         notifyCacheListenerImmediatelyIfCached = false;
         ds.setCacheListener(cacheListener);
+        ds.setEnableRedirects(redirectsAllowed);
+        ds.setMaxRedirects(maxRedirects);
         return ds;
     }
 
@@ -104,5 +108,13 @@ public final class CustomHttpDataSourceFactory extends BaseFactory {
 
     public void setCachingEnabled(boolean cachingEnabled) {
         this.cachingEnabled = cachingEnabled;
+    }
+
+    public void setRedirectsAllowed(boolean redirectsAllowed) {
+        this.redirectsAllowed = redirectsAllowed;
+    }
+
+    public void setMaxRedirects(int maxRedirects) {
+        this.maxRedirects = maxRedirects;
     }
 }

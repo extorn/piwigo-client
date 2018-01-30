@@ -6,12 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
@@ -21,18 +21,18 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.PiwigoUsers;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomImageButton;
+import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -44,13 +44,15 @@ import delit.piwigoclient.ui.events.ViewUserEvent;
  * Created by gareth on 26/05/17.
  */
 
-public class UsersListFragment extends MyFragment implements UsersListAdapter.UserActionListener {
+public class UsersListFragment extends MyFragment {
 
-    private static final String AVAILABLE_USERS = "availableUsers";
-    private ArrayList<User> availableUsers;
-    private ListView list;
+    private static final String USERS_MODEL = "usersModel";
+    private static final String USERS_PAGE_BEING_LOADED = "usersPageBeingLoaded";
     private ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
+    private PiwigoUsers usersModel = new PiwigoUsers();
+    private UserRecyclerViewAdapter viewAdapter;
+    private int pageToLoadNow = -1;
 
     public static UsersListFragment newInstance() {
         UsersListFragment fragment = new UsersListFragment();
@@ -72,7 +74,8 @@ public class UsersListFragment extends MyFragment implements UsersListAdapter.Us
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(AVAILABLE_USERS, availableUsers);
+        outState.putSerializable(USERS_MODEL, usersModel);
+        outState.putInt(USERS_PAGE_BEING_LOADED, pageToLoadNow);
     }
 
     @Nullable
@@ -86,10 +89,11 @@ public class UsersListFragment extends MyFragment implements UsersListAdapter.Us
         super.onCreateView(inflater, container, savedInstanceState);
 
         if (savedInstanceState != null) {
-            availableUsers = (ArrayList) savedInstanceState.getSerializable(AVAILABLE_USERS);
+            usersModel = (PiwigoUsers) savedInstanceState.getSerializable(USERS_MODEL);
+            pageToLoadNow = savedInstanceState.getInt(USERS_PAGE_BEING_LOADED);
         }
 
-        View view = inflater.inflate(R.layout.layout_fullsize_list, container, false);
+        View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
@@ -102,16 +106,6 @@ public class UsersListFragment extends MyFragment implements UsersListAdapter.Us
         TextView heading = view.findViewById(R.id.heading);
         heading.setText(R.string.users_heading);
         heading.setVisibility(View.VISIBLE);
-
-        list = view.findViewById(R.id.list);
-
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                User selectedUser = (User) list.getAdapter().getItem(position);
-                onUserSelected(selectedUser);
-            }
-        });
 
         Button cancelButton = view.findViewById(R.id.list_action_cancel_button);
         cancelButton.setVisibility(View.GONE);
@@ -137,18 +131,77 @@ public class UsersListFragment extends MyFragment implements UsersListAdapter.Us
             @Override
             public void onClick(View v) {
                 retryActionButton.setVisibility(View.GONE);
-                addActiveServiceCall(R.string.progress_loading_users, PiwigoAccessService.startActionGetUsersList(0, 100, getContext()));
+                loadUsersPage(pageToLoadNow);
             }
         });
 
-        if (availableUsers == null) {
-            //TODO FEATURE: Support Users paging (load page size from settings)
-            addActiveServiceCall(R.string.progress_loading_users, PiwigoAccessService.startActionGetUsersList(0, 100, getContext()));
-        } else {
-            populateListWithUsers();
-        }
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+
+        RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
+
+        recyclerView.setLayoutManager(layoutMan);
+
+        boolean allowMultiselection = false;
+
+        viewAdapter = new UserRecyclerViewAdapter(container.getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusListener<User>() {
+            @Override
+            public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
+            }
+
+            @Override
+            public void onItemSelectionCountChanged(int size) {
+            }
+
+            @Override
+            public void onItemDeleteRequested(User u) {
+                onDeleteUser(u);
+            }
+
+            @Override
+            public void onItemClick(User item) {
+                EventBus.getDefault().post(new ViewUserEvent(item));
+            }
+
+            @Override
+            public void onItemLongClick(User item) {
+
+            }
+        }, allowMultiselection);
+        viewAdapter.setEnabled(true);
+        viewAdapter.setAllowItemDeletion(true);
+
+        recyclerView.setAdapter(viewAdapter);
+
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                int pageToLoad = usersModel.getPagesLoaded();
+                if (pageToLoad == 0 || usersModel.isFullyLoaded()) {
+                    // already load this one by default so lets not double load it (or we've already loaded all items).
+                    return;
+                }
+                loadUsersPage(pageToLoad);
+            }
+        };
+        scrollListener.configure(usersModel.getPagesLoaded(), usersModel.getItems().size());
+        recyclerView.addOnScrollListener(scrollListener);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(usersModel.getPagesLoaded() == 0) {
+            viewAdapter.notifyDataSetChanged();
+            loadUsersPage(0);
+        }
+    }
+
+    private void loadUsersPage(int pageToLoad) {
+        this.pageToLoadNow = pageToLoad;
+        int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
+        addActiveServiceCall(R.string.progress_loading_users,PiwigoAccessService.startActionGetUsersList(pageToLoad, pageSize, getContext()));
     }
 
     private void addNewUser() {
@@ -160,15 +213,7 @@ public class UsersListFragment extends MyFragment implements UsersListAdapter.Us
 //        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_information_coming_soon));
     }
 
-
-    private void populateListWithUsers() {
-        list.setAdapter(new UsersListAdapter(getContext(), availableUsers, this));
-        list.requestLayout();
-    }
-
-    @Override
-    public void onDeleteItem(int position, final User thisItem) {
-
+    public void onDeleteUser(final User thisItem) {
         String currentUser = PiwigoSessionDetails.getInstance().getUsername();
         if (currentUser.equals(thisItem.getUsername())) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_delete_yourself_pattern), currentUser));
@@ -247,60 +292,29 @@ public class UsersListFragment extends MyFragment implements UsersListAdapter.Us
 
 
     public void onUsersLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse response) {
+        synchronized (usersModel) {
+            pageToLoadNow = -1;
+            retryActionButton.setVisibility(View.GONE);
+            int firstIdxAdded = usersModel.addItemPage(response.getPage(), response.getPageSize(), response.getUsers());
+            viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getUsers().size());
 
-        getUiHelper().dismissProgressDialog();
-        if (response.getItemsOnPage() == response.getPageSize()) {
-            //TODO FEATURE: Support Users paging
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));
         }
-        availableUsers = response.getUsers();
-        populateListWithUsers();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(UserDeletedEvent event) {
-        ((UsersListAdapter) list.getAdapter()).remove(event.getUser());
+        viewAdapter.remove(event.getUser());
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), event.getUser().getUsername()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(UserUpdatedEvent event) {
-        ListIterator<User> iter = availableUsers.listIterator();
-
-        boolean newUserAdded = false;
-        while(iter.hasNext()) {
-            User u = iter.next();
-            if (u.getId() == event.getUser().getId()) {
-                iter.remove();
-                if(u.getUsername().equals(event.getUser().getUsername())) {
-                    iter.add(event.getUser());
-                    newUserAdded = true;
-                }
-                break;
-            }
-        }
-        if(!newUserAdded) {
-            //add new user.
-            iter = availableUsers.listIterator();
-            while(iter.hasNext()) {
-                if(iter.next().getUsername().compareTo(event.getUser().getUsername()) > 0) {
-                    iter.previous();
-                    iter.add(event.getUser());
-                    newUserAdded = true;
-                    break;
-                }
-            }
-            if(!newUserAdded) {
-                // just add it to the end.
-                availableUsers.add(event.getUser());
-            }
-        }
-        list.setAdapter(new UsersListAdapter(getContext(), availableUsers, this));
+        viewAdapter.replaceOrAddItem(event.getUser());
     }
 
     public void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
         User user = deleteActionsPending.remove(response.getMessageId());
-        ((UsersListAdapter) list.getAdapter()).remove(user);
+        viewAdapter.remove(user);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), user.getUsername()));
     }
 

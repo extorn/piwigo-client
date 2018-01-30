@@ -307,6 +307,14 @@ public class UploadJob implements Serializable {
         return submitted;
     }
 
+    public Map<File,String> getFileToFilenamesMap() {
+        Map<File, String> filenamesMap = new HashMap<>(filesForUpload.size());
+        for(File f : filesForUpload) {
+            filenamesMap.put(f, f.getName());
+        }
+        return filenamesMap;
+    }
+
     protected static class PartialUploadData implements Serializable {
         private long bytesUploaded;
         private long countChunksUploaded;

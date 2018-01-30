@@ -293,6 +293,8 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 } else {
                     permissionToCache = false;
                     dataSourceFactory.setCachingEnabled(false);
+                    dataSourceFactory.setRedirectsAllowed(prefs.getBoolean(getString(R.string.preference_server_connection_allow_redirects_key), getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default)));
+                    dataSourceFactory.setMaxRedirects(prefs.getInt(getString(R.string.preference_server_connection_max_redirects_key), getResources().getInteger(R.integer.preference_server_connection_max_redirects_default)));
                     configurePlayer(startVideoWhenPermissionsGranted);
                 }
             } else {
@@ -309,6 +311,8 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private void configureDatasourceAndPlayerRequestingPermissions(final boolean startPlayback) {
 
         dataSourceFactory.setCachingEnabled(isUseCache());
+        dataSourceFactory.setRedirectsAllowed(prefs.getBoolean(getString(R.string.preference_server_connection_allow_redirects_key), getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default)));
+        dataSourceFactory.setMaxRedirects(prefs.getInt(getString(R.string.preference_server_connection_max_redirects_key), getResources().getInteger(R.integer.preference_server_connection_max_redirects_default)));
 
         if(dataSourceFactory.isCachingEnabled()) {
             startVideoWhenPermissionsGranted = startPlayback;

@@ -90,7 +90,7 @@ class RetryHandler implements HttpRequestRetryHandler {
 
     protected boolean isInList(HashSet<Class<?>> list, Throwable error) {
         for (Class<?> aList : list) {
-            if (aList.isInstance(error)) {
+            if (aList.isAssignableFrom(error.getClass())) {
                 return true;
             }
         }

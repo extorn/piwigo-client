@@ -1,9 +1,11 @@
 package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
-import android.preference.EditTextPreference;
+import android.content.res.TypedArray;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
+
+import delit.piwigoclient.R;
 
 /**
  * Created by gareth on 04/11/17.
@@ -16,6 +18,10 @@ public class SecureEditTextPreference extends EditTextPreference implements Secu
 
     public SecureEditTextPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        TypedArray a = context.obtainStyledAttributes(
+                attrs, R.styleable.SecureEditTextPreference, defStyleAttr, 0);
+        a.recycle();
     }
 
     public SecureEditTextPreference(Context context, AttributeSet attrs) {
@@ -79,4 +85,5 @@ public class SecureEditTextPreference extends EditTextPreference implements Secu
         String encryptedVal = super.getPersistedString(defaultReturnValue);
         return decrypt(encryptedVal, defaultReturnValue);
     }
+
 }

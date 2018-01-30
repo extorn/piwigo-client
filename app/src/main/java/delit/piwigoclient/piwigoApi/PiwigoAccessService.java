@@ -10,6 +10,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,9 +24,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
@@ -166,8 +169,10 @@ public class PiwigoAccessService {
                 prefs = PreferenceManager.getDefaultSharedPreferences(context);
             }
             String piwigoServerUrl = null;
-            if(prefs != null) {
-                piwigoServerUrl = prefs.getString(context.getString(R.string.preference_piwigo_server_address_key), null);
+            if(PiwigoSessionDetails.isLoggedIn()) {
+                piwigoServerUrl = PiwigoSessionDetails.getInstance().getServerUrl();
+            } else if(prefs != null) {
+                piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
             }
             AbstractPiwigoDirectResponseHandler handler = buildHandler(prefs);
             if(handler != null) {
@@ -260,7 +265,7 @@ public class PiwigoAccessService {
             @Override
             protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
                 SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-                String username = prefUtil.readSecureStringPreference(prefs, context.getString(R.string.preference_piwigo_server_username_key), null);
+                String username = ConnectionPreferences.getPiwigoUsername(prefs, context);
                 return new LoginResponseHandler(username, password);
             }
         }.start(messageId);
@@ -268,8 +273,7 @@ public class PiwigoAccessService {
 
     public static long startActionLogin(final Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-        String password = prefUtil.readSecureStringPreference(prefs, context.getString(R.string.preference_piwigo_server_password_key), null);
+        String password = ConnectionPreferences.getPiwigoPassword(prefs, context);
         return startActionLogin(context, password);
     }
 
@@ -446,6 +450,16 @@ public class PiwigoAccessService {
             }
         }.start(messageId);
 
+    }
+
+    public static long startActionGetUsernamesList(final Collection<Long> userIds, Context context) {
+        long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
+        return new Worker(context) {
+            @Override
+            protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
+                return new UsernamesGetListResponseHandler(userIds);
+            }
+        }.start(messageId);
     }
 
     public static long startActionGetUsernamesList(final List<Long> groupIds, final int page, final int pageSize, Context context) {

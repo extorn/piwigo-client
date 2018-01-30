@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
@@ -248,6 +249,9 @@ public class GroupFragment extends MyFragment {
         } else {
             setFieldsFromModel(currentGroup);
         }
+
+        ScrollView scrollview = v.findViewById(R.id.group_edit_scrollview);
+        scrollview.fullScroll(View.FOCUS_UP);
 
         return v;
     }

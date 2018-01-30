@@ -145,19 +145,21 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     @Override
     public boolean canHandlePiwigoResponseNow(PiwigoResponseBufferingHandler.Response response) {
         // If this fragment is not presently active, delay processing the response till it is.
-        //TODO check this works okay. Used to return "true".
+        boolean retVal;
         if(parent instanceof Fragment) {
             // If this fragment is not presently active, delay processing the response till it is.
             Activity activity = ((Fragment)parent).getActivity();
-            return ((Fragment)parent).isAdded() && activity != null;
+            retVal = ((Fragment)parent).isAdded() && activity != null;
         } else if(parent instanceof AppCompatActivity) {
-            return !((AppCompatActivity)parent).isFinishing();
+            retVal = !((AppCompatActivity)parent).isFinishing();
         } else if(parent instanceof ViewGroup) {
-            return ((ViewGroup)parent).isShown();
+            retVal = ((ViewGroup)parent).isShown();
         } else if(parent == null){
-            throw new IllegalArgumentException("Unsupported parent type " + parent);
+            // this listener has become detached from the UI.
+            retVal = false;
         } else {
             throw new IllegalArgumentException("Unsupported parent type " + parent);
         }
+        return retVal;
     }
 }

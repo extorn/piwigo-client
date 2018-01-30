@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;

@@ -1,10 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
@@ -36,11 +36,23 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
         PiwigoAlbumAdminList adminList = new PiwigoAlbumAdminList();
 
         for (int i = 0; i < categories.size(); i++) {
+
             JsonObject category = (JsonObject) categories.get(i);
             long id = category.get("id").getAsLong();
-            String name = category.get("name").getAsString();
+            JsonElement nameElem = category.get("name");
+            String name = null;
+            if(nameElem != null && !nameElem.isJsonNull()) {
+                name = category.get("name").getAsString();
+            }
+
             long photos = category.get("nb_images").getAsLong();
-            String description = category.get("comment").getAsString();
+
+            JsonElement commentElem = category.get("comment");
+            String description = null;
+            if(commentElem != null && !commentElem.isJsonNull()) {
+                description = commentElem.getAsString();
+            }
+
             boolean isPublic = "public".equals(category.get("status").getAsString());
 
             CategoryItem item = new CategoryItem(id, name, description, !isPublic, null, photos, photos, 0, null);

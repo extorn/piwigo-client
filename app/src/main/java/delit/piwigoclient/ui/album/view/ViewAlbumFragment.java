@@ -550,7 +550,7 @@ public class ViewAlbumFragment extends MyFragment {
 
     private void onBulkActionDeleteButtonPressed() {
         boolean bulkActionsAllowed = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-        if(bulkActionsAllowed){
+        if(bulkActionsAllowed) {
             HashSet<Long> selectedItemIds = viewAdapter.getSelectedItemIds();
             if(deleteActionData != null && selectedItemIds.equals(deleteActionData.getSelectedItemIds())) {
                 //continue with previous action

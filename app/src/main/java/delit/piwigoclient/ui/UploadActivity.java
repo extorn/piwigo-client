@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
@@ -85,7 +86,7 @@ public class UploadActivity extends MyActivity {
             fileSelectionEventId = TrackableRequestEvent.getNextEventId();
         }
 
-        if(!hasAgreedToEula() || prefs.getString(getApplicationContext().getString(R.string.preference_piwigo_server_address_key), "").isEmpty()) {
+        if(!hasAgreedToEula() || ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
             setContentView(R.layout.activity_upload);

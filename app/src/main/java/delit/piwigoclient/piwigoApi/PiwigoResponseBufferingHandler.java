@@ -4,13 +4,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import com.google.gson.JsonElement;import com.google.gson.JsonObject;import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
@@ -40,6 +41,8 @@ public class PiwigoResponseBufferingHandler {
     private ConcurrentMap<Long, Response> responses = new ConcurrentSkipListMap<>();
     private ConcurrentMap<Long, Long> handlerResponseMap = new ConcurrentSkipListMap<>();
     private ConcurrentMap<Long, PiwigoResponseListener> handlers = new ConcurrentSkipListMap<>();
+    //Note: this isn't a great idea - potentially, if there's a bug, some child msg ids could get left lying around forever as orphans.
+    private Map<Long, LinkedHashSet<Long>> parkedChildMsgIds = new HashMap<>();
     private static AtomicLong nextHandlerId = new AtomicLong();
 
     public PiwigoResponseBufferingHandler() {
@@ -105,17 +108,38 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
+    private void parkChildMessageId(long currentMessageId, long newMessageId) {
+        LinkedHashSet<Long> spawn = parkedChildMsgIds.get(currentMessageId);
+        if(spawn == null) {
+            spawn = new LinkedHashSet<>();
+            parkedChildMsgIds.put(currentMessageId, spawn);
+        }
+        spawn.add(newMessageId);
+    }
+
+    private LinkedHashSet<Long> popParkedChildMessageIds(long currentMessageId) {
+        return parkedChildMsgIds.remove(currentMessageId);
+    }
+
     public synchronized void preRegisterResponseHandlerForNewMessage(long currentMessageId, long newMessageId) {
         Long handlerId = handlerResponseMap.get(currentMessageId);
         if(handlerId == null) {
-            throw new IllegalStateException("Unable to find handler to register for new message id");
+            // record the parentage for processing when a handler is re-addded.
+            parkChildMessageId(currentMessageId, newMessageId);
+        } else {
+            handlerResponseMap.put(newMessageId, handlerId);
         }
-        handlerResponseMap.put(newMessageId, handlerId);
     }
 
     public synchronized PiwigoResponseListener registerResponseHandler(long messageId, final PiwigoResponseListener h) {
         PiwigoResponseListener oldHandler = handlers.put(h.getHandlerId(), h);
         handlerResponseMap.put(messageId, h.getHandlerId());
+        LinkedHashSet<Long> childMsgIds = popParkedChildMessageIds(messageId);
+        if(childMsgIds != null) {
+            for(Long childMsgId : childMsgIds) {
+                handlerResponseMap.put(childMsgId, h.getHandlerId());
+            }
+        }
         final Response r = responses.remove(messageId);
         if (r != null) {
             if (r.isEndResponse()) {
@@ -157,15 +181,21 @@ public class PiwigoResponseBufferingHandler {
             callbackHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if(handler.canHandlePiwigoResponseNow(response)) {
-                        handler.handlePiwigoResponse(response);
-                    } else {
-                        //Trying to replace the handler and the response back on the queue for later processing.
-                        //TODO think this through more - thread safe? Think so... be sure.
-                        if (response.isEndResponse()) {
-                            handlerResponseMap.put(response.getMessageId(), handlerId);
+                    try {
+                        if (handler.canHandlePiwigoResponseNow(response)) {
+                            handler.handlePiwigoResponse(response);
+                        } else {
+                            //Trying to replace the handler and the response back on the queue for later processing.
+                            //TODO think this through more - thread safe? Think so... be sure.
+                            if (response.isEndResponse()) {
+                                handlerResponseMap.put(response.getMessageId(), handlerId);
+                            }
+                            responses.put(response.getMessageId(), response);
                         }
-                        responses.put(response.getMessageId(), response);
+                    } catch(IllegalArgumentException e) {
+                        //TODO this keeps happening in the wild - sink it and the response for now to prevent crash.
+                        // the handler is attached, but to an unrecognised component type
+                        Log.e("PiwigoResponseHandler", "Handler attached to unrecognised parent component type", e);
                     }
                 }
             });

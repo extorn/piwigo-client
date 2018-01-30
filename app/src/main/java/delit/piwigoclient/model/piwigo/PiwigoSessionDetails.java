@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
-import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.MyApplication;
 
 /**
@@ -25,8 +24,10 @@ public class PiwigoSessionDetails {
     private User userDetails;
     private int loginStatus = 0;
     private Boolean useCommunityPlugin;
+    private String serverUrl;
 
-    public PiwigoSessionDetails(long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
+    public PiwigoSessionDetails(String serverUrl, long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
+        this.serverUrl = serverUrl;
         this.userGuid = userGuid;
         this.username = username;
         this.userType = userType;
@@ -36,7 +37,8 @@ public class PiwigoSessionDetails {
         this.loginStatus = 2;
     }
 
-    public PiwigoSessionDetails(long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, Set<String> allowedFileTypes, long webInterfaceUploadChunkSizeKB, String sessionToken) {
+    public PiwigoSessionDetails(String serverUrl, long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, Set<String> allowedFileTypes, long webInterfaceUploadChunkSizeKB, String sessionToken) {
+        this.serverUrl = serverUrl;
         this.userGuid = userGuid;
         this.username = username;
         this.userType = userType;
@@ -155,5 +157,9 @@ public class PiwigoSessionDetails {
 
     public void updateUserType(String realUserStatus) {
         this.userType = realUserStatus;
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
     }
 }

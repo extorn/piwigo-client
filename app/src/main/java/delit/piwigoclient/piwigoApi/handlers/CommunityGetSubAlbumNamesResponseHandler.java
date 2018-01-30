@@ -1,10 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +46,13 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
         for (int i = 0; i < categories.size(); i++) {
             JsonObject category = (JsonObject) categories.get(i);
             Long id = category.get("id").getAsLong();
-            String name = category.get("name").getAsString();
+
+            JsonElement nameElem = category.get("name");
+            String name = null;
+            if(nameElem != null && !nameElem.isJsonNull()) {
+                name = category.get("name").getAsString();
+            }
+
             Long parentId = null;
 //            if (!"null".equals(category.get("id_uppercat").getAsString())) {
 //                parentId = category.get("id_uppercat").getAsLong();

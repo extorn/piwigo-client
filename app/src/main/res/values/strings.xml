@@ -43,6 +43,8 @@
     <string name="gallery_subcategory_summary_text_pattern">%2$d in %1$d sub-albums</string>
     <string name="admin_email" translatable="false"><a href="mailto:gd_apps-piwigoclient@yahoo.co.uk">gd_apps-piwigoclient@yahoo.co.uk</a></string>
     <string name="alert_title_connectionTest">Connection Test</string>
+    <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>
+    <string name="alert_message_no_available_image_sizes">Warning\nServer did not report available image sizes.</string>
     <string name="alert_success">SUCCESS!</string>
     <string name="alert_partial_success">INCOMPLETE</string>
     <string name="alert_error">Error</string>
@@ -119,8 +121,6 @@
     <string name="alert_server_error_pattern">Server returned HTTP error: %1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Error parsing piwigo response</string>
     <string name="alert_error_handling_response_pattern">Unparsable response: %1$d (%2$s)</string>
-    <string name="alert_title_error_too_many_groups">Error</string>
-    <string name="alert_error_too_many_groups_message">Too many groups to handle. Please submit an enhancement request to enable paging of groups.</string>
     <string name="none_selected">None</string>
     <string name="alert_title_error_too_many_users">Error</string>
     <string name="alert_error_too_many_users_message">Too many users to handle. Please submit an enhancement request to enable paging of users.</string>
@@ -271,9 +271,6 @@ I have been testing with a copy of the piwigo_privacy plugin installed and also 
 I have a copy of the Extended Description plugin installed, but unfortunately, this functionality is not yet exposed via the PIWIGO API.
 I\'d like to include support for "favorite" photos but this functionality does not yet appear to be exposed via the PIWIGO API.
 
-NOTE: If you have more than 100 users or 100 groups, you won't see them all. Please contact me if this affects you and I'll add support for larger numbers. My server has just a few users and groups.
-    : PIWIGO community plugin is NOT supported by this app at present and a user has notified me of issues when trying to use this app against a 'community enabled' PIWIGO server.
-
 Please report any drop me an email if you encounter any bugs. I\'ve tested this on the android emulator, a Samsung phone and a Samsung tablet, but it\'s my first app so I\'m sure things will go wrong for someone.
 
 A big thank you to everyone who has emailed me with suggestions or bugs. I will endeavor to address all of your suggestions as soon as practical.
@@ -288,28 +285,73 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.60 - Changes:
+Release 1.3.68 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.59 - Changes:
+Release 1.3.67 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
-                    - Possibly - Support for paging of groups and users (support >100 of each)
                     - Possibly - Support for user comments
                     - Possibly - allow linking the upload process to a compression routine for videos
-                    - Possibly - add support for multiple piwigo galleries to be configured
 
-Release 1.3.58 - Changes:
+Release 1.3.66 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
-                    - Improve management of user credentials where possible
                     - Improve memory use further (app crashes are generally that it runs out of memory)
                     - Investigate serialization of app pages (crashes reported in this area)
+                    - Check for and remove any calls to Thread.sleep
 
 Released:
+
+Release 1.3.65 - Changes:
+                    - Added extra error handling around login and logout on the connection preferences page
+                    - Logout triggered if you change the connection profile in use
+                 Bugfix:
+                    - Added resilience for servers that don't report available image sizes in session status.
+                    - Fixed logout code so it sends the request to the correct url
+
+Release 1.3.64 - Changes:
+                    - Added support for multiple galleries to be configured (connection profiles in settings)
+                        - This allows better use of the community plugin as you can log in as guest to see your uploaded pics
+
+Release 1.3.63 - Bugfix:
+                    - Bug in the identification of unique files for upload (filename mode only)
+
+Release 1.3.62 - Changes:
+                    - Added support for servers using file name as unique identifier for resources (new gallery preference)
+                    - Added support for the Log_Failed_Logins Plugin when misconfigured prepending debug text to json response
+                    - Added configuration preference for max number of server redirects
+                    - Enabled redirection configuration for the video downloads
+               - Bugfix:
+                    - Added support for servers not returning md5sums for resources
+                    - Ensure picasso loader always reset when altering connection settings
+                    - Problem retrieving trusted certificates in preferences page
+                    - Reduced max default server redirects when enabled to 5
+                    - Obscure crash in area of server response handling
+                    - Silently ignore a page of resources double loaded
+
+Release 1.3.61 - Bugfix:
+                    - Prevented requests resulting in SSL Handshake error automatically retrying.
+                    - Ensured md5sum is treated as optional when retrieving resource information
+                - Warning:
+                    - I have noted that an assumption is made that the server is using md5sums for uniqueness tests. Be aware of this if you use the upload feature. This is existing functionality, nothing new.
+
+Release 1.3.60 - Bugfix:
+                    - Re-added defensive coding around data retrieval server calls
+
+Release 1.3.59 - Bugfix:
+                    - Crash fix at end of successful upload that prevented delete of temporary upload album
+
+Release 1.3.58 - Changes:
+                    - Added support for paging of users and groups
+                    - Altered color of checkboxes to make it more obvious when their state can be changed
+                 Bugfix:
+                    - Corrected bug where app crashes due to UI component being detached from the server response listener
+                    - Corrected bug retrieving resource details if resource has no name set
+                    - Crash on file upload if an error occurred and the upload screen wasn't shown
 
 Release 1.3.57 - Bugfix:
                     - Corrected bug in the proguard file stopping the released version from working.
@@ -1115,5 +1157,8 @@ SOFTWARE.
     <string name="service_target_heading">Service :</string>
     <string name="error_detail_heading">Detail :</string>
     <string name="gallery_admin_albums_list_load_failed_text">Failed to load the full administrative list of albums</string>
+    <string name="title_adding_item">Adding Item</string>
+    <string name="alert_error_item_not_unique">Sorry, that item already exists.</string>
+    <string name="alert_warning_no_server_url_specified">No server uri specified. Please add the location of your server and retry.</string>
 
 </resources>

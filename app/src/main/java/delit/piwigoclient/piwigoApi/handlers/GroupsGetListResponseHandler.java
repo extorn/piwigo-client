@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import delit.piwigoclient.model.piwigo.Group;
@@ -56,7 +57,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
     }
 
     public static HashSet<Group> parseGroupsFromJson(JsonArray groupsObj) throws JSONException {
-        HashSet<Group> groups = new HashSet<>(groupsObj.size());
+        HashSet<Group> groups = new LinkedHashSet<>(groupsObj.size());
         for (int i = 0; i < groupsObj.size(); i++) {
             JsonObject groupObj = groupsObj.get(i).getAsJsonObject();
             Group g = parseGroupFromJson(groupObj);

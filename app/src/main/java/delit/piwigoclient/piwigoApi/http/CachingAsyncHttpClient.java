@@ -137,6 +137,7 @@ public class CachingAsyncHttpClient implements Closeable {
     private String userAgent;
     private RetryHandler retryHandler;
     private int maxConcurrentConnections = DEFAULT_MAX_CONNECTIONS;
+    private int maxRedirects;
 
     protected HttpClientConnectionManager createConnectionManager() {
 
@@ -219,6 +220,7 @@ public class CachingAsyncHttpClient implements Closeable {
                 .setSocketTimeout(responseTimeout)
                 .setConnectionRequestTimeout(connectTimeout)
                 .setRedirectsEnabled(enableRedirects)
+                .setMaxRedirects(maxRedirects)
                 .setRelativeRedirectsAllowed(enableRelativeRedirects)
                 .setCircularRedirectsAllowed(enableCircularRedirects)
                 .build();
@@ -559,9 +561,11 @@ public class CachingAsyncHttpClient implements Closeable {
      * @param enableRedirects         boolean
      * @param enableRelativeRedirects boolean
      * @param enableCircularRedirects boolean
+     * @param maxRedirects            int
      */
-    public void setEnableRedirects(final boolean enableRedirects, final boolean enableRelativeRedirects, final boolean enableCircularRedirects) {
+    public void setEnableRedirects(final boolean enableRedirects, final boolean enableRelativeRedirects, final boolean enableCircularRedirects, final int maxRedirects) {
         this.enableRedirects = enableRedirects;
+        this.maxRedirects = maxRedirects;
         this.enableCircularRedirects = enableCircularRedirects;
         this.enableRelativeRedirects = enableRelativeRedirects;
     }
@@ -571,18 +575,18 @@ public class CachingAsyncHttpClient implements Closeable {
      *
      * @param enableRedirects         boolean
      * @param enableRelativeRedirects boolean
-     * @see #setEnableRedirects(boolean, boolean, boolean)
+     * @see #setEnableRedirects(boolean, boolean, boolean, int)
      */
-    public void setEnableRedirects(final boolean enableRedirects, final boolean enableRelativeRedirects) {
-        setEnableRedirects(enableRedirects, enableRelativeRedirects, true);
+    public void setEnableRedirects(final boolean enableRedirects, final boolean enableRelativeRedirects, final int maxRedirects) {
+        setEnableRedirects(enableRedirects, enableRelativeRedirects, true, maxRedirects);
     }
 
     /**
      * @param enableRedirects boolean
-     * @see #setEnableRedirects(boolean, boolean, boolean)
+     * @see #setEnableRedirects(boolean, boolean, boolean, int)
      */
-    public void setEnableRedirects(final boolean enableRedirects) {
-        setEnableRedirects(enableRedirects, enableRedirects, enableRedirects);
+    public void setEnableRedirects(final boolean enableRedirects, final int maxRedirects) {
+        setEnableRedirects(enableRedirects, enableRedirects, enableRedirects, maxRedirects);
     }
 
     /**

@@ -1,6 +1,9 @@
 package delit.piwigoclient.piwigoApi.upload.handlers;
 
-import org.json.JSONException;import com.google.gson.JsonElement;import com.google.gson.JsonObject;import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
 
 import java.util.HashSet;
 

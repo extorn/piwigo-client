@@ -105,6 +105,11 @@ public abstract class CustomSelectListAdapter<T> extends ArrayAdapter<T> impleme
         return enabled;
     }
 
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public T getItemById(Long selectedId) {
         int pos = getPosition(selectedId);
         if(pos < 0) {
@@ -112,4 +117,5 @@ public abstract class CustomSelectListAdapter<T> extends ArrayAdapter<T> impleme
         }
         return getItem(pos);
     }
+
 }

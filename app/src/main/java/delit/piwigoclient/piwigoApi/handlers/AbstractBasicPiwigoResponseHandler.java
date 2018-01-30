@@ -16,6 +16,7 @@ import java.net.SocketTimeoutException;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
@@ -141,7 +142,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     @Override
     public final void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
+        isSuccess = false;
         boolean tryingAgain = false;
         if (!cancelCallAsap && allowSessionRefreshAttempt &&
                 ((statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && error.getMessage().equalsIgnoreCase("Access denied"))
@@ -156,6 +157,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 synchronized (LoginResponseHandler.class) {
                     String newToken = PiwigoSessionDetails.getActiveSessionToken();
                     if (newToken != null && !newToken.equals(sessionToken)) {
+                        sessionToken = newToken;
                         // ensure we ignore this error (if it errors again, we'll capture that one)
                         tryingAgain = true;
                         // just run the original call again (another thread has retrieved a new session
@@ -248,11 +250,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         // send a server login request
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MyApplication.getInstance());
 
-        piwigoServerUrl = prefs.getString(MyApplication.getInstance().getString(R.string.preference_piwigo_server_address_key),"");
+        piwigoServerUrl = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, context);
 
-        SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
-        String username = prefUtil.readSecureStringPreference(prefs, context.getString(R.string.preference_piwigo_server_username_key), null);
-        String password = prefUtil.readSecureStringPreference(prefs, context.getString(R.string.preference_piwigo_server_password_key), null);
+        String username = ConnectionPreferences.getPiwigoUsername(prefs, context);
+        String password = ConnectionPreferences.getPiwigoPassword(prefs, context);
 
         int loginStatus = 0;
         int newLoginStatus = 0;

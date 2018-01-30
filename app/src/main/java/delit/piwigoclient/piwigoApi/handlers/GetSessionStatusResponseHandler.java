@@ -69,9 +69,14 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         String token = result.get("pwg_token").getAsString();
         String piwigoVersion = result.get("version").getAsString();
         Set<String> availableSizes = new HashSet<>();
-        JsonArray availableSizesArr = result.get("available_sizes").getAsJsonArray();
-        for (int i = 0; i < availableSizesArr.size(); i++) {
-            availableSizes.add(availableSizesArr.get(i).getAsString());
+        JsonElement availableSizesJsonElem = result.get("available_sizes");
+        if(availableSizesJsonElem == null || availableSizesJsonElem.isJsonNull()) {
+            // the sizes will be empty and thus warnings will be presented to the user.
+        } else {
+            JsonArray availableSizesArr = availableSizesJsonElem.getAsJsonArray();
+            for (int i = 0; i < availableSizesArr.size(); i++) {
+                availableSizes.add(availableSizesArr.get(i).getAsString());
+            }
         }
 
         PiwigoSessionDetails sessionDetails;
@@ -79,16 +84,26 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         long userGuid = serverUrl.hashCode() + user.hashCode() + userStatus.hashCode();
 
         if (userStatus.equals("admin") || userStatus.equals("webmaster")) {
-            Long uploadChunkSize = result.get("upload_form_chunk_size").getAsLong();
-            String uploadFileTypes = result.get("upload_file_types").getAsString();
-            StringTokenizer st = new StringTokenizer(uploadFileTypes, ",");
-            Set<String> uploadFileTypesSet = new HashSet<>(st.countTokens());
-            while (st.hasMoreTokens()) {
-                uploadFileTypesSet.add(st.nextToken());
+            JsonElement uploadChunkSizeElem = result.get("upload_form_chunk_size");
+            long uploadChunkSizeKb = -1L;
+            if(uploadChunkSizeElem != null && !uploadChunkSizeElem.isJsonNull()) {
+                uploadChunkSizeKb = uploadChunkSizeElem.getAsLong();
             }
-            sessionDetails = new PiwigoSessionDetails(userGuid, user, userStatus, piwigoVersion, availableSizes, uploadFileTypesSet, uploadChunkSize, token);
+            JsonElement fileTypesUploadAllowedJsonElem = result.get("upload_file_types");
+            Set<String> uploadFileTypesSet;
+            if(fileTypesUploadAllowedJsonElem != null && !fileTypesUploadAllowedJsonElem.isJsonNull()) {
+                String uploadFileTypes = fileTypesUploadAllowedJsonElem.getAsString();
+                StringTokenizer st = new StringTokenizer(uploadFileTypes, ",");
+                uploadFileTypesSet = new HashSet<>(st.countTokens());
+                while (st.hasMoreTokens()) {
+                    uploadFileTypesSet.add(st.nextToken());
+                }
+            } else {
+                uploadFileTypesSet = new HashSet<>(0);
+            }
+            sessionDetails = new PiwigoSessionDetails(serverUrl, userGuid, user, userStatus, piwigoVersion, availableSizes, uploadFileTypesSet, uploadChunkSizeKb, token);
         } else {
-            sessionDetails = new PiwigoSessionDetails(userGuid, user, userStatus, piwigoVersion, availableSizes, token);
+            sessionDetails = new PiwigoSessionDetails(serverUrl, userGuid, user, userStatus, piwigoVersion, availableSizes, token);
         }
         return sessionDetails;
     }

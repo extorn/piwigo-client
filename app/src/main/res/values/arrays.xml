@@ -119,6 +119,16 @@
         <item>0</item>
     </integer-array>
 
+    <string-array name="preference_gallery_unique_id_entries">
+        <item>md5sum</item>
+        <item>name</item>
+    </string-array>
+
+    <string-array name="preference_gallery_unique_id_entryValues" translatable="false">
+        <item>md5sum</item>
+        <item>name</item>
+    </string-array>
+
     <string-array name="rotation_array">
         <item>Left 90 degrees</item>
         <item>None</item>

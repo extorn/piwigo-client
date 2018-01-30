@@ -12,6 +12,7 @@ import android.widget.Button;
 import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -61,7 +62,7 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         loginButton.setEnabled(false);
-        String serverUri = prefs.getString(getString(R.string.preference_piwigo_server_address_key), "");
+        String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
         getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), PiwigoAccessService.startActionLogin(getContext()));
     }
 

@@ -3,7 +3,6 @@ package delit.piwigoclient.piwigoApi.handlers;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
@@ -13,7 +12,6 @@ import org.json.JSONException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 
 import cz.msebera.android.httpclient.Header;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;

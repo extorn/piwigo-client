@@ -16,10 +16,12 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
 
     private static final String TAG = "ImagesExistRspHdlr";
     private final Collection<String> checksums;
+    private boolean nameUnique;
 
-    public ImageFindExistingImagesResponseHandler(Collection<String> checksums) {
+    public ImageFindExistingImagesResponseHandler(Collection<String> checksums, boolean nameUnique) {
         super("pwg.images.exist", TAG);
         this.checksums = checksums;
+        this.nameUnique = nameUnique;
     }
 
     @Override
@@ -37,7 +39,11 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
                     sb.append(',');
                 }
             }
-            params.put("md5sum_list", sb.toString());
+            if(nameUnique) {
+                params.put("filename_list", sb.toString());
+            } else {
+                params.put("md5sum_list", sb.toString());
+            }
         }
 
         return params;
