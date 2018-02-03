@@ -285,19 +285,19 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.68 - Changes:
+Release 1.3.69 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.67 - Changes:
+Release 1.3.68 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
                     - Possibly - allow linking the upload process to a compression routine for videos
 
-Release 1.3.66 - Changes:
+Release 1.3.67 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
                     - Improve memory use further (app crashes are generally that it runs out of memory)
@@ -305,6 +305,11 @@ Release 1.3.66 - Changes:
                     - Check for and remove any calls to Thread.sleep
 
 Released:
+
+Release 1.3.66 - Changes:
+                    - Updated to latest available library versions
+                 Bugfix:
+                    - Access to the user and group pages resulted in crash on older devices (no vector graphics support).
 
 Release 1.3.65 - Changes:
                     - Added extra error handling around login and logout on the connection preferences page
