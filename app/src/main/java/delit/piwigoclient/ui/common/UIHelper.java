@@ -85,7 +85,7 @@ public abstract class UIHelper<T> {
         setupNotificationsManager();
     }
 
-    public void swapToNewContext(Context c) {
+    public void swapToNewContext(Context context) {
         try {
             closeAllDialogs();
         } catch(RuntimeException e) {

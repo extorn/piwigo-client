@@ -283,6 +283,7 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     		setZoom(delayedZoomVariables.scale, delayedZoomVariables.focusX, delayedZoomVariables.focusY, delayedZoomVariables.scaleType);
     		delayedZoomVariables = null;
     	}
+
     	super.onDraw(canvas);
     }
     

@@ -61,6 +61,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
         }
 
         final TouchImageView imageView = new TouchImageView(getContext());
+        imageView.setImageDrawable(getResources().getDrawable(R.drawable.blank));
         imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
         imageView.setMinimumWidth(DisplayUtils.dpToPx(getContext(), 120));
         imageView.setScaleType(ImageView.ScaleType.MATRIX);

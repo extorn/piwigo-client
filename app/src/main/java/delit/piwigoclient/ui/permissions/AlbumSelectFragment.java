@@ -133,7 +133,9 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
 //        }
         EventBus.getDefault().post(new AlbumPermissionsSelectionCompleteEvent(getActionId(), selectedIdsSet));
         // now pop this screen off the stack.
-        getFragmentManager().popBackStackImmediate();
+        if(isVisible()) {
+            getFragmentManager().popBackStackImmediate();
+        }
     }
 
     @Override

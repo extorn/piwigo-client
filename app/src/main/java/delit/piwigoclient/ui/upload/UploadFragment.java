@@ -210,9 +210,13 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             @Override
             public void onClick(View v) {
                 CategoryItemStub selectedGallery = (CategoryItemStub)selectedGallerySpinner.getSelectedItem();
-                AlbumCreateNeededEvent event = new AlbumCreateNeededEvent(selectedGallery);
-                getUiHelper().setTrackingRequest(event.getActionId());
-                EventBus.getDefault().post(event);
+                if(selectedGallery != null) {
+                    AlbumCreateNeededEvent event = new AlbumCreateNeededEvent(selectedGallery);
+                    getUiHelper().setTrackingRequest(event.getActionId());
+                    EventBus.getDefault().post(event);
+                } else {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
+                }
             }
         });
 
