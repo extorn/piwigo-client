@@ -94,7 +94,7 @@ public class UploadActivity extends MyActivity {
             final Fragment f;
             if (!PiwigoSessionDetails.isFullyLoggedIn()) {
                 f = LoginFragment.newInstance();
-                showFragmentNow(f, false);
+                showFragmentNow(f);
             } else {
                 showUploadFragment();
             }
@@ -156,6 +156,7 @@ public class UploadActivity extends MyActivity {
 
         if(isAdminUser || hasCommunityPlugin) {
             Fragment f = UploadFragment.newInstance(CategoryItem.ROOT_ALBUM, fileSelectionEventId);
+            removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
         } else {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
@@ -281,11 +282,7 @@ public class UploadActivity extends MyActivity {
             if (resultCode == RESULT_OK) {
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectionActivity.SELECTED_FILES);
                 FileListSelectionCompleteEvent event = new FileListSelectionCompleteEvent(requestCode, filesForUpload);
-                if(!PiwigoSessionDetails.isFullyLoggedIn()) {
-                    EventBus.getDefault().postSticky(event);
-                } else {
-                    EventBus.getDefault().post(event);
-                }
+                EventBus.getDefault().postSticky(event);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -316,26 +313,46 @@ public class UploadActivity extends MyActivity {
         if(getUiHelper().completePermissionsWantedRequest(event)) {
             if(event.areAllPermissionsGranted()) {
                 FileListSelectionCompleteEvent evt = new FileListSelectionCompleteEvent(fileSelectionEventId, handleSentFiles());
-                if(!PiwigoSessionDetails.isFullyLoggedIn()) {
-                    EventBus.getDefault().postSticky(evt);
-                } else {
-                    EventBus.getDefault().post(evt);
-                }
+                EventBus.getDefault().postSticky(evt);
             } else {
                 createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
             }
         }
     }
 
+//    private void showFragmentNow(Fragment f) {
+//        showFragmentNow(f, true);
+//    }
+//
+//    private void showFragmentNow(Fragment f, boolean addToBackstack) {
+//        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+//        if(addToBackstack) {
+//            tx.addToBackStack(null);
+//        }
+//        tx.replace(R.id.upload_details, f, f.getClass().getName()).commit();
+//
+//        addUploadingAsFieldsIfAppropriate();
+//    }
+
     private void showFragmentNow(Fragment f) {
-        showFragmentNow(f, true);
+        showFragmentNow(f, false);
     }
 
-    private void showFragmentNow(Fragment f, boolean addToBackstack) {
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        if(addToBackstack) {
-            tx.addToBackStack(null);
+    private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
+
+        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.upload_details);
+        String lastFragmentName = "";
+        if(lastFragment != null) {
+            lastFragmentName = lastFragment.getTag();
         }
+        if(!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
+            getSupportFragmentManager().popBackStackImmediate();
+        }
+        //TODO I've added code that clears stack when showing root album... is this "good enough"?
+        //TODO - trying to prevent adding duplicates here. not sure it works right.
+//        TODO maybe should be using current fragment classname when adding to backstack rather than one being replaced... hmmmm
+        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+        tx.addToBackStack(f.getClass().getName());
         tx.replace(R.id.upload_details, f, f.getClass().getName()).commit();
 
         addUploadingAsFieldsIfAppropriate();

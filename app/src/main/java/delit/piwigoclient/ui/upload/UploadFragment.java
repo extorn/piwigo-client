@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -144,10 +145,11 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(FileListSelectionCompleteEvent event) {
-        if(getUiHelper().isTrackingRequest(event.getActionId())) {
-            updateFilesForUploadList(event.getSelectedFiles());
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onEvent(FileListSelectionCompleteEvent stickyEvent) {
+        if(getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
+            EventBus.getDefault().removeStickyEvent(stickyEvent);
+            updateFilesForUploadList(stickyEvent.getSelectedFiles());
         }
     }
 
@@ -300,12 +302,19 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesForUploadAdapter);
 
-        FileListSelectionCompleteEvent event = EventBus.getDefault().getStickyEvent(FileListSelectionCompleteEvent.class);
-        if(event != null && getUiHelper().isTrackingRequest(event.getActionId())) {
-            EventBus.getDefault().removeStickyEvent(event);
-            updateFilesForUploadList(event.getSelectedFiles());
-        }
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // need to register here so FileSelectionComplete events always get through after the UI has been built when forked from different process
+        if(!EventBus.getDefault().isRegistered(this)) {
+            /* Need to wrap this call to prevent double registration when selecting files in this app from this fragment since we de-register on detach not stop which
+             * is not at the same lifecycle point as this one (so events are captured when on the backstack).
+             */
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
@@ -513,12 +522,6 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             NewPiwigoUploadService.startActionRunOrReRunUploadJob(getContext(), activeJob, keepDeviceAwake);
             allowUserUploadConfiguration(activeJob);
         }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        EventBus.getDefault().register(this);
     }
 
     @Override
