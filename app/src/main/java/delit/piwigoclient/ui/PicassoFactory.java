@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import delit.piwigoclient.business.CustomImageDownloader;
+import delit.piwigoclient.business.PicassoLoader;
 
 /**
  * Created by gareth on 13/07/17.
@@ -160,6 +161,7 @@ public class PicassoFactory {
     public void clearPicassoCache(Context context) {
         synchronized(PicassoFactory.class) {
             if (picasso != null) {
+                getPicassoSingleton().cancelTag(PicassoLoader.PICASSO_REQUEST_TAG);
                 getPicassoSingleton().shutdown();
                 picasso = null;
                 initialise(context);

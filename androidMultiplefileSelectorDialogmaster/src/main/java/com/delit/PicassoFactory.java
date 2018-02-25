@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PicassoFactory {
     private static PicassoFactory instance;
+    public static final String REQUEST_TAG = "PIWIGO";
     private final Context context;
     private transient Picasso picasso;
     private transient PicassoErrorHandler errorHandler;
@@ -161,6 +162,7 @@ public class PicassoFactory {
     public void clearPicassoCache(Context context) {
         synchronized(PicassoFactory.class) {
             if (picasso != null) {
+                getPicassoSingleton().cancelTag("PIWIGO");
                 getPicassoSingleton().shutdown();
                 picasso = null;
                 initialise(context);

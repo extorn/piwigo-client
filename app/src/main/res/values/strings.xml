@@ -310,7 +310,9 @@ Release 1.3.69 - Notes:
                       I will add an error handler to remind users of this. It sounds counter intuitive, but its sometimes best
                       that I let the app crash because users almost always don't tell me when something doesn't work!
                  Bugfix:
-                    - Fixed crash due to race condition after file upload complete
+                    - crash - Race condition after file upload complete
+                    - crash - Upload job not found in upload intent (very odd)
+                    - crash - shutdown picasso kinder
                  Changes:
                     - Added support for loading password protected pkcs files (untested)
                     - Added support for loading multiple certificates from certificate files (untested)
