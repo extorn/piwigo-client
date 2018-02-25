@@ -141,25 +141,11 @@ public class HttpClientFactory {
 
         CachingAsyncHttpClient client;
 
-
-        int httpPort = 80;
-        int httpsPort = 443;
         String piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
 
         if(piwigoServerUrl == null || piwigoServerUrl.trim().length() == 0) {
             return null;
         }
-        piwigoServerUrl = piwigoServerUrl.toLowerCase();
-        int port = extractPort(piwigoServerUrl);
-        if(port > 0) {
-            if (piwigoServerUrl.startsWith("http://")) {
-                httpPort = port;
-            } else if (piwigoServerUrl.startsWith("https://")) {
-                httpsPort = port;
-            }
-        }
-
-        //TODO sort out port for connection factory stuff
 
         SSLConnectionSocketFactory sslSocketFactory = buildHttpsSocketFactory(context);
 

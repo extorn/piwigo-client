@@ -1,8 +1,8 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
+import android.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -28,6 +30,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -40,7 +43,9 @@ import java.security.interfaces.RSAPrivateKey;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -54,20 +59,33 @@ import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileListSelectionNeededEvent;
 import delit.piwigoclient.util.X509Utils;
+import delit.piwigoclient.util.security.CertificateLoadException;
+import delit.piwigoclient.util.security.CertificateLoadOperationResult;
+import delit.piwigoclient.util.security.KeyStoreContentException;
+import delit.piwigoclient.util.security.KeyStoreOperationException;
+import delit.piwigoclient.util.security.KeystoreLoadOperation;
+import delit.piwigoclient.util.security.KeystoreLoadOperationResult;
+import delit.piwigoclient.util.security.LoadOperationResult;
+import delit.piwigoclient.util.security.SecurityOperationException;
+import delit.piwigoclient.util.security.X509LoadOperation;
 
 /**
  * Created by gareth on 15/07/17.
  */
 
 public abstract class KeyStorePreference extends DialogPreference {
+
     private boolean justKeysWanted;
     private KeyStore mValue;
     private boolean mValueSet;
     private RecyclerView certificateList;
     private int trackedRequest = -1;
     private ProgressDialog progressDialog;
+    private AlertDialog alertDialog;
+    public LoadOperationResult keystoreLoadOperationResult;
     private ArrayList<String> allowedCertificateFileTypes = new ArrayList<>(Arrays.asList(new String[]{".cer", ".cert", ".pem"}));
-    private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList(new String[]{".p12", ".pkcs12", ".pfx"}));
+    private static final String JKS_FILE_SUFFIX = ".jks";
+    private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList(new String[]{".p12", ".pkcs12", ".pfx", JKS_FILE_SUFFIX}));
 
     public KeyStorePreference(String tag, Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -88,7 +106,10 @@ public abstract class KeyStorePreference extends DialogPreference {
 
     public void setAllowedCertificateFileTypes(ArrayList<String> allowedCertificateFileTypes) {
         for (final ListIterator<String> i = allowedCertificateFileTypes.listIterator(); i.hasNext();) {
-            final String element = i.next();
+            String element = i.next();
+            if(!element.startsWith(".")) {
+                element = '.' + element;
+            }
             i.set(element.toLowerCase());
         }
         this.allowedCertificateFileTypes = allowedCertificateFileTypes;
@@ -96,7 +117,10 @@ public abstract class KeyStorePreference extends DialogPreference {
 
     public void setAllowedKeyFileTypes(ArrayList<String> allowedKeyFileTypes) {
         for (final ListIterator<String> i = allowedCertificateFileTypes.listIterator(); i.hasNext();) {
-            final String element = i.next();
+            String element = i.next();
+            if(!element.startsWith(".")) {
+                element = '.' + element;
+            }
             i.set(element.toLowerCase());
         }
         this.allowedKeyFileTypes = allowedKeyFileTypes;
@@ -180,6 +204,70 @@ public abstract class KeyStorePreference extends DialogPreference {
         return view;
     }
 
+    private void buildAndShowAlertErrorLoadingFilesDialog(String errorMessage) {
+        alertDialog = new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.alert_error)
+                            .setMessage(errorMessage)
+                            .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    alertDialog.dismiss();
+                                    keystoreLoadOperationResult.removeUnrecoverableErrors();
+                                    processRecoverableErrors();
+                                }
+                            })
+                            .show();
+    }
+
+    private void processRecoverableErrors() {
+
+        final SecurityOperationException recoverableError = keystoreLoadOperationResult.getNextRecoverableError();
+
+        if(recoverableError == null) {
+            // all passwords retrieved
+            List<X509LoadOperation> loadOperations = keystoreLoadOperationResult.getRemainingLoadOperations();
+            if(loadOperations.size() > 0) {
+                keystoreLoadOperationResult = null;
+                new AsyncX509LoaderTask().execute(loadOperations.toArray(new X509LoadOperation[loadOperations.size()]));
+            }
+            return;
+        }
+
+        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+        View v = null;
+        if (recoverableError instanceof KeyStoreOperationException) {
+            // request keystore password
+            v = layoutInflater.inflate(R.layout.keystore_password_entry_layout, null);
+        } else if (recoverableError instanceof KeyStoreContentException) {
+            // request keystore alias key password
+            v = layoutInflater.inflate(R.layout.keystore_key_password_entry_layout, null);
+
+            KeyStoreContentException e = (KeyStoreContentException) recoverableError;
+
+            EditText keystoreAliasEditText = (EditText) v.findViewById(R.id.keystore_alias_editText);
+            keystoreAliasEditText.setText(e.getAlias());
+        }
+
+        EditText filenameEditText = (EditText) v.findViewById(R.id.keystore_filename_editText);
+        filenameEditText.setText(recoverableError.getFile().getName());
+
+        alertDialog = new AlertDialog.Builder(getContext())
+                .setTitle(R.string.alert_information)
+                .setView(v)
+                .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText passwordEditText = (EditText) alertDialog.findViewById(R.id.keystore_password_editText);
+                        char[] pass = new char[passwordEditText.getText().length()];
+                        passwordEditText.getText().getChars(0, passwordEditText.getText().length(), pass, 0);
+                        alertDialog.dismiss();
+                        keystoreLoadOperationResult.addPasswordForRerun(recoverableError, pass);
+                        processRecoverableErrors();
+                    }
+                })
+                .show();
+    }
+
     private void buildProgressDialog(Context context) {
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
@@ -189,58 +277,157 @@ public abstract class KeyStorePreference extends DialogPreference {
     }
 
     public void onCertificatesSelected(ArrayList<File> certificateFiles) {
-        AsyncTask runningTask = new AsyncTask<File, Integer, Map<Key, Certificate[]>>() {
 
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
+        X509LoadOperation[] params = new X509LoadOperation[certificateFiles.size()];
+        int i = 0;
+        for(File f : certificateFiles) {
+            params[i++] = new X509LoadOperation(f);
+        }
+        keystoreLoadOperationResult = null;
+        new AsyncX509LoaderTask().execute(params);
+    }
 
-            }
+    class AsyncX509LoaderTask extends AsyncTask<X509LoadOperation, Integer, LoadOperationResult> {
 
-            @Override
-            protected Map<Key, Certificate[]> doInBackground(File ... certificateFiles) {
-                HashMap<Key, Certificate[]> keystoreContents = new HashMap<>(certificateFiles.length);
-                int currentFile = 0;
-                for (File f : certificateFiles) {
-                    String fileSuffix = f.getName().replaceFirst(".*(\\.[^.]*)","$1").toLowerCase();
-                    if (allowedCertificateFileTypes.contains(fileSuffix)) {
-                        X509Certificate cer = X509Utils.loadCertificateFromFile(f);
-                        keystoreContents.put(cer.getPublicKey(), new X509Certificate[]{cer});
-                    } else if (allowedKeyFileTypes.contains(fileSuffix)) {
-                        char[] passcode = new char[0]; //TODO accept passphrase and add to list of known passwords
-                        Map<Key, Certificate[]> fileContent = X509Utils.loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(f, passcode);
-                        keystoreContents.putAll(fileContent);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected LoadOperationResult doInBackground(X509LoadOperation ... loadOps) {
+            LoadOperationResult loadOperationResult = new LoadOperationResult();
+            int currentFile = 0;
+            for (X509LoadOperation loadOp : loadOps) {
+                String fileSuffix = loadOp.getFile().getName().replaceFirst(".*(\\.[^.]*)", "$1").toLowerCase();
+                if (allowedCertificateFileTypes.contains(fileSuffix)) {
+                    try {
+                        Collection<X509Certificate> certs = X509Utils.loadCertificatesFromFile(loadOp.getFile());
+                        CertificateLoadOperationResult result = new CertificateLoadOperationResult(loadOp);
+                        result.getCerts().addAll(certs);
+                        loadOperationResult.getCertLoadResults().add(result);
+                    } catch(CertificateLoadException e) {
+                        CertificateLoadOperationResult result = new CertificateLoadOperationResult(loadOp);
+                        result.setException(e);
+                        loadOperationResult.getCertLoadResults().add(result);
                     }
-                    currentFile++;
-                    publishProgress((int)Math.rint(100 * ((double)currentFile / certificateFiles.length)));
+                } else if (allowedKeyFileTypes.contains(fileSuffix)) {
+                    KeystoreLoadOperationResult keystoreLoadOperationResult;
+                    if(JKS_FILE_SUFFIX.equals(fileSuffix)) {
+                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation.from(loadOp), "jks");
+                    } else {
+                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(KeystoreLoadOperation.from(loadOp));
+                    }
+                    loadOperationResult.getKeystoreLoadResults().add(keystoreLoadOperationResult);
                 }
-                return keystoreContents;
+                currentFile++;
+                publishProgress((int)Math.rint(100 * ((double)currentFile / loadOps.length)));
+            }
+            return loadOperationResult;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            for(Integer i : values) {
+                if(getDialog() != null && getDialog().isShowing() && getDialog().getOwnerActivity() != null) {
+                    buildProgressDialog(getDialog().getContext());
+                    progressDialog.setProgress(i);
+                    progressDialog.show();
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(LoadOperationResult loadOperationResult) {
+            keystoreLoadOperationResult = loadOperationResult;
+            if (!isCancelled()) {
+                KeyStoreContentsAdapter adapter = ((KeyStoreContentsAdapter) certificateList.getAdapter());
+                adapter.addData(loadOperationResult.removeSuccessfullyLoadedData());
             }
 
-            @Override
-            protected void onProgressUpdate(Integer... values) {
-                for(Integer i : values) {
-                    if(getDialog() != null && getDialog().isShowing() && getDialog().getOwnerActivity() != null) {
-                        buildProgressDialog(getDialog().getContext());
-                        progressDialog.setProgress(i);
-                        progressDialog.show();
+            if(progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            showLoadErrors();
+        }
+    };
+
+    private void showLoadErrors() {
+        List<SecurityOperationException> unrecoverableErrors = keystoreLoadOperationResult.getUnrecoverableErrors();
+        if(unrecoverableErrors.size() > 0) {
+            String errorMessage = buildErrorMessage(unrecoverableErrors);
+            buildAndShowAlertErrorLoadingFilesDialog(errorMessage);
+        } else {
+            processRecoverableErrors();
+        }
+    }
+
+    private String buildErrorMessage(List<SecurityOperationException> unrecoverableErrors) {
+        // establish what groups of errors there are
+        List<CertificateLoadException> certExceptions = new ArrayList<>();
+        List<KeyStoreOperationException> keystoreExceptions = new ArrayList<>();
+        List<KeyStoreContentException> keystoreContentExceptions = new ArrayList<>();
+        for(SecurityOperationException ex : unrecoverableErrors) {
+            if(ex instanceof CertificateLoadException) {
+                certExceptions.add((CertificateLoadException)ex);
+            } else if(ex instanceof KeyStoreOperationException) {
+                keystoreExceptions.add((KeyStoreOperationException)ex);
+            } else if(ex instanceof KeyStoreContentException) {
+                keystoreContentExceptions.add((KeyStoreContentException)ex);
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        if(certExceptions.size() > 0) {
+            // add cert exceptions list
+            sb.append(getContext().getString(R.string.error_heading_unloadable_certificate_files));
+            for(CertificateLoadException ex : certExceptions) {
+                sb.append(safeGetFilename(ex.getFile()));
+                sb.append('\n');
+            }
+        }
+        if(keystoreExceptions.size() > 0) {
+            // add keystore exceptions list
+            sb.append(getContext().getString(R.string.error_heading_unloadable_keystore_files));
+            for(KeyStoreOperationException ex : keystoreExceptions) {
+                sb.append(safeGetFilename(ex.getFile()));
+                sb.append('\n');
+            }
+        }
+        if(keystoreContentExceptions.size() > 0) {
+            // add keystore content exceptions list
+            sb.append(getContext().getString(R.string.error_heading_unloadable_keystore_aliases));
+            Map<File, List<KeyStoreContentException>> aliasErrors = new HashMap<>();
+            for(KeyStoreContentException ex : keystoreContentExceptions) {
+                List<KeyStoreContentException> fileErrs = aliasErrors.get(ex.getFile());
+                if(fileErrs == null) {
+                    fileErrs = new ArrayList<>();
+                    aliasErrors.put(ex.getFile(), fileErrs);
+                }
+                fileErrs.add(ex);
+            }
+            for(Map.Entry<File, List<KeyStoreContentException>> fileExs : aliasErrors.entrySet()) {
+                sb.append(safeGetFilename(fileExs.getKey()));
+                sb.append(": ");
+                for (int i = 0; i < fileExs.getValue().size(); i++) {
+                    sb.append(fileExs.getValue().get(i));
+                    if(i < fileExs.getValue().size() - 1) {
+                        sb.append(", ");
                     }
                 }
             }
+        }
+        return sb.toString();
+    }
 
-            @Override
-            protected void onPostExecute(Map<Key, Certificate[]> keystoreContent) {
-                if (!isCancelled()) {
-                    KeyStoreContentsAdapter adapter = ((KeyStoreContentsAdapter) certificateList.getAdapter());
-                    adapter.addData(keystoreContent);
-                }
-                if(progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
-            }
-        };
-        File[] files = certificateFiles.toArray(new File[certificateFiles.size()]);
-        runningTask.execute((Object[])files);
+    protected String safeGetFilename(File file) {
+        try {
+            return file.getCanonicalPath();
+        } catch(IOException e) {
+            return file.getName();
+        } catch(SecurityException e) {
+            return file.getName();
+        }
     }
 
     private void addNewCertificate() {
@@ -313,6 +500,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         final SavedState myState = new SavedState(superState);
         myState.value = getValue();
         myState.trackedRequest = trackedRequest;
+        myState.keystoreLoadOperationProgress = keystoreLoadOperationResult;
         return myState;
     }
 
@@ -340,6 +528,12 @@ public abstract class KeyStorePreference extends DialogPreference {
         super.onRestoreInstanceState(myState.getSuperState());
         setValue(myState.value);
         trackedRequest = myState.trackedRequest;
+        keystoreLoadOperationResult = myState.keystoreLoadOperationProgress;
+
+
+        if(keystoreLoadOperationResult != null) {
+            showLoadErrors();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -368,6 +562,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         private String ksType;
         private KeyStore value;
         private int trackedRequest;
+        private LoadOperationResult keystoreLoadOperationProgress;
 
         public SavedState(Parcel source) {
             super(source);
@@ -377,6 +572,7 @@ public abstract class KeyStorePreference extends DialogPreference {
             source.readByteArray(ksBytes);
             value = X509Utils.deserialiseKeystore(ksBytes, ksPass, ksType);
             trackedRequest = source.readInt();
+            keystoreLoadOperationProgress = (LoadOperationResult)source.readSerializable();
         }
 
         public SavedState(Parcelable superState) {
@@ -391,6 +587,7 @@ public abstract class KeyStorePreference extends DialogPreference {
             dest.writeString(value.getType());
             dest.writeByteArray(ksBytes);
             dest.writeInt(trackedRequest);
+            dest.writeSerializable(keystoreLoadOperationProgress);
         }
     }
 
@@ -530,7 +727,6 @@ public abstract class KeyStorePreference extends DialogPreference {
         }
 
         private void populatePrivateKeyDetails(KeyStorePrivateKeyItemViewHolder viewHolder, final int position, KeyStore.PrivateKeyEntry item) {
-            //TODO move the fields to the view holder
 
             PrivateKey privateKey = item.getPrivateKey();
             viewHolder.keyTypeField.setText(getContext().getString(R.string.x509_key_type_field_pattern, privateKey.getAlgorithm()));

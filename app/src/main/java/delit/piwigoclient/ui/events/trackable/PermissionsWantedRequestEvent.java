@@ -8,7 +8,6 @@ import java.util.HashSet;
 
 public class PermissionsWantedRequestEvent extends TrackableRequestEvent {
     private String justification;
-    private String permissionNeeded;
     private HashSet<String> permissionsWanted = new HashSet<>();
     private HashSet<String> permissionsNeeded;
 

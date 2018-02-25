@@ -296,13 +296,25 @@ Release 1.3.70 - Changes:
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
                     - Possibly - allow linking the upload process to a compression routine for videos
-
-Release 1.3.69 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
                     - Improve memory use further (app crashes are generally that it runs out of memory)
                     - Investigate serialization of app pages (crashes reported in this area)
                     - Check for and remove any calls to Thread.sleep
+
+TO-RELEASE
+
+Release 1.3.69 - Notes:
+                    - Noted people are trying to load password protected keys or from password protected pkcs files
+                    - App crashes (that you choose to report) are the ONLY way I know there is a problem unless you email me.
+                      I will add an error handler to remind users of this. It sounds counter intuitive, but its sometimes best
+                      that I let the app crash because users almost always don't tell me when something doesn't work!
+                 Bugfix:
+                    - Fixed crash due to race condition after file upload complete
+                 Changes:
+                    - Added support for loading password protected pkcs files (untested)
+                    - Added support for loading multiple certificates from certificate files (untested)
+                    - Allowed loading of keys or certificates from JKS keystore files with a .jks filename suffix.
 
 Released:
 
@@ -1175,5 +1187,10 @@ SOFTWARE.
     <string name="title_adding_item">Adding Item</string>
     <string name="alert_error_item_not_unique">Sorry, that item already exists.</string>
     <string name="alert_warning_no_server_url_specified">No server uri specified. Please add the location of your server and retry.</string>
+    <string name="error_heading_unloadable_certificate_files">The following certificate files could not be loaded:</string>
+    <string name="error_heading_unloadable_keystore_files">The following keystore files could not be loaded:</string>
+    <string name="error_heading_unloadable_keystore_aliases">The following keystore aliases could not be loaded:</string>
+    <string name="heading_keystore_filename">Keystore</string>
+    <string name="heading_keystore_alias">Alias</string>
 
 </resources>
