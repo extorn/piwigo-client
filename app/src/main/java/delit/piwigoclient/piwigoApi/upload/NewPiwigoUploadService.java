@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.UploadFileChunk;
@@ -154,6 +155,12 @@ public class NewPiwigoUploadService extends IntentService {
 
         long jobId = intent.getLongExtra(INTENT_ARG_JOB_ID, -1);
         UploadJob thisUploadJob = getActiveJob(getApplicationContext(), jobId);
+        if(thisUploadJob == null) {
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Upload job could not be located immediately after creating it - wierd!");
+            }
+            return;
+        }
         thisUploadJob.setRunning(true);
         thisUploadJob.setSubmitted(false);
 
