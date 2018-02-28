@@ -285,13 +285,13 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.71 - Changes:
+Release 1.3.72 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.70 - Changes:
+Release 1.3.71 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
@@ -303,6 +303,11 @@ Release 1.3.70 - Changes:
                     - Check for and remove any calls to Thread.sleep
 
 Released:
+
+Release 1.3.70 - Changes:
+                    - Keystore loading tested - password protected keystores may now be loaded (BKS and PKCS12 format only). No JKS after all, sorry.
+               - Bugfix:
+                    - Crash expanding upload album dropdown on upload page before the albums have loaded
 
 Release 1.3.69 - Notes:
                     - Noted people are trying to load password protected keys or from password protected pkcs files

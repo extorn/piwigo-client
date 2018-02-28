@@ -69,7 +69,7 @@ public class LoadOperationResult implements Serializable {
         List<X509LoadOperation> loadOperations = new ArrayList<>();
         for(KeystoreLoadOperationResult result : keystoreLoadResults) {
             KeystoreLoadOperation loadOp = result.getLoadOperation();
-            if(loadOp.getAliasesToLoad() != null && loadOp.getAliasesToLoad().size() > 0) {
+            if(loadOp.getAliasesToLoad() == null || loadOp.getAliasesToLoad().size() > 0) {
                 loadOperations.add(loadOp);
             }
         }
@@ -108,7 +108,12 @@ public class LoadOperationResult implements Serializable {
     }
 
     private boolean isRecoverable(KeyStoreOperationException e) {
-        return e.getCause() instanceof IOException && e.getCause().getCause() instanceof UnrecoverableKeyException;
+        boolean recoverable = e.getCause() instanceof IOException && e.getCause().getCause() instanceof UnrecoverableKeyException;
+        if(!recoverable) {
+            // this is in breach of the API but seems to be the case...
+            recoverable = e.getCause().getCause() == null && e.getCause().getMessage().contains("wrong password");
+        }
+        return recoverable;
     }
 
     public List<SecurityOperationException> getUnrecoverableErrors() {
@@ -172,7 +177,8 @@ public class LoadOperationResult implements Serializable {
     public SecurityOperationException getNextRecoverableError() {
         for(KeystoreLoadOperationResult result : keystoreLoadResults) {
             if (result.getExceptionList().size() > 0) {
-                for (SecurityOperationException e : result.getExceptionList()) {
+                for(Iterator<SecurityOperationException> iter = result.getExceptionList().iterator(); iter.hasNext();) {
+                    SecurityOperationException e = iter.next();
                     if (e instanceof KeyStoreOperationException) {
                         // handle keystore operation exceptions
                         if (isRecoverable((KeyStoreOperationException)e)) {
@@ -216,10 +222,10 @@ public class LoadOperationResult implements Serializable {
         return recoverableErrors;
     }
 
-    private KeystoreLoadOperation findKeystoreLoadOperation(File f) {
+    private KeystoreLoadOperationResult findKeystoreLoadOperationResult(File f) {
         for (KeystoreLoadOperationResult result : keystoreLoadResults) {
             if(result.getLoadOperation().getFile().equals(f)) {
-                return result.getLoadOperation();
+                return result;
             }
         }
         throw new RuntimeException("Should never happen");
@@ -228,14 +234,16 @@ public class LoadOperationResult implements Serializable {
     public void addPasswordForRerun(SecurityOperationException recoverableError, char[] pass) {
         if (recoverableError instanceof KeyStoreOperationException) {
             File f = ((KeyStoreOperationException)recoverableError).getFile();
-            KeystoreLoadOperation result = findKeystoreLoadOperation(f);
-            result.setKeystorePass(pass);
+            KeystoreLoadOperationResult result = findKeystoreLoadOperationResult(f);
+            result.getLoadOperation().setKeystorePass(pass);
+            result.getExceptionList().remove(recoverableError);
         } else if (recoverableError instanceof KeyStoreContentException) {
             KeyStoreContentException err = (KeyStoreContentException)recoverableError;
             File f = err.getFile();
-            KeystoreLoadOperation result = findKeystoreLoadOperation(f);
-            result.getAliasPassMapp().put(err.getAlias(), pass);
-            result.addAliasToLoad(err.getAlias());
+            KeystoreLoadOperationResult result = findKeystoreLoadOperationResult(f);
+            result.getLoadOperation().getAliasPassMapp().put(err.getAlias(), pass);
+            result.getLoadOperation().addAliasToLoad(err.getAlias());
+            result.getExceptionList().remove(recoverableError);
         }
     }
 }

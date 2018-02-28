@@ -333,7 +333,7 @@ public class X509Utils {
         try {
             KeyStore keystore = KeyStore.getInstance(keystoreType);
             keystore.load(new FileInputStream(loadOperation.getFile()), loadOperation.getKeystorePass());
-            loadCertificatesAndPrivateKeysFromKeystore(keystore, loadOperation.getAliasPassMapp(), result);
+            loadCertificatesAndPrivateKeysFromKeystore(keystore, loadOperation.getAliasesToLoad(), loadOperation.getAliasPassMapp(), result);
             for(SecurityOperationException ex : result.getExceptionList()) {
                 ex.setFile(loadOperation.getFile());
             }
@@ -341,32 +341,40 @@ public class X509Utils {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            throw new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e);
+            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            throw new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e);
+            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (CertificateException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            throw new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e);
+            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (NoSuchAlgorithmException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            throw new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e);
+            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (KeyStoreException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            throw new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e);
+            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         }
         return result;
     }
 
-    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromKeystore(KeyStore keystore, Map<String, char[]> aliasPasswordMap, KeystoreLoadOperationResult result) {
+    /**
+     *
+     * @param keystore to load from
+     * @param aliasesToLoad null to load all
+     * @param aliasPasswordMap passwords for any keys protected
+     * @param result
+     * @return
+     */
+    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromKeystore(KeyStore keystore, List<String> aliasesToLoad, Map<String, char[]> aliasPasswordMap, KeystoreLoadOperationResult result) {
 
         String alias = null;
         try {
@@ -378,6 +386,10 @@ public class X509Utils {
             while (aliasesEnum.hasMoreElements()) {
                 try {
                     alias = (String) aliasesEnum.nextElement();
+                    if(aliasesToLoad != null && !aliasesToLoad.contains(alias)) {
+                        //skip this alias
+                        continue;
+                    }
                     Certificate[] certChain = keystore.getCertificateChain(alias);
                     keyPass = aliasPasswordMap.get(alias);
                     if(keyPass == null) {

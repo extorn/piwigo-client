@@ -84,8 +84,10 @@ public abstract class KeyStorePreference extends DialogPreference {
     private AlertDialog alertDialog;
     public LoadOperationResult keystoreLoadOperationResult;
     private ArrayList<String> allowedCertificateFileTypes = new ArrayList<>(Arrays.asList(new String[]{".cer", ".cert", ".pem"}));
-    private static final String JKS_FILE_SUFFIX = ".jks";
-    private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList(new String[]{".p12", ".pkcs12", ".pfx", JKS_FILE_SUFFIX}));
+    private static final String BKS_FILE_SUFFIX = ".bks";
+    private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList(new String[]{".p12", ".pkcs12", ".pfx", BKS_FILE_SUFFIX}));
+    private CustomImageButton addListItemButton;
+    private boolean keystoreLoadInProgress;
 
     public KeyStorePreference(String tag, Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -189,12 +191,14 @@ public abstract class KeyStorePreference extends DialogPreference {
         KeyStoreContentsAdapter adapter = new KeyStoreContentsAdapter(getContext(), X509Utils.cloneKeystore(mValue));
         certificateList.setAdapter(adapter);
 
-        CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
+        addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(View.VISIBLE);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addNewCertificate();
+                if(!keystoreLoadInProgress) {
+                    addNewCertificate();
+                }
             }
         });
 
@@ -272,7 +276,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         progressDialog = new ProgressDialog(context);
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setTitle(R.string.alert_loading_certificates_from_selected_files);
     }
 
@@ -284,6 +288,7 @@ public abstract class KeyStorePreference extends DialogPreference {
             params[i++] = new X509LoadOperation(f);
         }
         keystoreLoadOperationResult = null;
+        keystoreLoadInProgress = true;
         new AsyncX509LoaderTask().execute(params);
     }
 
@@ -314,8 +319,8 @@ public abstract class KeyStorePreference extends DialogPreference {
                     }
                 } else if (allowedKeyFileTypes.contains(fileSuffix)) {
                     KeystoreLoadOperationResult keystoreLoadOperationResult;
-                    if(JKS_FILE_SUFFIX.equals(fileSuffix)) {
-                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation.from(loadOp), "jks");
+                    if(BKS_FILE_SUFFIX.equals(fileSuffix)) {
+                        keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation.from(loadOp), "bks");
                     } else {
                         keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(KeystoreLoadOperation.from(loadOp));
                     }
@@ -330,8 +335,10 @@ public abstract class KeyStorePreference extends DialogPreference {
         @Override
         protected void onProgressUpdate(Integer... values) {
             for(Integer i : values) {
-                if(getDialog() != null && getDialog().isShowing() && getDialog().getOwnerActivity() != null) {
-                    buildProgressDialog(getDialog().getContext());
+                if(getDialog() != null && getDialog().isShowing()) {
+                    if(progressDialog == null || !progressDialog.isShowing()) {
+                        buildProgressDialog(getDialog().getContext());
+                    }
                     progressDialog.setProgress(i);
                     progressDialog.show();
                 }
@@ -350,6 +357,7 @@ public abstract class KeyStorePreference extends DialogPreference {
                 progressDialog.dismiss();
             }
             showLoadErrors();
+            keystoreLoadInProgress = false;
         }
     };
 
@@ -381,6 +389,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         if(certExceptions.size() > 0) {
             // add cert exceptions list
             sb.append(getContext().getString(R.string.error_heading_unloadable_certificate_files));
+            sb.append('\n');
             for(CertificateLoadException ex : certExceptions) {
                 sb.append(safeGetFilename(ex.getFile()));
                 sb.append('\n');
@@ -389,6 +398,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         if(keystoreExceptions.size() > 0) {
             // add keystore exceptions list
             sb.append(getContext().getString(R.string.error_heading_unloadable_keystore_files));
+            sb.append('\n');
             for(KeyStoreOperationException ex : keystoreExceptions) {
                 sb.append(safeGetFilename(ex.getFile()));
                 sb.append('\n');
@@ -397,6 +407,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         if(keystoreContentExceptions.size() > 0) {
             // add keystore content exceptions list
             sb.append(getContext().getString(R.string.error_heading_unloadable_keystore_aliases));
+            sb.append('\n');
             Map<File, List<KeyStoreContentException>> aliasErrors = new HashMap<>();
             for(KeyStoreContentException ex : keystoreContentExceptions) {
                 List<KeyStoreContentException> fileErrs = aliasErrors.get(ex.getFile());

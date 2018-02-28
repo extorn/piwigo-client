@@ -178,6 +178,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         selectedGallerySpinner = view.findViewById(R.id.selected_gallery);
         availableGalleries = new AvailableAlbumsListAdapter(currentGallery, getContext(), android.R.layout.simple_spinner_item);
         availableGalleries.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectedGallerySpinner.setEnabled(false);
         selectedGallerySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -498,7 +499,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         uploadFilesNowButton.setEnabled(filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow)));
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         newGalleryButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
-        selectedGallerySpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
+        selectedGallerySpinner.setEnabled(availableGalleries.getCount() > 0 && (noJobIsYetConfigured || jobIsFinished));
         privacyLevelSpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
     }
 
@@ -661,7 +662,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                 }
             }
         }
-
+        selectedGallerySpinner.setEnabled(true);
         subCategoryNamesActionId = -1;
         UploadJob uploadJob = getActiveJob(getContext());
         allowUserUploadConfiguration(uploadJob);
