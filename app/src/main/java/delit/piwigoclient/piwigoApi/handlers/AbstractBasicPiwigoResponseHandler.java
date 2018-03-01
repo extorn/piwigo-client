@@ -15,6 +15,7 @@ import java.net.SocketTimeoutException;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpStatus;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -73,6 +74,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     rerunningCall = false;
                 }
                 isRunning = false;
+                synchronized (this) {
+                    notifyAll();
+                }
                 break;
             default:
                 Log.i(tag, "rx " + message.what);
@@ -232,6 +236,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         } finally {
             if(requestHandle == null) {
                 isRunning = false;
+                synchronized (this) {
+                    notifyAll();
+                }
             }
         }
     }
@@ -287,15 +294,33 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         handler.setCallDetails(context, piwigoServerUrl, !getUseSynchronousMode());
         handler.setPublishResponses(false);
         handler.runCall();
-        while(handler.isRunning()) {
-            if(isCancelCallAsap()) {
-                handler.cancelCallAsap();
+
+        // this is the absolute timeout - in case something is seriously wrong.
+        long callTimeoutAtTime = System.currentTimeMillis() + 300000;
+
+        synchronized (handler) {
+            while (handler.isRunning() && !cancelCallAsap) {
+                long waitForMillis = callTimeoutAtTime - System.currentTimeMillis();
+                if (waitForMillis > 0) {
+                    try {
+                        handler.wait(waitForMillis);
+                    } catch (InterruptedException e) {
+                        // Either this has been cancelled or timed out
+                        if (cancelCallAsap) {
+                            if(BuildConfig.DEBUG) {
+                                Log.e(handler.getTag(), "Service call cancelled before login handler could finish running");
+                            }
+                            handler.cancelCallAsap();
+                        }
+                    }
+                }
             }
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-                handler.cancelCallAsap();
+        }
+        if(handler.isRunning()) {
+            if(BuildConfig.DEBUG) {
+                Log.e(handler.getTag(), "Timeout while waiting for service call login handler to finish running");
             }
+            handler.cancelCallAsap();
         }
     }
 

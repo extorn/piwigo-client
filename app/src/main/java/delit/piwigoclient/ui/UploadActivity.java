@@ -53,14 +53,17 @@ import paul.arian.fileselector.FileSelectionActivity;
 public class UploadActivity extends MyActivity {
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final String STATE_FILE_SELECT_EVENT_ID = "fileSelectionEventId";
+    private static final String STATE_STARTED_ALREADY = "startedAlready";
     private HashMap<String, String> errors = new HashMap<>();
     private int fileSelectionEventId;
+    private boolean startedWithPermissions;
 
     @Override
     public void onStart() {
         super.onStart();
         // Need to register here as the call is handled immediately if the permissions are already present.
         EventBus.getDefault().register(this);
+        startedWithPermissions = false;
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
     }
 
@@ -74,6 +77,7 @@ public class UploadActivity extends MyActivity {
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putInt(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
+        outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
     }
 
     @Override
@@ -82,6 +86,7 @@ public class UploadActivity extends MyActivity {
 
         if(savedInstanceState != null) {
             fileSelectionEventId = savedInstanceState.getInt(STATE_FILE_SELECT_EVENT_ID);
+            startedWithPermissions = savedInstanceState.getBoolean(STATE_STARTED_ALREADY);
         } else {
             fileSelectionEventId = TrackableRequestEvent.getNextEventId();
         }
@@ -281,7 +286,14 @@ public class UploadActivity extends MyActivity {
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectionActivity.SELECTED_FILES);
-                FileListSelectionCompleteEvent event = new FileListSelectionCompleteEvent(requestCode, filesForUpload);
+
+                int eventId = requestCode;
+                if(requestCode != fileSelectionEventId) {
+                    // this is an unexpected event - need to ensure the upload fragment will pick it up.
+                    eventId = Integer.MIN_VALUE;
+                }
+                FileListSelectionCompleteEvent event = new FileListSelectionCompleteEvent(eventId, filesForUpload);
+
                 EventBus.getDefault().postSticky(event);
             }
         } else {
@@ -311,8 +323,15 @@ public class UploadActivity extends MyActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PermissionsWantedResponse event) {
         if(getUiHelper().completePermissionsWantedRequest(event)) {
+            int fileSelectionEventIdToUse = fileSelectionEventId;
+            if(startedWithPermissions) {
+                // already started up. Therefore the fileSelectionEventId is valid and linked to the faragment
+            } else {
+                startedWithPermissions = true;
+                fileSelectionEventIdToUse = Integer.MIN_VALUE;
+            }
             if(event.areAllPermissionsGranted()) {
-                FileListSelectionCompleteEvent evt = new FileListSelectionCompleteEvent(fileSelectionEventId, handleSentFiles());
+                FileListSelectionCompleteEvent evt = new FileListSelectionCompleteEvent(fileSelectionEventIdToUse, handleSentFiles());
                 EventBus.getDefault().postSticky(evt);
             } else {
                 createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);

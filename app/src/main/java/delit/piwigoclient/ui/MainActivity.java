@@ -364,13 +364,15 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     }
 
     private boolean showUpload() {
-        if (!PiwigoSessionDetails.isFullyLoggedIn()) {
-            onLoginActionMethodName = "showUpload";
-            showLoginFragment();
-        } else {
-            UploadFragment fragment = UploadFragment.newInstance(currentAlbum);
-            showFragmentNow(fragment);
-        }
+//        if (!PiwigoSessionDetails.isFullyLoggedIn()) {
+//            onLoginActionMethodName = "showUpload";
+//            showLoginFragment();
+//        } else {
+//            UploadFragment fragment = UploadFragment.newInstance(currentAlbum);
+//            showFragmentNow(fragment);
+//        }
+        Intent intent = new Intent(getApplicationContext(), UploadActivity.class);
+        getApplicationContext().startActivity(intent);
         return true;
     }
 

@@ -147,7 +147,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onEvent(FileListSelectionCompleteEvent stickyEvent) {
-        if(getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
+        // Integer.MIN_VALUE is a special flag to allow external apps to call in and their events to always be handled.
+        if(getUiHelper().isTrackingRequest(stickyEvent.getActionId()) || stickyEvent.getActionId() == Integer.MIN_VALUE) {
             EventBus.getDefault().removeStickyEvent(stickyEvent);
             updateFilesForUploadList(stickyEvent.getSelectedFiles());
         }

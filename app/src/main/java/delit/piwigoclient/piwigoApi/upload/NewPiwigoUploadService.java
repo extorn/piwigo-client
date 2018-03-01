@@ -40,6 +40,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageFindExistingImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.upload.handlers.ImageCheckFilesResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.NewImageUploadFileChunkResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.UploadAlbumCreateResponseHandler;
@@ -115,24 +116,42 @@ public class NewPiwigoUploadService extends IntentService {
         handler.setCallDetails(getApplicationContext(), piwigoServerUrl, isAsyncMode);
         handler.setUsePoolThread(true); // This is requried since though this is a looper thread, we're just running our code in it... hmmm....
         handler.setPublishResponses(false);
-        try {
-            handler.runCall();
-            handler.getRequestHandle();
-            if(isAsyncMode) {
-                while (handler.isRunning()) {
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "Interrupted while waiting for image chunk to be uploaded", e);
+
+        handler.runCall();
+        // this can be used to cancel the request
+        RequestHandle handle = handler.getRequestHandle();
+
+        if(isAsyncMode) {
+            // this is the absolute timeout - in case something is seriously wrong.
+            long callTimeoutAtTime = System.currentTimeMillis() + 300000;
+
+            synchronized (handler) {
+                boolean timedOut = false;
+                while (handler.isRunning() && !timedOut) {
+                    long waitForMillis = callTimeoutAtTime - System.currentTimeMillis();
+                    if (waitForMillis > 0) {
+                        try {
+                            handler.wait(waitForMillis);
+                        } catch (InterruptedException e) {
+                            // Either this wait has timed out or the handler has completed okay and notified us (ignore the error)
+                        }
+                    } else {
+                        timedOut = true;
+                        if (BuildConfig.DEBUG) {
+                            Log.e(handler.getTag(), "Service call cancelled before handler could finish running");
+                        }
+                        handler.cancelCallAsap();
                     }
                 }
             }
-        } catch (Throwable th) {
-            // this catch is just to allow debugging
-            th.printStackTrace();
-            // now rethrow the exception
-            throw th;
+            if (handler.isRunning()) {
+                if (BuildConfig.DEBUG) {
+                    Log.e(handler.getTag(), "Timeout while waiting for service call handler to finish running");
+                }
+                handler.cancelCallAsap();
+            }
         }
+
         return handler.getMessageId();
     }
 

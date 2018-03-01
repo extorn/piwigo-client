@@ -300,12 +300,13 @@ Release 1.3.71 - Changes:
                     - Tidy the error messages during the upload process
                     - Improve memory use further (app crashes are generally that it runs out of memory)
                     - Investigate serialization of app pages (crashes reported in this area)
-                    - Check for and remove any calls to Thread.sleep
 
 Released:
 
 Release 1.3.70 - Changes:
                     - Keystore loading tested - password protected keystores may now be loaded (BKS and PKCS12 format only). No JKS after all, sorry.
+                    - Check for and remove any calls to Thread.sleep
+                    - memory use improvement for people using the share with feature
                - Bugfix:
                     - Crash expanding upload album dropdown on upload page before the albums have loaded
 
