@@ -303,7 +303,7 @@ Release 1.3.72 - Changes:
 
 Released:
 
-TODO - Release 1.3.71 - Bugfix:
+Release 1.3.71 - Bugfix:
                     - Removed 3 bugs causing crashes that are probably linked to the app being placed in the background.
                     - Ensure that if an upload job fails for some reason, that it is possible to clear that job without reinstalling the app. Note: Not tested
                     - Files shared with the app for upload fail to appear in the upload list
