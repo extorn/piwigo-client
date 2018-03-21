@@ -55,6 +55,7 @@ import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
+import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
@@ -497,7 +498,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         boolean jobIsRunningNow = uploadJob != null && uploadJob.isRunningNow();
         boolean jobIsSubmitted = uploadJob != null && uploadJob.isSubmitted();
 
-        uploadFilesNowButton.setEnabled(filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow)));
+        boolean jobYetToFinishUploadingFiles = filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow));
+        boolean jobYetToCompleteAfterUploadingFiles = !noJobIsYetConfigured && !filesStillToBeUploaded && !jobIsFinished && !jobIsRunningNow; // crashed job just loaded basically
+        uploadFilesNowButton.setEnabled(jobYetToFinishUploadingFiles || jobYetToCompleteAfterUploadingFiles); // Allow restart of the job.
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         newGalleryButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         selectedGallerySpinner.setEnabled(availableGalleries.getCount() > 0 && (noJobIsYetConfigured || jobIsFinished));
@@ -738,13 +741,32 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
     }
 
-    public void onUploadComplete(Context context, final UploadJob job) {
+    public void onUploadComplete(final Context context, final UploadJob job) {
         if(isAdded()) {
-            if(job.hasJobCompletedAllActionsSuccessfully()) {
+            if(job.hasJobCompletedAllActionsSuccessfully() && job.isFinished()) {
                 uploadJobId = null;
                 if (UploadFragment.this.isAdded()) {
                     NewPiwigoUploadService.removeJob(job);
                 }
+            } else {
+                int errMsgResourceId = R.string.alert_message_error_uploading_start;
+                if(job.getFilesNotYetUploaded().size() == 0) {
+                    errMsgResourceId = R.string.alert_message_error_uploading_end;
+                }
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_error_upload, getContext().getString(errMsgResourceId), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
+                    @Override
+                    public void onDismiss(AlertDialog dialog) {
+                    }
+
+                    @Override
+                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                        if(positiveAnswer) {
+                            NewPiwigoUploadService.removeJob(job);
+                            NewPiwigoUploadService.deleteStateFromDisk(context, job);
+                            allowUserUploadConfiguration(null);
+                        }
+                    }
+                });
             }
             allowUserUploadConfiguration(job);
         }

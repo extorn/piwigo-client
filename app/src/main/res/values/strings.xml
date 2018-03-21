@@ -285,13 +285,13 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.72 - Changes:
+Release 1.3.73 - Changes:
                     - User interface refinements
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.71 - Changes:
+Release 1.3.72 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
@@ -302,6 +302,11 @@ Release 1.3.71 - Changes:
                     - Investigate serialization of app pages (crashes reported in this area)
 
 Released:
+
+TODO - Release 1.3.71 - Bugfix:
+                    - Removed 3 bugs causing crashes that are probably linked to the app being placed in the background.
+                    - Ensure that if an upload job fails for some reason, that it is possible to clear that job without reinstalling the app. Note: Not tested
+                    - Files shared with the app for upload fail to appear in the upload list
 
 Release 1.3.70 - Changes:
                     - Keystore loading tested - password protected keystores may now be loaded (BKS and PKCS12 format only). No JKS after all, sorry.
@@ -1199,5 +1204,8 @@ SOFTWARE.
     <string name="error_heading_unloadable_keystore_aliases">The following keystore aliases could not be loaded:</string>
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
+    <string name="alert_title_error_upload">Error Uploading</string>
+    <string name="alert_message_error_uploading_end">An error occured after successfull uploading all files. Temporary folder may not have been deleted from the server. Ignore this error and fix it manually at some point?</string>
+    <string name="alert_message_error_uploading_start">An error occured before uploading all files. Temporary folder may not have been successfully created for example. Cancel the upload?</string>
 
 </resources>

@@ -1826,6 +1826,12 @@ public class ViewAlbumFragment extends MyFragment {
 
         @Override
         public int getSpanSize(int position) {
+            // ensure that app cannot crash due to position being out of bounds.
+            //FIXME - why would position be outside model size? What happens next now it doesn't crash here?
+            if(position < 0 || galleryModel.getItems().size() <= position) {
+                return 1;
+            }
+
             int itemType = galleryModel.getItems().get(position).getType();
             switch(itemType) {
                 case GalleryItem.CATEGORY_ADVERT_TYPE:

@@ -231,12 +231,17 @@ public class NewPiwigoUploadService extends IntentService {
             }
 
             if(thisUploadJob.hasJobCompletedAllActionsSuccessfully()) {
-                deleteStateFromDisk(thisUploadJob);
+                deleteStateFromDisk(getApplicationContext(), thisUploadJob);
             }
+
+            thisUploadJob.setFinished();
 
         } finally {
             thisUploadJob.setRunning(false);
-            thisUploadJob.setFinished();
+            if(!thisUploadJob.hasJobCompletedAllActionsSuccessfully()) {
+                saveStateToDisk(thisUploadJob);
+            }
+
             postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse(getNextMessageId(), thisUploadJob));
             PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(jobId);
             if(keepDeviceAwake) {
@@ -324,8 +329,8 @@ public class NewPiwigoUploadService extends IntentService {
         return loadedJobState;
     }
 
-    public void deleteStateFromDisk(UploadJob thisUploadJob) {
-        File f = new File(getApplicationContext().getExternalCacheDir(), "uploadJob.state");
+    public static void deleteStateFromDisk(Context c, UploadJob thisUploadJob) {
+        File f = new File(c.getExternalCacheDir(), "uploadJob.state");
         if(f.exists()) {
             if(!f.delete()) {
                 Log.d(TAG, "Error deleting job state from disk");
@@ -719,7 +724,9 @@ public class NewPiwigoUploadService extends IntentService {
                 try {
                     bis.close();
                 } catch (IOException e) {
-                    Log.e(TAG, "Exception on closing File input stream", e);
+                    if(BuildConfig.DEBUG) {
+                        Log.e(TAG, "Exception on closing File input stream", e);
+                    }
                 }
             }
         }

@@ -208,9 +208,13 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
 
             if(getNestedFailureMethod() != null) {
-                Log.e(getTag(), getNestedFailureMethod() + " onFailure: \n" + errorBody, error);
+                if(BuildConfig.DEBUG) {
+                    Log.e(getTag(), getNestedFailureMethod() + " onFailure: \n" + errorBody, error);
+                }
             } else {
-                Log.e(getTag(), piwigoMethod + " onFailure: \n" + getRequestParameters() + '\n' + errorBody, error);
+                if(BuildConfig.DEBUG) {
+                    Log.e(getTag(), piwigoMethod + " onFailure: \n" + getRequestParameters() + '\n' + errorBody, error);
+                }
             }
         }
         String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);

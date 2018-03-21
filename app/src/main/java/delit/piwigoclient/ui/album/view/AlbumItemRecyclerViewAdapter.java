@@ -153,7 +153,9 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
                                 if (imgSize == Integer.MAX_VALUE) {
                                     imgSize = viewHolder.mImageView.getMeasuredWidth();
                                 } else {
-                                    imgSize = Math.min(scalingQuality, viewHolder.mImageView.getMeasuredWidth());
+                                    // need that math.max to ensure that the image size remains positive
+                                    //FIXME How can this ever be called before the ImageView object has a size?
+                                    imgSize = Math.max(SCALING_QUALITY_VLOW,Math.min(scalingQuality, viewHolder.mImageView.getMeasuredWidth()));
                                 }
                                 ((ResizingPicassoLoader) viewHolder.imageLoader).setResizeTo(imgSize, imgSize);
                                 viewHolder.imageLoader.load();

@@ -99,7 +99,9 @@ class LicenseValidator {
                 sig.update(signedData.getBytes());
 
                 if (!sig.verify(Base64.decode(signature))) {
-                    Log.e(TAG, "Signature verification failed.");
+                    if(BuildConfig.DEBUG) {
+                        Log.e(TAG, "Signature verification failed.");
+                    }
                     handleInvalidResponse();
                     return;
                 }
@@ -112,7 +114,9 @@ class LicenseValidator {
             } catch (SignatureException e) {
                 throw new RuntimeException(e);
             } catch (Base64DecoderException e) {
-                Log.e(TAG, "Could not Base64-decode signature.");
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Could not Base64-decode signature.");
+                }
                 handleInvalidResponse();
                 return;
             }
@@ -121,31 +125,41 @@ class LicenseValidator {
             try {
                 data = ResponseData.parse(signedData);
             } catch (IllegalArgumentException e) {
-                Log.e(TAG, "Could not parse response.");
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Could not parse response.");
+                }
                 handleInvalidResponse();
                 return;
             }
 
             if (data.responseCode != responseCode) {
-                Log.e(TAG, "Response codes don't match.");
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Response codes don't match.");
+                }
                 handleInvalidResponse();
                 return;
             }
 
             if (data.nonce != mNonce) {
-                Log.e(TAG, "Nonce doesn't match.");
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Nonce doesn't match.");
+                }
                 handleInvalidResponse();
                 return;
             }
 
             if (!data.packageName.equals(mPackageName)) {
-                Log.e(TAG, "Package name doesn't match.");
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Package name doesn't match.");
+                }
                 handleInvalidResponse();
                 return;
             }
 
             if (!data.versionCode.equals(mVersionCode)) {
-                Log.e(TAG, "Version codes don't match.");
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Version codes don't match.");
+                }
                 handleInvalidResponse();
                 return;
             }
@@ -153,7 +167,9 @@ class LicenseValidator {
             // Application-specific user identifier.
             userId = data.userId;
             if (TextUtils.isEmpty(userId)) {
-                Log.e(TAG, "User identifier is empty.");
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "User identifier is empty.");
+                }
                 handleInvalidResponse();
                 return;
             }
@@ -169,15 +185,21 @@ class LicenseValidator {
                 handleResponse(Policy.NOT_LICENSED, data);
                 break;
             case ERROR_CONTACTING_SERVER:
-                Log.w(TAG, "Error contacting licensing server.");
+                if(BuildConfig.DEBUG) {
+                    Log.w(TAG, "Error contacting licensing server.");
+                }
                 handleResponse(Policy.RETRY, data);
                 break;
             case ERROR_SERVER_FAILURE:
-                Log.w(TAG, "An error has occurred on the licensing server.");
+                if(BuildConfig.DEBUG) {
+                    Log.w(TAG, "An error has occurred on the licensing server.");
+                }
                 handleResponse(Policy.RETRY, data);
                 break;
             case ERROR_OVER_QUOTA:
-                Log.w(TAG, "Licensing server is refusing to talk to this device, over quota.");
+                if(BuildConfig.DEBUG) {
+                    Log.w(TAG, "Licensing server is refusing to talk to this device, over quota.");
+                }
                 handleResponse(Policy.RETRY, data);
                 break;
             case ERROR_INVALID_PACKAGE_NAME:
@@ -190,7 +212,9 @@ class LicenseValidator {
                 handleApplicationError(LicenseCheckerCallback.ERROR_NOT_MARKET_MANAGED);
                 break;
             default:
-                Log.e(TAG, "Unknown response code for license check.");
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Unknown response code for license check.");
+                }
                 handleInvalidResponse();
         }
     }

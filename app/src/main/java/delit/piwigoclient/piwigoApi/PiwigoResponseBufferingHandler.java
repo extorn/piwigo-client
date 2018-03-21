@@ -21,6 +21,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -125,7 +126,7 @@ public class PiwigoResponseBufferingHandler {
         // check which handlers are not listening for anything else
         for(Long responseId : responsesMappingsToRemove) {
             Long thisHandlerId = handlerResponseMap.remove(responseId);
-            if(!handlerResponseMap.containsValue(thisHandlerId)) {
+            if(thisHandlerId != null && !handlerResponseMap.containsValue(thisHandlerId)) {
                 handlersToRemove.add(thisHandlerId);
             }
         }
@@ -222,7 +223,9 @@ public class PiwigoResponseBufferingHandler {
                     } catch(IllegalArgumentException e) {
                         //TODO this keeps happening in the wild - sink it and the response for now to prevent crash.
                         // the handler is attached, but to an unrecognised component type
-                        Log.e("PiwigoResponseHandler", "Handler attached to unrecognised parent component type", e);
+                        if(BuildConfig.DEBUG) {
+                            Log.e("PiwigoResponseHandler", "Handler attached to unrecognised parent component type", e);
+                        }
                     }
                 }
             });
@@ -243,7 +246,9 @@ public class PiwigoResponseBufferingHandler {
                 // still no handler for this...
                 if(!handlerResponseMap.containsKey(item.getKey())) {
                     iter.remove();
-                    Log.d("handlers", "Message expired before delivery could be made");
+                    if(BuildConfig.DEBUG) {
+                        Log.d("handlers", "Message expired before delivery could be made");
+                    }
                 }
             }
         }

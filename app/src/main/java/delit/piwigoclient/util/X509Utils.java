@@ -258,7 +258,9 @@ public class X509Utils {
             hexString.append(appendString);
         }
         String thumbprint = hexString.toString();
-        Log.d(TAG, "Cer: "+ thumbprint);
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, "Cer: " + thumbprint);
+        }
         return thumbprint;
     }
 
@@ -271,7 +273,9 @@ public class X509Utils {
                 certs.add((X509Certificate) keystore.getCertificate(alias));
             }
         } catch (KeyStoreException e) {
-            Log.e(TAG, "Error extracting certificates from store", e);
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error extracting certificates from store", e);
+            }
         }
         return certs;
     }
@@ -284,7 +288,9 @@ public class X509Utils {
                 aliases.add(aliasesEnum.nextElement());
             }
         } catch (KeyStoreException e) {
-            Log.e(TAG, "Error listing aliases", e);
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error listing aliases", e);
+            }
         }
         return aliases;
     }

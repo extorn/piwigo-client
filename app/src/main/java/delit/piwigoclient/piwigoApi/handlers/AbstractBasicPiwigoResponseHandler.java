@@ -79,7 +79,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 }
                 break;
             default:
-                Log.i(tag, "rx " + message.what);
+                if(BuildConfig.DEBUG) {
+                    Log.i(tag, "rx " + message.what);
+                }
         }
     }
 

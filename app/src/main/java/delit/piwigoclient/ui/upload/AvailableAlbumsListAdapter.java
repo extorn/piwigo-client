@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.common.CustomSelectListAdapter;
@@ -47,7 +48,9 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Category
                 text.setText(prefix + item.getName());
             }
         } catch (ClassCastException e) {
-            Log.e("ArrayAdapter", "You must supply a resource ID for a TextView");
+            if(BuildConfig.DEBUG) {
+                Log.e("ArrayAdapter", "You must supply a resource ID for a TextView");
+            }
             throw new IllegalStateException(
                     "ArrayAdapter requires the resource ID to be a TextView", e);
         }

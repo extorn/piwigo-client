@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.http.CachingSyncHttpClient;
 
@@ -529,7 +530,9 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
                 }
 
             } catch (NumberFormatException e) {
-                Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
+                }
             }
         }
         header = httpResponse.getFirstHeader("Content-Range");
@@ -554,8 +557,10 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
                         // assume the one with the larger value is correct. We have seen cases where carrier
                         // change one of them to reduce the size of a request, but it is unlikely anybody would
                         // increase it.
-                        Log.w(TAG, "Inconsistent headers [" + contentLengthHeader + "] [" + contentRangeHeader
-                                + "]");
+                        if(BuildConfig.DEBUG) {
+                            Log.w(TAG, "Inconsistent headers [" + contentLengthHeader + "] [" + contentRangeHeader
+                                    + "]");
+                        }
                         contentLength = Math.max(contentLength, contentLengthFromRange);
                     }
 
@@ -563,7 +568,9 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
                         cacheFileContent.setTotalBytes(totalFileContentBytes);
                     }
                 } catch (NumberFormatException e) {
-                    Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
+                    if(BuildConfig.DEBUG) {
+                        Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
+                    }
                 }
             }
         }

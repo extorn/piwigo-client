@@ -68,6 +68,12 @@ public class UploadActivity extends MyActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        this.setIntent(intent);
+    }
+
+    @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
