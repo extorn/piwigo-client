@@ -110,6 +110,7 @@ public class SlideshowFragment extends MyFragment {
         boolean shouldShowVideos = prefs.getBoolean(getString(R.string.preference_gallery_include_videos_in_slideshow_key), getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
         shouldShowVideos &= prefs.getBoolean(getString(R.string.preference_gallery_enable_video_playback_key), getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
         GalleryItemAdapter galleryItemAdapter = new GalleryItemAdapter(viewPager, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
+        galleryItemAdapter.setMaxFragmentsToSaveInState(5);
 
         viewPager.setAdapter(galleryItemAdapter);
 

@@ -25,8 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:visibility="visible"
-            app:srcCompat="@drawable/ic_file_download_black_24px"/>
+            android:visibility="visible"/>
 
         <delit.piwigoclient.ui.common.CustomImageButton
             android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
@@ -35,8 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:visibility="visible"
-            app:srcCompat="@drawable/ic_wallpaper_black_24dp"/>
+            android:visibility="visible"/>
 
         <RatingBar
             android:id="@+id/slideshow_image_average_ratingBar"
@@ -116,8 +114,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_below="@+id/slideshow_image_ratingBar"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+                    android:layout_height="wrap_content" />
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/slideshow_resource_action_save_button"
@@ -125,14 +122,12 @@
                     android:layout_below="@+id/slideshow_image_ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_save_black_24dp"
                     android:layout_alignBottom="@+id/slideshow_resource_action_edit_button" />
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/slideshow_resource_action_discard_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_undo_black_24dp"
                     android:layout_toRightOf="@+id/slideshow_resource_action_save_button"
                     android:layout_alignBottom="@+id/slideshow_resource_action_save_button"/>
 
@@ -141,8 +136,7 @@
                     android:layout_toLeftOf="@+id/slideshow_resource_action_download"
                     android:layout_alignBottom="@+id/slideshow_resource_action_download"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_content_cut_black_24px" />
+                    android:layout_height="wrap_content"/>
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/slideshow_resource_action_copy"
@@ -150,16 +144,14 @@
                     android:layout_alignBottom="@+id/slideshow_resource_action_move"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/slideshow_resource_action_copy"
-                    app:srcCompat="@drawable/ic_content_copy_black_24px" />
+                    android:text="@string/slideshow_resource_action_copy"/>
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/slideshow_resource_action_delete"
                     android:layout_toLeftOf="@+id/slideshow_resource_action_copy"
                     android:layout_alignBottom="@+id/slideshow_resource_action_copy"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_delete_black_24px" />
+                    android:layout_height="wrap_content"/>
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/slideshow_resource_action_download"
@@ -167,8 +159,7 @@
                     android:layout_below="@+id/slideshow_image_ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    app:srcCompat="@drawable/ic_file_download_black_24px"/>
+                    android:layout_gravity="right"/>
 
 
                 <LinearLayout

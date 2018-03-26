@@ -46,6 +46,7 @@ import delit.piwigoclient.business.video.HttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.PausableLoadControl;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -154,6 +155,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         hideProgressIndicator();
 
         directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
         directDownloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

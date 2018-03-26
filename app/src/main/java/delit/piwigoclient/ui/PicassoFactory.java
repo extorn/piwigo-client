@@ -9,8 +9,10 @@ import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.squareup.picasso.MyPicasso;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
@@ -18,6 +20,7 @@ import com.squareup.picasso.RequestHandler;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.CustomImageDownloader;
 import delit.piwigoclient.business.PicassoLoader;
 
@@ -26,6 +29,7 @@ import delit.piwigoclient.business.PicassoLoader;
  */
 
 public class PicassoFactory {
+    private static final String TAG = "PicassoFactory";
     private static PicassoFactory instance;
     private final Context context;
     private transient Picasso picasso;
@@ -49,7 +53,7 @@ public class PicassoFactory {
             if (picasso == null) {
                 errorHandler = new PicassoErrorHandler();
                 // request handler would work but it cant because it doesnt get in before the broken one!
-                picasso = new Picasso.Builder(context).addRequestHandler(new VideoRequestHandler())/*.addRequestHandler(new ResourceRequestHandler(context))*/.listener(errorHandler).downloader(new CustomImageDownloader(context)).build();
+                picasso = new MyPicasso.Builder(context).addRequestHandler(new ResourceRequestHandler(context)).addRequestHandler(new VideoRequestHandler()).listener(errorHandler).downloader(new CustomImageDownloader(context)).build();
             }
             return picasso;
         }
@@ -151,9 +155,13 @@ public class PicassoFactory {
 
         @Override
         public void onImageLoadFailed(Picasso picasso, Uri uri, Exception e) {
-            Picasso.Listener listener = listeners.get(uri);
-            if(listener != null) {
-                listener.onImageLoadFailed(picasso, uri, e);
+            if(uri != null) {
+                Picasso.Listener listener = listeners.get(uri);
+                if (listener != null) {
+                    listener.onImageLoadFailed(picasso, uri, e);
+                }
+            } else if(BuildConfig.DEBUG) {
+                Log.e(TAG, String.format("Error loading uri %1$s", uri), e);
             }
         }
     }

@@ -81,7 +81,7 @@ public class PicassoLoader implements Callback {
             return;
         }
         imageLoading = true;
-        //TODO this hack isn't needed if the resource isnt a vector drawable... later version of picasso?
+        //TODO this hack isn't needed if the resource isnt a vector drawable... later version of com.squareup.picasso?
         if(resourceToLoad != Integer.MIN_VALUE) {
             getLoadInto().setImageResource(getResourceToLoad());
             onSuccess();

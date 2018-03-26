@@ -11,8 +11,7 @@
         android:id="@+id/file_for_upload_img"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_alignParentLeft="true"
-        android:src="@drawable/blank" />
+        android:layout_alignParentLeft="true" />
 
     <TextView
         android:id="@+id/file_for_upload_txt"
@@ -29,8 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:gravity="center_vertical"
-        app:srcCompat="@drawable/ic_delete_black_24px" />
+        android:gravity="center_vertical" />
 
     <ProgressBar
         android:id="@+id/file_for_upload_progress"

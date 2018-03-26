@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.webkit.MimeTypeMap;
 
+import com.squareup.picasso.MyPicasso;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
@@ -50,7 +51,7 @@ public class PicassoFactory {
             if (picasso == null) {
                 errorHandler = new PicassoErrorHandler();
                 // request handler would work but it cant because it doesnt get in before the broken one!
-                picasso = new Picasso.Builder(context).addRequestHandler(new VideoRequestHandler())/*.addRequestHandler(new ResourceRequestHandler(context))*/.listener(errorHandler).build();
+                picasso = new MyPicasso.Builder(context).addRequestHandler(new ResourceRequestHandler(context)).addRequestHandler(new VideoRequestHandler()).listener(errorHandler).build();
             }
             return picasso;
         }

@@ -14,6 +14,8 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import java.util.List;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.ui.PicassoFactory;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
@@ -247,6 +250,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             progressBar = itemView.findViewById(R.id.file_for_upload_progress);
             fileNameField = itemView.findViewById(R.id.file_for_upload_txt);
             deleteButton = itemView.findViewById(R.id.file_for_upload_delete_button);
+            PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(deleteButton);
             fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
 
             imageLoader = new ResizingPicassoLoader(fileForUploadImageView, 0, 0);

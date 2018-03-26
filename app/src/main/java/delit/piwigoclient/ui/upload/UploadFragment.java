@@ -533,6 +533,15 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     public void onDetach() {
         super.onDetach();
         EventBus.getDefault().unregister(this);
+        if(filesForUploadView != null) {
+            filesForUploadView.setAdapter(null);
+        }
+        if(selectedGallerySpinner != null) {
+            selectedGallerySpinner.setAdapter(null);
+        }
+        if(privacyLevelSpinner != null) {
+            privacyLevelSpinner.setAdapter(null);
+        }
     }
 
     public void notifyUser(Context context, int titleId, String message) {

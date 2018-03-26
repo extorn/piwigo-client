@@ -285,23 +285,32 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.73 - Changes:
+Release 1.3.75 - Changes:
                     - User interface refinements
+                    - Poll a device folder and automatically upload any content found to a specified Piwigo profile
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.72 - Changes:
+Release 1.3.74 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
                     - Possibly - allow linking the upload process to a compression routine for videos
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
-                    - Improve memory use further (app crashes are generally that it runs out of memory)
-                    - Investigate serialization of app pages (crashes reported in this area)
+                    - Further investigation into memory use
 
 Released:
+
+Release 1.3.73 - Bugfix:
+                    - Limit state recording of slideshow pages to 5 pages to prevent crashes
+
+Release 1.3.72 - Changes:
+                    - Altered colours (likely to continue changing for a while)
+                    - Rounded corners of albums (Android version >= Lollipop)
+               - Bugfix:
+                    - More reuse of images loaded and better management of those loaded to reduce memory load
 
 Release 1.3.71 - Bugfix:
                     - Removed 3 bugs causing crashes that are probably linked to the app being placed in the background.
