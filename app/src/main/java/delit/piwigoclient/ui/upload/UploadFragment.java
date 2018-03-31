@@ -583,8 +583,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
     @Override
     public void onRemove(final FilesToUploadRecyclerViewAdapter adapter, final File itemToRemove, boolean longClick) {
-        if (uploadJobId != null) {
-            final UploadJob activeJob = getActiveJob(getContext());
+        final UploadJob activeJob = getActiveJob(getContext());
+        if (activeJob != null) {
             if(activeJob.isFinished()) {
                 if(activeJob.uploadItemRequiresAction(itemToRemove)) {
                     String message = getString(R.string.alert_message_remove_file_server_state_incorrect);

@@ -16,6 +16,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.piwigoclient.util.SetUtils;
 
 public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -44,9 +45,10 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        PiwigoSessionDetails oldCredentials = PiwigoSessionDetails.getInstance();
         PiwigoSessionDetails.setInstance(parseSessionDetails(rsp));
 
-        PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod());
+        PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials);
         onPiwigoSessionRetrieved();
         storeResponse(r);
     }

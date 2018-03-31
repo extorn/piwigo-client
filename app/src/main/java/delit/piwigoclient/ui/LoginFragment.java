@@ -13,6 +13,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -77,7 +78,7 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) {
                 PiwigoResponseBufferingHandler.PiwigoOnLoginResponse rsp = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) response;
                 if(rsp.isSessionRetrieved() && rsp.isUserDetailsRetrieved()) {
-                    onLogin();
+                    onLogin(rsp.getOldCredentials());
                 } else {
                     onLoginFailed();
                 }
@@ -89,8 +90,8 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
         }
     }
 
-    public void onLogin() {
-        EventBus.getDefault().post(new PiwigoLoginSuccessEvent(true));
+    public void onLogin(PiwigoSessionDetails oldCredentials) {
+        EventBus.getDefault().post(new PiwigoLoginSuccessEvent(oldCredentials, true));
     }
 
     public void onLoginFailed() {

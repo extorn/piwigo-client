@@ -28,6 +28,7 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.model.piwigo.Username;
@@ -559,8 +560,15 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoSessionStatusRetrievedResponse extends BasePiwigoResponse {
 
-        public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod) {
+        private PiwigoSessionDetails oldCredentials;
+
+        public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod, PiwigoSessionDetails oldCredentials) {
             super(messageId, piwigoMethod, true);
+            this.oldCredentials = oldCredentials;
+        }
+
+        public PiwigoSessionDetails getOldCredentials() {
+            return oldCredentials;
         }
     }
 
@@ -720,6 +728,7 @@ public class PiwigoResponseBufferingHandler {
     public static class PiwigoOnLoginResponse extends BasePiwigoResponse {
         private boolean sessionRetrieved;
         private boolean userDetailsRetrieved;
+        private PiwigoSessionDetails oldCredentials;
 
         public PiwigoOnLoginResponse(long messageId, String piwigoMethod) {
             super(messageId, piwigoMethod, true);
@@ -739,6 +748,14 @@ public class PiwigoResponseBufferingHandler {
 
         public boolean isUserDetailsRetrieved() {
             return userDetailsRetrieved;
+        }
+
+        public void setOldCredentials(PiwigoSessionDetails oldCredentials) {
+            this.oldCredentials = oldCredentials;
+        }
+
+        public PiwigoSessionDetails getOldCredentials() {
+            return oldCredentials;
         }
     }
 

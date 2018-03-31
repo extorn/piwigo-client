@@ -162,4 +162,9 @@ public class PiwigoSessionDetails {
     public String getServerUrl() {
         return serverUrl;
     }
+
+    public static boolean matchesSessionToken(String piwigoSessionToken) {
+        String activeToken = getActiveSessionToken();
+        return (activeToken == null && piwigoSessionToken == null) || activeToken.equals(piwigoSessionToken);
+    }
 }

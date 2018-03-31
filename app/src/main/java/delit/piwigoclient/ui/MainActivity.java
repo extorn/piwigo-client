@@ -731,6 +731,8 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.
             showGallery(CategoryItem.ROOT_ALBUM);
+        } else {
+            //TODO notify all pages that need it that they need to be reloaded - i.e. flush them out of the fragment manager or send an event forcing reload.
         }
         AdsManager.getInstance().updateShowAdvertsSetting();
         VersionCompatability.INSTANCE.runTests();

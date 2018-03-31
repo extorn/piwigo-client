@@ -285,14 +285,14 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.75 - Changes:
+Release 1.3.76 - Changes:
                     - User interface refinements
                     - Poll a device folder and automatically upload any content found to a specified Piwigo profile
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.74 - Changes:
+Release 1.3.75 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
@@ -300,8 +300,20 @@ Release 1.3.74 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
                     - Further investigation into memory use
+                 Bugfix:
+                    - Avoid showing stale data after user or server change while viewing users
+                    - Avoid showing stale data after user or server change while viewing groups
+                    - Avoid showing stale data after user or server change while viewing upload screen
 
 Released:
+
+Release 1.3.74 - Bugfix:
+                    - Delete button action on upload page caused crash if job not running
+                    - checkboxes not being removed again following bulk album action
+                    - Limit state recording of slideshow pages to 0 pages (crashes still occurring)
+                    - UI access visibility on menu following connection profile change
+                    - Avoid showing stale data after user or server change while mid gallery browsing
+                    - Corrections to error handling of non 200 http responses
 
 Release 1.3.73 - Bugfix:
                     - Limit state recording of slideshow pages to 5 pages to prevent crashes

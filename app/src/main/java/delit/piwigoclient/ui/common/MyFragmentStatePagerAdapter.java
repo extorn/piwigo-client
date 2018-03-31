@@ -200,27 +200,30 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
             Fragment.SavedState[] fss = new Fragment.SavedState[mSavedState.size()];
             fss = mSavedState.toArray(fss);
 
-            for(int i = 0; i < fss.length; i++) {
-                if(i < minIdxToKeep || i > maxIdxToKeep) {
+            // remove the state that has been recorded for fragments we don't want to keep
+            for (int i = 0; i < fss.length; i++) {
+                if (i < minIdxToKeep || i > maxIdxToKeep) {
                     fss[i] = null;
                 }
             }
             state.putParcelableArray("states", fss);
         }
-        int i = 0;
-        for(Fragment f : mFragments) {
-            String key = "f" + i;
-            i++;
-            if(i < minIdxToKeep || i > maxIdxToKeep) {
-                // don't store fragment (remove if present)
-                if (state != null) {
-                    state.remove(key);
+        if(maxFragmentsToSaveInState > 0) {
+            int i = 0;
+            for (Fragment f : mFragments) {
+                String key = "f" + i;
+                i++;
+                if (i < minIdxToKeep || i > maxIdxToKeep) {
+                    // don't store fragment (remove if present)
+                    if (state != null) {
+                        state.remove(key);
+                    }
+                } else if (f != null && f.isAdded()) {
+                    if (state == null) {
+                        state = new Bundle();
+                    }
+                    mFragmentManager.putFragment(state, key, f);
                 }
-            } else if (f != null && f.isAdded()) {
-                if (state == null) {
-                    state = new Bundle();
-                }
-                mFragmentManager.putFragment(state, key, f);
             }
         }
         return state;

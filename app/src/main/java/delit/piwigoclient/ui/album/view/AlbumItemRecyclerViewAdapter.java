@@ -275,6 +275,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         GalleryItem newItem = gallery.getItems().get(position);
         if (holder.getOldPosition() < 0 && holder.mItem != null && holder.mItem.getId() == newItem.getId()) {
             // rendering the same item.
+            updateCheckableStatus(holder);
             return;
         }
 
@@ -297,13 +298,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 
         holder.itemView.setVisibility(View.VISIBLE);
 
-        if(holder.mItem.getType() == GalleryItem.PICTURE_RESOURCE_TYPE || holder.mItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
-            holder.checkBox.setVisibility(allowItemSelection ? View.VISIBLE : GONE);
-            holder.checkBox.setChecked(selectedResourceIds.contains(holder.mItem.getId()));
-        } else if(holder.checkBox != null) {
-            // only in masonry view mode at the moment.
-            holder.checkBox.setVisibility(GONE);
-        }
+        updateCheckableStatus(holder);
 
         if(holder.mRecentlyAlteredMarkerView != null) {
             if (holder.mItem.getLastAltered() != null && holder.mItem.getLastAltered().compareTo(recentlyAlteredThresholdDate) > 0) {
@@ -408,6 +403,16 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         }
     }
 
+    private void updateCheckableStatus(ViewHolder holder) {
+        if(holder.mItem.getType() == GalleryItem.PICTURE_RESOURCE_TYPE || holder.mItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
+            holder.checkBox.setVisibility(allowItemSelection ? View.VISIBLE : GONE);
+            holder.checkBox.setChecked(selectedResourceIds.contains(holder.mItem.getId()));
+        } else if(holder.checkBox != null) {
+            // only in masonry view mode at the moment.
+            holder.checkBox.setVisibility(GONE);
+        }
+    }
+
     @Override
     public int getItemCount() {
         return gallery.getItems().size();
@@ -418,7 +423,8 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         if(!allowItemSelection) {
             selectedResourceIds.clear();
         }
-        notifyItemRangeChanged(0, getItemCount());
+//        notifyItemRangeChanged(0, getItemCount());
+        notifyDataSetChanged();
         multiSelectStatusListener.onMultiSelectStatusChanged(allowItemSelection);
         multiSelectStatusListener.onItemSelectionCountChanged(selectedResourceIds.size());
     }

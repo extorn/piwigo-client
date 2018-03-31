@@ -102,6 +102,7 @@ public class ViewAlbumFragment extends MyFragment {
     public static final String STATE_USERNAME_SELECTION_WANTED_NEXT = "usernameSelectionWantedNext";
     public static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
+    private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
     private static final int UPDATE_IN_PROGRESS = 1;
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
@@ -159,6 +160,7 @@ public class ViewAlbumFragment extends MyFragment {
     private transient List<CategoryItem> adminCategories;
     private AppCompatImageView actionIndicatorImg;
     private RecyclerView galleryListView;
+    private String piwigoSessionToken;
 
 
     /**
@@ -251,6 +253,7 @@ public class ViewAlbumFragment extends MyFragment {
         outState.putInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS, updateAlbumDetailsProgress);
         outState.putBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT, usernameSelectionWantedNext);
         outState.putSerializable(STATE_DELETE_ACTION_DATA, deleteActionData);
+        outState.putString(STATE_ACTIVE_SESSION_TOKEN, piwigoSessionToken);
     }
 
     @Nullable
@@ -262,6 +265,7 @@ public class ViewAlbumFragment extends MyFragment {
             galleryIsDirty = true;
         } else if (savedInstanceState != null) {
             //restore saved state
+            piwigoSessionToken = savedInstanceState.getString(STATE_ACTIVE_SESSION_TOKEN);
             editingItemDetails = savedInstanceState.getBoolean(STATE_EDITING_ITEM_DETAILS);
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
@@ -288,6 +292,7 @@ public class ViewAlbumFragment extends MyFragment {
                 albumAdminList = null;
             }
         }
+
         userGuid = PiwigoSessionDetails.getUserGuid();
         if(galleryModel == null) {
             galleryIsDirty = true;
@@ -295,6 +300,18 @@ public class ViewAlbumFragment extends MyFragment {
         }
 
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
+
+        if(galleryListView != null && !PiwigoSessionDetails.matchesSessionToken(piwigoSessionToken)) {
+            if(gallery == CategoryItem.ROOT_ALBUM) {
+                // Root album can just be reloaded.
+                galleryIsDirty = true;
+            } else {
+                // If the page has been initialised already (not first visit), and the session token has changed, force moving to parent album.
+                //TODO be cleverer - check if the website is the same (might be okay to try and reload the same album in that instance). N.b. would need to check for a 401 error
+                getFragmentManager().popBackStack();
+                return view;
+            }
+        }
 
         preferredThumbnailSize = prefs.getString(getContext().getString(R.string.preference_gallery_item_thumbnail_size_key), getContext().getString(R.string.preference_gallery_item_thumbnail_size_default));
         boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
@@ -336,7 +353,7 @@ public class ViewAlbumFragment extends MyFragment {
         }
 
         galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
-        galleryNameHeader.setClipToOutline(true);
+
         galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
         descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
         PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_more_horiz_black_24px).into(descriptionDropdownButton);
@@ -845,6 +862,12 @@ public class ViewAlbumFragment extends MyFragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        if(galleryListView == null) {
+            //Resumed, but fragment initialisation cancelled for whatever reason.
+            return;
+        }
+
         if (galleryIsDirty) {
             reloadAlbumContent();
         } else if(itemsToLoad.size() > 0) {
@@ -1246,6 +1269,15 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if(isVisible()) {
+                piwigoSessionToken = PiwigoSessionDetails.getActiveSessionToken();
+            }
+            super.onBeforeHandlePiwigoResponse(response);
+        }
+
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             synchronized (loadingMessageIds) {

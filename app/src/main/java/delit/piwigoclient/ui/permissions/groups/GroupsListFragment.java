@@ -192,7 +192,7 @@ public class GroupsListFragment extends MyFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(groupsModel.getPagesLoaded() == 0) {
+        if(groupsModel.getPagesLoaded() == 0 && viewAdapter != null) {
             viewAdapter.notifyDataSetChanged();
             loadGroupsPage(0);
         }

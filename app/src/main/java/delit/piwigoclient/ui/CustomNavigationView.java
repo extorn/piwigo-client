@@ -193,13 +193,13 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) {
                 PiwigoResponseBufferingHandler.PiwigoOnLoginResponse rsp = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) response;
                 if(rsp.isSessionRetrieved() && rsp.isUserDetailsRetrieved()) {
-                    onLogin();
+                    onLogin(rsp.getOldCredentials());
                 }
             }
         }
     }
 
-    public void onLogin() {
+    public void onLogin(PiwigoSessionDetails oldCredentials) {
         lockAppInReadOnlyMode(false);
         uiHelper.closeAllDialogs();
         uiHelper.showOrQueueDialogMessage(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));

@@ -26,6 +26,7 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.AdsManager;
@@ -34,6 +35,7 @@ import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.MyFragmentStatePagerAdapter;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
+import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
@@ -50,9 +52,11 @@ public class SlideshowFragment extends MyFragment {
 
     private static final String STATE_GALLERY = "gallery";
     private static final String STATE_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
+    private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
     private CustomViewPager viewPager;
     private PiwigoAlbum gallery;
     private int rawCurrentGalleryItemPosition;
+    private String piwigoSessionToken;
 
 
     public static SlideshowFragment newInstance(PiwigoAlbum gallery, GalleryItem currentGalleryItem) {
@@ -69,14 +73,6 @@ public class SlideshowFragment extends MyFragment {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_GALLERY, gallery);
         outState.putInt(STATE_GALLERY_ITEM_DISPLAYED, rawCurrentGalleryItemPosition);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        this.gallery = (PiwigoAlbum) getArguments().getSerializable(STATE_GALLERY);
-        rawCurrentGalleryItemPosition = getArguments().getInt(STATE_GALLERY_ITEM_DISPLAYED);
     }
 
     @Override
@@ -97,20 +93,35 @@ public class SlideshowFragment extends MyFragment {
         return view;
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PiwigoSessionTokenUseNotificationEvent event) {
+        this.piwigoSessionToken = event.getPiwigoSessionToken();
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Bundle configurationBundle = savedInstanceState;
+        if(configurationBundle == null) {
+            configurationBundle = getArguments();
+        }
+        if (configurationBundle != null) {
+            gallery = (PiwigoAlbum) configurationBundle.getSerializable(STATE_GALLERY);
+            rawCurrentGalleryItemPosition = configurationBundle.getInt(STATE_GALLERY_ITEM_DISPLAYED);
+            piwigoSessionToken = configurationBundle.getString(STATE_ACTIVE_SESSION_TOKEN);
+        }
 
-        if(savedInstanceState != null) {
-            gallery = (PiwigoAlbum) savedInstanceState.getSerializable(STATE_GALLERY);
-            rawCurrentGalleryItemPosition = savedInstanceState.getInt(STATE_GALLERY_ITEM_DISPLAYED);
+        if(viewPager != null && !PiwigoSessionDetails.matchesSessionToken(piwigoSessionToken)) {
+            // If the page has been initialised already (not first visit), and the session token has changed, force reload.
+            getFragmentManager().popBackStack();
+            return;
         }
 
         viewPager = view.findViewById(R.id.slideshow_viewpager);
         boolean shouldShowVideos = prefs.getBoolean(getString(R.string.preference_gallery_include_videos_in_slideshow_key), getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
         shouldShowVideos &= prefs.getBoolean(getString(R.string.preference_gallery_enable_video_playback_key), getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
         GalleryItemAdapter galleryItemAdapter = new GalleryItemAdapter(viewPager, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
-        galleryItemAdapter.setMaxFragmentsToSaveInState(5);
+        galleryItemAdapter.setMaxFragmentsToSaveInState(0);
 
         viewPager.setAdapter(galleryItemAdapter);
 
@@ -145,6 +156,9 @@ public class SlideshowFragment extends MyFragment {
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
+        if(viewPager == null || viewPager.getAdapter() == null) {
+            return;
+        }
 
         int slideshowIndexToShow = ((GalleryItemAdapter) viewPager.getAdapter()).getSlideshowIndex(rawCurrentGalleryItemPosition);
         viewPager.setCurrentItem(slideshowIndexToShow);
@@ -162,7 +176,9 @@ public class SlideshowFragment extends MyFragment {
 
     @Override
     public void onDestroyView() {
-        ((GalleryItemAdapter) viewPager.getAdapter()).tidyUpAllVideoResources();
+        if(viewPager != null && viewPager.getAdapter() != null) {
+            ((GalleryItemAdapter) viewPager.getAdapter()).tidyUpAllVideoResources();
+        }
         super.onDestroyView();
     }
 
@@ -173,7 +189,7 @@ public class SlideshowFragment extends MyFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGalleryItemActionStartedEvent(AlbumItemActionStartedEvent event) {
+    public void onEvent(AlbumItemActionStartedEvent event) {
         if(event.getItem().getParentId().equals(gallery.getId())) {
             getUiHelper().setTrackingRequest(event.getActionId());
             viewPager.setEnabled(false);
@@ -188,7 +204,7 @@ public class SlideshowFragment extends MyFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onGalleryItemDeletedEvent(AlbumItemDeletedEvent event) {
+    public void onEvent(AlbumItemDeletedEvent event) {
         int fullGalleryIdx = gallery.getItems().indexOf(event.item);
         ((GalleryItemAdapter) viewPager.getAdapter()).deleteGalleryItem(fullGalleryIdx);
         if(viewPager.getAdapter().getCount() == 0) {
@@ -199,7 +215,9 @@ public class SlideshowFragment extends MyFragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((GalleryItemAdapter) viewPager.getAdapter()).onResume();
+        if(viewPager != null && viewPager.getAdapter() != null) {
+            ((GalleryItemAdapter) viewPager.getAdapter()).onResume();
+        }
     }
 
     class GalleryItemAdapter extends MyFragmentStatePagerAdapter {
@@ -333,7 +351,7 @@ public class SlideshowFragment extends MyFragment {
     }
 
     @Subscribe
-    public void onGalleryAlteredEvent(AlbumAlteredEvent albumAlteredEvent) {
+    public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
         if(gallery.getId() == albumAlteredEvent.id) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync));
         }

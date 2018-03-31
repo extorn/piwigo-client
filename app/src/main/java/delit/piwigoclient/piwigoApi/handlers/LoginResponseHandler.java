@@ -58,7 +58,9 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             GetSessionStatusResponseHandler sessionLoadHandler = new GetSessionStatusResponseHandler();
             runAndWaitForHandlerToFinish(sessionLoadHandler);
             if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
+                PiwigoSessionDetails oldCredentials = ((PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse)sessionLoadHandler.getResponse()).getOldCredentials();
                 r.setSessionRetrieved();
+                r.setOldCredentials(oldCredentials);
             } else {
                 reportNestedFailure(sessionLoadHandler);
             }

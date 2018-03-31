@@ -11,6 +11,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 
 import cz.msebera.android.httpclient.Header;
@@ -20,6 +21,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
+import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.MyApplication;
@@ -150,17 +152,19 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     public final void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
         isSuccess = false;
         boolean tryingAgain = false;
-        if (!cancelCallAsap && allowSessionRefreshAttempt &&
-                ((statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && error.getMessage().equalsIgnoreCase("Access denied"))
-                || (error instanceof SocketTimeoutException))) {
-
-            triedLoggingInAgain = true;
+        if (!cancelCallAsap) {
             // attempt login and resend original message.
-
-            if(error instanceof SocketTimeoutException) {
+            if(error instanceof IOException && "Unhandled exception: Cache has been shut down".equals(error.getMessage())) {
+                tryingAgain = true;
                 rerunCall();
-            } else {
+            } else if(error instanceof SocketTimeoutException) {
+                tryingAgain = true;
+                rerunCall();
+            } else if(allowSessionRefreshAttempt
+                    && (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && error.getMessage().equalsIgnoreCase("Access denied"))) {
+
                 synchronized (LoginResponseHandler.class) {
+                    triedLoggingInAgain = true;
                     String newToken = PiwigoSessionDetails.getActiveSessionToken();
                     if (newToken != null && !newToken.equals(sessionToken)) {
                         sessionToken = newToken;
@@ -175,7 +179,6 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                         getNewLogin();
                     }
                 }
-
             }
         }
         if(!tryingAgain) {
@@ -274,7 +277,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 if (PiwigoSessionDetails.isFullyLoggedIn()) {
                     newLoginStatus = 3;
                     exit = true;
-                    EventBus.getDefault().post(new PiwigoLoginSuccessEvent(false));
+                    PiwigoResponseBufferingHandler.PiwigoOnLoginResponse response = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse)handler.getResponse();
+                    EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
                     onGetNewSessionSuccess();
                     rerunCall();
                 } else if (PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
