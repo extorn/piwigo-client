@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
     android:layout_marginRight="16dp"
-    android:background="@color/black_overlay">
+    android:background="@drawable/curved_corners_layout_bg_dark">
 
     <delit.piwigoclient.ui.common.SquareLinearLayout
         android:id="@+id/thumbnail_container"
@@ -28,8 +28,7 @@
         android:id="@+id/newly_altered_marker_image"
         android:layout_alignParentRight="true"
         android:layout_width="24dp"
-        android:layout_height="24dp"
-        app:srcCompat="@drawable/ic_star_yellow_24dp"/>
+        android:layout_height="24dp"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/resource_name"

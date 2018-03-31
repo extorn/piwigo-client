@@ -53,15 +53,24 @@ import paul.arian.fileselector.FileSelectionActivity;
 public class UploadActivity extends MyActivity {
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final String STATE_FILE_SELECT_EVENT_ID = "fileSelectionEventId";
+    private static final String STATE_STARTED_ALREADY = "startedAlready";
     private HashMap<String, String> errors = new HashMap<>();
     private int fileSelectionEventId;
+    private boolean startedWithPermissions;
 
     @Override
     public void onStart() {
         super.onStart();
         // Need to register here as the call is handled immediately if the permissions are already present.
         EventBus.getDefault().register(this);
+        startedWithPermissions = false;
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        this.setIntent(intent);
     }
 
     @Override
@@ -74,6 +83,7 @@ public class UploadActivity extends MyActivity {
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putInt(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
+        outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
     }
 
     @Override
@@ -82,6 +92,7 @@ public class UploadActivity extends MyActivity {
 
         if(savedInstanceState != null) {
             fileSelectionEventId = savedInstanceState.getInt(STATE_FILE_SELECT_EVENT_ID);
+            startedWithPermissions = savedInstanceState.getBoolean(STATE_STARTED_ALREADY);
         } else {
             fileSelectionEventId = TrackableRequestEvent.getNextEventId();
         }
@@ -94,7 +105,7 @@ public class UploadActivity extends MyActivity {
             final Fragment f;
             if (!PiwigoSessionDetails.isFullyLoggedIn()) {
                 f = LoginFragment.newInstance();
-                showFragmentNow(f, false);
+                showFragmentNow(f);
             } else {
                 showUploadFragment();
             }
@@ -156,6 +167,7 @@ public class UploadActivity extends MyActivity {
 
         if(isAdminUser || hasCommunityPlugin) {
             Fragment f = UploadFragment.newInstance(CategoryItem.ROOT_ALBUM, fileSelectionEventId);
+            removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
         } else {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
@@ -280,12 +292,15 @@ public class UploadActivity extends MyActivity {
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
             if (resultCode == RESULT_OK) {
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectionActivity.SELECTED_FILES);
-                FileListSelectionCompleteEvent event = new FileListSelectionCompleteEvent(requestCode, filesForUpload);
-                if(!PiwigoSessionDetails.isFullyLoggedIn()) {
-                    EventBus.getDefault().postSticky(event);
-                } else {
-                    EventBus.getDefault().post(event);
+
+                int eventId = requestCode;
+                if(requestCode != fileSelectionEventId) {
+                    // this is an unexpected event - need to ensure the upload fragment will pick it up.
+                    eventId = Integer.MIN_VALUE;
                 }
+                FileListSelectionCompleteEvent event = new FileListSelectionCompleteEvent(eventId, filesForUpload);
+
+                EventBus.getDefault().postSticky(event);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -314,28 +329,55 @@ public class UploadActivity extends MyActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PermissionsWantedResponse event) {
         if(getUiHelper().completePermissionsWantedRequest(event)) {
+            int fileSelectionEventIdToUse = fileSelectionEventId;
+            if(startedWithPermissions) {
+                // already started up. Therefore the fileSelectionEventId is valid and linked to the faragment
+            } else {
+                startedWithPermissions = true;
+                fileSelectionEventIdToUse = Integer.MIN_VALUE;
+            }
             if(event.areAllPermissionsGranted()) {
-                FileListSelectionCompleteEvent evt = new FileListSelectionCompleteEvent(fileSelectionEventId, handleSentFiles());
-                if(!PiwigoSessionDetails.isFullyLoggedIn()) {
-                    EventBus.getDefault().postSticky(evt);
-                } else {
-                    EventBus.getDefault().post(evt);
-                }
+                FileListSelectionCompleteEvent evt = new FileListSelectionCompleteEvent(fileSelectionEventIdToUse, handleSentFiles());
+                EventBus.getDefault().postSticky(evt);
             } else {
                 createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
             }
         }
     }
 
+//    private void showFragmentNow(Fragment f) {
+//        showFragmentNow(f, true);
+//    }
+//
+//    private void showFragmentNow(Fragment f, boolean addToBackstack) {
+//        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+//        if(addToBackstack) {
+//            tx.addToBackStack(null);
+//        }
+//        tx.replace(R.id.upload_details, f, f.getClass().getName()).commit();
+//
+//        addUploadingAsFieldsIfAppropriate();
+//    }
+
     private void showFragmentNow(Fragment f) {
-        showFragmentNow(f, true);
+        showFragmentNow(f, false);
     }
 
-    private void showFragmentNow(Fragment f, boolean addToBackstack) {
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        if(addToBackstack) {
-            tx.addToBackStack(null);
+    private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
+
+        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.upload_details);
+        String lastFragmentName = "";
+        if(lastFragment != null) {
+            lastFragmentName = lastFragment.getTag();
         }
+        if(!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
+            getSupportFragmentManager().popBackStackImmediate();
+        }
+        //TODO I've added code that clears stack when showing root album... is this "good enough"?
+        //TODO - trying to prevent adding duplicates here. not sure it works right.
+//        TODO maybe should be using current fragment classname when adding to backstack rather than one being replaced... hmmmm
+        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+        tx.addToBackStack(f.getClass().getName());
         tx.replace(R.id.upload_details, f, f.getClass().getName()).commit();
 
         addUploadingAsFieldsIfAppropriate();

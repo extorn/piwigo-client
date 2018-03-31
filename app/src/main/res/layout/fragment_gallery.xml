@@ -53,15 +53,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:background="?android:selectableItemBackground"
-                app:srcCompat="@drawable/ic_more_horiz_black_24px"/>
+                android:background="?android:selectableItemBackground"/>
 
         </RelativeLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/gallery_retryAction_actionButton"
             android:layout_alignTop="@+id/gallery_list"
-            app:srcCompat="@drawable/ic_refresh_black_24dp"
             android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -113,32 +111,28 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginRight="10dp"
-                app:srcCompat="@drawable/ic_content_paste_black_24dp"/>
+                android:layout_marginRight="10dp"/>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/gallery_action_cut_bulk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/gallery_action_paste_bulk"
-                android:layout_marginRight="10dp"
-                app:srcCompat="@drawable/ic_content_cut_black_24px"/>
+                android:layout_marginRight="10dp"/>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/gallery_action_copy_bulk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/gallery_action_cut_bulk"
-                android:layout_marginRight="10dp"
-                app:srcCompat="@drawable/ic_content_copy_black_24px"/>
+                android:layout_marginRight="10dp"/>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/gallery_action_delete_bulk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/gallery_action_copy_bulk"
-                android:layout_marginRight="10dp"
-                app:srcCompat="@drawable/ic_delete_black_24px"/>
+                android:layout_marginRight="10dp"/>
 
         </RelativeLayout>
 
@@ -184,51 +178,44 @@
                     android:id="@+id/gallery_details_edit_button"
                     android:layout_alignParentLeft="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+                    android:layout_height="wrap_content" />
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/gallery_details_save_button"
                     android:layout_toRightOf="@+id/gallery_details_edit_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_save_black_24dp" />
+                    android:layout_height="wrap_content"/>
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/gallery_details_discard_button"
                     android:layout_toRightOf="@+id/gallery_details_save_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_undo_black_24dp" />
+                    android:layout_height="wrap_content"/>
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/album_add_new_album_button"
                     android:layout_toLeftOf="@+id/gallery_action_delete"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_create_new_folder_black_24dp"/>
+                    android:layout_height="wrap_content"/>
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/gallery_action_paste"
                     android:layout_toLeftOf="@+id/gallery_action_delete"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_content_paste_black_24dp" />
+                    android:layout_height="wrap_content"/>
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/gallery_action_cut"
                     android:layout_toLeftOf="@+id/gallery_action_paste"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_content_cut_black_24px" />
+                    android:layout_height="wrap_content" />
 
                 <delit.piwigoclient.ui.common.CustomImageButton
                     android:id="@+id/gallery_action_delete"
                     android:layout_alignWithParentIfMissing="true"
                     android:layout_alignParentRight="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_delete_black_24px" />
+                    android:layout_height="wrap_content"/>
 
 
                 <LinearLayout

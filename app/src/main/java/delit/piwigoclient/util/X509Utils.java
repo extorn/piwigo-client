@@ -36,6 +36,12 @@ import java.util.Map;
 import java.util.Set;
 
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.util.security.CertificateLoadException;
+import delit.piwigoclient.util.security.KeyStoreContentException;
+import delit.piwigoclient.util.security.KeyStoreOperationException;
+import delit.piwigoclient.util.security.KeystoreLoadOperation;
+import delit.piwigoclient.util.security.KeystoreLoadOperationResult;
+import delit.piwigoclient.util.security.SecurityOperationException;
 
 /**
  * Created by gareth on 15/07/17.
@@ -252,7 +258,9 @@ public class X509Utils {
             hexString.append(appendString);
         }
         String thumbprint = hexString.toString();
-        Log.d(TAG, "Cer: "+ thumbprint);
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, "Cer: " + thumbprint);
+        }
         return thumbprint;
     }
 
@@ -265,7 +273,9 @@ public class X509Utils {
                 certs.add((X509Certificate) keystore.getCertificate(alias));
             }
         } catch (KeyStoreException e) {
-            Log.e(TAG, "Error extracting certificates from store", e);
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error extracting certificates from store", e);
+            }
         }
         return certs;
     }
@@ -278,28 +288,30 @@ public class X509Utils {
                 aliases.add(aliasesEnum.nextElement());
             }
         } catch (KeyStoreException e) {
-            Log.e(TAG, "Error listing aliases", e);
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error listing aliases", e);
+            }
         }
         return aliases;
     }
 
-    public static X509Certificate loadCertificateFromFile(File f) {
+    public static Collection<X509Certificate> loadCertificatesFromFile(File f) {
         BufferedInputStream bis = null;
         try {
             bis = new BufferedInputStream(new FileInputStream(f));
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            X509Certificate cert = (X509Certificate) cf.generateCertificate(bis);
-            return cert;
+            Collection<X509Certificate> certs = (Collection<X509Certificate>) cf.generateCertificates(bis);
+            return certs;
         } catch (FileNotFoundException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading certificate file stream", e);
             }
-            throw new RuntimeException("Error reading certificate file stream", e);
+            throw new CertificateLoadException(f, "Error reading certificate file stream", e);
         } catch (CertificateException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading certificate file stream", e);
             }
-            throw new RuntimeException("Error reading certificate file stream", e);
+            throw new CertificateLoadException(f, "Error reading certificate file stream", e);
         } finally {
             if (bis != null) {
                 try {
@@ -308,86 +320,116 @@ public class X509Utils {
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error closing certificate file stream", e);
                     }
-                    throw new RuntimeException("Error closing certificate file stream", e);
+                    throw new CertificateLoadException(f, "Error closing certificate file stream", e);
                 }
             }
         }
     }
 
-    public static Map<Key, Certificate[]> loadCertificatesAndPrivateKeysFromDefaultFormatKeystoreFile(File f, char[] keystorePass) {
-        return loadCertificatesAndPrivateKeysFromKeystoreFile(f, KeyStore.getDefaultType(), keystorePass);
+    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromDefaultFormatKeystoreFile(KeystoreLoadOperation loadOperation) {
+        return loadCertificatesAndPrivateKeysFromKeystoreFile(loadOperation, KeyStore.getDefaultType());
     }
 
-    public static Map<Key, Certificate[]> loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(File f, char[] keystorePass) {
-        return loadCertificatesAndPrivateKeysFromKeystoreFile(f, "pkcs12", keystorePass);
+    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromPkcs12KeystoreFile(KeystoreLoadOperation loadOperation) {
+        return loadCertificatesAndPrivateKeysFromKeystoreFile(loadOperation, "pkcs12");
     }
 
-    public static Map<Key, Certificate[]> loadCertificatesAndPrivateKeysFromKeystoreFile(File f, String keystoreType, char[] keystorePass) {
+    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation loadOperation, String keystoreType) {
+        KeystoreLoadOperationResult result = new KeystoreLoadOperationResult(loadOperation);
         try {
             KeyStore keystore = KeyStore.getInstance(keystoreType);
-            keystore.load(new FileInputStream(f), keystorePass);
-            return loadCertificatesAndPrivateKeysFromKeystore(keystore);
+            keystore.load(new FileInputStream(loadOperation.getFile()), loadOperation.getKeystorePass());
+            loadCertificatesAndPrivateKeysFromKeystore(keystore, loadOperation.getAliasesToLoad(), loadOperation.getAliasPassMapp(), result);
+            for(SecurityOperationException ex : result.getExceptionList()) {
+                ex.setFile(loadOperation.getFile());
+            }
         } catch (FileNotFoundException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            throw new RuntimeException("Error reading " + keystoreType + " file stream", e);
+            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (IOException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            throw new RuntimeException("Error reading " + keystoreType + " file stream", e);
+            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (CertificateException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            throw new RuntimeException("Error reading " + keystoreType + " file stream", e);
+            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (NoSuchAlgorithmException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            throw new RuntimeException("Error reading " + keystoreType + " file stream", e);
+            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (KeyStoreException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
-            throw new RuntimeException("Error reading " + keystoreType + " file stream", e);
+            result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         }
+        return result;
     }
 
-    public static HashMap<Key, Certificate[]> loadCertificatesAndPrivateKeysFromKeystore(KeyStore keystore) {
-        try {
+    /**
+     *
+     * @param keystore to load from
+     * @param aliasesToLoad null to load all
+     * @param aliasPasswordMap passwords for any keys protected
+     * @param result
+     * @return
+     */
+    public static KeystoreLoadOperationResult loadCertificatesAndPrivateKeysFromKeystore(KeyStore keystore, List<String> aliasesToLoad, Map<String, char[]> aliasPasswordMap, KeystoreLoadOperationResult result) {
 
-            Enumeration e = keystore.aliases();
-            HashMap<Key, Certificate[]> certs = new HashMap<>();
+        String alias = null;
+        try {
+            Enumeration aliasesEnum = keystore.aliases();
+
+            Map<Key, Certificate[]> certs = result.getKeystoreContent();
             char[] blankKey = new char[0];
-            while (e.hasMoreElements()) {
-                String alias = (String) e.nextElement();
-                Certificate[] certChain = keystore.getCertificateChain(alias);
-                Key key = keystore.getKey(alias, blankKey);
-                if(key == null) {
-                    //TODO check this is the right cert
-                    key = certChain[0].getPublicKey();
+            char[] keyPass;
+            while (aliasesEnum.hasMoreElements()) {
+                try {
+                    alias = (String) aliasesEnum.nextElement();
+                    if(aliasesToLoad != null && !aliasesToLoad.contains(alias)) {
+                        //skip this alias
+                        continue;
+                    }
+                    Certificate[] certChain = keystore.getCertificateChain(alias);
+                    keyPass = aliasPasswordMap.get(alias);
+                    if(keyPass == null) {
+                        keyPass = blankKey;
+                    }
+                    Key key = keystore.getKey(alias, keyPass);
+                    if(key == null) {
+                        key = certChain[0].getPublicKey();
+                    }
+                    certs.put(key, certChain);
+                } catch (UnrecoverableKeyException e) {
+                    if (BuildConfig.DEBUG) {
+                        Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
+                    }
+                    result.addException(new KeyStoreContentException(alias, "Error reading " + keystore.getType() + " file stream", e));
+                } catch (NoSuchAlgorithmException e) {
+                    if (BuildConfig.DEBUG) {
+                        Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
+                    }
+                    result.addException(new KeyStoreContentException(alias, "Error reading " + keystore.getType() + " file stream", e));
+                } catch (KeyStoreException e) {
+                    if (BuildConfig.DEBUG) {
+                        Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
+                    }
+                    result.addException(new KeyStoreContentException(alias, "Error reading " + keystore.getType() + " file stream", e));
                 }
-                certs.put(key, certChain);
             }
-            return certs;
-        } catch (UnrecoverableKeyException e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
-            }
-            throw new RuntimeException("Error reading " + keystore.getType() + " file stream", e);
-        } catch (NoSuchAlgorithmException e) {
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
-            }
-            throw new RuntimeException("Error reading " + keystore.getType() + " file stream", e);
         } catch (KeyStoreException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
             }
-            throw new RuntimeException("Error reading " + keystore.getType() + " file stream", e);
+            result.addException(new KeyStoreContentException(alias, "Error reading " + keystore.getType() + " file stream", e));
         }
+        return result;
     }
 
     public static KeyStore cloneKeystore(KeyStore mValue) {

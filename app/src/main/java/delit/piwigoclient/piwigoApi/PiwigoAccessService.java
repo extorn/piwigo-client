@@ -185,25 +185,37 @@ public class PiwigoAccessService {
             updatePoolSize(handler);
             handler.runCall();
 
+            // this is the absolute timeout - in case something is seriously wrong.
             long callTimeoutAtTime = System.currentTimeMillis() + 300000;
-            boolean callCancelled = false;
-            while (handler.isRunning() && System.currentTimeMillis() <= callTimeoutAtTime) {
-                if (isCancelled()) {
-                    handler.cancelCallAsap();
-                }
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    handler.cancelCallAsap();
+
+            synchronized (handler) {
+                boolean timedOut = false;
+                while (handler.isRunning() && !isCancelled() && !timedOut) {
+                    long waitForMillis = callTimeoutAtTime - System.currentTimeMillis();
+                    if (waitForMillis > 0) {
+                        try {
+                            handler.wait(waitForMillis);
+                        } catch (InterruptedException e) {
+                            // Either this has been cancelled or the wait timed out or the handler completed okay and notified us
+                            if (isCancelled()) {
+                                if(BuildConfig.DEBUG) {
+                                    Log.e(handler.getTag(), "Service call cancelled before handler could finish running");
+                                }
+                                handler.cancelCallAsap();
+                            }
+                        }
+                    } else {
+                        timedOut = true;
+                    }
                 }
             }
-            if (System.currentTimeMillis() > callTimeoutAtTime) {
-                // Kill the http call immediately if still in progress
-                handler.cancelCallAsap();
+            if(handler.isRunning()) {
                 if(BuildConfig.DEBUG) {
-                    Log.e(handler.getTag(), "Timeout while waiting for handler to finish running");
+                    Log.e(handler.getTag(), "Timeout while waiting for service call handler to finish running");
                 }
+                handler.cancelCallAsap();
             }
+
             afterCall(handler.isSuccess());
 
             return handler.isSuccess();

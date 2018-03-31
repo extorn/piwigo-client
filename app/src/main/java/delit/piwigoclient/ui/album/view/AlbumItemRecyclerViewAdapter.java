@@ -2,8 +2,11 @@ package delit.piwigoclient.ui.album.view;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +27,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.Date;
 import java.util.HashSet;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
@@ -31,7 +35,9 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.SquareLinearLayout;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
 
 import static android.view.View.GONE;
@@ -109,6 +115,9 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.fragment_galleryitem_resource_masonry, parent, false);
             }
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                view.setClipToOutline(true);
+            }
         } else if (viewType == GalleryItem.CATEGORY_TYPE) {
             if(showLargeAlbumThumbnails) {
                 view = LayoutInflater.from(parent.getContext())
@@ -117,6 +126,10 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
                 view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.fragment_galleryitem_album_list, parent, false);
             }
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                view.setClipToOutline(true);
+            }
+
         } else if (viewType == GalleryItem.PICTURE_RESOURCE_TYPE || viewType == GalleryItem.VIDEO_RESOURCE_TYPE) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.fragment_galleryitem_resource, parent, false);
@@ -153,7 +166,9 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
                                 if (imgSize == Integer.MAX_VALUE) {
                                     imgSize = viewHolder.mImageView.getMeasuredWidth();
                                 } else {
-                                    imgSize = Math.min(scalingQuality, viewHolder.mImageView.getMeasuredWidth());
+                                    // need that math.max to ensure that the image size remains positive
+                                    //FIXME How can this ever be called before the ImageView object has a size?
+                                    imgSize = Math.max(SCALING_QUALITY_VLOW,Math.min(scalingQuality, viewHolder.mImageView.getMeasuredWidth()));
                                 }
                                 ((ResizingPicassoLoader) viewHolder.imageLoader).setResizeTo(imgSize, imgSize);
                                 viewHolder.imageLoader.load();
@@ -201,23 +216,54 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
             viewHolder.itemView.setOnLongClickListener(viewHolder.itemActionListener);
         }
 
-        if(useDarkMode) {
-            if(useMasonryStyle) {
-                // needed for the background behind the title text
-                viewHolder.itemView.setBackgroundColor(resources.getColor(R.color.black_overlay_dark));
-                // needed for images that don't load correctly.
-                viewHolder.mImageView.setBackgroundColor(Color.WHITE);
-            } else {
-                viewHolder.itemView.setBackgroundColor(Color.WHITE);
-            }
-            if(viewHolder.mImageContainer != null) {
-                // will be null for categories in list view.
-                viewHolder.mImageContainer.setBackgroundColor(resources.getColor(R.color.black_overlay_dark));
-            }
-        }
+        setItemBackground(viewType, viewHolder);
 
         return viewHolder;
     }
+
+    private void setItemBackground(int viewType, ViewHolder viewHolder) {
+        if(viewType == GalleryItem.CATEGORY_TYPE) {
+            if (useDarkMode) {
+                if (useMasonryStyle) {
+                    // needed for the background behind the title text
+                    viewHolder.itemView.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);
+                    // needed for images that don't load correctly.
+                    viewHolder.mImageView.setBackgroundColor(Color.WHITE);
+                } else {
+                    viewHolder.itemView.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);
+                }
+                if (viewHolder.mImageContainer != null) {
+                    // will be null for categories in list view.
+                    viewHolder.mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);
+                }
+            }
+        } else {
+            if(useDarkMode) {
+                if(useMasonryStyle) {
+                    // needed for the background behind the title text
+                    viewHolder.itemView.setBackgroundResource(R.color.black_overlay);
+                    // needed for images that don't load correctly.
+                    viewHolder.mImageView.setBackgroundColor(Color.WHITE);
+                } else {
+                    viewHolder.itemView.setBackgroundColor(Color.WHITE);
+                }
+                if(viewHolder.mImageContainer != null) {
+                    // will be null for categories in list view.
+//                viewHolder.mImageContainer.setBackgroundColor(resources.getColor(R.color.black_overlay_dark));
+                    viewHolder.mImageContainer.setBackgroundResource(R.color.black_overlay);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onViewRecycled(ViewHolder holder) {
+        UIHelper.recycleImageViewContent(holder.mImageView);
+        UIHelper.recycleImageViewContent(holder.mRecentlyAlteredMarkerView);
+        UIHelper.recycleImageViewContent(holder.mTypeIndicatorImg);
+    }
+
+
 
     @Override
     public int getItemViewType(int position) {
@@ -229,6 +275,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         GalleryItem newItem = gallery.getItems().get(position);
         if (holder.getOldPosition() < 0 && holder.mItem != null && holder.mItem.getId() == newItem.getId()) {
             // rendering the same item.
+            updateCheckableStatus(holder);
             return;
         }
 
@@ -251,18 +298,15 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 
         holder.itemView.setVisibility(View.VISIBLE);
 
-        if(holder.mItem.getType() == GalleryItem.PICTURE_RESOURCE_TYPE || holder.mItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
-            holder.checkBox.setVisibility(allowItemSelection ? View.VISIBLE : GONE);
-            holder.checkBox.setChecked(selectedResourceIds.contains(holder.mItem.getId()));
-        } else if(holder.checkBox != null) {
-            // only in masonry view mode at the moment.
-            holder.checkBox.setVisibility(GONE);
-        }
+        updateCheckableStatus(holder);
 
         if(holder.mRecentlyAlteredMarkerView != null) {
-            if (holder.mItem.getLastAltered() != null) {
+            if (holder.mItem.getLastAltered() != null && holder.mItem.getLastAltered().compareTo(recentlyAlteredThresholdDate) > 0) {
                 // is null for blank categories (dummmy spacers) and also for categories only visible because this is an admin user (without explicit access)
-                holder.mRecentlyAlteredMarkerView.setVisibility(holder.mItem.getLastAltered().compareTo(recentlyAlteredThresholdDate) > 0 ? View.VISIBLE : GONE);
+                PicassoLoader picasso = new PicassoLoader(holder.mRecentlyAlteredMarkerView);
+                picasso.setResourceToLoad(R.drawable.ic_star_yellow_24dp);
+                picasso.load();
+                holder.mRecentlyAlteredMarkerView.setVisibility(View.VISIBLE);
             } else {
                 holder.mRecentlyAlteredMarkerView.setVisibility(GONE);
             }
@@ -352,8 +396,20 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         }
         if (holder.mItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
             AppCompatImageView imgView = holder.mTypeIndicatorImg;
-            imgView.setImageResource(R.drawable.ic_movie_filter_black_24px);
+            PicassoLoader picasso = new PicassoLoader(imgView);
+            picasso.setResourceToLoad(R.drawable.ic_movie_filter_black_24px);
+            picasso.load();
             imgView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void updateCheckableStatus(ViewHolder holder) {
+        if(holder.mItem.getType() == GalleryItem.PICTURE_RESOURCE_TYPE || holder.mItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
+            holder.checkBox.setVisibility(allowItemSelection ? View.VISIBLE : GONE);
+            holder.checkBox.setChecked(selectedResourceIds.contains(holder.mItem.getId()));
+        } else if(holder.checkBox != null) {
+            // only in masonry view mode at the moment.
+            holder.checkBox.setVisibility(GONE);
         }
     }
 
@@ -367,7 +423,8 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         if(!allowItemSelection) {
             selectedResourceIds.clear();
         }
-        notifyItemRangeChanged(0, getItemCount());
+//        notifyItemRangeChanged(0, getItemCount());
+        notifyDataSetChanged();
         multiSelectStatusListener.onMultiSelectStatusChanged(allowItemSelection);
         multiSelectStatusListener.onItemSelectionCountChanged(selectedResourceIds.size());
     }

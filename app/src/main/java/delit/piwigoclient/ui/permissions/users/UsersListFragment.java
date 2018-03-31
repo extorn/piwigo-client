@@ -192,7 +192,7 @@ public class UsersListFragment extends MyFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(usersModel.getPagesLoaded() == 0) {
+        if(usersModel.getPagesLoaded() == 0 && viewAdapter != null) {
             viewAdapter.notifyDataSetChanged();
             loadUsersPage(0);
         }

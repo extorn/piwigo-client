@@ -285,26 +285,86 @@ Planned releases:
 Release 1.3.x - Changes:
                     - ? German, French, other translations for the app ?
 
-Release 1.3.68 - Changes:
+Release 1.3.76 - Changes:
                     - User interface refinements
+                    - Poll a device folder and automatically upload any content found to a specified Piwigo profile
                     - Support for favorites - depends on PIWIGO API enhancement
                     - Possibly - Notify user of server updates that are available
                     - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do
 
-Release 1.3.67 - Changes:
+Release 1.3.75 - Changes:
                     - Possibly - The ability to delete an album, but not its contents (creating orphans)
                     - Possibly - Orphan file management
                     - Possibly - Support for user comments
                     - Possibly - allow linking the upload process to a compression routine for videos
-
-Release 1.3.66 - Changes:
                     - Rework of the way popup messages and progress indicators are shown so they always appear.
                     - Tidy the error messages during the upload process
-                    - Improve memory use further (app crashes are generally that it runs out of memory)
-                    - Investigate serialization of app pages (crashes reported in this area)
-                    - Check for and remove any calls to Thread.sleep
+                    - Further investigation into memory use
+                 Bugfix:
+                    - Avoid showing stale data after user or server change while viewing users
+                    - Avoid showing stale data after user or server change while viewing groups
+                    - Avoid showing stale data after user or server change while viewing upload screen
 
 Released:
+
+Release 1.3.74 - Bugfix:
+                    - Delete button action on upload page caused crash if job not running
+                    - checkboxes not being removed again following bulk album action
+                    - Limit state recording of slideshow pages to 0 pages (crashes still occurring)
+                    - UI access visibility on menu following connection profile change
+                    - Avoid showing stale data after user or server change while mid gallery browsing
+                    - Corrections to error handling of non 200 http responses
+
+Release 1.3.73 - Bugfix:
+                    - Limit state recording of slideshow pages to 5 pages to prevent crashes
+
+Release 1.3.72 - Changes:
+                    - Altered colours (likely to continue changing for a while)
+                    - Rounded corners of albums (Android version >= Lollipop)
+               - Bugfix:
+                    - More reuse of images loaded and better management of those loaded to reduce memory load
+
+Release 1.3.71 - Bugfix:
+                    - Removed 3 bugs causing crashes that are probably linked to the app being placed in the background.
+                    - Ensure that if an upload job fails for some reason, that it is possible to clear that job without reinstalling the app. Note: Not tested
+                    - Files shared with the app for upload fail to appear in the upload list
+
+Release 1.3.70 - Changes:
+                    - Keystore loading tested - password protected keystores may now be loaded (BKS and PKCS12 format only). No JKS after all, sorry.
+                    - Check for and remove any calls to Thread.sleep
+                    - memory use improvement for people using the share with feature
+               - Bugfix:
+                    - Crash expanding upload album dropdown on upload page before the albums have loaded
+
+Release 1.3.69 - Notes:
+                    - Noted people are trying to load password protected keys or from password protected pkcs files
+                    - App crashes (that you choose to report) are the ONLY way I know there is a problem unless you email me.
+                      I will add an error handler to remind users of this. It sounds counter intuitive, but its sometimes best
+                      that I let the app crash because users almost always don't tell me when something doesn't work!
+                    - Most crashes are caused by running out of memory - please help me diagnose this if it occurs to you
+                 Bugfix:
+                    - crash - Race condition after file upload complete
+                    - crash - Upload job not found in upload intent (very odd)
+                    - crash - shutdown picasso kinder
+                 Changes:
+                    - Added support for loading password protected pkcs files (untested)
+                    - Added support for loading multiple certificates from certificate files (untested)
+                    - Allowed loading of keys or certificates from JKS keystore files with a .jks filename suffix.
+
+Release 1.3.68 - Bugfix:
+                    - Changed event management to correct bug where files missing from upload page when shared with the app
+
+Release 1.3.67 - Bugfix:
+                    - Fixed bug allowing crash on resume of fragments where dialog is shown immediately  (e.g. upload)
+                    - Prevent user trying to create new album prior to the parent album being selected
+               - Attempted Bugfix (if this occurs for you, please email me saying how to reproduce this):
+                    - Attempt to fix bug causing crash when using back button at an unknown point in the app (a guess)
+                    - Attempt to fix bug on slideshow causing crash (a guess)
+
+Release 1.3.66 - Changes:
+                    - Updated to latest available library versions
+                 Bugfix:
+                    - Access to the user and group pages resulted in crash on older devices (no vector graphics support).
 
 Release 1.3.65 - Changes:
                     - Added extra error handling around login and logout on the connection preferences page
@@ -1160,5 +1220,13 @@ SOFTWARE.
     <string name="title_adding_item">Adding Item</string>
     <string name="alert_error_item_not_unique">Sorry, that item already exists.</string>
     <string name="alert_warning_no_server_url_specified">No server uri specified. Please add the location of your server and retry.</string>
+    <string name="error_heading_unloadable_certificate_files">The following certificate files could not be loaded:</string>
+    <string name="error_heading_unloadable_keystore_files">The following keystore files could not be loaded:</string>
+    <string name="error_heading_unloadable_keystore_aliases">The following keystore aliases could not be loaded:</string>
+    <string name="heading_keystore_filename">Keystore</string>
+    <string name="heading_keystore_alias">Alias</string>
+    <string name="alert_title_error_upload">Error Uploading</string>
+    <string name="alert_message_error_uploading_end">An error occured after successfull uploading all files. Temporary folder may not have been deleted from the server. Ignore this error and fix it manually at some point?</string>
+    <string name="alert_message_error_uploading_start">An error occured before uploading all files. Temporary folder may not have been successfully created for example. Cancel the upload?</string>
 
 </resources>

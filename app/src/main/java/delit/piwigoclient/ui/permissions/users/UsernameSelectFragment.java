@@ -176,7 +176,9 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         HashSet<Username> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new UsernameSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
-        getFragmentManager().popBackStackImmediate();
+        if(isVisible()) {
+            getFragmentManager().popBackStackImmediate();
+        }
     }
 
     @Override

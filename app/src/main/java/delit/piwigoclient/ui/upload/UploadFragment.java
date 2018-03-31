@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -54,6 +55,7 @@ import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
+import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
@@ -144,10 +146,12 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(FileListSelectionCompleteEvent event) {
-        if(getUiHelper().isTrackingRequest(event.getActionId())) {
-            updateFilesForUploadList(event.getSelectedFiles());
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onEvent(FileListSelectionCompleteEvent stickyEvent) {
+        // Integer.MIN_VALUE is a special flag to allow external apps to call in and their events to always be handled.
+        if(getUiHelper().isTrackingRequest(stickyEvent.getActionId()) || stickyEvent.getActionId() == Integer.MIN_VALUE) {
+            EventBus.getDefault().removeStickyEvent(stickyEvent);
+            updateFilesForUploadList(stickyEvent.getSelectedFiles());
         }
     }
 
@@ -176,6 +180,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         selectedGallerySpinner = view.findViewById(R.id.selected_gallery);
         availableGalleries = new AvailableAlbumsListAdapter(currentGallery, getContext(), android.R.layout.simple_spinner_item);
         availableGalleries.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        selectedGallerySpinner.setEnabled(false);
         selectedGallerySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -210,9 +215,13 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             @Override
             public void onClick(View v) {
                 CategoryItemStub selectedGallery = (CategoryItemStub)selectedGallerySpinner.getSelectedItem();
-                AlbumCreateNeededEvent event = new AlbumCreateNeededEvent(selectedGallery);
-                getUiHelper().setTrackingRequest(event.getActionId());
-                EventBus.getDefault().post(event);
+                if(selectedGallery != null) {
+                    AlbumCreateNeededEvent event = new AlbumCreateNeededEvent(selectedGallery);
+                    getUiHelper().setTrackingRequest(event.getActionId());
+                    EventBus.getDefault().post(event);
+                } else {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
+                }
             }
         });
 
@@ -296,12 +305,19 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesForUploadAdapter);
 
-        FileListSelectionCompleteEvent event = EventBus.getDefault().getStickyEvent(FileListSelectionCompleteEvent.class);
-        if(event != null && getUiHelper().isTrackingRequest(event.getActionId())) {
-            EventBus.getDefault().removeStickyEvent(event);
-            updateFilesForUploadList(event.getSelectedFiles());
-        }
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // need to register here so FileSelectionComplete events always get through after the UI has been built when forked from different process
+        if(!EventBus.getDefault().isRegistered(this)) {
+            /* Need to wrap this call to prevent double registration when selecting files in this app from this fragment since we de-register on detach not stop which
+             * is not at the same lifecycle point as this one (so events are captured when on the backstack).
+             */
+            EventBus.getDefault().register(this);
+        }
     }
 
     @Override
@@ -482,10 +498,12 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         boolean jobIsRunningNow = uploadJob != null && uploadJob.isRunningNow();
         boolean jobIsSubmitted = uploadJob != null && uploadJob.isSubmitted();
 
-        uploadFilesNowButton.setEnabled(filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow)));
+        boolean jobYetToFinishUploadingFiles = filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow));
+        boolean jobYetToCompleteAfterUploadingFiles = !noJobIsYetConfigured && !filesStillToBeUploaded && !jobIsFinished && !jobIsRunningNow; // crashed job just loaded basically
+        uploadFilesNowButton.setEnabled(jobYetToFinishUploadingFiles || jobYetToCompleteAfterUploadingFiles); // Allow restart of the job.
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         newGalleryButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
-        selectedGallerySpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
+        selectedGallerySpinner.setEnabled(availableGalleries.getCount() > 0 && (noJobIsYetConfigured || jobIsFinished));
         privacyLevelSpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
     }
 
@@ -512,15 +530,18 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         EventBus.getDefault().unregister(this);
+        if(filesForUploadView != null) {
+            filesForUploadView.setAdapter(null);
+        }
+        if(selectedGallerySpinner != null) {
+            selectedGallerySpinner.setAdapter(null);
+        }
+        if(privacyLevelSpinner != null) {
+            privacyLevelSpinner.setAdapter(null);
+        }
     }
 
     public void notifyUser(Context context, int titleId, String message) {
@@ -562,8 +583,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
     @Override
     public void onRemove(final FilesToUploadRecyclerViewAdapter adapter, final File itemToRemove, boolean longClick) {
-        if (uploadJobId != null) {
-            final UploadJob activeJob = getActiveJob(getContext());
+        final UploadJob activeJob = getActiveJob(getContext());
+        if (activeJob != null) {
             if(activeJob.isFinished()) {
                 if(activeJob.uploadItemRequiresAction(itemToRemove)) {
                     String message = getString(R.string.alert_message_remove_file_server_state_incorrect);
@@ -654,7 +675,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                 }
             }
         }
-
+        selectedGallerySpinner.setEnabled(true);
         subCategoryNamesActionId = -1;
         UploadJob uploadJob = getActiveJob(getContext());
         allowUserUploadConfiguration(uploadJob);
@@ -729,13 +750,32 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
     }
 
-    public void onUploadComplete(Context context, final UploadJob job) {
+    public void onUploadComplete(final Context context, final UploadJob job) {
         if(isAdded()) {
-            if(job.hasJobCompletedAllActionsSuccessfully()) {
+            if(job.hasJobCompletedAllActionsSuccessfully() && job.isFinished()) {
                 uploadJobId = null;
                 if (UploadFragment.this.isAdded()) {
                     NewPiwigoUploadService.removeJob(job);
                 }
+            } else {
+                int errMsgResourceId = R.string.alert_message_error_uploading_start;
+                if(job.getFilesNotYetUploaded().size() == 0) {
+                    errMsgResourceId = R.string.alert_message_error_uploading_end;
+                }
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_error_upload, getContext().getString(errMsgResourceId), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
+                    @Override
+                    public void onDismiss(AlertDialog dialog) {
+                    }
+
+                    @Override
+                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                        if(positiveAnswer) {
+                            NewPiwigoUploadService.removeJob(job);
+                            NewPiwigoUploadService.deleteStateFromDisk(context, job);
+                            allowUserUploadConfiguration(null);
+                        }
+                    }
+                });
             }
             allowUserUploadConfiguration(job);
         }

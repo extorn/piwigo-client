@@ -28,6 +28,7 @@ public class PicassoLoader implements Callback {
     float rotation = 0;
     private int resourceToLoad = Integer.MIN_VALUE;
     private boolean imageUnavailable;
+    public static final String PICASSO_REQUEST_TAG = "PIWIGO";
 
     public PicassoLoader(ImageView loadInto) {
         this.loadInto = loadInto;
@@ -80,7 +81,7 @@ public class PicassoLoader implements Callback {
             return;
         }
         imageLoading = true;
-        //TODO this hack isn't needed if the resource isnt a vector drawable... later version of picasso?
+        //TODO this hack isn't needed if the resource isnt a vector drawable... later version of com.squareup.picasso?
         if(resourceToLoad != Integer.MIN_VALUE) {
             getLoadInto().setImageResource(getResourceToLoad());
             onSuccess();
@@ -95,6 +96,7 @@ public class PicassoLoader implements Callback {
         if(Math.abs(rotation) > Float.MIN_NORMAL) {
             rc.rotate(rotation);
         }
+        rc.tag(PICASSO_REQUEST_TAG);
         return rc;
     }
 

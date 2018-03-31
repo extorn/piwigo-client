@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatDelegate;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
@@ -18,6 +19,11 @@ import paul.arian.fileselector.FileSelectionActivity;
  */
 
 public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {
+
+    static {
+        // required for vector graphics support on older devices
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     private transient SharedPreferences prefs;
     private static MyApplication instance;

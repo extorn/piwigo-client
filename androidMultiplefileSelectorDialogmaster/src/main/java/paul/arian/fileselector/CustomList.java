@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.delit.PicassoFactory;
+import com.squareup.picasso.RequestCreator;
 
 import java.io.File;
 
@@ -31,10 +32,12 @@ public class CustomList extends ArrayAdapter<String>{
         TextView txtTitle = rowView.findViewById(R.id.txt);
         ImageView imageView = rowView.findViewById(R.id.img);
         txtTitle.setText(web[position]);
-        PicassoFactory.getInstance(context).getPicassoSingleton().load(
+        RequestCreator rqc = PicassoFactory.getInstance(context).getPicassoSingleton().load(
                 new File(
-                        ParentFolder+"/"+web[position]
-                )).placeholder(R.drawable.document).resize(50, 50).into(imageView);
+                        ParentFolder + "/" + web[position]
+                )).placeholder(R.drawable.document).resize(50, 50);
+        rqc.tag(PicassoFactory.REQUEST_TAG);
+        rqc.into(imageView);
         return rowView;
     }
 }

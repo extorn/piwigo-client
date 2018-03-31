@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.webkit.MimeTypeMap;
 
+import com.squareup.picasso.MyPicasso;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
@@ -24,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PicassoFactory {
     private static PicassoFactory instance;
+    public static final String REQUEST_TAG = "PIWIGO";
     private final Context context;
     private transient Picasso picasso;
     private transient PicassoErrorHandler errorHandler;
@@ -49,7 +51,7 @@ public class PicassoFactory {
             if (picasso == null) {
                 errorHandler = new PicassoErrorHandler();
                 // request handler would work but it cant because it doesnt get in before the broken one!
-                picasso = new Picasso.Builder(context).addRequestHandler(new VideoRequestHandler())/*.addRequestHandler(new ResourceRequestHandler(context))*/.listener(errorHandler).build();
+                picasso = new MyPicasso.Builder(context).addRequestHandler(new ResourceRequestHandler(context)).addRequestHandler(new VideoRequestHandler()).listener(errorHandler).build();
             }
             return picasso;
         }
@@ -161,6 +163,7 @@ public class PicassoFactory {
     public void clearPicassoCache(Context context) {
         synchronized(PicassoFactory.class) {
             if (picasso != null) {
+                getPicassoSingleton().cancelTag("PIWIGO");
                 getPicassoSingleton().shutdown();
                 picasso = null;
                 initialise(context);

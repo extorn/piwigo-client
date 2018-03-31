@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import org.greenrobot.eventbus.EventBus;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.ui.LoginFragment;
 import delit.piwigoclient.ui.MyApplication;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
@@ -112,6 +115,29 @@ public abstract class MyActivity extends AppCompatActivity {
 
     protected void addActiveServiceCall(long messageId) {
         uiHelper.addActiveServiceCall(R.string.talking_to_server_please_wait, messageId);
+    }
+
+    protected void removeFragmentsFromHistory(Class<? extends Fragment> fragmentClass, boolean includeMidSessionLogins) {
+        boolean found = false;
+        int i = 0;
+        while(!found && getSupportFragmentManager().getBackStackEntryCount() > i) {
+            FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(i);
+            if(fragmentClass.getName().equals(entry.getName())) {
+                found = true;
+                if(i > 0) {
+                    // if the previous item was a login action - force that off the stack too.
+                    entry = getSupportFragmentManager().getBackStackEntryAt(i - 1);
+                    if(LoginFragment.class.getName().equals(entry.getName())) {
+                        i--;
+                    }
+                }
+            } else {
+                i++;
+            }
+        }
+        if(found) {
+            getSupportFragmentManager().popBackStack(i, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
     }
 
     @Override

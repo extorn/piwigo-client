@@ -216,7 +216,7 @@ public class UploadJob implements Serializable {
     }
 
     public synchronized boolean isFinished() {
-        return finished;
+        return finished && !isRunningNow();
     }
 
     public synchronized void setFinished() {

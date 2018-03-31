@@ -212,7 +212,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     }
 
     private void onCancelChanges() {
-        getFragmentManager().popBackStackImmediate();
+        if(isVisible()) {
+            getFragmentManager().popBackStackImmediate();
+        }
     }
 
     public X getListAdapter() {
@@ -252,7 +254,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     protected abstract void onSelectActionComplete(HashSet<Long> selectedIdsSet);
 
     protected void cancel() {
-        getFragmentManager().popBackStackImmediate();
+        if(isVisible()) {
+            getFragmentManager().popBackStackImmediate();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

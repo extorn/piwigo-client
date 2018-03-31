@@ -8,22 +8,27 @@ import com.google.gson.JsonElement;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.model.piwigo.Username;
@@ -78,27 +83,51 @@ public class PiwigoResponseBufferingHandler {
         //TODO this method leaves responses unhandled by handlers... both are retained. Memory leak. Re-examine the whole lifecycle of fragments that are handlers.
         List<Long> responsesMappingsToRemove = new ArrayList<>(10);
         List<Long> handlersToRemove = new ArrayList<>(10);
+        HashMap<Long, Response> responsesToHandle = new HashMap<>();
         for(Map.Entry<Long,Long> handlerResponseEntry : handlerResponseMap.entrySet()) {
             if(handlerResponseEntry.getValue() == handler.getHandlerId()) { // deliberate object referemce equality.
                 long responseMessageId = handlerResponseEntry.getKey();
                 Response r = responses.remove(responseMessageId);
                 if(r != null) {
-                    if(handler.canHandlePiwigoResponseNow(r)) {
-                        handler.handlePiwigoResponse(r);
-                        if(r.isEndResponse()) {
-                            responsesMappingsToRemove.add(responseMessageId);
-                        }
-                    } else {
-                        // add it back to the queue.
-                        responses.put(r.getMessageId(), r);
-                    }
+                    responsesToHandle.put(handlerResponseEntry.getKey(), r);
                 }
             }
         }
+        for (Iterator<Response> iterator = responsesToHandle.values().iterator(); iterator.hasNext(); ) {
+            Response r =  iterator.next();
+            if(iterator.hasNext() && r.isEndResponse()) {
+                // skip this response till last
+                iterator.next();
+            }
+            if (handler.canHandlePiwigoResponseNow(r)) {
+                handler.handlePiwigoResponse(r);
+                if (r.isEndResponse()) {
+                    responsesMappingsToRemove.add(r.getMessageId());
+                }
+            } else {
+                // add it back to the queue.
+                responses.put(r.getMessageId(), r);
+            }
+            iterator.remove();
+        }
+        if(responsesToHandle.size() > 0) {
+            // we left the first item on the list as it is an end response which should be handled last for the handler after all other responses
+            Response r = responsesToHandle.values().iterator().next();
+            if (handler.canHandlePiwigoResponseNow(r)) {
+                handler.handlePiwigoResponse(r);
+                if (r.isEndResponse()) {
+                    responsesMappingsToRemove.add(r.getMessageId());
+                }
+            } else {
+                // add it back to the queue.
+                responses.put(r.getMessageId(), r);
+            }
+        }
+
         // check which handlers are not listening for anything else
         for(Long responseId : responsesMappingsToRemove) {
             Long thisHandlerId = handlerResponseMap.remove(responseId);
-            if(!handlerResponseMap.containsValue(thisHandlerId)) {
+            if(thisHandlerId != null && !handlerResponseMap.containsValue(thisHandlerId)) {
                 handlersToRemove.add(thisHandlerId);
             }
         }
@@ -195,7 +224,9 @@ public class PiwigoResponseBufferingHandler {
                     } catch(IllegalArgumentException e) {
                         //TODO this keeps happening in the wild - sink it and the response for now to prevent crash.
                         // the handler is attached, but to an unrecognised component type
-                        Log.e("PiwigoResponseHandler", "Handler attached to unrecognised parent component type", e);
+                        if(BuildConfig.DEBUG) {
+                            Log.e("PiwigoResponseHandler", "Handler attached to unrecognised parent component type", e);
+                        }
                     }
                 }
             });
@@ -216,7 +247,9 @@ public class PiwigoResponseBufferingHandler {
                 // still no handler for this...
                 if(!handlerResponseMap.containsKey(item.getKey())) {
                     iter.remove();
-                    Log.d("handlers", "Message expired before delivery could be made");
+                    if(BuildConfig.DEBUG) {
+                        Log.d("handlers", "Message expired before delivery could be made");
+                    }
                 }
             }
         }
@@ -527,8 +560,15 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoSessionStatusRetrievedResponse extends BasePiwigoResponse {
 
-        public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod) {
+        private PiwigoSessionDetails oldCredentials;
+
+        public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod, PiwigoSessionDetails oldCredentials) {
             super(messageId, piwigoMethod, true);
+            this.oldCredentials = oldCredentials;
+        }
+
+        public PiwigoSessionDetails getOldCredentials() {
+            return oldCredentials;
         }
     }
 
@@ -688,6 +728,7 @@ public class PiwigoResponseBufferingHandler {
     public static class PiwigoOnLoginResponse extends BasePiwigoResponse {
         private boolean sessionRetrieved;
         private boolean userDetailsRetrieved;
+        private PiwigoSessionDetails oldCredentials;
 
         public PiwigoOnLoginResponse(long messageId, String piwigoMethod) {
             super(messageId, piwigoMethod, true);
@@ -707,6 +748,14 @@ public class PiwigoResponseBufferingHandler {
 
         public boolean isUserDetailsRetrieved() {
             return userDetailsRetrieved;
+        }
+
+        public void setOldCredentials(PiwigoSessionDetails oldCredentials) {
+            this.oldCredentials = oldCredentials;
+        }
+
+        public PiwigoSessionDetails getOldCredentials() {
+            return oldCredentials;
         }
     }
 

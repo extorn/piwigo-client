@@ -15,6 +15,7 @@ import android.widget.ImageView;
 
 import com.ortiz.touch.TouchImageView;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -23,10 +24,14 @@ import java.io.File;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.CustomImageButton;
+import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.DisplayUtils;
 
@@ -35,6 +40,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
     private static final String STATE_CURRENT_IMAGE_URL = "currentImageUrl";
     private String currentImageUrlDisplayed;
     private PicassoLoader loader;
+    private TouchImageView imageView;
 
     public AlbumPictureItemFragment() {
     }
@@ -60,7 +66,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
             currentImageUrlDisplayed = savedInstanceState.getString(STATE_CURRENT_IMAGE_URL);
         }
 
-        final TouchImageView imageView = new TouchImageView(getContext());
+        imageView = new TouchImageView(getContext());
         imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
         imageView.setMinimumWidth(DisplayUtils.dpToPx(getContext(), 120));
         imageView.setScaleType(ImageView.ScaleType.MATRIX);
@@ -68,6 +74,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
         imageView.setLayoutParams(layoutParams);
 
         CustomImageButton directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
         directDownloadButton.setVisibility(View.GONE);
 
         loader = new PicassoLoader(imageView) {
@@ -86,7 +93,13 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
                 } else {
                     imageView.setBackgroundColor(Color.DKGRAY);
                 }
+                EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken()));
                 hideProgressIndicator();
+            }
+
+            @Override
+            protected void onImageUnavailable() {
+                getLoadInto().setImageResource(R.drawable.blank);
             }
         };
 
@@ -178,5 +191,11 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
     public void onGetResource(final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
         super.onGetResource(response);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_image_download_title, getString(R.string.alert_image_download_complete_message));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UIHelper.recycleImageViewContent(imageView);
     }
 }

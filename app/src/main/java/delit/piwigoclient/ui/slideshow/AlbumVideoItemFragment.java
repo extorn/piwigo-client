@@ -13,15 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -36,10 +41,12 @@ import java.io.IOException;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.business.video.CustomHttpDataSourceFactory;
+import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
 import delit.piwigoclient.business.video.HttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.PausableLoadControl;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -148,6 +155,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         hideProgressIndicator();
 
         directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
         directDownloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,22 +247,23 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         player.stop();
         resetPlayerDatasource = true;
         seekToPosition = 0;
-        while(player.getPlaybackState() != Player.STATE_READY) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                // do nothing.
+        player.addListener(new ExoPlayerEventAdapter() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                if(playbackState == Player.STATE_READY) {
+                    player.removeListener(this);
+                    try {
+                        CacheUtils.deleteCachedContent(getContext(), getModel().getFullSizeFile().getUrl());
+                        // now update stored state and UI display
+                        setAllowDownload(false);
+                        displayItemDetailsControlsBasedOnSessionState();
+                    } catch (IOException e) {
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_clear_cached_content));
+                    }
+                    configureDatasourceAndPlayerRequestingPermissions(continuePlayback);
+                }
             }
-        }
-        try {
-            CacheUtils.deleteCachedContent(getContext(), getModel().getFullSizeFile().getUrl());
-            // now update stored state and UI display
-            setAllowDownload(false);
-            displayItemDetailsControlsBasedOnSessionState();
-        } catch (IOException e) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_clear_cached_content));
-        }
-        configureDatasourceAndPlayerRequestingPermissions(continuePlayback);
+        });
     }
 
     @Override

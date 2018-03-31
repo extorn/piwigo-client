@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.delit.PicassoFactory;
+import com.squareup.picasso.RequestCreator;
 
 import java.io.File;
 
@@ -35,10 +36,12 @@ public class CustomListSingleOnly extends ArrayAdapter<String>{
         if((new File(ParentFolder+"/"+web[position])).isDirectory()){
             imageView.setImageResource(R.drawable.folder);//sets to folder
         }else if((new File(ParentFolder+"/"+web[position])).isFile()) {//sets to file
-            PicassoFactory.getInstance(context).getPicassoSingleton().load(
+            RequestCreator rqc = PicassoFactory.getInstance(context).getPicassoSingleton().load(
                     new File(
                             ParentFolder + "/" + web[position]
-                    )).placeholder(R.drawable.document_gray).resize(50, 50).into(imageView);
+                    )).placeholder(R.drawable.document_gray).resize(50, 50);
+            rqc.tag(PicassoFactory.REQUEST_TAG);
+            rqc.into(imageView);
         }
         return rowView;
     }

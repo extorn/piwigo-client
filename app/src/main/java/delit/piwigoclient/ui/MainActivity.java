@@ -40,6 +40,7 @@ import delit.piwigoclient.ui.album.AlbumSelectFragment;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
+import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumDeletedEvent;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
@@ -292,26 +293,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         } else {
             if(CategoryItem.ROOT_ALBUM.equals(gallery)) {
                 // check if we've shown any albums before. If so, pop everything off the stack.
-                boolean found = false;
-                int i = 0;
-                while(!found && getSupportFragmentManager().getBackStackEntryCount() > i) {
-                    FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(i);
-                    if(ViewAlbumFragment.class.getName().equals(entry.getName())) {
-                        found = true;
-                        if(i > 0) {
-                            // if the previous item was a login action - force that off the stack too.
-                            entry = getSupportFragmentManager().getBackStackEntryAt(i - 1);
-                            if(LoginFragment.class.getName().equals(entry.getName())) {
-                                i--;
-                            }
-                        }
-                    } else {
-                        i++;
-                    }
-                }
-                if(found) {
-                    getSupportFragmentManager().popBackStack(i, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                }
+                removeFragmentsFromHistory(ViewAlbumFragment.class, true);
             }
             showFragmentNow(ViewAlbumFragment.newInstance(gallery), true);
         }
@@ -382,13 +364,15 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     }
 
     private boolean showUpload() {
-        if (!PiwigoSessionDetails.isFullyLoggedIn()) {
-            onLoginActionMethodName = "showUpload";
-            showLoginFragment();
-        } else {
-            UploadFragment fragment = UploadFragment.newInstance(currentAlbum);
-            showFragmentNow(fragment);
-        }
+//        if (!PiwigoSessionDetails.isFullyLoggedIn()) {
+//            onLoginActionMethodName = "showUpload";
+//            showLoginFragment();
+//        } else {
+//            UploadFragment fragment = UploadFragment.newInstance(currentAlbum);
+//            showFragmentNow(fragment);
+//        }
+        Intent intent = new Intent(getApplicationContext(), UploadActivity.class);
+        getApplicationContext().startActivity(intent);
         return true;
     }
 
@@ -747,6 +731,8 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {
             // If nothing specified, show the root gallery.
             showGallery(CategoryItem.ROOT_ALBUM);
+        } else {
+            //TODO notify all pages that need it that they need to be reloaded - i.e. flush them out of the fragment manager or send an event forcing reload.
         }
         AdsManager.getInstance().updateShowAdvertsSetting();
         VersionCompatability.INSTANCE.runTests();

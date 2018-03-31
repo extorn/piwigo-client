@@ -550,7 +550,9 @@ public class GroupFragment extends MyFragment {
     private void onGroupDeleted(PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse response) {
         EventBus.getDefault().post(new GroupDeletedEvent(currentGroup));
         // return to previous screen
-        getFragmentManager().popBackStackImmediate();
+        if(isVisible()) {
+            getFragmentManager().popBackStackImmediate();
+        }
     }
 
     public void onUsernamesLoaded(PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse response) {

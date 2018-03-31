@@ -233,7 +233,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     // refresh all preference values on the page.
                     setPreferenceScreen(null);
                     buildPreferencesViewAndInitialise();
-                    forkLogoutIfNeeded();
+                    testLogin();
                     initialising = false;
                 }
 
@@ -412,7 +412,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) {
                 PiwigoResponseBufferingHandler.PiwigoOnLoginResponse rsp = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) response;
                 if(rsp.isSessionRetrieved() && rsp.isUserDetailsRetrieved()) {
-                    onLogin();
+                    onLogin(rsp.getOldCredentials());
                 }
             } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse) {
                 getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), PiwigoAccessService.startActionCleanupHttpConnections(getContext()));
@@ -435,12 +435,12 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     }
 
 
-    public void onLogin() {
+    public void onLogin(PiwigoSessionDetails oldCredentials) {
         String msg = getString(R.string.alert_message_success_connectionTest, PiwigoSessionDetails.getInstance().getUserType());
         if(PiwigoSessionDetails.getInstance().getAvailableImageSizes().size() == 0) {
             msg += '\n' + getString(R.string.alert_message_no_available_image_sizes);
         }
         getUiHelper().showOrQueueDialogMessage(R.string.alert_title_connectionTest, msg);
-        EventBus.getDefault().post(new PiwigoLoginSuccessEvent(false));
+        EventBus.getDefault().post(new PiwigoLoginSuccessEvent(oldCredentials, false));
     }
 }

@@ -146,13 +146,35 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         handler.setCallDetails(getContext(), getPiwigoServerUrl(), !getUseSynchronousMode());
         handler.setPublishResponses(false);
         handler.runCall();
-        while(handler.isRunning()) {
-            if(isCancelCallAsap()) {
-                handler.cancelCallAsap();
+        if(handler.isRunning()) {
+            long callTimeoutAtTime = System.currentTimeMillis() + 300000;
+
+            synchronized (handler) {
+                boolean timedOut = false;
+                while (handler.isRunning() && !isCancelCallAsap() && !timedOut) {
+                    long waitForMillis = callTimeoutAtTime - System.currentTimeMillis();
+                    if (waitForMillis > 0) {
+                        try {
+                            handler.wait(waitForMillis);
+                        } catch (InterruptedException e) {
+                            // Either this wait has timed out or the handler has completed okay and notified us (ignore the error)
+                        }
+                    } else {
+                        timedOut = true;
+                        if (BuildConfig.DEBUG) {
+                            Log.e(handler.getTag(), "Service call cancelled before handler could finish running");
+                        }
+                        handler.cancelCallAsap();
+                    }
+                }
+                if(isCancelCallAsap()) {
+                    handler.cancelCallAsap();
+                }
             }
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
+            if (handler.isRunning()) {
+                if (BuildConfig.DEBUG) {
+                    Log.e(handler.getTag(), "Timeout while waiting for service call handler to finish running");
+                }
                 handler.cancelCallAsap();
             }
         }
@@ -186,9 +208,13 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
 
             if(getNestedFailureMethod() != null) {
-                Log.e(getTag(), getNestedFailureMethod() + " onFailure: \n" + errorBody, error);
+                if(BuildConfig.DEBUG) {
+                    Log.e(getTag(), getNestedFailureMethod() + " onFailure: \n" + errorBody, error);
+                }
             } else {
-                Log.e(getTag(), piwigoMethod + " onFailure: \n" + getRequestParameters() + '\n' + errorBody, error);
+                if(BuildConfig.DEBUG) {
+                    Log.e(getTag(), piwigoMethod + " onFailure: \n" + getRequestParameters() + '\n' + errorBody, error);
+                }
             }
         }
         String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);

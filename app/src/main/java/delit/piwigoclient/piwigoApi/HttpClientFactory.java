@@ -30,6 +30,7 @@ import cz.msebera.android.httpclient.conn.ssl.SSLContextBuilder;
 import cz.msebera.android.httpclient.conn.ssl.TrustStrategy;
 import cz.msebera.android.httpclient.conn.ssl.X509HostnameVerifier;
 import cz.msebera.android.httpclient.util.TextUtils;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
@@ -80,17 +81,23 @@ public class HttpClientFactory {
         try {
             closeClient(asyncClient);
         } catch(IOException e) {
-            Log.e(TAG, "Error closing asyncClient");
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error closing asyncClient");
+            }
         }
         try {
             closeClient(syncClient);
         } catch(IOException e) {
-            Log.e(TAG, "Error closing syncClient");
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error closing syncClient");
+            }
         }
         try {
             closeClient(videoDownloadClient);
         } catch(IOException e) {
-            Log.e(TAG, "Error closing videoDownloadClient");
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error closing videoDownloadClient");
+            }
         }
         asyncClient = null;
         syncClient = null;
@@ -141,25 +148,11 @@ public class HttpClientFactory {
 
         CachingAsyncHttpClient client;
 
-
-        int httpPort = 80;
-        int httpsPort = 443;
         String piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
 
         if(piwigoServerUrl == null || piwigoServerUrl.trim().length() == 0) {
             return null;
         }
-        piwigoServerUrl = piwigoServerUrl.toLowerCase();
-        int port = extractPort(piwigoServerUrl);
-        if(port > 0) {
-            if (piwigoServerUrl.startsWith("http://")) {
-                httpPort = port;
-            } else if (piwigoServerUrl.startsWith("https://")) {
-                httpsPort = port;
-            }
-        }
-
-        //TODO sort out port for connection factory stuff
 
         SSLConnectionSocketFactory sslSocketFactory = buildHttpsSocketFactory(context);
 
@@ -296,13 +289,21 @@ public class HttpClientFactory {
             return contextBuilder.build();
 
         } catch (NoSuchAlgorithmException e) {
-            Log.e(TAG, "Error building sslContext",e);
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error building sslContext", e);
+            }
         } catch (UnrecoverableKeyException e) {
-            Log.e(TAG, "Error building sslContext",e);
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error building sslContext", e);
+            }
         } catch (KeyStoreException e) {
-            Log.e(TAG, "Error building sslContext",e);
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error building sslContext", e);
+            }
         } catch (KeyManagementException e) {
-            Log.e(TAG, "Error building sslContext",e);
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error building sslContext", e);
+            }
         }
         return null;
     }

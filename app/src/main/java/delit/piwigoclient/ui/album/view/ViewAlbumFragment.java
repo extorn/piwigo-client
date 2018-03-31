@@ -60,6 +60,7 @@ import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.MainActivity;
+import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.ControllableBottomSheetBehavior;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
@@ -101,6 +102,7 @@ public class ViewAlbumFragment extends MyFragment {
     public static final String STATE_USERNAME_SELECTION_WANTED_NEXT = "usernameSelectionWantedNext";
     public static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
+    private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
     private static final int UPDATE_IN_PROGRESS = 1;
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
@@ -156,6 +158,9 @@ public class ViewAlbumFragment extends MyFragment {
     private long userGuid;
     private String preferredThumbnailSize;
     private transient List<CategoryItem> adminCategories;
+    private AppCompatImageView actionIndicatorImg;
+    private RecyclerView galleryListView;
+    private String piwigoSessionToken;
 
 
     /**
@@ -214,6 +219,12 @@ public class ViewAlbumFragment extends MyFragment {
         allowedGroupsField.setText(sb.toString());
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        UIHelper.recycleImageViewContent(actionIndicatorImg);
+    }
+
     private void fillUsernamesField(TextView allowedUsernamesField, Collection<Username> selectedUsernames) {
         StringBuilder sb = new StringBuilder();
         Iterator<Username> usernameIter = selectedUsernames.iterator();
@@ -242,6 +253,7 @@ public class ViewAlbumFragment extends MyFragment {
         outState.putInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS, updateAlbumDetailsProgress);
         outState.putBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT, usernameSelectionWantedNext);
         outState.putSerializable(STATE_DELETE_ACTION_DATA, deleteActionData);
+        outState.putString(STATE_ACTIVE_SESSION_TOKEN, piwigoSessionToken);
     }
 
     @Nullable
@@ -253,6 +265,7 @@ public class ViewAlbumFragment extends MyFragment {
             galleryIsDirty = true;
         } else if (savedInstanceState != null) {
             //restore saved state
+            piwigoSessionToken = savedInstanceState.getString(STATE_ACTIVE_SESSION_TOKEN);
             editingItemDetails = savedInstanceState.getBoolean(STATE_EDITING_ITEM_DETAILS);
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
@@ -279,6 +292,7 @@ public class ViewAlbumFragment extends MyFragment {
                 albumAdminList = null;
             }
         }
+
         userGuid = PiwigoSessionDetails.getUserGuid();
         if(galleryModel == null) {
             galleryIsDirty = true;
@@ -286,6 +300,18 @@ public class ViewAlbumFragment extends MyFragment {
         }
 
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
+
+        if(galleryListView != null && !PiwigoSessionDetails.matchesSessionToken(piwigoSessionToken)) {
+            if(gallery == CategoryItem.ROOT_ALBUM) {
+                // Root album can just be reloaded.
+                galleryIsDirty = true;
+            } else {
+                // If the page has been initialised already (not first visit), and the session token has changed, force moving to parent album.
+                //TODO be cleverer - check if the website is the same (might be okay to try and reload the same album in that instance). N.b. would need to check for a 401 error
+                getFragmentManager().popBackStack();
+                return view;
+            }
+        }
 
         preferredThumbnailSize = prefs.getString(getContext().getString(R.string.preference_gallery_item_thumbnail_size_key), getContext().getString(R.string.preference_gallery_item_thumbnail_size_default));
         boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
@@ -298,6 +324,8 @@ public class ViewAlbumFragment extends MyFragment {
         initialiseBasketView(view);
 
         retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_refresh_black_24dp).into(retryActionButton);
+
         retryActionButton.setVisibility(GONE);
         retryActionButton.setOnClickListener(new View.OnClickListener() {
 
@@ -325,8 +353,10 @@ public class ViewAlbumFragment extends MyFragment {
         }
 
         galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
+
         galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
         descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_more_horiz_black_24px).into(descriptionDropdownButton);
 
         setGalleryHeadings();
 
@@ -366,11 +396,11 @@ public class ViewAlbumFragment extends MyFragment {
 //        viewInOrientation = getResources().getConfiguration().orientation;
 
         // Set the adapter
-        View galleryListView = view.findViewById(R.id.gallery_list);
+        galleryListView = (RecyclerView)view.findViewById(R.id.gallery_list);
 
         boolean showLargeAlbumThumbnails = prefs.getBoolean(getString(R.string.preference_gallery_show_large_thumbnail_key), getResources().getBoolean(R.bool.preference_gallery_show_large_thumbnail_default));
 
-        RecyclerView recyclerView = (RecyclerView) galleryListView;
+        RecyclerView recyclerView = galleryListView;
 
         if (!galleryIsDirty) {
             emptyGalleryLabel.setVisibility(galleryModel.getItems().size() == 0 ? VISIBLE : GONE);
@@ -435,6 +465,7 @@ public class ViewAlbumFragment extends MyFragment {
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()||getBasket().getItemCount() > 0?VISIBLE:GONE);
 
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(bulkActionButtonDelete);
         bulkActionButtonDelete.setVisibility(viewAdapter.isItemSelectionAllowed() && basket.getItemCount() == 0?VISIBLE:GONE);
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -447,6 +478,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_copy_black_24px).into(bulkActionButtonCopy);
         bulkActionButtonCopy.setVisibility(viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
         bulkActionButtonCopy.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -460,6 +492,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_cut_black_24px).into(bulkActionButtonCut);
         bulkActionButtonCut.setVisibility(viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
         bulkActionButtonCut.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -473,6 +506,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_paste_black_24dp).into(bulkActionButtonPaste);
         bulkActionButtonPaste.setVisibility(!viewAdapter.isItemSelectionAllowed() && basket.getItemCount() > 0 && gallery.getId() != CategoryItem.ROOT_ALBUM.getId() && gallery.getId() != basket.getContentParentId()?VISIBLE:GONE);
         bulkActionButtonPaste.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -587,7 +621,11 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
+        AppCompatImageView basketImage = (AppCompatImageView)basketView.findViewById(R.id.basket_image);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_shopping_basket_black_24dp).into(basketImage);
+
         AppCompatImageView clearButton = basketView.findViewById(R.id.basket_clear_button);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(clearButton);
         clearButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -633,11 +671,11 @@ public class ViewAlbumFragment extends MyFragment {
             AppCompatTextView basketItemCountField = basketView.findViewById(R.id.basket_item_count);
             basketItemCountField.setText(String.valueOf(basketItemCount));
 
-            AppCompatImageView actionIndicatorImg = basketView.findViewById(R.id.basket_action_indicator);
+            actionIndicatorImg = (AppCompatImageView)basketView.findViewById(R.id.basket_action_indicator);
             if(basket.getAction() == Basket.ACTION_COPY) {
-                actionIndicatorImg.setImageResource(R.drawable.ic_content_copy_black_24px);
+                PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_copy_black_24px).into(actionIndicatorImg);
             } else {
-                actionIndicatorImg.setImageResource(R.drawable.ic_content_cut_black_24px);
+                PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_cut_black_24px).into(actionIndicatorImg);
             }
         }
 
@@ -824,6 +862,12 @@ public class ViewAlbumFragment extends MyFragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        if(galleryListView == null) {
+            //Resumed, but fragment initialisation cancelled for whatever reason.
+            return;
+        }
+
         if (galleryIsDirty) {
             reloadAlbumContent();
         } else if(itemsToLoad.size() > 0) {
@@ -934,6 +978,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         saveButton = bottomSheet.findViewById(R.id.gallery_details_save_button);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_save_black_24dp).into(saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -944,6 +989,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
         discardButton = bottomSheet.findViewById(R.id.gallery_details_discard_button);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_undo_black_24dp).into(discardButton);
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -954,6 +1000,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
         editButton = bottomSheet.findViewById(R.id.gallery_details_edit_button);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_mode_edit_black_24dp).into(editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -963,6 +1010,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         addNewAlbumButton = bottomSheet.findViewById(R.id.album_add_new_album_button);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_create_new_folder_black_24dp).into(addNewAlbumButton);
         addNewAlbumButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1042,6 +1090,7 @@ public class ViewAlbumFragment extends MyFragment {
         galleryPrivacyStatusField.setOnCheckedChangeListener(checkedListener);
 
         deleteButton = bottomSheet.findViewById(R.id.gallery_action_delete);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1050,13 +1099,16 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         pasteButton = bottomSheet.findViewById(R.id.gallery_action_paste);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_paste_black_24dp).into(pasteButton);
         pasteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onMoveItem(gallery);
             }
         });
+
         cutButton = bottomSheet.findViewById(R.id.gallery_action_cut);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_cut_black_24px).into(cutButton);
         cutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1202,6 +1254,13 @@ public class ViewAlbumFragment extends MyFragment {
     public void onDetach() {
         super.onDetach();
         EventBus.getDefault().unregister(this);
+        gallery = null;
+        galleryModel = null;
+        currentUsers = null;
+        currentGroups = null;
+        if(galleryListView != null) {
+            galleryListView.setAdapter(null);
+        }
     }
 
     @Override
@@ -1210,6 +1269,15 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if(isVisible()) {
+                piwigoSessionToken = PiwigoSessionDetails.getActiveSessionToken();
+            }
+            super.onBeforeHandlePiwigoResponse(response);
+        }
+
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             synchronized (loadingMessageIds) {
@@ -1826,6 +1894,12 @@ public class ViewAlbumFragment extends MyFragment {
 
         @Override
         public int getSpanSize(int position) {
+            // ensure that app cannot crash due to position being out of bounds.
+            //FIXME - why would position be outside model size? What happens next now it doesn't crash here?
+            if(position < 0 || galleryModel.getItems().size() <= position) {
+                return 1;
+            }
+
             int itemType = galleryModel.getItems().get(position).getType();
             switch(itemType) {
                 case GalleryItem.CATEGORY_ADVERT_TYPE:

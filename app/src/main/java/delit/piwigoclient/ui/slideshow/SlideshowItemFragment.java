@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +34,10 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -42,6 +47,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -49,6 +55,7 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.ControllableBottomSheetBehavior;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
@@ -60,6 +67,7 @@ import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
+import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
@@ -173,6 +181,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         progressIndicator = v.findViewById(R.id.slideshow_image_loadingIndicator);
 
         setAsAlbumThumbnail = v.findViewById(R.id.slideshow_resource_action_use_for_album_thumbnail);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_wallpaper_black_24dp).into(setAsAlbumThumbnail);
         setAsAlbumThumbnail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -328,6 +337,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
 
         saveButton = v.findViewById(R.id.slideshow_resource_action_save_button);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_save_black_24dp).into(saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -336,6 +346,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             }
         });
         discardButton = v.findViewById(R.id.slideshow_resource_action_discard_button);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_undo_black_24dp).into(discardButton);
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -346,6 +357,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         });
 
         editButton = v.findViewById(R.id.slideshow_resource_action_edit_button);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_mode_edit_black_24dp).into(editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -356,6 +368,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
 
 
         downloadButton = v.findViewById(R.id.slideshow_resource_action_download);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_file_download_black_24px).into(downloadButton);
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -363,6 +376,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             }
         });
         deleteButton = v.findViewById(R.id.slideshow_resource_action_delete);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -370,6 +384,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             }
         });
         moveButton = v.findViewById(R.id.slideshow_resource_action_move);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_cut_black_24px).into(moveButton);
         moveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -377,6 +392,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             }
         });
         copyButton = v.findViewById(R.id.slideshow_resource_action_copy);
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_copy_black_24px).into(copyButton);
         copyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -520,56 +536,69 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         return model;
     }
 
-    private void notifyUserFileDownloadComplete(File downloadedFile) {
+    private void notifyUserFileDownloadComplete(final File downloadedFile) {
 
-        Intent notificationIntent;
+        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_notifications_black_24dp).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                Intent notificationIntent;
 
 //        if(openImageNotFolder) {
-        notificationIntent = new Intent(Intent.ACTION_VIEW);
-        // Action on click on notification
-        Uri selectedUri = Uri.fromFile(downloadedFile);
-        MimeTypeMap map = MimeTypeMap.getSingleton();
-        String ext = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
-        String mimeType = map.getMimeTypeFromExtension(ext);
-        //notificationIntent.setDataAndType(selectedUri, mimeType);
+                notificationIntent = new Intent(Intent.ACTION_VIEW);
+                // Action on click on notification
+                Uri selectedUri = Uri.fromFile(downloadedFile);
+                MimeTypeMap map = MimeTypeMap.getSingleton();
+                String ext = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
+                String mimeType = map.getMimeTypeFromExtension(ext);
+                //notificationIntent.setDataAndType(selectedUri, mimeType);
 
-        Uri apkURI = FileProvider.getUriForFile(
-                getContext(),
-                getContext().getApplicationContext()
-                        .getPackageName() + ".provider", downloadedFile);
-        notificationIntent.setDataAndType(apkURI, mimeType);
-        notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Uri apkURI = FileProvider.getUriForFile(
+                        getContext(),
+                        getContext().getApplicationContext()
+                                .getPackageName() + ".provider", downloadedFile);
+                notificationIntent.setDataAndType(apkURI, mimeType);
+                notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
 //        } else {
-        // N.B.this only works with a very select few android apps - folder browsing seeminly isnt a standard thing in android.
+                // N.B.this only works with a very select few android apps - folder browsing seeminly isnt a standard thing in android.
 //            notificationIntent = pkg Intent(Intent.ACTION_VIEW);
 //            Uri selectedUri = Uri.fromFile(downloadedFile.getParentFile());
 //            notificationIntent.setDataAndType(selectedUri, "resource/folder");
 //        }
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
-                notificationIntent, 0);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
+                        notificationIntent, 0);
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(getContext().getResources(),
-                R.drawable.ic_notifications_black_24dp);
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), getUiHelper().getDefaultNotificationChannelId())
+                        .setLargeIcon(bitmap)
+                        .setContentTitle(getString(R.string.notification_download_event))
+                        .setContentText(downloadedFile.getAbsolutePath())
+                        .setCategory(Notification.CATEGORY_EVENT)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), getUiHelper().getDefaultNotificationChannelId())
-                .setLargeIcon(largeIcon)
-                .setContentTitle(getString(R.string.notification_download_event))
-                .setContentText(downloadedFile.getAbsolutePath())
-                .setCategory(Notification.CATEGORY_EVENT)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    // this is not a vector graphic
+                    mBuilder.setSmallIcon(R.drawable.ic_notifications_black);
+                } else {
+                    mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
+                }
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            // this is not a vector graphic
-            mBuilder.setSmallIcon(R.drawable.ic_notifications_black);
-        } else {
-            mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
-        }
+                getUiHelper().clearNotification(TAG, 1);
+                getUiHelper().showNotification(TAG, 1, mBuilder.build());
+            }
 
-        getUiHelper().clearNotification(TAG, 1);
-        getUiHelper().showNotification(TAG, 1, mBuilder.build());
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                //Do nothing... Should never ever occur
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                // Don't need to do anything before loading image
+            }
+
+        });
 
     }
 
@@ -618,6 +647,12 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken()));
+        }
+
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             boolean finishedOperation = true;

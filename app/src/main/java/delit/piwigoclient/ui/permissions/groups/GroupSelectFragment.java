@@ -153,7 +153,9 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         HashSet<Group> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new GroupSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
-        getFragmentManager().popBackStackImmediate();
+        if(isVisible()) {
+            getFragmentManager().popBackStackImmediate();
+        }
     }
 
     @Override

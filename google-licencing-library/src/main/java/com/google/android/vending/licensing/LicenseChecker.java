@@ -122,10 +122,14 @@ public class LicenseChecker implements ServiceConnection {
             // This won't happen in an Android-compatible environment.
             throw new RuntimeException(e);
         } catch (Base64DecoderException e) {
-            Log.e(TAG, "Could not decode from Base64.");
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Could not decode from Base64.");
+            }
             throw new IllegalArgumentException(e);
         } catch (InvalidKeySpecException e) {
-            Log.e(TAG, "Invalid key specification.");
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Invalid key specification.");
+            }
             throw new IllegalArgumentException(e);
         }
 
@@ -174,14 +178,18 @@ public class LicenseChecker implements ServiceConnection {
         // If we have a valid recent LICENSED response, we can skip asking
         // Market.
         if (mPolicy.allowAccess()) {
-            Log.i(TAG, "Using cached license response");
+            if(BuildConfig.DEBUG) {
+                Log.i(TAG, "Using cached license response");
+            }
             callback.allow(Policy.LICENSED);
         } else {
             LicenseValidator validator = new LicenseValidator(mPolicy, new NullDeviceLimiter(),
                     callback, generateNonce(), mPackageName, mVersionCode);
 
             if (mService == null) {
-                Log.i(TAG, "Binding to licensing service.");
+                if(BuildConfig.DEBUG) {
+                    Log.i(TAG, "Binding to licensing service.");
+                }
                 try {
 
                     Intent serviceIntent;
@@ -206,7 +214,9 @@ public class LicenseChecker implements ServiceConnection {
                     if (bindResult) {
                         mPendingChecks.offer(validator);
                     } else {
-                        Log.e(TAG, "Could not bind to service.");
+                        if(BuildConfig.DEBUG) {
+                            Log.e(TAG, "Could not bind to service.");
+                        }
                         handleServiceConnectionError(validator);
                     }
                 } catch (SecurityException e) {
@@ -225,13 +235,17 @@ public class LicenseChecker implements ServiceConnection {
         LicenseValidator validator;
         while ((validator = mPendingChecks.poll()) != null) {
             try {
-                Log.i(TAG, "Calling checkLicense on service for " + validator.getPackageName());
+                if(BuildConfig.DEBUG) {
+                    Log.i(TAG, "Calling checkLicense on service for " + validator.getPackageName());
+                }
                 mService.checkLicense(
                         validator.getNonce(), validator.getPackageName(),
                         new ResultListener(validator));
                 mChecksInProgress.add(validator);
             } catch (RemoteException e) {
-                Log.w(TAG, "RemoteException in checkLicense call.", e);
+                if(BuildConfig.DEBUG) {
+                    Log.w(TAG, "RemoteException in checkLicense call.", e);
+                }
                 handleServiceConnectionError(validator);
             }
         }
@@ -252,7 +266,9 @@ public class LicenseChecker implements ServiceConnection {
             mValidator = validator;
             mOnTimeout = new Runnable() {
                 public void run() {
-                    Log.i(TAG, "Check timed out.");
+                    if(BuildConfig.DEBUG) {
+                        Log.i(TAG, "Check timed out.");
+                    }
                     handleServiceConnectionError(mValidator);
                     finishCheck(mValidator);
                 }
@@ -270,7 +286,9 @@ public class LicenseChecker implements ServiceConnection {
                 final String signature) {
             mHandler.post(new Runnable() {
                 public void run() {
-                    Log.i(TAG, "Received response.");
+                    if(BuildConfig.DEBUG) {
+                        Log.i(TAG, "Received response.");
+                    }
                     // Make sure it hasn't already timed out.
                     if (mChecksInProgress.contains(mValidator)) {
                         clearTimeout();
@@ -301,9 +319,11 @@ public class LicenseChecker implements ServiceConnection {
                             String android_id = Secure.getString(mContext.getContentResolver(),
                                     Secure.ANDROID_ID);
                             Date date = new Date();
-                            Log.d(TAG, "Server Failure: " + stringError);
-                            Log.d(TAG, "Android ID: " + android_id);
-                            Log.d(TAG, "Time: " + date.toGMTString());
+                            if(BuildConfig.DEBUG) {
+                                Log.d(TAG, "Server Failure: " + stringError);
+                                Log.d(TAG, "Android ID: " + android_id);
+                                Log.d(TAG, "Time: " + date.toGMTString());
+                            }
                         }
                     }
 
@@ -312,12 +332,16 @@ public class LicenseChecker implements ServiceConnection {
         }
 
         private void startTimeout() {
-            Log.i(TAG, "Start monitoring timeout.");
+            if(BuildConfig.DEBUG) {
+                Log.i(TAG, "Start monitoring timeout.");
+            }
             mHandler.postDelayed(mOnTimeout, TIMEOUT_MS);
         }
 
         private void clearTimeout() {
-            Log.i(TAG, "Clearing timeout.");
+            if(BuildConfig.DEBUG) {
+                Log.i(TAG, "Clearing timeout.");
+            }
             mHandler.removeCallbacks(mOnTimeout);
         }
     }
@@ -331,7 +355,9 @@ public class LicenseChecker implements ServiceConnection {
         // Called when the connection with the service has been
         // unexpectedly disconnected. That is, Market crashed.
         // If there are any checks in progress, the timeouts will handle them.
-        Log.w(TAG, "Service unexpectedly disconnected.");
+        if(BuildConfig.DEBUG) {
+            Log.w(TAG, "Service unexpectedly disconnected.");
+        }
         mService = null;
     }
 
@@ -357,7 +383,9 @@ public class LicenseChecker implements ServiceConnection {
             } catch (IllegalArgumentException e) {
                 // Somehow we've already been unbound. This is a non-fatal
                 // error.
-                Log.e(TAG, "Unable to unbind from licensing service (already unbound)");
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Unable to unbind from licensing service (already unbound)");
+                }
             }
             mService = null;
         }
@@ -393,7 +421,9 @@ public class LicenseChecker implements ServiceConnection {
             return String.valueOf(context.getPackageManager().getPackageInfo(packageName, 0).
                     versionCode);
         } catch (NameNotFoundException e) {
-            Log.e(TAG, "Package not found. could not get version code.");
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Package not found. could not get version code.");
+            }
             return "";
         }
     }
