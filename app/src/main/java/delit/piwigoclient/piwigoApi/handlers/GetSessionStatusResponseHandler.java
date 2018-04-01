@@ -35,7 +35,7 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        if(PiwigoSessionDetails.getInstance() != null) {
+        if(PiwigoSessionDetails.getInstance() != null && !PiwigoSessionDetails.getInstance().isSessionMayHaveExpired()) {
             onPiwigoSessionRetrieved();
             return null;
         } else {

@@ -150,6 +150,18 @@ public class ResourceItem extends GalleryItem {
         this.fileChecksum = fileChecksum;
     }
 
+    public void copyFrom(ResourceItem other) {
+        super.copyFrom(other);
+        yourRating = other.yourRating;
+        averageRating = other.averageRating;
+        ratingsGiven = other.ratingsGiven;
+        privacyLevel = other.privacyLevel;
+        availableFiles = other.availableFiles;
+        fullSizeImage = other.fullSizeImage;
+        linkedAlbums = other.linkedAlbums;
+        fileChecksum = other.fileChecksum;
+    }
+
     public static class ResourceFile implements Comparable<ResourceFile>, Serializable {
         private final String name;
         private final String url;

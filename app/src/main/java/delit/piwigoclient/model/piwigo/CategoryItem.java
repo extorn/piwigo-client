@@ -26,6 +26,10 @@ public class CategoryItem extends GalleryItem {
     };
     public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
 
+    public CategoryItem(long id) {
+        super(id, null, null, null, null);
+    }
+
     public CategoryItem(long id, String name, String description, boolean isPrivate, Date lastAltered, long photoCount, long totalPhotoCount, long subCategories, String thumbnailUrl) {
         super(id, name, description, lastAltered, thumbnailUrl);
         this.photoCount = photoCount;

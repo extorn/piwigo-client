@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
@@ -161,7 +162,8 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             albumsRequiringReload = (HashSet<Long>) savedInstanceState.getSerializable(STATE_ALBUMS_REQUIRING_UPDATE);
         } else {
             // call this quietly in the background to avoid it ruining the slideshow experience.
-            long messageId = PiwigoAccessService.startActionGetResourceInfo(model, getContext());
+            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+            long messageId = PiwigoAccessService.startActionGetResourceInfo(model, multimediaExtensionList, getContext());
             getUiHelper().addBackgroundServiceCall(messageId);
 //            if(proactivelyDownloadResourceInfo) {
 //                EventBus.getDefault().post(new AlbumItemActionStartedEvent(model));

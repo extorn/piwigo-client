@@ -16,10 +16,12 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
 
     private static final String TAG = "GetResourceInfoRspHdlr";
     private T resourceItem;
+    private final String multimediaExtensionList;
 
-    public ImageGetInfoResponseHandler(T piwigoResource) {
+    public ImageGetInfoResponseHandler(T piwigoResource, String multimediaExtensionList) {
         super("pwg.images.getInfo", TAG);
         this.resourceItem = piwigoResource;
+        this.multimediaExtensionList = multimediaExtensionList;
     }
 
     @Override
@@ -36,33 +38,32 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
 
-        JsonElement nameJsonElem = result.get("name");
-        if(nameJsonElem != null && !nameJsonElem.isJsonNull()) {
-            resourceItem.setName(nameJsonElem.getAsString());
-        }
+        ImagesGetResponseHandler.ResourceParser resourceParser = new ImagesGetResponseHandler.ResourceParser(getContext(), multimediaExtensionList);
+
+        ResourceItem loadedResourceItem = resourceParser.parseAndProcessResourceData(result);
 
         int privacyLevel = result.get("level").getAsInt();
-        resourceItem.setPrivacyLevel(privacyLevel);
+        loadedResourceItem.setPrivacyLevel(privacyLevel);
 
         JsonObject rates = result.get("rates").getAsJsonObject();
         if(rates != null && !rates.isJsonNull()) {
             JsonElement scoreJsonElem = rates.get("score");
             if (scoreJsonElem != null && !scoreJsonElem.isJsonNull()) {
                 float rating = scoreJsonElem.getAsFloat();
-                resourceItem.setYourRating(rating);
+                loadedResourceItem.setYourRating(rating);
             }
 
             JsonElement ratesElem = rates.get("count");
             if(ratesElem != null && !ratesElem.isJsonNull()) {
                 int usersRated = ratesElem.getAsInt();
-                resourceItem.setRatingsGiven(usersRated);
+                loadedResourceItem.setRatingsGiven(usersRated);
             }
         }
 
         JsonElement averageJsonElem = rates.get("average");
         if (averageJsonElem != null && !averageJsonElem.isJsonNull()) {
             float averageRating = averageJsonElem.getAsFloat();
-            resourceItem.setAverageRating(averageRating);
+            loadedResourceItem.setAverageRating(averageRating);
         }
 
         JsonElement checksumJsonElem = result.get("md5sum");
@@ -71,20 +72,14 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
             fileChecksum = checksumJsonElem.getAsString();
         }
 
-        resourceItem.setFileChecksum(fileChecksum);
+        loadedResourceItem.setFileChecksum(fileChecksum);
 
-        // we reload this because when retrieving all images for an album, it returns incorrect results.
-        HashSet<Long> linkedAlbums = new HashSet<>();
-        JsonArray linkedAlbumsJsonArr = result.get("categories").getAsJsonArray();
-
-        for(int j = 0; j < linkedAlbumsJsonArr.size(); j++) {
-            JsonObject catJsonObj = linkedAlbumsJsonArr.get(j).getAsJsonObject();
-            linkedAlbums.add(catJsonObj.get("id").getAsLong());
+        if(loadedResourceItem.getClass().isAssignableFrom(resourceItem.getClass())) {
+            resourceItem.copyFrom(loadedResourceItem);
+            loadedResourceItem = resourceItem;
         }
 
-        resourceItem.setLinkedAlbums(linkedAlbums);
-
-        PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<>(getMessageId(), getPiwigoMethod(), resourceItem);
+        PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<>(getMessageId(), getPiwigoMethod(), (T)loadedResourceItem);
         storeResponse(r);
     }
 

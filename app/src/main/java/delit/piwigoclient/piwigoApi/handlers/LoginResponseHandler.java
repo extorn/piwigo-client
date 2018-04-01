@@ -38,7 +38,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        if (PiwigoSessionDetails.isLoggedIn() || username == null || username.trim().isEmpty()) {
+        if ((PiwigoSessionDetails.getInstance() != null && !PiwigoSessionDetails.getInstance().isSessionMayHaveExpired() && PiwigoSessionDetails.isLoggedIn()) || username == null || username.trim().isEmpty()) {
             onLogin();
             return null;
         } else {
@@ -54,13 +54,18 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     public void onLogin() {
         loginSuccess = true;
         PiwigoResponseBufferingHandler.PiwigoOnLoginResponse r = new PiwigoResponseBufferingHandler.PiwigoOnLoginResponse(getMessageId(), getPiwigoMethod());
-        if(!PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance();
+        if(sessionDetails == null || sessionDetails.isSessionMayHaveExpired() || !PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
             GetSessionStatusResponseHandler sessionLoadHandler = new GetSessionStatusResponseHandler();
             runAndWaitForHandlerToFinish(sessionLoadHandler);
-            if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
+            if(PiwigoSessionDetails.isLoggedInWithSessionDetails()
+                    && sessionLoadHandler.getResponse() instanceof PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse) {
+
                 PiwigoSessionDetails oldCredentials = ((PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse)sessionLoadHandler.getResponse()).getOldCredentials();
+
                 r.setSessionRetrieved();
                 r.setOldCredentials(oldCredentials);
+
             } else {
                 reportNestedFailure(sessionLoadHandler);
             }

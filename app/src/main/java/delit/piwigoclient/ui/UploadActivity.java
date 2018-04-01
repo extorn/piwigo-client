@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -165,8 +166,10 @@ public class UploadActivity extends MyActivity {
         boolean isAdminUser = PiwigoSessionDetails.isAdminUser();
         boolean hasCommunityPlugin = PiwigoSessionDetails.isUseCommunityPlugin();
 
+        long initialGalleryId = getIntent().getLongExtra("galleryId", 0);
+
         if(isAdminUser || hasCommunityPlugin) {
-            Fragment f = UploadFragment.newInstance(CategoryItem.ROOT_ALBUM, fileSelectionEventId);
+            Fragment f = UploadFragment.newInstance(initialGalleryId, fileSelectionEventId);
             removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
         } else {
@@ -239,6 +242,7 @@ public class UploadActivity extends MyActivity {
         } else {
             filesToUpload = new ArrayList<>(0);
         }
+        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[])null);
         return filesToUpload;
     }
 
@@ -251,6 +255,7 @@ public class UploadActivity extends MyActivity {
         } else {
             filesToUpload = new ArrayList<>(0);
         }
+        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[])null);
         return filesToUpload;
     }
 

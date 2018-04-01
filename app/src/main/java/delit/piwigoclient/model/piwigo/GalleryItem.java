@@ -19,7 +19,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Serializable {
     public static final int CATEGORY_ADVERT_TYPE = 3;
     public static final int RESOURCE_ADVERT_TYPE = 4;
     private final long id;
-    private final String thumbnailUrl;
+    private String thumbnailUrl;
     private String name;
     private String description;
     private Date lastAltered;
@@ -58,6 +58,10 @@ public class GalleryItem implements Comparable<GalleryItem>, Serializable {
     public void setParentageChain(List<Long> parentageChain, long directParent) {
         this.parentageChain = new ArrayList<>(parentageChain);
         this.parentageChain.add(directParent);
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public List<Long> getParentageChain() {
@@ -132,5 +136,16 @@ public class GalleryItem implements Comparable<GalleryItem>, Serializable {
 
     public String getThumbnailUrl() {
         return thumbnailUrl;
+    }
+
+    public void copyFrom(GalleryItem other) {
+        if(id != other.id) {
+            throw new IllegalArgumentException("IDs do not match");
+        }
+        this.name = other.name;
+        this.description = other.description;
+        this.thumbnailUrl = other.thumbnailUrl;
+        this.lastAltered = other.lastAltered;
+        parentageChain = other.parentageChain;
     }
 }

@@ -645,13 +645,13 @@ public class PiwigoAccessService {
         }.start(handler.getMessageId());
     }
 
-    public static <T extends ResourceItem> long startActionGetResourceInfo(final T model, Context context) {
+    public static <T extends ResourceItem> long startActionGetResourceInfo(final T model, final String multimediaExtensionList, Context context) {
         long messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
         return new Worker(context) {
 
             @Override
             protected AbstractPiwigoDirectResponseHandler buildHandler(SharedPreferences prefs) {
-                return new ImageGetInfoResponseHandler<>(model);
+                return new ImageGetInfoResponseHandler<>(model, multimediaExtensionList);
             }
         }.start(messageId);
     }
