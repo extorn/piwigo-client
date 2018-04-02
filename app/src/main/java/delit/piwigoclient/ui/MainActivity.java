@@ -373,7 +373,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
 //        }
         Intent intent = new Intent(Constants.ACTION_MANUAL_UPLOAD);
         intent.putExtra("galleryId", currentAlbum.getId());
-        getApplicationContext().startActivity(intent);
+        startActivity(intent);
         return true;
     }
 
