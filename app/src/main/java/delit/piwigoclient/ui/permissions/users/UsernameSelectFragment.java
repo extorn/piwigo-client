@@ -75,6 +75,12 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
+        if(isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return null;
+        }
+
         boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
         UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(getContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusListener<Username>() {
             @Override
@@ -144,6 +150,11 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     @Override
     public void onResume() {
         super.onResume();
+
+        if(isServerConnectionChanged()) {
+            return;
+        }
+
         if (usernamesModel.getPagesLoaded() == 0) {
             getListAdapter().notifyDataSetChanged();
             loadUsernamesPage(0);

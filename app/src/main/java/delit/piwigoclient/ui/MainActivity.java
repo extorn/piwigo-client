@@ -371,7 +371,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
 //            UploadFragment fragment = UploadFragment.newInstance(currentAlbum);
 //            showFragmentNow(fragment);
 //        }
-        Intent intent = new Intent(getApplicationContext(), UploadActivity.class);
+        Intent intent = new Intent(Constants.ACTION_MANUAL_UPLOAD);
         intent.putExtra("galleryId", currentAlbum.getId());
         getApplicationContext().startActivity(intent);
         return true;

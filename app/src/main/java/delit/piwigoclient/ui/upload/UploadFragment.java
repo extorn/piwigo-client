@@ -152,12 +152,14 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        super.onCreateView(inflater, container, savedInstanceState);
+
         if ((!PiwigoSessionDetails.isAdminUser() && !PiwigoSessionDetails.getInstance().isUseCommunityPlugin()) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
         }
-        super.onCreateView(inflater, container, savedInstanceState);
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
@@ -276,6 +278,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         int position = availableGalleries.getPosition(uploadToAlbumId);
         if(position >= 0) {
+            // item may not be found if it has just been deleted from the server or we have changed server we're connected to.
             selectedGallerySpinner.setSelection(position);
         }
         if(privacyLevelWantedSelection >= 0) {
@@ -685,6 +688,14 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         CustomPiwigoResponseListener(Context context) {
             this.context = context;
+        }
+
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if(isVisible()) {
+                updateActiveSessionDetails();
+            }
+            super.onBeforeHandlePiwigoResponse(response);
         }
 
         @Override

@@ -104,7 +104,6 @@ public class ViewAlbumFragment extends MyFragment {
     public static final String STATE_USERNAME_SELECTION_WANTED_NEXT = "usernameSelectionWantedNext";
     public static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
-    private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
     private static final int UPDATE_IN_PROGRESS = 1;
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
@@ -162,7 +161,6 @@ public class ViewAlbumFragment extends MyFragment {
     private transient List<CategoryItem> adminCategories;
     private AppCompatImageView actionIndicatorImg;
     private RecyclerView galleryListView;
-    private String piwigoSessionToken;
     private AlbumViewAdapterListener viewAdapterListener;
 
 
@@ -256,19 +254,19 @@ public class ViewAlbumFragment extends MyFragment {
         outState.putInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS, updateAlbumDetailsProgress);
         outState.putBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT, usernameSelectionWantedNext);
         outState.putSerializable(STATE_DELETE_ACTION_DATA, deleteActionData);
-        outState.putString(STATE_ACTIVE_SESSION_TOKEN, piwigoSessionToken);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         super.onCreateView(inflater, container, savedInstanceState);
+
         if(!PiwigoSessionDetails.isFullyLoggedIn()) {
             // force a reload of the gallery if the session has been destroyed.
             galleryIsDirty = true;
         } else if (savedInstanceState != null) {
             //restore saved state
-            piwigoSessionToken = savedInstanceState.getString(STATE_ACTIVE_SESSION_TOKEN);
             editingItemDetails = savedInstanceState.getBoolean(STATE_EDITING_ITEM_DETAILS);
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
@@ -304,7 +302,7 @@ public class ViewAlbumFragment extends MyFragment {
 
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
-        if(galleryListView != null && !PiwigoSessionDetails.matchesSessionToken(piwigoSessionToken)) {
+        if(galleryListView != null && isSessionDetailsChanged()) {
             if(gallery == CategoryItem.ROOT_ALBUM) {
                 // Root album can just be reloaded.
                 galleryIsDirty = true;
@@ -1262,7 +1260,7 @@ public class ViewAlbumFragment extends MyFragment {
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if(isVisible()) {
-                piwigoSessionToken = PiwigoSessionDetails.getActiveSessionToken();
+                updateActiveSessionDetails();
             }
             super.onBeforeHandlePiwigoResponse(response);
         }

@@ -52,6 +52,7 @@ import paul.arian.fileselector.FileSelectionActivity;
  */
 
 public class UploadActivity extends MyActivity {
+
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final String STATE_FILE_SELECT_EVENT_ID = "fileSelectionEventId";
     private static final String STATE_STARTED_ALREADY = "startedAlready";

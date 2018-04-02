@@ -152,12 +152,15 @@ public class GroupFragment extends MyFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if((!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode()) {
+
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        if((!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
         }
-        super.onCreateView(inflater, container, savedInstanceState);
+
         View v = inflater.inflate(R.layout.fragment_group, container, false);
 
         AdView adView = v.findViewById(R.id.group_adView);

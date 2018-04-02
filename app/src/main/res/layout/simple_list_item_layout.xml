@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_marginTop="15dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/checked"
+        android:layout_toLeftOf="@+id/list_item_delete_button"
+        android:layout_alignWithParentIfMissing="true"
+        android:text="dummy text"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+    <TextView
+        android:id="@+id/details"
+        android:layout_marginLeft="5dp"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="15dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name"
+        android:layout_toRightOf="@id/checked"
+        android:layout_toLeftOf="@+id/list_item_delete_button"
+        android:layout_alignWithParentIfMissing="true"
+        android:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"/>
+
+</RelativeLayout>

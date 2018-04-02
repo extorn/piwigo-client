@@ -180,4 +180,14 @@ public class PiwigoSessionDetails {
         return activeToken == null && piwigoSessionToken == null
                 || activeToken != null && activeToken.equals(piwigoSessionToken);
     }
+
+    public static boolean matchesServerConnection(String piwigoServerConnection) {
+        String activeToken = getActiveServerConnection();
+        return activeToken == null && piwigoServerConnection == null
+                || activeToken != null && activeToken.equals(piwigoServerConnection);
+    }
+
+    public static String getActiveServerConnection() {
+        return instance == null ? null : instance.getServerUrl();
+    }
 }

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -74,6 +75,12 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
+        if(isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return null;
+        }
+
         if (savedInstanceState != null) {
             availableItems = (ArrayList) savedInstanceState.getSerializable(STATE_AVAILABLE_ITEMS);
             indirectSelection = (HashSet<Long>) savedInstanceState.getSerializable(STATE_INDIRECT_SELECTION);
@@ -91,6 +98,9 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     @Override
     public void onResume() {
         super.onResume();
+        if(isServerConnectionChanged()) {
+            return;
+        }
         populateListWithItems();
     }
 

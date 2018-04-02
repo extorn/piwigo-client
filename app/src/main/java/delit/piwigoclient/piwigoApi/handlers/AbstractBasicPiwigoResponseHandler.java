@@ -162,7 +162,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             } else if(error instanceof SocketTimeoutException) {
                 tryingAgain = true;
                 rerunCall();
-            } else if(error instanceof SSLHandshakeException && error.getMessage() != null && error.getMessage().contains("I/O error during system call, Broken pipe")) {
+            } else if(error instanceof SSLHandshakeException && error.getMessage() != null && error.getMessage().contains("I/O error during system call")) {
                 tryingAgain = true;
                 rerunCall();
             } else if(allowSessionRefreshAttempt
