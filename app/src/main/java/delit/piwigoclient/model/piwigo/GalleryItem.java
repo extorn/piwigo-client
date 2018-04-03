@@ -138,7 +138,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Serializable {
         return thumbnailUrl;
     }
 
-    public void copyFrom(GalleryItem other) {
+    public void copyFrom(GalleryItem other, boolean copyParentage) {
         if(id != other.id) {
             throw new IllegalArgumentException("IDs do not match");
         }
@@ -146,6 +146,8 @@ public class GalleryItem implements Comparable<GalleryItem>, Serializable {
         this.description = other.description;
         this.thumbnailUrl = other.thumbnailUrl;
         this.lastAltered = other.lastAltered;
-        parentageChain = other.parentageChain;
+        if(copyParentage) {
+            parentageChain = other.parentageChain;
+        }
     }
 }

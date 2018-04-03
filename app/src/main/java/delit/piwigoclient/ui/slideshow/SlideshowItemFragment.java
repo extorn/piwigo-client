@@ -7,13 +7,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
@@ -35,7 +33,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -48,7 +45,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -130,6 +126,11 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         if (getArguments() != null) {
             model = (T) getArguments().getSerializable(ARG_GALLERY_ITEM);
         }
+    }
+
+    @Override
+    protected void doInOnCreateView() {
+        // Do nothing (don't want to register for service calls. we'll do that as the fragment is displayed).
     }
 
     @Override
@@ -636,6 +637,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
     public void onPageSelected() {
         if(isAdded()) {
             FragmentUIHelper uiHelper = getUiHelper();
+            uiHelper.registerToActiveServiceCalls();
             uiHelper.setBlockDialogsFromShowing(false);
             uiHelper.handleAnyQueuedPiwigoMessages();
         }

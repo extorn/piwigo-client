@@ -148,32 +148,38 @@
         <item>"Changes:
          - ? German, French, other translations for the app ?"
         </item>
-        <item>1.3.81</item>
+        <item>1.3.82</item>
         <item>"Changes:
          - User interface refinements
          - Support for favorites - depends on PIWIGO API enhancement
          - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"
         </item>
-        <item>1.3.80</item>
+        <item>1.3.81</item>
         <item>"Changes:
          - Possibly - allow linking the upload process to a compression routine for videos
-         - Rework of the way popup messages and progress indicators are shown so they always appear.
-         - Further investigation into memory use
+         - Rework of the way popup messages and progress indicators are shown so they always appear - investigate using Toast messages
          - Possibly - The ability to delete an album, but not its contents (creating orphans)
          - Possibly - Orphan file management"
         </item>
-        <item>1.3.79</item>
+        <item>1.3.80</item>
         <item>"Changes:
          - Paid App Only : (Maybe) : Support for user tags
          - Paid App Only : (Maybe) : Support for user comments"
         </item>
-        <item>1.3.78</item>
+        <item>1.3.79</item>
         <item>"Changes:
          - Paid App Only : Poll a device folder and automatically upload any content found to a specified Piwigo profile
          - Paid App Only : (Maybe) : Notify user of server updates that are available"
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.78</item>
+        <item>"Bugfix:
+         - Fixed possible race condition in app startup
+         - Corrected bug introduced in 1.3.76 that could cause issues moving or deleting resources
+         - Corrected race condition in the slideshow screen
+         - Tweaked the slideshow state saving"
+        </item>
         <item>1.3.77</item>
         <item>"Bugfix:
             - Upload screen really is accessible on physical devices again now!"

@@ -75,7 +75,8 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
         loadedResourceItem.setFileChecksum(fileChecksum);
 
         if(loadedResourceItem.getClass().isAssignableFrom(resourceItem.getClass())) {
-            resourceItem.copyFrom(loadedResourceItem);
+            // don't copy parentage since this isn't retrieved from the server but built locally.
+            resourceItem.copyFrom(loadedResourceItem, false);
             loadedResourceItem = resourceItem;
         }
 

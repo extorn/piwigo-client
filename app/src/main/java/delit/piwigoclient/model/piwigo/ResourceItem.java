@@ -150,8 +150,8 @@ public class ResourceItem extends GalleryItem {
         this.fileChecksum = fileChecksum;
     }
 
-    public void copyFrom(ResourceItem other) {
-        super.copyFrom(other);
+    public void copyFrom(ResourceItem other, boolean copyParentage) {
+        super.copyFrom(other, copyParentage);
         yourRating = other.yourRating;
         averageRating = other.averageRating;
         ratingsGiven = other.ratingsGiven;

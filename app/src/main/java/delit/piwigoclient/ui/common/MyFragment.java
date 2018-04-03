@@ -117,12 +117,19 @@ public class MyFragment extends Fragment {
         if(piwigoSessionToken == null) {
             updateActiveSessionDetails();
         }
-        //TODO move inside the savedState reload block above?
-        uiHelper.registerToActiveServiceCalls();
+
+        doInOnCreateView();
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
         return v;
+    }
+
+    /**
+     * Currently registers for active service calls.
+     */
+    protected void doInOnCreateView() {
+        uiHelper.registerToActiveServiceCalls();
     }
 
     private void setupDialogBoxes() {

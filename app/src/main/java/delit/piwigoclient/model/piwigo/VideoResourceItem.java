@@ -15,7 +15,7 @@ public class VideoResourceItem extends ResourceItem {
         return VIDEO_RESOURCE_TYPE;
     }
 
-    public void copyFrom(VideoResourceItem other) {
-        super.copyFrom(other);
+    public void copyFrom(VideoResourceItem other, boolean copyParentage) {
+        super.copyFrom(other, copyParentage);
     }
 }

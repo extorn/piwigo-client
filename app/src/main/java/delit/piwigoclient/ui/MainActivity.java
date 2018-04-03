@@ -103,6 +103,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
 
         if (savedInstanceState != null) {
             currentAlbum = (CategoryItem) savedInstanceState.getSerializable(STATE_CURRENT_ALBUM);
@@ -662,6 +663,11 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
         EventBus.getDefault().register(this);
     }
 

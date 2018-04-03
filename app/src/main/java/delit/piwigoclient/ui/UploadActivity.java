@@ -63,10 +63,15 @@ public class UploadActivity extends MyActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Need to register here as the call is handled immediately if the permissions are already present.
-        EventBus.getDefault().register(this);
         startedWithPermissions = false;
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        // Need to register here as the call is handled immediately if the permissions are already present.
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -91,6 +96,7 @@ public class UploadActivity extends MyActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
 
         if(savedInstanceState != null) {
             fileSelectionEventId = savedInstanceState.getInt(STATE_FILE_SELECT_EVENT_ID);
