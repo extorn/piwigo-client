@@ -2,11 +2,9 @@ package delit.piwigoclient.ui.album.view;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
@@ -27,7 +25,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.Date;
 import java.util.HashSet;
 
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
@@ -35,7 +32,6 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.SquareLinearLayout;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
@@ -97,6 +93,10 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
                 toggleItemSelection();
             }
         }
+    }
+
+    public int getItemPosition(GalleryItem item) {
+        return gallery.getItems().indexOf(item);
     }
 
     @Override
@@ -383,6 +383,13 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
                     ((ResizingPicassoLoader) holder.imageLoader).setCenterCrop(false);
                 }
             }
+        } else if(holder.mItem instanceof CategoryItem && ((CategoryItem)holder.mItem).getRepresentativePictureId() != null) {
+            holder.imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
+            if(!useMasonryStyle) {
+                ((ResizingPicassoLoader) holder.imageLoader).setCenterCrop(false);
+            }
+            //Now trigger a load of the real data.
+            multiSelectStatusListener.notifyAlbumThumbnailInfoLoadNeeded((CategoryItem)holder.mItem);
         } else {
             holder.imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
             if(!useMasonryStyle) {
@@ -467,6 +474,18 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         this.albumWidth = albumWidth;
     }
 
+    public void redrawItem(ViewHolder vh, CategoryItem item) {
+        // clone the item into the view holder item (will not be same object if serialization has occured)
+        vh.mItem.copyFrom(item, true);
+        // find item index.
+
+        int idx = getItemPosition(vh.mItem);
+        notifyItemChanged(idx);
+        // clear the item in the view holder (to ensure it is redrawn - will be reloaded from the galleryList).
+        vh.mItem = null;
+        onBindViewHolder(vh, gallery.getItems().indexOf(vh.mItem));
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final AppCompatCheckBox checkBox;
         public final AppCompatImageView mImageView;
@@ -505,6 +524,8 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         void onItemSelectionCountChanged(int size);
 
         void onCategoryLongClick(CategoryItem album);
+
+        void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem);
     }
 
     private class ItemSelectionListener implements CompoundButton.OnCheckedChangeListener {

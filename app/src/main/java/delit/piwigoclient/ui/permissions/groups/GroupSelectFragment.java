@@ -56,6 +56,12 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
+        if(isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return null;
+        }
+
         boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
         GroupRecyclerViewAdapter viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusListener<Group>() {
             @Override
@@ -121,6 +127,9 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     @Override
     public void onResume() {
         super.onResume();
+        if(isServerConnectionChanged()) {
+            return;
+        }
         if(groupsModel.getPagesLoaded() == 0) {
             getListAdapter().notifyDataSetChanged();
             loadGroupsPage(0);

@@ -42,6 +42,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoAccessService;
@@ -72,7 +73,7 @@ import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 public class UploadFragment extends MyFragment implements FilesToUploadRecyclerViewAdapter.RemoveListener {
 
     // the fragment initialization parameters
-    public static final String ARG_CURRENT_GALLERY = "currentGallery";
+    public static final String ARG_CURRENT_GALLERY_ID = "currentGalleryId";
     public static final String TAG = "UploadFragment";
     public static final String SAVED_STATE_CURRENT_GALLERY = "currentGallery";
     public static final String SAVED_STATE_PRIVACY_LEVEL_WANTED = "privacyLevelWanted";
@@ -100,21 +101,10 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     public UploadFragment() {
     }
 
-    /**
-     * Use this factory method to create a pkg instance of
-     * this fragment using the provided parameters.
-     *
-     * @param currentGallery Parameter 1.
-     * @return A pkg instance of fragment UploadFragment.
-     */
-    public static UploadFragment newInstance(CategoryItem currentGallery) {
-        return newInstance(currentGallery, -1);
-    }
-
-    public static UploadFragment newInstance(CategoryItem currentGallery, int actionId) {
+    public static UploadFragment newInstance(long currentGalleryId, int actionId) {
         UploadFragment fragment = new UploadFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_CURRENT_GALLERY, currentGallery);
+        args.putSerializable(ARG_CURRENT_GALLERY_ID, currentGalleryId);
         args.putInt(ARG_SELECT_FILES_ACTION_ID, actionId);
         fragment.setArguments(args);
         return fragment;
@@ -137,8 +127,11 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            currentGallery = (CategoryItem) getArguments().getSerializable(ARG_CURRENT_GALLERY);
-            uploadToAlbumId = currentGallery.getId();
+            uploadToAlbumId = getArguments().getLong(ARG_CURRENT_GALLERY_ID);
+            currentGallery = CategoryItem.ROOT_ALBUM;
+            if(uploadToAlbumId != currentGallery.getId()) {
+                currentGallery = new CategoryItem(uploadToAlbumId);
+            }
             int fileSelectAction = getArguments().getInt(ARG_SELECT_FILES_ACTION_ID);
             if(fileSelectAction >= 0) {
                 getUiHelper().setTrackingRequest(fileSelectAction);
@@ -159,12 +152,14 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        super.onCreateView(inflater, container, savedInstanceState);
+
         if ((!PiwigoSessionDetails.isAdminUser() && !PiwigoSessionDetails.getInstance().isUseCommunityPlugin()) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
         }
-        super.onCreateView(inflater, container, savedInstanceState);
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
@@ -283,6 +278,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         int position = availableGalleries.getPosition(uploadToAlbumId);
         if(position >= 0) {
+            // item may not be found if it has just been deleted from the server or we have changed server we're connected to.
             selectedGallerySpinner.setSelection(position);
         }
         if(privacyLevelWantedSelection >= 0) {
@@ -692,6 +688,14 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         CustomPiwigoResponseListener(Context context) {
             this.context = context;
+        }
+
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if(isVisible()) {
+                updateActiveSessionDetails();
+            }
+            super.onBeforeHandlePiwigoResponse(response);
         }
 
         @Override

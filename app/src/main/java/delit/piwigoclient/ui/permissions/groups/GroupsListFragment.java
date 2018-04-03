@@ -81,14 +81,16 @@ public class GroupsListFragment extends MyFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        super.onCreateView(inflater, container, savedInstanceState);
+
         if((!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
         }
-        super.onCreateView(inflater, container, savedInstanceState);
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null && !isSessionDetailsChanged()) {
             groupsModel = (PiwigoGroups) savedInstanceState.getSerializable(GROUPS_MODEL);
             pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
         }
@@ -241,6 +243,15 @@ public class GroupsListFragment extends MyFragment {
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if(isVisible()) {
+                updateActiveSessionDetails();
+            }
+            super.onBeforeHandlePiwigoResponse(response);
+        }
+
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) {

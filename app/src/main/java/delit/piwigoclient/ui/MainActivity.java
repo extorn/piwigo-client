@@ -103,6 +103,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
 
         if (savedInstanceState != null) {
             currentAlbum = (CategoryItem) savedInstanceState.getSerializable(STATE_CURRENT_ALBUM);
@@ -371,8 +372,9 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
 //            UploadFragment fragment = UploadFragment.newInstance(currentAlbum);
 //            showFragmentNow(fragment);
 //        }
-        Intent intent = new Intent(getApplicationContext(), UploadActivity.class);
-        getApplicationContext().startActivity(intent);
+        Intent intent = new Intent(Constants.ACTION_MANUAL_UPLOAD);
+        intent.putExtra("galleryId", currentAlbum.getId());
+        startActivity(intent);
         return true;
     }
 
@@ -661,6 +663,11 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     @Override
     public void onStart() {
         super.onStart();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
         EventBus.getDefault().register(this);
     }
 

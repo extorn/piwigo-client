@@ -427,8 +427,10 @@ public class NewPiwigoUploadService extends IntentService {
             postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadFileFilesExistAlreadyResponse(getNextMessageId(), filesExistingOnServerAlready));
         }
 
+        String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
         for(Map.Entry<File,Long> entry : resourcesToRetrieve.entrySet()) {
-            ImageGetInfoResponseHandler handler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null));
+
+            ImageGetInfoResponseHandler handler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null), multimediaExtensionList);
             int allowedAttempts = 2;
             while (!handler.isSuccess() && allowedAttempts > 0) {
                 allowedAttempts--;

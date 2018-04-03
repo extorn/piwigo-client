@@ -103,6 +103,8 @@
      <fields>;
 }
 
+-keep class delit.piwigoclient.ui.Constants
+
 -keep class delit.piwigoclient.business.video.CachedContent
 
 # We're not using the okhttp library at the moment so we don't need it on the classpath.

@@ -24,4 +24,9 @@ public class PictureResourceItem extends ResourceItem {
     public int getType() {
         return PICTURE_RESOURCE_TYPE;
     }
+
+    public void copyFrom(PictureResourceItem other, boolean copyParentage) {
+        super.copyFrom(other, copyParentage);
+        fullScreenImage = other.fullScreenImage;
+    }
 }

@@ -12,7 +12,10 @@ import delit.piwigoclient.ui.MyApplication;
 
 public class PiwigoSessionDetails {
     private static PiwigoSessionDetails instance;
-
+    public static final int NOT_LOGGED_IN = 0;
+    public static final int LOGGED_IN = 1;
+    public static final int LOGGED_IN_WITH_SESSION_DETAILS = 2;
+    public static final int LOGGED_IN_WITH_SESSION_AND_USER_DETAILS = 3;
     private long userGuid;
     private String username;
     private String userType;
@@ -22,7 +25,8 @@ public class PiwigoSessionDetails {
     private long webInterfaceUploadChunkSizeKB;
     private String sessionToken;
     private User userDetails;
-    private int loginStatus = 0;
+    private boolean sessionMayHaveExpired;
+    private int loginStatus = NOT_LOGGED_IN;
     private Boolean useCommunityPlugin;
     private String serverUrl;
 
@@ -34,7 +38,7 @@ public class PiwigoSessionDetails {
         this.piwigoVersion = piwigoVersion;
         this.availableImageSizes = availableImageSizes;
         this.sessionToken = sessionToken;
-        this.loginStatus = 2;
+        this.loginStatus = LOGGED_IN_WITH_SESSION_DETAILS;
     }
 
     public PiwigoSessionDetails(String serverUrl, long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, Set<String> allowedFileTypes, long webInterfaceUploadChunkSizeKB, String sessionToken) {
@@ -47,11 +51,19 @@ public class PiwigoSessionDetails {
         this.allowedFileTypes = allowedFileTypes;
         this.webInterfaceUploadChunkSizeKB = webInterfaceUploadChunkSizeKB;
         this.sessionToken = sessionToken;
-        this.loginStatus = 2;
+        this.loginStatus = LOGGED_IN_WITH_SESSION_DETAILS;
+    }
+
+    public void setSessionMayHaveExpired() {
+        this.sessionMayHaveExpired = true;
+    }
+
+    public boolean isSessionMayHaveExpired() {
+        return sessionMayHaveExpired;
     }
 
     public static boolean isLoggedInAndHaveSessionAndUserDetails() {
-        return instance != null && instance.loginStatus == 3;
+        return instance != null && instance.loginStatus == LOGGED_IN_WITH_SESSION_AND_USER_DETAILS;
     }
 
     public static long getUserGuid() {
@@ -144,7 +156,7 @@ public class PiwigoSessionDetails {
 
     public void setUserDetails(User userDetails) {
         this.userDetails = userDetails;
-        this.loginStatus = 3;
+        this.loginStatus = LOGGED_IN_WITH_SESSION_AND_USER_DETAILS;
     }
 
     public boolean isCommunityPluginStatusAvailable() {
@@ -165,6 +177,17 @@ public class PiwigoSessionDetails {
 
     public static boolean matchesSessionToken(String piwigoSessionToken) {
         String activeToken = getActiveSessionToken();
-        return (activeToken == null && piwigoSessionToken == null) || activeToken.equals(piwigoSessionToken);
+        return activeToken == null && piwigoSessionToken == null
+                || activeToken != null && activeToken.equals(piwigoSessionToken);
+    }
+
+    public static boolean matchesServerConnection(String piwigoServerConnection) {
+        String activeToken = getActiveServerConnection();
+        return activeToken == null && piwigoServerConnection == null
+                || activeToken != null && activeToken.equals(piwigoServerConnection);
+    }
+
+    public static String getActiveServerConnection() {
+        return instance == null ? null : instance.getServerUrl();
     }
 }

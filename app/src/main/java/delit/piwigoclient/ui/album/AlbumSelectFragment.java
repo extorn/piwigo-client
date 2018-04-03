@@ -53,6 +53,12 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
+        if(isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return null;
+        }
+
         if (savedInstanceState != null) {
             availableAlbums = (ArrayList) savedInstanceState.getSerializable(STATE_AVAILABLE_ITEMS);
         }
@@ -69,6 +75,11 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     @Override
     public void onResume() {
         super.onResume();
+
+        if(isServerConnectionChanged()) {
+            return;
+        }
+
         populateListWithItems();
     }
 

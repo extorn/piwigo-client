@@ -63,45 +63,69 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
 
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point point = new Point();
-        display.getSize(point);
-        int screenWidth = point.x;
-        int screenHeight = point.y;
-        if (screenHeight < screenWidth) {
-            //Assume portrait mode
-            //noinspection SuspiciousNameCombination
-            screenHeight = point.x;
-            //noinspection SuspiciousNameCombination
-            screenWidth = point.y;
-        }
-
-        StringTokenizer st = new StringTokenizer(multimediaExtensionList, ",");
-        StringBuilder multimediaRegexpBuilder = new StringBuilder(".*\\.(");
-        String token;
-        while (st.hasMoreTokens()) {
-            token = st.nextToken();
-            if (token.startsWith(".")) {
-                token = token.substring(1);
-            }
-            multimediaRegexpBuilder.append(token);
-            if (st.hasMoreTokens()) {
-                multimediaRegexpBuilder.append('|');
-            }
-        }
-        multimediaRegexpBuilder.append(")$");
-        Pattern p = Pattern.compile(multimediaRegexpBuilder.toString());
-        Matcher m = null;
-
         ArrayList<GalleryItem> resources = new ArrayList<>();
-
-        SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         JsonObject result = rsp.getAsJsonObject();
         JsonArray images = result.get("images").getAsJsonArray();
+
+        ResourceParser resourceParser = new ResourceParser(context, multimediaExtensionList);
+
         for (int i = 0; i < images.size(); i++) {
             JsonObject image = (JsonObject) images.get(i);
+            ResourceItem item = resourceParser.parseAndProcessResourceData(image);
+
+            item.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
+            resources.add(item);
+
+        }
+
+        PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse r = new PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources);
+        storeResponse(r);
+    }
+
+    protected static class ResourceParser {
+
+        private final Pattern p;
+        private Matcher m;
+        private SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        private final int screenWidth;
+
+        public ResourceParser(Context context, String multimediaExtensionList) {
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point point = new Point();
+            display.getSize(point);
+            int screenWidth = point.x;
+            int screenHeight = point.y;
+            if (screenHeight < screenWidth) {
+                //Assume portrait mode
+                //noinspection SuspiciousNameCombination
+                screenHeight = point.x;
+                //noinspection SuspiciousNameCombination
+                screenWidth = point.y;
+            }
+            this.screenWidth = screenWidth;
+
+            StringTokenizer st = new StringTokenizer(multimediaExtensionList, ",");
+            StringBuilder multimediaRegexpBuilder = new StringBuilder(".*\\.(");
+            String token;
+            while (st.hasMoreTokens()) {
+                token = st.nextToken();
+                if (token.startsWith(".")) {
+                    token = token.substring(1);
+                }
+                multimediaRegexpBuilder.append(token);
+                if (st.hasMoreTokens()) {
+                    multimediaRegexpBuilder.append('|');
+                }
+            }
+            multimediaRegexpBuilder.append(")$");
+            p = Pattern.compile(multimediaRegexpBuilder.toString());
+            m = null;
+        }
+
+        public ResourceItem parseAndProcessResourceData(JsonObject image) throws JSONException {
+
             long id = image.get("id").getAsLong();
 
             String name = null;
@@ -137,18 +161,18 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
             HashSet<Long> linkedAlbums = new HashSet<>();
             JsonArray linkedAlbumsJsonArr = image.get("categories").getAsJsonArray();
-            for(int j = 0; j < linkedAlbumsJsonArr.size(); j++) {
+            for (int j = 0; j < linkedAlbumsJsonArr.size(); j++) {
                 JsonObject catJsonObj = linkedAlbumsJsonArr.get(j).getAsJsonObject();
                 linkedAlbums.add(catJsonObj.get("id").getAsLong());
             }
 
             int originalResourceUrlWidth = 0;
-            if(image.has("width") && !image.get("width").isJsonNull()) {
+            if (image.has("width") && !image.get("width").isJsonNull()) {
                 originalResourceUrlWidth = image.get("width").getAsInt();
             }
 
             int originalResourceUrlHeight = 0;
-            if(image.has("height") && !image.get("height").isJsonNull()) {
+            if (image.has("height") && !image.get("height").isJsonNull()) {
                 originalResourceUrlHeight = image.get("height").getAsInt();
             }
 
@@ -207,13 +231,9 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
             }
 
             item.setLinkedAlbums(linkedAlbums);
-            item.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
-            resources.add(item);
 
+            return item;
         }
-
-        PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse r = new PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources);
-        storeResponse(r);
     }
 
 }

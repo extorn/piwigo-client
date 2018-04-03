@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -34,7 +33,6 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -47,7 +45,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -132,6 +129,11 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
     }
 
     @Override
+    protected void doInOnCreateView() {
+        // Do nothing (don't want to register for service calls. we'll do that as the fragment is displayed).
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
@@ -161,7 +163,8 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
             albumsRequiringReload = (HashSet<Long>) savedInstanceState.getSerializable(STATE_ALBUMS_REQUIRING_UPDATE);
         } else {
             // call this quietly in the background to avoid it ruining the slideshow experience.
-            long messageId = PiwigoAccessService.startActionGetResourceInfo(model, getContext());
+            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+            long messageId = PiwigoAccessService.startActionGetResourceInfo(model, multimediaExtensionList, getContext());
             getUiHelper().addBackgroundServiceCall(messageId);
 //            if(proactivelyDownloadResourceInfo) {
 //                EventBus.getDefault().post(new AlbumItemActionStartedEvent(model));
@@ -634,6 +637,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
     public void onPageSelected() {
         if(isAdded()) {
             FragmentUIHelper uiHelper = getUiHelper();
+            uiHelper.registerToActiveServiceCalls();
             uiHelper.setBlockDialogsFromShowing(false);
             uiHelper.handleAnyQueuedPiwigoMessages();
         }

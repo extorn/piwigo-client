@@ -14,6 +14,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
+import javax.net.ssl.SSLHandshakeException;
+
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
@@ -160,24 +162,44 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             } else if(error instanceof SocketTimeoutException) {
                 tryingAgain = true;
                 rerunCall();
+            } else if(error instanceof SSLHandshakeException && error.getMessage() != null && error.getMessage().contains("I/O error during system call")) {
+                tryingAgain = true;
+                rerunCall();
             } else if(allowSessionRefreshAttempt
                     && (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && error.getMessage().equalsIgnoreCase("Access denied"))) {
 
-                synchronized (LoginResponseHandler.class) {
+                boolean newLoginAcquired = false;
+                synchronized (AbstractBasicPiwigoResponseHandler.class) {
+                    // Only one instance of this class can perform a login at a time - all others will wait for the outcome
                     triedLoggingInAgain = true;
                     String newToken = PiwigoSessionDetails.getActiveSessionToken();
                     if (newToken != null && !newToken.equals(sessionToken)) {
-                        sessionToken = newToken;
-                        // ensure we ignore this error (if it errors again, we'll capture that one)
-                        tryingAgain = true;
-                        // just run the original call again (another thread has retrieved a new session
-                        rerunCall();
+                        newLoginAcquired = true;
                     } else if(!(PiwigoSessionDetails.isLoggedIn() && !PiwigoSessionDetails.isFullyLoggedIn())) {
-                        // ensure we ignore this error (if it errors again, we'll capture that one)
-                        tryingAgain = true;
                         // if we're not trying to get a new login at the moment. (otherwise this recurses).
-                        getNewLogin();
+
+                        // clear the cookies to ensure the fresh cookie is used in subsequent requests.
+                        //TODO is this required?
+                        httpClientFactory.flushCookies();
+
+                        // Ensure that the login code knows that the current session token may be invalid despite seemingly being okay
+                        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance();
+                        if(sessionDetails != null) {
+                            sessionDetails.setSessionMayHaveExpired();
+                        }
+
+                        // try and get a new session token
+                        newLoginAcquired = getNewLogin();
                     }
+                }
+
+                // if we either got a new token here or another thread did, retry the original failing call.
+                if(newLoginAcquired) {
+                    sessionToken = PiwigoSessionDetails.getActiveSessionToken();
+                    // ensure we ignore this error (if it errors again, we'll capture that one)
+                    tryingAgain = true;
+                    // just run the original call again (another thread has retrieved a new session
+                    rerunCall();
                 }
             }
         }
@@ -257,7 +279,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         return httpClientFactory;
     }
 
-    private void getNewLogin() {
+    private boolean getNewLogin() {
 
         // send a server login request
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MyApplication.getInstance());
@@ -267,24 +289,28 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         String username = ConnectionPreferences.getPiwigoUsername(prefs, context);
         String password = ConnectionPreferences.getPiwigoPassword(prefs, context);
 
-        int loginStatus = 0;
-        int newLoginStatus = 0;
+        int loginStatus = PiwigoSessionDetails.NOT_LOGGED_IN;
+        int newLoginStatus = PiwigoSessionDetails.NOT_LOGGED_IN;
         boolean exit = false;
         do {
             LoginResponseHandler handler = new LoginResponseHandler(username, password);
             runLoginHandler(handler);
             if (handler.isLoginSuccess()) {
-                if (PiwigoSessionDetails.isFullyLoggedIn()) {
-                    newLoginStatus = 3;
+                if(handler.getNestedFailureMethod() != null) {
+                    // failed internally. - still a failure!
+                    newLoginStatus = PiwigoSessionDetails.LOGGED_IN;
+                } else if (PiwigoSessionDetails.isFullyLoggedIn()) {
+                    newLoginStatus = PiwigoSessionDetails.LOGGED_IN_WITH_SESSION_AND_USER_DETAILS;
                     exit = true;
                     PiwigoResponseBufferingHandler.PiwigoOnLoginResponse response = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse)handler.getResponse();
                     EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
                     onGetNewSessionSuccess();
-                    rerunCall();
+                    // update the session token for this handler.
+                    return true;
                 } else if (PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-                    newLoginStatus = 2;
+                    newLoginStatus = PiwigoSessionDetails.LOGGED_IN_WITH_SESSION_DETAILS;
                 } else if (PiwigoSessionDetails.isLoggedIn()) {
-                    newLoginStatus = 1;
+                    newLoginStatus = PiwigoSessionDetails.LOGGED_IN;
                 }
             }
             if(newLoginStatus == loginStatus) {
@@ -294,6 +320,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             }
             loginStatus = newLoginStatus;
         } while(!exit);
+
+        return false;
     }
 
     private void runLoginHandler(LoginResponseHandler handler) {

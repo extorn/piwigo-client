@@ -26,7 +26,6 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.AdsManager;
@@ -50,13 +49,12 @@ import static android.view.View.VISIBLE;
 
 public class SlideshowFragment extends MyFragment {
 
+    private static final String TAG = "SlideshowFragment";
     private static final String STATE_GALLERY = "gallery";
     private static final String STATE_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
-    private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
     private CustomViewPager viewPager;
     private PiwigoAlbum gallery;
     private int rawCurrentGalleryItemPosition;
-    private String piwigoSessionToken;
 
 
     public static SlideshowFragment newInstance(PiwigoAlbum gallery, GalleryItem currentGalleryItem) {
@@ -79,6 +77,14 @@ public class SlideshowFragment extends MyFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        super.onCreateView(inflater, container, savedInstanceState);
+
+        if(isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return null;
+        }
+
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
         AdView adView = view.findViewById(R.id.slideshow_adView);
@@ -95,11 +101,17 @@ public class SlideshowFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PiwigoSessionTokenUseNotificationEvent event) {
-        this.piwigoSessionToken = event.getPiwigoSessionToken();
+        updateActiveSessionDetails();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+
+        if(view == null) {
+            // exiting this screen
+            return;
+        }
+
         super.onViewCreated(view, savedInstanceState);
         Bundle configurationBundle = savedInstanceState;
         if(configurationBundle == null) {
@@ -108,10 +120,9 @@ public class SlideshowFragment extends MyFragment {
         if (configurationBundle != null) {
             gallery = (PiwigoAlbum) configurationBundle.getSerializable(STATE_GALLERY);
             rawCurrentGalleryItemPosition = configurationBundle.getInt(STATE_GALLERY_ITEM_DISPLAYED);
-            piwigoSessionToken = configurationBundle.getString(STATE_ACTIVE_SESSION_TOKEN);
         }
 
-        if(viewPager != null && !PiwigoSessionDetails.matchesSessionToken(piwigoSessionToken)) {
+        if(viewPager != null && isSessionDetailsChanged()) {
             // If the page has been initialised already (not first visit), and the session token has changed, force reload.
             getFragmentManager().popBackStack();
             return;
@@ -155,7 +166,9 @@ public class SlideshowFragment extends MyFragment {
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+
         super.onViewStateRestored(savedInstanceState);
+
         if(viewPager == null || viewPager.getAdapter() == null) {
             return;
         }

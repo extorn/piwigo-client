@@ -151,8 +151,14 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
         while (mSavedState.size() <= position) {
             mSavedState.add(null);
         }
-        mSavedState.set(position, fragment.isAdded() && getItemPosition(fragment) >= 0
-                ? mFragmentManager.saveFragmentInstanceState(fragment) : null);
+
+        int itemPos = getItemPosition(fragment);
+        if(fragment.isAdded() && itemPos >= 0) {
+            mSavedState.set(position, mFragmentManager.saveFragmentInstanceState(fragment));
+        } else {
+            mSavedState.set(position, null);
+        }
+
         mFragments.set(position, null);
 
         mCurTransaction.remove(fragment);
@@ -187,12 +193,26 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
         return ((Fragment)object).getView() == view;
     }
 
+    private int getMinIdxFragmentStateToKeep() {
+        int idxCurrentVisibleFragment = mFragments.indexOf(mCurrentPrimaryItem);
+        if(maxFragmentsToSaveInState == 0) {
+            return Integer.MAX_VALUE;
+        }
+        return (int)Math.round(idxCurrentVisibleFragment - Math.floor(((double)maxFragmentsToSaveInState-1) / 2));
+    }
+
+    private int getMaxIdxFragmentStateToKeep() {
+        if(maxFragmentsToSaveInState == 0) {
+            return Integer.MIN_VALUE;
+        }
+        return getMinIdxFragmentStateToKeep() + maxFragmentsToSaveInState;
+    }
+
     @Override
     public Parcelable saveState() {
 
-        int idxToKeep = mFragments.indexOf(mCurrentPrimaryItem);
-        int minIdxToKeep = (int)Math.round(idxToKeep - Math.floor(((double)maxFragmentsToSaveInState-1) / 2));
-        int maxIdxToKeep = minIdxToKeep + maxFragmentsToSaveInState;
+        int minIdxToKeep = getMinIdxFragmentStateToKeep();
+        int maxIdxToKeep = getMaxIdxFragmentStateToKeep();
 
         Bundle state = null;
         if (mSavedState.size() > 0) {
@@ -213,16 +233,18 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
             for (Fragment f : mFragments) {
                 String key = "f" + i;
                 i++;
-                if (i < minIdxToKeep || i > maxIdxToKeep) {
+                if (i >= minIdxToKeep && i <= maxIdxToKeep) {
+                    if (f != null && f.isAdded()) {
+                        if (state == null) {
+                            state = new Bundle();
+                        }
+                        mFragmentManager.putFragment(state, key, f);
+                    }
+                } else {
                     // don't store fragment (remove if present)
                     if (state != null) {
                         state.remove(key);
                     }
-                } else if (f != null && f.isAdded()) {
-                    if (state == null) {
-                        state = new Bundle();
-                    }
-                    mFragmentManager.putFragment(state, key, f);
                 }
             }
         }

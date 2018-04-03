@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import delit.piwigoclient.R;
@@ -50,6 +51,7 @@ import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Group;
+import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -102,7 +104,6 @@ public class ViewAlbumFragment extends MyFragment {
     public static final String STATE_USERNAME_SELECTION_WANTED_NEXT = "usernameSelectionWantedNext";
     public static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
-    private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
     private static final int UPDATE_IN_PROGRESS = 1;
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
@@ -160,7 +161,7 @@ public class ViewAlbumFragment extends MyFragment {
     private transient List<CategoryItem> adminCategories;
     private AppCompatImageView actionIndicatorImg;
     private RecyclerView galleryListView;
-    private String piwigoSessionToken;
+    private AlbumViewAdapterListener viewAdapterListener;
 
 
     /**
@@ -253,19 +254,19 @@ public class ViewAlbumFragment extends MyFragment {
         outState.putInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS, updateAlbumDetailsProgress);
         outState.putBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT, usernameSelectionWantedNext);
         outState.putSerializable(STATE_DELETE_ACTION_DATA, deleteActionData);
-        outState.putString(STATE_ACTIVE_SESSION_TOKEN, piwigoSessionToken);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         super.onCreateView(inflater, container, savedInstanceState);
+
         if(!PiwigoSessionDetails.isFullyLoggedIn()) {
             // force a reload of the gallery if the session has been destroyed.
             galleryIsDirty = true;
         } else if (savedInstanceState != null) {
             //restore saved state
-            piwigoSessionToken = savedInstanceState.getString(STATE_ACTIVE_SESSION_TOKEN);
             editingItemDetails = savedInstanceState.getBoolean(STATE_EDITING_ITEM_DETAILS);
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
@@ -301,7 +302,7 @@ public class ViewAlbumFragment extends MyFragment {
 
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
-        if(galleryListView != null && !PiwigoSessionDetails.matchesSessionToken(piwigoSessionToken)) {
+        if(galleryListView != null && isSessionDetailsChanged()) {
             if(gallery == CategoryItem.ROOT_ALBUM) {
                 // Root album can just be reloaded.
                 galleryIsDirty = true;
@@ -433,23 +434,8 @@ public class ViewAlbumFragment extends MyFragment {
         boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
         captureActionClicks &= (getBasket().getItemCount() == 0 || getBasket().getContentParentId() == gallery.getId());
 
-        viewAdapter = new AlbumItemRecyclerViewAdapter(galleryModel, recentlyAlteredThresholdDate, new AlbumItemRecyclerViewAdapter.MultiSelectStatusListener() {
-            @Override
-            public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
-//                bulkActionsContainer.setVisibility(multiSelectEnabled?VISIBLE:GONE);
-            }
-
-            @Override
-            public void onItemSelectionCountChanged(int size) {
-                bulkActionsContainer.setVisibility(size > 0 || getBasket().getItemCount() > 0 ?VISIBLE:GONE);
-                updateBasketDisplay(getBasket());
-            }
-
-            @Override
-            public void onCategoryLongClick(CategoryItem album) {
-                onAlbumDeleteRequest(album);
-            }
-        }, captureActionClicks);
+        viewAdapterListener = new AlbumViewAdapterListener();
+        viewAdapter = new AlbumItemRecyclerViewAdapter(galleryModel, recentlyAlteredThresholdDate, viewAdapterListener, captureActionClicks);
 
         boolean showResourceNames = prefs.getBoolean(getString(R.string.preference_gallery_show_image_name_key), getResources().getBoolean(R.bool.preference_gallery_show_image_name_default));
 
@@ -805,8 +791,9 @@ public class ViewAlbumFragment extends MyFragment {
                 }
             }
         } else {
+            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
-                addActiveServiceCall(R.string.progress_loading_resource_details, PiwigoAccessService.startActionGetResourceInfo(item, getContext()));
+                addActiveServiceCall(R.string.progress_loading_resource_details, PiwigoAccessService.startActionGetResourceInfo(item, multimediaExtensionList, getContext()));
             }
             return;
         }
@@ -1273,7 +1260,7 @@ public class ViewAlbumFragment extends MyFragment {
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if(isVisible()) {
-                piwigoSessionToken = PiwigoSessionDetails.getActiveSessionToken();
+                updateActiveSessionDetails();
             }
             super.onBeforeHandlePiwigoResponse(response);
         }
@@ -1299,11 +1286,14 @@ public class ViewAlbumFragment extends MyFragment {
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateAlbumContentResponse) {
                     onAlbumContentAltered((PiwigoResponseBufferingHandler.PiwigoUpdateAlbumContentResponse) response);
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) {
-                    if (deleteActionData != null && !deleteActionData.isEmpty()) {
-                        //currently mid delete of resources.
-                        onResourceUnlinked((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) response);
-                    } else {
-                        onResourceMoved((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) response);
+
+                    if(!viewAdapterListener.handleAlbumThumbnailInfoLoaded(response.getMessageId(), ((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse)response).getResource())) {
+                        if (deleteActionData != null && !deleteActionData.isEmpty()) {
+                            //currently mid delete of resources.
+                            onResourceUnlinked((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) response);
+                        } else {
+                            onResourceMoved((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) response);
+                        }
                     }
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse) {
                     onThumbnailUpdated((PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse) response);
@@ -1915,6 +1905,63 @@ public class ViewAlbumFragment extends MyFragment {
                 default:
                     return colsOnScreen;
             }
+        }
+    }
+
+    private class AlbumViewAdapterListener implements AlbumItemRecyclerViewAdapter.MultiSelectStatusListener {
+
+        private Map<Long, CategoryItem> albumThumbnailLoadActions = new HashMap<>();
+
+        @Override
+        public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
+//                bulkActionsContainer.setVisibility(multiSelectEnabled?VISIBLE:GONE);
+        }
+
+        public Map<Long, CategoryItem> getAlbumThumbnailLoadActions() {
+            return albumThumbnailLoadActions;
+        }
+
+        public void setAlbumThumbnailLoadActions(Map<Long, CategoryItem> albumThumbnailLoadActions) {
+            this.albumThumbnailLoadActions = albumThumbnailLoadActions;
+        }
+
+        @Override
+        public void onItemSelectionCountChanged(int size) {
+            bulkActionsContainer.setVisibility(size > 0 || getBasket().getItemCount() > 0 ?VISIBLE:GONE);
+            updateBasketDisplay(getBasket());
+        }
+
+        @Override
+        public void onCategoryLongClick(CategoryItem album) {
+            onAlbumDeleteRequest(album);
+        }
+
+        @Override
+        public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
+            // Do nothing since this will only occur if the image is missing from the server.
+            return;
+
+//            PictureResourceItem resourceItem = new PictureResourceItem(mItem.getRepresentativePictureId(), null, null, null, null);
+//            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+//            long messageId = PiwigoAccessService.startActionGetResourceInfo(resourceItem, multimediaExtensionList, getContext());
+//            albumThumbnailLoadActions.put(messageId, mItem);
+//            getUiHelper().addBackgroundServiceCall(messageId);
+        }
+
+        public boolean handleAlbumThumbnailInfoLoaded(long messageId, ResourceItem thumbnailResource) {
+            CategoryItem item = albumThumbnailLoadActions.remove(messageId);
+            if(item == null) {
+                return false;
+            }
+            item.setThumbnailUrl(thumbnailResource.getThumbnailUrl());
+
+            RecyclerView.ViewHolder vh = galleryListView.findViewHolderForItemId(item.getId());
+            if(vh != null) {
+                // item currently displaying.
+                viewAdapter.redrawItem((AlbumItemRecyclerViewAdapter.ViewHolder) vh, item);
+            }
+
+            return true;
         }
     }
 }

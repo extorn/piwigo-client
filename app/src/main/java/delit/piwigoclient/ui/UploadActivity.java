@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -51,6 +52,7 @@ import paul.arian.fileselector.FileSelectionActivity;
  */
 
 public class UploadActivity extends MyActivity {
+
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final String STATE_FILE_SELECT_EVENT_ID = "fileSelectionEventId";
     private static final String STATE_STARTED_ALREADY = "startedAlready";
@@ -61,10 +63,15 @@ public class UploadActivity extends MyActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Need to register here as the call is handled immediately if the permissions are already present.
-        EventBus.getDefault().register(this);
         startedWithPermissions = false;
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.alert_read_permissions_needed_for_file_upload));
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        // Need to register here as the call is handled immediately if the permissions are already present.
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -89,6 +96,7 @@ public class UploadActivity extends MyActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
 
         if(savedInstanceState != null) {
             fileSelectionEventId = savedInstanceState.getInt(STATE_FILE_SELECT_EVENT_ID);
@@ -165,8 +173,10 @@ public class UploadActivity extends MyActivity {
         boolean isAdminUser = PiwigoSessionDetails.isAdminUser();
         boolean hasCommunityPlugin = PiwigoSessionDetails.isUseCommunityPlugin();
 
+        long initialGalleryId = getIntent().getLongExtra("galleryId", 0);
+
         if(isAdminUser || hasCommunityPlugin) {
-            Fragment f = UploadFragment.newInstance(CategoryItem.ROOT_ALBUM, fileSelectionEventId);
+            Fragment f = UploadFragment.newInstance(initialGalleryId, fileSelectionEventId);
             removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
         } else {
@@ -239,6 +249,7 @@ public class UploadActivity extends MyActivity {
         } else {
             filesToUpload = new ArrayList<>(0);
         }
+        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[])null);
         return filesToUpload;
     }
 
@@ -251,6 +262,7 @@ public class UploadActivity extends MyActivity {
         } else {
             filesToUpload = new ArrayList<>(0);
         }
+        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[])null);
         return filesToUpload;
     }
 

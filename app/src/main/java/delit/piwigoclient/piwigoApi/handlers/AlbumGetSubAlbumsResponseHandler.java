@@ -92,6 +92,8 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             Long representativePictureId = null;
             if(category.has("representative_picture_id") && !category.get("representative_picture_id").isJsonNull()) {
                 representativePictureId = category.get("representative_picture_id").getAsLong();
+            }
+            if(category.has("tn_url") && !category.get("tn_url").isJsonNull()) {
                 thumbnail = category.get("tn_url").getAsString();
             }
 

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 
 /**
@@ -21,10 +22,14 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 
 public class MyFragment extends Fragment {
 
+    private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
+    private static final String STATE_ACTIVE_SERVER_CONNECTION = "activeServerConnection";
     protected ProgressDialog determinateProgressDialog;
     protected SharedPreferences prefs;
     // Stored state below here.
     private FragmentUIHelper uiHelper;
+    private String piwigoSessionToken;
+    private String piwigoServerConnected;
 
     protected long addActiveServiceCall(int titleStringId, long messageId) {
         uiHelper.addActiveServiceCall(getString(titleStringId), messageId);
@@ -45,6 +50,8 @@ public class MyFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         uiHelper.onSaveInstanceState(outState);
+        outState.putString(STATE_ACTIVE_SESSION_TOKEN, piwigoSessionToken);
+        outState.putString(STATE_ACTIVE_SERVER_CONNECTION, piwigoServerConnected);
         super.onSaveInstanceState(outState);
     }
 
@@ -67,6 +74,18 @@ public class MyFragment extends Fragment {
 
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new BasicPiwigoResponseListener();
+    }
+
+    public boolean isSessionDetailsChanged() {
+        return !PiwigoSessionDetails.matchesSessionToken(piwigoSessionToken);
+    }
+    public boolean isServerConnectionChanged() {
+        return !PiwigoSessionDetails.matchesServerConnection(piwigoServerConnected);
+    }
+
+    public void updateActiveSessionDetails() {
+        piwigoSessionToken = PiwigoSessionDetails.getActiveSessionToken();
+        piwigoServerConnected = PiwigoSessionDetails.getActiveServerConnection();
     }
 
     @Override
@@ -92,13 +111,25 @@ public class MyFragment extends Fragment {
 
         if (savedInstanceState != null) {
             uiHelper.onRestoreSavedInstanceState(savedInstanceState);
+            piwigoSessionToken = savedInstanceState.getString(STATE_ACTIVE_SESSION_TOKEN);
+            piwigoServerConnected = savedInstanceState.getString(STATE_ACTIVE_SERVER_CONNECTION);
         }
-        //TODO move inside the savedState reload block above?
-        uiHelper.registerToActiveServiceCalls();
+        if(piwigoSessionToken == null) {
+            updateActiveSessionDetails();
+        }
+
+        doInOnCreateView();
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
         return v;
+    }
+
+    /**
+     * Currently registers for active service calls.
+     */
+    protected void doInOnCreateView() {
+        uiHelper.registerToActiveServiceCalls();
     }
 
     private void setupDialogBoxes() {

@@ -51,6 +51,8 @@ public class SecurePrefsUtil {
         String prefValue = prefs.getString(preferenceKey, defaultValue);
         if(prefValue == null) {
             return defaultValue;
+        } else if(prefValue.length() == 0) {
+            return prefValue;
         }
         return decryptValue(preferenceKey, prefValue, defaultValue);
     }
