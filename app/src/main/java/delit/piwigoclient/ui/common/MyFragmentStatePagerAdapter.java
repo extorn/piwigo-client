@@ -132,6 +132,28 @@ public abstract class MyFragmentStatePagerAdapter extends PagerAdapter {
         mFragments.set(position, fragment);
         mCurTransaction.add(container.getId(), fragment);
 
+
+        // Keep a maximum of 5 fragments (current and two to left and right) - stops the memory use just going crazy!
+        int minIdxToKeep = Math.max(0, position - 2);
+        int maxIdxToKeep = Math.min(mFragments.size() - 1, position + 2);
+
+        // clear fragments before current window
+        for(int i = 0; i < minIdxToKeep; i++) {
+            Fragment f = mFragments.get(i);
+            if(f != null) {
+                mCurTransaction.remove(f);
+            }
+            mFragments.set(i, null);
+        }
+        // clear fragments after current window
+        for(int i = maxIdxToKeep + 1; i < mFragments.size(); i++) {
+            Fragment f = mFragments.get(i);
+            if(f != null) {
+                mCurTransaction.remove(f);
+            }
+            mFragments.set(i, null);
+        }
+
         return fragment;
     }
 

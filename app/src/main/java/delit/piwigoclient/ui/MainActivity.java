@@ -449,7 +449,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
                     newFragment = SlideshowFragment.newInstance(albumOpen, selectedItem);
                 } else if (allowVideoPlayback) {
                     boolean startOnResume = true;
-                    newFragment = AlbumVideoItemFragment.newInstance((VideoResourceItem) selectedItem, startOnResume);
+                    newFragment = AlbumVideoItemFragment.newInstance((VideoResourceItem) selectedItem, 1, 1, 1, startOnResume);
                 }
             }
             if (selectedItem instanceof PictureResourceItem) {

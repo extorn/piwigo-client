@@ -81,10 +81,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             setAllowDownload(false);
     }
 
-    public static AlbumVideoItemFragment newInstance(VideoResourceItem galleryItem, boolean startPlaybackOnFragmentDisplay) {
+    public static AlbumVideoItemFragment newInstance(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
         AlbumVideoItemFragment fragment = new AlbumVideoItemFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_GALLERY_ITEM, galleryItem);
+        Bundle args = buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
         args.putBoolean(STATE_START_ON_RESUME, startPlaybackOnFragmentDisplay);
         fragment.setArguments(args);
         return fragment;

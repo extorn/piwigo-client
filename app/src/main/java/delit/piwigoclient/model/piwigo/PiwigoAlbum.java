@@ -20,6 +20,7 @@ import delit.piwigoclient.BuildConfig;
  */
 public class PiwigoAlbum implements Serializable {
 
+    private CategoryItem albumDetails;
     private static final String TAG = "piwigoAlbum";
     private int subAlbumCount;
     private int spacerAlbums;
@@ -27,7 +28,6 @@ public class PiwigoAlbum implements Serializable {
 
     private SortedSet<Integer> pagesLoaded = new TreeSet<>();
 
-    private Long id;
     /**
      * An array of items in the gallery.
      */
@@ -62,14 +62,20 @@ public class PiwigoAlbum implements Serializable {
         }
     };
 
+    public PiwigoAlbum(CategoryItem albumDetails) {
+        this.albumDetails = albumDetails;
+    }
+
+    public CategoryItem getAlbumDetails() {
+        return albumDetails;
+    }
 
     public Long getId() {
-        return id;
+        return albumDetails.getId();
     }
 
     public void addItem(CategoryItem item) {
         if(item != CategoryItem.ADVERT) {
-            id = item.getParentId();
             subAlbumCount++;
         } else {
             advertCount++;
@@ -102,7 +108,6 @@ public class PiwigoAlbum implements Serializable {
                 insertPosition += subAlbumCount;
                 insertPosition += spacerAlbums;
                 insertPosition += advertCount;
-                id = newItems.get(0).getParentId();
                 for (GalleryItem item : newItems) {
                     if (item == GalleryItem.ADVERT) {
                         advertCount++;
@@ -191,4 +196,20 @@ public class PiwigoAlbum implements Serializable {
         setSpacerAlbumCount(spacerAlbumsNeeded);
     }
 
+    public boolean isAllResourcesLoaded() {
+        return getResourcesCount() == albumDetails.getTotalPhotos();
+    }
+
+    public void remove(int idx) {
+        GalleryItem removedItem = items.remove(idx);
+        if(removedItem instanceof CategoryItem) {
+            if(removedItem == CategoryItem.ADVERT) {
+                advertCount--;
+            } else if(removedItem == CategoryItem.BLANK) {
+                subAlbumCount--;
+            }
+        } else {
+            // It's a resource (no count recorded at the moment).
+        }
+    }
 }

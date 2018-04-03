@@ -45,11 +45,9 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
     public AlbumPictureItemFragment() {
     }
 
-    public static AlbumPictureItemFragment newInstance(PictureResourceItem galleryItem) {
+    public static AlbumPictureItemFragment newInstance(PictureResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount) {
         AlbumPictureItemFragment fragment = new AlbumPictureItemFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_GALLERY_ITEM, galleryItem);
-        fragment.setArguments(args);
+        fragment.setArguments(buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount));
         return fragment;
     }
 
