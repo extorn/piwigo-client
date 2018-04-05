@@ -420,69 +420,77 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         if(uploadJobId != null) {
             activeJob = NewPiwigoUploadService.getActiveJob(getContext(), uploadJobId);
         }
-        long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
+
+        if(activeJob == null) {
+            activeJob = buildNewUploadJob();
+            if(activeJob != null) {
+                uploadJobId = activeJob.getJobId();
+            }
+        }
 
         if(activeJob != null) {
             getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, Manifest.permission.WAKE_LOCK, getString(R.string.alert_wake_lock_permission_needed_to_keep_upload_job_running_with_screen_off));
-        } else {
-            FilesToUploadRecyclerViewAdapter fileListAdapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
+        }
+    }
 
-            if (fileListAdapter == null || uploadToAlbumId == null || uploadToAlbumId == CategoryItem.ROOT_ALBUM.getId()) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
-                return;
-            }
+    private UploadJob buildNewUploadJob() {
+        FilesToUploadRecyclerViewAdapter fileListAdapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
 
-            ArrayList<File> filesForUpload = fileListAdapter.getFiles();
+        if (fileListAdapter == null || uploadToAlbumId == null || uploadToAlbumId == CategoryItem.ROOT_ALBUM.getId()) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
+            return null;
+        }
 
-            int maxUploadSizeWantedThresholdMB = prefs.getInt(getString(R.string.preference_data_upload_max_filesize_mb_key), getResources().getInteger(R.integer.preference_data_upload_max_filesize_mb_default));
-            final Set<File> filesForReview = new HashSet<>();
-            StringBuilder filenameListStrB = new StringBuilder();
-            for(File f : filesForUpload) {
-                double fileLengthMB = ((double)f.length()) / 1024 / 1024;
-                if(fileLengthMB > maxUploadSizeWantedThresholdMB) {
-                    if(filesForReview.size() > 0) {
-                        filenameListStrB.append(", ");
-                    }
-                    filenameListStrB.append(f);
-                    filenameListStrB.append(String.format("(%1$.1fMB)", fileLengthMB));
-                    filesForReview.add(f);
+        ArrayList<File> filesForUpload = fileListAdapter.getFiles();
+
+        int maxUploadSizeWantedThresholdMB = prefs.getInt(getString(R.string.preference_data_upload_max_filesize_mb_key), getResources().getInteger(R.integer.preference_data_upload_max_filesize_mb_default));
+        final Set<File> filesForReview = new HashSet<>();
+        StringBuilder filenameListStrB = new StringBuilder();
+        for(File f : filesForUpload) {
+            double fileLengthMB = ((double)f.length()) / 1024 / 1024;
+            if(fileLengthMB > maxUploadSizeWantedThresholdMB) {
+                if(filesForReview.size() > 0) {
+                    filenameListStrB.append(", ");
                 }
+                filenameListStrB.append(f);
+                filenameListStrB.append(String.format("(%1$.1fMB)", fileLengthMB));
+                filesForReview.add(f);
             }
-            if(filesForReview.size() > 0) {
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
+        }
+        if(filesForReview.size() > 0) {
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
 
-                    Set<File> filesToDelete = filesForReview;
+                Set<File> filesToDelete = filesForReview;
 
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
+                @Override
+                public void onDismiss(AlertDialog dialog) {
 
-                    }
+                }
 
-                    @Override
-                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                        if(Boolean.TRUE == positiveAnswer) {
-                            for(File file : filesToDelete) {
-                                onRemove(filesToUploadAdapter, file, false);
-                            }
+                @Override
+                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                    if(Boolean.TRUE == positiveAnswer) {
+                        for(File file : filesToDelete) {
+                            onRemove(filesToUploadAdapter, file, false);
                         }
                     }
-                });
-            }
-
-
-            CategoryItemStub uploadToCategory = availableGalleries.getItemById(uploadToAlbumId);
-
-            if (uploadToCategory == null) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
-                return;
-            }
-
-            boolean useTempFolder = !PiwigoSessionDetails.isUseCommunityPlugin();
-
-            UploadJob uploadJob = NewPiwigoUploadService.createUploadJob(getContext(), filesForUpload, uploadToCategory, getPrivacyLevelWanted(), handlerId, useTempFolder);
-            uploadJobId = uploadJob.getJobId();
-            getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, Manifest.permission.WAKE_LOCK, getString(R.string.alert_wake_lock_permission_needed_to_keep_upload_job_running_with_screen_off));
+                }
+            });
         }
+
+
+        CategoryItemStub uploadToCategory = availableGalleries.getItemById(uploadToAlbumId);
+
+        if (uploadToCategory == null) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
+            return null;
+        }
+
+        boolean useTempFolder = !PiwigoSessionDetails.isUseCommunityPlugin();
+
+        long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
+        UploadJob uploadJob = NewPiwigoUploadService.createUploadJob(getContext(), filesForUpload, uploadToCategory, getPrivacyLevelWanted(), handlerId, useTempFolder);
+        return uploadJob;
     }
 
     private void allowUserUploadConfiguration(UploadJob uploadJob) {
