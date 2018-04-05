@@ -399,21 +399,6 @@ public class SlideshowFragment extends MyFragment {
             return posToTry;
         }
 
-        public void tidyUpAllVideoResources() {
-
-            Collection<Fragment> activeFragments = getActiveFragments();
-            AlbumVideoItemFragment lastFragment = null;
-            for(Fragment f : activeFragments) {
-                if (f instanceof AlbumVideoItemFragment) {
-                    lastFragment = (AlbumVideoItemFragment)f;
-                    lastFragment.cleanupVideoResources();
-                }
-            }
-            if(lastFragment != null) {
-                lastFragment.manageCache();
-            }
-        }
-
         public void deleteGalleryItem(int fullGalleryIdx) {
             int positionToDelete = galleryResourceItems.indexOf(fullGalleryIdx);
             if(positionToDelete >= 0) {

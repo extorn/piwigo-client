@@ -224,8 +224,8 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
         super.onDestroyView();
         UIHelper.recycleImageViewContent(imageView);
         currentImageUrlDisplayed = null;
+        //Enable the next line to cancel download of the image if not yet complete. This is very wasteful of network traffic though possibly essential for memory.
+        loader.cancelImageLoadIfRunning();
         loader = null;
-        //Enable the next line to cancel download of the image if not yet complete. This is very wasteful of network traffic though.
-        //loader.cancelImageLoadIfRunning();
     }
 }

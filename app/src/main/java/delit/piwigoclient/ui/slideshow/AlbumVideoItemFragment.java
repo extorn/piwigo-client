@@ -137,6 +137,10 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
+        if(getArguments() != null) {
+            // if true, playback will start immediately. Otherwise user will have to push play.
+            continuePlayback = getArguments().getBoolean(STATE_CONTINUE_PLAYBACK);
+        }
         if (savedInstanceState != null) {
             startVideoWhenPermissionsGranted = savedInstanceState.getBoolean(STATE_START_VIDEO_ON_PERMISSIONS_GRANTED);
             seekToPosition = savedInstanceState.getLong(CURRENT_VIDEO_PLAYBACK_POSITION);
@@ -167,13 +171,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             }
         });
 
-        if(player == null) {
-            buildPlayer(model);
-        }
-
         SimpleExoPlayerView simpleExoPlayerView = new SimpleExoPlayerView(getContext());
 
-        simpleExoPlayerView.setPlayer(player);
+        simpleExoPlayerView.setPlayer(buildPlayer(model));
 
         simpleExoPlayerView.setOnTouchListener(new CustomClickTouchListener(getContext()) {
             @Override
