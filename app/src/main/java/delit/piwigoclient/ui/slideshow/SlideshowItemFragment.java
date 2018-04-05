@@ -128,17 +128,6 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         return allowDownload;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            model = (T) getArguments().getSerializable(ARG_GALLERY_ITEM);
-            albumItemIdx = getArguments().getLong(ARG_ALBUM_ITEM_IDX);
-            albumLoadedItemCount = getArguments().getLong(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
-            albumTotalItemCount = getArguments().getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
-        }
-    }
-
     public static Bundle buildArgs(ResourceItem model, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
         b.putSerializable(ARG_GALLERY_ITEM, model);
@@ -172,10 +161,31 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         getUiHelper().addBackgroundServiceCall(activeDownloadActionId);
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(savedInstanceState == null) {
+            // call this quietly in the background to avoid it ruining the slideshow experience.
+            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+            long messageId = PiwigoAccessService.startActionGetResourceInfo(model, multimediaExtensionList, getContext());
+            getUiHelper().addBackgroundServiceCall(messageId);
+//            if(proactivelyDownloadResourceInfo) {
+//                EventBus.getDefault().post(new AlbumItemActionStartedEvent(model));
+//                addActiveServiceCall(R.string.progress_loading_resource_details, PiwigoAccessService.startActionGetResourceInfo(model, getContext()));
+//            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        if (getArguments() != null) {
+            model = (T) getArguments().getSerializable(ARG_GALLERY_ITEM);
+            albumItemIdx = getArguments().getLong(ARG_ALBUM_ITEM_IDX);
+            albumLoadedItemCount = getArguments().getLong(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
+            albumTotalItemCount = getArguments().getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
+        }
         if (savedInstanceState != null) {
             //restore saved state
             editingItemDetails = savedInstanceState.getBoolean(STATE_EDITING_ITEM_DETAILS);
@@ -189,15 +199,6 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
                 albumLoadedItemCount = savedInstanceState.getLong(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
                 albumTotalItemCount = savedInstanceState.getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
             }
-        } else {
-            // call this quietly in the background to avoid it ruining the slideshow experience.
-            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
-            long messageId = PiwigoAccessService.startActionGetResourceInfo(model, multimediaExtensionList, getContext());
-            getUiHelper().addBackgroundServiceCall(messageId);
-//            if(proactivelyDownloadResourceInfo) {
-//                EventBus.getDefault().post(new AlbumItemActionStartedEvent(model));
-//                addActiveServiceCall(R.string.progress_loading_resource_details, PiwigoAccessService.startActionGetResourceInfo(model, getContext()));
-//            }
         }
 
         final View v = inflater.inflate(R.layout.fragment_slideshow_item, container, false);
@@ -254,6 +255,7 @@ public class SlideshowItemFragment<T extends ResourceItem> extends MyFragment {
         View itemContent = createItemContent(inflater, itemContentLayout, savedInstanceState, model);
         if (itemContent != null) {
             // insert first to allow all others to be overlaid.
+            int children = itemContentLayout.getChildCount();
             itemContentLayout.addView(itemContent, 0);
         }
 

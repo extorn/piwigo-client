@@ -44,6 +44,7 @@ import delit.piwigoclient.business.video.CustomHttpDataSourceFactory;
 import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
 import delit.piwigoclient.business.video.HttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.PausableLoadControl;
+import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.PicassoFactory;
@@ -83,17 +84,21 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     public static AlbumVideoItemFragment newInstance(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
         AlbumVideoItemFragment fragment = new AlbumVideoItemFragment();
-        Bundle args = buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
-        args.putBoolean(STATE_START_ON_RESUME, startPlaybackOnFragmentDisplay);
-        fragment.setArguments(args);
+        fragment.setArguments(buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay));
         return fragment;
     }
 
+    public static Bundle buildArgs(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
+        Bundle args = SlideshowItemFragment.buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
+        args.putBoolean(STATE_START_ON_RESUME, startPlaybackOnFragmentDisplay);
+        return args;
+    }
+
     @Override
-    public void onDetach() {
+    public void onDestroyView() {
         cleanupVideoResources();
         manageCache();
-        super.onDetach();
+        super.onDestroyView();
     }
 
     @Override

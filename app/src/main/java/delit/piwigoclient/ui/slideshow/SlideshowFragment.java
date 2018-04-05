@@ -20,6 +20,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +38,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomViewPager;
 import delit.piwigoclient.ui.common.MyFragment;
-import delit.piwigoclient.ui.common.MyFragmentStatePagerAdapter;
+import delit.piwigoclient.ui.common.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
@@ -150,7 +151,7 @@ public class SlideshowFragment extends MyFragment {
         viewPager = view.findViewById(R.id.slideshow_viewpager);
         boolean shouldShowVideos = prefs.getBoolean(getString(R.string.preference_gallery_include_videos_in_slideshow_key), getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
         shouldShowVideos &= prefs.getBoolean(getString(R.string.preference_gallery_enable_video_playback_key), getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
-        GalleryItemAdapter galleryItemAdapter = new GalleryItemAdapter(viewPager, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
+        GalleryItemAdapter galleryItemAdapter = new GalleryItemAdapter( shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
         galleryItemAdapter.setMaxFragmentsToSaveInState(0);
 
         viewPager.setAdapter(galleryItemAdapter);
@@ -223,8 +224,13 @@ public class SlideshowFragment extends MyFragment {
 
     @Override
     public void onDestroyView() {
-        if(viewPager != null && viewPager.getAdapter() != null) {
-            ((GalleryItemAdapter) viewPager.getAdapter()).tidyUpAllVideoResources();
+        if(viewPager != null) {
+            // clean up any existing adapter.
+            GalleryItemAdapter adapter = (GalleryItemAdapter)viewPager.getAdapter();
+            if(adapter != null) {
+                adapter.destroy();
+            }
+            viewPager.setAdapter(null);
         }
         super.onDestroyView();
     }
@@ -267,15 +273,13 @@ public class SlideshowFragment extends MyFragment {
         }
     }
 
-    class GalleryItemAdapter extends MyFragmentStatePagerAdapter {
+    class GalleryItemAdapter extends MyFragmentRecyclerPagerAdapter {
 
         private List<Integer> galleryResourceItems;
-        private ViewPager pagerComponent;
         private boolean shouldShowVideos;
 
-        public GalleryItemAdapter(ViewPager pagerComponent, boolean shouldShowVideos, int selectedItem, FragmentManager fm) {
+        public GalleryItemAdapter(boolean shouldShowVideos, int selectedItem, FragmentManager fm) {
             super(fm);
-            this.pagerComponent = pagerComponent;
             galleryResourceItems = new ArrayList<>((int)gallery.getResourcesCount());
             this.shouldShowVideos = shouldShowVideos;
             addResourcesToIndex(0, selectedItem);
@@ -321,7 +325,31 @@ public class SlideshowFragment extends MyFragment {
         }
 
         @Override
-        public Fragment createNewItem(int position) {
+        public Class<? extends Fragment> getFragmentType(int position) {
+            GalleryItem galleryItem = gallery.getItems().get(galleryResourceItems.get(position));
+            if (galleryItem instanceof PictureResourceItem) {
+                return AlbumPictureItemFragment.class;
+            } else if (galleryItem instanceof VideoResourceItem) {
+                return AlbumVideoItemFragment.class;
+            }
+            throw new IllegalArgumentException("Unsupported slideshow item type at position " + position);
+        }
+
+        @Override
+        protected void bindDataToFragment(Fragment fragment, int position) {
+            GalleryItem galleryItem = (ResourceItem) gallery.getItems().get(galleryResourceItems.get(position));
+            long totalSlideshowItems = getTotalSlideshowItems();
+
+            if (galleryItem instanceof PictureResourceItem) {
+                fragment.setArguments(SlideshowItemFragment.buildArgs((PictureResourceItem)galleryItem, position, galleryResourceItems.size(), totalSlideshowItems));
+            } else if (galleryItem instanceof VideoResourceItem) {
+                boolean startOnResume = false;
+                fragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, startOnResume));
+            }
+        }
+
+        @Override
+        public Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
 
             GalleryItem galleryItem = gallery.getItems().get(galleryResourceItems.get(position));
             SlideshowItemFragment fragment = null;
@@ -345,13 +373,11 @@ public class SlideshowFragment extends MyFragment {
         }
 
         public void onPageDeselected(int position) {
-            List<Fragment> managedFragments = getManagedFragments();
-            if(managedFragments.size() > position) {
+            Fragment managedFragment = getActiveFragment(position);
+            if(managedFragment != null) {
                 // if this slideshow item still exists (not been deleted by user)
-                SlideshowItemFragment selectedPage = (SlideshowItemFragment)managedFragments.get(position);
-                if(selectedPage != null) {
-                    selectedPage.onPageDeselected();
-                }
+                SlideshowItemFragment selectedPage = (SlideshowItemFragment)managedFragment;
+                selectedPage.onPageDeselected();
             }
         }
 
@@ -374,8 +400,10 @@ public class SlideshowFragment extends MyFragment {
         }
 
         public void tidyUpAllVideoResources() {
+
+            Collection<Fragment> activeFragments = getActiveFragments();
             AlbumVideoItemFragment lastFragment = null;
-            for(Fragment f : getManagedFragments()) {
+            for(Fragment f : activeFragments) {
                 if (f instanceof AlbumVideoItemFragment) {
                     lastFragment = (AlbumVideoItemFragment)f;
                     lastFragment.cleanupVideoResources();
@@ -410,11 +438,12 @@ public class SlideshowFragment extends MyFragment {
             }
         }
 
-        public void onDataLoaded() {
+        @Override
+        public void notifyDataSetChanged() {
             int lastLoadedIdx = galleryResourceItems.get(galleryResourceItems.size() - 1);
             addResourcesToIndex(1 + lastLoadedIdx, -1);
             EventBus.getDefault().post(new SlideshowSizeUpdateEvent(galleryResourceItems.size(), getTotalSlideshowItems()));
-            notifyDataSetChanged();
+            super.notifyDataSetChanged();
         }
     }
 
@@ -475,7 +504,7 @@ public class SlideshowFragment extends MyFragment {
             synchronized (gallery) {
                 gallery.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
                 pagesBeingLoaded.remove(response.getPage());
-                ((GalleryItemAdapter) viewPager.getAdapter()).onDataLoaded();
+                viewPager.getAdapter().notifyDataSetChanged();
             }
         }
     }

@@ -57,12 +57,17 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
         outState.putString(STATE_CURRENT_IMAGE_URL, currentImageUrlDisplayed);
     }
 
+    /**
+     * TODO break this code into two pieces - part to make the view and part that populates it (so we can reuse more of the view) DITTO video fragment.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @param model
+     * @return
+     */
     @Nullable
     @Override
     public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState, final PictureResourceItem model) {
-        if(savedInstanceState != null) {
-            currentImageUrlDisplayed = savedInstanceState.getString(STATE_CURRENT_IMAGE_URL);
-        }
 
         imageView = new TouchImageView(getContext());
         imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
@@ -101,22 +106,6 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
             }
         };
 
-        if(currentImageUrlDisplayed == null) {
-            String preferredImageSize = prefs.getString(getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key), getContext().getString(R.string.preference_gallery_item_slideshow_image_size_default));
-            for(ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
-                if(rf.getName().equals(preferredImageSize)) {
-                    currentImageUrlDisplayed = rf.getUrl();
-                    break;
-                }
-            }
-            if(currentImageUrlDisplayed == null) {
-                //Oh no - image couldn't be found - use the default.
-                currentImageUrlDisplayed = model.getFullScreenImage().getUrl();
-            }
-        }
-        loader.setUriToLoad(currentImageUrlDisplayed);
-        loader.load();
-
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,6 +138,42 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
             }
         });
         return imageView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if(savedInstanceState != null) {
+            currentImageUrlDisplayed = savedInstanceState.getString(STATE_CURRENT_IMAGE_URL);
+        }
+
+        // reset the screen state if we're entering for the first time
+        if(currentImageUrlDisplayed == null) {
+            // currently only the loader needs resetting.
+            loader.resetAll();
+        }
+
+        // Load the content into the screen.
+
+        PictureResourceItem model = getModel();
+        if(currentImageUrlDisplayed == null) {
+            String preferredImageSize = prefs.getString(getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key), getContext().getString(R.string.preference_gallery_item_slideshow_image_size_default));
+            for(ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
+                if(rf.getName().equals(preferredImageSize)) {
+                    currentImageUrlDisplayed = rf.getUrl();
+                    break;
+                }
+            }
+            if(currentImageUrlDisplayed == null) {
+                //Oh no - image couldn't be found - use the default.
+                currentImageUrlDisplayed = model.getFullScreenImage().getUrl();
+            }
+        }
+
+        loader.setPlaceholderImageUri(model.getThumbnailUrl());
+        loader.setUriToLoad(currentImageUrlDisplayed);
+        loader.load();
     }
 
     @Override
@@ -191,9 +216,16 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
         getUiHelper().showOrQueueDialogMessage(R.string.alert_image_download_title, getString(R.string.alert_image_download_complete_message));
     }
 
+    /**
+     * Need to be certain to wipe this view down as we'll be reusing it.
+     */
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         UIHelper.recycleImageViewContent(imageView);
+        currentImageUrlDisplayed = null;
+        loader = null;
+        //Enable the next line to cancel download of the image if not yet complete. This is very wasteful of network traffic though.
+        //loader.cancelImageLoadIfRunning();
     }
 }
