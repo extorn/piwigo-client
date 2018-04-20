@@ -5,6 +5,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import javax.net.ssl.X509TrustManager;
 
@@ -13,8 +14,8 @@ import javax.net.ssl.X509TrustManager;
  */
 
 public class CustomTrustManager implements X509TrustManager {
-    private X509TrustManager chainedTrustManager;
-    private String serverHostname;
+    private final X509TrustManager chainedTrustManager;
+    private final String serverHostname;
     private boolean selfSignedCertificatesAllowed;
 //    X509ExtendedTrustManager
 
@@ -55,7 +56,7 @@ public class CustomTrustManager implements X509TrustManager {
         Date certValidTill = cert.getNotAfter();
         Date certValidFrom = cert.getNotBefore();
         if (certValidTill.before(now) || certValidFrom.after(now)) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH24:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH24:mm", Locale.UK);
             throw new CertificateException("Certificate is only valid between " + sdf.format(certValidFrom) + " - " + sdf.format(certValidTill));
         }
     }

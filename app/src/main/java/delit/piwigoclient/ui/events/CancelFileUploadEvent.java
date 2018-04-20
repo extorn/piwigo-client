@@ -8,8 +8,8 @@ import java.io.File;
 
 public class CancelFileUploadEvent {
 
-    private long jobId;
-    private File cancelledFile;
+    private final long jobId;
+    private final File cancelledFile;
 
     public CancelFileUploadEvent(long jobId, File cancelledFile) {
         this.jobId = jobId;

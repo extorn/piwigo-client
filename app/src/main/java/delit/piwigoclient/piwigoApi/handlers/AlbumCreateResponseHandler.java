@@ -12,7 +12,7 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 public class AlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "CreateGalleryRspHdlr";
-    private PiwigoGalleryDetails newAlbum;
+    private final PiwigoGalleryDetails newAlbum;
 
     public AlbumCreateResponseHandler(PiwigoGalleryDetails newAlbum) {
         super("pwg.categories.add", TAG);

@@ -28,8 +28,9 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUsers;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.UserDeleteResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.UsersGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
@@ -48,7 +49,7 @@ public class UsersListFragment extends MyFragment {
 
     private static final String USERS_MODEL = "usersModel";
     private static final String USERS_PAGE_BEING_LOADED = "usersPageBeingLoaded";
-    private ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
     private PiwigoUsers usersModel = new PiwigoUsers();
     private UserRecyclerViewAdapter viewAdapter;
@@ -185,7 +186,7 @@ public class UsersListFragment extends MyFragment {
                 loadUsersPage(pageToLoad);
             }
         };
-        scrollListener.configure(usersModel.getPagesLoaded(), usersModel.getItems().size());
+        scrollListener.configure(usersModel.getPagesLoaded(), usersModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
 
         return view;
@@ -203,7 +204,7 @@ public class UsersListFragment extends MyFragment {
     private void loadUsersPage(int pageToLoad) {
         this.pageToLoadNow = pageToLoad;
         int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-        addActiveServiceCall(R.string.progress_loading_users,PiwigoAccessService.startActionGetUsersList(pageToLoad, pageSize, getContext()));
+        addActiveServiceCall(R.string.progress_loading_users,new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
     }
 
     private void addNewUser() {
@@ -238,7 +239,7 @@ public class UsersListFragment extends MyFragment {
     }
 
     private void deleteUserNow(User thisItem) {
-        long deleteActionId = PiwigoAccessService.startActionDeleteUser(thisItem.getId(), this.getContext());
+        long deleteActionId = new UserDeleteResponseHandler(thisItem.getId()).invokeAsync(this.getContext());
         this.deleteActionsPending.put(deleteActionId, thisItem);
         addActiveServiceCall(R.string.progress_delete_user, deleteActionId);
     }

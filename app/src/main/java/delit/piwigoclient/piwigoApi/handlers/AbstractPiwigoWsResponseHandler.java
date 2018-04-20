@@ -31,12 +31,12 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
  */
 public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDirectResponseHandler {
 
-    private String piwigoMethod;
+    private final String piwigoMethod;
     private RequestParams requestParams;
     private String nestedFailureMethod;
     private Gson gson;
 
-    public AbstractPiwigoWsResponseHandler(String piwigoMethod, String tag) {
+    protected AbstractPiwigoWsResponseHandler(String piwigoMethod, String tag) {
         super(tag);
         this.piwigoMethod = piwigoMethod;
     }
@@ -46,14 +46,14 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         return piwigoMethod;
     }
 
-    public final RequestParams getRequestParameters() {
+    private final RequestParams getRequestParameters() {
         if(requestParams == null) {
             requestParams = buildRequestParameters();
         }
         return requestParams;
     }
 
-    public abstract RequestParams buildRequestParameters();
+    protected abstract RequestParams buildRequestParameters();
 
     @Override
     public void clearCallDetails() {
@@ -81,7 +81,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     @Override
-    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
+    protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
         String response = null;
         try {
 
@@ -199,7 +199,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     // When the response returned by REST has Http response code other than '200'
     @Override
-    public void onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession) {
+    protected void onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession) {
 
         if (BuildConfig.DEBUG) {
             String errorBody = null;

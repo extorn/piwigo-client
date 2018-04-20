@@ -13,20 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -44,7 +39,6 @@ import delit.piwigoclient.business.video.CustomHttpDataSourceFactory;
 import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
 import delit.piwigoclient.business.video.HttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.PausableLoadControl;
-import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.PicassoFactory;
@@ -56,7 +50,7 @@ import delit.piwigoclient.util.IOUtils;
 
 public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceItem> {
 
-    public static final String CURRENT_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
+    private static final String CURRENT_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
     private static final String CACHED_VIDEO_FILENAME = "cachedVideoFileName";
     private static final String STATE_START_ON_RESUME = "startOnResume";
     private static final String STATE_CONTINUE_PLAYBACK = "continuePlayback";
@@ -358,7 +352,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         startImmediately = continuePlayback;
     }
 
-    public void startVideoDownloadAndPlay() {
+    private void startVideoDownloadAndPlay() {
         if(isAdded()) {
             configureDatasourceAndPlayerRequestingPermissions(continuePlayback);
         } else {
@@ -366,7 +360,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    public void stopVideoDownloadAndPlay() {
+    private void stopVideoDownloadAndPlay() {
         if (player != null) {
             continuePlayback = player.getPlayWhenReady();
             seekToPosition = player.getCurrentPosition();
@@ -375,7 +369,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    public void cleanupVideoResources() {
+    private void cleanupVideoResources() {
         if (player != null) {
             player.stop();
             player.release();
@@ -384,7 +378,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    public void manageCache() {
+    private void manageCache() {
         if(isUseCache()) {
             long maxCacheSizeBytes = 1024 * 1024 * prefs.getInt(getString(R.string.preference_video_cache_maxsize_mb_key), getResources().getInteger(R.integer.preference_video_cache_maxsize_mb_default));
             try {

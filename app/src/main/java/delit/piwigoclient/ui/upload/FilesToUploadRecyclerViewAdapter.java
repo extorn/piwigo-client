@@ -14,8 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     private boolean useDarkMode;
     private final ArrayList<File> filesToUpload;
     private final HashMap<File, Integer> fileUploadProgress = new HashMap<>();
-    private RemoveListener listener;
+    private final RemoveListener listener;
     public static final int VIEW_TYPE_LIST = 0;
     public static final int VIEW_TYPE_GRID = 1;
     private int viewType = VIEW_TYPE_LIST;
@@ -45,7 +43,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public static final int SCALING_QUALITY_MEDIUM = 240;
     public static final int SCALING_QUALITY_LOW = 120;
     public static final int SCALING_QUALITY_VLOW = 60;
-    private int scalingQuality = SCALING_QUALITY_MEDIUM;
+    private final int scalingQuality = SCALING_QUALITY_MEDIUM;
 
     public FilesToUploadRecyclerViewAdapter(ArrayList<File> filesToUpload, @NonNull Context context, RemoveListener listener) {
         this.listener = listener;

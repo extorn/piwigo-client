@@ -10,7 +10,6 @@ import com.squareup.picasso.Downloader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 

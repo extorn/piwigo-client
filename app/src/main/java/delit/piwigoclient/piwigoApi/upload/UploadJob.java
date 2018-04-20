@@ -318,7 +318,7 @@ public class UploadJob implements Serializable {
     protected static class PartialUploadData implements Serializable {
         private long bytesUploaded;
         private long countChunksUploaded;
-        private String uploadName;
+        private final String uploadName;
         private String fileChecksum;
         private ResourceItem uploadedItem;
 

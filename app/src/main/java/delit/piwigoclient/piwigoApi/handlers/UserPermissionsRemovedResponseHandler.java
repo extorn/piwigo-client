@@ -15,7 +15,7 @@ public class UserPermissionsRemovedResponseHandler extends AbstractPiwigoWsRespo
 
     private static final String TAG = "delUsrPermRspHdlr";
     private final HashSet<Long> newAlbumsNotAllowedAccessTo;
-    private long userId;
+    private final long userId;
 
     public UserPermissionsRemovedResponseHandler(long userId, HashSet<Long> newAlbumsNotAllowedAccessTo) {
         super("pwg.permissions.remove", TAG);

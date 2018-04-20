@@ -32,15 +32,14 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.album.AlbumSelectFragment;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
-import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumDeletedEvent;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
@@ -73,11 +72,10 @@ import delit.piwigoclient.ui.permissions.users.UsersListFragment;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
-import delit.piwigoclient.ui.upload.UploadFragment;
 import hotchemi.android.rate.MyAppRate;
 import paul.arian.fileselector.FileSelectionActivity;
 
-public class MainActivity extends MyActivity implements ComponentCallbacks2 {
+public abstract class AbstractMainActivity extends MyActivity implements ComponentCallbacks2 {
 
     private static final String STATE_CURRENT_ALBUM = "currentAlbum";
     private static final String STATE_BASKET = "basket";
@@ -100,10 +98,10 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         super.onSaveInstanceState(outState);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
 
         if (savedInstanceState != null) {
             currentAlbum = (CategoryItem) savedInstanceState.getSerializable(STATE_CURRENT_ALBUM);
@@ -255,7 +253,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.piwigo_main, menu);
         return true;
     }
 
@@ -282,24 +280,16 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     }
 
     private void showEula() {
-        showFragmentNow(EulaFragment.newInstance(this));
+        showFragmentNow(EulaFragment.newInstance());
     }
 
-    public boolean showGallery(final CategoryItem gallery) {
-        if (!PiwigoSessionDetails.isFullyLoggedIn()) {
-            onLoginActionMethodName = "showGallery";
-            onLoginActionParams.clear();
-            onLoginActionParams.add(gallery);
-            showLoginFragment();
-        } else {
-            if(CategoryItem.ROOT_ALBUM.equals(gallery)) {
-                // check if we've shown any albums before. If so, pop everything off the stack.
-                removeFragmentsFromHistory(ViewAlbumFragment.class, true);
-            }
-            showFragmentNow(ViewAlbumFragment.newInstance(gallery), true);
+    private void showGallery(final CategoryItem gallery) {
+        if(CategoryItem.ROOT_ALBUM.equals(gallery)) {
+            // check if we've shown any albums before. If so, pop everything off the stack.
+            removeFragmentsFromHistory(ViewAlbumFragment.class, true);
         }
+        showFragmentNow(ViewAlbumFragment.newInstance(gallery), true);
         AdsManager.getInstance().showAlbumBrowsingAdvertIfAppropriate();
-        return true;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -313,6 +303,9 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
                 break;
             case R.id.nav_groups:
                 showGroups();
+                break;
+            case R.id.nav_tags:
+                showTags();
                 break;
             case R.id.nav_users:
                 showUsers();
@@ -342,79 +335,50 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    private void showLoginFragment() {
+    protected void showLoginFragment() {
         LoginFragment fragment = LoginFragment.newInstance();
         showFragmentNow(fragment);
     }
 
     private void showTopTips() {
-        TopTipsFragment fragment = TopTipsFragment.newInstance(this);
+        TopTipsFragment fragment = TopTipsFragment.newInstance();
         showFragmentNow(fragment);
     }
 
-    private boolean showAboutFragment() {
-        AboutFragment fragment = AboutFragment.newInstance(this);
+    private void showAboutFragment() {
+        AboutFragment fragment = AboutFragment.newInstance();
         showFragmentNow(fragment);
-        return true;
     }
 
-    private boolean showLicencesFragment() {
-        LicencesFragment fragment = LicencesFragment.newInstance(this);
+    private void showLicencesFragment() {
+        LicencesFragment fragment = LicencesFragment.newInstance();
         showFragmentNow(fragment);
-        return true;
     }
 
-    private boolean showUpload() {
-//        if (!PiwigoSessionDetails.isFullyLoggedIn()) {
-//            onLoginActionMethodName = "showUpload";
-//            showLoginFragment();
-//        } else {
-//            UploadFragment fragment = UploadFragment.newInstance(currentAlbum);
-//            showFragmentNow(fragment);
-//        }
+    private void showUpload() {
         Intent intent = new Intent(Constants.ACTION_MANUAL_UPLOAD);
         intent.putExtra("galleryId", currentAlbum.getId());
         startActivity(intent);
-        return true;
     }
 
-    private boolean showGroups() {
-        if (!PiwigoSessionDetails.isFullyLoggedIn()) {
-            onLoginActionMethodName = "showGroups";
-            showLoginFragment();
-        } else {
-            GroupsListFragment fragment = GroupsListFragment.newInstance();
-            showFragmentNow(fragment);
-        }
-        return true;
+    private void showGroups() {
+        GroupsListFragment fragment = GroupsListFragment.newInstance();
+        showFragmentNow(fragment);
     }
 
-
-    private boolean showAlbumPermissions(final ArrayList<CategoryItemStub> availableAlbums, final HashSet<Long> directAlbumPermissions, final HashSet<Long> indirectAlbumPermissions, boolean allowEdit, int actionId) {
-        if (!PiwigoSessionDetails.isFullyLoggedIn()) {
-            onLoginActionMethodName = "showAlbumPermissions";
-            onLoginActionParams.clear();
-            onLoginActionParams.add(availableAlbums);
-            onLoginActionParams.add(directAlbumPermissions);
-            onLoginActionParams.add(indirectAlbumPermissions);
-            onLoginActionParams.add(allowEdit);
-            onLoginActionParams.add(actionId);
-            showLoginFragment();
-        } else {
-            delit.piwigoclient.ui.permissions.AlbumSelectFragment fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, true, allowEdit, actionId, indirectAlbumPermissions, directAlbumPermissions);
-            showFragmentNow(fragment);
-        }
-        return true;
+    public void setOnLoginActionMethodName(String onLoginActionMethodName) {
+        this.onLoginActionMethodName = onLoginActionMethodName;
     }
 
-    private boolean showUsers() {
-        if (!PiwigoSessionDetails.isFullyLoggedIn()) {
-            onLoginActionMethodName = "showUsers";
-            showLoginFragment();
-        } else {
-            showFragmentNow(UsersListFragment.newInstance());
-        }
-        return true;
+    protected abstract void showTags();
+
+    private void showAlbumPermissions(final ArrayList<CategoryItemStub> availableAlbums, final HashSet<Long> directAlbumPermissions, final HashSet<Long> indirectAlbumPermissions, boolean allowEdit, int actionId) {
+        delit.piwigoclient.ui.permissions.AlbumSelectFragment fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, true, allowEdit, false, actionId, indirectAlbumPermissions, directAlbumPermissions);
+        showFragmentNow(fragment);
+    }
+
+    private void showUsers() {
+        showFragmentNow(UsersListFragment.newInstance());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -435,7 +399,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
 
         Fragment newFragment = null;
 
-        PiwigoAlbum albumOpen = event.getAlbum();
+        ResourceContainer albumOpen = event.getResourceContainer();
         GalleryItem selectedItem = event.getSelectedItem();
 
         if (selectedItem instanceof CategoryItem) {
@@ -587,7 +551,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), event.getActionId(), event.getIndirectSelection(), event.getCurrentSelection());
+        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), event.isInitialSelectionLocked(), event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
@@ -598,15 +562,17 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
     }
 
     private void showAlbumSelectionFragment(int actionId, boolean allowMultiSelect, boolean allowEditing, HashSet<Long> currentSelection) {
-        AlbumSelectFragment fragment = AlbumSelectFragment.newInstance(allowMultiSelect, allowEditing, actionId, currentSelection);
+        AlbumSelectFragment fragment = AlbumSelectFragment.newInstance(allowMultiSelect, allowEditing, false, actionId, currentSelection);
         showFragmentNow(fragment);
     }
 
-    private void showFragmentNow(Fragment f) {
+    protected void showFragmentNow(Fragment f) {
         showFragmentNow(f, false);
     }
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
+
+        checkLicenceIfNeeded();
 
         Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
         String lastFragmentName = "";
@@ -656,26 +622,10 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final GroupSelectionNeededEvent event) {
-        GroupSelectFragment fragment = GroupSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), event.getActionId(), event.getCurrentSelection());
+        GroupSelectFragment fragment = GroupSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), event.isInitialSelectionLocked(), event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(EulaNotAgreedEvent event) {
@@ -703,13 +653,24 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
 
     private boolean invokeStoredActionIfAvailable() {
 
+        boolean invoked = invokeStoredActionIfAvailableOnClass(AbstractMainActivity.class);
+        if(!invoked) {
+            invoked = invokeStoredActionIfAvailableOnClass(MainActivity.class);
+        }
+        return invoked;
+    }
+
+    private boolean invokeStoredActionIfAvailableOnClass(Class c) {
+
+        boolean invoked = false;
         boolean actionAvailable = onLoginActionMethodName != null;
         if (actionAvailable) {
-            Method[] methods = MainActivity.class.getDeclaredMethods();
+            Method[] methods = c.getDeclaredMethods();
             for(Method m : methods) {
                 if(m.getName().equals(onLoginActionMethodName)) {
                     onLoginActionMethodName = null;
                     try {
+                        invoked = true;
                         Object[] params = onLoginActionParams.toArray();
                         onLoginActionParams.clear();
                         m.invoke(this, params);
@@ -722,7 +683,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
                 }
             }
         }
-        return actionAvailable;
+        return invoked;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -762,6 +723,7 @@ public class MainActivity extends MyActivity implements ComponentCallbacks2 {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumSelectionNeededEvent event) {
-        showAlbumSelectionFragment(event.getActionId(), event.isAllowMultiSelect(), event.isAllowEditing(), event.getCurrentSelection());
+        showAlbumSelectionFragment(event.getActionId(), event.isAllowMultiSelect(), event.isAllowEditing(), event.getInitialSelection());
     }
+
 }

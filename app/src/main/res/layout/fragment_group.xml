@@ -41,9 +41,6 @@
 
     <ScrollView
         android:id="@+id/group_edit_scrollview"
-        android:layout_below="@id/group_edit_controls"
-        android:layout_above="@+id/group_adView"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -145,10 +142,8 @@
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/group_adView"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
         ads:adUnitId="@string/ad_id_group_edit_banner">
     </com.google.android.gms.ads.AdView>

@@ -38,7 +38,6 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.MyFragment;
-import delit.piwigoclient.ui.common.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.common.SlidingTabLayout;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 

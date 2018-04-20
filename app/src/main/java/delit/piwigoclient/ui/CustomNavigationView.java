@@ -29,8 +29,8 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.ViewGroupUIHelper;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -199,7 +199,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    public void onLogin(PiwigoSessionDetails oldCredentials) {
+    private void onLogin(PiwigoSessionDetails oldCredentials) {
         lockAppInReadOnlyMode(false);
         uiHelper.closeAllDialogs();
         uiHelper.showOrQueueDialogMessage(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
@@ -230,7 +230,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             EventBus.getDefault().post(new AppUnlockedEvent());
         } else {
             // attempt login to PIWIGO server using this password.
-            uiHelper.addActiveServiceCall(R.string.progress_checking_with_server, PiwigoAccessService.startActionLogin(getContext(), event.getPassword()));
+            uiHelper.addActiveServiceCall(R.string.progress_checking_with_server, new LoginResponseHandler(event.getPassword(), getContext()).invokeAsync(getContext()));
         }
     }
 

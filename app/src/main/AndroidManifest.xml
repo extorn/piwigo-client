@@ -46,6 +46,7 @@
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="delit.piwigoclient.MANUAL_UPLOAD" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>

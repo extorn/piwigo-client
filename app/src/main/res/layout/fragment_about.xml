@@ -30,8 +30,7 @@
                 android:id="@+id/about_text"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="@string/about_content"
-                android:layout_below="@+id/about_heading"/>
+                android:text="@string/about_content"/>
 
             <TextView
                 android:id="@+id/about_planned_releases_header"

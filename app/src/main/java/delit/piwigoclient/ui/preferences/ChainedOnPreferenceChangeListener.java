@@ -8,7 +8,7 @@ import android.preference.Preference;
 
 public class ChainedOnPreferenceChangeListener implements Preference.OnPreferenceChangeListener {
 
-    Preference.OnPreferenceChangeListener chainedListener;
+    final Preference.OnPreferenceChangeListener chainedListener;
 
     public ChainedOnPreferenceChangeListener(Preference.OnPreferenceChangeListener chainedListener) {
         this.chainedListener = chainedListener;

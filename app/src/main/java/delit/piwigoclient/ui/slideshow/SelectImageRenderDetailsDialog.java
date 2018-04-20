@@ -64,27 +64,34 @@ class SelectImageRenderDetailsDialog {
         AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ResourceItem.ResourceFile selectedItem = adapter.getItem(position);
+
+                int selectPos = Math.min(Math.max(0, position), adapter.getCount() -1);
 
                 float rotateDegrees = 0f;
-                if (selectedItem.getName().equals("original") && adapter.getCount() >= 2) {
-                    int i = 0;
-                    ResourceItem.ResourceFile rf = adapter.getItem(i);
-                    while(rf.getName().equals("square") || rf.getName().equals("original")) {
-                        rf = adapter.getItem(++i);
-                        if(i == adapter.getCount()) {
-                            rf = null;
-                            break;
-                        }
-                    }
-                    if(rf != null) {
-                        boolean oldIsLandscape = rf.getWidth() > rf.getHeight();
-                        boolean newIsLandscape = selectedItem.getWidth() > selectedItem.getHeight();
 
-                        if (newIsLandscape && !oldIsLandscape) {
-                            rotateDegrees = -90f;
-                        } else if (!newIsLandscape && oldIsLandscape) {
-                            rotateDegrees = 90f;
+                if(selectPos >= 0) {
+
+                    ResourceItem.ResourceFile selectedItem = adapter.getItem(selectPos);
+
+                    if (adapter.getCount() >= 2 && selectedItem.getName().equals("original")) {
+                        int i = 0;
+                        ResourceItem.ResourceFile rf = adapter.getItem(i);
+                        while (rf.getName().equals("square") || rf.getName().equals("original")) {
+                            rf = adapter.getItem(++i);
+                            if (i == adapter.getCount()) {
+                                rf = null;
+                                break;
+                            }
+                        }
+                        if (rf != null) {
+                            boolean oldIsLandscape = rf.getWidth() > rf.getHeight();
+                            boolean newIsLandscape = selectedItem.getWidth() > selectedItem.getHeight();
+
+                            if (newIsLandscape && !oldIsLandscape) {
+                                rotateDegrees = -90f;
+                            } else if (!newIsLandscape && oldIsLandscape) {
+                                rotateDegrees = 90f;
+                            }
                         }
                     }
                 }

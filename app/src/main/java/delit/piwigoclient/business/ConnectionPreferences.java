@@ -26,7 +26,8 @@ public class ConnectionPreferences {
 
     public static void deletePreferences(SharedPreferences prefs, Context context, String prefix) {
         if(prefix == null || prefix.isEmpty()) {
-            throw new IllegalArgumentException("Unable to delete the core app preferences");
+            //TODO do this better - this causes exceptions (crashes) for users.
+//            throw new IllegalArgumentException("Unable to delete the core app preferences");
         }
         if(activeProfile != null && prefix.equals(activeProfile.prefix)) {
             throw new IllegalArgumentException("Unable to delete preferences for active profile");
@@ -40,9 +41,9 @@ public class ConnectionPreferences {
         toPrefs.copyFrom(prefs, context, fromPrefs);
     }
 
-    static ProfilePreferences activeProfile;
+    private static ProfilePreferences activeProfile;
 
-    public static ProfilePreferences getActiveProfile(SharedPreferences prefs, Context context) {
+    private static ProfilePreferences getActiveProfile(SharedPreferences prefs, Context context) {
         if(activeProfile == null) {
             activeProfile = new ProfilePreferences(null);
         }
@@ -50,7 +51,7 @@ public class ConnectionPreferences {
     }
 
     private static class ProfilePreferences {
-        private String prefix;
+        private final String prefix;
 
         public ProfilePreferences(String prefix) {
             this.prefix = prefix;

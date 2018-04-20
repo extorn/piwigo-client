@@ -7,8 +7,8 @@ import java.util.List;
 
 public class CertificateLoadOperationResult implements Serializable {
     private CertificateLoadException exception;
-    private X509LoadOperation loadOperation;
-    private List<X509Certificate> certs;
+    private final X509LoadOperation loadOperation;
+    private final List<X509Certificate> certs;
 
     public CertificateLoadOperationResult(X509LoadOperation loadOperation) {
         this.loadOperation = loadOperation;

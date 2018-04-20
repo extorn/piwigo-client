@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * An item representing a piece of content.
  */
-public class GalleryItem implements Comparable<GalleryItem>, Serializable {
+public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Serializable {
 
     public static final int CATEGORY_TYPE = 0;
     public static final int PICTURE_RESOURCE_TYPE = 1;

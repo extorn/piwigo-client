@@ -28,7 +28,6 @@ import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.MyApplication;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 /**
  * Created by gareth on 10/10/17.
@@ -47,7 +46,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private boolean isRunning;
     private boolean rerunningCall;
     private Context context;
-    private String tag;
+    private final String tag;
     private Throwable error;
     private int statusCode;
     private Header[] headers;

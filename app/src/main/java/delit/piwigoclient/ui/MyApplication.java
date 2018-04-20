@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
+import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
@@ -119,7 +119,7 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityStopped(Activity activity) {
-        PiwigoAccessService.startActionCleanupHttpConnections(getApplicationContext());
+        new HttpConnectionCleanup(getApplicationContext()).start();
     }
 
     @Override

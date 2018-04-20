@@ -12,10 +12,12 @@ import com.google.android.vending.licensing.LicenseCheckerCallback;
 import com.google.android.vending.licensing.Policy;
 import com.google.android.vending.licensing.ServerManagedPolicy;
 
+import java.util.Date;
 import java.util.Random;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.preferences.PreferenceUtils;
 
 /**
  * Created by gareth on 28/10/17.
@@ -32,6 +34,7 @@ public class LicenceCheckingHelper {
     // A handler on the UI thread.
     private Handler mHandler;
     private MyActivity activity;
+    private Date lastChecked;
 
     public void onCreate(MyActivity activity) {
 
@@ -55,10 +58,10 @@ public class LicenceCheckingHelper {
                 activity, new ServerManagedPolicy(activity.getApplicationContext(),
                 new AESObfuscator(salt, myPackageName, deviceId)),
                 BASE64_PUBLIC_KEY);
-        doCheck();
+        doVisualCheck();
     }
 
-    protected void showDialog(final boolean showRetryButton) {
+    private void showDialog(final boolean showRetryButton) {
         String msg = activity.getString(showRetryButton ? R.string.unlicensed_dialog_retry_body : R.string.unlicensed_dialog_body);
         activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new UIHelper.QuestionResultListener() {
             @Override
@@ -77,16 +80,30 @@ public class LicenceCheckingHelper {
                         activity.startActivity(marketIntent);
                     }
                 } else {
-                    activity.finish();
+//                    activity.finish();
+                    // Kill the app in a way that gets them to maybe report it so I can track the issue.
+                    throw new IllegalStateException("Unknown error occurred");
                 }
             }
         });
     }
 
+    public void doSilentCheck() {
+        doCheck();
+    }
 
-    private void doCheck() {
+    private void doVisualCheck() {
         activity.getUiHelper().showProgressDialog(R.string.checking_license);
-        mChecker.checkAccess(mLicenseCheckerCallback);
+        doCheck();
+    }
+
+    private synchronized void doCheck() {
+        long maxInterval = 1000 * 60 * 60 * 6;
+        // check again a maximum of every 6 hours apart.
+        if(lastChecked == null || lastChecked.getTime() > System.currentTimeMillis() || lastChecked.getTime() + maxInterval > System.currentTimeMillis()) {
+            lastChecked = new Date();
+            mChecker.checkAccess(mLicenseCheckerCallback);
+        }
     }
 
     private void displayResult(final String result) {
@@ -126,6 +143,10 @@ public class LicenceCheckingHelper {
             }
             activity.getUiHelper().dismissProgressDialog();
             AdsManager.getInstance().setAppLicensed(false);
+            if(policyReason == Policy.NOT_LICENSED) {
+                PreferenceUtils.wipeAppPreferences(activity);
+            }
+
 //            displayResult(activity.getString(R.string.dont_allow));
             // Should not allow access. In most cases, the app should assume
             // the user has access unless it encounters this. If it does,

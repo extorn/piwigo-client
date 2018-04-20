@@ -13,7 +13,7 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetGalPermRspHdlr";
-    private CategoryItem album;
+    private final CategoryItem album;
 
     public AlbumGetPermissionsResponseHandler(CategoryItem album) {
         super("pwg.permissions.getList", TAG);

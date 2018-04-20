@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -50,7 +51,7 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
         JsonArray categories = result.get("categories").getAsJsonArray();
         ArrayList<CategoryItem> availableGalleries = new ArrayList<>(categories.size());
 
-        SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
 
         for (int i = 0; i < categories.size(); i++) {
             JsonObject category = (JsonObject) categories.get(i);

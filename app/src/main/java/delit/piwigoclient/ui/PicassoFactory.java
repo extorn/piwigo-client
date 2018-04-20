@@ -61,7 +61,7 @@ public class PicassoFactory {
 
     class VideoRequestHandler extends RequestHandler {
 
-        public String SCHEME_VIDEO="video";
+        public final String SCHEME_VIDEO="video";
         @Override
         public boolean canHandleRequest(Request data)
         {
@@ -143,7 +143,7 @@ public class PicassoFactory {
 
     private class PicassoErrorHandler implements Picasso.Listener {
 
-        private ConcurrentHashMap<Uri, Picasso.Listener> listeners = new ConcurrentHashMap<>();
+        private final ConcurrentHashMap<Uri, Picasso.Listener> listeners = new ConcurrentHashMap<>();
 
         public void addListener(Uri uri, Picasso.Listener listener) {
             listeners.put(uri, listener);

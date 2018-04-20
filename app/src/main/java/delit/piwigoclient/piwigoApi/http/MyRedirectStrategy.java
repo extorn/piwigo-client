@@ -9,7 +9,7 @@ import cz.msebera.android.httpclient.impl.client.LaxRedirectStrategy;
 
 public class MyRedirectStrategy extends LaxRedirectStrategy {
 
-    boolean enableRedirects;
+    final boolean enableRedirects;
 
     public MyRedirectStrategy(final boolean allowRedirects) {
         super();

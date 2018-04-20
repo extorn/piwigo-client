@@ -130,7 +130,7 @@ public class CachingAsyncHttpClient implements Closeable {
     private CookieStore cookieStore;
     private BasicCredentialsProvider credentialsProvider;
     private boolean usePreemptiveAuth;
-    private HashMap<AuthScope, Credentials> credentialsMap;
+    private final HashMap<AuthScope, Credentials> credentialsMap;
     private long maxCachedObjectSizeBytes = 8192;
     private int maxCacheEntries = 1000;
     private File cacheFolder;

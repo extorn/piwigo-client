@@ -51,7 +51,7 @@ public abstract class MyActivity extends AppCompatActivity {
             trackedActionIntentsMap = (HashMap<Long, Integer>) savedInstanceState.getSerializable(STATE_TRACKED_ACTION_TO_INTENTS_MAP);
         }
 
-        if(BuildConfig.PAID_VERSION) {
+        if(BuildConfig.PAID_VERSION && !BuildConfig.DEBUG) {
             licencingHelper = new LicenceCheckingHelper();
             licencingHelper.onCreate(this);
         }
@@ -137,6 +137,12 @@ public abstract class MyActivity extends AppCompatActivity {
         }
         if(found) {
             getSupportFragmentManager().popBackStack(i, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+    }
+
+    protected void checkLicenceIfNeeded() {
+        if(licencingHelper != null) {
+            licencingHelper.doSilentCheck();
         }
     }
 

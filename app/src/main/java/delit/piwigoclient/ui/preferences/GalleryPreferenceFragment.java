@@ -36,7 +36,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Gallery Settings";
 
-    private Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
+    private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(final Preference preference, Object value) {
             final Boolean val = (Boolean) value;
@@ -53,7 +53,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
      * A preference value change listener that updates the preference's summary
      * to reflect its pkg value.
      */
-    private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();

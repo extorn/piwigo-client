@@ -34,7 +34,7 @@ public final class CustomHttpDataSourceFactory extends BaseFactory {
     private final int readTimeoutMillis;
     private final boolean allowCrossProtocolRedirects;
     private final Context context;
-    private HttpClientBasedHttpDataSource.CacheListener cacheListener;
+    private final HttpClientBasedHttpDataSource.CacheListener cacheListener;
     private boolean cachingEnabled;
     private boolean notifyCacheListenerImmediatelyIfCached = true;
     private boolean redirectsAllowed;

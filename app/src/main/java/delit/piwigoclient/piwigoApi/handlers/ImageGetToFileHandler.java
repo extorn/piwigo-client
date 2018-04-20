@@ -33,7 +33,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
 
     private static final String TAG = "GetImgToFileRspHdlr";
     private final File outputFile;
-    private String resourceUrl;
+    private final String resourceUrl;
 
     public ImageGetToFileHandler(String resourceUrl, File outputFile) {
         super(TAG);

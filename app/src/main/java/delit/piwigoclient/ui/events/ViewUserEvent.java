@@ -7,7 +7,7 @@ import delit.piwigoclient.model.piwigo.User;
  */
 
 public class ViewUserEvent {
-    private User user;
+    private final User user;
 
     public ViewUserEvent(User user) {
         this.user = user;

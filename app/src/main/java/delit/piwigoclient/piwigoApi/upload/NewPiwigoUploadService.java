@@ -59,7 +59,7 @@ public class NewPiwigoUploadService extends IntentService {
     private static final String ACTION_UPLOAD_FILES = "delit.piwigoclient.action.ACTION_UPLOAD_FILES";
     public static final String INTENT_ARG_KEEP_DEVICE_AWAKE = "keepDeviceAwake";
     public static final String INTENT_ARG_JOB_ID = "jobId";
-    private static List<UploadJob> activeUploadJobs = Collections.synchronizedList(new ArrayList<UploadJob>(1));
+    private static final List<UploadJob> activeUploadJobs = Collections.synchronizedList(new ArrayList<UploadJob>(1));
     private static final SecureRandom random = new SecureRandom();
     private SharedPreferences prefs;
 

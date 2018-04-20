@@ -4,6 +4,7 @@ import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import delit.piwigoclient.R;
 
@@ -19,22 +20,22 @@ public abstract class RecyclerViewLongSetSelectFragment<X extends Enableable & S
         return R.layout.layout_fullsize_recycler_list;
     }
 
-    protected SelectableItemsAdapter getAdapter() {
-        RecyclerView.Adapter adapter = getList().getAdapter();
-        return (SelectableItemsAdapter)adapter;
-    }
-
     protected void selectAllListItems() {
-        getAdapter().selectAllItemIds();
+        getListAdapter().selectAllItemIds();
     }
 
     protected void selectNoneListItems() {
-        getAdapter().clearSelectedItemIds();
+        getListAdapter().clearSelectedItemIds();
+    }
+
+    @Override
+    protected void selectOnlyListItems(Set<Long> selectionIds) {
+        getListAdapter().setSelectedItems(new HashSet(selectionIds));
     }
 
     @Override
     protected long[] getSelectedItemIds() {
-        HashSet<Long> ids = getAdapter().getSelectedItemIds();
+        HashSet<Long> ids = getListAdapter().getSelectedItemIds();
         long[] result = new long[ids.size()];
         int i = 0;
         for(Long id : ids) {

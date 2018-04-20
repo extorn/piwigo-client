@@ -37,7 +37,6 @@ import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.CachingSyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.UntrustedCaCertificateInterceptingTrustStrategy;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 import delit.piwigoclient.util.X509Utils;
 
 /**
@@ -50,7 +49,7 @@ public class HttpClientFactory {
     private static HttpClientFactory instance;
     private final PersistentCookieStore cookieStore;
 
-    protected SharedPreferences prefs;
+    private final SharedPreferences prefs;
     private final Context context;
 
     private CachingAsyncHttpClient asyncClient;
@@ -163,7 +162,7 @@ public class HttpClientFactory {
         }
         int connectTimeoutMillis = ConnectionPreferences.getServerConnectTimeout(prefs, context);
         client.setConnectTimeout(connectTimeoutMillis);
-        client.setMaxConcurrentConnections(2);
+        client.setMaxConcurrentConnections(5);
         int connectRetries = ConnectionPreferences.getMaxServerConnectRetries(prefs, context);
         client.setMaxRetriesAndTimeout(connectRetries, AsyncHttpClient.DEFAULT_RETRY_SLEEP_TIME_MILLIS);
         boolean allowRedirects = ConnectionPreferences.getFollowHttpRedirects(prefs, context);
@@ -276,7 +275,7 @@ public class HttpClientFactory {
         return sslSocketFactory;
     }
 
-    public SSLContext getCustomSSLContext(KeyStore clientKeystore, char[] clientKeyPass, KeyStore trustedCAKeystore, TrustStrategy trustStrategy) {
+    private SSLContext getCustomSSLContext(KeyStore clientKeystore, char[] clientKeyPass, KeyStore trustedCAKeystore, TrustStrategy trustStrategy) {
         try {
 
             SSLContextBuilder contextBuilder = new SSLContextBuilder();

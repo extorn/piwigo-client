@@ -22,7 +22,6 @@ import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
@@ -49,7 +48,7 @@ public class NumberPickerPreference extends DialogPreference {
     private final boolean setDefaultOnAttach;
     private final boolean wrapPickList;
     private NumberPicker mPicker;
-    private int multiplier;
+    private final int multiplier;
     private int mNumber = 0;
 
     public NumberPickerPreference(Context context, AttributeSet attrs) {

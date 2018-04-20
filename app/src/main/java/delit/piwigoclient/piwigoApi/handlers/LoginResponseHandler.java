@@ -1,11 +1,16 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import com.google.gson.JsonElement;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -25,6 +30,20 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         super("pwg.session.login", TAG);
         this.username = username;
         this.password = password;
+    }
+
+    public LoginResponseHandler(Context context) {
+        super("pwg.session.login", TAG);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        this.password = ConnectionPreferences.getPiwigoPassword(prefs, getContext());
+        this.username = ConnectionPreferences.getPiwigoUsername(prefs, getContext());
+    }
+
+    public LoginResponseHandler(String password, Context context) {
+        super("pwg.session.login", TAG);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        this.password = password;
+        this.username = ConnectionPreferences.getPiwigoUsername(prefs, getContext());
     }
 
     @Override
@@ -51,7 +70,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         onLogin();
     }
 
-    public void onLogin() {
+    private void onLogin() {
         loginSuccess = true;
         PiwigoResponseBufferingHandler.PiwigoOnLoginResponse r = new PiwigoResponseBufferingHandler.PiwigoOnLoginResponse(getMessageId(), getPiwigoMethod());
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance();

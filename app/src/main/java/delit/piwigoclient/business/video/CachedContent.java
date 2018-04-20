@@ -17,7 +17,7 @@ public class CachedContent implements Serializable {
     private static final long serialVersionUID = -5756180868306113659L;
     private String cacheDataFilename;
     private Date lastAccessed;
-    private ArrayList<SerializableRange> cachedRanges = new ArrayList<>();
+    private final ArrayList<SerializableRange> cachedRanges = new ArrayList<>();
     private long totalBytes;
     private transient File persistTo;
 

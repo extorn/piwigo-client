@@ -19,7 +19,7 @@ public abstract class CustomSelectListAdapter<T> extends ArrayAdapter<T> impleme
     private HashMap<Long, Integer> idPositionMap;
     private boolean enabled = true;
 
-    public CustomSelectListAdapter(@NonNull Context context, @LayoutRes int resource) {
+    protected CustomSelectListAdapter(@NonNull Context context, @LayoutRes int resource) {
         super(context, resource);
     }
 

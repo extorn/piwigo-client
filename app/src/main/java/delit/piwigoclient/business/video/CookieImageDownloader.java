@@ -18,9 +18,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import cz.msebera.android.httpclient.cookie.Cookie;
-import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 /**
  * Created by gareth on 18/05/17.
@@ -29,7 +27,7 @@ import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 public class CookieImageDownloader extends UrlConnectionDownloader {
 
     private final Context context;
-    HttpURLConnection lastConn;
+    private HttpURLConnection lastConn;
 
     public CookieImageDownloader(Context context) {
         super(context);

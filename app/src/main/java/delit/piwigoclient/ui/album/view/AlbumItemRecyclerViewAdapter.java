@@ -30,7 +30,7 @@ import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.ui.common.SquareLinearLayout;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -43,13 +43,13 @@ import static android.view.View.GONE;
  */
 public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItemRecyclerViewAdapter.ViewHolder> {
 
-    private final PiwigoAlbum gallery;
+    private final ResourceContainer gallery;
     private Resources resources;
-    private Date recentlyAlteredThresholdDate;
+    private final Date recentlyAlteredThresholdDate;
     private String preferredThumbnailSize;
     private boolean allowItemSelection;
-    private HashSet<Long> selectedResourceIds = new HashSet<>();
-    private MultiSelectStatusListener multiSelectStatusListener;
+    private final HashSet<Long> selectedResourceIds = new HashSet<>();
+    private final MultiSelectStatusListener multiSelectStatusListener;
     private boolean captureActionClicks;
     private boolean useDarkMode;
     private boolean showAlbumThumbnailsZoomed;
@@ -61,11 +61,11 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
     public static final int SCALING_QUALITY_MEDIUM = 240;
     public static final int SCALING_QUALITY_LOW = 120;
     public static final int SCALING_QUALITY_VLOW = 60;
-    private int scalingQuality = SCALING_QUALITY_MEDIUM;
+    private final int scalingQuality = SCALING_QUALITY_MEDIUM;
     private boolean showResourceNames;
     private boolean useMasonryStyle;
 
-    public AlbumItemRecyclerViewAdapter(final PiwigoAlbum gallery, Date recentlyAlteredThresholdDate, MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
+    public AlbumItemRecyclerViewAdapter(final ResourceContainer gallery, Date recentlyAlteredThresholdDate, MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
         this.gallery = gallery;
         this.recentlyAlteredThresholdDate = recentlyAlteredThresholdDate;
         this.setHasStableIds(true);
@@ -96,12 +96,12 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
     }
 
     public int getItemPosition(GalleryItem item) {
-        return gallery.getItems().indexOf(item);
+        return gallery.getItemIdx(item);
     }
 
     @Override
     public long getItemId(int position) {
-        return gallery.getItems().get(position).getId();
+        return gallery.getItemByIdx(position).getId();
     }
 
     @Override
@@ -267,12 +267,12 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 
     @Override
     public int getItemViewType(int position) {
-        return gallery.getItems().get(position).getType();
+        return ((GalleryItem)gallery.getItemByIdx(position)).getType();
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        GalleryItem newItem = gallery.getItems().get(position);
+        GalleryItem newItem = (GalleryItem) gallery.getItemByIdx(position);
         if (holder.getOldPosition() < 0 && holder.mItem != null && holder.mItem.getId() == newItem.getId()) {
             // rendering the same item.
             updateCheckableStatus(holder);
@@ -422,7 +422,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 
     @Override
     public int getItemCount() {
-        return gallery.getItems().size();
+        return gallery.getItemCount();
     }
 
     public void toggleItemSelection() {
@@ -475,7 +475,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
     }
 
     public void redrawItem(ViewHolder vh, CategoryItem item) {
-        // clone the item into the view holder item (will not be same object if serialization has occured)
+        // clone the item into the view holder item (will not be same object if serialization has occurred)
         vh.mItem.copyFrom(item, true);
         // find item index.
 
@@ -483,7 +483,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         notifyItemChanged(idx);
         // clear the item in the view holder (to ensure it is redrawn - will be reloaded from the galleryList).
         vh.mItem = null;
-        onBindViewHolder(vh, gallery.getItems().indexOf(vh.mItem));
+        onBindViewHolder(vh, idx);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -530,7 +530,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 
     private class ItemSelectionListener implements CompoundButton.OnCheckedChangeListener {
 
-        private ViewHolder holder;
+        private final ViewHolder holder;
 
         public ItemSelectionListener(ViewHolder holder) {
             this.holder = holder;
@@ -538,7 +538,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            boolean changed = false;
+            boolean changed;
             if(isChecked) {
                 changed = selectedResourceIds.add(holder.getItemId());
             } else {
@@ -554,7 +554,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
 
         private final ViewHolder viewHolder;
         private int manualRetries = 0;
-        private int maxManualRetries = 2;
+        private final int maxManualRetries = 2;
 
         public CustomClickListener(ViewHolder viewHolder) {
             this.viewHolder = viewHolder;

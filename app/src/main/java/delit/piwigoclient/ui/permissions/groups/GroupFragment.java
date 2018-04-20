@@ -35,10 +35,20 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupAddMembersResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupAddResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupDeleteResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupGetPermissionsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupPermissionsAddResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupPermissionsRemovedResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupRemoveMembersResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupUpdateInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
 import delit.piwigoclient.ui.common.CustomImageButton;
@@ -69,7 +79,7 @@ public class GroupFragment extends MyFragment {
     private static final String STATE_FIELDS_EDITABLE = "fieldsAreEditable";
     private static final String IN_FLIGHT_MEMBER_SAVE_ACTION_IDS = "memberSaveActionIds";
     private static final String IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS = "permissionsSaveActionIds";
-    public static final String STATE_SELECT_USERS_ACTION_ID = "selectUsersActionId";
+    private static final String STATE_SELECT_USERS_ACTION_ID = "selectUsersActionId";
 
     // Fields
     private TextView groupNameField;
@@ -260,14 +270,8 @@ public class GroupFragment extends MyFragment {
     }
 
     private HashSet<Long> buildPreselectedUserIds(List<Username> selectedUsernames) {
-        HashSet<Long> preselectedUsernames = null;
-        if (selectedUsernames != null) {
-            preselectedUsernames = new HashSet<>(selectedUsernames.size());
-            int i = 0;
-            for (Username u : selectedUsernames) {
-                preselectedUsernames.add(u.getId());
-            }
-        } else {
+        HashSet<Long> preselectedUsernames = PiwigoUtils.toSetOfIds(selectedUsernames);
+        if (preselectedUsernames == null) {
             preselectedUsernames = new HashSet<>(0);
         }
         return preselectedUsernames;
@@ -303,11 +307,11 @@ public class GroupFragment extends MyFragment {
         boolean isDefault = isDefaultField.isChecked();
         newGroup = new Group(currentGroup.getId(), name, isDefault);
         if(newGroup.getId() < 0) {
-            long saveActionId = PiwigoAccessService.startActionAddGroup(newGroup, getContext());
+            long saveActionId = new GroupAddResponseHandler(newGroup).invokeAsync(getContext());
             addActiveServiceCall(R.string.progress_adding_group, saveActionId);
 
         } else {
-            long saveActionId = PiwigoAccessService.startActionUpdateGroupInfo(currentGroup, newGroup, getContext());
+            long saveActionId = new GroupUpdateInfoResponseHandler(currentGroup, newGroup).invokeAsync(getContext());
             addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
         }
     }
@@ -334,15 +338,15 @@ public class GroupFragment extends MyFragment {
         if (currentGroupMembers == null) {
             ArrayList<Long> groups = new ArrayList<>(1);
             groups.add(group.getId());
-            addActiveServiceCall(R.string.progress_loading_group_details,PiwigoAccessService.startActionGetUsernamesList(groups, 0, 100, getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details,new UsernamesGetListResponseHandler(groups, 0, 100).invokeAsync(getContext()));
         }
 
         if (availableGalleries == null) {
-            addActiveServiceCall(R.string.progress_loading_group_details, PiwigoAccessService.startActionGetSubCategoryNames(CategoryItem.ROOT_ALBUM.getId(), true, getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         }
 
         if (currentAccessibleAlbumIds == null) {
-            addActiveServiceCall(R.string.progress_loading_group_details, PiwigoAccessService.startActionGetAllAlbumPermissionsForGroup(group.getId(), getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details, new GroupGetPermissionsResponseHandler(group.getId()).invokeAsync(getContext()));
         }
 
         if (availableGalleries != null) {
@@ -370,7 +374,7 @@ public class GroupFragment extends MyFragment {
     }
 
     private void deleteGroupNow(Group group) {
-        addActiveServiceCall(R.string.progress_delete_group, PiwigoAccessService.startActionDeleteGroup(group.getId(), getContext()));
+        addActiveServiceCall(R.string.progress_delete_group, new GroupDeleteResponseHandler(group.getId()).invokeAsync(getContext()));
     }
 
     private void setFieldsEditable(boolean editable) {
@@ -497,12 +501,12 @@ public class GroupFragment extends MyFragment {
         boolean hasRemovedPermissions = oldGroupMembersSet.size() > 0;
 
         if (hasRemovedPermissions) {
-            long saveActionId = PiwigoAccessService.startActionRemoveUsersFromGroup(currentGroup.getId(), new ArrayList<>(oldGroupMembersSet), getContext());
+            long saveActionId = new GroupRemoveMembersResponseHandler(currentGroup.getId(), new ArrayList<>(oldGroupMembersSet)).invokeAsync(getContext());
             memberSaveActionIds.add(saveActionId);
             addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
         }
         if (hasAddedNewPermissions) {
-            long saveActionId = PiwigoAccessService.startActionAddUsersToGroup(currentGroup.getId(), new ArrayList<>(newGroupMembersSet), getContext());
+            long saveActionId = new GroupAddMembersResponseHandler(currentGroup.getId(), new ArrayList<>(newGroupMembersSet)).invokeAsync(getContext());
             memberSaveActionIds.add(saveActionId);
             addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
         }
@@ -523,12 +527,12 @@ public class GroupFragment extends MyFragment {
         boolean hasRemovedPermissions = oldPermissionsSet.size() > 0;
 
         if (hasRemovedPermissions) {
-            long saveActionId = PiwigoAccessService.startActionGroupRemovePermissions(currentGroup.getId(), new ArrayList<>(oldPermissionsSet), getContext());
+            long saveActionId = new GroupPermissionsRemovedResponseHandler(currentGroup.getId(), new ArrayList<>(oldPermissionsSet)).invokeAsync(getContext());
             permissionsSaveActionIds.add(saveActionId);
             addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
         }
         if (hasAddedNewPermissions) {
-            long saveActionId = PiwigoAccessService.startActionGroupAddPermissions(currentGroup.getId(), new ArrayList<>(newPermissionsSet), getContext());
+            long saveActionId = new GroupPermissionsAddResponseHandler(currentGroup.getId(), new ArrayList<>(newPermissionsSet)).invokeAsync(getContext());
             permissionsSaveActionIds.add(saveActionId);
             addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
         }
@@ -558,12 +562,12 @@ public class GroupFragment extends MyFragment {
         }
     }
 
-    public void onUsernamesLoaded(PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse response) {
+    private void onUsernamesLoaded(PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse response) {
         currentGroupMembers = response.getUsernames();
         populateGroupMembersField();
     }
 
-    public void onGroupPermissionsRetrieved(PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse response) {
+    private void onGroupPermissionsRetrieved(PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse response) {
 
         this.currentAccessibleAlbumIds = response.getAllowedAlbums();
         if (availableGalleries != null) {
@@ -572,7 +576,7 @@ public class GroupFragment extends MyFragment {
 
     }
 
-    public void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
         this.availableGalleries = response.getAlbumNames();
         if (currentAccessibleAlbumIds != null) {
             populateAlbumPermissionsList();

@@ -12,11 +12,11 @@ public class UploadFileChunk {
     private final long jobId;
     private final File originalFile;
     private final String mimeType;
-    private long chunkId;
-    private long chunkCount;
-    private long uploadToAlbumId;
-    private InputStream chunkData;
-    private String filenameOnServer;
+    private final long chunkId;
+    private final long chunkCount;
+    private final long uploadToAlbumId;
+    private final InputStream chunkData;
+    private final String filenameOnServer;
     private int uploadAttempts;
 
     public UploadFileChunk(long jobId, File originalFile, String filenameOnServer, long uploadToAlbumId, InputStream chunkData, long chunkId, long chunkCount, String mimeType) {

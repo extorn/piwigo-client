@@ -15,7 +15,7 @@ public class GroupPermissionsRemovedResponseHandler extends AbstractPiwigoWsResp
 
     private static final String TAG = "delGrpPermRspHdlr";
     private final ArrayList<Long> albumsNotAllowedAccessTo;
-    private long groupId;
+    private final long groupId;
 
     public GroupPermissionsRemovedResponseHandler(long groupId, ArrayList<Long> albumsNotAllowedAccessTo) {
         super("pwg.permissions.remove", TAG);

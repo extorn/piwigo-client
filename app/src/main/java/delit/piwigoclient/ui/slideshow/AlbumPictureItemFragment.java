@@ -26,8 +26,8 @@ import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -197,7 +197,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
                         File outputFile = new File(downloadsFolder, getModel().getDownloadFileName(selectedItem));
                         //TODO check what happens if file exists
                         //NOTE: Don't add to active service calls (we want control over the dialog displayed).
-                        addDownloadAction(PiwigoAccessService.startActionGetResourceToFile(selectedItem.getUrl(), outputFile, getContext()));
+                        addDownloadAction(new ImageGetToFileHandler(selectedItem.getUrl(), outputFile).invokeAsync(getContext()));
                     }
                 });
                 dialog.show();

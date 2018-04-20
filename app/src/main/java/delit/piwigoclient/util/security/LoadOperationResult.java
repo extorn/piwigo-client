@@ -11,12 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 public class LoadOperationResult implements Serializable {
-    private List<KeystoreLoadOperationResult> keystoreLoadResults;
-    private List<CertificateLoadOperationResult> certLoadResults;
+    private final List<KeystoreLoadOperationResult> keystoreLoadResults;
+    private final List<CertificateLoadOperationResult> certLoadResults;
 
     public LoadOperationResult() {
         keystoreLoadResults = new ArrayList<>();

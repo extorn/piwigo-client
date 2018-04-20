@@ -11,7 +11,7 @@
     <Spinner
         android:id="@+id/imageRotationField"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></Spinner>
+        android:layout_height="wrap_content" />
 
     <TextView
         android:text="@string/alert_image_show_image_select_max_zoom"
@@ -31,7 +31,7 @@
     <ListView
         android:id="@+id/fileSelectList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:choiceMode="singleChoice" />
 

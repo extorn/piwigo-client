@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.preferences;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,7 +11,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
-import android.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -47,6 +47,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,7 +83,7 @@ public abstract class KeyStorePreference extends DialogPreference {
     private int trackedRequest = -1;
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
-    public LoadOperationResult keystoreLoadOperationResult;
+    private LoadOperationResult keystoreLoadOperationResult;
     private ArrayList<String> allowedCertificateFileTypes = new ArrayList<>(Arrays.asList(new String[]{".cer", ".cert", ".pem"}));
     private static final String BKS_FILE_SUFFIX = ".bks";
     private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList(new String[]{".p12", ".pkcs12", ".pfx", BKS_FILE_SUFFIX}));
@@ -649,7 +650,7 @@ public abstract class KeyStorePreference extends DialogPreference {
 
         public KeyStoreContentsAdapter(@NonNull Context context, @NonNull KeyStore ks) {
             setData(ks);
-            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         }
 
         public KeyStore getBackingObjectStore() {

@@ -9,16 +9,26 @@ import java.util.HashSet;
 public class LongSetSelectionNeededEvent extends TrackableRequestEvent {
     private final boolean allowMultiSelect;
     private final boolean allowEditing;
-    private final HashSet<Long> currentSelection;
+    private final boolean initialSelectionLocked;
+    private final HashSet<Long> initialSelection;
 
     public LongSetSelectionNeededEvent(boolean allowMultiSelect, boolean allowEditing, HashSet<Long> currentSelection) {
-        this.allowMultiSelect = allowMultiSelect;
-        this.currentSelection = currentSelection;
-        this.allowEditing = allowEditing;
+        this(allowMultiSelect, allowEditing, false, currentSelection);
     }
 
-    public HashSet<Long> getCurrentSelection() {
-        return currentSelection;
+    public LongSetSelectionNeededEvent(boolean allowMultiSelect, boolean allowEditing, boolean initialSelectionLocked, HashSet<Long> initialSelection) {
+        this.allowMultiSelect = allowMultiSelect;
+        this.initialSelection = initialSelection;
+        this.allowEditing = allowEditing;
+        this.initialSelectionLocked = initialSelectionLocked;
+    }
+
+    public HashSet<Long> getInitialSelection() {
+        return initialSelection;
+    }
+
+    public boolean isInitialSelectionLocked() {
+        return initialSelectionLocked;
     }
 
     public boolean isAllowMultiSelect() {

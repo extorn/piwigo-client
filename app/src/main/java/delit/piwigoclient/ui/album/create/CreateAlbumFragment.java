@@ -34,8 +34,11 @@ import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumAddPermissionsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumSetStatusResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
@@ -49,14 +52,13 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 /**
  * Created by gareth on 23/05/17.
  */
-
 public class CreateAlbumFragment extends MyFragment {
 
-    public static final String STATE_UPLOAD_TO_GALLERY = "uploadToGallery";
-    public static final String STATE_NEW_GALLERY = "newAlbum";
-    public static final String STATE_CREATE_GALLERY_CALL_ID = "createGalleryCallId";
-    public static final String STATE_SET_GALLERY_PERMISSIONS_CALL_ID = "setGalleryPermissionsCallId";
-    public static final String STATE_DELETE_GALLERY_CALL_ID = "deleteGalleryCallId";
+    private static final String STATE_UPLOAD_TO_GALLERY = "uploadToGallery";
+    private static final String STATE_NEW_GALLERY = "newAlbum";
+    private static final String STATE_CREATE_GALLERY_CALL_ID = "createGalleryCallId";
+    private static final String STATE_SET_GALLERY_PERMISSIONS_CALL_ID = "setGalleryPermissionsCallId";
+    private static final String STATE_DELETE_GALLERY_CALL_ID = "deleteGalleryCallId";
     private static final String STATE_ACTION_ID = "actionId";
     private CategoryItemStub parentGallery;
     private TextView galleryNameEditField;
@@ -274,7 +276,7 @@ public class CreateAlbumFragment extends MyFragment {
                     for(Group g : selectedGroups) {
                         selectedGroupIds.add(g.getId());
                     }
-                    addActiveServiceCall(R.string.progress_loading_group_details,PiwigoAccessService.startActionGetUsernamesList(selectedGroupIds, 0, 100, getContext()));
+                    addActiveServiceCall(R.string.progress_loading_group_details,new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100).invokeAsync(getContext()));
                 }
             }
         });
@@ -294,7 +296,7 @@ public class CreateAlbumFragment extends MyFragment {
     }
 
     private HashSet<Long> buildPreselectedUserIds(List<Username> selectedUsernames) {
-        HashSet<Long> preselectedUsernames = null;
+        HashSet<Long> preselectedUsernames;
         if (selectedUsernames != null) {
             preselectedUsernames = new HashSet<>(selectedUsernames.size());
             int i = 0;
@@ -327,7 +329,7 @@ public class CreateAlbumFragment extends MyFragment {
 
         newAlbum = new PiwigoGalleryDetails(parentGallery, null, galleryName, galleryDescription, userCommentsAllowed, isPrivate);
 
-        createGalleryMessageId = PiwigoAccessService.startActionAddAlbum(newAlbum, getContext());
+        createGalleryMessageId = new AlbumCreateResponseHandler(newAlbum).invokeAsync(getContext());
         addActiveServiceCall(R.string.progress_creating_album, createGalleryMessageId);
     }
 
@@ -408,11 +410,11 @@ public class CreateAlbumFragment extends MyFragment {
             }
 
             // don't need the call to be recursive since it is a leaf node already.
-            setGalleryPermissionsMessageId = PiwigoAccessService.startActionAddAlbumPermissions(newAlbum, allowedGroups, allowedUsers, false, getContext());
+            setGalleryPermissionsMessageId = new AlbumAddPermissionsResponseHandler(newAlbum, allowedGroups, allowedUsers, false).invokeAsync(getContext());
             addActiveServiceCall(setGalleryPermissionsMessageId);
         } else {
             //TODO why are we doing this unnecessary call?
-            setGalleryPermissionsMessageId = PiwigoAccessService.startActionSetAlbumStatus(newAlbum, getContext());
+            setGalleryPermissionsMessageId = new AlbumSetStatusResponseHandler(newAlbum).invokeAsync(getContext());
             addActiveServiceCall(setGalleryPermissionsMessageId);
         }
 

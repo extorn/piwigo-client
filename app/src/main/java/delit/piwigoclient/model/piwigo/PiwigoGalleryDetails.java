@@ -13,12 +13,12 @@ import java.util.Set;
 public class PiwigoGalleryDetails implements Serializable {
 
     private final ArrayList<Long> parentageChain;
-    private CategoryItemStub parentGallery;
+    private final CategoryItemStub parentGallery;
     private Long galleryId;
-    private String galleryName;
-    private String galleryDescription;
-    private boolean userCommentsAllowed;
-    private boolean isPrivate;
+    private final String galleryName;
+    private final String galleryDescription;
+    private final boolean userCommentsAllowed;
+    private final boolean isPrivate;
     private HashSet<Long> allowedGroups;
     private HashSet<Long> allowedUsers;
 

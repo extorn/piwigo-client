@@ -55,6 +55,7 @@ android {
             buildConfigField "boolean", "PAID_VERSION", "false"
             // Assigns this product flavor to the "tier" flavor dimension. Specifying
             // this property is optional if you are using only one dimension.
+
             dimension "tier"
         }
         paid {
@@ -101,4 +102,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-ads:11.8.0'
 
     testCompile 'junit:junit:4.12'
+
 }

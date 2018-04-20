@@ -8,7 +8,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 
 public class AlbumCreateNeededEvent extends TrackableRequestEvent {
 
-    private CategoryItemStub parentAlbum;
+    private final CategoryItemStub parentAlbum;
 
     public AlbumCreateNeededEvent(CategoryItemStub parentAlbum) {
         this.parentAlbum = parentAlbum;

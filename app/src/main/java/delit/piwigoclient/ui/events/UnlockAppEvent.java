@@ -5,7 +5,7 @@ package delit.piwigoclient.ui.events;
  */
 
 public class UnlockAppEvent {
-    private String password;
+    private final String password;
 
     public UnlockAppEvent(String password) {
         this.password = password;

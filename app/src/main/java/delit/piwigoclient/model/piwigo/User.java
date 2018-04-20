@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 
-public class User implements Serializable {
+public class User implements Identifiable, Serializable {
     private String email;
     private long id = -1;
     private String username;

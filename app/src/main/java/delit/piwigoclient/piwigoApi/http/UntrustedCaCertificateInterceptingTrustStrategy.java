@@ -20,7 +20,7 @@ import delit.piwigoclient.util.X509Utils;
 
 public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSignedStrategy {
 
-    private Set<String> certThumbprints;
+    private final Set<String> certThumbprints;
     private static Set<String> preNotifiedCerts;
 
     public UntrustedCaCertificateInterceptingTrustStrategy(KeyStore trustedCAKeystore, Set<String> preNotifiedCerts) {

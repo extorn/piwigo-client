@@ -22,7 +22,7 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
 
     private final Context context;
     private HashSet<Long> indirectlySelectedItems;
-    private ArrayList<T> availableItems;
+    private final ArrayList<T> availableItems;
     private boolean enabled;
     private HashMap<Long, Integer> itemIdToLevelMap;
     private HashMap<Long, Integer> idPositionMap;

@@ -1,37 +1,21 @@
 package delit.piwigoclient.model.piwigo;
 
-import android.util.Log;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import delit.piwigoclient.BuildConfig;
 
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
  * <p>
  */
-public class PiwigoAlbum implements Serializable {
+public class PiwigoAlbum extends ResourceContainer<CategoryItem> implements Serializable {
 
-    private CategoryItem albumDetails;
-    private static final String TAG = "piwigoAlbum";
     private int subAlbumCount;
     private int spacerAlbums;
     private int advertCount;
-
-    private SortedSet<Integer> pagesLoaded = new TreeSet<>();
-
-    /**
-     * An array of items in the gallery.
-     */
-    private final ArrayList<GalleryItem> items = new ArrayList<>();
 
     private final transient Comparator<GalleryItem> itemComparator = new Comparator<GalleryItem>() {
         @Override
@@ -63,15 +47,7 @@ public class PiwigoAlbum implements Serializable {
     };
 
     public PiwigoAlbum(CategoryItem albumDetails) {
-        this.albumDetails = albumDetails;
-    }
-
-    public CategoryItem getAlbumDetails() {
-        return albumDetails;
-    }
-
-    public Long getId() {
-        return albumDetails.getId();
+        super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));
     }
 
     public void addItem(CategoryItem item) {
@@ -80,68 +56,38 @@ public class PiwigoAlbum implements Serializable {
         } else {
             advertCount++;
         }
-        items.add(item);
+        super.addItem(item);
         // ensure these are always placed first.
-        Collections.sort(items, itemComparator);
+        Collections.sort(getItems(), itemComparator);
     }
 
-    private int earlierLoadedPages(int page) {
-        Iterator<Integer> iter = pagesLoaded.iterator();
-        int earlierPages = 0;
-        while(iter.hasNext()) {
-            int curPage = iter.next();
-            if(curPage < page) {
-                earlierPages++;
-            } else if(curPage == page) {
-                throw new IllegalStateException("Attempting to add page already loaded (" + curPage+")");
-            } else {
-                break;
-            }
-        }
-        return earlierPages;
+    protected int getPageInsertPosition(int page, int pageSize) {
+        int insertPosition = super.getPageInsertPosition(page, pageSize);
+        insertPosition += subAlbumCount;
+        insertPosition += spacerAlbums;
+        insertPosition += advertCount;
+        return insertPosition;
     }
 
     public void addItemPage(int page, int pageSize, List<GalleryItem> newItems) {
-        try {
-            if (newItems.size() > 0) {
-                int insertPosition = earlierLoadedPages(page) * pageSize;
-                insertPosition += subAlbumCount;
-                insertPosition += spacerAlbums;
-                insertPosition += advertCount;
-                for (GalleryItem item : newItems) {
-                    if (item == GalleryItem.ADVERT) {
-                        advertCount++;
-                    }
-                    items.add(insertPosition, item);
-                    insertPosition++;
-                }
-            }
-            pagesLoaded.add(page);
-        } catch(IllegalArgumentException e) {
-            if(BuildConfig.DEBUG) {
-                Log.e(TAG, "page already loaded", e);
+        super.addItemPage(page, pageSize, newItems);
+        for (GalleryItem item : newItems) {
+            if (item == GalleryItem.ADVERT) {
+                advertCount++;
             }
         }
     }
 
     public void clear() {
-        items.clear();
-        pagesLoaded.clear();
+        super.clear();
         subAlbumCount = 0;
         spacerAlbums = 0;
         advertCount = 0;
     }
 
-    public List<GalleryItem> getItems() {
-        return items;
-    }
-
-    public int getPagesLoaded() {
-        return pagesLoaded.size();
-    }
-
-    public long getResourcesCount() {
-        return items.size() - subAlbumCount - spacerAlbums - advertCount;
+    @Override
+    public int getResourcesCount() {
+        return super.getItemCount() - subAlbumCount - spacerAlbums - advertCount;
     }
 
     public int getSubAlbumCount() {
@@ -150,6 +96,7 @@ public class PiwigoAlbum implements Serializable {
 
     public void setSpacerAlbumCount(int spacerAlbumsNeeded) {
         // remove all spacers
+        ArrayList<GalleryItem> items = getItems();
         while(items.remove(CategoryItem.BLANK)){}
         spacerAlbums = spacerAlbumsNeeded;
         if(spacerAlbumsNeeded > 0) {
@@ -162,30 +109,8 @@ public class PiwigoAlbum implements Serializable {
         }
     }
 
-    public ResourceItem getResourceItemById(long selectedItemId) {
-        for (GalleryItem item : items) {
-            if(item.getId() == selectedItemId) {
-                if(item instanceof ResourceItem) {
-                    return (ResourceItem) item;
-                }
-                throw new RuntimeException("Item is present, but is not an album resource, is a " + item.getClass().getName());
-            }
-        }
-        throw new IllegalArgumentException("No resource item present with id : " + selectedItemId);
-    }
-
     public boolean addMissingAlbums(List<CategoryItem> adminCategories) {
-        if(adminCategories == null) {
-            return false;
-        }
-        boolean changed = false;
-        for(CategoryItem c : adminCategories) {
-            if(!items.contains(c)) {
-                addItem(c);
-                changed = true;
-            }
-        }
-        return changed;
+        return super.addMissingItems(adminCategories);
     }
 
     public void updateSpacerAlbumCount(int albumsPerRow) {
@@ -196,12 +121,8 @@ public class PiwigoAlbum implements Serializable {
         setSpacerAlbumCount(spacerAlbumsNeeded);
     }
 
-    public boolean isAllResourcesLoaded() {
-        return getResourcesCount() == albumDetails.getTotalPhotos();
-    }
-
-    public void remove(int idx) {
-        GalleryItem removedItem = items.remove(idx);
+    public GalleryItem remove(int idx) {
+        GalleryItem removedItem = (GalleryItem) super.remove(idx);
         if(removedItem instanceof CategoryItem) {
             if(removedItem == CategoryItem.ADVERT) {
                 advertCount--;
@@ -211,5 +132,11 @@ public class PiwigoAlbum implements Serializable {
         } else {
             // It's a resource (no count recorded at the moment).
         }
+        return removedItem;
+    }
+
+    @Override
+    public long getImgResourceCount() {
+        return getContainerDetails().getPhotoCount();
     }
 }

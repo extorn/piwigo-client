@@ -5,7 +5,7 @@ import android.view.View;
 public class CustomClickListener<T, S extends CustomViewHolder<T>> implements View.OnClickListener, View.OnLongClickListener {
 
     private final S viewHolder;
-    private BaseRecyclerViewAdapter<T, S> parentAdapter;
+    private final BaseRecyclerViewAdapter<T, S> parentAdapter;
 
     public CustomClickListener(S viewHolder, BaseRecyclerViewAdapter<T, S> parentAdapter) {
         this.viewHolder = viewHolder;

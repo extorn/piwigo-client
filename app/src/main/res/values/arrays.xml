@@ -728,7 +728,7 @@
             - Added local caching of video files (configurable) and the ability to save fully cached videos locally if enabled.
             - Removed image size download option for image sizes not explicitly generated on the server
             - Corrected a bug in the slideshow displayed while deleting files
-            - Long click on album thumbnails and album resources invokes redownloading of that resource (On Videos, it clears any locally cached data)
+            - Long click on album thumbnails and album resources invokes re-downloading of that resource (On Videos, it clears any locally cached data)
             - Fixed a number of bugs in the area of changing user sessions without restarting the app
             - Clear the back button history when a user session is changed
             - Added a gallery property to allow user correction of the positioning of the image / video details bottom drawer that slides up

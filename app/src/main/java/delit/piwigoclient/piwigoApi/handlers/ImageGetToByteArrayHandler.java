@@ -19,7 +19,7 @@ import delit.piwigoclient.ui.events.CancelDownloadEvent;
 public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHandler {
 
     private static final String TAG = "GetImgRspHdlr";
-    private String resourceUrl;
+    private final String resourceUrl;
 
     public ImageGetToByteArrayHandler(String resourceUrl) {
         super(TAG);

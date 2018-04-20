@@ -446,9 +446,9 @@ public class EditableListPreference extends DialogPreference {
 
     private class DefaultListContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private String currentSelectedValue;
-        private List<String> entriesList;
-        private List<String> entryValues;
+        private final String currentSelectedValue;
+        private final List<String> entriesList;
+        private final List<String> entryValues;
 
         public DefaultListContentsAdapter(@NonNull Context context, @NonNull List<String> entriesList, @NonNull List<String> entryValues, String currentSelectedValue) {
             this.entriesList = entriesList;
@@ -556,7 +556,7 @@ public class EditableListPreference extends DialogPreference {
         public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
             ActionableListItemViewHolder viewHolder = (ActionableListItemViewHolder)holder;
             viewHolder.selected.setVisibility(View.GONE);
-            String thisValue = entriesList.get(position);
+            String thisValue = entriesList.get(holder.getAdapterPosition());
             viewHolder.itemName.setText(thisValue);
             if(thisValue.equals(currentSelectedValue)) {
                 viewHolder.itemName.setTypeface(viewHolder.itemName.getTypeface(), Typeface.BOLD);
@@ -565,7 +565,7 @@ public class EditableListPreference extends DialogPreference {
             viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onDeleteItem(position, v);
+                    onDeleteItem(holder.getAdapterPosition(), v);
                 }
             });
         }

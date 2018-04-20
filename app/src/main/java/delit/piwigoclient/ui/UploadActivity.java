@@ -27,7 +27,6 @@ import java.util.Map;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
@@ -56,7 +55,7 @@ public class UploadActivity extends MyActivity {
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final String STATE_FILE_SELECT_EVENT_ID = "fileSelectionEventId";
     private static final String STATE_STARTED_ALREADY = "startedAlready";
-    private HashMap<String, String> errors = new HashMap<>();
+    private final HashMap<String, String> errors = new HashMap<>();
     private int fileSelectionEventId;
     private boolean startedWithPermissions;
 
@@ -110,13 +109,7 @@ public class UploadActivity extends MyActivity {
         } else {
             setContentView(R.layout.activity_upload);
             addUploadingAsFieldsIfAppropriate();
-            final Fragment f;
-            if (!PiwigoSessionDetails.isFullyLoggedIn()) {
-                f = LoginFragment.newInstance();
-                showFragmentNow(f);
-            } else {
-                showUploadFragment();
-            }
+            showUploadFragment();
         }
     }
 
@@ -328,13 +321,13 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), event.getActionId(), event.getIndirectSelection(),  event.getCurrentSelection());
+        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), false, event.getActionId(), event.getIndirectSelection(),  event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final GroupSelectionNeededEvent event) {
-        GroupSelectFragment fragment = GroupSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), event.getActionId(), event.getCurrentSelection());
+        GroupSelectFragment fragment = GroupSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), false, event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
@@ -376,6 +369,8 @@ public class UploadActivity extends MyActivity {
     }
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
+
+        checkLicenceIfNeeded();
 
         Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.upload_details);
         String lastFragmentName = "";

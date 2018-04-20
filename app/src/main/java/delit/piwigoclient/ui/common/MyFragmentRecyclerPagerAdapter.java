@@ -53,18 +53,22 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     private static final String TAG = "FrgmntStatePagerAdapter";
     private static final boolean DEBUG = false;
 
-    private final FragmentManager mFragmentManager;
+    private FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction = null;
 
     private ArrayList<Fragment.SavedState> pageState;
-    private Map<Class,Queue<Fragment>> availableFragmentPool = new HashMap<>();
-    private Map<Integer,Fragment> activeFragments = new HashMap<>(3);
+    private final Map<Class,Queue<Fragment>> availableFragmentPool = new HashMap<>();
+    private final Map<Integer,Fragment> activeFragments = new HashMap<>(3);
     private int maxFragmentsToSaveInState = 3;
     private int visibleItemIdx = -1;
     private Fragment mCurrentPrimaryItem;
 
     public MyFragmentRecyclerPagerAdapter(FragmentManager fm) {
         mFragmentManager = fm;
+    }
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.mFragmentManager = fragmentManager;
     }
 
     public void setMaxFragmentsToSaveInState(int maxFragmentsToSaveInState) {
