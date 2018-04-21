@@ -1,5 +1,9 @@
 package delit.piwigoclient.ui.slideshow;
 
+import android.content.Context;
+
+import org.greenrobot.eventbus.EventBus;
+
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;

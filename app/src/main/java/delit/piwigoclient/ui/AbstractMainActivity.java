@@ -465,7 +465,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     public void onTrimMemory(int level) {
 
         // Determine which lifecycle or system event was raised.
-        switch (level) {
+            switch (level) {
 
             case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
 
