@@ -29,15 +29,13 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoTag;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomViewPager;
 import delit.piwigoclient.ui.common.MyFragment;
@@ -59,26 +57,23 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 14/05/17.
  */
 
-public class SlideshowFragment extends MyFragment {
+public abstract class AbstractSlideshowFragment<T extends Identifiable> extends MyFragment {
 
     private static final String TAG = "SlideshowFragment";
     private static final String STATE_GALLERY = "gallery";
     private static final String STATE_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
     private CustomViewPager viewPager;
-    private ResourceContainer gallery;
+    private ResourceContainer<T> gallery;
     private int rawCurrentGalleryItemPosition;
     private View progressIndicator;
     private final Set<Integer> pagesBeingLoaded = new HashSet<>();
     private GalleryItemAdapter galleryItemAdapter;
 
-
-    public static SlideshowFragment newInstance(ResourceContainer gallery, GalleryItem currentGalleryItem) {
-        SlideshowFragment fragment = new SlideshowFragment();
+    protected static Bundle buildArgs(ResourceContainer gallery, GalleryItem currentGalleryItem) {
         Bundle args = new Bundle();
         args.putSerializable(STATE_GALLERY, gallery);
         args.putInt(STATE_GALLERY_ITEM_DISPLAYED, gallery.getItemIdx(currentGalleryItem));
-        fragment.setArguments(args);
-        return fragment;
+        return args;
     }
 
     @Override
@@ -221,10 +216,8 @@ public class SlideshowFragment extends MyFragment {
         progressIndicator.setVisibility(VISIBLE);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        EventBus.getDefault().register(this);
+    protected ResourceContainer<T> getGallery() {
+        return gallery;
     }
 
     /**
@@ -241,12 +234,6 @@ public class SlideshowFragment extends MyFragment {
             viewPager.setAdapter(null);
         }
         super.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -281,7 +268,7 @@ public class SlideshowFragment extends MyFragment {
 
     @Subscribe
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        if(gallery.getId() == albumAlteredEvent.id) {
+        if(gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.id) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync));
         }
     }
@@ -322,6 +309,7 @@ public class SlideshowFragment extends MyFragment {
         public int getRawGalleryItemPosition(int slideshowPosition) {
             return galleryResourceItems.get(slideshowPosition);
         }
+
 
         @Override
         public int getItemPosition(@NonNull Object item) {
@@ -478,18 +466,13 @@ public class SlideshowFragment extends MyFragment {
             String multimediaExtensionList = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
             int pageSize = prefs.getInt(getString(R.string.preference_album_request_pagesize_key), getResources().getInteger(R.integer.preference_album_request_pagesize_default));
 
-            Identifiable cd = gallery.getContainerDetails();
             long loadingMessageId;
-            if(cd instanceof CategoryItem) {
-                loadingMessageId = new ImagesGetResponseHandler((CategoryItem) gallery.getContainerDetails(), sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
-            } else if(cd instanceof Tag) {
-                loadingMessageId = new TagGetImagesResponseHandler((Tag) gallery.getContainerDetails(), sortOrder, pageToLoad, pageSize, getContext(), multimediaExtensionList).invokeAsync(getContext());
-            } else {
-                throw new IllegalArgumentException("unsupported container type : " + cd);
-            }
+            loadingMessageId = invokeResourcePageLoader(gallery, sortOrder, pageToLoad, pageSize, multimediaExtensionList);
             addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
         }
     }
+
+    protected abstract long invokeResourcePageLoader(ResourceContainer<T> containerDetails, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList);
 
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {

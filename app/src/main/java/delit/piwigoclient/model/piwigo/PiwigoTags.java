@@ -80,7 +80,7 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
         }
         items.addAll(tagsToAdd);
         sort();
-        return 0;
+        return tagsToAdd.size();
     }
 
     public int getPagesLoaded() {

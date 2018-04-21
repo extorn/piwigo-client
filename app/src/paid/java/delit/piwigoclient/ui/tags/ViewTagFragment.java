@@ -57,6 +57,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
+import delit.piwigoclient.ui.events.TagAlteredEvent;
 import delit.piwigoclient.ui.events.TagUpdatedEvent;
 
 import static android.view.View.GONE;
@@ -683,7 +684,18 @@ public class ViewTagFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
+        // This is needed because a slideshow item currently only fires these events (tag unaware).
         if (tag != null && tag.getId() == albumAlteredEvent.id) {
+            tagIsDirty = true;
+            if(isResumed()) {
+                reloadAlbumContent();
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(TagAlteredEvent event) {
+        if (tag != null && tag.getId() == event.id) {
             tagIsDirty = true;
             if(isResumed()) {
                 reloadAlbumContent();

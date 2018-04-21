@@ -1,6 +1,7 @@
 package delit.piwigoclient.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,6 +36,34 @@ public class SetUtils {
             }
         }
         return difference;
+    }
+
+    /**
+     * Returns all those items in either setA or setB but not in both
+     * Empty set if there are no elements fitting the above description (including if setA or B is null)
+     * @param setA
+     * @param setB
+     * @param <T>
+     * @return
+     */
+    public static <T> HashSet<T> differences(Set<T> setA, Set<T> setB) {
+        if(setA == null) {
+            if(setB == null) {
+                return new HashSet<>(0);
+            } else {
+                return new HashSet<>(setB);
+            }
+        }
+        if(setB == null) {
+            if(setA == null) {
+                return new HashSet<>(0);
+            } else {
+                return new HashSet<>(setA);
+            }
+        }
+        HashSet<T> diffs = difference(setA, setB);
+        diffs.addAll(difference(setB, setA));
+        return diffs;
     }
 
     public static String[] asStringArray(Collection<String> items) {

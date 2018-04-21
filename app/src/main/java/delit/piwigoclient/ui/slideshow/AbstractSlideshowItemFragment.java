@@ -96,7 +96,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private static final String ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT = "albumTotalResourceItemCount";
     private static final String TAG = "SlideshowItemFragment";
     private static final String STATE_UPDATED_LINKED_ALBUM_SET = "updatedLinkedAlbumSet";
-    private static final String STATE_UPDATED_TAGS_SET = "updatedTagSet";
     private static final String STATE_ALBUMS_REQUIRING_UPDATE = "albumsRequiringUpdate";
     private static final String STATE_EDITING_ITEM_DETAILS = "editingItemDetails";
     private static final String STATE_INFORMATION_SHOWING = "informationShowing";
@@ -124,7 +123,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private CustomImageButton setAsAlbumThumbnail;
     private TextView linkedAlbumsField;
     private TextView tagsField;
-    protected HashSet<Tag> updatedTagsSet;
     private HashSet<Long> updatedLinkedAlbumSet;
     private HashSet<Long> albumsRequiringReload;
     private long albumItemIdx;
@@ -162,7 +160,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         outState.putSerializable(ARG_GALLERY_ITEM, model);
         outState.putBoolean(ALLOW_DOWNLOAD, isAllowDownload());
         outState.putSerializable(STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
-        outState.putSerializable(STATE_UPDATED_TAGS_SET, updatedTagsSet);
         outState.putSerializable(STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
         outState.putLong(ARG_ALBUM_ITEM_IDX, albumItemIdx);
         outState.putLong(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
@@ -205,7 +202,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             allowDownload = savedInstanceState.getBoolean(ALLOW_DOWNLOAD);
             updatedLinkedAlbumSet = (HashSet<Long>) savedInstanceState.getSerializable(STATE_UPDATED_LINKED_ALBUM_SET);
-            updatedTagsSet = (HashSet<Tag>) savedInstanceState.getSerializable(STATE_UPDATED_TAGS_SET);
             albumsRequiringReload = (HashSet<Long>) savedInstanceState.getSerializable(STATE_ALBUMS_REQUIRING_UPDATE);
             if (getArguments() == null) {
                 model = (T) savedInstanceState.getSerializable(ARG_GALLERY_ITEM);
@@ -239,30 +235,17 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         setAsAlbumThumbnail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                // Invoke call to retrieve all album names (will show a dialog once this is done).
-                boolean recursive = true;
-                addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), recursive).invokeAsync(getContext()));
-                return true;
+                return onUseAsAlbumThumbnailSelectAlbum();
             }
         });
         setAsAlbumThumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-
-                    }
-
-                    @Override
-                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                        if (Boolean.TRUE == positiveAnswer) {
-                            long albumId = model.getParentId();
-                            Long albumParentId = model.getParentageChain().size() > 1 ? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
-                            addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(albumId, albumParentId, model.getId()).invokeAsync(getContext()));
-                        }
-                    }
-                });
+                if(model.getParentId() != null) {
+                    onUseAsAlbumThumbnailForParent();
+                } else {
+                    onUseAsAlbumThumbnailSelectAlbum();
+                }
             }
         });
 
@@ -319,6 +302,31 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         updateInformationShowingStatus();
 
         return v;
+    }
+
+    private void onUseAsAlbumThumbnailForParent() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
+            @Override
+            public void onDismiss(AlertDialog dialog) {
+
+            }
+
+            @Override
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if (Boolean.TRUE == positiveAnswer) {
+                    long albumId = model.getParentId();
+                    Long albumParentId = model.getParentageChain().size() > 1 ? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
+                    addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(albumId, albumParentId, model.getId()).invokeAsync(getContext()));
+                }
+            }
+        });
+    }
+
+    private boolean onUseAsAlbumThumbnailSelectAlbum() {
+        // Invoke call to retrieve all album names (will show a dialog once this is done).
+        boolean recursive = true;
+        addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), recursive).invokeAsync(getContext()));
+        return true;
     }
 
     private void updateItemPositionText() {
@@ -403,19 +411,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         tagsField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                HashSet<Tag> currentSelection = updatedTagsSet;
-                if (currentSelection == null) {
-                    currentSelection = new HashSet<>(model.getTags());
-                }
-                boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
-                boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
-                allowTagEdit &= editingItemDetails;
-                boolean lockInitialSelection = allowTagEdit && !PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
-                //disable tag deselection if user tags plugin is not present but allow editing if is admin user. (bug in PIWIGO API)
-                TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, allowTagEdit, lockInitialSelection, PiwigoUtils.toSetOfIds(currentSelection));
-                getUiHelper().setTrackingRequest(tagSelectEvent.getActionId());
-                EventBus.getDefault().post(tagSelectEvent);
+                onShowTagsSelection();
             }
         });
 
@@ -442,10 +438,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editingItemDetails = !editingItemDetails;
-                updatedLinkedAlbumSet = null;
-                updatedTagsSet = null;
-                fillResourceEditFields();
+                onDiscardChanges();
             }
         });
 
@@ -498,18 +491,37 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         fillResourceEditFields();
     }
 
+    private void onShowTagsSelection() {
+        HashSet<Tag> currentSelection = getLatestTagListForResource();
+        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
+        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
+        allowTagEdit &= editingItemDetails;
+        boolean lockInitialSelection = allowTagEdit && !PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
+        //disable tag deselection if user tags plugin is not present but allow editing if is admin user. (bug in PIWIGO API)
+        TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, allowTagEdit, lockInitialSelection, PiwigoUtils.toSetOfIds(currentSelection));
+        getUiHelper().setTrackingRequest(tagSelectEvent.getActionId());
+        EventBus.getDefault().post(tagSelectEvent);
+    }
+
+    protected HashSet<Tag> getLatestTagListForResource() {
+        return new HashSet<>(model.getTags());
+    }
+
     protected abstract void onSaveModelChanges(T model);
 
-    private void updateModelFromFields() {
+    protected void updateModelFromFields() {
         model.setName(resourceNameView.getText().toString());
         model.setDescription(resourceDescriptionView.getText().toString());
         model.setPrivacyLevel(getPrivacyLevelValue());
         if (updatedLinkedAlbumSet != null) {
             model.setLinkedAlbums(updatedLinkedAlbumSet);
         }
-        if (updatedTagsSet != null) {
-            model.setTags(updatedTagsSet);
-        }
+    }
+
+    protected void onDiscardChanges() {
+        editingItemDetails = !editingItemDetails;
+        updatedLinkedAlbumSet = null;
+        fillResourceEditFields();
     }
 
     private void setControlVisible(View v, boolean visible) {
@@ -881,9 +893,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             tagsField.setVisibility(GONE);
         } else {
             tagsField.setVisibility(VISIBLE);
-            HashSet<Tag> currentTagsSet = updatedTagsSet != null ? updatedTagsSet : model.getTags();
+            HashSet<Tag> currentTagsSet = getLatestTagListForResource();
             if (currentTagsSet.size() == 0) {
-                tagsField.setText("");
+                StringBuilder sb = new StringBuilder("0 (");
+                sb.append(getString(R.string.click_to_view));
+                sb.append(')');
+                tagsField.setText(sb.toString());
             } else {
                 StringBuilder sb = new StringBuilder();
                 Iterator<Tag> iter = currentTagsSet.iterator();
@@ -900,12 +915,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    public void onResourceInfoAltered(final T categoryItem) {
+    protected void onResourceInfoAltered(final T resourceItem) {
         if (BuildConfig.PAID_VERSION && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate() && getUiHelper().getActiveServiceCallCount() == 0) {
             // tags have been updated already so we need to keep the existing ones.
-            categoryItem.setTags(model.getTags());
+            resourceItem.setTags(model.getTags());
         }
-        model = categoryItem;
+        model = resourceItem;
         if (editingItemDetails) {
             editingItemDetails = !editingItemDetails;
             fillResourceEditFields();

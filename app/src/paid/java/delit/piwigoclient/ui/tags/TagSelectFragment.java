@@ -319,12 +319,12 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             pageToLoadNow = -1;
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
             boolean isUserTagPluginSearchResult = response instanceof PluginUserTagsGetListResponseHandler.PiwigoUserTagsPluginGetTagsListRetrievedResponse;
-            int firstIdxAdded = tagsModel.addItemPage(isAdminPage || isUserTagPluginSearchResult, response.getTags());
+            int itemsAddedCount = tagsModel.addItemPage(isAdminPage || isUserTagPluginSearchResult, response.getTags());
             HashSet<Long> selectedItemIds = getListAdapter().getSelectedItemIds();
             for (Long selectedItemId : selectedItemIds) {
                 getListAdapter().setItemSelected(selectedItemId);
             }
-            getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getTags().size());
+            getListAdapter().notifyItemRangeInserted(0, itemsAddedCount);
             onListItemLoadSuccess();
             setAppropriateComponentState();
         }

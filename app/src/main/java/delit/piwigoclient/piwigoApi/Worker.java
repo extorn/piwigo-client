@@ -124,6 +124,12 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
         beforeCall();
         updatePoolSize(handler);
+
+        synchronized (Worker.class) {
+            if (PiwigoSessionDetails.getInstance() == null) {
+                handler.getNewLogin();
+            }
+        }
         handler.runCall();
 
         // this is the absolute timeout - in case something is seriously wrong.
