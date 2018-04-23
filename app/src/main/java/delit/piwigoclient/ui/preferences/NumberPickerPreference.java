@@ -66,7 +66,7 @@ public class NumberPickerPreference extends DialogPreference {
         minValue = a.getInt(R.styleable.NumberPickerPreference_minValue, DEFAULT_minValue);
         int DEFAULT_multiplier = 1;
         multiplier = a.getInt(R.styleable.NumberPickerPreference_multiplier, DEFAULT_multiplier);
-        mNumber = a.getInt(R.styleable.NumberPickerPreference_defaultValue, 0);
+        mNumber = a.getInt(R.styleable.NumberPickerPreference_defValue, 0);
         setDefaultOnAttach = a.getBoolean(R.styleable.NumberPickerPreference_setDefaultOnAttach, true);
         wrapPickList = a.getBoolean(R.styleable.NumberPickerPreference_wrapPickList, false);
         a.recycle();

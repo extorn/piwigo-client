@@ -18,6 +18,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.video.CacheUtils;
@@ -222,13 +223,13 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         long MB = KB * 1024;
         String spaceSuffix = " ";
         if(cacheBytes < KB) {
-            spaceSuffix += String.format("(%1$.0f Bytes)", cacheBytes);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.0f Bytes)", cacheBytes);
         } else if(cacheBytes < MB) {
             double kb = (cacheBytes / KB);
-            spaceSuffix += String.format("(%1$.1f KB)", kb);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f KB)", kb);
         } else {
             double mb = (cacheBytes / MB);
-            spaceSuffix += String.format("(%1$.1f MB)", mb);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f MB)", mb);
         }
         videoCacheFlushButton.setTitle(getString(R.string.preference_gallery_clearVideoCache_title) + spaceSuffix);
     }

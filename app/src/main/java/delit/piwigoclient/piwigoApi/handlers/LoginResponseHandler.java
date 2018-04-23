@@ -34,16 +34,16 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     public LoginResponseHandler(Context context) {
         super("pwg.session.login", TAG);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        this.password = ConnectionPreferences.getPiwigoPassword(prefs, getContext());
-        this.username = ConnectionPreferences.getPiwigoUsername(prefs, getContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        this.password = ConnectionPreferences.getPiwigoPassword(prefs, context);
+        this.username = ConnectionPreferences.getPiwigoUsername(prefs, context);
     }
 
     public LoginResponseHandler(String password, Context context) {
         super("pwg.session.login", TAG);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         this.password = password;
-        this.username = ConnectionPreferences.getPiwigoUsername(prefs, getContext());
+        this.username = ConnectionPreferences.getPiwigoUsername(prefs, context);
     }
 
     @Override

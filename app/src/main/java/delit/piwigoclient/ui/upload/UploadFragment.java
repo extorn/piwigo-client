@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import delit.piwigoclient.R;
@@ -165,7 +166,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
 
         AdView adView = view.findViewById(R.id.upload_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {
@@ -453,7 +454,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                     filenameListStrB.append(", ");
                 }
                 filenameListStrB.append(f);
-                filenameListStrB.append(String.format("(%1$.1fMB)", fileLengthMB));
+                filenameListStrB.append(String.format(Locale.getDefault(), "(%1$.1fMB)", fileLengthMB));
                 filesForReview.add(f);
             }
         }

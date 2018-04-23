@@ -31,16 +31,14 @@ import delit.piwigoclient.business.PicassoLoader;
 public class PicassoFactory {
     private static final String TAG = "PicassoFactory";
     private static PicassoFactory instance;
-    private final Context context;
     private transient Picasso picasso;
     private transient PicassoErrorHandler errorHandler;
 
-    public PicassoFactory(Context context) {
-        this.context = context;
+    public PicassoFactory() {
     }
 
-    public synchronized static PicassoFactory initialise(Context context) {
-        instance = new PicassoFactory(context);
+    public synchronized static PicassoFactory initialise() {
+        instance = new PicassoFactory();
         return instance;
     }
 
@@ -48,7 +46,7 @@ public class PicassoFactory {
         return instance;
     }
 
-    public Picasso getPicassoSingleton() {
+    public Picasso getPicassoSingleton(Context context) {
         synchronized (MyApplication.class) {
             if (picasso == null) {
                 errorHandler = new PicassoErrorHandler();
@@ -127,16 +125,16 @@ public class PicassoFactory {
 
     }
 
-    public synchronized void registerListener(Uri uri, Picasso.Listener listener) {
+    public synchronized void registerListener(Context context, Uri uri, Picasso.Listener listener) {
         if(errorHandler == null) {
-            getPicassoSingleton();
+            getPicassoSingleton(context);
         }
         errorHandler.addListener(uri, listener);
     }
 
-    public synchronized void deregisterListener(Uri uri) {
+    public synchronized void deregisterListener(Context context, Uri uri) {
         if(errorHandler == null) {
-            getPicassoSingleton();
+            getPicassoSingleton(context);
         }
         errorHandler.removeListener(uri);
     }
@@ -169,10 +167,10 @@ public class PicassoFactory {
     public void clearPicassoCache(Context context) {
         synchronized(PicassoFactory.class) {
             if (picasso != null) {
-                getPicassoSingleton().cancelTag(PicassoLoader.PICASSO_REQUEST_TAG);
-                getPicassoSingleton().shutdown();
+                getPicassoSingleton(context).cancelTag(PicassoLoader.PICASSO_REQUEST_TAG);
+                getPicassoSingleton(context).shutdown();
                 picasso = null;
-                initialise(context);
+                initialise();
             }
         }
     }

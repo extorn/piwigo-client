@@ -59,7 +59,7 @@ import static android.view.View.VISIBLE;
 
 public abstract class AbstractSlideshowFragment<T extends Identifiable> extends MyFragment {
 
-    private static final String TAG = "SlideshowFragment";
+//    private static final String TAG = "SlideshowFragment";
     private static final String STATE_GALLERY = "gallery";
     private static final String STATE_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
     private CustomViewPager viewPager;
@@ -69,7 +69,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     private final Set<Integer> pagesBeingLoaded = new HashSet<>();
     private GalleryItemAdapter galleryItemAdapter;
 
-    protected static Bundle buildArgs(ResourceContainer gallery, GalleryItem currentGalleryItem) {
+    public static Bundle buildArgs(ResourceContainer gallery, GalleryItem currentGalleryItem) {
         Bundle args = new Bundle();
         args.putSerializable(STATE_GALLERY, gallery);
         args.putInt(STATE_GALLERY_ITEM_DISPLAYED, gallery.getItemIdx(currentGalleryItem));
@@ -107,7 +107,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         hideProgressIndicator();
 
         AdView adView = view.findViewById(R.id.slideshow_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()
+        if(AdsManager.getInstance().shouldShowAdverts()
                 && getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(VISIBLE);
@@ -365,10 +365,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
             SlideshowItemFragment fragment = null;
             long totalSlideshowItems = getTotalSlideshowItems();
             if (galleryItem instanceof PictureResourceItem) {
-                fragment = AlbumPictureItemFragment.newInstance((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems);
+                fragment = new AlbumPictureItemFragment();
+                Bundle b = AlbumPictureItemFragment.buildArgs((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems);
+                fragment.setArguments(b);
             } else if (galleryItem instanceof VideoResourceItem) {
                 boolean startOnResume = false;
-                fragment = AlbumVideoItemFragment.newInstance((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, startOnResume);
+                fragment = new AlbumVideoItemFragment();
+                Bundle args = AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, startOnResume);
+                fragment.setArguments(args);
             }
             if (fragment != null) {
                 return fragment;

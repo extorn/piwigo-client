@@ -152,7 +152,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         View view = inflater.inflate(getViewId(), container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {

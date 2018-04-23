@@ -16,12 +16,6 @@ import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
 
 public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshowFragment<T> {
 
-    public static SlideshowFragment newInstance(ResourceContainer gallery, GalleryItem currentGalleryItem) {
-        SlideshowFragment fragment = new SlideshowFragment();
-        fragment.setArguments(buildArgs(gallery, currentGalleryItem));
-        return fragment;
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

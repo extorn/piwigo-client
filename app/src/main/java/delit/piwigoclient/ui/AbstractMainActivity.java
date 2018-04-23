@@ -154,13 +154,13 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void configureAndShowRateAppReminderIfNeeded() {
-        MyAppRate.with(this)
+        MyAppRate.instance()
                 .setInstallDays(10) // default 10, 0 means install day.
                 .setLaunchTimes(10) // default 10
                 .setRemindInterval(30) // default 1
                 .setShowLaterButton(true) // default true
                 .setDebug(false) // default false
-                .monitor();
+                .monitor(getApplicationContext());
 
         // Show a dialog if meets conditions
         MyAppRate.showRateDialogIfMeetsConditions(this);
@@ -410,14 +410,16 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             boolean allowVideoPlayback = prefs.getBoolean(getString(R.string.preference_gallery_enable_video_playback_key), getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
             if (selectedItem instanceof VideoResourceItem) {
                 if (showVideosInSlideshow) {
-                    newFragment = SlideshowFragment.newInstance(albumOpen, selectedItem);
+                    newFragment = new SlideshowFragment();
+                    newFragment.setArguments(SlideshowFragment.buildArgs(albumOpen, selectedItem));
                 } else if (allowVideoPlayback) {
                     boolean startOnResume = true;
-                    newFragment = AlbumVideoItemFragment.newInstance((VideoResourceItem) selectedItem, 1, 1, 1, startOnResume);
+                    newFragment = new AlbumVideoItemFragment();
+                    newFragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) selectedItem, 1, 1, 1, startOnResume));
                 }
-            }
-            if (selectedItem instanceof PictureResourceItem) {
-                newFragment = SlideshowFragment.newInstance(albumOpen, selectedItem);
+            } else if (selectedItem instanceof PictureResourceItem) {
+                newFragment = new SlideshowFragment();
+                newFragment.setArguments(SlideshowFragment.buildArgs(albumOpen, selectedItem));
             }
         }
 
@@ -702,7 +704,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         } else {
             //TODO notify all pages that need it that they need to be reloaded - i.e. flush them out of the fragment manager or send an event forcing reload.
         }
-        AdsManager.getInstance().updateShowAdvertsSetting();
+        AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
         VersionCompatability.INSTANCE.runTests();
         if (!VersionCompatability.INSTANCE.isSupportedVersion()) {
             String serverVersion = VersionCompatability.INSTANCE.getServerVersionString();

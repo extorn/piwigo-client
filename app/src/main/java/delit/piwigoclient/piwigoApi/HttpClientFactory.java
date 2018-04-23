@@ -50,17 +50,14 @@ public class HttpClientFactory {
     private final PersistentCookieStore cookieStore;
 
     private final SharedPreferences prefs;
-    private final Context context;
-
     private CachingAsyncHttpClient asyncClient;
     private CachingSyncHttpClient syncClient;
     private CachingSyncHttpClient videoDownloadClient;
     private static final SecureRandom secureRandom = new SecureRandom();
 
     public HttpClientFactory(Context c) {
-        context = c.getApplicationContext();
-        cookieStore = new PersistentCookieStore(context);
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        cookieStore = new PersistentCookieStore(c.getApplicationContext());
+        prefs = PreferenceManager.getDefaultSharedPreferences(c.getApplicationContext());
     }
 
     public static HttpClientFactory getInstance(Context c) {
@@ -112,38 +109,40 @@ public class HttpClientFactory {
         }
     }
 
-    public CachingSyncHttpClient buildVideoDownloadSyncHttpClient() {
+    public CachingSyncHttpClient buildVideoDownloadSyncHttpClient(Context c) {
         if (videoDownloadClient == null) {
             boolean forceDisableCache = true;
             // we use a custom cache solution for video data
-            videoDownloadClient = buildSyncHttpClient(forceDisableCache);
+            videoDownloadClient = buildSyncHttpClient(c, forceDisableCache);
         }
         return videoDownloadClient;
     }
 
-    public CachingSyncHttpClient buildSyncHttpClient(boolean forceDisableCache) {
-        return (CachingSyncHttpClient) buildHttpClient(false, forceDisableCache);
+    public CachingSyncHttpClient buildSyncHttpClient(Context c, boolean forceDisableCache) {
+        return (CachingSyncHttpClient) buildHttpClient(c, false, forceDisableCache);
     }
 
-    public synchronized CachingSyncHttpClient getSyncHttpClient() {
+    public synchronized CachingSyncHttpClient getSyncHttpClient(Context c) {
 
         if (syncClient == null) {
             boolean forceDisableCache = false;
-            syncClient = buildSyncHttpClient(forceDisableCache);
+            syncClient = buildSyncHttpClient(c, forceDisableCache);
         }
         return syncClient;
     }
 
-    public synchronized CachingAsyncHttpClient getAsyncHttpClient() {
+    public synchronized CachingAsyncHttpClient getAsyncHttpClient(Context c) {
         if (asyncClient == null) {
             boolean forceDisableCache = false;
-            asyncClient = buildHttpClient(true, forceDisableCache);
+            asyncClient = buildHttpClient(c, true, forceDisableCache);
         }
         return asyncClient;
     }
 
 
-    protected CachingAsyncHttpClient buildHttpClient(boolean async, boolean forceDisableCache) {
+    protected CachingAsyncHttpClient buildHttpClient(Context c, boolean async, boolean forceDisableCache) {
+
+        Context context = c.getApplicationContext();
 
         CachingAsyncHttpClient client;
 

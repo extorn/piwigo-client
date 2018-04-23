@@ -1,13 +1,5 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import org.json.JSONException;
-
-import java.util.HashSet;
-
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 /**

@@ -1,5 +1,6 @@
 package delit.piwigoclient.business;
 
+import android.content.Context;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
@@ -96,19 +97,27 @@ public class PicassoLoader implements Callback {
             getLoadInto().setImageResource(getResourceToLoad());
             onSuccess();
         } else {
-            PicassoFactory.getInstance().getPicassoSingleton().cancelRequest(loadInto);
+            PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
             customiseLoader(buildLoader()).into(loadInto, this);
         }
     }
 
     public void cancelImageLoadIfRunning() {
         if(loadInto != null) {
-            PicassoFactory.getInstance().getPicassoSingleton().cancelRequest(loadInto);
+            PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
         }
     }
 
+    private Context getContext() {
+        Context context = loadInto.getContext();
+        if(context == null) {
+            throw new IllegalStateException("Context is not available in the view at this time");
+        }
+        return context;
+    }
+
     protected RequestCreator buildLoader() {
-        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton()).error(R.drawable.ic_error_black_24px);
+        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext())).error(R.drawable.ic_error_black_24px);
         if(placeholderLoaded) {
             rc.noPlaceholder();
         } else {

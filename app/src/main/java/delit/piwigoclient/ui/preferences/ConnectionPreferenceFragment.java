@@ -20,6 +20,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import delit.piwigoclient.R;
@@ -144,7 +145,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
                 // clear the existing session - it's not valid any more.
                 forkLogoutIfNeeded();
-                AdsManager.getInstance().updateShowAdvertsSetting();
+                AdsManager.getInstance().updateShowAdvertsSetting(getContext());
             }
 
             return true;
@@ -261,7 +262,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 try {
-                    CacheUtils.clearResponseCache(getContext());
+                    CacheUtils.clearResponseCache(preference.getContext());
                     testLogin();
                     getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
                 } catch(IOException e) {
@@ -297,13 +298,13 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         long MB = KB * 1024;
         String spaceSuffix = " ";
         if(cacheBytes < KB) {
-            spaceSuffix += String.format("(%1$.0f Bytes)", cacheBytes);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.0f Bytes)", cacheBytes);
         } else if(cacheBytes < MB) {
             double kb = (cacheBytes / KB);
-            spaceSuffix += String.format("(%1$.1f KB)", kb);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f KB)", kb);
         } else {
             double mb = (cacheBytes / MB);
-            spaceSuffix += String.format("(%1$.1f MB)", mb);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f MB)", mb);
         }
         responseCacheFlushButton.setTitle(getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
     }
@@ -366,8 +367,9 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             if (forkLogoutIfNeeded()) {
                 loginOnLogout = true;
             } else {
-                HttpClientFactory.getInstance(getContext()).clearCachedClients();
-                getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(getContext()).invokeAsync(getContext()));
+                Context context = getContext();
+                HttpClientFactory.getInstance(context).clearCachedClients();
+                getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(context).invokeAsync(context));
             }
         }
     }

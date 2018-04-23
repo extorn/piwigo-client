@@ -81,7 +81,7 @@ public class PreferencesFragment extends MyFragment {
         View v = inflater.inflate(R.layout.activity_preferences, container, false);
 
         AdView adView = v.findViewById(R.id.prefs_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {

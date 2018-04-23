@@ -44,7 +44,7 @@ public class EulaFragment extends MyFragment {
         View view = inflater.inflate(R.layout.fragment_eula, container, false);
 
         AdView adView = view.findViewById(R.id.eula_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {

@@ -99,7 +99,7 @@ public class UsersListFragment extends MyFragment {
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {

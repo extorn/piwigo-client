@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -76,12 +78,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             setAllowDownload(false);
     }
 
-    public static AlbumVideoItemFragment newInstance(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
-        AlbumVideoItemFragment fragment = new AlbumVideoItemFragment();
-        fragment.setArguments(buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay));
-        return fragment;
-    }
-
     public static Bundle buildArgs(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
         Bundle args = SlideshowItemFragment.buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
         args.putBoolean(STATE_START_ON_RESUME, startPlaybackOnFragmentDisplay);
@@ -106,6 +102,18 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         configureDatasourceAndPlayerRequestingPermissions(startImmediately || (startOnResume && continuePlayback));
         startImmediately = false;
         super.onResume();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -157,7 +165,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         hideProgressIndicator();
 
         directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
         directDownloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -112,8 +112,7 @@
             android:summary="@string/preference_server_connection_allow_redirects_summary"
             android:title="@string/preference_server_connection_allow_redirects_title" />
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_server_connection_max_redirects_default"
-            app:defaultValue="@integer/preference_server_connection_max_redirects_default"
+            app:defValue="@integer/preference_server_connection_max_redirects_default"
             app:minValue="0"
             app:maxValue="100"
             app:wrapPickList="false"
@@ -123,8 +122,7 @@
             android:summary="@string/preference_server_connection_max_redirects_summary"/>
 
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_server_socketTimeout_millisecs_default"
-            app:defaultValue="@integer/preference_server_socketTimeout_millisecs_default"
+            app:defValue="@integer/preference_server_socketTimeout_millisecs_default"
             app:minValue="1000"
             app:maxValue="15000"
             app:wrapPickList="false"
@@ -133,8 +131,7 @@
             android:summary="@string/preference_server_socketTimeout_millisecs_summary"/>
 
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_server_connection_retries_default"
-            app:defaultValue="@integer/preference_server_connection_retries_default"
+            app:defValue="@integer/preference_server_connection_retries_default"
             app:minValue="0"
             app:maxValue="10"
             app:wrapPickList="false"
@@ -157,8 +154,7 @@
             android:key="@string/preference_caching_clearResponseCache_key"
             android:summary="@string/preference_caching_clearResponseCache_summary"/>
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_caching_max_cache_entries_default"
-            app:defaultValue="@integer/preference_caching_max_cache_entries_default"
+            app:defValue="@integer/preference_caching_max_cache_entries_default"
             app:minValue="0"
             app:maxValue="10000"
             app:wrapPickList="false"
@@ -166,8 +162,7 @@
             android:title="@string/preference_caching_max_cache_entries_title"
             android:summary="@string/preference_caching_max_cache_entries_summary"/>
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_caching_max_cache_entry_size_default"
-            app:defaultValue="@integer/preference_caching_max_cache_entry_size_default"
+            app:defValue="@integer/preference_caching_max_cache_entry_size_default"
             app:minValue="0"
             app:maxValue="10240"
             app:multiplier="1024"

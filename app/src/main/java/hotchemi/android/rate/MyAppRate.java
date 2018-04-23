@@ -18,8 +18,6 @@ public final class MyAppRate {
 
     private static MyAppRate singleton;
 
-    private final Context context;
-
     private final DialogOptions options = new DialogOptions();
 
     private int installDate = 10;
@@ -30,15 +28,14 @@ public final class MyAppRate {
 
     private boolean isDebug = false;
 
-    private MyAppRate(Context context) {
-        this.context = context.getApplicationContext();
+    private MyAppRate() {
     }
 
-    public static MyAppRate with(Context context) {
+    public static MyAppRate instance() {
         if (singleton == null) {
             synchronized (MyAppRate.class) {
                 if (singleton == null) {
-                    singleton = new MyAppRate(context);
+                    singleton = new MyAppRate();
                 }
             }
         }
@@ -46,7 +43,7 @@ public final class MyAppRate {
     }
 
     public static boolean showRateDialogIfMeetsConditions(Activity activity) {
-        boolean isMeetsConditions = singleton.isDebug || singleton.shouldShowRateDialog();
+        boolean isMeetsConditions = singleton.isDebug || singleton.shouldShowRateDialog(activity.getApplicationContext());
         if (isMeetsConditions) {
             singleton.showRateDialog(activity);
         }
@@ -87,18 +84,18 @@ public final class MyAppRate {
         return this;
     }
 
-    public MyAppRate clearAgreeShowDialog() {
+    public MyAppRate clearAgreeShowDialog(Context context) {
         PreferenceHelper.setAgreeShowDialog(context, true);
         return this;
     }
 
-    public MyAppRate clearSettingsParam() {
+    public MyAppRate clearSettingsParam(Context context) {
         PreferenceHelper.setAgreeShowDialog(context, true);
         PreferenceHelper.clearSharedPreferences(context);
         return this;
     }
 
-    public MyAppRate setAgreeShowDialog(boolean clear) {
+    public MyAppRate setAgreeShowDialog(Context context, boolean clear) {
         PreferenceHelper.setAgreeShowDialog(context, clear);
         return this;
     }
@@ -173,7 +170,7 @@ public final class MyAppRate {
         return this;
     }
 
-    public void monitor() {
+    public void monitor(Context context) {
         if (isFirstLaunch(context)) {
             setInstallDate(context);
         }
@@ -186,22 +183,22 @@ public final class MyAppRate {
         }
     }
 
-    public boolean shouldShowRateDialog() {
+    public boolean shouldShowRateDialog(Context context) {
         return getIsAgreeShowDialog(context) &&
-                isOverLaunchTimes() &&
-                isOverInstallDate() &&
-                isOverRemindDate();
+                isOverLaunchTimes(context) &&
+                isOverInstallDate(context) &&
+                isOverRemindDate(context);
     }
 
-    private boolean isOverLaunchTimes() {
+    private boolean isOverLaunchTimes(Context context) {
         return getLaunchTimes(context) >= launchTimes;
     }
 
-    private boolean isOverInstallDate() {
+    private boolean isOverInstallDate(Context context) {
         return isOverDate(getInstallDate(context), installDate);
     }
 
-    private boolean isOverRemindDate() {
+    private boolean isOverRemindDate(Context context) {
         return isOverDate(getRemindInterval(context), remindInterval);
     }
 

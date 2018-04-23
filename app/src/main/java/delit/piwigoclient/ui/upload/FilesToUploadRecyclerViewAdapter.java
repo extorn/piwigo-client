@@ -248,7 +248,11 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             progressBar = itemView.findViewById(R.id.file_for_upload_progress);
             fileNameField = itemView.findViewById(R.id.file_for_upload_txt);
             deleteButton = itemView.findViewById(R.id.file_for_upload_delete_button);
-            PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(deleteButton);
+            Context context = view.getContext();
+            if(context == null) {
+                throw new IllegalStateException("Context is not available in the view at this time");
+            }
+            PicassoFactory.getInstance().getPicassoSingleton(context).load(R.drawable.ic_delete_black_24px).into(deleteButton);
             fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
 
             imageLoader = new ResizingPicassoLoader(fileForUploadImageView, 0, 0);

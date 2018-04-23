@@ -24,7 +24,6 @@ import delit.piwigoclient.business.ConnectionPreferences;
 
 public class AdsManager {
 
-    private final Context context;
     private transient InterstitialAd selectFileToUploadAd;
     private transient InterstitialAd albumBrowsingAd;
     private long lastShowedAdvert;
@@ -33,22 +32,17 @@ public class AdsManager {
     private transient SharedPreferences prefs;
     private static AdsManager instance;
 
-    private AdsManager(Context c) {
-        this.context = c;
+    private AdsManager() {
     }
 
     public synchronized static AdsManager getInstance() {
-        return instance;
-    }
-
-    public synchronized static AdsManager getInstance(Context context) {
         if(instance == null) {
-            instance = new AdsManager(context);
+            instance = new AdsManager();
         }
         return instance;
     }
 
-    private SharedPreferences getPrefs() {
+    private SharedPreferences getPrefs(Context context) {
         if(prefs == null) {
             prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         }
@@ -59,8 +53,8 @@ public class AdsManager {
         this.appLicensed = appLicensed;
     }
 
-    public synchronized void updateShowAdvertsSetting() {
-        String serverAddress = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(getPrefs(), context);
+    public synchronized void updateShowAdvertsSetting(Context context) {
+        String serverAddress = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(getPrefs(context), context);
         showAds = !BuildConfig.PAID_VERSION;
         if(showAds) {
             // can we disable the ads another way?
@@ -81,12 +75,12 @@ public class AdsManager {
             selectFileToUploadAd = new InterstitialAd(context);
             selectFileToUploadAd.setAdUnitId(context.getString(R.string.ad_id_uploads_interstitial));
             selectFileToUploadAd.loadAd(new AdRequest.Builder().build());
-            selectFileToUploadAd.setAdListener(new MyAdListener(selectFileToUploadAd));
+            selectFileToUploadAd.setAdListener(new MyAdListener(context, selectFileToUploadAd));
 
             albumBrowsingAd = new InterstitialAd(context);
             albumBrowsingAd.setAdUnitId(context.getString(R.string.ad_id_album_interstitial));
             albumBrowsingAd.loadAd(new AdRequest.Builder().build());
-            albumBrowsingAd.setAdListener(new MyAdListener(albumBrowsingAd));
+            albumBrowsingAd.setAdListener(new MyAdListener(context, albumBrowsingAd));
         } else if(showAds) {
             if(!selectFileToUploadAd.isLoading() && ! selectFileToUploadAd.isLoaded()) {
                 selectFileToUploadAd.loadAd(new AdRequest.Builder().build());
@@ -135,11 +129,13 @@ public class AdsManager {
     class MyAdListener extends AdListener {
 
         private final InterstitialAd ad;
+        private final Context context;
         private int onCloseActionId = -1;
         private Intent onCloseIntent;
 
-        public MyAdListener(InterstitialAd ad) {
+        public MyAdListener(Context context, InterstitialAd ad) {
             this.ad = ad;
+            this.context = context;
         }
         @Override
         public void onAdClosed() {

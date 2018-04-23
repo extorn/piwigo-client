@@ -205,7 +205,7 @@ public class ViewTagFragment extends MyFragment {
         }
 
         retryActionButton = view.findViewById(R.id.tag_retryAction_actionButton);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_refresh_black_24dp).into(retryActionButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_refresh_black_24dp).into(retryActionButton);
 
         retryActionButton.setVisibility(GONE);
         retryActionButton.setOnClickListener(new View.OnClickListener() {
@@ -277,7 +277,7 @@ public class ViewTagFragment extends MyFragment {
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
 
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.tag_action_delete_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(bulkActionButtonDelete);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(bulkActionButtonDelete);
         bulkActionButtonDelete.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override

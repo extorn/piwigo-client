@@ -27,24 +27,21 @@
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_data_upload">
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_data_upload_chunkSizeKb_default"
-            app:defaultValue="@integer/preference_data_upload_chunkSizeKb_default"
+            app:defValue="@integer/preference_data_upload_chunkSizeKb_default"
             app:minValue="256"
             app:maxValue="10240"
             android:key="@string/preference_data_upload_chunkSizeKb_key"
             android:title="@string/preference_data_upload_chunkSizeKb_title"
             android:summary="@string/preference_data_upload_chunkSizeKb_summary"/>
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_data_upload_chunk_auto_retries_default"
-            app:defaultValue="@integer/preference_data_upload_chunk_auto_retries_default"
+            app:defValue="@integer/preference_data_upload_chunk_auto_retries_default"
             app:minValue="0"
             app:maxValue="5"
             android:key="@string/preference_data_upload_chunk_auto_retries_key"
             android:title="@string/preference_data_upload_chunk_auto_retries_title"
             android:summary="@string/preference_data_upload_chunk_auto_retries_summary"/>
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_data_upload_max_filesize_mb_default"
-            app:defaultValue="@integer/preference_data_upload_max_filesize_mb_default"
+            app:defValue="@integer/preference_data_upload_max_filesize_mb_default"
             app:minValue="0"
             app:maxValue="150"
             android:key="@string/preference_data_upload_max_filesize_mb_key"

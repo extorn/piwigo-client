@@ -88,24 +88,21 @@
             android:title="@string/preference_gallery_show_image_name_title"
             android:dependency="@string/preference_gallery_masonry_view_key"/>
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_album_request_pagesize_default"
-            app:defaultValue="@integer/preference_album_request_pagesize_default"
+            app:defValue="@integer/preference_album_request_pagesize_default"
             app:minValue="5"
             app:maxValue="500"
             android:key="@string/preference_album_request_pagesize_key"
             android:title="@string/preference_album_request_pagesize_title"
             android:summary="@string/preference_album_request_pagesize_summary"/>
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_users_request_pagesize_default"
-            app:defaultValue="@integer/preference_users_request_pagesize_default"
+            app:defValue="@integer/preference_users_request_pagesize_default"
             app:minValue="5"
             app:maxValue="500"
             android:key="@string/preference_users_request_pagesize_key"
             android:title="@string/preference_users_request_pagesize_title"
             android:summary="@string/preference_users_request_pagesize_summary"/>
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_groups_request_pagesize_default"
-            app:defaultValue="@integer/preference_groups_request_pagesize_default"
+            app:defValue="@integer/preference_groups_request_pagesize_default"
             app:minValue="5"
             app:maxValue="500"
             android:key="@string/preference_groups_request_pagesize_key"
@@ -129,8 +126,7 @@
             android:summary="@string/preference_gallery_item_slideshow_image_size_summary"/>
 
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_gallery_recentlyAlteredAgeDays_default"
-            app:defaultValue="@integer/preference_gallery_recentlyAlteredAgeDays_default"
+            app:defValue="@integer/preference_gallery_recentlyAlteredAgeDays_default"
             app:minValue="0"
             app:maxValue="14"
             app:multiplier="86400000"
@@ -180,8 +176,7 @@
             android:dependency="@string/preference_video_cache_enabled_key"/>
 
         <delit.piwigoclient.ui.preferences.NumberPickerPreference
-            android:defaultValue="@integer/preference_video_cache_maxsize_mb_default"
-            app:defaultValue="@integer/preference_video_cache_maxsize_mb_default"
+            app:defValue="@integer/preference_video_cache_maxsize_mb_default"
             app:minValue="10"
             app:maxValue="10240"
             android:key="@string/preference_video_cache_maxsize_mb_key"

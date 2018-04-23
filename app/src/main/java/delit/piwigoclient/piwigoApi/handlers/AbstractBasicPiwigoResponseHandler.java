@@ -243,9 +243,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
             isRunning = true;
             if (getUseSynchronousMode()) {
-                client = getHttpClientFactory().getSyncHttpClient();
+                client = getHttpClientFactory().getSyncHttpClient(context);
             } else {
-                client = getHttpClientFactory().getAsyncHttpClient();
+                client = getHttpClientFactory().getAsyncHttpClient(context);
             }
             if(client == null) {
                 // unable to build a client from configuration properties.

@@ -86,9 +86,9 @@ public class MyApplication extends Application implements Application.ActivityLi
     @Override
     public void onCreate() {
         super.onCreate();
-        PicassoFactory.initialise(getApplicationContext());
+        PicassoFactory.initialise();
         upgradeAnyPreferencesIfRequired();
-        AdsManager.getInstance(getApplicationContext()).updateShowAdvertsSetting();
+        AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
     }
 
@@ -106,7 +106,7 @@ public class MyApplication extends Application implements Application.ActivityLi
     public void onActivityResumed(Activity activity) {
         currentActivity = activity;
         if (activity instanceof FileSelectionActivity) {
-            AdsManager.getInstance(getApplicationContext()).showFileToUploadAdvertIfAppropriate();
+            AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
         }
     }
 

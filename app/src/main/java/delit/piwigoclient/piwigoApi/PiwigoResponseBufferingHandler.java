@@ -3,6 +3,7 @@ package delit.piwigoclient.piwigoApi;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.LongSparseArray;
 
 import com.google.gson.JsonElement;
 
@@ -44,7 +45,7 @@ public class PiwigoResponseBufferingHandler {
     private final ConcurrentMap<Long, Long> handlerResponseMap = new ConcurrentSkipListMap<>();
     private final ConcurrentMap<Long, PiwigoResponseListener> handlers = new ConcurrentSkipListMap<>();
     //Note: this isn't a great idea - potentially, if there's a bug, some child msg ids could get left lying around forever as orphans.
-    private final Map<Long, LinkedHashSet<Long>> parkedChildMsgIds = new HashMap<>();
+    private final LongSparseArray<LinkedHashSet<Long>> parkedChildMsgIds = new LongSparseArray<>();
     private static final AtomicLong nextHandlerId = new AtomicLong();
 
     public PiwigoResponseBufferingHandler() {
@@ -144,7 +145,9 @@ public class PiwigoResponseBufferingHandler {
     }
 
     private LinkedHashSet<Long> popParkedChildMessageIds(long currentMessageId) {
-        return parkedChildMsgIds.remove(currentMessageId);
+        LinkedHashSet<Long> item = parkedChildMsgIds.get(currentMessageId);
+        parkedChildMsgIds.remove(currentMessageId);
+        return item;
     }
 
     public synchronized void preRegisterResponseHandlerForNewMessage(long currentMessageId, long newMessageId) {

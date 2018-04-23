@@ -218,7 +218,7 @@ public class CreateAlbumFragment extends MyFragment {
         View view = inflater.inflate(R.layout.fragment_create_new_gallery, container, false);
 
         AdView adView = view.findViewById(R.id.createGallery_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {

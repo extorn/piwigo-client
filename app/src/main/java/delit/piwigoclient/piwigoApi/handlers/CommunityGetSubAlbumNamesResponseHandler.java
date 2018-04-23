@@ -1,5 +1,7 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.util.LongSparseArray;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -41,7 +43,7 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray categories = result.get("categories").getAsJsonArray();
-        HashMap<Long, CategoryItemStub> availableGalleriesMap = new HashMap<>(categories.size());
+        LongSparseArray<CategoryItemStub> availableGalleriesMap = new LongSparseArray<>(categories.size());
         ArrayList<CategoryItemStub> availableGalleries = new ArrayList<>();
         for (int i = 0; i < categories.size(); i++) {
             JsonObject category = (JsonObject) categories.get(i);

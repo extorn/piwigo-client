@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -51,7 +52,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         HTTP_THREAD_POOL_EXECUTOR = threadPoolExecutor;
     }
 
-    private final Context context;
+    private WeakReference<Context> context;
 
     private final String DEFAULT_TAG = "PwgAccessSvcAsyncTask";
 
@@ -61,12 +62,12 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private AbstractPiwigoDirectResponseHandler handler;
 
     public Worker(AbstractPiwigoDirectResponseHandler handler, Context context) {
-        this.context = context;
+        this.context = new WeakReference<>(context);
         this.handler = handler;
     }
 
     public Context getContext() {
-        return context;
+        return context.get();
     }
 
     public void beforeCall() {}
@@ -74,7 +75,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private void updatePoolSize(AbstractPiwigoDirectResponseHandler handler) {
         //Update the max pool size.
         try {
-            CachingAsyncHttpClient client = handler.getHttpClientFactory().getAsyncHttpClient();
+            CachingAsyncHttpClient client = handler.getHttpClientFactory().getAsyncHttpClient(context.get());
             if(client != null) {
                 int newMaxPoolSize = client.getMaxConcurrentConnections();
                 HTTP_THREAD_POOL_EXECUTOR.setCorePoolSize(Math.min(newMaxPoolSize, Math.max(3, newMaxPoolSize / 2)));
@@ -86,7 +87,9 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
     }
 
-    public void afterCall(boolean success) {}
+    public void afterCall(boolean success) {
+        context = null;
+    }
 
     @Override
     protected final Boolean doInBackground(Long... params) {
@@ -107,20 +110,20 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     protected boolean executeCall(long messageId) {
         SharedPreferences prefs = null;
         if(context != null) {
-            prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            prefs = PreferenceManager.getDefaultSharedPreferences(context.get());
         }
         String piwigoServerUrl = null;
         if(PiwigoSessionDetails.isLoggedIn()) {
             piwigoServerUrl = PiwigoSessionDetails.getInstance().getServerUrl();
         } else if(prefs != null) {
-            piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
+            piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context.get());
         }
         AbstractPiwigoDirectResponseHandler handler = getHandler(prefs);
         if(handler != null) {
             this.tag = handler.getTag();
         }
         handler.setMessageId(messageId);
-        handler.setCallDetails(context, piwigoServerUrl, true);
+        handler.setCallDetails(context.get(), piwigoServerUrl, true);
 
         beforeCall();
         updatePoolSize(handler);

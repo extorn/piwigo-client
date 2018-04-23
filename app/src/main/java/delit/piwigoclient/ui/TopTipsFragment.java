@@ -33,7 +33,7 @@ public class TopTipsFragment extends MyFragment {
         View view = inflater.inflate(R.layout.fragment_top_tips, container, false);
 
         AdView adView = view.findViewById(R.id.toptips_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {

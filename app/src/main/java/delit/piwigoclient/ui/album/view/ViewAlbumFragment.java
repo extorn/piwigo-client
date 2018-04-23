@@ -89,7 +89,6 @@ import delit.piwigoclient.ui.events.AlbumSelectedEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
-import delit.piwigoclient.ui.events.TagAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
@@ -353,7 +352,7 @@ public class ViewAlbumFragment extends MyFragment {
         initialiseBasketView(view);
 
         retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_refresh_black_24dp).into(retryActionButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_refresh_black_24dp).into(retryActionButton);
 
         retryActionButton.setVisibility(GONE);
         retryActionButton.setOnClickListener(new View.OnClickListener() {
@@ -374,7 +373,7 @@ public class ViewAlbumFragment extends MyFragment {
         EventBus.getDefault().post(event);
 
         AdView adView = view.findViewById(R.id.gallery_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.setVisibility(VISIBLE);
             adView.loadAd(new AdRequest.Builder().build());
         } else {
@@ -385,7 +384,7 @@ public class ViewAlbumFragment extends MyFragment {
 
         galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
         descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_more_horiz_black_24px).into(descriptionDropdownButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_more_horiz_black_24px).into(descriptionDropdownButton);
 
         setGalleryHeadings();
 
@@ -479,7 +478,7 @@ public class ViewAlbumFragment extends MyFragment {
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()||getBasket().getItemCount() > 0?VISIBLE:GONE);
 
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(bulkActionButtonDelete);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(bulkActionButtonDelete);
         bulkActionButtonDelete.setVisibility(viewAdapter.isItemSelectionAllowed() && basket.getItemCount() == 0?VISIBLE:GONE);
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -492,7 +491,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_copy_black_24px).into(bulkActionButtonCopy);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_copy_black_24px).into(bulkActionButtonCopy);
         bulkActionButtonCopy.setVisibility(viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
         bulkActionButtonCopy.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -506,7 +505,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_cut_black_24px).into(bulkActionButtonCut);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_cut_black_24px).into(bulkActionButtonCut);
         bulkActionButtonCut.setVisibility(viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
         bulkActionButtonCut.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -520,7 +519,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_paste_black_24dp).into(bulkActionButtonPaste);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_paste_black_24dp).into(bulkActionButtonPaste);
         bulkActionButtonPaste.setVisibility(!viewAdapter.isItemSelectionAllowed() && basket.getItemCount() > 0 && gallery.getId() != CategoryItem.ROOT_ALBUM.getId() && gallery.getId() != basket.getContentParentId()?VISIBLE:GONE);
         bulkActionButtonPaste.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -636,10 +635,10 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         AppCompatImageView basketImage = basketView.findViewById(R.id.basket_image);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_shopping_basket_black_24dp).into(basketImage);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_shopping_basket_black_24dp).into(basketImage);
 
         AppCompatImageView clearButton = basketView.findViewById(R.id.basket_clear_button);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(clearButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(clearButton);
         clearButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -687,9 +686,9 @@ public class ViewAlbumFragment extends MyFragment {
 
             actionIndicatorImg = basketView.findViewById(R.id.basket_action_indicator);
             if(basket.getAction() == Basket.ACTION_COPY) {
-                PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_copy_black_24px).into(actionIndicatorImg);
+                PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_copy_black_24px).into(actionIndicatorImg);
             } else {
-                PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_cut_black_24px).into(actionIndicatorImg);
+                PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_cut_black_24px).into(actionIndicatorImg);
             }
         }
 
@@ -995,7 +994,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         saveButton = bottomSheet.findViewById(R.id.gallery_details_save_button);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_save_black_24dp).into(saveButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_save_black_24dp).into(saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1006,7 +1005,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
         discardButton = bottomSheet.findViewById(R.id.gallery_details_discard_button);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_undo_black_24dp).into(discardButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_undo_black_24dp).into(discardButton);
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1017,7 +1016,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
         editButton = bottomSheet.findViewById(R.id.gallery_details_edit_button);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_mode_edit_black_24dp).into(editButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_mode_edit_black_24dp).into(editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1027,7 +1026,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         addNewAlbumButton = bottomSheet.findViewById(R.id.album_add_new_album_button);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_create_new_folder_black_24dp).into(addNewAlbumButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_create_new_folder_black_24dp).into(addNewAlbumButton);
         addNewAlbumButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1107,7 +1106,7 @@ public class ViewAlbumFragment extends MyFragment {
         galleryPrivacyStatusField.setOnCheckedChangeListener(checkedListener);
 
         deleteButton = bottomSheet.findViewById(R.id.gallery_action_delete);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(deleteButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1116,7 +1115,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         pasteButton = bottomSheet.findViewById(R.id.gallery_action_paste);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_paste_black_24dp).into(pasteButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_paste_black_24dp).into(pasteButton);
         pasteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1125,7 +1124,7 @@ public class ViewAlbumFragment extends MyFragment {
         });
 
         cutButton = bottomSheet.findViewById(R.id.gallery_action_cut);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_content_cut_black_24px).into(cutButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_cut_black_24px).into(cutButton);
         cutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -25,7 +25,7 @@ import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.util.SetUtils;
 
 
-public class SlideshowItemFragment<T extends ResourceItem> extends AbstractSlideshowItemFragment<T> {
+public abstract class SlideshowItemFragment<T extends ResourceItem> extends AbstractSlideshowItemFragment<T> {
 
     private static final String STATE_UPDATED_TAGS_SET = "updatedTagSet";
     private static final String STATE_CHANGED_TAGS_SET = "changedTagSet";
@@ -84,18 +84,6 @@ public class SlideshowItemFragment<T extends ResourceItem> extends AbstractSlide
             changedTags = (HashSet<Tag>) savedInstanceState.getSerializable(STATE_CHANGED_TAGS_SET);
         }
         return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

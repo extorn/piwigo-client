@@ -175,7 +175,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
 
     private void startClient() {
         if(client == null) {
-            client = HttpClientFactory.getInstance(context).buildVideoDownloadSyncHttpClient();
+            client = HttpClientFactory.getInstance(context).buildVideoDownloadSyncHttpClient(context);
         }
     }
 
