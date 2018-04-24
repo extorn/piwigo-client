@@ -515,7 +515,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     protected HashSet<Tag> getLatestTagListForResource() {
-        return new HashSet<>(model.getTags());
+        if(model.getTags() != null) {
+            return new HashSet<>(model.getTags());
+        }
+        return new HashSet<>();
     }
 
     protected abstract void onSaveModelChanges(T model);
