@@ -207,6 +207,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             albumItemIdx = getArguments().getLong(ARG_ALBUM_ITEM_IDX);
             albumLoadedItemCount = getArguments().getLong(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
             albumTotalItemCount = getArguments().getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
+            setArguments(null);
         }
         if (savedInstanceState != null) {
             //restore saved state
