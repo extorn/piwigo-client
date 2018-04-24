@@ -69,7 +69,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
     @Override
     public void onImageDeleted() {
-        for (Tag tag : model.getTags()) {
+        for (Tag tag : getModel().getTags()) {
             EventBus.getDefault().post(new TagAlteredEvent(tag.getId()));
         }
         super.onImageDeleted();
@@ -90,7 +90,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     public void onEvent(TagSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             updatedTagsSet = event.getSelectedItems();
-            HashSet<Tag> currentTags = model.getTags();
+            HashSet<Tag> currentTags = getModel().getTags();
             HashSet<Tag> newTags = updatedTagsSet;
             if (newTags.size() == currentTags.size() && newTags.containsAll(currentTags)) {
                 // no changes
@@ -117,7 +117,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     protected void updateModelFromFields() {
         super.updateModelFromFields();
         if (updatedTagsSet != null) {
-            model.setTags(updatedTagsSet);
+            getModel().setTags(updatedTagsSet);
         }
     }
 }

@@ -878,7 +878,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    private void onImageDeleted() {
+    protected void onImageDeleted() {
         for (Long itemParent : model.getParentageChain()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
         }
@@ -930,7 +930,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    private void onResourceInfoAltered(final T resourceItem) {
+    protected void onResourceInfoAltered(final T resourceItem) {
         if (BuildConfig.PAID_VERSION && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate() && getUiHelper().getActiveServiceCallCount() == 0) {
             // tags have been updated already so we need to keep the existing ones.
             resourceItem.setTags(model.getTags());
