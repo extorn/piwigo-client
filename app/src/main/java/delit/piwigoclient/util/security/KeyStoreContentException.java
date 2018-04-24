@@ -3,8 +3,6 @@ package delit.piwigoclient.util.security;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
-import delit.piwigoclient.BuildConfig;
-
 /**
  * Created by gareth on 24/02/18.
  */

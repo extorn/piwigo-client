@@ -38,7 +38,6 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.MyFragment;
-import delit.piwigoclient.ui.common.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.common.SlidingTabLayout;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 
@@ -82,7 +81,7 @@ public class PreferencesFragment extends MyFragment {
         View v = inflater.inflate(R.layout.activity_preferences, container, false);
 
         AdView adView = v.findViewById(R.id.prefs_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {

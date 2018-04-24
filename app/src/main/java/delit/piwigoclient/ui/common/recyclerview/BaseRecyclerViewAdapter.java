@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,8 +25,10 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
     private static final String TAG = "BaseRecyclerViewAdapter";
     private Context context;
     private boolean allowItemSelection;
-    private MultiSelectStatusListener<T> multiSelectStatusListener;
-    private HashSet<Long> selectedResourceIds = new HashSet<>();
+    private final MultiSelectStatusListener<T> multiSelectStatusListener;
+    private HashSet<Long> selectedResourceIds = new HashSet<>(0);
+    private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
+    private boolean initialSelectionLocked;
     private boolean captureActionClicks;
     private boolean allowItemDeletion;
     private boolean enabled;
@@ -78,10 +81,17 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
     }
 
     @Override
-    public S onCreateViewHolder(ViewGroup parent, int viewType) {
+    public void setInitiallySelectedItems(HashSet<Long> initialSelection, boolean initialSelectionLocked) {
+        this.initialSelectedResourceIds = initialSelection != null ? new HashSet<>(initialSelection) : new HashSet<Long>(0);
+        this.initialSelectionLocked = initialSelectionLocked;
+    }
+
+    @NonNull
+    @Override
+    public S onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         setContext(parent.getContext());
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.actionable_list_item_layout, parent, false);
+                .inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
 
         final S viewHolder = buildViewHolder(view);
         viewHolder.internalCacheViewFieldsAndConfigure(buildCustomClickListener(viewHolder));
@@ -90,18 +100,18 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
     }
 
     protected CustomClickListener<T,? extends CustomViewHolder<T>> buildCustomClickListener(S viewHolder) {
-        return new CustomClickListener<T,S>(viewHolder, this);
+        return new CustomClickListener<>(viewHolder, this);
     }
 
     @Override
     public int getItemViewType(int position) {
-        //groups.getItems().get(position).getType();
+        //groups.getItemByIdx(position).getType();
         // override this method for multiple item types
         return super.getItemViewType(position);
     }
 
     @Override
-    public void onBindViewHolder(S holder, int position) {
+    public void onBindViewHolder(@NonNull S holder, int position) {
         T newItem = getItemByPosition(position);
         if (isHolderOutOfSync(holder, newItem)) {
             // store the item in this recyclable holder.
@@ -185,8 +195,10 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
 
     public void remove(T group) {
         int idxRemoved = getItemPosition(group);
-        removeItemFromInternalStore(idxRemoved);
-        notifyItemRemoved(idxRemoved);
+        if(idxRemoved >= 0) {
+            removeItemFromInternalStore(idxRemoved);
+            notifyItemRemoved(idxRemoved);
+        }
     }
 
     public void replaceOrAddItem(T group) {
@@ -237,7 +249,7 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
 
     protected class ItemSelectionListener implements CompoundButton.OnCheckedChangeListener {
 
-        private S holder;
+        private final S holder;
 
         public ItemSelectionListener(S holder) {
             this.holder = holder;
@@ -249,7 +261,12 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
             if (isChecked) {
                 changed = selectedResourceIds.add(holder.getItemId());
             } else {
-                changed = selectedResourceIds.remove(holder.getItemId());
+                if(isAllowItemDeselection(holder.getItemId())) {
+                    changed = selectedResourceIds.remove(holder.getItemId());
+                } else {
+                    // re-check the button.
+                    buttonView.setChecked(true);
+                }
             }
             if (changed) {
                 multiSelectStatusListener.onItemSelectionCountChanged(selectedResourceIds.size());
@@ -257,12 +274,16 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
         }
     }
 
+    protected boolean isAllowItemDeselection(long itemId) {
+        return !initialSelectionLocked || !initialSelectedResourceIds.contains(itemId);
+    }
+
     public boolean isCaptureActionClicks() {
         return captureActionClicks;
     }
 
     protected void onDeleteItem(S viewHolder, View v) {
-        multiSelectStatusListener.onItemDeleteRequested((T) viewHolder.getItem());
+        multiSelectStatusListener.onItemDeleteRequested(viewHolder.getItem());
     }
 
 

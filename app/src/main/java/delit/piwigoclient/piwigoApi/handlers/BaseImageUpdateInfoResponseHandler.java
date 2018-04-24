@@ -7,18 +7,23 @@ import org.json.JSONException;
 import java.util.Iterator;
 import java.util.Set;
 
+import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
-public class ImageUpdateInfoResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
+public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "UpdateResourceInfoRspHdlr";
     private final T piwigoResource;
 
-    public ImageUpdateInfoResponseHandler(T piwigoResource) {
+    public BaseImageUpdateInfoResponseHandler(T piwigoResource) {
         super("pwg.images.setInfo", TAG);
         this.piwigoResource = piwigoResource;
+    }
+
+    public T getPiwigoResource() {
+        return piwigoResource;
     }
 
     @Override
@@ -45,6 +50,21 @@ public class ImageUpdateInfoResponseHandler<T extends ResourceItem> extends Abst
             }
         }
         return sb.toString();
+    }
+
+    @Override
+    protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
+        /**
+         * OK 200
+         * <error><item>You are not allowed to delete tags</item></error>
+         * <info>Tags updated</info>
+         *
+         * <error><item>You are not allowed to delete tags</item></error>
+         * <info>Tags updated</info>
+         *
+         * <rsp stat="ok"><script/></rsp> (image not found)
+         */
+        super.onPiwigoFailure(rsp);
     }
 
     @Override

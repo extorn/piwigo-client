@@ -1,9 +1,7 @@
 package delit.piwigoclient.business.video;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -165,8 +163,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         this.requestProperties = new RequestProperties();
         this.connectTimeoutMillis = connectTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
-        RequestProperties defaultRequestProperties1 = defaultRequestProperties;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         this.context = context;
         this.cachingEnabled = cachingEnabled;
         this.notifyCacheListenerImmediatelyIfCached = notifyCacheListenerImmediatelyIfCached;
@@ -175,7 +171,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
 
     private void startClient() {
         if(client == null) {
-            client = HttpClientFactory.getInstance(context).buildVideoDownloadSyncHttpClient();
+            client = HttpClientFactory.getInstance(context).buildVideoDownloadSyncHttpClient(context);
         }
     }
 

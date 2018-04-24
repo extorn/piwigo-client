@@ -14,7 +14,14 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 public class GroupGetPermissionsResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetGrpPermRspHdlr";
-    private HashSet<Long> groupIds;
+    private final HashSet<Long> groupIds;
+
+    public GroupGetPermissionsResponseHandler(Long groupId) {
+        super("pwg.permissions.getList", TAG);
+        HashSet<Long> groupIds = new HashSet<>(1);
+        groupIds.add(groupId);
+        this.groupIds = groupIds;
+    }
 
     public GroupGetPermissionsResponseHandler(HashSet<Long> groupIds) {
         super("pwg.permissions.getList", TAG);

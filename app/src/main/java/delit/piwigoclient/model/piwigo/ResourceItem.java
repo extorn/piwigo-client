@@ -13,13 +13,14 @@ import java.util.regex.Pattern;
  * Created by gareth on 12/07/17.
  */
 public class ResourceItem extends GalleryItem {
-    private float yourRating;
-    private float averageRating;
-    private int ratingsGiven;
-    private int privacyLevel;
+    private float yourRating = 0;
+    private float averageRating = 0;
+    private int ratingsGiven = 0;
+    private int privacyLevel = 0;
     private ArrayList<ResourceFile> availableFiles = new ArrayList<>();
     private ResourceFile fullSizeImage;
     private HashSet<Long> linkedAlbums;
+    private HashSet<Tag> tags;
     private String fileChecksum;
 
     public ResourceItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
@@ -41,6 +42,10 @@ public class ResourceItem extends GalleryItem {
             }
         }
         return null;
+    }
+
+    public void setTags(HashSet<Tag> tags) {
+        this.tags = tags;
     }
 
     public void setLinkedAlbums(HashSet<Long> linkedAlbums) {
@@ -72,16 +77,12 @@ public class ResourceItem extends GalleryItem {
 
     @Override
     public int hashCode() {
-        int hashcode = super.hashCode();
-        return hashcode;
+        return super.hashCode();
     }
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof GalleryItem)) {
-            return false;
-        }
-        return ((GalleryItem) other).getId() == this.getId();
+        return other instanceof GalleryItem && ((GalleryItem) other).getId() == this.getId();
     }
 
     public String getDownloadFileName(ResourceFile selectedItem) {
@@ -108,6 +109,10 @@ public class ResourceItem extends GalleryItem {
             filesystemSafeFilenameRoot = filesystemSafeFilenameRoot.substring(0, 127);
         }
         return filesystemSafeFilenameRoot + '_' + selectedItem.name + ext;
+    }
+
+    public HashSet<Tag> getTags() {
+        return tags;
     }
 
     public HashSet<Long> getLinkedAlbums() {
@@ -159,6 +164,7 @@ public class ResourceItem extends GalleryItem {
         availableFiles = other.availableFiles;
         fullSizeImage = other.fullSizeImage;
         linkedAlbums = other.linkedAlbums;
+        tags = other.tags;
         fileChecksum = other.fileChecksum;
     }
 

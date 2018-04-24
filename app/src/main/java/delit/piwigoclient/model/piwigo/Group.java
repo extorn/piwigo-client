@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by gareth on 26/06/17.
  */
-public class Group implements Serializable {
+public class Group implements Identifiable, Serializable {
     private long id = -1;
     private String name;
     private boolean isDefault;

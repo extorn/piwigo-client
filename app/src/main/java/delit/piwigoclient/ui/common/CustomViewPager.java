@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 
 /**
  * Created by gareth on 06/06/17.
@@ -27,17 +26,11 @@ public class CustomViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!isEnabled()) {
-            return false;
-        }
-        return super.onInterceptTouchEvent(ev);
+        return isEnabled() && super.onInterceptTouchEvent(ev);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if (!isEnabled()) {
-            return false;
-        }
-        return super.onTouchEvent(ev);
+        return isEnabled() && super.onTouchEvent(ev);
     }
 }

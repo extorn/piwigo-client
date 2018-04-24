@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.preferences;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,7 +11,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
-import android.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -47,6 +47,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,10 +83,10 @@ public abstract class KeyStorePreference extends DialogPreference {
     private int trackedRequest = -1;
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
-    public LoadOperationResult keystoreLoadOperationResult;
-    private ArrayList<String> allowedCertificateFileTypes = new ArrayList<>(Arrays.asList(new String[]{".cer", ".cert", ".pem"}));
+    private LoadOperationResult keystoreLoadOperationResult;
+    private ArrayList<String> allowedCertificateFileTypes = new ArrayList<>(Arrays.asList(".cer", ".cert", ".pem"));
     private static final String BKS_FILE_SUFFIX = ".bks";
-    private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList(new String[]{".p12", ".pkcs12", ".pfx", BKS_FILE_SUFFIX}));
+    private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList(".p12", ".pkcs12", ".pfx", BKS_FILE_SUFFIX));
     private CustomImageButton addListItemButton;
     private boolean keystoreLoadInProgress;
 
@@ -171,7 +172,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_recycler_list, null, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {
@@ -248,11 +249,11 @@ public abstract class KeyStorePreference extends DialogPreference {
 
             KeyStoreContentException e = (KeyStoreContentException) recoverableError;
 
-            EditText keystoreAliasEditText = (EditText) v.findViewById(R.id.keystore_alias_editText);
+            EditText keystoreAliasEditText = v.findViewById(R.id.keystore_alias_editText);
             keystoreAliasEditText.setText(e.getAlias());
         }
 
-        EditText filenameEditText = (EditText) v.findViewById(R.id.keystore_filename_editText);
+        EditText filenameEditText = v.findViewById(R.id.keystore_filename_editText);
         filenameEditText.setText(recoverableError.getFile().getName());
 
         alertDialog = new AlertDialog.Builder(getContext())
@@ -261,7 +262,7 @@ public abstract class KeyStorePreference extends DialogPreference {
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EditText passwordEditText = (EditText) alertDialog.findViewById(R.id.keystore_password_editText);
+                        EditText passwordEditText = alertDialog.findViewById(R.id.keystore_password_editText);
                         char[] pass = new char[passwordEditText.getText().length()];
                         passwordEditText.getText().getChars(0, passwordEditText.getText().length(), pass, 0);
                         alertDialog.dismiss();
@@ -649,7 +650,7 @@ public abstract class KeyStorePreference extends DialogPreference {
 
         public KeyStoreContentsAdapter(@NonNull Context context, @NonNull KeyStore ks) {
             setData(ks);
-            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         }
 
         public KeyStore getBackingObjectStore() {
@@ -669,8 +670,9 @@ public abstract class KeyStorePreference extends DialogPreference {
             return new char[0];
         }
 
+        @NonNull
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view;
             if(viewType == VIEW_TYPE_PRIVATE_KEY) {
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.x509key_actionable_list_item_layout, parent, false);
@@ -685,7 +687,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             switch (holder.getItemViewType()) {
                 case VIEW_TYPE_PRIVATE_KEY:
                     populatePrivateKeyDetails((KeyStorePrivateKeyItemViewHolder) holder, position, (KeyStore.PrivateKeyEntry) getItem(position));

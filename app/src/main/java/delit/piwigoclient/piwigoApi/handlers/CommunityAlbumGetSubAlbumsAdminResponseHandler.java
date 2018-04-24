@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -50,7 +51,7 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
         JsonArray categories = result.get("categories").getAsJsonArray();
         ArrayList<CategoryItem> availableGalleries = new ArrayList<>(categories.size());
 
-        SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
 
         for (int i = 0; i < categories.size(); i++) {
             JsonObject category = (JsonObject) categories.get(i);
@@ -78,13 +79,12 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
             if(maxDateLastJsonElem != null && !maxDateLastJsonElem.isJsonNull()) {
                 dateLastAlteredStr = maxDateLastJsonElem.getAsString();
             }
-            String thumbnail = null;
             Long representativePictureId = null;
             if(category.has("representative_picture_id") && !category.get("representative_picture_id").isJsonNull()) {
                 representativePictureId = category.get("representative_picture_id").getAsLong();
             }
 
-            Date dateLastAltered = null;
+            Date dateLastAltered;
             try {
                 if (dateLastAlteredStr == null) {
                     dateLastAltered = new Date(0);
@@ -95,7 +95,7 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
                 throw new JSONException("Unable to parse date " + dateLastAlteredStr);
             }
 
-            CategoryItem item = new CategoryItem(id, name, description, !isPublic, dateLastAltered, photos, totalPhotos, subCategories, thumbnail);
+            CategoryItem item = new CategoryItem(id, name, description, !isPublic, dateLastAltered, photos, totalPhotos, subCategories, null);
             item.setRepresentativePictureId(representativePictureId);
 
             if (item.getId() == parentAlbum.getId()) {

@@ -1,9 +1,7 @@
 package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.Arrays;
@@ -14,24 +12,21 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoUsernames;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.ui.common.AppCompatCheckboxTriState;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
+import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 
 /**
  * {@link android.support.v7.widget.RecyclerView.Adapter} that can display a {@link Username}
  */
-public class UsernameRecyclerViewAdapter extends BaseRecyclerViewAdapter<Username, UsernameRecyclerViewAdapter.UsernameViewHolder> {
+public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Username, PiwigoUsernames, UsernameRecyclerViewAdapter.UsernameViewHolder> {
 
-    private final PiwigoUsernames usernames;
     private final List<String> userTypes;
     private final List<String> userTypeValues;
     private final HashSet<Long> indirectlySelectedItems;
 
 
     public UsernameRecyclerViewAdapter(final Context context, final PiwigoUsernames usernames, HashSet<Long> indirectlySelectedItems, MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
-        super(multiSelectStatusListener, captureActionClicks);
-        this.usernames = usernames;
+        super(usernames, multiSelectStatusListener, captureActionClicks);
         setContext(context);
         this.indirectlySelectedItems = indirectlySelectedItems;
         userTypes = Arrays.asList(context.getResources().getStringArray(R.array.user_types_array));
@@ -39,80 +34,8 @@ public class UsernameRecyclerViewAdapter extends BaseRecyclerViewAdapter<Usernam
     }
 
     @Override
-    public long getItemId(int position) {
-        return usernames.getItems().get(position).getId();
-    }
-
-    @Override
     public UsernameViewHolder buildViewHolder(View view) {
-        new CustomClickListener(null, this);
         return new UsernameViewHolder(view);
-    }
-
-    @Override
-    protected void removeItemFromInternalStore(int idxRemoved) {
-        usernames.getItems().remove(idxRemoved);
-    }
-
-    @Override
-    protected void replaceItemInInternalStore(int idxToReplace, Username newItem) {
-        usernames.getItems().remove(idxToReplace);
-        usernames.getItems().add(idxToReplace, newItem);
-    }
-
-    @Override
-    protected Username getItemFromInternalStoreMatching(Username item) {
-        return usernames.getUsernameById(item.getId());
-    }
-
-    @Override
-    public HashSet<Long> getItemsSelectedButNotLoaded() {
-        HashSet<Long> loadedSelectedItemIds = new HashSet<>(getSelectedItemIds());
-        for(Username username : usernames.getItems()) {
-            loadedSelectedItemIds.remove(username.getId());
-        }
-        return loadedSelectedItemIds;
-    }
-
-    @Override
-    protected void addItemToInternalStore(Username item) {
-        usernames.getItems().add(item);
-    }
-
-    @Override
-    public Username getItemByPosition(int position) {
-        return usernames.getItems().get(position);
-    }
-
-    @Override
-    public boolean isHolderOutOfSync(UsernameViewHolder holder, Username newItem) {
-        return !(holder.getOldPosition() < 0 && holder.getItem() != null && holder.getItem().getId() == newItem.getId());
-    }
-
-    @Override
-    public int getItemCount() {
-        return usernames.getItems().size();
-    }
-
-    @Override
-    public Username getItemById(Long selectedId) {
-        return usernames.getUsernameById(selectedId);
-    }
-
-    @Override
-    protected int getItemPosition(Username item) {
-        return usernames.getItems().indexOf(item);
-    }
-
-    @Override
-    public UsernameViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
-
-        final UsernameViewHolder viewHolder = buildViewHolder(view);
-        viewHolder.internalCacheViewFieldsAndConfigure(buildCustomClickListener(viewHolder));
-
-        return viewHolder;
     }
 
     public class UsernameViewHolder extends CustomViewHolder<Username> {

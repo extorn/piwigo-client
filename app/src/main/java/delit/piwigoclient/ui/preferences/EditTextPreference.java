@@ -43,6 +43,6 @@ public class EditTextPreference extends android.preference.EditTextPreference {
         if (summary != null) {
             return String.format(summary.toString(), entry == null ? "" : entry);
         }
-        return summary;
+        return null;
     }
 }

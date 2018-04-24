@@ -5,7 +5,7 @@ import android.view.View;
 public class CustomClickListener<T, S extends CustomViewHolder<T>> implements View.OnClickListener, View.OnLongClickListener {
 
     private final S viewHolder;
-    private BaseRecyclerViewAdapter<T, S> parentAdapter;
+    private final BaseRecyclerViewAdapter<T, S> parentAdapter;
 
     public CustomClickListener(S viewHolder, BaseRecyclerViewAdapter<T, S> parentAdapter) {
         this.viewHolder = viewHolder;
@@ -20,7 +20,7 @@ public class CustomClickListener<T, S extends CustomViewHolder<T>> implements Vi
         //TODO Note - the way this works, click event is sunk if item selection is enabled... allow override?
         if (!parentAdapter.isItemSelectionAllowed()) {
             //If not currently in multiselect mode
-            parentAdapter.getMultiSelectStatusListener().onItemClick((T) viewHolder.getItem());
+            parentAdapter.getMultiSelectStatusListener().onItemClick(viewHolder.getItem());
         } else if (parentAdapter.isCaptureActionClicks()) {
 //                 multi selection mode is enabled.
             if (parentAdapter.getSelectedItemIds().contains(viewHolder.getItemId())) {

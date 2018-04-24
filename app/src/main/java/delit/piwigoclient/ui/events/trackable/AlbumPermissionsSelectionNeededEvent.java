@@ -12,9 +12,9 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 public class AlbumPermissionsSelectionNeededEvent extends TrackableRequestEvent {
 
     private final boolean allowEdit;
-    private ArrayList<CategoryItemStub> availableAlbums;
-    private HashSet<Long> directAlbumPermissions;
-    private HashSet<Long> indirectAlbumPermissions;
+    private final ArrayList<CategoryItemStub> availableAlbums;
+    private final HashSet<Long> directAlbumPermissions;
+    private final HashSet<Long> indirectAlbumPermissions;
 
     public AlbumPermissionsSelectionNeededEvent(ArrayList<CategoryItemStub> availableAlbums, HashSet<Long> directAlbumPermissions, boolean allowEdit) {
         this(availableAlbums, directAlbumPermissions, null, allowEdit);

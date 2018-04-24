@@ -1,5 +1,6 @@
 package delit.piwigoclient.business;
 
+import android.content.Context;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
@@ -19,13 +20,13 @@ public class PicassoLoader implements Callback {
     private String uriToLoad;
     private final ImageView loadInto;
     private File fileToLoad;
-    public final static int DEFAULT_AUTO_RETRIES = 1;
+    private final static int DEFAULT_AUTO_RETRIES = 1;
     public final static int INFINITE_AUTO_RETRIES = -1;
-    int maxRetries = DEFAULT_AUTO_RETRIES;
-    int retries = 0;
+    private int maxRetries = DEFAULT_AUTO_RETRIES;
+    private int retries = 0;
     private boolean imageLoaded;
     private boolean imageLoading;
-    float rotation = 0;
+    private float rotation = 0;
     private int resourceToLoad = Integer.MIN_VALUE;
     private boolean imageUnavailable;
     public static final String PICASSO_REQUEST_TAG = "PIWIGO";
@@ -96,19 +97,27 @@ public class PicassoLoader implements Callback {
             getLoadInto().setImageResource(getResourceToLoad());
             onSuccess();
         } else {
-            PicassoFactory.getInstance().getPicassoSingleton().cancelRequest(loadInto);
+            PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
             customiseLoader(buildLoader()).into(loadInto, this);
         }
     }
 
     public void cancelImageLoadIfRunning() {
         if(loadInto != null) {
-            PicassoFactory.getInstance().getPicassoSingleton().cancelRequest(loadInto);
+            PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
         }
     }
 
+    private Context getContext() {
+        Context context = loadInto.getContext();
+        if(context == null) {
+            throw new IllegalStateException("Context is not available in the view at this time");
+        }
+        return context;
+    }
+
     protected RequestCreator buildLoader() {
-        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton()).error(R.drawable.ic_error_black_24px);
+        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext())).error(R.drawable.ic_error_black_24px);
         if(placeholderLoaded) {
             rc.noPlaceholder();
         } else {

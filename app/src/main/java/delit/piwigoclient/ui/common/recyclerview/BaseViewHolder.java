@@ -1,17 +1,17 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
 import android.widget.TextView;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.AppCompatCheckboxTriState;
 
 public abstract class BaseViewHolder<A> extends CustomViewHolder<A> {
     private TextView txtTitle;
     private TextView detailsTitle;
     private View deleteButton;
-    private AppCompatCheckBox checkBox;
+    private AppCompatCheckboxTriState checkBox;
 
     public BaseViewHolder(View view) {
         super(view);
@@ -25,7 +25,7 @@ public abstract class BaseViewHolder<A> extends CustomViewHolder<A> {
         return detailsTitle;
     }
 
-    public AppCompatCheckBox getCheckBox() {
+    public AppCompatCheckboxTriState getCheckBox() {
         return checkBox;
     }
 

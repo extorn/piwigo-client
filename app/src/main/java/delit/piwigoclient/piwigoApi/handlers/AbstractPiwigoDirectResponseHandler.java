@@ -1,30 +1,35 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.content.Context;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.Worker;
 
 /**
  * Created by gareth on 27/07/17.
  */
 
 public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicPiwigoResponseHandler {
-    private long messageId = -1;
+    private long messageId;
     private PiwigoResponseBufferingHandler.BaseResponse response;
-    private static AtomicLong nextMessageId = new AtomicLong();
+    private static final AtomicLong nextMessageId = new AtomicLong();
     private boolean publishResponses = true;
 
-    public synchronized static long getNextMessageId() {
-        long id = nextMessageId.incrementAndGet();
+    public static synchronized long getNextMessageId() {
+        long id;
+        id = nextMessageId.incrementAndGet();
         if(id < 0) {
-            id = 0;
             nextMessageId.set(0);
+            id = 0;
         }
         return id;
     }
 
     public AbstractPiwigoDirectResponseHandler(String tag) {
         super(tag);
+        messageId = getNextMessageId();
     }
 
     public long getMessageId() {
@@ -45,12 +50,12 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
 
     @Override
     public final void preRunCall() {
-        if(messageId < 0) {
+        /*if(messageId < 0) {
             messageId = getNextMessageId();
-        }
+        }*/
     }
 
-    public void storeResponse(PiwigoResponseBufferingHandler.BaseResponse response) {
+    protected void storeResponse(PiwigoResponseBufferingHandler.BaseResponse response) {
 
         if(!getUseSynchronousMode() && publishResponses) {
             PiwigoResponseBufferingHandler.getDefault().processResponse(response);
@@ -72,4 +77,11 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
         return response instanceof PiwigoResponseBufferingHandler.ErrorResponse;
     }
 
+    public long invokeAsync(Context context) {
+        return new Worker( this, context).start(messageId);
+    }
+
+    public long invokeAsyncAgain() {
+        return new Worker( this, this.getContext()).start(messageId);
+    }
 }

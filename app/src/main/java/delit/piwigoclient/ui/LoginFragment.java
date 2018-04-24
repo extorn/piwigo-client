@@ -15,8 +15,8 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 
@@ -30,8 +30,7 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
     private Button loginButton;
 
     public static LoginFragment newInstance() {
-        LoginFragment fragment = new LoginFragment();
-        return fragment;
+        return new LoginFragment();
     }
 
     @Override
@@ -64,7 +63,7 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
     public void onClick(View v) {
         loginButton.setEnabled(false);
         String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
-        getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), PiwigoAccessService.startActionLogin(getContext()));
+        getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(getContext()).invokeAsync(getContext()));
     }
 
     @Override
@@ -90,11 +89,11 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
         }
     }
 
-    public void onLogin(PiwigoSessionDetails oldCredentials) {
+    private void onLogin(PiwigoSessionDetails oldCredentials) {
         EventBus.getDefault().post(new PiwigoLoginSuccessEvent(oldCredentials, true));
     }
 
-    public void onLoginFailed() {
+    private void onLoginFailed() {
         loginButton.setEnabled(true);
     }
 

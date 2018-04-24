@@ -28,8 +28,9 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUsers;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.UserDeleteResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.UsersGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
@@ -48,15 +49,14 @@ public class UsersListFragment extends MyFragment {
 
     private static final String USERS_MODEL = "usersModel";
     private static final String USERS_PAGE_BEING_LOADED = "usersPageBeingLoaded";
-    private ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
     private PiwigoUsers usersModel = new PiwigoUsers();
     private UserRecyclerViewAdapter viewAdapter;
     private int pageToLoadNow = -1;
 
     public static UsersListFragment newInstance() {
-        UsersListFragment fragment = new UsersListFragment();
-        return fragment;
+        return new UsersListFragment();
     }
 
     @Override
@@ -98,7 +98,7 @@ public class UsersListFragment extends MyFragment {
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {
@@ -137,13 +137,13 @@ public class UsersListFragment extends MyFragment {
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        RecyclerView recyclerView = view.findViewById(R.id.list);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
 
         recyclerView.setLayoutManager(layoutMan);
 
-        boolean allowMultiselection = false;
+        final boolean allowMultiselection = false;
 
         viewAdapter = new UserRecyclerViewAdapter(container.getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusListener<User>() {
             @Override
@@ -185,7 +185,7 @@ public class UsersListFragment extends MyFragment {
                 loadUsersPage(pageToLoad);
             }
         };
-        scrollListener.configure(usersModel.getPagesLoaded(), usersModel.getItems().size());
+        scrollListener.configure(usersModel.getPagesLoaded(), usersModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
 
         return view;
@@ -203,7 +203,7 @@ public class UsersListFragment extends MyFragment {
     private void loadUsersPage(int pageToLoad) {
         this.pageToLoadNow = pageToLoad;
         int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-        addActiveServiceCall(R.string.progress_loading_users,PiwigoAccessService.startActionGetUsersList(pageToLoad, pageSize, getContext()));
+        addActiveServiceCall(R.string.progress_loading_users,new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
     }
 
     private void addNewUser() {
@@ -215,7 +215,7 @@ public class UsersListFragment extends MyFragment {
 //        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_information_coming_soon));
     }
 
-    public void onDeleteUser(final User thisItem) {
+    private void onDeleteUser(final User thisItem) {
         String currentUser = PiwigoSessionDetails.getInstance().getUsername();
         if (currentUser.equals(thisItem.getUsername())) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_delete_yourself_pattern), currentUser));
@@ -238,7 +238,7 @@ public class UsersListFragment extends MyFragment {
     }
 
     private void deleteUserNow(User thisItem) {
-        long deleteActionId = PiwigoAccessService.startActionDeleteUser(thisItem.getId(), this.getContext());
+        long deleteActionId = new UserDeleteResponseHandler(thisItem.getId()).invokeAsync(this.getContext());
         this.deleteActionsPending.put(deleteActionId, thisItem);
         addActiveServiceCall(R.string.progress_delete_user, deleteActionId);
     }
@@ -302,7 +302,7 @@ public class UsersListFragment extends MyFragment {
 
 
 
-    public void onUsersLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse response) {
+    private void onUsersLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse response) {
         synchronized (usersModel) {
             pageToLoadNow = -1;
             retryActionButton.setVisibility(View.GONE);
@@ -323,13 +323,13 @@ public class UsersListFragment extends MyFragment {
         viewAdapter.replaceOrAddItem(event.getUser());
     }
 
-    public void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
+    private void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
         User user = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(user);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), user.getUsername()));
     }
 
-    public void onUserDeleteFailed(final long messageId) {
+    private void onUserDeleteFailed(final long messageId) {
         User user = deleteActionsPending.remove(messageId);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_failed_pattern), user.getUsername()));
     }

@@ -9,11 +9,11 @@ import java.io.File;
 public class UploadFileFragment {
 
     private final long jobId;
-    private String data;
-    private String fileChecksum;
-    private int chunkId;
-    private String name;
-    private File originalFile;
+    private final String data;
+    private final String fileChecksum;
+    private final int chunkId;
+    private final String name;
+    private final File originalFile;
     private int uploadAttempts;
 
     public UploadFileFragment(String name, File originalFile, String data, String checksum, long jobId, int chunkId) {

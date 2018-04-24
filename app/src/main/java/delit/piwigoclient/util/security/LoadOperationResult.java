@@ -11,12 +11,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 public class LoadOperationResult implements Serializable {
-    private List<KeystoreLoadOperationResult> keystoreLoadResults;
-    private List<CertificateLoadOperationResult> certLoadResults;
+    private final List<KeystoreLoadOperationResult> keystoreLoadResults;
+    private final List<CertificateLoadOperationResult> certLoadResults;
 
     public LoadOperationResult() {
         keystoreLoadResults = new ArrayList<>();
@@ -177,11 +176,10 @@ public class LoadOperationResult implements Serializable {
     public SecurityOperationException getNextRecoverableError() {
         for(KeystoreLoadOperationResult result : keystoreLoadResults) {
             if (result.getExceptionList().size() > 0) {
-                for(Iterator<SecurityOperationException> iter = result.getExceptionList().iterator(); iter.hasNext();) {
-                    SecurityOperationException e = iter.next();
+                for (SecurityOperationException e : result.getExceptionList()) {
                     if (e instanceof KeyStoreOperationException) {
                         // handle keystore operation exceptions
-                        if (isRecoverable((KeyStoreOperationException)e)) {
+                        if (isRecoverable((KeyStoreOperationException) e)) {
                             return e;
                         }
                     } else if (e instanceof KeyStoreContentException) {
@@ -233,7 +231,7 @@ public class LoadOperationResult implements Serializable {
 
     public void addPasswordForRerun(SecurityOperationException recoverableError, char[] pass) {
         if (recoverableError instanceof KeyStoreOperationException) {
-            File f = ((KeyStoreOperationException)recoverableError).getFile();
+            File f = recoverableError.getFile();
             KeystoreLoadOperationResult result = findKeystoreLoadOperationResult(f);
             result.getLoadOperation().setKeystorePass(pass);
             result.getExceptionList().remove(recoverableError);

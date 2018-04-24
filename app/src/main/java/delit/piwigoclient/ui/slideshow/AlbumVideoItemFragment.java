@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,25 +14,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -44,7 +41,6 @@ import delit.piwigoclient.business.video.CustomHttpDataSourceFactory;
 import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
 import delit.piwigoclient.business.video.HttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.PausableLoadControl;
-import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.PicassoFactory;
@@ -56,7 +52,7 @@ import delit.piwigoclient.util.IOUtils;
 
 public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceItem> {
 
-    public static final String CURRENT_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
+    private static final String CURRENT_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
     private static final String CACHED_VIDEO_FILENAME = "cachedVideoFileName";
     private static final String STATE_START_ON_RESUME = "startOnResume";
     private static final String STATE_CONTINUE_PLAYBACK = "continuePlayback";
@@ -80,12 +76,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     public AlbumVideoItemFragment() {
             setAllowDownload(false);
-    }
-
-    public static AlbumVideoItemFragment newInstance(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
-        AlbumVideoItemFragment fragment = new AlbumVideoItemFragment();
-        fragment.setArguments(buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay));
-        return fragment;
     }
 
     public static Bundle buildArgs(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
@@ -112,6 +102,18 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         configureDatasourceAndPlayerRequestingPermissions(startImmediately || (startOnResume && continuePlayback));
         startImmediately = false;
         super.onResume();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -163,7 +165,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         hideProgressIndicator();
 
         directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
         directDownloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,7 +229,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
         // 2. Create the player
         loadControl = new PausableLoadControl();
-        loadControl.setSrcUri(model.getFullSizeFile().getUrl());
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
         return player;
@@ -358,7 +359,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         startImmediately = continuePlayback;
     }
 
-    public void startVideoDownloadAndPlay() {
+    private void startVideoDownloadAndPlay() {
         if(isAdded()) {
             configureDatasourceAndPlayerRequestingPermissions(continuePlayback);
         } else {
@@ -366,7 +367,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    public void stopVideoDownloadAndPlay() {
+    private void stopVideoDownloadAndPlay() {
         if (player != null) {
             continuePlayback = player.getPlayWhenReady();
             seekToPosition = player.getCurrentPosition();
@@ -375,7 +376,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    public void cleanupVideoResources() {
+    private void cleanupVideoResources() {
         if (player != null) {
             player.stop();
             player.release();
@@ -384,7 +385,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    public void manageCache() {
+    private void manageCache() {
         if(isUseCache()) {
             long maxCacheSizeBytes = 1024 * 1024 * prefs.getInt(getString(R.string.preference_video_cache_maxsize_mb_key), getResources().getInteger(R.integer.preference_video_cache_maxsize_mb_default));
             try {

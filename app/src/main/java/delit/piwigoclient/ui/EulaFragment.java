@@ -30,9 +30,8 @@ import delit.piwigoclient.util.ProjectUtils;
  */
 
 public class EulaFragment extends MyFragment {
-    public static EulaFragment newInstance(MainActivity mainActivity) {
-        EulaFragment fragment = new EulaFragment();
-        return fragment;
+    public static EulaFragment newInstance() {
+        return new EulaFragment();
     }
 
     @Nullable
@@ -44,7 +43,7 @@ public class EulaFragment extends MyFragment {
         View view = inflater.inflate(R.layout.fragment_eula, container, false);
 
         AdView adView = view.findViewById(R.id.eula_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {

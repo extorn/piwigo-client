@@ -16,19 +16,20 @@ public class PiwigoSessionDetails {
     public static final int LOGGED_IN = 1;
     public static final int LOGGED_IN_WITH_SESSION_DETAILS = 2;
     public static final int LOGGED_IN_WITH_SESSION_AND_USER_DETAILS = 3;
-    private long userGuid;
-    private String username;
+    private Set<String> methodsAvailable;
+    private final long userGuid;
+    private final String username;
     private String userType;
-    private String piwigoVersion;
-    private Set<String> availableImageSizes;
+    private final String piwigoVersion;
+    private final Set<String> availableImageSizes;
     private Set<String> allowedFileTypes;
     private long webInterfaceUploadChunkSizeKB;
-    private String sessionToken;
+    private final String sessionToken;
     private User userDetails;
     private boolean sessionMayHaveExpired;
     private int loginStatus = NOT_LOGGED_IN;
     private Boolean useCommunityPlugin;
-    private String serverUrl;
+    private final String serverUrl;
 
     public PiwigoSessionDetails(String serverUrl, long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
         this.serverUrl = serverUrl;
@@ -84,6 +85,10 @@ public class PiwigoSessionDetails {
 
     public synchronized static void setInstance(PiwigoSessionDetails sessionDetails) {
         instance = sessionDetails;
+    }
+
+    public void setMethodsAvailable(Set<String> methodsAvailable) {
+        this.methodsAvailable = methodsAvailable;
     }
 
     public synchronized static String getActiveSessionToken() {
@@ -189,5 +194,21 @@ public class PiwigoSessionDetails {
 
     public static String getActiveServerConnection() {
         return instance == null ? null : instance.getServerUrl();
+    }
+
+    public boolean isMethodsAvailableListAvailable() {
+        return methodsAvailable != null;
+    }
+
+    private boolean isMethodAvailable(String methodName) {
+        return methodsAvailable != null && methodsAvailable.contains(methodName);
+    }
+
+    public boolean isUseUserTagPluginForUpdate() {
+        return isMethodAvailable("user_tags.tags.update");
+    }
+
+    public boolean isUseUserTagPluginForSearch() {
+        return isMethodAvailable("user_tags.tags.list");
     }
 }

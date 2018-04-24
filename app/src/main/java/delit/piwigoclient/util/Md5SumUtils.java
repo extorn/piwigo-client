@@ -48,12 +48,10 @@ public class Md5SumUtils {
             } catch (IOException e) {
                 throw new RuntimeException("Unable to process file for MD5", e);
             } finally {
-                if(is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        Log.e(TAG, "Exception on closing MD5 input stream", e);
-                    }
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "Exception on closing MD5 input stream", e);
                 }
             }
         } catch (FileNotFoundException e) {

@@ -14,6 +14,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.Header;
@@ -28,7 +29,6 @@ import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.MyApplication;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 /**
  * Created by gareth on 10/10/17.
@@ -47,7 +47,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private boolean isRunning;
     private boolean rerunningCall;
     private Context context;
-    private String tag;
+    private final String tag;
     private Throwable error;
     private int statusCode;
     private Header[] headers;
@@ -162,11 +162,12 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             } else if(error instanceof SocketTimeoutException) {
                 tryingAgain = true;
                 rerunCall();
-            } else if(error instanceof SSLHandshakeException && error.getMessage() != null && error.getMessage().contains("I/O error during system call")) {
+            } else if(error instanceof SSLException && error.getMessage() != null && error.getMessage().contains("Connection reset by peer")
+                    || error instanceof SSLHandshakeException && error.getMessage() != null && error.getMessage().contains("I/O error during system call")) {
                 tryingAgain = true;
                 rerunCall();
             } else if(allowSessionRefreshAttempt
-                    && (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && error.getMessage().equalsIgnoreCase("Access denied"))) {
+                    && (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && error == null || error.getMessage().equalsIgnoreCase("Access denied"))) {
 
                 boolean newLoginAcquired = false;
                 synchronized (AbstractBasicPiwigoResponseHandler.class) {
@@ -244,9 +245,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
             isRunning = true;
             if (getUseSynchronousMode()) {
-                client = getHttpClientFactory().getSyncHttpClient();
+                client = getHttpClientFactory().getSyncHttpClient(context);
             } else {
-                client = getHttpClientFactory().getAsyncHttpClient();
+                client = getHttpClientFactory().getAsyncHttpClient(context);
             }
             if(client == null) {
                 // unable to build a client from configuration properties.
@@ -279,7 +280,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         return httpClientFactory;
     }
 
-    private boolean getNewLogin() {
+    public boolean getNewLogin() {
 
         // send a server login request
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MyApplication.getInstance());
@@ -296,13 +297,13 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             LoginResponseHandler handler = new LoginResponseHandler(username, password);
             runLoginHandler(handler);
             if (handler.isLoginSuccess()) {
-                if(handler.getNestedFailureMethod() != null) {
+                if (handler.getNestedFailureMethod() != null) {
                     // failed internally. - still a failure!
                     newLoginStatus = PiwigoSessionDetails.LOGGED_IN;
                 } else if (PiwigoSessionDetails.isFullyLoggedIn()) {
                     newLoginStatus = PiwigoSessionDetails.LOGGED_IN_WITH_SESSION_AND_USER_DETAILS;
                     exit = true;
-                    PiwigoResponseBufferingHandler.PiwigoOnLoginResponse response = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse)handler.getResponse();
+                    PiwigoResponseBufferingHandler.PiwigoOnLoginResponse response = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) handler.getResponse();
                     EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
                     onGetNewSessionSuccess();
                     // update the session token for this handler.
@@ -313,13 +314,13 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     newLoginStatus = PiwigoSessionDetails.LOGGED_IN;
                 }
             }
-            if(newLoginStatus == loginStatus) {
+            if (newLoginStatus == loginStatus) {
                 // no progression - fail call.
                 exit = true;
                 onGetNewSessionAndOrUserDetailsFailed();
             }
             loginStatus = newLoginStatus;
-        } while(!exit);
+        } while (!exit);
 
         return false;
     }

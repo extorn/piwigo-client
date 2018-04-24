@@ -20,7 +20,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,12 +27,14 @@ import java.util.Set;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
+import delit.piwigoclient.model.piwigo.PiwigoTag;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomViewPager;
@@ -56,25 +57,23 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 14/05/17.
  */
 
-public class SlideshowFragment extends MyFragment {
+public abstract class AbstractSlideshowFragment<T extends Identifiable> extends MyFragment {
 
-    private static final String TAG = "SlideshowFragment";
+//    private static final String TAG = "SlideshowFragment";
     private static final String STATE_GALLERY = "gallery";
     private static final String STATE_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
     private CustomViewPager viewPager;
-    private PiwigoAlbum gallery;
+    private ResourceContainer<T> gallery;
     private int rawCurrentGalleryItemPosition;
     private View progressIndicator;
-    private Set<Integer> pagesBeingLoaded = new HashSet<>();
+    private final Set<Integer> pagesBeingLoaded = new HashSet<>();
+    private GalleryItemAdapter galleryItemAdapter;
 
-
-    public static SlideshowFragment newInstance(PiwigoAlbum gallery, GalleryItem currentGalleryItem) {
-        SlideshowFragment fragment = new SlideshowFragment();
+    public static Bundle buildArgs(ResourceContainer gallery, GalleryItem currentGalleryItem) {
         Bundle args = new Bundle();
         args.putSerializable(STATE_GALLERY, gallery);
-        args.putInt(STATE_GALLERY_ITEM_DISPLAYED, gallery.getItems().indexOf(currentGalleryItem));
-        fragment.setArguments(args);
-        return fragment;
+        args.putInt(STATE_GALLERY_ITEM_DISPLAYED, gallery.getItemIdx(currentGalleryItem));
+        return args;
     }
 
     @Override
@@ -108,7 +107,7 @@ public class SlideshowFragment extends MyFragment {
         hideProgressIndicator();
 
         AdView adView = view.findViewById(R.id.slideshow_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()
+        if(AdsManager.getInstance().shouldShowAdverts()
                 && getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(VISIBLE);
@@ -119,18 +118,8 @@ public class SlideshowFragment extends MyFragment {
         return view;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PiwigoSessionTokenUseNotificationEvent event) {
-        updateActiveSessionDetails();
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-
-        if(view == null) {
-            // exiting this screen
-            return;
-        }
 
         super.onViewCreated(view, savedInstanceState);
         Bundle configurationBundle = savedInstanceState;
@@ -138,7 +127,7 @@ public class SlideshowFragment extends MyFragment {
             configurationBundle = getArguments();
         }
         if (configurationBundle != null) {
-            gallery = (PiwigoAlbum) configurationBundle.getSerializable(STATE_GALLERY);
+            gallery = (ResourceContainer) configurationBundle.getSerializable(STATE_GALLERY);
             rawCurrentGalleryItemPosition = configurationBundle.getInt(STATE_GALLERY_ITEM_DISPLAYED);
         }
 
@@ -151,8 +140,14 @@ public class SlideshowFragment extends MyFragment {
         viewPager = view.findViewById(R.id.slideshow_viewpager);
         boolean shouldShowVideos = prefs.getBoolean(getString(R.string.preference_gallery_include_videos_in_slideshow_key), getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
         shouldShowVideos &= prefs.getBoolean(getString(R.string.preference_gallery_enable_video_playback_key), getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
-        GalleryItemAdapter galleryItemAdapter = new GalleryItemAdapter( shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
-        galleryItemAdapter.setMaxFragmentsToSaveInState(0);
+        if(galleryItemAdapter == null) {
+            galleryItemAdapter = new GalleryItemAdapter(shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
+            galleryItemAdapter.setMaxFragmentsToSaveInState(1);
+        } else {
+            // update settings.
+            galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
+            galleryItemAdapter.setFragmentManager(getChildFragmentManager());
+        }
 
         viewPager.setAdapter(galleryItemAdapter);
 
@@ -167,7 +162,7 @@ public class SlideshowFragment extends MyFragment {
 
             @Override
             public void onPageSelected(int position) {
-                if(!gallery.isAllResourcesLoaded()) {
+                if(!gallery.isFullyLoaded()) {
                     if((viewPager.getAdapter()).getCount() - position < 10) {
                         //if within 10 items of the end of those items currently loaded, load some more.
                         loadMoreGalleryResources();
@@ -208,7 +203,7 @@ public class SlideshowFragment extends MyFragment {
 //        }
     }
 
-    public void hideProgressIndicator() {
+    private void hideProgressIndicator() {
         progressIndicator.setVisibility(GONE);
     }
 
@@ -216,14 +211,15 @@ public class SlideshowFragment extends MyFragment {
         progressIndicator.setVisibility(VISIBLE);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        EventBus.getDefault().register(this);
+    protected ResourceContainer<T> getGallery() {
+        return gallery;
     }
 
+    /**
+     * Can't clean up on destroy view as events are then not delivered.
+     */
     @Override
-    public void onDestroyView() {
+    public void onDestroy() {
         if(viewPager != null) {
             // clean up any existing adapter.
             GalleryItemAdapter adapter = (GalleryItemAdapter)viewPager.getAdapter();
@@ -232,13 +228,12 @@ public class SlideshowFragment extends MyFragment {
             }
             viewPager.setAdapter(null);
         }
-        super.onDestroyView();
+        super.onDestroy();
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        EventBus.getDefault().unregister(this);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PiwigoSessionTokenUseNotificationEvent event) {
+        updateActiveSessionDetails();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -251,17 +246,25 @@ public class SlideshowFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemActionFinishedEvent event) {
-        if(event.getItem().getParentId().equals(gallery.getId()) && getUiHelper().isTrackingRequest(event.getActionId())) {
+        //TODO this is rubbish, store a reference to the parent in the resource items so we can test if this screen is relevant.
+        if((gallery instanceof PiwigoTag || event.getItem().getParentId().equals(gallery.getId())) && getUiHelper().isTrackingRequest(event.getActionId())) {
             viewPager.setEnabled(true);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemDeletedEvent event) {
-        int fullGalleryIdx = gallery.getItems().indexOf(event.item);
+        int fullGalleryIdx = gallery.getItemIdx(event.item);
         ((GalleryItemAdapter) viewPager.getAdapter()).deleteGalleryItem(fullGalleryIdx);
         if(viewPager.getAdapter().getCount() == 0) {
             EventBus.getDefault().post(new SlideshowEmptyEvent());
+        }
+    }
+
+    @Subscribe
+    public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
+        if(gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.id) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync));
         }
     }
 
@@ -275,22 +278,22 @@ public class SlideshowFragment extends MyFragment {
 
     class GalleryItemAdapter extends MyFragmentRecyclerPagerAdapter {
 
-        private List<Integer> galleryResourceItems;
+        private final List<Integer> galleryResourceItems;
         private boolean shouldShowVideos;
 
         public GalleryItemAdapter(boolean shouldShowVideos, int selectedItem, FragmentManager fm) {
             super(fm);
-            galleryResourceItems = new ArrayList<>((int)gallery.getResourcesCount());
+            galleryResourceItems = new ArrayList<>(gallery.getResourcesCount());
             this.shouldShowVideos = shouldShowVideos;
             addResourcesToIndex(0, selectedItem);
         }
 
         private void addResourcesToIndex(int fromIdx, int selectedItem) {
-            for (int i = fromIdx; i < gallery.getItems().size(); i++) {
-                if (gallery.getItems().get(i) instanceof CategoryItem) {
+            for (int i = fromIdx; i < gallery.getItemCount(); i++) {
+                if (gallery.getItemByIdx(i) instanceof CategoryItem) {
                     continue;
                 }
-                if (!shouldShowVideos && gallery.getItems().get(i) instanceof VideoResourceItem && i != selectedItem) {
+                if (!shouldShowVideos && gallery.getItemByIdx(i) instanceof VideoResourceItem && i != selectedItem) {
                     continue;
                 }
                 galleryResourceItems.add(i);
@@ -302,10 +305,11 @@ public class SlideshowFragment extends MyFragment {
             return galleryResourceItems.get(slideshowPosition);
         }
 
+
         @Override
         public int getItemPosition(@NonNull Object item) {
             ResourceItem model = ((SlideshowItemFragment) item).getModel();
-            int fullGalleryIdx = gallery.getItems().indexOf(model);
+            int fullGalleryIdx = gallery.getItemIdx(model);
             int newIndexPosition = galleryResourceItems.indexOf(fullGalleryIdx);
             if (newIndexPosition < 0) {
                 return POSITION_NONE;
@@ -320,13 +324,13 @@ public class SlideshowFragment extends MyFragment {
 
         private long getTotalSlideshowItems() {
             long ignoredResourceCount = gallery.getResourcesCount() - galleryResourceItems.size();
-            long totalResources = gallery.isAllResourcesLoaded() ? galleryResourceItems.size() : gallery.getAlbumDetails().getPhotoCount() - ignoredResourceCount;
-            return totalResources;
+            return gallery.isFullyLoaded() ? galleryResourceItems.size() : gallery.getImgResourceCount() - ignoredResourceCount;
         }
 
         @Override
         public Class<? extends Fragment> getFragmentType(int position) {
-            GalleryItem galleryItem = gallery.getItems().get(galleryResourceItems.get(position));
+            int slideshowIdx = galleryResourceItems.get(position);
+            GalleryItem galleryItem = gallery.getItemByIdx(slideshowIdx);
             if (galleryItem instanceof PictureResourceItem) {
                 return AlbumPictureItemFragment.class;
             } else if (galleryItem instanceof VideoResourceItem) {
@@ -337,28 +341,30 @@ public class SlideshowFragment extends MyFragment {
 
         @Override
         protected void bindDataToFragment(Fragment fragment, int position) {
-            GalleryItem galleryItem = (ResourceItem) gallery.getItems().get(galleryResourceItems.get(position));
+            GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
             long totalSlideshowItems = getTotalSlideshowItems();
 
             if (galleryItem instanceof PictureResourceItem) {
                 fragment.setArguments(SlideshowItemFragment.buildArgs((PictureResourceItem)galleryItem, position, galleryResourceItems.size(), totalSlideshowItems));
             } else if (galleryItem instanceof VideoResourceItem) {
-                boolean startOnResume = false;
-                fragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, startOnResume));
+                fragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, false));
             }
         }
 
         @Override
         public Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
 
-            GalleryItem galleryItem = gallery.getItems().get(galleryResourceItems.get(position));
+            GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
             SlideshowItemFragment fragment = null;
             long totalSlideshowItems = getTotalSlideshowItems();
             if (galleryItem instanceof PictureResourceItem) {
-                fragment = AlbumPictureItemFragment.newInstance((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems);
+                fragment = new AlbumPictureItemFragment();
+                Bundle b = AbstractSlideshowItemFragment.buildArgs((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems);
+                fragment.setArguments(b);
             } else if (galleryItem instanceof VideoResourceItem) {
-                boolean startOnResume = false;
-                fragment = AlbumVideoItemFragment.newInstance((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, startOnResume);
+                fragment = new AlbumVideoItemFragment();
+                Bundle args = AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, false);
+                fragment.setArguments(args);
             }
             if (fragment != null) {
                 return fragment;
@@ -404,13 +410,17 @@ public class SlideshowFragment extends MyFragment {
             if(positionToDelete >= 0) {
                 // remove the item from the resource index and the backing gallery model
                 gallery.remove(galleryResourceItems.remove(positionToDelete));
+                // now recalcualate the positions of the remaining slideshow items in the main album
+                for(int i = positionToDelete ; i < galleryResourceItems.size(); i++) {
+                    galleryResourceItems.set(i, galleryResourceItems.get(i)-1);
+                }
                 notifyDataSetChanged();
             }
         }
 
         public void onResume() {
             int pageToShow = Math.max(0, viewPager.getCurrentItem());
-            if(pageToShow < galleryResourceItems.size() && pageToShow >= 0) {
+            if(pageToShow < galleryResourceItems.size()) {
                 Fragment selectedPage = (Fragment)instantiateItem(viewPager, pageToShow);
                 if(selectedPage.isAdded()) {
                     if (selectedPage instanceof AlbumVideoItemFragment) {
@@ -430,23 +440,20 @@ public class SlideshowFragment extends MyFragment {
             EventBus.getDefault().post(new SlideshowSizeUpdateEvent(galleryResourceItems.size(), getTotalSlideshowItems()));
             super.notifyDataSetChanged();
         }
-    }
 
-    @Subscribe
-    public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        if(gallery.getId() == albumAlteredEvent.id) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync));
+        public void setShouldShowVideos(boolean shouldShowVideos) {
+            this.shouldShowVideos = shouldShowVideos;
         }
     }
 
-    public void loadMoreGalleryResources() {
+    private void loadMoreGalleryResources() {
         int pageToLoad = gallery.getPagesLoaded();
         loadAlbumResourcesPage(pageToLoad);
     }
 
     private void loadAlbumResourcesPage(int pageToLoad) {
         synchronized (pagesBeingLoaded) {
-            if (pagesBeingLoaded.contains(String.valueOf(pageToLoad))) {
+            if (pagesBeingLoaded.contains(Integer.valueOf(pageToLoad))) {
                 // already loading this page, ignore the request.
                 return;
             }
@@ -454,10 +461,14 @@ public class SlideshowFragment extends MyFragment {
             String sortOrder = prefs.getString(getString(R.string.preference_gallery_sortOrder_key), getString(R.string.preference_gallery_sortOrder_default));
             String multimediaExtensionList = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
             int pageSize = prefs.getInt(getString(R.string.preference_album_request_pagesize_key), getResources().getInteger(R.integer.preference_album_request_pagesize_default));
-            long loadingMessageId = PiwigoAccessService.startActionGetResources(gallery.getAlbumDetails(), sortOrder, pageToLoad, pageSize, multimediaExtensionList, getContext());
+
+            long loadingMessageId;
+            loadingMessageId = invokeResourcePageLoader(gallery, sortOrder, pageToLoad, pageSize, multimediaExtensionList);
             addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
         }
     }
+
+    protected abstract long invokeResourcePageLoader(ResourceContainer<T> containerDetails, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList);
 
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
@@ -480,7 +491,7 @@ public class SlideshowFragment extends MyFragment {
 
                 if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) {
                     onGetResources((PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) response);
-                    pagesBeingLoaded.remove(response.getMessageId());
+                    pagesBeingLoaded.remove(((PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) response).getPage());
                 }
             }
         }

@@ -6,7 +6,7 @@ package delit.piwigoclient.ui.events;
 
 public class SingleUseEvent {
 
-    boolean handled;
+    private boolean handled;
 
     public synchronized boolean isHandled() {
         if(!handled) {

@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,8 +27,8 @@ import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -45,11 +46,29 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
     public AlbumPictureItemFragment() {
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        EventBus.getDefault().unregister(this);
+    }
+
     public static AlbumPictureItemFragment newInstance(PictureResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount) {
         AlbumPictureItemFragment fragment = new AlbumPictureItemFragment();
         fragment.setArguments(buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount));
         return fragment;
     }
+/*
+
+    public static Bundle buildArgs(ResourceItem model, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount) {
+        return SlideshowItemFragment.buildArgs(model, albumResourceItemIdx, albumResourceItemCount,totalResourceItemCount);
+    }
+*/
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -77,7 +96,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
         imageView.setLayoutParams(layoutParams);
 
         CustomImageButton directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
-        PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
         directDownloadButton.setVisibility(View.GONE);
 
         loader = new PicassoLoader(imageView) {
@@ -170,7 +189,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
                 currentImageUrlDisplayed = model.getFullScreenImage().getUrl();
             }
         }
-
+        loader.cancelImageLoadIfRunning();
         loader.setPlaceholderImageUri(model.getThumbnailUrl());
         loader.setUriToLoad(currentImageUrlDisplayed);
         loader.load();
@@ -197,7 +216,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
                         File outputFile = new File(downloadsFolder, getModel().getDownloadFileName(selectedItem));
                         //TODO check what happens if file exists
                         //NOTE: Don't add to active service calls (we want control over the dialog displayed).
-                        addDownloadAction(PiwigoAccessService.startActionGetResourceToFile(selectedItem.getUrl(), outputFile, getContext()));
+                        addDownloadAction(new ImageGetToFileHandler(selectedItem.getUrl(), outputFile).invokeAsync(getContext()));
                     }
                 });
                 dialog.show();

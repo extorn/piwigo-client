@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.common;
 
 import android.content.Context;
+import android.util.LongSparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import delit.piwigoclient.R;
@@ -22,10 +22,10 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
 
     private final Context context;
     private HashSet<Long> indirectlySelectedItems;
-    private ArrayList<T> availableItems;
+    private final ArrayList<T> availableItems;
     private boolean enabled;
-    private HashMap<Long, Integer> itemIdToLevelMap;
-    private HashMap<Long, Integer> idPositionMap;
+    private LongSparseArray<Integer> itemIdToLevelMap;
+    private LongSparseArray<Integer> idPositionMap;
 
     public MultiSourceListAdapter(Context context, ArrayList<T> availableItems, boolean enabled) {
         this(context, availableItems, null, enabled);
@@ -40,7 +40,7 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
     }
 
     private void buildTreeLayoutMetadata() {
-        itemIdToLevelMap = new HashMap<>(availableItems.size());
+        itemIdToLevelMap = new LongSparseArray<>(availableItems.size());
         for (T item : availableItems) {
             long id = getItemId(item);
             Long parentId = getItemParentId(item);
@@ -94,8 +94,8 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
         return true;
     }
 
-    private HashMap<Long, Integer> buildIdPositionMap() {
-        idPositionMap = new HashMap<>();
+    private LongSparseArray<Integer> buildIdPositionMap() {
+        idPositionMap = new LongSparseArray<>();
         for (int i = 0; i < getCount(); i++) {
             T thisItem = getItem(i);
             idPositionMap.put(getItemId(thisItem), i);

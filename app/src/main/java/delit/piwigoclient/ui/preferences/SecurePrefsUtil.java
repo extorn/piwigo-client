@@ -28,7 +28,7 @@ public class SecurePrefsUtil {
         return instance;
     }
 
-    public SecurePrefsUtil(Context c) {
+    private SecurePrefsUtil(Context c) {
         // Try to use more data here. ANDROID_ID is a single point of attack.
         String deviceId = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -49,9 +49,7 @@ public class SecurePrefsUtil {
 
     public String readSecureStringPreference(SharedPreferences prefs, String preferenceKey, String defaultValue) {
         String prefValue = prefs.getString(preferenceKey, defaultValue);
-        if(prefValue == null) {
-            return defaultValue;
-        } else if(prefValue.length() == 0) {
+        if(prefValue == null || prefValue.length() == 0) {
             return prefValue;
         }
         return decryptValue(preferenceKey, prefValue, defaultValue);

@@ -437,6 +437,9 @@ public class FileSelectionActivity extends AppCompatActivity {
             if (android.os.Build.VERSION.SDK_INT >= 23) {
                 File[] files = context.getExternalFilesDirs(null);
                 for (File file : files) {
+                    if(file == null) {
+                        continue;
+                    }
                     String applicationSpecificAbsolutePath = file.getAbsolutePath();
                     String emulatedRootPath = applicationSpecificAbsolutePath.substring(0, applicationSpecificAbsolutePath.indexOf("Android/data"));
                     rv.add(emulatedRootPath);

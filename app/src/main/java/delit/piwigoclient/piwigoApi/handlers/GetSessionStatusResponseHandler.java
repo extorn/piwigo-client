@@ -16,7 +16,6 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
-import delit.piwigoclient.util.SetUtils;
 
 public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHandler {
 

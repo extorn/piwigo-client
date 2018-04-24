@@ -37,7 +37,6 @@ import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.CachingSyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.UntrustedCaCertificateInterceptingTrustStrategy;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 import delit.piwigoclient.util.X509Utils;
 
 /**
@@ -50,18 +49,15 @@ public class HttpClientFactory {
     private static HttpClientFactory instance;
     private final PersistentCookieStore cookieStore;
 
-    protected SharedPreferences prefs;
-    private final Context context;
-
+    private final SharedPreferences prefs;
     private CachingAsyncHttpClient asyncClient;
     private CachingSyncHttpClient syncClient;
     private CachingSyncHttpClient videoDownloadClient;
     private static final SecureRandom secureRandom = new SecureRandom();
 
     public HttpClientFactory(Context c) {
-        context = c.getApplicationContext();
-        cookieStore = new PersistentCookieStore(context);
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        cookieStore = new PersistentCookieStore(c.getApplicationContext());
+        prefs = PreferenceManager.getDefaultSharedPreferences(c.getApplicationContext());
     }
 
     public static HttpClientFactory getInstance(Context c) {
@@ -113,38 +109,40 @@ public class HttpClientFactory {
         }
     }
 
-    public CachingSyncHttpClient buildVideoDownloadSyncHttpClient() {
+    public CachingSyncHttpClient buildVideoDownloadSyncHttpClient(Context c) {
         if (videoDownloadClient == null) {
             boolean forceDisableCache = true;
             // we use a custom cache solution for video data
-            videoDownloadClient = buildSyncHttpClient(forceDisableCache);
+            videoDownloadClient = buildSyncHttpClient(c, true);
         }
         return videoDownloadClient;
     }
 
-    public CachingSyncHttpClient buildSyncHttpClient(boolean forceDisableCache) {
-        return (CachingSyncHttpClient) buildHttpClient(false, forceDisableCache);
+    public CachingSyncHttpClient buildSyncHttpClient(Context c, boolean forceDisableCache) {
+        return (CachingSyncHttpClient) buildHttpClient(c, false, forceDisableCache);
     }
 
-    public synchronized CachingSyncHttpClient getSyncHttpClient() {
+    public synchronized CachingSyncHttpClient getSyncHttpClient(Context c) {
 
         if (syncClient == null) {
             boolean forceDisableCache = false;
-            syncClient = buildSyncHttpClient(forceDisableCache);
+            syncClient = buildSyncHttpClient(c, false);
         }
         return syncClient;
     }
 
-    public synchronized CachingAsyncHttpClient getAsyncHttpClient() {
+    public synchronized CachingAsyncHttpClient getAsyncHttpClient(Context c) {
         if (asyncClient == null) {
             boolean forceDisableCache = false;
-            asyncClient = buildHttpClient(true, forceDisableCache);
+            asyncClient = buildHttpClient(c, true, false);
         }
         return asyncClient;
     }
 
 
-    protected CachingAsyncHttpClient buildHttpClient(boolean async, boolean forceDisableCache) {
+    protected CachingAsyncHttpClient buildHttpClient(Context c, boolean async, boolean forceDisableCache) {
+
+        Context context = c.getApplicationContext();
 
         CachingAsyncHttpClient client;
 
@@ -163,7 +161,7 @@ public class HttpClientFactory {
         }
         int connectTimeoutMillis = ConnectionPreferences.getServerConnectTimeout(prefs, context);
         client.setConnectTimeout(connectTimeoutMillis);
-        client.setMaxConcurrentConnections(2);
+        client.setMaxConcurrentConnections(5);
         int connectRetries = ConnectionPreferences.getMaxServerConnectRetries(prefs, context);
         client.setMaxRetriesAndTimeout(connectRetries, AsyncHttpClient.DEFAULT_RETRY_SLEEP_TIME_MILLIS);
         boolean allowRedirects = ConnectionPreferences.getFollowHttpRedirects(prefs, context);
@@ -276,7 +274,7 @@ public class HttpClientFactory {
         return sslSocketFactory;
     }
 
-    public SSLContext getCustomSSLContext(KeyStore clientKeystore, char[] clientKeyPass, KeyStore trustedCAKeystore, TrustStrategy trustStrategy) {
+    private SSLContext getCustomSSLContext(KeyStore clientKeystore, char[] clientKeyPass, KeyStore trustedCAKeystore, TrustStrategy trustStrategy) {
         try {
 
             SSLContextBuilder contextBuilder = new SSLContextBuilder();

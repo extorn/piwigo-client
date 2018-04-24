@@ -13,7 +13,7 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 public class ImageCheckFilesResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "CheckResourceRspHdlr";
-    private T resourceItem;
+    private final T resourceItem;
     private Boolean fileMatches;
 
     public ImageCheckFilesResponseHandler(T piwigoResource) {

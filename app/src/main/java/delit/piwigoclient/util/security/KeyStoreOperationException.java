@@ -4,8 +4,6 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 
 import java.io.File;
-import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.FileSystemException;
 
 /**
  * Created by gareth on 24/02/18.

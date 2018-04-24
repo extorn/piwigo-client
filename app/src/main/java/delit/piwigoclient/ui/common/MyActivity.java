@@ -51,7 +51,7 @@ public abstract class MyActivity extends AppCompatActivity {
             trackedActionIntentsMap = (HashMap<Long, Integer>) savedInstanceState.getSerializable(STATE_TRACKED_ACTION_TO_INTENTS_MAP);
         }
 
-        if(BuildConfig.PAID_VERSION) {
+        if(BuildConfig.PAID_VERSION && !BuildConfig.DEBUG) {
             licencingHelper = new LicenceCheckingHelper();
             licencingHelper.onCreate(this);
         }
@@ -74,11 +74,10 @@ public abstract class MyActivity extends AppCompatActivity {
         uiHelper.showNextQueuedMessage();
     }
 
-    public boolean hasAgreedToEula() {
+    protected boolean hasAgreedToEula() {
         int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);
         int currentEulaVersion = getResources().getInteger(R.integer.eula_version);
-        boolean agreedToEula = agreedEulaVersion >= currentEulaVersion;
-        return agreedToEula;
+        return agreedEulaVersion >= currentEulaVersion;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -137,6 +136,12 @@ public abstract class MyActivity extends AppCompatActivity {
         }
         if(found) {
             getSupportFragmentManager().popBackStack(i, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+    }
+
+    protected void checkLicenceIfNeeded() {
+        if(licencingHelper != null) {
+            licencingHelper.doSilentCheck();
         }
     }
 

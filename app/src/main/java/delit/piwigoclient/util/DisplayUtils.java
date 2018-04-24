@@ -4,19 +4,13 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.os.Build;
 import android.os.Looper;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
-
-import java.lang.reflect.InvocationTargetException;
-
-import delit.piwigoclient.BuildConfig;
 
 /**
  * Created by gareth on 30/05/17.
@@ -142,26 +136,7 @@ public class DisplayUtils {
         Display display = windowManager.getDefaultDisplay();
         Point size = new Point();
 
-        if (Build.VERSION.SDK_INT >= 17) {
-            display.getRealSize(size);
-        } else if (Build.VERSION.SDK_INT >= 14) {
-            try {
-                size.x = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
-                size.y = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
-            } catch (IllegalAccessException e) {
-                if(BuildConfig.DEBUG) {
-                    Log.e(TAG, "Getting screen size", e);
-                }
-            } catch (InvocationTargetException e) {
-                if(BuildConfig.DEBUG) {
-                    Log.e(TAG, "Getting screen size", e);
-                }
-            } catch (NoSuchMethodException e) {
-                if(BuildConfig.DEBUG) {
-                    Log.e(TAG, "Getting screen size", e);
-                }
-            }
-        }
+        display.getRealSize(size);
 
         return size;
     }

@@ -14,8 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     private boolean useDarkMode;
     private final ArrayList<File> filesToUpload;
     private final HashMap<File, Integer> fileUploadProgress = new HashMap<>();
-    private RemoveListener listener;
+    private final RemoveListener listener;
     public static final int VIEW_TYPE_LIST = 0;
     public static final int VIEW_TYPE_GRID = 1;
     private int viewType = VIEW_TYPE_LIST;
@@ -45,11 +43,10 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public static final int SCALING_QUALITY_MEDIUM = 240;
     public static final int SCALING_QUALITY_LOW = 120;
     public static final int SCALING_QUALITY_VLOW = 60;
-    private int scalingQuality = SCALING_QUALITY_MEDIUM;
+    private final int scalingQuality = SCALING_QUALITY_MEDIUM;
 
     public FilesToUploadRecyclerViewAdapter(ArrayList<File> filesToUpload, @NonNull Context context, RemoveListener listener) {
         this.listener = listener;
-        Context context1 = context;
         this.filesToUpload = filesToUpload;
         this.setHasStableIds(true);
     }
@@ -71,8 +68,9 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         return new BigInteger(filesToUpload.get(position).getAbsolutePath().getBytes()).longValue();
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         if (viewType == VIEW_TYPE_LIST) {
             view = LayoutInflater.from(parent.getContext())
@@ -168,7 +166,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final File itemToView = filesToUpload.get(position);
 
         View itemView = holder.mView;
@@ -250,7 +248,11 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             progressBar = itemView.findViewById(R.id.file_for_upload_progress);
             fileNameField = itemView.findViewById(R.id.file_for_upload_txt);
             deleteButton = itemView.findViewById(R.id.file_for_upload_delete_button);
-            PicassoFactory.getInstance().getPicassoSingleton().load(R.drawable.ic_delete_black_24px).into(deleteButton);
+            Context context = view.getContext();
+            if(context == null) {
+                throw new IllegalStateException("Context is not available in the view at this time");
+            }
+            PicassoFactory.getInstance().getPicassoSingleton(context).load(R.drawable.ic_delete_black_24px).into(deleteButton);
             fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
 
             imageLoader = new ResizingPicassoLoader(fileForUploadImageView, 0, 0);

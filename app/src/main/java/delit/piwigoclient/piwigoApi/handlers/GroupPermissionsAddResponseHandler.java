@@ -15,7 +15,7 @@ public class GroupPermissionsAddResponseHandler extends AbstractPiwigoWsResponse
 
     private static final String TAG = "addGrpPermRspHdlr";
     private final ArrayList<Long> newAlbumsAllowedAccessTo;
-    private long groupId;
+    private final long groupId;
 
     public GroupPermissionsAddResponseHandler(long groupId, ArrayList<Long> newAlbumsAllowedAccessTo) {
         super("pwg.permissions.add", TAG);

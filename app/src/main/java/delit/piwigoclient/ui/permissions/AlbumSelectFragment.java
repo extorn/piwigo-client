@@ -19,10 +19,9 @@ import java.util.HashSet;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
 
@@ -37,9 +36,9 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     private ArrayList<CategoryItemStub> availableItems;
     private HashSet<Long> indirectSelection;
 
-    public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, boolean multiSelectEnabled, boolean allowEditing, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
+    public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
         AlbumSelectFragment fragment = new AlbumSelectFragment();
-        Bundle args = buildArgsBundle(multiSelectEnabled, allowEditing, actionId, initialSelection);
+        Bundle args = buildArgsBundle(multiSelectEnabled, allowEditing, allowAddition, false, actionId, initialSelection);
         if(indirectSelection != null) {
             args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
@@ -108,7 +107,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     protected void populateListWithItems() {
         if (availableItems == null) {
             //TODO FEATURE: Support albums list paging (load page size from settings)
-            addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetSubCategoryNames(CategoryItem.ROOT_ALBUM.getId(), true, getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         } else if(getListAdapter() == null) {
             //TODO use list item layout as per AvailableAlbumsListAdapter
 //            int listItemLayout = isMultiSelectEnabled()? android.R.layout.simple_list_item_multiple_choice : android.R.layout.simple_list_item_single_choice;
@@ -164,7 +163,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         }
     }
 
-    public void onSubGalleriesLoaded(final PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onSubGalleriesLoaded(final PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
         getUiHelper().dismissProgressDialog();
 //        if (response.getItemsOnPage() == response.getPageSize()) {
 //            //TODO FEATURE: Support groups paging

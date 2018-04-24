@@ -45,7 +45,7 @@ public class EditableListPreference extends DialogPreference {
     private Set<String> entries;
     private boolean entriesAltered;
     private final int entriesPref;
-    private final String summary;
+    private String summary;
     private String currentValue;
     private RecyclerView listRecyclerView;
     private boolean currentValueSet = false;
@@ -235,11 +235,12 @@ public class EditableListPreference extends DialogPreference {
     @Override
     public void setSummary(CharSequence summary) {
         super.setSummary(summary);
-        if (summary == null && summary != null) {
-            summary = null;
-        } else if (summary != null && !summary.equals(summary)) {
-            summary = summary.toString();
-        }
+        //FIXME this block was totally broken thus useless. is it needed?
+//        if (this.summary == null && summary != null) {
+//            this.summary = null;
+//        } else if (this.summary != null && !this.summary.contentEquals(summary)) {
+//            this.summary = summary.toString();
+//        }
     }
 
     private static class SavedState extends BaseSavedState {
@@ -294,7 +295,7 @@ public class EditableListPreference extends DialogPreference {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_recycler_list, null, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {
@@ -360,7 +361,7 @@ public class EditableListPreference extends DialogPreference {
                 dialog.dismiss();
                 if(editingExistingValue) {
                     String newValue = input.getText().toString();
-                    if(initialValue != newValue && !newValue.equals(initialValue)) {
+                    if(!newValue.equals(initialValue)) {
                         onChangeItem(initialValue, newValue);
                     }
                 } else {
@@ -446,9 +447,9 @@ public class EditableListPreference extends DialogPreference {
 
     private class DefaultListContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-        private String currentSelectedValue;
-        private List<String> entriesList;
-        private List<String> entryValues;
+        private final String currentSelectedValue;
+        private final List<String> entriesList;
+        private final List<String> entryValues;
 
         public DefaultListContentsAdapter(@NonNull Context context, @NonNull List<String> entriesList, @NonNull List<String> entryValues, String currentSelectedValue) {
             this.entriesList = entriesList;
@@ -461,8 +462,9 @@ public class EditableListPreference extends DialogPreference {
             return entriesList.size();
         }
 
+        @NonNull
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.actionable_list_item_layout, parent, false);
             return buildViewHolder(view);
         }
@@ -553,10 +555,10 @@ public class EditableListPreference extends DialogPreference {
         }
 
         @Override
-        public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
             ActionableListItemViewHolder viewHolder = (ActionableListItemViewHolder)holder;
             viewHolder.selected.setVisibility(View.GONE);
-            String thisValue = entriesList.get(position);
+            String thisValue = entriesList.get(holder.getAdapterPosition());
             viewHolder.itemName.setText(thisValue);
             if(thisValue.equals(currentSelectedValue)) {
                 viewHolder.itemName.setTypeface(viewHolder.itemName.getTypeface(), Typeface.BOLD);
@@ -565,7 +567,7 @@ public class EditableListPreference extends DialogPreference {
             viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onDeleteItem(position, v);
+                    onDeleteItem(holder.getAdapterPosition(), v);
                 }
             });
         }

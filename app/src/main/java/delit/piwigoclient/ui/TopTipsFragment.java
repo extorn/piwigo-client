@@ -19,9 +19,8 @@ import delit.piwigoclient.ui.common.MyFragment;
 
 public class TopTipsFragment extends MyFragment {
 
-    public static TopTipsFragment newInstance(MainActivity mainActivity) {
-        TopTipsFragment fragment = new TopTipsFragment();
-        return fragment;
+    public static TopTipsFragment newInstance() {
+        return new TopTipsFragment();
     }
 
     @Nullable
@@ -33,7 +32,7 @@ public class TopTipsFragment extends MyFragment {
         View view = inflater.inflate(R.layout.fragment_top_tips, container, false);
 
         AdView adView = view.findViewById(R.id.toptips_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {

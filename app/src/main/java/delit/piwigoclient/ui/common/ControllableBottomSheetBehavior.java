@@ -37,9 +37,6 @@ public class ControllableBottomSheetBehavior<V extends View> extends BottomSheet
 
     @Override
     public boolean onInterceptTouchEvent(CoordinatorLayout parent, V child, MotionEvent event) {
-        if (!mAllowUserDragging) {
-            return false;
-        }
-        return super.onInterceptTouchEvent(parent, child, event);
+        return mAllowUserDragging && super.onInterceptTouchEvent(parent, child, event);
     }
 }

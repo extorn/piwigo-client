@@ -14,7 +14,7 @@ public class Basket implements Serializable {
 
     private int action;
     private CategoryItem contentParent;
-    private HashSet<ResourceItem> contents = new HashSet<>();
+    private final HashSet<ResourceItem> contents = new HashSet<>();
 
     public void addItem(int action, ResourceItem item, CategoryItem contentParent) {
         // only add items to be appended if the action is the same

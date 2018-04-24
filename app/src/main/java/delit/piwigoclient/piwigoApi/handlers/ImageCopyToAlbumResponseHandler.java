@@ -13,7 +13,7 @@ public class ImageCopyToAlbumResponseHandler<T extends ResourceItem> extends Abs
 
     private static final String TAG = "CopyResourceToAlbumRspHdlr";
     private final T piwigoResource;
-    private CategoryItem targetAlbum;
+    private final CategoryItem targetAlbum;
 
     public ImageCopyToAlbumResponseHandler(T piwigoResource, CategoryItem targetAlbum) {
         super("pwg.images.setInfo", TAG);

@@ -2,11 +2,13 @@ package delit.piwigoclient.ui.preferences;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import delit.piwigoclient.R;
@@ -26,11 +29,13 @@ import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
+import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.MyPreferenceFragment;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.SetUtils;
@@ -47,7 +52,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     private boolean initialising = false;
     private boolean loginOnLogout;
 
-    private transient Preference.OnPreferenceChangeListener trustedCertsAuthPreferenceListener = new Preference.OnPreferenceChangeListener() {
+    private final transient Preference.OnPreferenceChangeListener trustedCertsAuthPreferenceListener = new Preference.OnPreferenceChangeListener() {
 
         AsyncTask<Context, Object, Set<String>> runningTask = null;
 
@@ -61,40 +66,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             if(val && !initialising) {
                 // If we're enabling this feature, flush the list.
 
-                final long actionId = PiwigoResponseBufferingHandler.getNextHandlerId();
-
-                runningTask = new AsyncTask<Context, Object, Set<String>>() {
-
-                    @Override
-                    protected void onPreExecute() {
-                        super.onPreExecute();
-                        getUiHelper().addActiveServiceCall(R.string.alert_clearing_certificate_use_history, actionId);
-                    }
-
-                    @Override
-                    protected Set<String> doInBackground(Context... context) {
-                        KeyStore truststore = X509Utils.loadTrustedCaKeystore(context[0]);
-                        if (isCancelled()) {
-                            return null;
-                        }
-                        Set<String> aliases = X509Utils.listAliasesInStore(truststore);
-                        return aliases;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Set<String> aliases) {
-                        if (!isCancelled()) {
-                            prefs.edit().putStringSet(getString(R.string.preference_pre_user_notified_certificates_key), aliases).commit();
-                            preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_select_trusted_certificate_key)).setEnabled(true);
-                            if (!initialising) {
-                                // clear the existing session - it's not valid any more.
-                                forkLogoutIfNeeded();
-                            }
-                        }
-                        getUiHelper().onServiceCallComplete(actionId);
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_trusted_certificates_polling));
-                    }
-                };
+                runningTask = new LoadCertificatesTask(getUiHelper(), prefs, preference.getPreferenceManager());
                 runningTask.execute(getContext());
             } else {
                 preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_select_trusted_certificate_key)).setEnabled(val);
@@ -102,7 +74,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             return true;
         }
     };
-    private transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new Preference.OnPreferenceChangeListener() {
+    private final transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(final Preference preference, Object value) {
             String currentPersistedValue = prefs.getString(preference.getKey(), null);
@@ -111,12 +83,12 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
             if ("disk".equals(newValue) || valueChanged) {
                 getUiHelper().runWithExtraPermissions(ConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
-            } else if(valueChanged) {
+            }/* else if(valueChanged) {
                 if (!initialising) {
                     // clear the existing session - it's not valid any more.
                     forkLogoutIfNeeded();
                 }
-            }
+            }*/
 
             Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
             responseCacheFlushButton.setEnabled("disk".equals(newValue));
@@ -144,7 +116,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private transient Preference.OnPreferenceChangeListener simplePreferenceListener = new Preference.OnPreferenceChangeListener() {
+    private final transient Preference.OnPreferenceChangeListener simplePreferenceListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
 
@@ -156,7 +128,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     };
 
-    private transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new Preference.OnPreferenceChangeListener() {
+    private final transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
@@ -173,7 +145,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
                 // clear the existing session - it's not valid any more.
                 forkLogoutIfNeeded();
-                AdsManager.getInstance().updateShowAdvertsSetting();
+                AdsManager.getInstance().updateShowAdvertsSetting(getContext());
             }
 
             return true;
@@ -290,7 +262,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 try {
-                    CacheUtils.clearResponseCache(getContext());
+                    CacheUtils.clearResponseCache(preference.getContext());
                     testLogin();
                     getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
                 } catch(IOException e) {
@@ -326,13 +298,13 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         long MB = KB * 1024;
         String spaceSuffix = " ";
         if(cacheBytes < KB) {
-            spaceSuffix += String.format("(%1$.0f Bytes)", cacheBytes);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.0f Bytes)", cacheBytes);
         } else if(cacheBytes < MB) {
             double kb = (cacheBytes / KB);
-            spaceSuffix += String.format("(%1$.1f KB)", kb);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f KB)", kb);
         } else {
             double mb = (cacheBytes / MB);
-            spaceSuffix += String.format("(%1$.1f MB)", mb);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f MB)", mb);
         }
         responseCacheFlushButton.setTitle(getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
     }
@@ -377,10 +349,10 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
     private boolean forkLogoutIfNeeded() {
         if (PiwigoSessionDetails.isLoggedIn()) {
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), PiwigoSessionDetails.getInstance().getServerUrl()), PiwigoAccessService.startActionLogout(getContext()));
+            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), PiwigoSessionDetails.getInstance().getServerUrl()), new LogoutResponseHandler().invokeAsync(getContext()));
             return true;
         } else if(HttpClientFactory.getInstance(getContext()).isInitialised()) {
-            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), PiwigoAccessService.startActionCleanupHttpConnections(getContext()));
+            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(getContext()).start());
             return true;
         }
         return false;
@@ -395,8 +367,9 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             if (forkLogoutIfNeeded()) {
                 loginOnLogout = true;
             } else {
-                HttpClientFactory.getInstance(getContext()).clearCachedClients();
-                getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), PiwigoAccessService.startActionLogin(getContext()));
+                Context context = getContext();
+                HttpClientFactory.getInstance(context).clearCachedClients();
+                getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(context).invokeAsync(context));
             }
         }
     }
@@ -415,7 +388,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     onLogin(rsp.getOldCredentials());
                 }
             } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse) {
-                getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), PiwigoAccessService.startActionCleanupHttpConnections(getContext()));
+                getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(getContext()).start());
             } else if(response instanceof PiwigoResponseBufferingHandler.HttpClientsShutdownResponse) {
                 if(loginOnLogout) {
                     loginOnLogout = false;
@@ -435,12 +408,67 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     }
 
 
-    public void onLogin(PiwigoSessionDetails oldCredentials) {
+    private void onLogin(PiwigoSessionDetails oldCredentials) {
         String msg = getString(R.string.alert_message_success_connectionTest, PiwigoSessionDetails.getInstance().getUserType());
         if(PiwigoSessionDetails.getInstance().getAvailableImageSizes().size() == 0) {
             msg += '\n' + getString(R.string.alert_message_no_available_image_sizes);
         }
         getUiHelper().showOrQueueDialogMessage(R.string.alert_title_connectionTest, msg);
         EventBus.getDefault().post(new PiwigoLoginSuccessEvent(oldCredentials, false));
+    }
+
+    private static class LoadCertificatesTask extends AsyncTask<Context, Object, Set<String>> {
+
+        private final UIHelper uiHelper;
+        final long actionId = PiwigoResponseBufferingHandler.getNextHandlerId();
+        private final PreferenceManager preferenceManager;
+        private final SharedPreferences prefs;
+
+        public LoadCertificatesTask(UIHelper uiHelper, SharedPreferences prefs, PreferenceManager preferenceManager) {
+            this.uiHelper = uiHelper;
+            this.prefs = prefs;
+            this.preferenceManager = preferenceManager;
+        }
+
+        public UIHelper getUiHelper() {
+            return uiHelper;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            getUiHelper().addActiveServiceCall(R.string.alert_clearing_certificate_use_history, actionId);
+        }
+
+        @Override
+        protected Set<String> doInBackground(Context... context) {
+            KeyStore truststore = X509Utils.loadTrustedCaKeystore(context[0]);
+            if (isCancelled()) {
+                return null;
+            }
+            return X509Utils.listAliasesInStore(truststore);
+        }
+
+        @Override
+        protected void onPostExecute(Set<String> aliases) {
+            if (!isCancelled()) {
+                prefs.edit().putStringSet(uiHelper.getContext().getString(R.string.preference_pre_user_notified_certificates_key), aliases).commit();
+                preferenceManager.findPreference(uiHelper.getContext().getString(R.string.preference_select_trusted_certificate_key)).setEnabled(true);
+                forkLogoutIfNeeded();
+            }
+            getUiHelper().onServiceCallComplete(actionId);
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, uiHelper.getContext().getString(R.string.alert_trusted_certificates_polling));
+        }
+
+        private boolean forkLogoutIfNeeded() {
+            if (PiwigoSessionDetails.isLoggedIn()) {
+                getUiHelper().addActiveServiceCall(String.format(getUiHelper().getContext().getString(R.string.logging_out_of_piwigo_pattern), PiwigoSessionDetails.getInstance().getServerUrl()), new LogoutResponseHandler().invokeAsync(getUiHelper().getContext()));
+                return true;
+            } else if(HttpClientFactory.getInstance(getUiHelper().getContext()).isInitialised()) {
+                getUiHelper().addActiveServiceCall(getUiHelper().getContext().getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(getUiHelper().getContext()).start());
+                return true;
+            }
+            return false;
+        }
     }
 }

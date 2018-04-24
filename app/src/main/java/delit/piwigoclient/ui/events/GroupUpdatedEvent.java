@@ -8,7 +8,7 @@ import delit.piwigoclient.model.piwigo.Group;
 
 public class GroupUpdatedEvent {
 
-    public final Group group;
+    private final Group group;
 
     public GroupUpdatedEvent(final Group group) {
         this.group = group;

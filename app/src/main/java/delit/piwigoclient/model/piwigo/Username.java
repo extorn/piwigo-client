@@ -2,10 +2,10 @@ package delit.piwigoclient.model.piwigo;
 
 import java.io.Serializable;
 
-public class Username implements Serializable {
-    long id;
-    String username;
-    String userType; //guest,    generic,    normal,    admin,    webmaster
+public class Username implements Identifiable, Serializable {
+    private final long id;
+    private final String username;
+    private final String userType; //guest,    generic,    normal,    admin,    webmaster
 
     public Username(long id, String username, String userType) {
         this.id = id;

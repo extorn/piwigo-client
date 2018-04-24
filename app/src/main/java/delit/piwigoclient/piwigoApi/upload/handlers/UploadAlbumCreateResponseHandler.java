@@ -14,7 +14,7 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 public class UploadAlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "CreateGalleryRspHdlr";
-    private long parentAlbumId;
+    private final long parentAlbumId;
     private static final SecureRandom random = new SecureRandom();
 
     public UploadAlbumCreateResponseHandler(long parentAlbumId) {

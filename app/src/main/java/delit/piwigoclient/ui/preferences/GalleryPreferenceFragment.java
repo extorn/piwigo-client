@@ -18,6 +18,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.video.CacheUtils;
@@ -36,7 +37,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Gallery Settings";
 
-    private Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
+    private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(final Preference preference, Object value) {
             final Boolean val = (Boolean) value;
@@ -53,17 +54,17 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
      * A preference value change listener that updates the preference's summary
      * to reflect its pkg value.
      */
-    private Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
 
             if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_thumbnail_size_key))) {
-                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(value)) {
+                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(stringValue)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_thumbnail_size_not_natively_supported_by_server));
                 }
             } else if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key))) {
-                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(value)) {
+                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(stringValue)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_slideshow_image_size_not_natively_supported_by_server));
                 }
             }
@@ -108,7 +109,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
      */
     @SuppressWarnings("JavadocReference")
     private int getDefaultImagesColumnCount(int orientationId) {
-        float screenWidth = 0;
+        float screenWidth;
         if (getResources().getConfiguration().orientation == orientationId) {
             screenWidth = getScreenWidthInches();
         } else {
@@ -124,7 +125,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
      */
     @SuppressWarnings("JavadocReference")
     private int getDefaultAlbumsColumnCount(int orientationId) {
-        float screenWidth = 0;
+        float screenWidth ;
         if (getResources().getConfiguration().orientation == orientationId) {
             screenWidth = getScreenWidthInches();
         } else {
@@ -222,13 +223,13 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         long MB = KB * 1024;
         String spaceSuffix = " ";
         if(cacheBytes < KB) {
-            spaceSuffix += String.format("(%1$.0f Bytes)", cacheBytes);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.0f Bytes)", cacheBytes);
         } else if(cacheBytes < MB) {
             double kb = (cacheBytes / KB);
-            spaceSuffix += String.format("(%1$.1f KB)", kb);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f KB)", kb);
         } else {
             double mb = (cacheBytes / MB);
-            spaceSuffix += String.format("(%1$.1f MB)", mb);
+            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f MB)", mb);
         }
         videoCacheFlushButton.setTitle(getString(R.string.preference_gallery_clearVideoCache_title) + spaceSuffix);
     }

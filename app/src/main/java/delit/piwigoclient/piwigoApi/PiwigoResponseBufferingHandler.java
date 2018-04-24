@@ -3,20 +3,18 @@ package delit.piwigoclient.piwigoApi;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.LongSparseArray;
 
 import com.google.gson.JsonElement;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -43,12 +41,12 @@ import delit.piwigoclient.piwigoApi.upload.UploadJob;
 public class PiwigoResponseBufferingHandler {
     private static volatile PiwigoResponseBufferingHandler defaultInstance;
     private final Handler callbackHandler;
-    private ConcurrentMap<Long, Response> responses = new ConcurrentSkipListMap<>();
-    private ConcurrentMap<Long, Long> handlerResponseMap = new ConcurrentSkipListMap<>();
-    private ConcurrentMap<Long, PiwigoResponseListener> handlers = new ConcurrentSkipListMap<>();
+    private final ConcurrentMap<Long, Response> responses = new ConcurrentSkipListMap<>();
+    private final ConcurrentMap<Long, Long> handlerResponseMap = new ConcurrentSkipListMap<>();
+    private final ConcurrentMap<Long, PiwigoResponseListener> handlers = new ConcurrentSkipListMap<>();
     //Note: this isn't a great idea - potentially, if there's a bug, some child msg ids could get left lying around forever as orphans.
-    private Map<Long, LinkedHashSet<Long>> parkedChildMsgIds = new HashMap<>();
-    private static AtomicLong nextHandlerId = new AtomicLong();
+    private final LongSparseArray<LinkedHashSet<Long>> parkedChildMsgIds = new LongSparseArray<>();
+    private static final AtomicLong nextHandlerId = new AtomicLong();
 
     public PiwigoResponseBufferingHandler() {
         callbackHandler = new Handler(Looper.getMainLooper());
@@ -147,7 +145,9 @@ public class PiwigoResponseBufferingHandler {
     }
 
     private LinkedHashSet<Long> popParkedChildMessageIds(long currentMessageId) {
-        return parkedChildMsgIds.remove(currentMessageId);
+        LinkedHashSet<Long> item = parkedChildMsgIds.get(currentMessageId);
+        parkedChildMsgIds.remove(currentMessageId);
+        return item;
     }
 
     public synchronized void preRegisterResponseHandlerForNewMessage(long currentMessageId, long newMessageId) {
@@ -338,8 +338,8 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoServerErrorResponse extends BasePiwigoResponse implements RemoteErrorResponse {
         private final AbstractPiwigoWsResponseHandler requestHandler;
-        private int piwigoErrorCode;
-        private String piwigoErrorMessage;
+        private final int piwigoErrorCode;
+        private final String piwigoErrorMessage;
 
         public PiwigoServerErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int piwigoErrorCode, String piwigoErrorMessage) {
             super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod());
@@ -407,9 +407,9 @@ public class PiwigoResponseBufferingHandler {
     public static class PiwigoHttpErrorResponse extends BasePiwigoResponse implements RemoteErrorResponse {
 
         private final AbstractPiwigoWsResponseHandler requestHandler;
-        private int statusCode;
-        private String errorMessage;
-        private String errorDetail;
+        private final int statusCode;
+        private final String errorMessage;
+        private final String errorDetail;
 
         public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, String errorDetail) {
             super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod());
@@ -451,9 +451,9 @@ public class PiwigoResponseBufferingHandler {
     public static class UrlErrorResponse extends BaseUrlResponse implements RemoteErrorResponse  {
 
         private final AbstractPiwigoDirectResponseHandler requestHandler;
-        private int statusCode;
-        private String errorMessage;
-        private String errorDetail;
+        private final int statusCode;
+        private final String errorMessage;
+        private final String errorDetail;
 
         public UrlErrorResponse(AbstractPiwigoDirectResponseHandler requestHandler, String url, int statusCode, byte[] data, String errorMessage, String errorDetail) {
             super(requestHandler.getMessageId(), url);
@@ -496,7 +496,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class UrlToFileSuccessResponse extends BaseUrlResponse {
-        private File file;
+        private final File file;
 
         public UrlToFileSuccessResponse(long messageId, String url, File file) {
             super(messageId, url);
@@ -509,7 +509,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class UrlSuccessResponse extends BaseUrlResponse {
-        private byte[] data;
+        private final byte[] data;
 
         public UrlSuccessResponse(long messageId, String url, byte[] data) {
             super(messageId, url);
@@ -522,7 +522,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class BaseUrlResponse extends BaseResponse {
-        private String url;
+        private final String url;
 
         public BaseUrlResponse(long messageId, String url) {
             super(messageId);
@@ -540,7 +540,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class BasePiwigoResponse extends BaseResponse implements PiwigoResponse {
-        private String piwigoMethod;
+        private final String piwigoMethod;
 
         public BasePiwigoResponse(long messageId, String piwigoMethod) {
             super(messageId);
@@ -560,7 +560,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoSessionStatusRetrievedResponse extends BasePiwigoResponse {
 
-        private PiwigoSessionDetails oldCredentials;
+        private final PiwigoSessionDetails oldCredentials;
 
         public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod, PiwigoSessionDetails oldCredentials) {
             super(messageId, piwigoMethod, true);
@@ -572,6 +572,13 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
+    public static class PiwigoGetMethodsAvailableResponse extends BasePiwigoResponse {
+
+        public PiwigoGetMethodsAvailableResponse(long messageId, String piwigoMethod) {
+            super(messageId, piwigoMethod, true);
+        }
+    }
+
     public static class PiwigoAddImageResponse extends BasePiwigoResponse {
 
         public PiwigoAddImageResponse(long messageId, String piwigoMethod) {
@@ -579,31 +586,34 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoFavoriteStatusResponse extends BasePiwigoResponse {
+    public static class PiwigoResourceItemResponse<T extends ResourceItem> extends BasePiwigoResponse {
+        private final T piwigoResource;
 
-        private final ResourceItem piwigoResource;
-
-        public PiwigoFavoriteStatusResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
+        public PiwigoResourceItemResponse(long messageId, String piwigoMethod, T piwigoResource) {
             super(messageId, piwigoMethod, true);
             this.piwigoResource = piwigoResource;
         }
 
-        public ResourceItem getPiwigoResource() {
+        public T getPiwigoResource() {
             return piwigoResource;
         }
     }
 
-    public static class PiwigoRatingAlteredResponse extends BasePiwigoResponse {
-
-        private final ResourceItem piwigoResource;
-
-        public PiwigoRatingAlteredResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
-            super(messageId, piwigoMethod, true);
-            this.piwigoResource = piwigoResource;
+    public static class PiwigoUserTagsUpdateTagsListResponse extends PiwigoResourceItemResponse {
+        public PiwigoUserTagsUpdateTagsListResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
+            super(messageId, piwigoMethod, piwigoResource);
         }
+    }
 
-        public ResourceItem getPiwigoResource() {
-            return piwigoResource;
+    public static class PiwigoFavoriteStatusResponse extends PiwigoResourceItemResponse {
+        public PiwigoFavoriteStatusResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
+            super(messageId, piwigoMethod, piwigoResource);
+        }
+    }
+
+    public static class PiwigoRatingAlteredResponse extends PiwigoResourceItemResponse {
+        public PiwigoRatingAlteredResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
+            super(messageId, piwigoMethod, piwigoResource);
         }
     }
 
@@ -681,7 +691,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoAlbumDeletedResponse extends BasePiwigoResponse {
-        private long albumId;
+        private final long albumId;
 
         public PiwigoAlbumDeletedResponse(long messageId, String piwigoMethod, long albumId) {
             super(messageId, piwigoMethod, true);
@@ -701,7 +711,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoDeleteImageResponse extends BasePiwigoResponse {
 
-        private HashSet<Long> deletedItemIds;
+        private final HashSet<Long> deletedItemIds;
 
         public PiwigoDeleteImageResponse(long messageId, String piwigoMethod, HashSet<Long> itemIds) {
             super(messageId, piwigoMethod, true);
@@ -970,7 +980,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoFindExistingImagesResponse extends BasePiwigoResponse {
 
-        private HashMap<String, Long> existingImages;
+        private final HashMap<String, Long> existingImages;
 
         public PiwigoFindExistingImagesResponse(long messageId, String piwigoMethod, HashMap<String, Long> existingImages) {
             super(messageId, piwigoMethod, true);
@@ -986,7 +996,7 @@ public class PiwigoResponseBufferingHandler {
 
         private final int page;
         private final int pageSize;
-        private ArrayList<GalleryItem> resources;
+        private final ArrayList<GalleryItem> resources;
 
         public PiwigoGetResourcesResponse(long messageId, String piwigoMethod, int page, int pageSize, ArrayList<GalleryItem> resources) {
             super(messageId, piwigoMethod, true);
@@ -1009,7 +1019,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoGetSubAlbumNamesResponse extends BasePiwigoResponse {
-        private ArrayList<CategoryItemStub> albumNames;
+        private final ArrayList<CategoryItemStub> albumNames;
 
         public PiwigoGetSubAlbumNamesResponse(long messageId, String piwigoMethod, ArrayList<CategoryItemStub> albumNames) {
             super(messageId, piwigoMethod, true);
@@ -1022,7 +1032,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoUpdateAlbumInfoResponse extends BasePiwigoResponse {
-        private CategoryItem album;
+        private final CategoryItem album;
 
         public PiwigoUpdateAlbumInfoResponse(long messageId, String piwigoMethod, CategoryItem album) {
             super(messageId, piwigoMethod, true);
@@ -1035,7 +1045,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoUpdateAlbumContentResponse extends BasePiwigoResponse {
-        private CategoryItem album;
+        private final CategoryItem album;
 
         public PiwigoUpdateAlbumContentResponse(long messageId, String piwigoMethod, CategoryItem album) {
             super(messageId, piwigoMethod, true);
@@ -1050,7 +1060,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoUserPermissionsAddedResponse extends BasePiwigoResponse {
         private final HashSet<Long> albumsForWhichPermissionAdded;
-        private long userId;
+        private final long userId;
 
         public PiwigoUserPermissionsAddedResponse(long messageId, String piwigoMethod, long userId, HashSet<Long> albumsForWhichPermissionAdded) {
             super(messageId, piwigoMethod, true);
@@ -1069,7 +1079,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoGroupPermissionsAddedResponse extends BasePiwigoResponse {
         private final ArrayList<Long> albumsForWhichPermissionAdded;
-        private long groupId;
+        private final long groupId;
 
         public PiwigoGroupPermissionsAddedResponse(long messageId, String piwigoMethod, long groupId, ArrayList<Long> albumsForWhichPermissionAdded) {
             super(messageId, piwigoMethod, true);
@@ -1088,7 +1098,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoUserPermissionsRemovedResponse extends BasePiwigoResponse {
         private final HashSet<Long> albumsForWhichPermissionRemoved;
-        private long userId;
+        private final long userId;
 
         public PiwigoUserPermissionsRemovedResponse(long messageId, String piwigoMethod, long userId, HashSet<Long> albumsForWhichPermissionRemoved) {
             super(messageId, piwigoMethod, true);
@@ -1107,7 +1117,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoGroupPermissionsRemovedResponse extends BasePiwigoResponse {
         private final ArrayList<Long> albumsForWhichPermissionRemoved;
-        private long groupId;
+        private final long groupId;
 
         public PiwigoGroupPermissionsRemovedResponse(long messageId, String piwigoMethod, long groupId, ArrayList<Long> albumsForWhichPermissionRemoved) {
             super(messageId, piwigoMethod, true);
@@ -1125,7 +1135,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoAddGroupResponse extends BasePiwigoResponse {
-        private Group group;
+        private final Group group;
 
         public PiwigoAddGroupResponse(long messageId, String piwigoMethod, Group group) {
             super(messageId, piwigoMethod, true);
@@ -1138,7 +1148,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoGroupUpdateInfoResponse extends BasePiwigoResponse {
-        private Group group;
+        private final Group group;
 
         public PiwigoGroupUpdateInfoResponse(long messageId, String piwigoMethod, Group group) {
             super(messageId, piwigoMethod, true);
@@ -1151,7 +1161,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoGroupAddMembersResponse extends BasePiwigoResponse {
-        private Group group;
+        private final Group group;
 
         public PiwigoGroupAddMembersResponse(long messageId, String piwigoMethod, Group group) {
             super(messageId, piwigoMethod, true);
@@ -1164,7 +1174,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoGroupRemoveMembersResponse extends BasePiwigoResponse {
-        private Group group;
+        private final Group group;
 
         public PiwigoGroupRemoveMembersResponse(long messageId, String piwigoMethod, Group group) {
             super(messageId, piwigoMethod, true);
@@ -1177,7 +1187,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoAddUserResponse extends BasePiwigoResponse {
-        private User user;
+        private final User user;
 
         public PiwigoAddUserResponse(long messageId, String piwigoMethod, User user) {
             super(messageId, piwigoMethod, true);
@@ -1190,7 +1200,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoUpdateUserInfoResponse extends BasePiwigoResponse {
-        private User user;
+        private final User user;
 
         public PiwigoUpdateUserInfoResponse(long messageId, String piwigoMethod, User user) {
             super(messageId, piwigoMethod, true);
@@ -1203,7 +1213,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends BasePiwigoResponse {
-        private T resource;
+        private final T resource;
 
         public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, T resource) {
             super(messageId, piwigoMethod, true);
@@ -1216,7 +1226,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoGetSubAlbumsAdminResponse extends BasePiwigoResponse {
-        PiwigoAlbumAdminList adminList;
+        final PiwigoAlbumAdminList adminList;
 
         public PiwigoGetSubAlbumsAdminResponse(long messageId, String piwigoMethod, PiwigoAlbumAdminList adminList) {
             super(messageId, piwigoMethod, true);
@@ -1229,7 +1239,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoGetSubAlbumsResponse extends BasePiwigoResponse {
-        private ArrayList<CategoryItem> albums;
+        private final ArrayList<CategoryItem> albums;
 
         public PiwigoGetSubAlbumsResponse(long messageId, String piwigoMethod, ArrayList<CategoryItem> albums) {
             super(messageId, piwigoMethod, true);
@@ -1243,8 +1253,8 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoUserPermissionsResponse extends BasePiwigoResponse {
         private final HashSet<Long> indirectlyAccessibleAlbumIds;
-        private HashSet<Long> directlyAccessibleAlbumIds;
-        private long userId;
+        private final HashSet<Long> directlyAccessibleAlbumIds;
+        private final long userId;
 
         public PiwigoUserPermissionsResponse(long messageId, String piwigoMethod, long userId, HashSet<Long> directlyAccessibleAlbumIds, HashSet<Long> indirectlyAccessibleAlbumIds) {
             super(messageId, piwigoMethod, true);
@@ -1401,7 +1411,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoUploadFileJobCompleteResponse extends BaseResponse {
 
-        private UploadJob job;
+        private final UploadJob job;
 
         public PiwigoUploadFileJobCompleteResponse(long messageId, UploadJob job) {
 
@@ -1465,7 +1475,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class FileUploadCancelledResponse extends BaseResponse {
 
-        private File cancelledFile;
+        private final File cancelledFile;
         public FileUploadCancelledResponse(long messageId, File cancelledFile) {
             super(messageId, true);
             this.cancelledFile = cancelledFile;

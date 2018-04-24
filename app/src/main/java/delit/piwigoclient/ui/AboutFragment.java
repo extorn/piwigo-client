@@ -6,11 +6,9 @@ import android.support.annotation.ArrayRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,9 +24,8 @@ import delit.piwigoclient.ui.common.MyFragment;
  */
 
 public class AboutFragment extends MyFragment {
-    public static AboutFragment newInstance(MainActivity mainActivity) {
-        AboutFragment fragment = new AboutFragment();
-        return fragment;
+    public static AboutFragment newInstance() {
+        return new AboutFragment();
     }
 
     @Nullable
@@ -40,7 +37,7 @@ public class AboutFragment extends MyFragment {
         View view = inflater.inflate(R.layout.fragment_about, container, false);
 
         AdView adView = view.findViewById(R.id.about_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {
@@ -71,7 +68,7 @@ public class AboutFragment extends MyFragment {
             TextView headingText = view.findViewById(R.id.name);
             headingText.setText(heading);
 
-            data = data.replaceAll("\\n[\\s]*(\\s\\-|\\w)", "\n$1");
+            data = data.replaceAll("\\n[\\s]*(\\s-|\\w)", "\n$1");
 
             TextView detailsText = view.findViewById(R.id.details);
             detailsText.setText(data);
@@ -81,8 +78,8 @@ public class AboutFragment extends MyFragment {
     abstract class PairedArrayAdapter extends BaseAdapter {
 
         private final Context context;
-        private String[] data;
-        private int itemLayout;
+        private final String[] data;
+        private final int itemLayout;
 
         public PairedArrayAdapter(@NonNull Context context, @LayoutRes int itemLayout, @ArrayRes int dataResource) {
             this(context, itemLayout, context.getResources().getStringArray(dataResource));

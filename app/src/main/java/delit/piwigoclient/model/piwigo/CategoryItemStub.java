@@ -42,10 +42,7 @@ public class CategoryItemStub implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof CategoryItemStub) {
-            return id == ((CategoryItemStub) obj).id;
-        }
-        return false;
+        return obj instanceof CategoryItemStub && id == ((CategoryItemStub) obj).id;
     }
 
     public long getId() {

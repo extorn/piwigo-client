@@ -20,8 +20,8 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
 import delit.piwigoclient.ui.upload.AvailableAlbumsListAdapter;
@@ -29,15 +29,14 @@ import delit.piwigoclient.ui.upload.AvailableAlbumsListAdapter;
 /**
  * Created by gareth on 26/05/17.
  */
-
 public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private ArrayList<CategoryItemStub> availableAlbums;
 
-    public static AlbumSelectFragment newInstance(boolean multiSelectEnabled, boolean allowEditing, int actionId, HashSet<Long> initialSelection) {
+    public static AlbumSelectFragment newInstance(boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, int actionId, HashSet<Long> initialSelection) {
         AlbumSelectFragment fragment = new AlbumSelectFragment();
-        fragment.setArguments(buildArgsBundle(multiSelectEnabled, allowEditing, actionId, initialSelection));
+        fragment.setArguments(buildArgsBundle(multiSelectEnabled, allowEditing, allowAddition, false, actionId, initialSelection));
         return fragment;
     }
 
@@ -60,7 +59,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         }
 
         if (savedInstanceState != null) {
-            availableAlbums = (ArrayList) savedInstanceState.getSerializable(STATE_AVAILABLE_ITEMS);
+            availableAlbums = (ArrayList<CategoryItemStub>) savedInstanceState.getSerializable(STATE_AVAILABLE_ITEMS);
         }
 
         return v;
@@ -86,7 +85,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     @Override
     protected void populateListWithItems() {
         if (availableAlbums == null) {
-            addActiveServiceCall(R.string.progress_loading_albums, PiwigoAccessService.startActionGetSubCategoryNames(CategoryItem.ROOT_ALBUM.getId(), true, getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         } else if(getListAdapter() == null) {
             int listItemLayout = isMultiSelectEnabled()? android.R.layout.simple_list_item_multiple_choice : android.R.layout.simple_list_item_single_choice;
             AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(CategoryItem.ROOT_ALBUM, getContext(), listItemLayout);
@@ -147,7 +146,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         }
     }
 
-    public void onAlbumsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onAlbumsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
         getUiHelper().dismissProgressDialog();
         availableAlbums = response.getAlbumNames();
         populateListWithItems();

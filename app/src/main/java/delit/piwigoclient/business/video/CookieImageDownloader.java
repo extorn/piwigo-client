@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.loopj.android.http.PersistentCookieStore;
 import com.squareup.picasso.UrlConnectionDownloader;
@@ -18,9 +19,8 @@ import java.net.URLEncoder;
 import java.util.List;
 
 import cz.msebera.android.httpclient.cookie.Cookie;
-import delit.piwigoclient.R;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 /**
  * Created by gareth on 18/05/17.
@@ -28,8 +28,9 @@ import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 public class CookieImageDownloader extends UrlConnectionDownloader {
 
+    private static final String TAG = "CookieImgDwnldr";
     private final Context context;
-    HttpURLConnection lastConn;
+    private HttpURLConnection lastConn;
 
     public CookieImageDownloader(Context context) {
         super(context);
@@ -80,6 +81,9 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
             }
             return r;
         } catch (ResponseException e) {
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "Error downloading image", e);
+            }
             throw e;
         }
     }

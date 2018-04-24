@@ -14,7 +14,7 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 public class UserGetPermissionsResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetUsrPermRspHdlr";
-    private long userId;
+    private final long userId;
 
     public UserGetPermissionsResponseHandler(long userId) {
         super("pwg.permissions.getList", TAG);

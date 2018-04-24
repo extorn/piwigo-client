@@ -33,16 +33,26 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupGetPermissionsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.UserAddResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.UserDeleteResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.UserGetPermissionsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.UserPermissionsAddResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.UserPermissionsRemovedResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.UserUpdateInfoResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
 import delit.piwigoclient.ui.common.CustomImageButton;
@@ -78,7 +88,7 @@ public class UserFragment extends MyFragment {
     private static final String STATE_FIELDS_EDITABLE = "fieldsAreEditable";
     private static final String STATE_NEW_GROUP_MEMBERSHIP = "newGroupMembership";
     private static final String IN_FLIGHT_SAVE_ACTION_IDS = "saveActionIds";
-    public static final String STATE_SELECT_GROUPS_ACTION_ID = "selectGroupsActionId";
+    private static final String STATE_SELECT_GROUPS_ACTION_ID = "selectGroupsActionId";
 
     // fields
     private EditText usernameField;
@@ -96,7 +106,7 @@ public class UserFragment extends MyFragment {
     private TextView lastVisitedFieldLabel;
 
     // other stuff
-    private SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.UK);
 
     // field value options
     private int[] userPrivacyLevelValues;
@@ -185,11 +195,9 @@ public class UserFragment extends MyFragment {
     }
 
     private HashSet<Long> getGroupMembership(HashSet<Group> groupMembership) {
-        HashSet<Long> groupIds = new HashSet<>(groupMembership == null? 0 : groupMembership.size());
-        if(groupMembership != null) {
-            for (Group group : groupMembership) {
-                groupIds.add(group.getId());
-            }
+        HashSet<Long> groupIds = PiwigoUtils.toSetOfIds(groupMembership);
+        if(groupIds == null) {
+            groupIds = new HashSet<>(0);
         }
         return groupIds;
     }
@@ -252,7 +260,7 @@ public class UserFragment extends MyFragment {
         View v = inflater.inflate(R.layout.fragment_user, container, false);
 
         AdView adView = v.findViewById(R.id.user_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {
@@ -369,7 +377,7 @@ public class UserFragment extends MyFragment {
         }
 
         if (availableGalleries == null) {
-            addActiveServiceCall(R.string.progress_loading_user_details, PiwigoAccessService.startActionGetSubCategoryNames(CategoryItem.ROOT_ALBUM.getId(), true, getContext()));
+            addActiveServiceCall(R.string.progress_loading_user_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         }
 
         if(user.getId() < 0) {
@@ -379,14 +387,14 @@ public class UserFragment extends MyFragment {
         } else {
             if (currentGroupMembership == null) {
                 if (user.getGroups().size() > 0) {
-                    addActiveServiceCall(R.string.progress_loading_user_details, PiwigoAccessService.startActionGetGroupsList(user.getGroups(), 0, 100, getContext()));
+                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups(), 0, 100).invokeAsync(getContext()));
                 } else {
                     currentGroupMembership = new HashSet<>();
                 }
             }
             fillGroupMembershipField();
             if (currentDirectAlbumPermissions == null) {
-                addActiveServiceCall(R.string.progress_loading_user_details, PiwigoAccessService.startActionGetAllAlbumPermissionsForUser(user.getId(), getContext()));
+                addActiveServiceCall(R.string.progress_loading_user_details, new UserGetPermissionsResponseHandler(user.getId()).invokeAsync(getContext()));
             }
         }
 
@@ -401,11 +409,11 @@ public class UserFragment extends MyFragment {
         newUser = setModelFromFields(new User());
         setFieldsEditable(false);
         if(newUser.getId() < 0) {
-            long saveActionId = PiwigoAccessService.startActionAddUser(newUser, getContext());
+            long saveActionId = new UserAddResponseHandler(newUser).invokeAsync(getContext());
             saveActionIds.add(saveActionId);
             addActiveServiceCall(R.string.progress_adding_user, saveActionId);
         } else {
-            long saveActionId = PiwigoAccessService.startActionUpdateUserInfo(newUser, getContext());
+            long saveActionId = new UserUpdateInfoResponseHandler(newUser).invokeAsync(getContext());
             saveActionIds.add(saveActionId);
             addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
             saveUserPermissionsChangesIfRequired();
@@ -414,7 +422,7 @@ public class UserFragment extends MyFragment {
     }
 
     private HashSet<Group> getLatestGroupMembership() {
-        HashSet<Group> currentSelection = null;
+        HashSet<Group> currentSelection;
         if(newGroupMembership != null) {
             currentSelection = newGroupMembership;
         } else {
@@ -502,7 +510,7 @@ public class UserFragment extends MyFragment {
 
     private void deleteUserNow(User thisItem) {
 
-        addActiveServiceCall(R.string.progress_delete_user, PiwigoAccessService.startActionDeleteUser(thisItem.getId(), getContext()));
+        addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId()).invokeAsync(getContext()));
     }
 
     private void onUserSaved(PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse response) {
@@ -542,12 +550,12 @@ public class UserFragment extends MyFragment {
         HashSet<Long> userPermissionsToAdd = SetUtils.difference(newDirectAlbumPermissions, currentDirectAlbumPermissions);
 
         if (userPermissionsToRemove.size() > 0) {
-            long saveActionId = PiwigoAccessService.startActionRemoveUserPermissions(newUser.getId(), userPermissionsToRemove, getContext());
+            long saveActionId = new UserPermissionsRemovedResponseHandler(newUser.getId(), userPermissionsToRemove).invokeAsync(getContext());
             saveActionIds.add(saveActionId);
             addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
         }
         if (userPermissionsToAdd.size() > 0) {
-            long saveActionId = PiwigoAccessService.startActionAddUserPermissions(newUser.getId(), userPermissionsToAdd, getContext());
+            long saveActionId = new UserPermissionsAddResponseHandler(newUser.getId(), userPermissionsToAdd).invokeAsync(getContext());
             saveActionIds.add(saveActionId);
             addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
         }
@@ -685,11 +693,11 @@ public class UserFragment extends MyFragment {
         newUser.setId(savedUser.getId());
         newUser.setPassword(null);
         setFieldsFromModel(newUser);
-        addActiveServiceCall(R.string.progress_saving_changes, PiwigoAccessService.startActionUpdateUserInfo(newUser, getContext()));
+        addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler(newUser).invokeAsync(getContext()));
         saveUserPermissionsChangesIfRequired();
     }
 
-    public void onGroupsLoaded(PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    private void onGroupsLoaded(PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
         currentGroupMembership = response.getGroups();
         fillGroupMembershipField();
     }
@@ -700,7 +708,7 @@ public class UserFragment extends MyFragment {
         populateAlbumPermissionsList(getLatestDirectAlbumPermissions(), getLatestIndirectAlbumPermissions());
     }
 
-    public void onUserPermissionsRetrieved(PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse response) {
+    private void onUserPermissionsRetrieved(PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse response) {
         // We're retrieving the current configuration
         currentDirectAlbumPermissions = response.getDirectlyAccessibleAlbumIds();
         currentIndirectAlbumPermissions = response.getIndirectlyAccessibleAlbumIds();
@@ -709,14 +717,14 @@ public class UserFragment extends MyFragment {
         }
     }
 
-    public void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
         this.availableGalleries = response.getAlbumNames();
         if (currentIndirectAlbumPermissions != null) {
             populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
         }
     }
 
-    public void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
+    private void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
         EventBus.getDefault().post(new UserDeletedEvent(user));
         // return to previous screen
         if(isVisible()) {
@@ -754,7 +762,7 @@ public class UserFragment extends MyFragment {
 
             HashSet<Long> newGroupsMembership = new HashSet<>(groupSelectionCompleteEvent.getCurrentSelection());
             if(newGroupsMembership.size() > 0) {
-                addActiveServiceCall(R.string.progress_reloading_album_permissions, PiwigoAccessService.startActionGetAllAlbumPermissionsForGroups(newGroupsMembership, getContext()));
+                addActiveServiceCall(R.string.progress_reloading_album_permissions, new GroupGetPermissionsResponseHandler(newGroupsMembership).invokeAsync(getContext()));
             } else {
                 newIndirectAlbumPermissions = new HashSet<>(0);
             }

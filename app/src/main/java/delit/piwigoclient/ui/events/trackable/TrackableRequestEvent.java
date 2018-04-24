@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 public class TrackableRequestEvent implements Serializable {
-    private static AtomicInteger actionIdGenerator = new AtomicInteger(0);
+    private static final AtomicInteger actionIdGenerator = new AtomicInteger(0);
     private int actionId;
 
     public synchronized static int getNextEventId() {

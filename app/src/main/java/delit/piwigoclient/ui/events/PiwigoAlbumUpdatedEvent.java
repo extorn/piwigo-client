@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.events;
 
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 
 /**
  * Created by gareth on 03/04/18.
@@ -8,13 +8,13 @@ import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 
 public class PiwigoAlbumUpdatedEvent {
 
-    private final PiwigoAlbum updatedAlbum;
+    private final ResourceContainer updatedAlbum;
 
-    public PiwigoAlbumUpdatedEvent(PiwigoAlbum album) {
+    public PiwigoAlbumUpdatedEvent(ResourceContainer album) {
         this.updatedAlbum = album;
     }
 
-    public PiwigoAlbum getUpdatedAlbum() {
+    public ResourceContainer getUpdatedAlbum() {
         return updatedAlbum;
     }
 }

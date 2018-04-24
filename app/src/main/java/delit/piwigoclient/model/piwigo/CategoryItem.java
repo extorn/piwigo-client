@@ -75,10 +75,7 @@ public class CategoryItem extends GalleryItem {
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof GalleryItem)) {
-            return false;
-        }
-        return ((GalleryItem) other).getId() == this.getId();
+        return other instanceof GalleryItem && ((GalleryItem) other).getId() == this.getId();
     }
 
     @Override
@@ -147,7 +144,7 @@ public class CategoryItem extends GalleryItem {
     }
 
     private CategoryItem locateChildAlbum(List<Long> parentageChain, int idx) {
-        if(getId() != parentageChain.get(idx).longValue()) {
+        if(getId() != parentageChain.get(idx)) {
             return null;
         }
         if(parentageChain.size() == getParentageChain().size() + 1) {

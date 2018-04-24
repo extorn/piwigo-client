@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 public class KeystoreLoadOperationResult implements Serializable {
-    private KeystoreLoadOperation loadOperation;
-    private Map<Key, Certificate[]> keystoreContent;
-    private List<SecurityOperationException> exceptionList;
+    private final KeystoreLoadOperation loadOperation;
+    private final Map<Key, Certificate[]> keystoreContent;
+    private final List<SecurityOperationException> exceptionList;
 
     public KeystoreLoadOperationResult(KeystoreLoadOperation loadOperation) {
         this.loadOperation = loadOperation;

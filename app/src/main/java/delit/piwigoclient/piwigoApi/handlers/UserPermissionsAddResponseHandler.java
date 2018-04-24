@@ -15,7 +15,7 @@ public class UserPermissionsAddResponseHandler extends AbstractPiwigoWsResponseH
 
     private static final String TAG = "addUsrPermRspHdlr";
     private final HashSet<Long> newAlbumsAllowedAccessTo;
-    private long userId;
+    private final long userId;
 
     public UserPermissionsAddResponseHandler(long userId, HashSet<Long> newAlbumsAllowedAccessTo) {
         super("pwg.permissions.add", TAG);

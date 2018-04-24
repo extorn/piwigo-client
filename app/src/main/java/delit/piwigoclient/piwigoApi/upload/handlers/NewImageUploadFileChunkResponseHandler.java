@@ -18,7 +18,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
 
     private static final String TAG = "UploadFileChunkRspHdlr";
 
-    private UploadFileChunk fileChunk;
+    private final UploadFileChunk fileChunk;
 
     public NewImageUploadFileChunkResponseHandler(UploadFileChunk fileChunk) {
         super("pwg.images.upload", TAG);

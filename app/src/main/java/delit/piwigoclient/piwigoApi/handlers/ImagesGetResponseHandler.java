@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,16 +33,14 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetResourcesRspHdlr";
-    private final Context context;
     private final String multimediaExtensionList;
     private final CategoryItem parentAlbum;
     private final String sortOrder;
     private final int pageSize;
     private final int page;
 
-    public ImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, Context c, String multimediaExtensionList) {
+    public ImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, String multimediaExtensionList) {
         super("pwg.categories.getImages", TAG);
-        this.context = c;
         this.parentAlbum = parentAlbum;
         this.sortOrder = sortOrder;
         this.page = page;
@@ -68,7 +67,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray images = result.get("images").getAsJsonArray();
 
-        ResourceParser resourceParser = new ResourceParser(context, multimediaExtensionList);
+        ResourceParser resourceParser = new ResourceParser(getContext(), multimediaExtensionList);
 
         for (int i = 0; i < images.size(); i++) {
             JsonObject image = (JsonObject) images.get(i);
@@ -87,7 +86,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
         private final Pattern p;
         private Matcher m;
-        private SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         private final int screenWidth;
 
         public ResourceParser(Context context, String multimediaExtensionList) {
@@ -142,7 +141,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
             String originalResourceUrl = image.get("element_url").getAsString();
             JsonObject derivatives = image.get("derivatives").getAsJsonObject();
-            String thumbnail = null;
+            String thumbnail;
             ResourceItem item;
 
             if (m == null) {
@@ -152,7 +151,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
             }
 
             String dateLastAlteredStr = image.get("date_available").getAsString();
-            Date dateLastAltered = null;
+            Date dateLastAltered;
             try {
                 dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
             } catch (ParseException e) {

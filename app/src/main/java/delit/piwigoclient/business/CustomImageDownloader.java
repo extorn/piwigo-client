@@ -10,7 +10,6 @@ import com.squareup.picasso.Downloader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 
@@ -34,8 +33,7 @@ public class CustomImageDownloader implements Downloader {
         String uriToCall = uri.toString();
         ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(uriToCall);
         String piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
-        boolean asyncMode = false;
-        handler.setCallDetails(context, piwigoServerUrl, asyncMode);
+        handler.setCallDetails(context, piwigoServerUrl, false);
         handler.runCall();
 
         if(!handler.isSuccess()) {

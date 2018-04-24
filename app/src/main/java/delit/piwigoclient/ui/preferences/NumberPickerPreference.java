@@ -22,7 +22,6 @@ import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
-import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
@@ -49,7 +48,7 @@ public class NumberPickerPreference extends DialogPreference {
     private final boolean setDefaultOnAttach;
     private final boolean wrapPickList;
     private NumberPicker mPicker;
-    private int multiplier;
+    private final int multiplier;
     private int mNumber = 0;
 
     public NumberPickerPreference(Context context, AttributeSet attrs) {
@@ -67,7 +66,7 @@ public class NumberPickerPreference extends DialogPreference {
         minValue = a.getInt(R.styleable.NumberPickerPreference_minValue, DEFAULT_minValue);
         int DEFAULT_multiplier = 1;
         multiplier = a.getInt(R.styleable.NumberPickerPreference_multiplier, DEFAULT_multiplier);
-        mNumber = a.getInt(R.styleable.NumberPickerPreference_defaultValue, 0);
+        mNumber = a.getInt(R.styleable.NumberPickerPreference_defValue, 0);
         setDefaultOnAttach = a.getBoolean(R.styleable.NumberPickerPreference_setDefaultOnAttach, true);
         wrapPickList = a.getBoolean(R.styleable.NumberPickerPreference_wrapPickList, false);
         a.recycle();
@@ -102,6 +101,7 @@ public class NumberPickerPreference extends DialogPreference {
     public void updateDefaultValue(int newDefault) {
         setDefaultValue(newDefault);
         setValue(getAdjustedPersistedInt(getPersistedInt(newDefault)));
+        notifyChanged();
     }
 
     @Override
@@ -115,9 +115,7 @@ public class NumberPickerPreference extends DialogPreference {
         if (multiplier == 1) {
             return defaultPersistedInt;
         } else {
-            int persistedInt = defaultPersistedInt;
-            int adjustedValue = (int) Math.round((double) persistedInt / multiplier);
-            return adjustedValue;
+            return (int) Math.round((double) defaultPersistedInt / multiplier);
         }
     }
 
@@ -164,11 +162,11 @@ public class NumberPickerPreference extends DialogPreference {
      */
     @Override
     public CharSequence getSummary() {
-        int adjustedValue = (int) Math.round((double) mNumber / getMultiplier());
+//        int adjustedValue = (int) Math.round((double) mNumber / getMultiplier());
         CharSequence summary = super.getSummary();
         if (summary != null) {
-            return String.format(summary.toString(), adjustedValue);
+            return String.format(summary.toString(), mNumber);
         }
-        return summary;
+        return null;
     }
 }

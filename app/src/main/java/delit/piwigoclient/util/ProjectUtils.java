@@ -10,18 +10,17 @@ import android.content.pm.PackageManager;
 
 public class ProjectUtils {
     public static int getVersionCode(Context c) {
-        PackageInfo pInfo = null;
+        PackageInfo pInfo;
         try {
             pInfo = c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException("Somehow the package in MyApplication cannot be found in the package...", e);
         }
-        int verCode = pInfo.versionCode;
-        return verCode;
+        return pInfo.versionCode;
     }
 
     public static String getVersionName(Context c) {
-        PackageInfo pInfo = null;
+        PackageInfo pInfo;
         try {
             pInfo = c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {

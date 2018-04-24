@@ -16,7 +16,7 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
 
     private static final String TAG = "ImagesExistRspHdlr";
     private final Collection<String> checksums;
-    private boolean nameUnique;
+    private final boolean nameUnique;
 
     public ImageFindExistingImagesResponseHandler(Collection<String> checksums, boolean nameUnique) {
         super("pwg.images.exist", TAG);

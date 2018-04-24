@@ -20,7 +20,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -36,7 +38,10 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     private static final String STATE_ALLOW_MULTISELECT = "multiSelectEnabled";
     private static final String STATE_ALLOW_EDITING = "editingEnabled";
+    private static final String STATE_ALLOW_ADDITION = "additionEnabled";
     private static final String STATE_CURRENT_SELECTION = "currentSelection";
+    private static final String STATE_INITIAL_SELECTION_LOCKED = "initialSelectionLocked";
+    private static final String STATE_INITIAL_SELECTION = "initialSelection";
     private static final String STATE_ACTION_ID = "actionId";
     private static final String STATE_SELECT_TOGGLE = "selectToggle";
     private Y list;
@@ -47,16 +52,23 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     private boolean multiSelectEnabled;
     private int actionId;
     private HashSet<Long> currentSelection;
+    private HashSet<Long> initialSelection;
     private boolean editingEnabled;
     private Button toggleAllSelectionButton;
     private boolean selectToggle;
+    private CustomImageButton addListItemButton;
+    private boolean additionEnabled;
+    private boolean initialSelectionLocked;
 
-    public static Bundle buildArgsBundle(boolean multiSelectEnabled, boolean allowEditing, int actionId, HashSet<Long> initialSelection) {
+    public static Bundle buildArgsBundle(boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, boolean initialSelectionLocked, int actionId, HashSet<Long> initialSelection) {
         Bundle args = new Bundle();
         args.putBoolean(STATE_ALLOW_EDITING, allowEditing);
+        args.putBoolean(STATE_ALLOW_ADDITION, allowAddition);
         args.putBoolean(STATE_ALLOW_MULTISELECT, multiSelectEnabled);
         args.putInt(STATE_ACTION_ID, actionId);
-        args.putSerializable(STATE_CURRENT_SELECTION, initialSelection != null ? initialSelection : new HashSet<Long>(0));
+        HashSet<Long> selection = initialSelection != null ? initialSelection : new HashSet<Long>(0);
+        args.putSerializable(STATE_INITIAL_SELECTION, selection);
+        args.putSerializable(STATE_INITIAL_SELECTION_LOCKED, initialSelectionLocked);
         return args;
     }
 
@@ -66,6 +78,10 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     public int getActionId() {
         return actionId;
+    }
+
+    public CustomImageButton getAddListItemButton() {
+        return addListItemButton;
     }
 
     @Override
@@ -85,11 +101,21 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            multiSelectEnabled = args.getBoolean(STATE_ALLOW_MULTISELECT);
-            actionId = args.getInt(STATE_ACTION_ID);
-            currentSelection = (HashSet<Long>) args.getSerializable(STATE_CURRENT_SELECTION);
-            editingEnabled = args.getBoolean(STATE_ALLOW_EDITING);
+            loadStateFromBundle(args);
         }
+    }
+
+    private void loadStateFromBundle(Bundle args) {
+        multiSelectEnabled = args.getBoolean(STATE_ALLOW_MULTISELECT);
+        actionId = args.getInt(STATE_ACTION_ID);
+        currentSelection = (HashSet<Long>) args.getSerializable(STATE_CURRENT_SELECTION);
+        initialSelection = (HashSet<Long>) args.getSerializable(STATE_INITIAL_SELECTION);
+        if(currentSelection == null) {
+            currentSelection = initialSelection;
+        }
+        initialSelectionLocked = args.getBoolean(STATE_INITIAL_SELECTION_LOCKED);
+        editingEnabled = args.getBoolean(STATE_ALLOW_EDITING);
+        additionEnabled = args.getBoolean(STATE_ALLOW_ADDITION);
     }
 
     @Override
@@ -120,17 +146,13 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         super.onCreateView(inflater, container, savedInstanceState);
 
         if (savedInstanceState != null) {
-            multiSelectEnabled = savedInstanceState.getBoolean(STATE_ALLOW_MULTISELECT);
-            actionId = savedInstanceState.getInt(STATE_ACTION_ID);
-            currentSelection = (HashSet<Long>) savedInstanceState.getSerializable(STATE_CURRENT_SELECTION);
-            editingEnabled = savedInstanceState.getBoolean(STATE_ALLOW_EDITING);
-            selectToggle = savedInstanceState.getBoolean(STATE_SELECT_TOGGLE);
+            loadStateFromBundle(savedInstanceState);
         }
 
         View view = inflater.inflate(getViewId(), container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance(getContext()).shouldShowAdverts()) {
+        if(AdsManager.getInstance().shouldShowAdverts()) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setVisibility(View.VISIBLE);
         } else {
@@ -143,14 +165,8 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
         list = view.findViewById(R.id.list);
 
-        CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
-        addListItemButton.setVisibility(View.GONE);
-//        addListItemButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                addAlbum();
-//            }
-//        });
+        addListItemButton = view.findViewById(R.id.list_action_add_item_button);
+
         Button cancelChangesButton = view.findViewById(R.id.list_action_cancel_button);
         cancelChangesButton.setVisibility(View.VISIBLE);
         cancelChangesButton.setOnClickListener(new View.OnClickListener() {
@@ -193,19 +209,31 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setAppropriateComponentState();
+    }
+
     protected abstract void setPageHeading(TextView headingField);
 
     protected abstract void selectAllListItems();
 
     protected abstract void selectNoneListItems();
 
+    protected abstract void selectOnlyListItems(Set<Long> selectionIds);
+
     private void onToggleAllSelection() {
         if (!selectToggle) {
             selectAllListItems();
             toggleAllSelectionButton.setText(getString(R.string.none));
             selectToggle = true;
-        } else if (selectToggle) {
-            selectNoneListItems();
+        } else {
+            if(initialSelectionLocked) {
+                selectOnlyListItems(Collections.unmodifiableSet(initialSelection));
+            } else {
+                selectNoneListItems();
+            }
             toggleAllSelectionButton.setText(getString(R.string.all));
             selectToggle = false;
         }
@@ -225,6 +253,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         this.listAdapter = listAdapter;
         if(listAdapter instanceof SelectableItemsAdapter) {
             ((SelectableItemsAdapter)listAdapter).setSelectedItems(currentSelection);
+            ((SelectableItemsAdapter) listAdapter).setInitiallySelectedItems(initialSelection, initialSelectionLocked);
+        } else if(initialSelectionLocked) {
+            throw new IllegalStateException("Support for initial selection locking requires adapter to implement SelectableItemsAdapter");
         }
     }
 
@@ -247,6 +278,10 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         HashSet<Long> selectedIdsSet = new HashSet<>(selectedItemIds.length);
         for(long selectedId : selectedItemIds) {
             selectedIdsSet.add(selectedId);
+        }
+        // Now just for added security - make certain it has all the initial selection if locked
+        if(initialSelectionLocked) {
+            selectedIdsSet.addAll(initialSelection);
         }
         onSelectActionComplete(selectedIdsSet);
     }
@@ -280,10 +315,17 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         boolean enabled = editingEnabled && !isNotAuthorisedToAlterState();
         saveChangesButton.setEnabled(enabled);
         toggleAllSelectionButton.setEnabled(enabled);
-        listAdapter.setEnabled(enabled);
+        if(listAdapter != null) {
+            listAdapter.setEnabled(enabled);
+        }
+        addListItemButton.setVisibility(!isNotAuthorisedToAlterState() && additionEnabled?View.VISIBLE:View.GONE);
     }
 
     public boolean isEditingEnabled() {
         return editingEnabled;
+    }
+
+    public boolean isInitialSelectionLocked() {
+        return initialSelectionLocked;
     }
 }

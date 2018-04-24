@@ -1,24 +1,21 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-import java.util.HashSet;
-
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
-public class ImageGetInfoResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
+public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetResourceInfoRspHdlr";
-    private T resourceItem;
+    private final T resourceItem;
     private final String multimediaExtensionList;
 
-    public ImageGetInfoResponseHandler(T piwigoResource, String multimediaExtensionList) {
+    public BaseImageGetInfoResponseHandler(T piwigoResource, String multimediaExtensionList) {
         super("pwg.images.getInfo", TAG);
         this.resourceItem = piwigoResource;
         this.multimediaExtensionList = multimediaExtensionList;
@@ -34,18 +31,15 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
         return params;
     }
 
-    @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        JsonObject result = rsp.getAsJsonObject();
-
+    protected ResourceItem parseResourceItemFromJson(JsonObject resourceItemElem) throws JSONException {
         ImagesGetResponseHandler.ResourceParser resourceParser = new ImagesGetResponseHandler.ResourceParser(getContext(), multimediaExtensionList);
 
-        ResourceItem loadedResourceItem = resourceParser.parseAndProcessResourceData(result);
+        ResourceItem loadedResourceItem = resourceParser.parseAndProcessResourceData(resourceItemElem);
 
-        int privacyLevel = result.get("level").getAsInt();
+        int privacyLevel = resourceItemElem.get("level").getAsInt();
         loadedResourceItem.setPrivacyLevel(privacyLevel);
 
-        JsonObject rates = result.get("rates").getAsJsonObject();
+        JsonObject rates = resourceItemElem.get("rates").getAsJsonObject();
         if(rates != null && !rates.isJsonNull()) {
             JsonElement scoreJsonElem = rates.get("score");
             if (scoreJsonElem != null && !scoreJsonElem.isJsonNull()) {
@@ -66,7 +60,7 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
             loadedResourceItem.setAverageRating(averageRating);
         }
 
-        JsonElement checksumJsonElem = result.get("md5sum");
+        JsonElement checksumJsonElem = resourceItemElem.get("md5sum");
         String fileChecksum = null;
         if(checksumJsonElem != null && !checksumJsonElem.isJsonNull()) {
             fileChecksum = checksumJsonElem.getAsString();
@@ -79,6 +73,15 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends Abstrac
             resourceItem.copyFrom(loadedResourceItem, false);
             loadedResourceItem = resourceItem;
         }
+
+        return loadedResourceItem;
+    }
+
+    @Override
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+
+        ResourceItem loadedResourceItem = parseResourceItemFromJson(result);
 
         PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<>(getMessageId(), getPiwigoMethod(), (T)loadedResourceItem);
         storeResponse(r);

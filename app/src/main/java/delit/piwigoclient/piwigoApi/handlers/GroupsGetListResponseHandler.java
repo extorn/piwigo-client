@@ -21,6 +21,10 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
     private final long pageSize;
     private final Set<Long> groupIds;
 
+    public GroupsGetListResponseHandler(long page, long pageSize) {
+        this(null, page, pageSize);
+    }
+
     public GroupsGetListResponseHandler(Set<Long> groupIds, long page, long pageSize) {
         super("pwg.groups.getList", TAG);
         this.page = page;
@@ -66,7 +70,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         return groups;
     }
 
-    public static Group parseGroupFromJson(JsonObject groupObj) throws JSONException {
+    private static Group parseGroupFromJson(JsonObject groupObj) throws JSONException {
         long id = groupObj.get("id").getAsLong();
         String name = groupObj.get("name").getAsString();
         boolean isDefault = groupObj.get("is_default").getAsBoolean();

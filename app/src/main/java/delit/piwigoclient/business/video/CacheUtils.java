@@ -25,7 +25,7 @@ import delit.piwigoclient.R;
 
 public class CacheUtils {
 
-    public static File getVideoCacheFolder(Context c) throws IOException {
+    private static File getVideoCacheFolder(Context c) throws IOException {
         File f = new File(c.getApplicationContext().getExternalCacheDir(), "videos");
         if(!f.exists() || !f.isDirectory()) {
             boolean created = f.mkdir();
@@ -54,7 +54,7 @@ public class CacheUtils {
     }
 
     public static CachedContent loadCachedContent(File f) throws IOException {
-        CachedContent cachedContent = null;
+        CachedContent cachedContent;
         try {
             ObjectInputStream ois = null;
             try {
@@ -72,14 +72,14 @@ public class CacheUtils {
         return cachedContent;
     }
 
-    public static final FilenameFilter metadataFileFilter = new FilenameFilter() {
+    private static final FilenameFilter metadataFileFilter = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
             return name.endsWith(".dat");
         }
     };
 
-    public static final Comparator<CachedContent> cacheItemAgeComparator = new Comparator<CachedContent>() {
+    private static final Comparator<CachedContent> cacheItemAgeComparator = new Comparator<CachedContent>() {
 
         @Override
         public int compare(CachedContent o1, CachedContent o2) {
@@ -227,7 +227,7 @@ public class CacheUtils {
 //        file.delete();
 //    }
 
-    public static boolean deleteQuietly(File file) {
+    private static boolean deleteQuietly(File file) {
         if (file == null || !file.exists())
             return true;
         if (!file.isDirectory())
@@ -253,7 +253,7 @@ public class CacheUtils {
     }
 
     public static File getBasicCacheFolder(Context context) {
-        File cacheFolder = null;
+        File cacheFolder;
         try {
             cacheFolder = new File(context.getApplicationContext().getExternalCacheDir(), "basic-cache");
             if (!cacheFolder.exists()) {
@@ -288,7 +288,7 @@ public class CacheUtils {
         }
     }
 
-    public static long folderSize(File directory) {
+    private static long folderSize(File directory) {
         long length = 0;
         File[] fileList = directory.listFiles();
         if(fileList != null) {

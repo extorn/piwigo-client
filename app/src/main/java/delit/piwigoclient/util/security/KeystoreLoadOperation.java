@@ -9,7 +9,7 @@ import java.util.Map;
 public class KeystoreLoadOperation extends X509LoadOperation {
     private List<String> aliasesToLoad;
     private char[] keystorePass;
-    private Map<String, char[]> aliasPassMapp;
+    private final Map<String, char[]> aliasPassMapp;
 
     public KeystoreLoadOperation(File file) {
         super(file);

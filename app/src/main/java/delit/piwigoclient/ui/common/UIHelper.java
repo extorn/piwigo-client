@@ -33,6 +33,7 @@ import java.math.BigInteger;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -46,7 +47,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.piwigoApi.PiwigoAccessService;
+import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
@@ -71,7 +72,7 @@ public abstract class UIHelper<T> {
     private DismissListener dismissListener;
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
-    private Queue<QueuedMessage> messageQueue = new LinkedBlockingQueue<>(100);
+    private final Queue<QueuedMessage> messageQueue = new LinkedBlockingQueue<>(100);
     private HashSet<Long> activeServiceCalls = new HashSet<>(3);
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;
@@ -299,7 +300,7 @@ public abstract class UIHelper<T> {
                 QueuedMessage nextMessage = messageQueue.peek();
                 if(nextMessage instanceof QueuedQuestionMessage) {
                     showDialog((QueuedQuestionMessage)nextMessage);
-                } else if(nextMessage instanceof QueuedMessage) {
+                } else if(nextMessage != null) {
                     showDialog(nextMessage);
                 }
             }
@@ -443,7 +444,7 @@ public abstract class UIHelper<T> {
             QueuedMessage nextMessage = messageQueue.peek();
             if(nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage)nextMessage);
-            } else if(nextMessage instanceof QueuedMessage) {
+            } else if(nextMessage != null) {
                 showDialog(nextMessage);
             }
         }
@@ -602,7 +603,7 @@ public abstract class UIHelper<T> {
             return;
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat();
+        DateFormat sdf = SimpleDateFormat.getDateInstance();
         StringBuilder sb = new StringBuilder();
         sb.append(context.getString(R.string.alert_add_cert_to_truststore_pattern));
 
@@ -649,7 +650,7 @@ public abstract class UIHelper<T> {
                     }
                     preNotifiedCerts.addAll(event.getUntrustedCerts().keySet());
                     prefs.edit().putStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
-                    long messageId = PiwigoAccessService.startActionCleanupHttpConnections(context);
+                    long messageId = new HttpConnectionCleanup(context).start();
                     PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
                         @Override
                         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -694,7 +695,7 @@ public abstract class UIHelper<T> {
             QueuedMessage nextMessage = messageQueue.peek();
             if(nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage)nextMessage);
-            } else if(nextMessage instanceof QueuedMessage) {
+            } else if(nextMessage != null) {
                 showDialog(nextMessage);
             }
         }
@@ -706,7 +707,7 @@ public abstract class UIHelper<T> {
             QueuedMessage nextMessage = messageQueue.peek();
             if(nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage)nextMessage);
-            } else if(nextMessage instanceof QueuedMessage) {
+            } else if(nextMessage != null) {
                 showDialog(nextMessage);
             }
         }

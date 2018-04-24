@@ -88,7 +88,7 @@
     <string name="alert_upload_partial_success">Upload complete. Files that could not be uploaded remain in the list for retry if wanted. If any actions are incomplete, you can\'t add new files to the upload list. Click upload button to complete them.</string>
     <string name="alert_upload_failed_piwigo">Upload failed due to error in PIWIGO server (%1$d : %2$s).</string>
     <string name="alert_upload_failed_webserver">Upload failed due to web server error (%1$d : %2$s).</string>
-    <string name="alert_upload_failed_webresponse">Upload failed due to error processing PIWIGO response. This is probably due to a PIWIGO API change. Unparsable response : %1$s.</string>
+    <string name="alert_upload_failed_webresponse">Upload failed due to error processing PIWIGO response. This is probably due to a PIWIGO API change. Unparseable response : %1$s.</string>
     <string name="alert_error_upload_chunk_failed_message_pattern">Upload of chunk for file %1$s failed. Abandoning upload of file.</string>
     <string name="alert_error_upload_file_no_longer_available_message_pattern">File %1$s is no longer available on the device.Perhaps it has been deleted or moved.</string>
     <string name="alert_error_upload_file_read_error_message_pattern">Error while uploading file %1$s</string>
@@ -255,7 +255,11 @@ If you have any questions about this Agreement, please contact us."
 It will be updated regularly to add more features.
 
 There are two versions, a free version (with advertisements) and a paid version (free of advertisements). You are free to choose which you prefer. You cannot 'upgrade' the free version at present, install the paid version, and delete the free version.
-Note: There is currently no difference between the versions, and the intention is to keep the versions in-sync. What this means is that the same changes will be made to both free and paid versions. However, the free version is likely to be a release or two ahead of the paid one, making the paid one more stable.
+Note: The versions will diverge over time. Most changes will be made to both free and paid versions.
+
+Presently, the paid version has added support for tags:
+        Piwigo supports tags to a degree out of the box, but the User Tags plugin adds more features (basic testing performed).
+
 
 At the moment, it provides a basic level of functionality to allow navigation around an existing gallery, upload of new photos and videos, and creating new categories within a gallery. Some fields can be amended once created, but many are still read only.... for now!
 
@@ -300,7 +304,7 @@ THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMP
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Shintaro Katafuchi
+Copyright © 2015 Shintaro Katafuchi
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -749,9 +753,24 @@ SOFTWARE.
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Error Uploading</string>
-    <string name="alert_message_error_uploading_end">An error occured after successfull uploading all files. Temporary folder may not have been deleted from the server. Ignore this error and fix it manually at some point?</string>
-    <string name="alert_message_error_uploading_start">An error occured before uploading all files. Temporary folder may not have been successfully created for example. Cancel the upload?</string>
+    <string name="alert_message_error_uploading_end">An error occurred after successful uploading all files. Temporary folder may not have been deleted from the server. Ignore this error and fix it manually at some point?</string>
+    <string name="alert_message_error_uploading_start">An error occurred before uploading all files. Temporary folder may not have been successfully created for example. Cancel the upload?</string>
     <string name="release_history">Release History</string>
     <string name="planned_releases">Planned Releases</string>
-
+    <string name="tags_heading">Tags</string>
+    <string name="progress_loading_tags">Retrieving Tags</string>
+    <string name="alert_confirm_really_delete_tag">Are you sure you want to delete this tag? Any resources that are linked to it will not be deleted, but this operation is permanent.</string>
+    <string name="alert_tag_delete_success_pattern">Tag (%1$s) was successfully deleted</string>
+    <string name="alert_tag_delete_failed_pattern">Error while deleting tag (%1$s). Please retry.</string>
+    <string name="tag_usage_count_pattern">(%1$d uses)</string>
+    <string name="progress_loading_tag_details">Retrieving resources matching tag</string>
+    <string name="tags_menu_title">Tags</string>
+    <string name="tag_empty_text">No items tagged with this tag</string>
+    <string name="tag_content_load_failed_text">Failed to load resources linked to tag</string>
+    <string name="tag_heading">Tag</string>
+    <string name="tag_tagname_title">Tag name</string>
+    <string name="alert_paid_feature_only">This feature is only available in the paid app</string>
+    <string name="paid_feature_only">paid app only</string>
+    <string name="slideshow_image_details_tags_title">Tags</string>
+    <string name="button_search">Search</string>
 </resources>
