@@ -76,14 +76,14 @@ public class MyFragment extends Fragment {
         return new BasicPiwigoResponseListener();
     }
 
-    public boolean isSessionDetailsChanged() {
+    protected boolean isSessionDetailsChanged() {
         return !PiwigoSessionDetails.matchesSessionToken(piwigoSessionToken);
     }
-    public boolean isServerConnectionChanged() {
+    protected boolean isServerConnectionChanged() {
         return !PiwigoSessionDetails.matchesServerConnection(piwigoServerConnected);
     }
 
-    public void updateActiveSessionDetails() {
+    protected void updateActiveSessionDetails() {
         piwigoSessionToken = PiwigoSessionDetails.getActiveSessionToken();
         piwigoServerConnected = PiwigoSessionDetails.getActiveServerConnection();
     }
@@ -120,9 +120,7 @@ public class MyFragment extends Fragment {
 
         doInOnCreateView();
 
-        View v = super.onCreateView(inflater, container, savedInstanceState);
-
-        return v;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     /**
@@ -143,13 +141,12 @@ public class MyFragment extends Fragment {
         determinateProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
     }
 
-    public FragmentUIHelper getUiHelper() {
+    protected FragmentUIHelper getUiHelper() {
         return uiHelper;
     }
 
     protected boolean isAppInReadOnlyMode() {
-        boolean isReadOnly = prefs.getBoolean(getContext().getString(R.string.preference_app_read_only_mode_key), false);
-        return isReadOnly;
+        return prefs.getBoolean(getContext().getString(R.string.preference_app_read_only_mode_key), false);
     }
 
 }

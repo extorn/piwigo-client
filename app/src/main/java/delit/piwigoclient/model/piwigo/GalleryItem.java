@@ -70,10 +70,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Seria
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof GalleryItem)) {
-            return false;
-        }
-        return ((GalleryItem) other).id == this.id;
+        return other instanceof GalleryItem && ((GalleryItem) other).id == this.id;
     }
 
     @Override
@@ -98,7 +95,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Seria
             return 1;
         }
         // both are categories
-        if (isCategory && otherIsCategory) {
+        if (isCategory) {
             if(this == CategoryItem.BLANK || o == CategoryItem.ADVERT) {
                 return 1;
             } else if(o == CategoryItem.BLANK || this == CategoryItem.ADVERT) {

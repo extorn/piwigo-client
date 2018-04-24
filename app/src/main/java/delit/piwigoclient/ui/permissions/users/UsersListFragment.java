@@ -56,8 +56,7 @@ public class UsersListFragment extends MyFragment {
     private int pageToLoadNow = -1;
 
     public static UsersListFragment newInstance() {
-        UsersListFragment fragment = new UsersListFragment();
-        return fragment;
+        return new UsersListFragment();
     }
 
     @Override
@@ -138,13 +137,13 @@ public class UsersListFragment extends MyFragment {
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        RecyclerView recyclerView = view.findViewById(R.id.list);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
 
         recyclerView.setLayoutManager(layoutMan);
 
-        boolean allowMultiselection = false;
+        final boolean allowMultiselection = false;
 
         viewAdapter = new UserRecyclerViewAdapter(container.getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusListener<User>() {
             @Override
@@ -216,7 +215,7 @@ public class UsersListFragment extends MyFragment {
 //        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_information_coming_soon));
     }
 
-    public void onDeleteUser(final User thisItem) {
+    private void onDeleteUser(final User thisItem) {
         String currentUser = PiwigoSessionDetails.getInstance().getUsername();
         if (currentUser.equals(thisItem.getUsername())) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_delete_yourself_pattern), currentUser));
@@ -303,7 +302,7 @@ public class UsersListFragment extends MyFragment {
 
 
 
-    public void onUsersLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse response) {
+    private void onUsersLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse response) {
         synchronized (usersModel) {
             pageToLoadNow = -1;
             retryActionButton.setVisibility(View.GONE);
@@ -324,13 +323,13 @@ public class UsersListFragment extends MyFragment {
         viewAdapter.replaceOrAddItem(event.getUser());
     }
 
-    public void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
+    private void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
         User user = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(user);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), user.getUsername()));
     }
 
-    public void onUserDeleteFailed(final long messageId) {
+    private void onUserDeleteFailed(final long messageId) {
         User user = deleteActionsPending.remove(messageId);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_failed_pattern), user.getUsername()));
     }

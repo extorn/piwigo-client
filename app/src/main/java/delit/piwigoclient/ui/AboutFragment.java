@@ -25,8 +25,7 @@ import delit.piwigoclient.ui.common.MyFragment;
 
 public class AboutFragment extends MyFragment {
     public static AboutFragment newInstance() {
-        AboutFragment fragment = new AboutFragment();
-        return fragment;
+        return new AboutFragment();
     }
 
     @Nullable
@@ -69,7 +68,7 @@ public class AboutFragment extends MyFragment {
             TextView headingText = view.findViewById(R.id.name);
             headingText.setText(heading);
 
-            data = data.replaceAll("\\n[\\s]*(\\s\\-|\\w)", "\n$1");
+            data = data.replaceAll("\\n[\\s]*(\\s-|\\w)", "\n$1");
 
             TextView detailsText = view.findViewById(R.id.details);
             detailsText.setText(data);

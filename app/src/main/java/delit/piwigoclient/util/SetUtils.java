@@ -54,11 +54,7 @@ public class SetUtils {
             }
         }
         if(setB == null) {
-            if(setA == null) {
-                return new HashSet<>(0);
-            } else {
-                return new HashSet<>(setA);
-            }
+            return new HashSet<>(setA);
         }
         HashSet<T> diffs = difference(setA, setB);
         diffs.addAll(difference(setB, setA));

@@ -42,7 +42,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
      */
     @SuppressWarnings("JavadocReference")
     private int getDefaultImagesColumnCount(int orientationId) {
-        float screenWidth = 0;
+        float screenWidth;
         if (getResources().getConfiguration().orientation == orientationId) {
             screenWidth = getScreenWidthInches();
         } else {

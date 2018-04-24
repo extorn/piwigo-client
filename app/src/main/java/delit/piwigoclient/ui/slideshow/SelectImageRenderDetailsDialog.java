@@ -121,15 +121,15 @@ class SelectImageRenderDetailsDialog {
         return builder1.create();
     }
 
-    public float getRotateDegrees() {
+    private float getRotateDegrees() {
          return rotationValues[imageRotation.getSelectedItemPosition()];
     }
 
-    public float getMaxZoom() {
+    private float getMaxZoom() {
         return (float)maxZoomPicker.getValue();
     }
 
-    public ResourceItem.ResourceFile getSelectedFile() {
+    private ResourceItem.ResourceFile getSelectedFile() {
         return adapter.getItem(fileSelectList.getCheckedItemPosition());
     }
 }

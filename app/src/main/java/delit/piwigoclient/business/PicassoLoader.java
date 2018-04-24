@@ -20,13 +20,13 @@ public class PicassoLoader implements Callback {
     private String uriToLoad;
     private final ImageView loadInto;
     private File fileToLoad;
-    public final static int DEFAULT_AUTO_RETRIES = 1;
+    private final static int DEFAULT_AUTO_RETRIES = 1;
     public final static int INFINITE_AUTO_RETRIES = -1;
-    int maxRetries = DEFAULT_AUTO_RETRIES;
-    int retries = 0;
+    private int maxRetries = DEFAULT_AUTO_RETRIES;
+    private int retries = 0;
     private boolean imageLoaded;
     private boolean imageLoading;
-    float rotation = 0;
+    private float rotation = 0;
     private int resourceToLoad = Integer.MIN_VALUE;
     private boolean imageUnavailable;
     public static final String PICASSO_REQUEST_TAG = "PIWIGO";

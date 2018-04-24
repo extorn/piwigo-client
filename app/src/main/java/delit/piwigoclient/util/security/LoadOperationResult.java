@@ -176,11 +176,10 @@ public class LoadOperationResult implements Serializable {
     public SecurityOperationException getNextRecoverableError() {
         for(KeystoreLoadOperationResult result : keystoreLoadResults) {
             if (result.getExceptionList().size() > 0) {
-                for(Iterator<SecurityOperationException> iter = result.getExceptionList().iterator(); iter.hasNext();) {
-                    SecurityOperationException e = iter.next();
+                for (SecurityOperationException e : result.getExceptionList()) {
                     if (e instanceof KeyStoreOperationException) {
                         // handle keystore operation exceptions
-                        if (isRecoverable((KeyStoreOperationException)e)) {
+                        if (isRecoverable((KeyStoreOperationException) e)) {
                             return e;
                         }
                     } else if (e instanceof KeyStoreContentException) {
@@ -232,7 +231,7 @@ public class LoadOperationResult implements Serializable {
 
     public void addPasswordForRerun(SecurityOperationException recoverableError, char[] pass) {
         if (recoverableError instanceof KeyStoreOperationException) {
-            File f = ((KeyStoreOperationException)recoverableError).getFile();
+            File f = recoverableError.getFile();
             KeystoreLoadOperationResult result = findKeystoreLoadOperationResult(f);
             result.getLoadOperation().setKeystorePass(pass);
             result.getExceptionList().remove(recoverableError);

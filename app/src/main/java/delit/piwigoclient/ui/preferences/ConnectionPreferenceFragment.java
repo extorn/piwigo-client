@@ -83,12 +83,12 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
             if ("disk".equals(newValue) || valueChanged) {
                 getUiHelper().runWithExtraPermissions(ConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
-            } else if(valueChanged) {
+            }/* else if(valueChanged) {
                 if (!initialising) {
                     // clear the existing session - it's not valid any more.
                     forkLogoutIfNeeded();
                 }
-            }
+            }*/
 
             Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
             responseCacheFlushButton.setEnabled("disk".equals(newValue));
@@ -408,7 +408,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     }
 
 
-    public void onLogin(PiwigoSessionDetails oldCredentials) {
+    private void onLogin(PiwigoSessionDetails oldCredentials) {
         String msg = getString(R.string.alert_message_success_connectionTest, PiwigoSessionDetails.getInstance().getUserType());
         if(PiwigoSessionDetails.getInstance().getAvailableImageSizes().size() == 0) {
             msg += '\n' + getString(R.string.alert_message_no_available_image_sizes);
@@ -446,8 +446,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             if (isCancelled()) {
                 return null;
             }
-            Set<String> aliases = X509Utils.listAliasesInStore(truststore);
-            return aliases;
+            return X509Utils.listAliasesInStore(truststore);
         }
 
         @Override

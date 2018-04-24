@@ -19,8 +19,7 @@ import delit.piwigoclient.ui.common.MyFragment;
 
 public class LicencesFragment extends MyFragment {
     public static LicencesFragment newInstance() {
-        LicencesFragment fragment = new LicencesFragment();
-        return fragment;
+        return new LicencesFragment();
     }
 
     @Nullable

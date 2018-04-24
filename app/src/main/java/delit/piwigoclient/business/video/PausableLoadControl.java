@@ -19,25 +19,25 @@ public final class PausableLoadControl implements LoadControl {
      * The default minimum duration of media that the player will attempt to ensure is buffered at all
      * times, in milliseconds.
      */
-    public static final int DEFAULT_MIN_BUFFER_MS = 15000;
+    private static final int DEFAULT_MIN_BUFFER_MS = 15000;
 
     /**
      * The default maximum duration of media that the player will attempt to buffer, in milliseconds.
      */
-    public static final int DEFAULT_MAX_BUFFER_MS = 30000;
+    private static final int DEFAULT_MAX_BUFFER_MS = 30000;
 
     /**
      * The default duration of media that must be buffered for playback to start or resume following a
      * user action such as a seek, in milliseconds.
      */
-    public static final int DEFAULT_BUFFER_FOR_PLAYBACK_MS = 2500;
+    private static final int DEFAULT_BUFFER_FOR_PLAYBACK_MS = 2500;
 
     /**
      * The default duration of media that must be buffered for playback to resume after a rebuffer,
      * in milliseconds. A rebuffer is defined to be caused by buffer depletion rather than a user
      * action.
      */
-    public static final int DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = 5000;
+    private static final int DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = 5000;
 
     private static final int ABOVE_HIGH_WATERMARK = 0;
     private static final int BETWEEN_WATERMARKS = 1;
@@ -67,7 +67,7 @@ public final class PausableLoadControl implements LoadControl {
      *
      * @param allocator The {@link DefaultAllocator} used by the loader.
      */
-    public PausableLoadControl(DefaultAllocator allocator) {
+    private PausableLoadControl(DefaultAllocator allocator) {
         this(allocator, DEFAULT_MIN_BUFFER_MS, DEFAULT_MAX_BUFFER_MS, DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                 DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS);
     }
@@ -86,8 +86,8 @@ public final class PausableLoadControl implements LoadControl {
      *                                         playback to resume after a rebuffer, in milliseconds. A rebuffer is defined to be caused by
      *                                         buffer depletion rather than a user action.
      */
-    public PausableLoadControl(DefaultAllocator allocator, int minBufferMs, int maxBufferMs,
-                               long bufferForPlaybackMs, long bufferForPlaybackAfterRebufferMs) {
+    private PausableLoadControl(DefaultAllocator allocator, int minBufferMs, int maxBufferMs,
+                                long bufferForPlaybackMs, long bufferForPlaybackAfterRebufferMs) {
         this(allocator, minBufferMs, maxBufferMs, bufferForPlaybackMs, bufferForPlaybackAfterRebufferMs,
                 null);
     }
@@ -109,19 +109,15 @@ public final class PausableLoadControl implements LoadControl {
      *                                         {@link C#PRIORITY_PLAYBACK} during loading periods, and unregisters itself during draining
      *                                         periods.
      */
-    public PausableLoadControl(DefaultAllocator allocator, int minBufferMs, int maxBufferMs,
-                               long bufferForPlaybackMs, long bufferForPlaybackAfterRebufferMs,
-                               PriorityTaskManager priorityTaskManager) {
+    private PausableLoadControl(DefaultAllocator allocator, int minBufferMs, int maxBufferMs,
+                                long bufferForPlaybackMs, long bufferForPlaybackAfterRebufferMs,
+                                PriorityTaskManager priorityTaskManager) {
         this.allocator = allocator;
         minBufferUs = minBufferMs * 1000L;
         maxBufferUs = maxBufferMs * 1000L;
         bufferForPlaybackUs = bufferForPlaybackMs * 1000L;
         bufferForPlaybackAfterRebufferUs = bufferForPlaybackAfterRebufferMs * 1000L;
         this.priorityTaskManager = priorityTaskManager;
-    }
-
-    public void setSrcUri(String srcUri) {
-        String srcUri1 = srcUri;
     }
 
     @Override

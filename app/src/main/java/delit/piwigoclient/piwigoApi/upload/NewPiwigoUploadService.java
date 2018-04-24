@@ -165,7 +165,9 @@ public class NewPiwigoUploadService extends IntentService {
         if(keepDeviceAwake) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-            wl.acquire();
+            if(wl != null) {
+                wl.acquire();
+            }
         }
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

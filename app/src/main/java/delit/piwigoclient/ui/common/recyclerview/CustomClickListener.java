@@ -20,7 +20,7 @@ public class CustomClickListener<T, S extends CustomViewHolder<T>> implements Vi
         //TODO Note - the way this works, click event is sunk if item selection is enabled... allow override?
         if (!parentAdapter.isItemSelectionAllowed()) {
             //If not currently in multiselect mode
-            parentAdapter.getMultiSelectStatusListener().onItemClick((T) viewHolder.getItem());
+            parentAdapter.getMultiSelectStatusListener().onItemClick(viewHolder.getItem());
         } else if (parentAdapter.isCaptureActionClicks()) {
 //                 multi selection mode is enabled.
             if (parentAdapter.getSelectedItemIds().contains(viewHolder.getItemId())) {

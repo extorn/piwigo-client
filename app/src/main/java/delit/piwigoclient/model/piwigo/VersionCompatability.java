@@ -42,10 +42,8 @@ public enum VersionCompatability {
             if (serverVersion[1] < minimumVersion[1]) {
                 return false;
             }
-            if (serverVersion[1] == minimumVersion[1]
-                    && serverVersion[2] < minimumVersion[2]) {
-                return false;
-            }
+            return serverVersion[1] != minimumVersion[1]
+                    || serverVersion[2] >= minimumVersion[2];
         }
         return true;
     }

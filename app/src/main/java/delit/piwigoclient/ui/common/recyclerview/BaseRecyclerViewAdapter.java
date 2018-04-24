@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -85,8 +86,9 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
         this.initialSelectionLocked = initialSelectionLocked;
     }
 
+    @NonNull
     @Override
-    public S onCreateViewHolder(ViewGroup parent, int viewType) {
+    public S onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         setContext(parent.getContext());
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
@@ -98,7 +100,7 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
     }
 
     protected CustomClickListener<T,? extends CustomViewHolder<T>> buildCustomClickListener(S viewHolder) {
-        return new CustomClickListener<T,S>(viewHolder, this);
+        return new CustomClickListener<>(viewHolder, this);
     }
 
     @Override
@@ -109,7 +111,7 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
     }
 
     @Override
-    public void onBindViewHolder(S holder, int position) {
+    public void onBindViewHolder(@NonNull S holder, int position) {
         T newItem = getItemByPosition(position);
         if (isHolderOutOfSync(holder, newItem)) {
             // store the item in this recyclable holder.
@@ -281,7 +283,7 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
     }
 
     protected void onDeleteItem(S viewHolder, View v) {
-        multiSelectStatusListener.onItemDeleteRequested((T) viewHolder.getItem());
+        multiSelectStatusListener.onItemDeleteRequested(viewHolder.getItem());
     }
 
 

@@ -60,11 +60,11 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
             String stringValue = value.toString();
 
             if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_thumbnail_size_key))) {
-                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(value)) {
+                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(stringValue)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_thumbnail_size_not_natively_supported_by_server));
                 }
             } else if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key))) {
-                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(value)) {
+                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(stringValue)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_slideshow_image_size_not_natively_supported_by_server));
                 }
             }
@@ -109,7 +109,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
      */
     @SuppressWarnings("JavadocReference")
     private int getDefaultImagesColumnCount(int orientationId) {
-        float screenWidth = 0;
+        float screenWidth;
         if (getResources().getConfiguration().orientation == orientationId) {
             screenWidth = getScreenWidthInches();
         } else {
@@ -125,7 +125,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
      */
     @SuppressWarnings("JavadocReference")
     private int getDefaultAlbumsColumnCount(int orientationId) {
-        float screenWidth = 0;
+        float screenWidth ;
         if (getResources().getConfiguration().orientation == orientationId) {
             screenWidth = getScreenWidthInches();
         } else {

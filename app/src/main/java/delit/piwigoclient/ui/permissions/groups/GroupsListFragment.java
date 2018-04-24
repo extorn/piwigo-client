@@ -56,8 +56,7 @@ public class GroupsListFragment extends MyFragment {
     private int pageToLoadNow = -1;
 
     public static GroupsListFragment newInstance() {
-        GroupsListFragment fragment = new GroupsListFragment();
-        return fragment;
+        return new GroupsListFragment();
     }
 
     @Override
@@ -138,13 +137,13 @@ public class GroupsListFragment extends MyFragment {
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        RecyclerView recyclerView = view.findViewById(R.id.list);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
 
         recyclerView.setLayoutManager(layoutMan);
 
-        boolean allowMultiselection = false;
+        final boolean allowMultiselection = false;
 
         viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusListener<Group>() {
             @Override

@@ -77,16 +77,12 @@ public class ResourceItem extends GalleryItem {
 
     @Override
     public int hashCode() {
-        int hashcode = super.hashCode();
-        return hashcode;
+        return super.hashCode();
     }
 
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof GalleryItem)) {
-            return false;
-        }
-        return ((GalleryItem) other).getId() == this.getId();
+        return other instanceof GalleryItem && ((GalleryItem) other).getId() == this.getId();
     }
 
     public String getDownloadFileName(ResourceFile selectedItem) {

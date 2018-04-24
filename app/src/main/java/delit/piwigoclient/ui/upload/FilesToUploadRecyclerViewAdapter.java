@@ -47,7 +47,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
     public FilesToUploadRecyclerViewAdapter(ArrayList<File> filesToUpload, @NonNull Context context, RemoveListener listener) {
         this.listener = listener;
-        Context context1 = context;
         this.filesToUpload = filesToUpload;
         this.setHasStableIds(true);
     }
@@ -69,8 +68,9 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         return new BigInteger(filesToUpload.get(position).getAbsolutePath().getBytes()).longValue();
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         if (viewType == VIEW_TYPE_LIST) {
             view = LayoutInflater.from(parent.getContext())
@@ -166,7 +166,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final File itemToView = filesToUpload.get(position);
 
         View itemView = holder.mView;

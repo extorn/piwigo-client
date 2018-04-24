@@ -88,7 +88,7 @@ public class UserFragment extends MyFragment {
     private static final String STATE_FIELDS_EDITABLE = "fieldsAreEditable";
     private static final String STATE_NEW_GROUP_MEMBERSHIP = "newGroupMembership";
     private static final String IN_FLIGHT_SAVE_ACTION_IDS = "saveActionIds";
-    public static final String STATE_SELECT_GROUPS_ACTION_ID = "selectGroupsActionId";
+    private static final String STATE_SELECT_GROUPS_ACTION_ID = "selectGroupsActionId";
 
     // fields
     private EditText usernameField;
@@ -422,7 +422,7 @@ public class UserFragment extends MyFragment {
     }
 
     private HashSet<Group> getLatestGroupMembership() {
-        HashSet<Group> currentSelection = null;
+        HashSet<Group> currentSelection;
         if(newGroupMembership != null) {
             currentSelection = newGroupMembership;
         } else {
@@ -697,7 +697,7 @@ public class UserFragment extends MyFragment {
         saveUserPermissionsChangesIfRequired();
     }
 
-    public void onGroupsLoaded(PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    private void onGroupsLoaded(PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
         currentGroupMembership = response.getGroups();
         fillGroupMembershipField();
     }
@@ -708,7 +708,7 @@ public class UserFragment extends MyFragment {
         populateAlbumPermissionsList(getLatestDirectAlbumPermissions(), getLatestIndirectAlbumPermissions());
     }
 
-    public void onUserPermissionsRetrieved(PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse response) {
+    private void onUserPermissionsRetrieved(PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse response) {
         // We're retrieving the current configuration
         currentDirectAlbumPermissions = response.getDirectlyAccessibleAlbumIds();
         currentIndirectAlbumPermissions = response.getIndirectlyAccessibleAlbumIds();
@@ -717,14 +717,14 @@ public class UserFragment extends MyFragment {
         }
     }
 
-    public void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
         this.availableGalleries = response.getAlbumNames();
         if (currentIndirectAlbumPermissions != null) {
             populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);
         }
     }
 
-    public void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
+    private void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
         EventBus.getDefault().post(new UserDeletedEvent(user));
         // return to previous screen
         if(isVisible()) {

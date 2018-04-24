@@ -101,7 +101,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private static final String STATE_EDITING_ITEM_DETAILS = "editingItemDetails";
     private static final String STATE_INFORMATION_SHOWING = "informationShowing";
     private static final String ALLOW_DOWNLOAD = "allowDownload";
-    protected T model;
+    private T model;
     private ControllableBottomSheetBehavior<View> bottomSheetBehavior;
     private RatingBar averageRatingsBar;
     private ProgressBar progressIndicator;
@@ -336,8 +336,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private boolean onUseAsAlbumThumbnailSelectAlbum() {
         // Invoke call to retrieve all album names (will show a dialog once this is done).
-        boolean recursive = true;
-        addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), recursive).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         return true;
     }
 
@@ -415,11 +414,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
 
         tagsField = v.findViewById(R.id.slideshow_image_details_tags);
-        if (model.getTags() == null) {
-            tagsField.setVisibility(GONE);
-        } else {
-            tagsField.setVisibility(VISIBLE);
-        }
+//        if (model.getTags() == null) {
+//            tagsField.setVisibility(GONE);
+//        } else {
+//            tagsField.setVisibility(VISIBLE);
+//        }
         tagsField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -631,14 +630,14 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         EventBus.getDefault().post(event);
     }
 
-    protected void onAlterRating(T model, float rating) {
+    private void onAlterRating(T model, float rating) {
         AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
         getUiHelper().setTrackingRequest(event.getActionId());
         EventBus.getDefault().post(event);
         addActiveServiceCall(R.string.progress_resource_details_updating, new ImageAlterRatingResponseHandler(model, rating).invokeAsync(getContext()));
     }
 
-    protected void onDeleteItem(final T model) {
+    private void onDeleteItem(final T model) {
         String message = getString(R.string.alert_confirm_really_delete_from_server);
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
             @Override
@@ -698,15 +697,16 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                         .setLargeIcon(bitmap)
                         .setContentTitle(getString(R.string.notification_download_event))
                         .setContentText(downloadedFile.getAbsolutePath())
-                        .setCategory(Notification.CATEGORY_EVENT)
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(true);
 
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                     // this is not a vector graphic
                     mBuilder.setSmallIcon(R.drawable.ic_notifications_black);
+                    mBuilder.setCategory("event");
                 } else {
                     mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
+                    mBuilder.setCategory(Notification.CATEGORY_EVENT);
                 }
 
                 getUiHelper().clearNotification(TAG, 1);
@@ -844,7 +844,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
 
-    public void onProgressUpdate(final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
+    private void onProgressUpdate(final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
         if (response.getProgress() < 0) {
             getUiHelper().showProgressDialog();
         } else {
@@ -868,25 +868,25 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    public void onRatingAltered(ResourceItem resource) {
+    private void onRatingAltered(ResourceItem resource) {
         if (resource.getRatingsGiven() > 0) {
             averageRatingsBar.setRating(resource.getAverageRating());
             averageRatingsBar.setVisibility(VISIBLE);
         }
     }
 
-    public void onImageDeleted() {
+    private void onImageDeleted() {
         for (Long itemParent : model.getParentageChain()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
         }
         EventBus.getDefault().post(new AlbumItemDeletedEvent(model, albumItemIdx, albumLoadedItemCount));
     }
 
-    public void onGetResourceCancelled(PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
+    private void onGetResourceCancelled(PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_image_download_cancelled_message));
     }
 
-    public void onResourceInfoRetrieved(final PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse response) {
+    private void onResourceInfoRetrieved(final PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse response) {
         model = (T) response.getResource();
         populateResourceExtraFields();
     }
@@ -902,15 +902,15 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         linkedAlbumsField.setText((currentLinkedAlbumsSet == null ? '?' : currentLinkedAlbumsSet.size()) + " (" + getString(R.string.click_to_view) + ')');
 
         if (model.getTags() == null) {
-            tagsField.setVisibility(GONE);
+            tagsField.setText(R.string.paid_feature_only);
+//            tagsField.setVisibility(GONE);
         } else {
-            tagsField.setVisibility(VISIBLE);
+//            tagsField.setVisibility(VISIBLE);
             HashSet<Tag> currentTagsSet = getLatestTagListForResource();
             if (currentTagsSet.size() == 0) {
-                StringBuilder sb = new StringBuilder("0 (");
-                sb.append(getString(R.string.click_to_view));
-                sb.append(')');
-                tagsField.setText(sb.toString());
+                String sb = "0 (" + getString(R.string.click_to_view) +
+                        ')';
+                tagsField.setText(sb);
             } else {
                 StringBuilder sb = new StringBuilder();
                 Iterator<Tag> iter = currentTagsSet.iterator();
@@ -927,7 +927,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    protected void onResourceInfoAltered(final T resourceItem) {
+    private void onResourceInfoAltered(final T resourceItem) {
         if (BuildConfig.PAID_VERSION && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate() && getUiHelper().getActiveServiceCallCount() == 0) {
             // tags have been updated already so we need to keep the existing ones.
             resourceItem.setTags(model.getTags());
@@ -949,7 +949,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemDeletedEvent event) {
         Long albumId = event.item.getParentId();
-        if (albumId == model.getParentId()) {
+        if(albumId == null && model.getParentId() == null || albumId != null && albumId.equals(model.getParentId())) {
             //Need to update page as an item was deleted from the currently displayed album
             albumLoadedItemCount = event.getAlbumResourceItemCount() - 1;
             if (albumItemIdx > event.getAlbumResourceItemIdx()) {

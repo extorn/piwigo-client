@@ -298,8 +298,7 @@ public class GroupFragment extends MyFragment {
 
 
     private void saveGroupChanges() {
-        fieldsEditable = false;
-        setFieldsEditable(fieldsEditable);
+        setFieldsEditable(false);
 
         memberSaveActionIds = new HashSet<>(2);
         permissionsSaveActionIds = new HashSet<>(2);

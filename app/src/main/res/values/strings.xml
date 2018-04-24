@@ -770,6 +770,7 @@ SOFTWARE.
     <string name="tag_heading">Tag</string>
     <string name="tag_tagname_title">Tag name</string>
     <string name="alert_paid_feature_only">This feature is only available in the paid app</string>
+    <string name="paid_feature_only">paid app only</string>
     <string name="slideshow_image_details_tags_title">Tags</string>
     <string name="button_search">Search</string>
 </resources>

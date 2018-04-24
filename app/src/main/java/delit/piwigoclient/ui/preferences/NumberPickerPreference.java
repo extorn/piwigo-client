@@ -101,6 +101,7 @@ public class NumberPickerPreference extends DialogPreference {
     public void updateDefaultValue(int newDefault) {
         setDefaultValue(newDefault);
         setValue(getAdjustedPersistedInt(getPersistedInt(newDefault)));
+        notifyChanged();
     }
 
     @Override
@@ -114,9 +115,7 @@ public class NumberPickerPreference extends DialogPreference {
         if (multiplier == 1) {
             return defaultPersistedInt;
         } else {
-            int persistedInt = defaultPersistedInt;
-            int adjustedValue = (int) Math.round((double) persistedInt / multiplier);
-            return adjustedValue;
+            return (int) Math.round((double) defaultPersistedInt / multiplier);
         }
     }
 
@@ -163,11 +162,11 @@ public class NumberPickerPreference extends DialogPreference {
      */
     @Override
     public CharSequence getSummary() {
-        int adjustedValue = (int) Math.round((double) mNumber / getMultiplier());
+//        int adjustedValue = (int) Math.round((double) mNumber / getMultiplier());
         CharSequence summary = super.getSummary();
         if (summary != null) {
-            return String.format(summary.toString(), adjustedValue);
+            return String.format(summary.toString(), mNumber);
         }
-        return summary;
+        return null;
     }
 }

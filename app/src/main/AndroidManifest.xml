@@ -68,12 +68,10 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"/>
-        <activity android:name="com.google.android.gms.ads.AdActivity"
-            tools:replace="android:theme"
-            android:theme="@style/Theme.Translucent"/>
+        <activity android:name="com.google.android.gms.ads.AdActivity"/>
         <service
             android:name=".piwigoApi.upload.NewPiwigoUploadService"
-            android:exported="false"></service>
+            android:exported="false"/>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"

@@ -14,6 +14,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.Header;
@@ -161,7 +162,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             } else if(error instanceof SocketTimeoutException) {
                 tryingAgain = true;
                 rerunCall();
-            } else if(error instanceof SSLHandshakeException && error.getMessage() != null && error.getMessage().contains("I/O error during system call")) {
+            } else if(error instanceof SSLException && error.getMessage() != null && error.getMessage().contains("Connection reset by peer")
+                    || error instanceof SSLHandshakeException && error.getMessage() != null && error.getMessage().contains("I/O error during system call")) {
                 tryingAgain = true;
                 rerunCall();
             } else if(allowSessionRefreshAttempt

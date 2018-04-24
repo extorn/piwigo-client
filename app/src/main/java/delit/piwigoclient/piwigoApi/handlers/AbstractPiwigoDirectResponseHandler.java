@@ -12,13 +12,13 @@ import delit.piwigoclient.piwigoApi.Worker;
  */
 
 public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicPiwigoResponseHandler {
-    private long messageId = -1;
+    private long messageId;
     private PiwigoResponseBufferingHandler.BaseResponse response;
     private static final AtomicLong nextMessageId = new AtomicLong();
     private boolean publishResponses = true;
 
     public static synchronized long getNextMessageId() {
-        long id = -1;
+        long id;
         id = nextMessageId.incrementAndGet();
         if(id < 0) {
             nextMessageId.set(0);

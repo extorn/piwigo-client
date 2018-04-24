@@ -141,7 +141,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
             String originalResourceUrl = image.get("element_url").getAsString();
             JsonObject derivatives = image.get("derivatives").getAsJsonObject();
-            String thumbnail = null;
+            String thumbnail;
             ResourceItem item;
 
             if (m == null) {
@@ -151,7 +151,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
             }
 
             String dateLastAlteredStr = image.get("date_available").getAsString();
-            Date dateLastAltered = null;
+            Date dateLastAltered;
             try {
                 dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
             } catch (ParseException e) {

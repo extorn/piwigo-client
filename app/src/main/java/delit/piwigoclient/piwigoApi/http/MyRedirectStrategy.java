@@ -18,9 +18,6 @@ public class MyRedirectStrategy extends LaxRedirectStrategy {
 
     @Override
     protected boolean isRedirectable(String method) {
-        if(!enableRedirects) {
-            return false;
-        }
-        return super.isRedirectable(method);
+        return enableRedirects && super.isRedirectable(method);
     }
 }

@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
@@ -104,8 +105,9 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
         return gallery.getItemByIdx(position).getId();
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         if(useMasonryStyle) {
             if (viewType == GalleryItem.CATEGORY_TYPE) {
@@ -257,7 +259,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
     }
 
     @Override
-    public void onViewRecycled(ViewHolder holder) {
+    public void onViewRecycled(@NonNull ViewHolder holder) {
         UIHelper.recycleImageViewContent(holder.mImageView);
         UIHelper.recycleImageViewContent(holder.mRecentlyAlteredMarkerView);
         UIHelper.recycleImageViewContent(holder.mTypeIndicatorImg);
@@ -271,7 +273,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         GalleryItem newItem = (GalleryItem) gallery.getItemByIdx(position);
         if (holder.getOldPosition() < 0 && holder.mItem != null && holder.mItem.getId() == newItem.getId()) {
             // rendering the same item.

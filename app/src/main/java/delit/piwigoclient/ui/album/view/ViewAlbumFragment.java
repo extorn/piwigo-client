@@ -162,7 +162,7 @@ public class ViewAlbumFragment extends MyFragment {
     private boolean informationShowing;
     private long[] currentUsers;
     private long[] currentGroups;
-    private volatile boolean galleryIsDirty;
+    private boolean galleryIsDirty;
     private HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private ArrayList<String> itemsToLoad = new ArrayList<>(0);
     private boolean movedResourceParentUpdateRequired;
@@ -311,6 +311,12 @@ public class ViewAlbumFragment extends MyFragment {
             }
         }
 
+        userGuid = PiwigoSessionDetails.getUserGuid();
+        if(galleryModel == null) {
+            galleryIsDirty = true;
+            galleryModel = new PiwigoAlbum(gallery);
+        }
+
         PiwigoAlbumUpdatedEvent albumUpdatedEvent = EventBus.getDefault().removeStickyEvent(PiwigoAlbumUpdatedEvent.class);
         if(albumUpdatedEvent != null && albumUpdatedEvent.getUpdatedAlbum() instanceof PiwigoAlbum) {
             // retrieved this from the slideshow.
@@ -319,12 +325,6 @@ public class ViewAlbumFragment extends MyFragment {
                 galleryModel = eventModel;
                 gallery = galleryModel.getContainerDetails();
             }
-        }
-
-        userGuid = PiwigoSessionDetails.getUserGuid();
-        if(galleryModel == null) {
-            galleryIsDirty = true;
-            galleryModel = new PiwigoAlbum(gallery);
         }
 
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
@@ -654,8 +654,7 @@ public class ViewAlbumFragment extends MyFragment {
 
     private Basket getBasket() {
         MainActivity activity = (MainActivity)getActivity();
-        Basket basket = activity.getBasket();
-        return basket;
+        return activity.getBasket();
     }
 
     private void addItemsToBasket(int action) {

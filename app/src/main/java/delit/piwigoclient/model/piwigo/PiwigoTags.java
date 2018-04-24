@@ -51,7 +51,7 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
 
     @Override
     public int getItemCount() {
-        return items == null? 0 : items.size();
+        return items.size();
     }
 
     @Override
@@ -70,17 +70,16 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
             items.addAll(tags);
             return 0;
         }
-        HashSet<Tag> tagsToAdd = tags;
         if(isAdminPage) {
             // remove any already present in the store.
-            tagsToAdd.removeAll(getItems());
+            tags.removeAll(getItems());
         } else {
             // overwrite those already in the store.
-            getItems().removeAll(tagsToAdd);
+            getItems().removeAll(tags);
         }
-        items.addAll(tagsToAdd);
+        items.addAll(tags);
         sort();
-        return tagsToAdd.size();
+        return tags.size();
     }
 
     public int getPagesLoaded() {

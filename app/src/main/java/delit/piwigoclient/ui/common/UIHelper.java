@@ -300,7 +300,7 @@ public abstract class UIHelper<T> {
                 QueuedMessage nextMessage = messageQueue.peek();
                 if(nextMessage instanceof QueuedQuestionMessage) {
                     showDialog((QueuedQuestionMessage)nextMessage);
-                } else if(nextMessage instanceof QueuedMessage) {
+                } else if(nextMessage != null) {
                     showDialog(nextMessage);
                 }
             }
@@ -444,7 +444,7 @@ public abstract class UIHelper<T> {
             QueuedMessage nextMessage = messageQueue.peek();
             if(nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage)nextMessage);
-            } else if(nextMessage instanceof QueuedMessage) {
+            } else if(nextMessage != null) {
                 showDialog(nextMessage);
             }
         }
@@ -695,7 +695,7 @@ public abstract class UIHelper<T> {
             QueuedMessage nextMessage = messageQueue.peek();
             if(nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage)nextMessage);
-            } else if(nextMessage instanceof QueuedMessage) {
+            } else if(nextMessage != null) {
                 showDialog(nextMessage);
             }
         }
@@ -707,7 +707,7 @@ public abstract class UIHelper<T> {
             QueuedMessage nextMessage = messageQueue.peek();
             if(nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage)nextMessage);
-            } else if(nextMessage instanceof QueuedMessage) {
+            } else if(nextMessage != null) {
                 showDialog(nextMessage);
             }
         }

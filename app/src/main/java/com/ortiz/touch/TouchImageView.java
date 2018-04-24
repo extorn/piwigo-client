@@ -736,11 +736,8 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
     	} else if (x >= -1 && direction < 0) {
     		return false;
     		
-    	} else if (Math.abs(x) + viewWidth + 1 >= getImageWidth() && direction > 0) {
-    		return false;
-    	}
-    	
-    	return true;
+    	} else return !(Math.abs(x) + viewWidth + 1 >= getImageWidth()) || direction <= 0;
+
     }
     
     /**

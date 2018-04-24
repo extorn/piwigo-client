@@ -113,7 +113,7 @@ public class HttpClientFactory {
         if (videoDownloadClient == null) {
             boolean forceDisableCache = true;
             // we use a custom cache solution for video data
-            videoDownloadClient = buildSyncHttpClient(c, forceDisableCache);
+            videoDownloadClient = buildSyncHttpClient(c, true);
         }
         return videoDownloadClient;
     }
@@ -126,7 +126,7 @@ public class HttpClientFactory {
 
         if (syncClient == null) {
             boolean forceDisableCache = false;
-            syncClient = buildSyncHttpClient(c, forceDisableCache);
+            syncClient = buildSyncHttpClient(c, false);
         }
         return syncClient;
     }
@@ -134,7 +134,7 @@ public class HttpClientFactory {
     public synchronized CachingAsyncHttpClient getAsyncHttpClient(Context c) {
         if (asyncClient == null) {
             boolean forceDisableCache = false;
-            asyncClient = buildHttpClient(c, true, forceDisableCache);
+            asyncClient = buildHttpClient(c, true, false);
         }
         return asyncClient;
     }

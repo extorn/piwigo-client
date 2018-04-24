@@ -101,7 +101,7 @@ public class PicassoFactory {
 
 
         public Bitmap drawableToBitmap (Drawable drawable) {
-            Bitmap bitmap = null;
+            Bitmap bitmap;
 
             if (drawable instanceof BitmapDrawable) {
                 BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
@@ -157,9 +157,11 @@ public class PicassoFactory {
                 Picasso.Listener listener = listeners.get(uri);
                 if (listener != null) {
                     listener.onImageLoadFailed(picasso, uri, e);
+                } else if(BuildConfig.DEBUG) {
+                    Log.e(TAG, String.format("Error loading uri %1$s", uri), e);
                 }
             } else if(BuildConfig.DEBUG) {
-                Log.e(TAG, String.format("Error loading uri %1$s", uri), e);
+                Log.e(TAG, String.format("Error loading uri null"), e);
             }
         }
     }

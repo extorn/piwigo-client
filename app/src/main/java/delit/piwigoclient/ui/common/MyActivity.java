@@ -74,11 +74,10 @@ public abstract class MyActivity extends AppCompatActivity {
         uiHelper.showNextQueuedMessage();
     }
 
-    public boolean hasAgreedToEula() {
+    protected boolean hasAgreedToEula() {
         int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);
         int currentEulaVersion = getResources().getInteger(R.integer.eula_version);
-        boolean agreedToEula = agreedEulaVersion >= currentEulaVersion;
-        return agreedToEula;
+        return agreedEulaVersion >= currentEulaVersion;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

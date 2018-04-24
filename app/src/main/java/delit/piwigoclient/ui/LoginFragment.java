@@ -30,8 +30,7 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
     private Button loginButton;
 
     public static LoginFragment newInstance() {
-        LoginFragment fragment = new LoginFragment();
-        return fragment;
+        return new LoginFragment();
     }
 
     @Override

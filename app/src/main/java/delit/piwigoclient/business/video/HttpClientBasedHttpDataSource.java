@@ -165,8 +165,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         this.requestProperties = new RequestProperties();
         this.connectTimeoutMillis = connectTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
-        RequestProperties defaultRequestProperties1 = defaultRequestProperties;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         this.context = context;
         this.cachingEnabled = cachingEnabled;
         this.notifyCacheListenerImmediatelyIfCached = notifyCacheListenerImmediatelyIfCached;

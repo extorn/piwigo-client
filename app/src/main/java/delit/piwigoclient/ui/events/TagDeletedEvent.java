@@ -8,7 +8,7 @@ import delit.piwigoclient.model.piwigo.Tag;
 
 public class TagDeletedEvent {
 
-    public final Tag tag;
+    private final Tag tag;
 
     public TagDeletedEvent(final Tag tag) {
         this.tag = tag;

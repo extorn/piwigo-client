@@ -105,7 +105,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         }
     }
 
-    protected void loadStateFromBundle(Bundle args) {
+    private void loadStateFromBundle(Bundle args) {
         multiSelectEnabled = args.getBoolean(STATE_ALLOW_MULTISELECT);
         actionId = args.getInt(STATE_ACTION_ID);
         currentSelection = (HashSet<Long>) args.getSerializable(STATE_CURRENT_SELECTION);
@@ -228,7 +228,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             selectAllListItems();
             toggleAllSelectionButton.setText(getString(R.string.none));
             selectToggle = true;
-        } else if (selectToggle) {
+        } else {
             if(initialSelectionLocked) {
                 selectOnlyListItems(Collections.unmodifiableSet(initialSelection));
             } else {

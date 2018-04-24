@@ -12,7 +12,7 @@ import static delit.piwigoclient.model.piwigo.CategoryItem.ROOT_ALBUM;
 
 public class PiwigoAlbumAdminList implements Serializable {
 
-    final ArrayList<CategoryItem> rootAlbums = new ArrayList<>();
+    private final ArrayList<CategoryItem> rootAlbums = new ArrayList<>();
 
 
     public List<CategoryItem> getDirectChildrenOfAlbum(List<Long> parentageChain, long albumId) {

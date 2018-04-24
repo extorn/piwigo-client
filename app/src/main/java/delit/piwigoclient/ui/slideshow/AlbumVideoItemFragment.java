@@ -229,7 +229,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
         // 2. Create the player
         loadControl = new PausableLoadControl();
-        loadControl.setSrcUri(model.getFullSizeFile().getUrl());
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
         return player;

@@ -79,8 +79,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     private static final String STATE_CURRENT_ALBUM = "currentAlbum";
     private static final String STATE_BASKET = "basket";
-    private static final String ON_LOGIN_ACTION_METHOD_NAME = "onLoginActionMethodName";
-    private static final String ON_LOGIN_ACTION_METHOD_PARAMS = "onLoginActionMethodParams";
     private static final String TAG = "mainActivity";
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     // these fields are persisted.
@@ -93,8 +91,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     protected void onSaveInstanceState(Bundle outState) {
         outState.putSerializable(STATE_CURRENT_ALBUM, currentAlbum);
         outState.putSerializable(STATE_BASKET, basket);
-        outState.putString(ON_LOGIN_ACTION_METHOD_NAME, onLoginActionMethodName);
-        outState.putSerializable(ON_LOGIN_ACTION_METHOD_PARAMS, onLoginActionParams);
         super.onSaveInstanceState(outState);
     }
 
@@ -105,8 +101,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
         if (savedInstanceState != null) {
             currentAlbum = (CategoryItem) savedInstanceState.getSerializable(STATE_CURRENT_ALBUM);
-            onLoginActionMethodName = savedInstanceState.getString(ON_LOGIN_ACTION_METHOD_NAME);
-            onLoginActionParams = (ArrayList<Serializable>) savedInstanceState.getSerializable(ON_LOGIN_ACTION_METHOD_PARAMS);
             basket = (Basket) savedInstanceState.getSerializable(STATE_BASKET);
         }
 
@@ -181,7 +175,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             return;
         }
 
-        boolean preferencesShowing = false;
+        boolean preferencesShowing;
         Fragment myFragment = getSupportFragmentManager().findFragmentByTag(PreferencesFragment.class.getName());
         preferencesShowing = myFragment != null && myFragment.isVisible();
 
@@ -265,18 +259,16 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            if (showPreferences()) {
-                return true;
-            }
+            showPreferences();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean showPreferences() {
+    private void showPreferences() {
         PreferencesFragment fragment = new PreferencesFragment();
         showFragmentNow(fragment);
-        return true;
     }
 
     private void showEula() {
@@ -413,9 +405,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                     newFragment = new SlideshowFragment();
                     newFragment.setArguments(SlideshowFragment.buildArgs(albumOpen, selectedItem));
                 } else if (allowVideoPlayback) {
-                    boolean startOnResume = true;
                     newFragment = new AlbumVideoItemFragment();
-                    newFragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) selectedItem, 1, 1, 1, startOnResume));
+                    newFragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) selectedItem, 1, 1, 1, true));
                 }
             } else if (selectedItem instanceof PictureResourceItem) {
                 newFragment = new SlideshowFragment();
@@ -448,7 +439,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
-            if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK && data.getExtras() != null) {
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectionActivity.SELECTED_FILES);
                 FileListSelectionCompleteEvent event = new FileListSelectionCompleteEvent(requestCode, filesForUpload);
                 EventBus.getDefault().post(event);

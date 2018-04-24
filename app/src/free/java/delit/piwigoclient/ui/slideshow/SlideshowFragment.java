@@ -5,7 +5,6 @@ import android.content.Context;
 import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;

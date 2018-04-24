@@ -121,11 +121,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
-        if(view == null) {
-            // exiting this screen
-            return;
-        }
-
         super.onViewCreated(view, savedInstanceState);
         Bundle configurationBundle = savedInstanceState;
         if(configurationBundle == null) {
@@ -208,7 +203,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 //        }
     }
 
-    public void hideProgressIndicator() {
+    private void hideProgressIndicator() {
         progressIndicator.setVisibility(GONE);
     }
 
@@ -288,7 +283,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         public GalleryItemAdapter(boolean shouldShowVideos, int selectedItem, FragmentManager fm) {
             super(fm);
-            galleryResourceItems = new ArrayList<>((int)gallery.getResourcesCount());
+            galleryResourceItems = new ArrayList<>(gallery.getResourcesCount());
             this.shouldShowVideos = shouldShowVideos;
             addResourcesToIndex(0, selectedItem);
         }
@@ -329,14 +324,13 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         private long getTotalSlideshowItems() {
             long ignoredResourceCount = gallery.getResourcesCount() - galleryResourceItems.size();
-            long totalResources = gallery.isFullyLoaded() ? galleryResourceItems.size() : gallery.getImgResourceCount() - ignoredResourceCount;
-            return totalResources;
+            return gallery.isFullyLoaded() ? galleryResourceItems.size() : gallery.getImgResourceCount() - ignoredResourceCount;
         }
 
         @Override
         public Class<? extends Fragment> getFragmentType(int position) {
             int slideshowIdx = galleryResourceItems.get(position);
-            GalleryItem galleryItem = (GalleryItem) gallery.getItemByIdx(slideshowIdx);
+            GalleryItem galleryItem = gallery.getItemByIdx(slideshowIdx);
             if (galleryItem instanceof PictureResourceItem) {
                 return AlbumPictureItemFragment.class;
             } else if (galleryItem instanceof VideoResourceItem) {
@@ -347,31 +341,29 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         @Override
         protected void bindDataToFragment(Fragment fragment, int position) {
-            GalleryItem galleryItem = (ResourceItem) gallery.getItemByIdx(galleryResourceItems.get(position));
+            GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
             long totalSlideshowItems = getTotalSlideshowItems();
 
             if (galleryItem instanceof PictureResourceItem) {
                 fragment.setArguments(SlideshowItemFragment.buildArgs((PictureResourceItem)galleryItem, position, galleryResourceItems.size(), totalSlideshowItems));
             } else if (galleryItem instanceof VideoResourceItem) {
-                boolean startOnResume = false;
-                fragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, startOnResume));
+                fragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, false));
             }
         }
 
         @Override
         public Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
 
-            GalleryItem galleryItem = (GalleryItem) gallery.getItemByIdx(galleryResourceItems.get(position));
+            GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
             SlideshowItemFragment fragment = null;
             long totalSlideshowItems = getTotalSlideshowItems();
             if (galleryItem instanceof PictureResourceItem) {
                 fragment = new AlbumPictureItemFragment();
-                Bundle b = AlbumPictureItemFragment.buildArgs((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems);
+                Bundle b = AbstractSlideshowItemFragment.buildArgs((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems);
                 fragment.setArguments(b);
             } else if (galleryItem instanceof VideoResourceItem) {
-                boolean startOnResume = false;
                 fragment = new AlbumVideoItemFragment();
-                Bundle args = AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, startOnResume);
+                Bundle args = AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, false);
                 fragment.setArguments(args);
             }
             if (fragment != null) {
@@ -428,7 +420,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         public void onResume() {
             int pageToShow = Math.max(0, viewPager.getCurrentItem());
-            if(pageToShow < galleryResourceItems.size() && pageToShow >= 0) {
+            if(pageToShow < galleryResourceItems.size()) {
                 Fragment selectedPage = (Fragment)instantiateItem(viewPager, pageToShow);
                 if(selectedPage.isAdded()) {
                     if (selectedPage instanceof AlbumVideoItemFragment) {
@@ -454,14 +446,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         }
     }
 
-    public void loadMoreGalleryResources() {
+    private void loadMoreGalleryResources() {
         int pageToLoad = gallery.getPagesLoaded();
         loadAlbumResourcesPage(pageToLoad);
     }
 
     private void loadAlbumResourcesPage(int pageToLoad) {
         synchronized (pagesBeingLoaded) {
-            if (pagesBeingLoaded.contains(String.valueOf(pageToLoad))) {
+            if (pagesBeingLoaded.contains(Integer.valueOf(pageToLoad))) {
                 // already loading this page, ignore the request.
                 return;
             }
@@ -499,7 +491,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
                 if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) {
                     onGetResources((PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) response);
-                    pagesBeingLoaded.remove(response.getMessageId());
+                    pagesBeingLoaded.remove(((PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) response).getPage());
                 }
             }
         }

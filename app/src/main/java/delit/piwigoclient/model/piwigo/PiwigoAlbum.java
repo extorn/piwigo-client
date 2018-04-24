@@ -122,7 +122,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem> implements Seri
     }
 
     public GalleryItem remove(int idx) {
-        GalleryItem removedItem = (GalleryItem) super.remove(idx);
+        GalleryItem removedItem = super.remove(idx);
         if(removedItem instanceof CategoryItem) {
             if(removedItem == CategoryItem.ADVERT) {
                 advertCount--;

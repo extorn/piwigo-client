@@ -2,6 +2,7 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 
 import java.util.HashSet;
@@ -24,7 +25,7 @@ public class ConnectionPreferences {
         return prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), null);
     }
 
-    public static void deletePreferences(SharedPreferences prefs, Context context, String prefix) {
+    public static void deletePreferences(SharedPreferences prefs, Context context, @NonNull String prefix) {
         if(prefix == null || prefix.isEmpty()) {
             //TODO do this better - this causes exceptions (crashes) for users.
 //            throw new IllegalArgumentException("Unable to delete the core app preferences");

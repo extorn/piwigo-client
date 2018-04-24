@@ -299,8 +299,7 @@ public class X509Utils {
         try {
             bis = new BufferedInputStream(new FileInputStream(f));
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            Collection<X509Certificate> certs = (Collection<X509Certificate>) cf.generateCertificates(bis);
-            return certs;
+            return (Collection<X509Certificate>) cf.generateCertificates(bis);
         } catch (FileNotFoundException e) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading certificate file stream", e);
@@ -426,7 +425,7 @@ public class X509Utils {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
             }
-            result.addException(new KeyStoreContentException(alias, "Error reading " + keystore.getType() + " file stream", e));
+            result.addException(new KeyStoreContentException(null, "Error reading " + keystore.getType() + " file stream", e));
         }
         return result;
     }
@@ -434,8 +433,7 @@ public class X509Utils {
     public static KeyStore cloneKeystore(KeyStore mValue) {
         char[] blankPass = new char[0];
         byte[] ksBytes = serialiseKeystore(mValue, blankPass);
-        KeyStore clone = deserialiseKeystore(ksBytes, blankPass, mValue.getType());
-        return clone;
+        return deserialiseKeystore(ksBytes, blankPass, mValue.getType());
     }
 
     public static KeyStore deserialiseKeystore(byte[] ksBytes, char[] ksPass, String ksType) {

@@ -20,8 +20,7 @@ import delit.piwigoclient.ui.common.MyFragment;
 public class TopTipsFragment extends MyFragment {
 
     public static TopTipsFragment newInstance() {
-        TopTipsFragment fragment = new TopTipsFragment();
-        return fragment;
+        return new TopTipsFragment();
     }
 
     @Nullable

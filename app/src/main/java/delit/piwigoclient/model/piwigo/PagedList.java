@@ -41,8 +41,6 @@ public class PagedList<T extends Identifiable> implements IdentifiableItemStore<
                 earlierPages++;
             } else if(curPage == page) {
                 throw new IllegalStateException("Attempting to add page already loaded (" + curPage+")");
-            } else {
-                continue;
             }
         }
         return earlierPages;

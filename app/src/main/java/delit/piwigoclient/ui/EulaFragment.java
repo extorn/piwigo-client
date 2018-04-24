@@ -31,8 +31,7 @@ import delit.piwigoclient.util.ProjectUtils;
 
 public class EulaFragment extends MyFragment {
     public static EulaFragment newInstance() {
-        EulaFragment fragment = new EulaFragment();
-        return fragment;
+        return new EulaFragment();
     }
 
     @Nullable

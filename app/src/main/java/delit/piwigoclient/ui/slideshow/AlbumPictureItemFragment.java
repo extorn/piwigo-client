@@ -63,10 +63,12 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
         fragment.setArguments(buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount));
         return fragment;
     }
+/*
 
     public static Bundle buildArgs(ResourceItem model, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount) {
         return SlideshowItemFragment.buildArgs(model, albumResourceItemIdx, albumResourceItemCount,totalResourceItemCount);
     }
+*/
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {

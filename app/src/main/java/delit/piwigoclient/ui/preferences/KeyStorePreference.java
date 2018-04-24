@@ -84,9 +84,9 @@ public abstract class KeyStorePreference extends DialogPreference {
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
     private LoadOperationResult keystoreLoadOperationResult;
-    private ArrayList<String> allowedCertificateFileTypes = new ArrayList<>(Arrays.asList(new String[]{".cer", ".cert", ".pem"}));
+    private ArrayList<String> allowedCertificateFileTypes = new ArrayList<>(Arrays.asList(".cer", ".cert", ".pem"));
     private static final String BKS_FILE_SUFFIX = ".bks";
-    private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList(new String[]{".p12", ".pkcs12", ".pfx", BKS_FILE_SUFFIX}));
+    private ArrayList<String> allowedKeyFileTypes = new ArrayList<>(Arrays.asList(".p12", ".pkcs12", ".pfx", BKS_FILE_SUFFIX));
     private CustomImageButton addListItemButton;
     private boolean keystoreLoadInProgress;
 
@@ -249,11 +249,11 @@ public abstract class KeyStorePreference extends DialogPreference {
 
             KeyStoreContentException e = (KeyStoreContentException) recoverableError;
 
-            EditText keystoreAliasEditText = (EditText) v.findViewById(R.id.keystore_alias_editText);
+            EditText keystoreAliasEditText = v.findViewById(R.id.keystore_alias_editText);
             keystoreAliasEditText.setText(e.getAlias());
         }
 
-        EditText filenameEditText = (EditText) v.findViewById(R.id.keystore_filename_editText);
+        EditText filenameEditText = v.findViewById(R.id.keystore_filename_editText);
         filenameEditText.setText(recoverableError.getFile().getName());
 
         alertDialog = new AlertDialog.Builder(getContext())
@@ -262,7 +262,7 @@ public abstract class KeyStorePreference extends DialogPreference {
                 .setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EditText passwordEditText = (EditText) alertDialog.findViewById(R.id.keystore_password_editText);
+                        EditText passwordEditText = alertDialog.findViewById(R.id.keystore_password_editText);
                         char[] pass = new char[passwordEditText.getText().length()];
                         passwordEditText.getText().getChars(0, passwordEditText.getText().length(), pass, 0);
                         alertDialog.dismiss();
@@ -670,8 +670,9 @@ public abstract class KeyStorePreference extends DialogPreference {
             return new char[0];
         }
 
+        @NonNull
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view;
             if(viewType == VIEW_TYPE_PRIVATE_KEY) {
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.x509key_actionable_list_item_layout, parent, false);
@@ -686,7 +687,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             switch (holder.getItemViewType()) {
                 case VIEW_TYPE_PRIVATE_KEY:
                     populatePrivateKeyDetails((KeyStorePrivateKeyItemViewHolder) holder, position, (KeyStore.PrivateKeyEntry) getItem(position));

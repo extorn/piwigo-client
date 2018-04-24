@@ -18,7 +18,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // Sets the starting page index
     private int startingPageIndex = 0;
 
-    final RecyclerView.LayoutManager mLayoutManager;
+    private final RecyclerView.LayoutManager mLayoutManager;
 
     public EndlessRecyclerViewScrollListener(RecyclerView.LayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
@@ -31,11 +31,11 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         }
     }
 
-    protected final void withGridLayoutManager(GridLayoutManager layoutManager) {
+    private void withGridLayoutManager(GridLayoutManager layoutManager) {
         visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
     }
 
-    protected final void withGridLayoutManager(StaggeredGridLayoutManager layoutManager) {
+    private void withGridLayoutManager(StaggeredGridLayoutManager layoutManager) {
         visibleThreshold = visibleThreshold * layoutManager.getSpanCount();
     }
 
@@ -45,7 +45,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         loading = false;
     }
 
-    public int getLastVisibleItem(int[] lastVisibleItemPositions) {
+    private int getLastVisibleItem(int[] lastVisibleItemPositions) {
         int maxSize = 0;
         for (int i = 0; i < lastVisibleItemPositions.length; i++) {
             if (i == 0) {
@@ -112,5 +112,5 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     }
 
     // Defines the process for actually loading more data based on page
-    public abstract void onLoadMore(int page, int totalItemsCount, RecyclerView view);
+    protected abstract void onLoadMore(int page, int totalItemsCount, RecyclerView view);
 }

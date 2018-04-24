@@ -22,7 +22,7 @@ public class MyPreferenceFragment extends PreferenceFragment {
     private UIHelper uiHelper;
     protected SharedPreferences prefs;
 
-    public UIHelper getUiHelper() {
+    protected UIHelper getUiHelper() {
         return uiHelper;
     }
 

@@ -44,7 +44,7 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
         Set<String> methodsAvailable = new HashSet<>(methodsArray.size());
         Iterator<JsonElement> methodItem = methodsArray.iterator();
         while(methodItem.hasNext()) {
-            methodsAvailable.add(((JsonPrimitive)methodItem.next()).getAsString());
+            methodsAvailable.add(methodItem.next().getAsString());
         }
         return methodsAvailable;
     }

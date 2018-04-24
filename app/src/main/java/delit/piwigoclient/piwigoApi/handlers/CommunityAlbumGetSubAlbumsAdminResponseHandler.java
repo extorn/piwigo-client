@@ -79,13 +79,12 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
             if(maxDateLastJsonElem != null && !maxDateLastJsonElem.isJsonNull()) {
                 dateLastAlteredStr = maxDateLastJsonElem.getAsString();
             }
-            String thumbnail = null;
             Long representativePictureId = null;
             if(category.has("representative_picture_id") && !category.get("representative_picture_id").isJsonNull()) {
                 representativePictureId = category.get("representative_picture_id").getAsLong();
             }
 
-            Date dateLastAltered = null;
+            Date dateLastAltered;
             try {
                 if (dateLastAlteredStr == null) {
                     dateLastAltered = new Date(0);
@@ -96,7 +95,7 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
                 throw new JSONException("Unable to parse date " + dateLastAlteredStr);
             }
 
-            CategoryItem item = new CategoryItem(id, name, description, !isPublic, dateLastAltered, photos, totalPhotos, subCategories, thumbnail);
+            CategoryItem item = new CategoryItem(id, name, description, !isPublic, dateLastAltered, photos, totalPhotos, subCategories, null);
             item.setRepresentativePictureId(representativePictureId);
 
             if (item.getId() == parentAlbum.getId()) {
