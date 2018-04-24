@@ -4,19 +4,13 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
-import android.os.Build;
 import android.os.Looper;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
 import android.view.WindowManager;
-
-import java.lang.reflect.InvocationTargetException;
-
-import delit.piwigoclient.BuildConfig;
 
 /**
  * Created by gareth on 30/05/17.
