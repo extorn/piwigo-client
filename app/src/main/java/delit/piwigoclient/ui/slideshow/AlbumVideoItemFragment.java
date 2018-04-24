@@ -44,6 +44,7 @@ import delit.piwigoclient.business.video.CustomHttpDataSourceFactory;
 import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
 import delit.piwigoclient.business.video.HttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.PausableLoadControl;
+import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.PicassoFactory;
@@ -81,20 +82,23 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             setAllowDownload(false);
     }
 
-    public static AlbumVideoItemFragment newInstance(VideoResourceItem galleryItem, boolean startPlaybackOnFragmentDisplay) {
+    public static AlbumVideoItemFragment newInstance(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
         AlbumVideoItemFragment fragment = new AlbumVideoItemFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_GALLERY_ITEM, galleryItem);
-        args.putBoolean(STATE_START_ON_RESUME, startPlaybackOnFragmentDisplay);
-        fragment.setArguments(args);
+        fragment.setArguments(buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay));
         return fragment;
     }
 
+    public static Bundle buildArgs(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
+        Bundle args = SlideshowItemFragment.buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
+        args.putBoolean(STATE_START_ON_RESUME, startPlaybackOnFragmentDisplay);
+        return args;
+    }
+
     @Override
-    public void onDetach() {
+    public void onDestroyView() {
         cleanupVideoResources();
         manageCache();
-        super.onDetach();
+        super.onDestroyView();
     }
 
     @Override
@@ -133,6 +137,10 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
+        if(getArguments() != null) {
+            // if true, playback will start immediately. Otherwise user will have to push play.
+            continuePlayback = getArguments().getBoolean(STATE_CONTINUE_PLAYBACK);
+        }
         if (savedInstanceState != null) {
             startVideoWhenPermissionsGranted = savedInstanceState.getBoolean(STATE_START_VIDEO_ON_PERMISSIONS_GRANTED);
             seekToPosition = savedInstanceState.getLong(CURRENT_VIDEO_PLAYBACK_POSITION);
@@ -163,13 +171,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             }
         });
 
-        if(player == null) {
-            buildPlayer(model);
-        }
-
         SimpleExoPlayerView simpleExoPlayerView = new SimpleExoPlayerView(getContext());
 
-        simpleExoPlayerView.setPlayer(player);
+        simpleExoPlayerView.setPlayer(buildPlayer(model));
 
         simpleExoPlayerView.setOnTouchListener(new CustomClickTouchListener(getContext()) {
             @Override

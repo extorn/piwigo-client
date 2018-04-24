@@ -73,6 +73,7 @@ import delit.piwigoclient.ui.events.AlbumDeletedEvent;
 import delit.piwigoclient.ui.events.AlbumSelectedEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
+import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
@@ -294,10 +295,17 @@ public class ViewAlbumFragment extends MyFragment {
             }
         }
 
+        PiwigoAlbumUpdatedEvent albumUpdatedEvent = EventBus.getDefault().removeStickyEvent(PiwigoAlbumUpdatedEvent.class);
+        if(albumUpdatedEvent != null) {
+            // retrieved this from the slideshow.
+            galleryModel = albumUpdatedEvent.getUpdatedAlbum();
+            gallery = galleryModel.getAlbumDetails();
+        }
+
         userGuid = PiwigoSessionDetails.getUserGuid();
         if(galleryModel == null) {
             galleryIsDirty = true;
-            galleryModel = new PiwigoAlbum();
+            galleryModel = new PiwigoAlbum(gallery);
         }
 
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
@@ -545,7 +553,7 @@ public class ViewAlbumFragment extends MyFragment {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 int pageToLoad = galleryModel.getPagesLoaded();
-                if (pageToLoad == 0 || galleryModel.getResourcesCount() == gallery.getTotalPhotos()) {
+                if (pageToLoad == 0 || galleryModel.isAllResourcesLoaded()) {
                     // already load this one by default so lets not double load it (or we've already loaded all items).
                     return;
                 }

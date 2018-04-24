@@ -29,6 +29,8 @@ public class PicassoLoader implements Callback {
     private int resourceToLoad = Integer.MIN_VALUE;
     private boolean imageUnavailable;
     public static final String PICASSO_REQUEST_TAG = "PIWIGO";
+    private String placeholderUri;
+    private boolean placeholderLoaded;
 
     public PicassoLoader(ImageView loadInto) {
         this.loadInto = loadInto;
@@ -40,8 +42,16 @@ public class PicassoLoader implements Callback {
 
     @Override
     public final void onSuccess() {
-        imageLoaded = true;
         imageLoading = false;
+
+        if(placeholderUri != null && !placeholderLoaded) {
+            placeholderUri = null;
+            placeholderLoaded = true;
+            load();
+            return;
+        }
+
+        imageLoaded = true;
         onImageLoad(true);
     }
 
@@ -91,8 +101,20 @@ public class PicassoLoader implements Callback {
         }
     }
 
+    public void cancelImageLoadIfRunning() {
+        if(loadInto != null) {
+            PicassoFactory.getInstance().getPicassoSingleton().cancelRequest(loadInto);
+        }
+    }
+
     protected RequestCreator buildLoader() {
-        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton()).error(R.drawable.ic_error_black_24px).placeholder(R.drawable.blank);
+        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton()).error(R.drawable.ic_error_black_24px);
+        if(placeholderLoaded) {
+            rc.noPlaceholder();
+        } else {
+            rc.placeholder(R.drawable.blank);
+        }
+
         if(Math.abs(rotation) > Float.MIN_NORMAL) {
             rc.rotate(rotation);
         }
@@ -101,6 +123,9 @@ public class PicassoLoader implements Callback {
     }
 
     private RequestCreator buildRequestCreator(Picasso picassoSingleton) {
+        if(placeholderUri != null) {
+            return picassoSingleton.load(placeholderUri);
+        }
         if (uriToLoad != null) {
             return picassoSingleton.load(uriToLoad);
         } else if (fileToLoad != null) {
@@ -174,5 +199,9 @@ public class PicassoLoader implements Callback {
 
     protected ImageView getLoadInto() {
         return loadInto;
+    }
+
+    public void setPlaceholderImageUri(String placeholderUri) {
+        this.placeholderUri = placeholderUri;
     }
 }

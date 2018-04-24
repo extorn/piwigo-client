@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +38,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.MyFragment;
-import delit.piwigoclient.ui.common.MyFragmentStatePagerAdapter;
+import delit.piwigoclient.ui.common.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.common.SlidingTabLayout;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 
@@ -119,7 +120,7 @@ public class PreferencesFragment extends MyFragment {
      * this class is the {@link #getPageTitle(int)} method which controls what is displayed in the
      * {@link SlidingTabLayout}.
      */
-    class SamplePagerAdapter extends MyFragmentStatePagerAdapter {
+    class SamplePagerAdapter extends FragmentPagerAdapter {
 
         public SamplePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -140,7 +141,7 @@ public class PreferencesFragment extends MyFragment {
         }
 
         @Override
-        public Fragment createNewItem(int position) {
+        public Fragment getItem(int position) {
             switch (position) {
                 case 0:
                     return new ConnectionPreferenceFragment();
