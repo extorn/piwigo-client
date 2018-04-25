@@ -62,6 +62,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEve
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapter;
+import delit.piwigoclient.util.SetUtils;
 
 /**
  * Created by gareth on 21/06/17.
@@ -100,10 +101,9 @@ public class GroupFragment extends MyFragment {
     private ArrayList<CategoryItemStub> availableGalleries;
     private boolean fieldsEditable;
     private CheckBox isDefaultField;
-    private HashSet<Long> memberSaveActionIds;
-    private HashSet<Long> permissionsSaveActionIds;
+    private final HashSet<Long> memberSaveActionIds = new HashSet<>(2);
+    private final HashSet<Long> permissionsSaveActionIds = new HashSet<>(2);
     private int selectUsersActionId;
-
 
     public static GroupFragment newInstance(Group group) {
         GroupFragment fragment = new GroupFragment();
@@ -190,8 +190,10 @@ public class GroupFragment extends MyFragment {
             newAccessibleAlbumIds = (HashSet<Long>) savedInstanceState.getSerializable(NEW_ACCESSIBLE_ALBUM_IDS);
             availableGalleries = (ArrayList<CategoryItemStub>) savedInstanceState.getSerializable(AVAILABLE_ALBUMS);
             fieldsEditable = savedInstanceState.getBoolean(STATE_FIELDS_EDITABLE);
-            memberSaveActionIds = (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_MEMBER_SAVE_ACTION_IDS);
-            permissionsSaveActionIds = (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS);
+            SetUtils.setNotNull(memberSaveActionIds, (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_MEMBER_SAVE_ACTION_IDS));
+
+            permissionsSaveActionIds.clear();
+            permissionsSaveActionIds.addAll((HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS));
             selectUsersActionId = savedInstanceState.getInt(STATE_SELECT_USERS_ACTION_ID);
         }
 
@@ -299,9 +301,6 @@ public class GroupFragment extends MyFragment {
 
     private void saveGroupChanges() {
         setFieldsEditable(false);
-
-        memberSaveActionIds = new HashSet<>(2);
-        permissionsSaveActionIds = new HashSet<>(2);
         String name = groupNameField.getText().toString();
         boolean isDefault = isDefaultField.isChecked();
         newGroup = new Group(currentGroup.getId(), name, isDefault);

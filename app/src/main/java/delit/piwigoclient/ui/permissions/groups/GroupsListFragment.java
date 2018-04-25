@@ -295,7 +295,7 @@ public class GroupsListFragment extends MyFragment {
     }
 
     private void onGroupsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
-        synchronized (groupsModel) {
+        synchronized (this) {
             pageToLoadNow = -1;
             retryActionButton.setVisibility(View.GONE);
             int firstIdxAdded = groupsModel.addItemPage(response.getPage(), response.getPageSize(), response.getGroups());

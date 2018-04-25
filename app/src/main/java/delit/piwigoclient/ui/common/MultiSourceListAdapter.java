@@ -174,6 +174,9 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
     }
 
     public int getPosition(Long itemId) {
+        if(itemId == null) {
+            return -1;
+        }
         if(idPositionMap == null) {
             idPositionMap = buildIdPositionMap();
         }

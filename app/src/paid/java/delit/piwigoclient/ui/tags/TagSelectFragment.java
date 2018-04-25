@@ -315,7 +315,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     public void onTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
-        synchronized (tagsModel) {
+        synchronized (this) {
             pageToLoadNow = -1;
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
             boolean isUserTagPluginSearchResult = response instanceof PluginUserTagsGetListResponseHandler.PiwigoUserTagsPluginGetTagsListRetrievedResponse;

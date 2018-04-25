@@ -156,8 +156,14 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         boolean tryingAgain = false;
         if (!cancelCallAsap) {
             // attempt login and resend original message.
-            if(error instanceof IOException && "Unhandled exception: Cache has been shut down".equals(error.getMessage())) {
+            if(error instanceof IOException && ("Unhandled exception: Cache has been shut down".equals(error.getMessage())
+            || "Unhandled exception: Connection pool shut down".equals(error.getMessage()))) {
                 tryingAgain = true;
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    // wait just a fraction of a second to give another cache or connection pool time to come up.
+                }
                 rerunCall();
             } else if(error instanceof SocketTimeoutException) {
                 tryingAgain = true;
@@ -295,7 +301,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         boolean exit = false;
         do {
             LoginResponseHandler handler = new LoginResponseHandler(username, password);
-            runLoginHandler(handler);
+            runLoginHandlerAndWaitForOutcome(handler);
             if (handler.isLoginSuccess()) {
                 if (handler.getNestedFailureMethod() != null) {
                     // failed internally. - still a failure!
@@ -325,12 +331,12 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         return false;
     }
 
-    private void runLoginHandler(LoginResponseHandler handler) {
+    private void runLoginHandlerAndWaitForOutcome(LoginResponseHandler handler) {
         handler.setCallDetails(context, piwigoServerUrl, !getUseSynchronousMode());
         handler.setPublishResponses(false);
         handler.runCall();
 
-        // this is the absolute timeout - in case something is seriously wrong.
+        // this is the absolute timeout (5min) - in case something is seriously wrong.
         long callTimeoutAtTime = System.currentTimeMillis() + 300000;
 
         synchronized (handler) {
@@ -342,7 +348,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     } catch (InterruptedException e) {
                         // Either this has been cancelled or timed out
                         if (cancelCallAsap) {
-                            if(BuildConfig.DEBUG) {
+                            if (BuildConfig.DEBUG) {
                                 Log.e(handler.getTag(), "Service call cancelled before login handler could finish running");
                             }
                             handler.cancelCallAsap();

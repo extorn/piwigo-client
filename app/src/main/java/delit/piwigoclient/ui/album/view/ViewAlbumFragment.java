@@ -163,8 +163,8 @@ public class ViewAlbumFragment extends MyFragment {
     private long[] currentUsers;
     private long[] currentGroups;
     private boolean galleryIsDirty;
-    private HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
-    private ArrayList<String> itemsToLoad = new ArrayList<>(0);
+    private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
+    private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     private boolean movedResourceParentUpdateRequired;
     private HashSet<Long> userIdsInSelectedGroups;
     private int updateAlbumDetailsProgress = UPDATE_NOT_RUNNING;
@@ -294,8 +294,8 @@ public class ViewAlbumFragment extends MyFragment {
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid() != userGuid;
             galleryIsDirty = galleryIsDirty || savedInstanceState.getBoolean(STATE_GALLERY_DIRTY);
-            loadingMessageIds = (HashMap<Long,String>)savedInstanceState.getSerializable(STATE_GALLERY_ACTIVE_LOAD_THREADS);
-            itemsToLoad = (ArrayList<String>)savedInstanceState.getSerializable(STATE_GALLERY_LOADS_TO_RETRY);
+            SetUtils.setNotNull(loadingMessageIds,(HashMap<Long,String>)savedInstanceState.getSerializable(STATE_GALLERY_ACTIVE_LOAD_THREADS));
+            SetUtils.setNotNull(itemsToLoad,(ArrayList<String>)savedInstanceState.getSerializable(STATE_GALLERY_LOADS_TO_RETRY));
             movedResourceParentUpdateRequired = savedInstanceState.getBoolean(STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED);
             updateAlbumDetailsProgress = savedInstanceState.getInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS);
             usernameSelectionWantedNext = savedInstanceState.getBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT);
@@ -1533,7 +1533,7 @@ public class ViewAlbumFragment extends MyFragment {
 
     private void onGetSubGalleries(final PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsResponse response) {
 
-        synchronized (galleryModel) {
+        synchronized (this) {
             if(galleryModel.getContainerDetails().isRoot()) {
                 galleryModel.updateMaxExpectedItemCount(response.getAlbums().size());
             }
@@ -1560,7 +1560,7 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     private void onGetResources(final PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse response) {
-        synchronized (galleryModel) {
+        synchronized (this) {
             galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
             viewAdapter.notifyDataSetChanged();
         }

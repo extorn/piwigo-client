@@ -184,7 +184,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     }
 
     private void onGroupsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
-        synchronized (groupsModel) {
+        synchronized (this) {
             if(pageToLoadNow == Integer.MAX_VALUE) {
                 // this is a special page of all missing items from those selected.
                 pageToLoadNow = -1;

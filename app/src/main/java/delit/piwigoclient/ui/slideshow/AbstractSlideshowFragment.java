@@ -48,6 +48,7 @@ import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
+import delit.piwigoclient.util.SetUtils;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static android.view.View.GONE;
@@ -62,11 +63,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 //    private static final String TAG = "SlideshowFragment";
     private static final String STATE_GALLERY = "gallery";
     private static final String STATE_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
+    private static final String STATE_ACTIVE_LOAD_THREADS = "activeLoadThreads";
     private CustomViewPager viewPager;
     private ResourceContainer<T> gallery;
     private int rawCurrentGalleryItemPosition;
     private View progressIndicator;
-    private final Set<Integer> pagesBeingLoaded = new HashSet<>();
+    private final HashSet<Integer> pagesBeingLoaded = new HashSet<>();
     private GalleryItemAdapter galleryItemAdapter;
 
     public static Bundle buildArgs(ResourceContainer gallery, GalleryItem currentGalleryItem) {
@@ -81,6 +83,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_GALLERY, gallery);
         outState.putInt(STATE_GALLERY_ITEM_DISPLAYED, rawCurrentGalleryItemPosition);
+        outState.putSerializable(STATE_ACTIVE_LOAD_THREADS, pagesBeingLoaded);
     }
 
     @Override
@@ -129,6 +132,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         if (configurationBundle != null) {
             gallery = (ResourceContainer) configurationBundle.getSerializable(STATE_GALLERY);
             rawCurrentGalleryItemPosition = configurationBundle.getInt(STATE_GALLERY_ITEM_DISPLAYED);
+            pagesBeingLoaded.clear();
+            SetUtils.setNotNull(pagesBeingLoaded, (HashSet<Integer>) configurationBundle.getSerializable(STATE_ACTIVE_LOAD_THREADS));
         }
 
         if(viewPager != null && isSessionDetailsChanged()) {
@@ -497,7 +502,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         }
 
         public void onGetResources(final PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse response) {
-            synchronized (gallery) {
+            synchronized (this) {
                 gallery.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
                 pagesBeingLoaded.remove(response.getPage());
                 viewPager.getAdapter().notifyDataSetChanged();

@@ -362,7 +362,7 @@ public class TagsListFragment extends MyFragment {
     }
 
     public void onTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
-        synchronized (tagsModel) {
+        synchronized (this) {
             pageToLoadNow = -1;
             retryActionButton.setVisibility(View.GONE);
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;

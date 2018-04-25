@@ -59,6 +59,7 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.TagAlteredEvent;
 import delit.piwigoclient.ui.events.TagUpdatedEvent;
+import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -85,8 +86,8 @@ public class ViewTagFragment extends MyFragment {
     // Start fields maintained in saved session state.
     private Tag tag;
     private PiwigoTag tagModel;
-    private HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
-    private ArrayList<String> itemsToLoad = new ArrayList<>(0);
+    private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
+    private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     private int colsOnScreen;
     private DeleteActionData deleteActionData;
     private long userGuid;
@@ -167,8 +168,8 @@ public class ViewTagFragment extends MyFragment {
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid() != userGuid;
             tagIsDirty = tagIsDirty || savedInstanceState.getBoolean(STATE_TAG_DIRTY);
-            loadingMessageIds = (HashMap)savedInstanceState.getSerializable(STATE_TAG_ACTIVE_LOAD_THREADS);
-            itemsToLoad = (ArrayList)savedInstanceState.getSerializable(STATE_TAG_LOADS_TO_RETRY);
+            SetUtils.setNotNull(loadingMessageIds,(HashMap)savedInstanceState.getSerializable(STATE_TAG_ACTIVE_LOAD_THREADS));
+            SetUtils.setNotNull(itemsToLoad,(ArrayList)savedInstanceState.getSerializable(STATE_TAG_LOADS_TO_RETRY));
             if(deleteActionData != null && deleteActionData.isEmpty()) {
                 deleteActionData = null;
             } else {
@@ -645,7 +646,7 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private void onGetResources(final PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse response) {
-        synchronized (tagModel) {
+        synchronized (this) {
             tagModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
             viewAdapter.notifyDataSetChanged();
         }

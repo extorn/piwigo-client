@@ -303,7 +303,7 @@ public class UsersListFragment extends MyFragment {
 
 
     private void onUsersLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse response) {
-        synchronized (usersModel) {
+        synchronized (this) {
             pageToLoadNow = -1;
             retryActionButton.setVisibility(View.GONE);
             int firstIdxAdded = usersModel.addItemPage(response.getPage(), response.getPageSize(), response.getUsers());

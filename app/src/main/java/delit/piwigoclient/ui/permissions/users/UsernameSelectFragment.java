@@ -210,7 +210,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
 
 
     private void onUsernamesLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse response) {
-        synchronized (usernamesModel) {
+        synchronized (this) {
             if(pageToLoadNow == Integer.MAX_VALUE) {
                 // this is a special page of all missing items from those selected.
                 pageToLoadNow = -1;

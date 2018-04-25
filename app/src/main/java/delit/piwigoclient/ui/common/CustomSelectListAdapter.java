@@ -78,11 +78,14 @@ public abstract class CustomSelectListAdapter<T> extends ArrayAdapter<T> impleme
         }
     }
 
-    public int getPosition(Long albumId) {
+    public int getPosition(Long itemId) {
+        if(itemId == null) {
+            return -1;
+        }
         if(idPositionMap == null) {
             idPositionMap = buildIdPositionMap();
         }
-        Integer pos = idPositionMap.get(albumId);
+        Integer pos = idPositionMap.get(itemId);
         if(pos != null) {
             return pos;
         }

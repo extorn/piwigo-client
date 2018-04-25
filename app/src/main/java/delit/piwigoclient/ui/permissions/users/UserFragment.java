@@ -118,7 +118,7 @@ public class UserFragment extends MyFragment {
     private ArrayList<CategoryItemStub> availableGalleries;
     private boolean fieldsEditable = false;
     private ListView albumPermissionsField;
-    private HashSet<Long> saveActionIds;
+    private final HashSet<Long> saveActionIds = new HashSet<>(5);
     private HashSet<Long> currentDirectAlbumPermissions;
     private HashSet<Long> currentIndirectAlbumPermissions;
     private HashSet<Long> newDirectAlbumPermissions;
@@ -278,7 +278,7 @@ public class UserFragment extends MyFragment {
             newUser = (User) savedInstanceState.getSerializable(NEW_USER);
             fieldsEditable = savedInstanceState.getBoolean(STATE_FIELDS_EDITABLE);
             newGroupMembership = (HashSet<Group>) savedInstanceState.getSerializable(STATE_NEW_GROUP_MEMBERSHIP);
-            saveActionIds = (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_SAVE_ACTION_IDS);
+            SetUtils.setNotNull(saveActionIds,(HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_SAVE_ACTION_IDS));
             selectGroupsActionId = savedInstanceState.getInt(STATE_SELECT_GROUPS_ACTION_ID);
         }
 
@@ -405,7 +405,6 @@ public class UserFragment extends MyFragment {
     }
 
     private void saveUserChanges() {
-        saveActionIds = new HashSet<>(5);
         newUser = setModelFromFields(new User());
         setFieldsEditable(false);
         if(newUser.getId() < 0) {
