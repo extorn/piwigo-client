@@ -26,7 +26,7 @@ public class ImageUpdateInfoResponseHandler<T extends ResourceItem> extends Base
     }
 
     private String getTagIds(HashSet<Tag> tags) {
-        if(tags.size() == 0) {
+        if(tags == null || tags.size() == 0) {
             return "";
         }
         Iterator<Tag> tagIterator = tags.iterator();

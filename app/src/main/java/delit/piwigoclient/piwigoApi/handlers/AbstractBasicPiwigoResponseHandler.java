@@ -211,6 +211,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             }
         }
         if(!tryingAgain) {
+            if(BuildConfig.DEBUG && !"Method name is not valid".equals(error.getMessage())) {
+                Log.e(getTag(),"Tracking piwigo failure class: " + error.getClass() +" message: " + error.getMessage(), error);
+            }
             this.statusCode = statusCode;
             this.headers = headers;
             this.responseBody = responseBody;

@@ -18,7 +18,7 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     public PiwigoTags() {
     }
 
-    private final Comparator<Tag> tagComparator = new Comparator<Tag>() {
+    private transient final Comparator<Tag> tagComparator = new Comparator<Tag>() {
 
         @Override
         public int compare(Tag o1, Tag o2) {
