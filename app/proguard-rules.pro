@@ -80,15 +80,6 @@
 
 -keepclassmembers class com.google.android.gms.dynamite.DynamiteModule$DynamiteLoaderClassLoader { java.lang.ClassLoader sClassLoader; }
 
-# Needed because we do reflection on the showXyz methods.
--keepclassmembernames class delit.piwigoclient.ui.MainActivity {
-    public <methods>;
-}
-# Needed because we do reflection on the showXyz methods.
--keepclassmembernames class delit.piwigoclient.ui.AbstractMainActivity {
-    public <methods>;
-}
-
 # For using GSON @Expose annotation
 -keepattributes *Annotation*
 -keepclassmembers class ** {
