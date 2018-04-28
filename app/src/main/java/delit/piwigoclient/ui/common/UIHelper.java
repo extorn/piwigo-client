@@ -578,7 +578,7 @@ public abstract class UIHelper<T> {
         progressDialog.show();
     }
 
-    private void dismissProgressDialog() {
+    public void dismissProgressDialog() {
         progressDialog.dismiss();
     }
 

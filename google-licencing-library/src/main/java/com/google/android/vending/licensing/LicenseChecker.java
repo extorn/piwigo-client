@@ -73,14 +73,14 @@ public class LicenseChecker implements ServiceConnection {
 
     private ILicensingService mService;
 
-    private PublicKey mPublicKey;
+    private final PublicKey mPublicKey;
     private final Context mContext;
     private final Policy mPolicy;
     /**
      * A handler for running tasks on a background thread. We don't want license
      * processing to block the UI thread.
      */
-    private Handler mHandler;
+    private final Handler mHandler;
     private final String mPackageName;
     private final String mVersionCode;
     private final Set<LicenseValidator> mChecksInProgress = new HashSet<>();
@@ -260,9 +260,9 @@ public class LicenseChecker implements ServiceConnection {
 
     private class ResultListener extends ILicenseResultListener.Stub {
         private final LicenseValidator mValidator;
-        private Runnable mOnTimeout;
+        private final Runnable mOnTimeout;
 
-        public ResultListener(LicenseValidator validator) {
+        ResultListener(LicenseValidator validator) {
             mValidator = validator;
             mOnTimeout = new Runnable() {
                 public void run() {
@@ -346,11 +346,13 @@ public class LicenseChecker implements ServiceConnection {
         }
     }
 
+    @Override
     public synchronized void onServiceConnected(ComponentName name, IBinder service) {
         mService = ILicensingService.Stub.asInterface(service);
         runChecks();
     }
 
+    @Override
     public synchronized void onServiceDisconnected(ComponentName name) {
         // Called when the connection with the service has been
         // unexpectedly disconnected. That is, Market crashed.
