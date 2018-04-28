@@ -397,7 +397,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse && ((PiwigoResponseBufferingHandler.BasePiwigoResponse)response).getPiwigoMethod().equals(LogoutResponseHandler.METHOD)) {
                 //TODO find a nicer way of this.
                 // logout failed. Lets just wipe the login state manually for now.
-                PiwigoSessionDetails.logout();
+                PiwigoSessionDetails.logout(getContext());
                 if(loginOnLogout) {
                     loginOnLogout = false;
                     testLogin();

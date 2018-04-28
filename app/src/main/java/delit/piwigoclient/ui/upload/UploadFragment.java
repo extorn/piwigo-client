@@ -550,8 +550,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
     private void notifyUser(Context context, int titleId, String message) {
         if(getContext() == null) {
-            Context ctx = MyApplication.getInstance();
-            notifyUserUploadStatus(ctx, message);
+            notifyUserUploadStatus(context.getApplicationContext(), message);
         } else {
             getUiHelper().showOrQueueDialogMessage(titleId, message);
         }

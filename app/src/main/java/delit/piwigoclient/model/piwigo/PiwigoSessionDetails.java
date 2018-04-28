@@ -1,5 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.content.Context;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -99,8 +101,8 @@ public class PiwigoSessionDetails {
         return instance != null && "guest".equals(instance.userType);
     }
 
-    public synchronized  static void logout() {
-        HttpClientFactory.getInstance(MyApplication.getInstance()).flushCookies();
+    public synchronized  static void logout(Context context) {
+        HttpClientFactory.getInstance(context).flushCookies();
         instance = null;
     }
 

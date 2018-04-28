@@ -249,24 +249,24 @@ public abstract class UIHelper<T> {
      */
     public void addActiveServiceCall(long messageId) {
         activeServiceCalls.add(messageId);
-        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
         if (progressDialog != null && !progressDialog.isShowing()) {
             // assume it still has the correct text... (fingers crossed)
             if(canShowDialog()) {
                 showProgressDialog();
             }
         }
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
     public void addActiveServiceCall(String titleString, long messageId) {
         activeServiceCalls.add(messageId);
-        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
         if (progressDialog != null && !progressDialog.isShowing()) {
             progressDialog.setTitle(titleString);
             if(canShowDialog()) {
                 showProgressDialog();
             }
         }
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
     private class DismissListener implements DialogInterface.OnDismissListener {
@@ -578,10 +578,8 @@ public abstract class UIHelper<T> {
         progressDialog.show();
     }
 
-    public void dismissProgressDialog() {
-        if (progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
+    private void dismissProgressDialog() {
+        progressDialog.dismiss();
     }
 
     public interface QuestionResultListener extends Serializable {

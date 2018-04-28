@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -265,6 +266,17 @@ public class PiwigoResponseBufferingHandler {
 
     public void replaceHandler(BasicPiwigoResponseListener newHandler) {
         handlers.put(newHandler.getHandlerId(), newHandler);
+    }
+
+    public synchronized Set<Long> getUnknownMessageIds(Set<Long> messageIdsToCheck) {
+        Iterator<Long> iterator = messageIdsToCheck.iterator();
+        while (iterator.hasNext()) {
+            Long next =  iterator.next();
+            if(!handlerResponseMap.containsKey(next)) {
+                iterator.remove();
+            }
+        }
+        return messageIdsToCheck;
     }
 
     public interface PiwigoResponse extends Response {

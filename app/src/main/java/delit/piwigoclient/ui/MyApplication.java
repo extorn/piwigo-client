@@ -26,19 +26,8 @@ public class MyApplication extends Application implements Application.ActivityLi
     }
 
     private transient SharedPreferences prefs;
-    private static MyApplication instance;
-    private Activity currentActivity;
 
     public MyApplication() {
-        instance = this;
-    }
-
-    public static MyApplication getInstance() {
-        return instance;
-    }
-
-    public Activity getCurrentActivity() {
-        return currentActivity;
     }
 
     private void upgradeAnyPreferencesIfRequired() {
@@ -94,7 +83,6 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        currentActivity = activity;
     }
 
     @Override
@@ -104,7 +92,6 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityResumed(Activity activity) {
-        currentActivity = activity;
         if (activity instanceof FileSelectionActivity) {
             AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
         }
@@ -112,9 +99,6 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityPaused(Activity activity) {
-        if(activity == currentActivity) {
-            currentActivity = null;
-        }
     }
 
     @Override

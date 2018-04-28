@@ -43,7 +43,7 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     private void onLogout() {
-        PiwigoSessionDetails.logout();
+        PiwigoSessionDetails.logout(getContext());
         PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse r = new PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse(getMessageId(), getPiwigoMethod());
         storeResponse(r);
     }

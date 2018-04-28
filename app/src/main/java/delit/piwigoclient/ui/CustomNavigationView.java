@@ -85,25 +85,30 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
         final TextView email = headerView.findViewById(R.id.admin_email);
 
-        final Activity activity = MyApplication.getInstance().getCurrentActivity();
-
         email.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain"); // send email as plain text
-                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email.getText().toString()});
-                intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
-                String serverVersion = "Unknown";
-                if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-                    serverVersion = PiwigoSessionDetails.getInstance().getPiwigoVersion();
-                }
-                intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: "+ appVersion +"\nType and model of Device Being Used:\n");
-                activity.startActivity(Intent.createChooser(intent, ""));
+                sendEmail(((TextView)v).getText().toString());
             }
         });
 
         return headerView;
+    }
+
+    private void sendEmail(String email) {
+
+        final String appVersion = ProjectUtils.getVersionName(getContext());
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain"); // send email as plain text
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
+        String serverVersion = "Unknown";
+        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
+            serverVersion = PiwigoSessionDetails.getInstance().getPiwigoVersion();
+        }
+        intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: "+ appVersion +"\nType and model of Device Being Used:\n");
+        getContext().startActivity(Intent.createChooser(intent, ""));
     }
 
     @Override

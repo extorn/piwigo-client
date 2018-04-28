@@ -260,13 +260,13 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             }
             if(client == null) {
                 // unable to build a client from configuration properties.
-                sendFailureMessage(-1, null, null, new IllegalArgumentException(MyApplication.getInstance().getString(R.string.error_server_configuration_invalid)));
+                sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_server_configuration_invalid)));
             } else {
                 requestHandle = runCall(client, this);
             }
         } catch(RuntimeException e) {
             if(client == null) {
-                sendFailureMessage(-1, null, null, new IllegalStateException(MyApplication.getInstance().getString(R.string.error_building_http_engine), e));
+                sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
             } else {
                 sendFailureMessage(-1, null, null, e);
             }
@@ -292,7 +292,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     public boolean getNewLogin() {
 
         // send a server login request
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MyApplication.getInstance());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
         piwigoServerUrl = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, context);
 
@@ -377,7 +377,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         if(requestHandle != null && !(requestHandle.isFinished() || requestHandle.isCancelled())) {
             boolean cancelled = requestHandle.cancel(true);
             if(cancelled) {
-                sendFailureMessage(-1, null, null, new IllegalArgumentException(MyApplication.getInstance().getString(R.string.error_request_timed_out)));
+                sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_request_timed_out)));
             }
         }
     }
