@@ -15,30 +15,33 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSelectionListAdapter> {
+public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSelectionListAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private ArrayList<CategoryItemStub> availableItems;
     private HashSet<Long> indirectSelection;
 
-    public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
+    public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
         AlbumSelectFragment fragment = new AlbumSelectFragment();
-        Bundle args = buildArgsBundle(multiSelectEnabled, allowEditing, allowAddition, false, actionId, initialSelection);
+        Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if(indirectSelection != null) {
             args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
@@ -60,6 +63,11 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     }
 
     @Override
+    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
+        return new BaseRecyclerViewAdapterPreferences();
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_AVAILABLE_ITEMS, availableItems);
@@ -78,6 +86,11 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
+        }
+
+        boolean editingEnabled = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+        if(!editingEnabled) {
+            getViewPrefs().locked();
         }
 
         if (savedInstanceState != null) {
@@ -121,7 +134,8 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
                 listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
             }
 
-            for(Long selectedItemId : getCurrentSelection()) {
+            for (Iterator<Long> it = getCurrentSelection().iterator(); it.hasNext(); ) {
+                Long selectedItemId = it.next();
                 int itemPos = availableItemsAdapter.getPosition(selectedItemId);
                 if(itemPos >= 0) {
                     listView.setItemChecked(itemPos, true);
@@ -167,7 +181,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         getUiHelper().dismissProgressDialog();
 //        if (response.getItemsOnPage() == response.getPageSize()) {
 //            //TODO FEATURE: Support groups paging
-//            getUiHelper().showOrQueueDialogMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));
+//            getUiHelper().showOrQueueMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));
 //        }
         availableItems = response.getAlbumNames();
         populateListWithItems();

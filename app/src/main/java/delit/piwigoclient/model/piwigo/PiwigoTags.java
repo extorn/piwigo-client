@@ -77,9 +77,10 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
             // overwrite those already in the store.
             getItems().removeAll(tags);
         }
+        int insertAt = items.size();
         items.addAll(tags);
         sort();
-        return tags.size();
+        return insertAt;
     }
 
     public int getPagesLoaded() {

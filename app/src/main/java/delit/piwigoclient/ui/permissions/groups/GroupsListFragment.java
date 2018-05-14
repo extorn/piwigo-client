@@ -36,6 +36,8 @@ import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.GroupDeletedEvent;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
@@ -54,9 +56,25 @@ public class GroupsListFragment extends MyFragment {
     private PiwigoGroups groupsModel = new PiwigoGroups();
     private GroupRecyclerViewAdapter viewAdapter;
     private int pageToLoadNow = -1;
+    private BaseRecyclerViewAdapterPreferences viewPrefs;
 
     public static GroupsListFragment newInstance() {
-        return new GroupsListFragment();
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().unlocked(false, false);
+        prefs.setAllowItemAddition(true);
+        Bundle args = new Bundle();
+        prefs.storeToBundle(args);
+        GroupsListFragment fragment = new GroupsListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        if(getArguments() != null) {
+            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(getArguments());
+            setArguments(null);
+        }
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -76,6 +94,7 @@ public class GroupsListFragment extends MyFragment {
         super.onSaveInstanceState(outState);
         outState.putSerializable(GROUPS_MODEL, groupsModel);
         outState.putInt(GROUPS_PAGE_BEING_LOADED, pageToLoadNow);
+        viewPrefs.storeToBundle(outState);
     }
 
     @Nullable
@@ -119,7 +138,7 @@ public class GroupsListFragment extends MyFragment {
         saveButton.setVisibility(View.GONE);
 
         CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
-        addListItemButton.setVisibility(View.VISIBLE);
+        addListItemButton.setVisibility(viewPrefs.isAllowItemAddition()?View.VISIBLE:View.GONE);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,34 +162,19 @@ public class GroupsListFragment extends MyFragment {
 
         recyclerView.setLayoutManager(layoutMan);
 
-        final boolean allowMultiselection = false;
-
-        viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusListener<Group>() {
-            @Override
-            public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
-            }
+        viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
 
             @Override
-            public void onItemSelectionCountChanged(int size) {
-            }
-
-            @Override
-            public void onItemDeleteRequested(Group item) {
+            public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, Group item) {
                 onDeleteGroup(item);
             }
 
             @Override
-            public void onItemClick(Group item) {
+            public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, Group item) {
                 EventBus.getDefault().post(new ViewGroupEvent(item));
             }
 
-            @Override
-            public void onItemLongClick(Group item) {
-            }
-
-        }, allowMultiselection);
-        viewAdapter.setEnabled(true);
-        viewAdapter.setAllowItemDeletion(true);
+        }, viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
 
@@ -212,7 +216,7 @@ public class GroupsListFragment extends MyFragment {
 
     private void onGroupSelected(Group selectedGroup) {
         EventBus.getDefault().post(new ViewGroupEvent(selectedGroup));
-//        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_information_coming_soon));
+//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_information_coming_soon));
     }
 
     private void onDeleteGroup(final Group thisItem) {

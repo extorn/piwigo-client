@@ -8,6 +8,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashSet;
 
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.ViewTagEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
 import delit.piwigoclient.ui.tags.TagSelectFragment;
@@ -44,18 +45,26 @@ public class MainActivity extends AbstractMainActivity {
     }
 
     protected void showTags() {
-        TagsListFragment fragment = TagsListFragment.newInstance();
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().locked();
+        TagsListFragment fragment = TagsListFragment.newInstance(prefs);
         showFragmentNow(fragment);
     }
 
-    private void showTagSelectionFragment(int actionId, boolean allowMultiSelect, boolean allowEditing, boolean allowAddition, boolean initialSelectionLocked, HashSet<Long> initialSelection) {
-        TagSelectFragment fragment = TagSelectFragment.newInstance(allowMultiSelect, allowEditing, allowAddition, initialSelectionLocked, actionId, initialSelection);
+    private void showTagSelectionFragment(int actionId, BaseRecyclerViewAdapterPreferences prefs, HashSet<Long> initialSelection) {
+        TagSelectFragment fragment = TagSelectFragment.newInstance(prefs, actionId, initialSelection);
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(TagSelectionNeededEvent event) {
-        showTagSelectionFragment(event.getActionId(), event.isAllowMultiSelect(), event.isAllowEditing(), true, event.isInitialSelectionLocked(), event.getInitialSelection());
+        BaseRecyclerViewAdapterPreferences prefs;
+        if(event.isAllowEditing()) {
+            prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+            prefs.setAllowItemAddition(true);
+        } else {
+            prefs = new BaseRecyclerViewAdapterPreferences().locked();
+        }
+        showTagSelectionFragment(event.getActionId(), prefs , event.getInitialSelection());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

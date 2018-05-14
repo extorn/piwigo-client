@@ -4,7 +4,7 @@ package delit.piwigoclient.model.piwigo;
  * Created by gareth on 06/04/18.
  */
 
-public abstract class ResourceContainer<T extends Identifiable> extends PagedList<GalleryItem> implements Identifiable {
+public abstract class ResourceContainer<T extends Identifiable> extends IdentifiablePagedList<GalleryItem> implements Identifiable {
 
     private final T containerDetails;
 

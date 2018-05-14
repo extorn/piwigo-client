@@ -33,23 +33,30 @@ import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.RecyclerViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter> {
+public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String TAGS_MODEL = "tagsModel";
     private static final String TAGS_PAGE_BEING_LOADED = "tagsPageBeingLoaded";
     private PiwigoTags tagsModel = new PiwigoTags();
     private int pageToLoadNow = -1;
 
-    public static TagSelectFragment newInstance(boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, boolean initialSelectionLocked, int actionId, HashSet<Long> initialSelection) {
+    public static TagSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         TagSelectFragment fragment = new TagSelectFragment();
-        fragment.setArguments(buildArgsBundle(multiSelectEnabled, allowEditing, allowAddition, initialSelectionLocked, actionId, initialSelection));
+        fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
         return fragment;
+    }
+
+    @Override
+    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
+        return new BaseRecyclerViewAdapterPreferences();
     }
 
     @Override
@@ -79,33 +86,13 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             return null;
         }
 
-        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusListener<Tag>() {
-            @Override
-            public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
-            }
-
-            @Override
-            public void onItemSelectionCountChanged(int size) {
-            }
-
-            @Override
-            public void onItemDeleteRequested(Tag g) {
-            }
-            @Override
-            public void onItemClick(Tag item) {
-
-            }
-
-            @Override
-            public void onItemLongClick(Tag item) {
-
-            }
-        }, captureActionClicks);
-        if(!viewAdapter.isItemSelectionAllowed()) {
-            viewAdapter.toggleItemSelection();
+        boolean editingEnabled = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+        if(!editingEnabled) {
+            getViewPrefs().locked();
         }
 
+        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
+        }, getViewPrefs());
         setListAdapter(viewAdapter);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());

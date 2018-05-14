@@ -41,6 +41,7 @@ public class FileSelectionActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 101;
     private static final String TAG = "FileSelection";
     public static final String SELECTED_FILES = "selectedFiles";
+    public static final String ARG_FOLDER_SELECTION = "folderSelection";
     private File mainPath = Environment.getExternalStorageDirectory();
     public static final String ARG_ALLOWED_FILE_TYPES = "ARG_ALLOWED_FILE_TYPES";
     public static final String ARG_SORT_A_TO_Z = "ARG_SORT_A_TO_Z";
@@ -66,16 +67,13 @@ public class FileSelectionActivity extends AppCompatActivity {
     private int top = 0;
     private ArrayList<String> allowedFileTypes;
     private int sortOrderFlag = -1;
+    private boolean folderSelection;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getIntent().hasExtra(ARG_ALLOWED_FILE_TYPES)) {
             allowedFileTypes = getIntent().getExtras().getStringArrayList(ARG_ALLOWED_FILE_TYPES);
-            boolean sortAtoZ = getIntent().getExtras().getBoolean(ARG_SORT_A_TO_Z);
-            if(sortAtoZ) {
-                sortOrderFlag = 1;
-            }
             for( int i = 0; i < allowedFileTypes.size(); i++) {
                 String currentVal = allowedFileTypes.get(i);
                 if(!currentVal.startsWith(".")) {
@@ -84,6 +82,15 @@ public class FileSelectionActivity extends AppCompatActivity {
                     allowedFileTypes.set(i, currentVal.toLowerCase());
                 }
             }
+        }
+        if(getIntent().hasExtra(ARG_SORT_A_TO_Z)) {
+            boolean sortAtoZ = getIntent().getExtras().getBoolean(ARG_SORT_A_TO_Z);
+            if(sortAtoZ) {
+                sortOrderFlag = 1;
+            }
+        }
+        if(getIntent().hasExtra(ARG_FOLDER_SELECTION)) {
+            folderSelection = getIntent().getExtras().getBoolean(ARG_FOLDER_SELECTION);
         }
         buildView();
     }
@@ -170,7 +177,7 @@ public class FileSelectionActivity extends AppCompatActivity {
 
                 File lastPath = mainPath;
                 try {
-                    if (position < directoryList.size()) {
+                    if (position < directoryList.size() && !folderSelection) {
                         mainPath = directoryList.get(position);
                         loadLists();
                     }
@@ -265,7 +272,11 @@ public class FileSelectionActivity extends AppCompatActivity {
 
         for(int i = 0 ; i < directoryView.getCount(); i++){
             if(directoryView.isItemChecked(i)){
-                resultFileList.add(fileList.get(i-directoryList.size()));
+                if(i < directoryList.size()) {
+                    resultFileList.add(directoryList.get(i));
+                } else {
+                    resultFileList.add(fileList.get(i - directoryList.size()));
+                }
             }
         }
         if(resultFileList.isEmpty()){

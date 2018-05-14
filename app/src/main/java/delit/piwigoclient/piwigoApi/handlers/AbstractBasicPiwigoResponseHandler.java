@@ -52,6 +52,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private int statusCode;
     private Header[] headers;
     private byte[] responseBody;
+    private ConnectionPreferences.ProfilePreferences customConnectionPrefs;
 
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
@@ -396,5 +397,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     public boolean isRunning() {
         return isRunning;
+    }
+
+    public void withConnectionPreferences(ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        customConnectionPrefs = connectionPrefs;
+        //TODO do something useful with these!
     }
 }

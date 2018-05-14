@@ -36,6 +36,8 @@ import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.UserDeletedEvent;
 import delit.piwigoclient.ui.events.UserUpdatedEvent;
@@ -54,9 +56,25 @@ public class UsersListFragment extends MyFragment {
     private PiwigoUsers usersModel = new PiwigoUsers();
     private UserRecyclerViewAdapter viewAdapter;
     private int pageToLoadNow = -1;
+    private BaseRecyclerViewAdapterPreferences viewPrefs;
 
     public static UsersListFragment newInstance() {
-        return new UsersListFragment();
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().unlocked(false, false);
+        prefs.setAllowItemAddition(true);
+        Bundle args = new Bundle();
+        prefs.storeToBundle(args);
+        UsersListFragment fragment = new UsersListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        if(getArguments() != null) {
+            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(getArguments());
+            setArguments(null);
+        }
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -76,6 +94,7 @@ public class UsersListFragment extends MyFragment {
         super.onSaveInstanceState(outState);
         outState.putSerializable(USERS_MODEL, usersModel);
         outState.putInt(USERS_PAGE_BEING_LOADED, pageToLoadNow);
+        viewPrefs.storeToBundle(outState);
     }
 
     @Nullable
@@ -93,6 +112,7 @@ public class UsersListFragment extends MyFragment {
         if (savedInstanceState != null && !isSessionDetailsChanged()) {
             usersModel = (PiwigoUsers) savedInstanceState.getSerializable(USERS_MODEL);
             pageToLoadNow = savedInstanceState.getInt(USERS_PAGE_BEING_LOADED);
+            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
@@ -119,7 +139,7 @@ public class UsersListFragment extends MyFragment {
         saveButton.setVisibility(View.GONE);
 
         CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
-        addListItemButton.setVisibility(View.VISIBLE);
+        addListItemButton.setVisibility(viewPrefs.isAllowItemAddition()?View.VISIBLE:View.GONE);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,34 +163,18 @@ public class UsersListFragment extends MyFragment {
 
         recyclerView.setLayoutManager(layoutMan);
 
-        final boolean allowMultiselection = false;
-
-        viewAdapter = new UserRecyclerViewAdapter(container.getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusListener<User>() {
-            @Override
-            public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
-            }
+        viewAdapter = new UserRecyclerViewAdapter(container.getContext(), usersModel, new UserRecyclerViewAdapter.MultiSelectStatusAdapter<User>() {
 
             @Override
-            public void onItemSelectionCountChanged(int size) {
-            }
-
-            @Override
-            public void onItemDeleteRequested(User u) {
+            public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, User u) {
                 onDeleteUser(u);
             }
 
             @Override
-            public void onItemClick(User item) {
+            public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, User item) {
                 EventBus.getDefault().post(new ViewUserEvent(item));
             }
-
-            @Override
-            public void onItemLongClick(User item) {
-
-            }
-        }, allowMultiselection);
-        viewAdapter.setEnabled(true);
-        viewAdapter.setAllowItemDeletion(true);
+        }, viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
 
@@ -212,7 +216,7 @@ public class UsersListFragment extends MyFragment {
 
     private void onUserSelected(User selectedUser) {
         EventBus.getDefault().post(new ViewUserEvent(selectedUser));
-//        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_information_coming_soon));
+//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_information_coming_soon));
     }
 
     private void onDeleteUser(final User thisItem) {

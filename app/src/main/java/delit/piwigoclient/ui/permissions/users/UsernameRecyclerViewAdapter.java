@@ -12,21 +12,22 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoUsernames;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.ui.common.AppCompatCheckboxTriState;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 
 /**
  * {@link android.support.v7.widget.RecyclerView.Adapter} that can display a {@link Username}
  */
-public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Username, PiwigoUsernames, UsernameRecyclerViewAdapter.UsernameViewHolder> {
+public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Username, PiwigoUsernames, UsernameRecyclerViewAdapter.UsernameViewHolder> {
 
     private final List<String> userTypes;
     private final List<String> userTypeValues;
     private final HashSet<Long> indirectlySelectedItems;
 
 
-    public UsernameRecyclerViewAdapter(final Context context, final PiwigoUsernames usernames, HashSet<Long> indirectlySelectedItems, MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
-        super(usernames, multiSelectStatusListener, captureActionClicks);
+    public UsernameRecyclerViewAdapter(final Context context, final PiwigoUsernames usernames, HashSet<Long> indirectlySelectedItems, MultiSelectStatusListener multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
+        super(usernames, multiSelectStatusListener, prefs);
         setContext(context);
         this.indirectlySelectedItems = indirectlySelectedItems;
         userTypes = Arrays.asList(context.getResources().getStringArray(R.array.user_types_array));
@@ -38,7 +39,7 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Use
         return new UsernameViewHolder(view);
     }
 
-    public class UsernameViewHolder extends CustomViewHolder<Username> {
+    public class UsernameViewHolder extends CustomViewHolder<BaseRecyclerViewAdapterPreferences, Username> {
         private TextView txtTitle;
         private TextView detailsTitle;
         private View deleteButton;
@@ -79,7 +80,7 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Use
 
             checkBox = itemView.findViewById(R.id.checked);
 //            checkBox.setClickable(isItemSelectionAllowed());
-            checkBox.setOnCheckedChangeListener(new ItemSelectionListener(this));
+            checkBox.setOnCheckedChangeListener(new ItemSelectionListener(UsernameRecyclerViewAdapter.this,this));
 
             txtTitle = itemView.findViewById(R.id.name);
 
@@ -104,7 +105,7 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Use
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
-            getCheckBox().setVisibility(isCaptureActionClicks() ? View.VISIBLE : View.GONE);
+            getCheckBox().setVisibility(isMultiSelectionAllowed() ? View.VISIBLE : View.GONE);
             getCheckBox().setAlwaysChecked(indirectlySelectedItems.contains(newItem.getId()));
             getCheckBox().setChecked(getSelectedItemIds().contains(newItem.getId()));
             getCheckBox().setEnabled(isEnabled());

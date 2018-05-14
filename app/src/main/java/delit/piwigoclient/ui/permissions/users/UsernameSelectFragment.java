@@ -24,13 +24,14 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.RecyclerViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter> {
+public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String USER_NAMES_MODEL = "usernamesModel";
     private static final String USER_NAMES_PAGE_BEING_LOADED = "usernamesPageBeingLoaded";
@@ -39,9 +40,9 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     private int pageToLoadNow = -1;
     private HashSet<Long> indirectSelection;
 
-    public static UsernameSelectFragment newInstance(boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
+    public static UsernameSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
         UsernameSelectFragment fragment = new UsernameSelectFragment();
-        Bundle args = buildArgsBundle(multiSelectEnabled, allowEditing, allowAddition, false, actionId, initialSelection);
+        Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if (indirectSelection != null) {
             args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
@@ -58,6 +59,11 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         if (args != null) {
             indirectSelection = (HashSet<Long>) args.getSerializable(STATE_INDIRECT_SELECTION);
         }
+    }
+
+    @Override
+    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
+        return new BaseRecyclerViewAdapterPreferences();
     }
 
     @Override
@@ -81,35 +87,13 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
             return null;
         }
 
-        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-        UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(getContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusListener<Username>() {
-            @Override
-            public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
-            }
-
-            @Override
-            public void onItemSelectionCountChanged(int size) {
-            }
-
-            @Override
-            public void onItemDeleteRequested(Username item) {
-
-            }
-
-            @Override
-            public void onItemClick(Username item) {
-
-            }
-
-            @Override
-            public void onItemLongClick(Username item) {
-
-            }
-
-        }, captureActionClicks);
-        if (!viewAdapter.isItemSelectionAllowed()) {
-            viewAdapter.toggleItemSelection();
+        boolean editingEnabled = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+        if(!editingEnabled) {
+            getViewPrefs().locked();
         }
+
+        UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(getContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusAdapter<Username>() {
+        }, getViewPrefs());
 
         setListAdapter(viewAdapter);
 

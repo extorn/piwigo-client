@@ -2,12 +2,12 @@ package delit.piwigoclient.ui.common.recyclerview;
 
 import android.view.View;
 
-public class CustomClickListener<T, S extends CustomViewHolder<T>> implements View.OnClickListener, View.OnLongClickListener {
+public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T, S extends CustomViewHolder<V, T>> implements View.OnClickListener, View.OnLongClickListener {
 
     private final S viewHolder;
-    private final BaseRecyclerViewAdapter<T, S> parentAdapter;
+    private final BaseRecyclerViewAdapter<V, T, S> parentAdapter;
 
-    public CustomClickListener(S viewHolder, BaseRecyclerViewAdapter<T, S> parentAdapter) {
+    public CustomClickListener(S viewHolder, BaseRecyclerViewAdapter<V, T, S> parentAdapter) {
         this.viewHolder = viewHolder;
         this.parentAdapter = parentAdapter;
     }
@@ -18,10 +18,7 @@ public class CustomClickListener<T, S extends CustomViewHolder<T>> implements Vi
             return;
         }
         //TODO Note - the way this works, click event is sunk if item selection is enabled... allow override?
-        if (!parentAdapter.isItemSelectionAllowed()) {
-            //If not currently in multiselect mode
-            parentAdapter.getMultiSelectStatusListener().onItemClick(viewHolder.getItem());
-        } else if (parentAdapter.isCaptureActionClicks()) {
+       if (parentAdapter.isMultiSelectionAllowed()) {
 //                 multi selection mode is enabled.
             if (parentAdapter.getSelectedItemIds().contains(viewHolder.getItemId())) {
                 viewHolder.setChecked(false);
@@ -30,7 +27,10 @@ public class CustomClickListener<T, S extends CustomViewHolder<T>> implements Vi
             }
             //TODO Not sure why we'd call this?
             viewHolder.itemView.setPressed(false);
-        }
+        } else if (parentAdapter.isItemSelectionAllowed()) {
+           //If not currently in multiselect mode
+           parentAdapter.getMultiSelectStatusListener().onItemClick(parentAdapter, viewHolder.getItem());
+       }
     }
 
     @Override
@@ -38,11 +38,11 @@ public class CustomClickListener<T, S extends CustomViewHolder<T>> implements Vi
         if (!parentAdapter.isEnabled()) {
             return false;
         }
-        parentAdapter.getMultiSelectStatusListener().onItemLongClick(viewHolder.getItem());
+        parentAdapter.getMultiSelectStatusListener().onItemLongClick(parentAdapter, viewHolder.getItem());
         return true;
     }
 
-    public BaseRecyclerViewAdapter<T, S> getParentAdapter() {
+    public BaseRecyclerViewAdapter<V, T, S> getParentAdapter() {
         return parentAdapter;
     }
 }

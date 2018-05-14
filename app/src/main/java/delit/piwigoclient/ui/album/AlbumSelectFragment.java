@@ -23,21 +23,27 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
 import delit.piwigoclient.ui.upload.AvailableAlbumsListAdapter;
 
 /**
  * Created by gareth on 26/05/17.
  */
-public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter> {
+public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private ArrayList<CategoryItemStub> availableAlbums;
 
-    public static AlbumSelectFragment newInstance(boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, int actionId, HashSet<Long> initialSelection) {
+    public static AlbumSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         AlbumSelectFragment fragment = new AlbumSelectFragment();
-        fragment.setArguments(buildArgsBundle(multiSelectEnabled, allowEditing, allowAddition, false, actionId, initialSelection));
+        fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
         return fragment;
+    }
+
+    @Override
+    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
+        return new BaseRecyclerViewAdapterPreferences();
     }
 
     @Override

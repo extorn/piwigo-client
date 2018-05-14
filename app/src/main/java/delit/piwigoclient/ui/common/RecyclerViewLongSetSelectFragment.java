@@ -7,12 +7,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 
 /**
  * Created by gareth on 03/01/18.
  */
 
-public abstract class RecyclerViewLongSetSelectFragment<X extends Enableable & SelectableItemsAdapter> extends LongSetSelectFragment<RecyclerView, X> {
+public abstract class RecyclerViewLongSetSelectFragment<X extends Enableable & SelectableItemsAdapter, Z extends BaseRecyclerViewAdapterPreferences> extends LongSetSelectFragment<RecyclerView, X, Z> {
 
     @Override
     @LayoutRes

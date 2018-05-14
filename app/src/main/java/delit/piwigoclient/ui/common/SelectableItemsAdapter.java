@@ -13,5 +13,5 @@ public interface SelectableItemsAdapter<T> {
     void selectAllItemIds();
     void setItemSelected(Long selectedItemId);
     void setSelectedItems(HashSet<Long> currentSelection);
-    void setInitiallySelectedItems(HashSet<Long> initialSelection, boolean initialSelectionLocked);
+    void setInitiallySelectedItems(HashSet<Long> initialSelection);
 }

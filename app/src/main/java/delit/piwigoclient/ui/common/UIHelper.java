@@ -652,7 +652,7 @@ public abstract class UIHelper<T> {
                     PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
                         @Override
                         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-                            showOrQueueDialogMessage(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
+                            showOrQueueMessage(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
                         }
                     });
                 }

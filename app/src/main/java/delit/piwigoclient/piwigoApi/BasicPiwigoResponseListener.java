@@ -3,6 +3,9 @@ package delit.piwigoclient.piwigoApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.preference.DialogPreference;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
@@ -36,6 +39,11 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         handlerId = newHandlerId;
     }
 
+    public void withUiHelper(DialogPreference parent, UIHelper uiHelper) {
+        this.uiHelper = uiHelper;
+        this.parent = parent;
+    }
+
     public void withUiHelper(ViewGroup parent, UIHelper uiHelper) {
         this.uiHelper = uiHelper;
         this.parent = parent;
@@ -59,38 +67,47 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         handlerId = savedInstanceState.getLong(HANDLER_ID);
     }
     
-    protected void showOrQueueDialogMessage(int title, String message) {
+    protected void showOrQueueMessage(int title, String message) {
         uiHelper.showOrQueueDialogMessage(title, message);
     }
 
     private void showOrQueueRetryDialogMessage(final PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg) {
         if(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
             final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse = (PiwigoResponseBufferingHandler.RemoteErrorResponse) response;
-            final AbstractPiwigoDirectResponseHandler handler = errorResponse.getHttpResponseHandler();
-            uiHelper.showOrQueueDialogQuestion(title, msg, R.string.button_cancel, R.string.button_retry, new UIHelper.QuestionResultListener() {
-                @Override
-                public void onDismiss(AlertDialog dialog) {
-                    // don't care
-                }
+            handleErrorRetryPossible(errorResponse, title, msg);
 
-                @Override
-                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                    if(positiveAnswer) {
-                        uiHelper.addActiveServiceCall(handler.getMessageId());
-                        handler.invokeAsyncAgain();
-                    } else {
-                        onAfterHandlePiwigoResponse(response);
-                    }
-                }
-            });
         } else {
-            showOrQueueDialogMessage(title, msg);
+            handleErrorRetryNotPossible(response, title, msg);
         }
+    }
+
+    protected void handleErrorRetryNotPossible(PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg) {
+        showOrQueueMessage(title, msg);
+    }
+
+    protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg) {
+        final AbstractPiwigoDirectResponseHandler handler = errorResponse.getHttpResponseHandler();
+        uiHelper.showOrQueueDialogQuestion(title, msg, R.string.button_cancel, R.string.button_retry, new UIHelper.QuestionResultListener() {
+            @Override
+            public void onDismiss(AlertDialog dialog) {
+                // don't care
+            }
+
+            @Override
+            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                if(positiveAnswer) {
+                    uiHelper.addActiveServiceCall(handler.getMessageId());
+                    handler.invokeAsyncAgain();
+                } else {
+                    onAfterHandlePiwigoResponse(errorResponse);
+                }
+            }
+        });
     }
 
     public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {}
 
-    public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {}
+    public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {}
 
 
     @Override
@@ -138,7 +155,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
                 showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, -1, msg.getRawResponse()));
                 break;
             case PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_SUCCESS:
-                showOrQueueDialogMessage(R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, -1, msg.getRawResponse()));
+                showOrQueueMessage(R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, -1, msg.getRawResponse()));
         }
     }
 
@@ -154,6 +171,8 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             retVal = !((AppCompatActivity)parent).isFinishing();
         } else if(parent instanceof ViewGroup) {
             retVal = ((ViewGroup)parent).isShown();
+        } else if(parent instanceof DialogPreference) {
+            retVal = ((DialogPreference) parent).getDialog() != null;
         } else if(parent == null){
             // this listener has become detached from the UI.
             retVal = false;

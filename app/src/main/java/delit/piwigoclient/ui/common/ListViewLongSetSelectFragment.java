@@ -1,18 +1,21 @@
 package delit.piwigoclient.ui.common;
 
 import android.support.annotation.LayoutRes;
+import android.support.v4.content.res.TypedArrayUtils;
 import android.widget.ListView;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.util.ObjectUtils;
 
 /**
  * Created by gareth on 03/01/18.
  */
 
-public abstract class ListViewLongSetSelectFragment<X extends Enableable> extends LongSetSelectFragment<ListView, X> {
+public abstract class ListViewLongSetSelectFragment<X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences> extends LongSetSelectFragment<ListView, X, Z> {
 
     @Override
     @LayoutRes

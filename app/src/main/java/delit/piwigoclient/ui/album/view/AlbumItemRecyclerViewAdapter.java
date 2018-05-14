@@ -42,9 +42,9 @@ import static android.view.View.GONE;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
  */
-public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItemRecyclerViewAdapter.ViewHolder> {
+public class AlbumItemRecyclerViewAdapter<T extends ResourceItem> extends RecyclerView.Adapter<AlbumItemRecyclerViewAdapter.ViewHolder> {
 
-    private final ResourceContainer gallery;
+    private final ResourceContainer<T> gallery;
     private Resources resources;
     private final Date recentlyAlteredThresholdDate;
     private String preferredThumbnailSize;
@@ -66,7 +66,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
     private boolean showResourceNames;
     private boolean useMasonryStyle;
 
-    public AlbumItemRecyclerViewAdapter(final ResourceContainer gallery, Date recentlyAlteredThresholdDate, MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
+    public AlbumItemRecyclerViewAdapter(final ResourceContainer<T> gallery, Date recentlyAlteredThresholdDate, MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
         this.gallery = gallery;
         this.recentlyAlteredThresholdDate = recentlyAlteredThresholdDate;
         this.setHasStableIds(true);
@@ -259,7 +259,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
     }
 
     @Override
-    public void onViewRecycled(@NonNull ViewHolder holder) {
+    public void onViewRecycled(@NonNull AlbumItemRecyclerViewAdapter.ViewHolder holder) {
         UIHelper.recycleImageViewContent(holder.mImageView);
         UIHelper.recycleImageViewContent(holder.mRecentlyAlteredMarkerView);
         UIHelper.recycleImageViewContent(holder.mTypeIndicatorImg);
@@ -273,7 +273,7 @@ public class AlbumItemRecyclerViewAdapter extends RecyclerView.Adapter<AlbumItem
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final AlbumItemRecyclerViewAdapter.ViewHolder holder, int position) {
         GalleryItem newItem = (GalleryItem) gallery.getItemByIdx(position);
         if (holder.getOldPosition() < 0 && holder.mItem != null && holder.mItem.getId() == newItem.getId()) {
             // rendering the same item.

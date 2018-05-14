@@ -31,6 +31,8 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
@@ -321,13 +323,25 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), false, event.getActionId(), event.getIndirectSelection(),  event.getInitialSelection());
+        BaseRecyclerViewAdapterPreferences prefs;
+        if(event.isAllowEditing()) {
+            prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        } else {
+            prefs = new BaseRecyclerViewAdapterPreferences().locked();
+        }
+        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(),  event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final GroupSelectionNeededEvent event) {
-        GroupSelectFragment fragment = GroupSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), false, event.getActionId(), event.getInitialSelection());
+        BaseRecyclerViewAdapterPreferences prefs;
+        if(event.isAllowEditing()) {
+            prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        } else {
+            prefs = new BaseRecyclerViewAdapterPreferences().locked();
+        }
+        GroupSelectFragment fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 

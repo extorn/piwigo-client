@@ -27,6 +27,7 @@ import java.util.Set;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 
@@ -34,13 +35,9 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class LongSetSelectFragment<Y extends View, X extends Enableable> extends MyFragment {
+public abstract class LongSetSelectFragment<Y extends View, X extends Enableable, Z extends BaseRecyclerViewAdapterPreferences> extends MyFragment {
 
-    private static final String STATE_ALLOW_MULTISELECT = "multiSelectEnabled";
-    private static final String STATE_ALLOW_EDITING = "editingEnabled";
-    private static final String STATE_ALLOW_ADDITION = "additionEnabled";
     private static final String STATE_CURRENT_SELECTION = "currentSelection";
-    private static final String STATE_INITIAL_SELECTION_LOCKED = "initialSelectionLocked";
     private static final String STATE_INITIAL_SELECTION = "initialSelection";
     private static final String STATE_ACTION_ID = "actionId";
     private static final String STATE_SELECT_TOGGLE = "selectToggle";
@@ -49,31 +46,29 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     private Button saveChangesButton;
     private FloatingActionButton reloadListButton;
     // Maintained state
-    private boolean multiSelectEnabled;
     private int actionId;
     private HashSet<Long> currentSelection;
     private HashSet<Long> initialSelection;
-    private boolean editingEnabled;
     private Button toggleAllSelectionButton;
     private boolean selectToggle;
     private CustomImageButton addListItemButton;
-    private boolean additionEnabled;
-    private boolean initialSelectionLocked;
+    private Z viewPrefs;
 
-    public static Bundle buildArgsBundle(boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, boolean initialSelectionLocked, int actionId, HashSet<Long> initialSelection) {
+    public static <Long> Bundle buildArgsBundle(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         Bundle args = new Bundle();
-        args.putBoolean(STATE_ALLOW_EDITING, allowEditing);
-        args.putBoolean(STATE_ALLOW_ADDITION, allowAddition);
-        args.putBoolean(STATE_ALLOW_MULTISELECT, multiSelectEnabled);
+        prefs.storeToBundle(args);
         args.putInt(STATE_ACTION_ID, actionId);
         HashSet<Long> selection = initialSelection != null ? initialSelection : new HashSet<Long>(0);
         args.putSerializable(STATE_INITIAL_SELECTION, selection);
-        args.putSerializable(STATE_INITIAL_SELECTION_LOCKED, initialSelectionLocked);
         return args;
     }
 
     public Y getList() {
         return list;
+    }
+
+    public Z getViewPrefs() {
+        return viewPrefs;
     }
 
     public int getActionId() {
@@ -105,26 +100,26 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         }
     }
 
-    private void loadStateFromBundle(Bundle args) {
-        multiSelectEnabled = args.getBoolean(STATE_ALLOW_MULTISELECT);
-        actionId = args.getInt(STATE_ACTION_ID);
-        currentSelection = (HashSet<Long>) args.getSerializable(STATE_CURRENT_SELECTION);
-        initialSelection = (HashSet<Long>) args.getSerializable(STATE_INITIAL_SELECTION);
+    protected abstract Z createEmptyPrefs();
+
+    private void loadStateFromBundle(Bundle bundle) {
+        viewPrefs = createEmptyPrefs();
+        viewPrefs.loadFromBundle(bundle);
+        actionId = bundle.getInt(STATE_ACTION_ID);
+        currentSelection = (HashSet<Long>) bundle.getSerializable(STATE_CURRENT_SELECTION);
+        initialSelection = (HashSet<Long>) bundle.getSerializable(STATE_INITIAL_SELECTION);
         if(currentSelection == null) {
             currentSelection = initialSelection;
         }
-        initialSelectionLocked = args.getBoolean(STATE_INITIAL_SELECTION_LOCKED);
-        editingEnabled = args.getBoolean(STATE_ALLOW_EDITING);
-        additionEnabled = args.getBoolean(STATE_ALLOW_ADDITION);
+        selectToggle = bundle.getBoolean(STATE_SELECT_TOGGLE);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_ALLOW_MULTISELECT, multiSelectEnabled);
+        viewPrefs.storeToBundle(outState);
         outState.putInt(STATE_ACTION_ID, actionId);
         outState.putSerializable(STATE_CURRENT_SELECTION, getCurrentSelection());
-        outState.putBoolean(STATE_ALLOW_EDITING, editingEnabled);
         outState.putBoolean(STATE_SELECT_TOGGLE, selectToggle);
     }
 
@@ -133,7 +128,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     }
 
     public boolean isMultiSelectEnabled() {
-        return multiSelectEnabled;
+        return viewPrefs.isMultiSelectionEnabled();
     }
 
     @LayoutRes
@@ -177,7 +172,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         });
 
         toggleAllSelectionButton = view.findViewById(R.id.list_action_toggle_all_button);
-        toggleAllSelectionButton.setVisibility(multiSelectEnabled?View.VISIBLE:View.GONE);
+        toggleAllSelectionButton.setVisibility(viewPrefs.isMultiSelectionEnabled()?View.VISIBLE:View.GONE);
         toggleAllSelectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -229,7 +224,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             toggleAllSelectionButton.setText(getString(R.string.none));
             selectToggle = true;
         } else {
-            if(initialSelectionLocked) {
+            if(viewPrefs.isInitialSelectionLocked()) {
                 selectOnlyListItems(Collections.unmodifiableSet(initialSelection));
             } else {
                 selectNoneListItems();
@@ -253,8 +248,8 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         this.listAdapter = listAdapter;
         if(listAdapter instanceof SelectableItemsAdapter) {
             ((SelectableItemsAdapter)listAdapter).setSelectedItems(currentSelection);
-            ((SelectableItemsAdapter) listAdapter).setInitiallySelectedItems(initialSelection, initialSelectionLocked);
-        } else if(initialSelectionLocked) {
+            ((SelectableItemsAdapter) listAdapter).setInitiallySelectedItems(initialSelection);
+        } else if(viewPrefs.isInitialSelectionLocked()) {
             throw new IllegalStateException("Support for initial selection locking requires adapter to implement SelectableItemsAdapter");
         }
     }
@@ -280,7 +275,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             selectedIdsSet.add(selectedId);
         }
         // Now just for added security - make certain it has all the initial selection if locked
-        if(initialSelectionLocked) {
+        if(viewPrefs.isInitialSelectionLocked()) {
             selectedIdsSet.addAll(initialSelection);
         }
         onSelectActionComplete(selectedIdsSet);
@@ -312,20 +307,17 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     }
 
     protected void setAppropriateComponentState() {
-        boolean enabled = editingEnabled && !isNotAuthorisedToAlterState();
+        boolean enabled = !viewPrefs.isReadOnly() && !isNotAuthorisedToAlterState();
         saveChangesButton.setEnabled(enabled);
         toggleAllSelectionButton.setEnabled(enabled);
         if(listAdapter != null) {
             listAdapter.setEnabled(enabled);
         }
-        addListItemButton.setVisibility(!isNotAuthorisedToAlterState() && additionEnabled?View.VISIBLE:View.GONE);
+        addListItemButton.setVisibility(!isNotAuthorisedToAlterState() && viewPrefs.isAllowItemAddition()?View.VISIBLE:View.GONE);
     }
 
     public boolean isEditingEnabled() {
-        return editingEnabled;
+        return !viewPrefs.isReadOnly();
     }
 
-    public boolean isInitialSelectionLocked() {
-        return initialSelectionLocked;
-    }
 }

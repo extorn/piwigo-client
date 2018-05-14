@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.support.annotation.IdRes;
+import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,21 +22,30 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 
 public class MyPreferenceFragment extends PreferenceFragment {
     private UIHelper uiHelper;
-    protected SharedPreferences prefs;
+    private Context c;
 
     protected UIHelper getUiHelper() {
         return uiHelper;
     }
 
+    protected SharedPreferences getPrefs() {
+        return getPreferenceManager().getSharedPreferences();
+    }
+
     @Override
-    public void onAttach(Context context) {
-        prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+    public void onCreate(Bundle paramBundle) {
+        super.onCreate(paramBundle);
         if(uiHelper == null) {
-            uiHelper = new FragmentUIHelper(this, prefs, context);
-            BasicPiwigoResponseListener listener = buildPiwigoResponseListener(context);
+            uiHelper = new FragmentUIHelper(this, getPrefs(), c);
+            BasicPiwigoResponseListener listener = buildPiwigoResponseListener(c);
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        c = context;
         super.onAttach(context);
     }
 
@@ -61,6 +72,7 @@ public class MyPreferenceFragment extends PreferenceFragment {
 
     // Not needed from API v23 and above
     public Context getContext() {
+        // this is sometimes used before the view is initialised.
         return getActivity().getApplicationContext();
     }
 
@@ -79,17 +91,15 @@ public class MyPreferenceFragment extends PreferenceFragment {
     }
 
     protected boolean getBooleanPreferenceValue(String preferenceKey) {
-        Context context = findPreference(preferenceKey).getContext();
-        return PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getBoolean(preferenceKey, false);
+        return getPreferenceManager().getSharedPreferences().getBoolean(preferenceKey, false);
     }
 
     protected String getPreferenceValue(String preferenceKey) {
-        Context context = findPreference(preferenceKey).getContext();
-        return PreferenceManager
-                .getDefaultSharedPreferences(context)
-                .getString(preferenceKey, "");
+        return getPreferenceManager().getSharedPreferences().getString(preferenceKey, "");
+    }
+
+    protected String getPreferenceValueOrNull(@StringRes int preferenceKey) {
+        return getPreferenceManager().getSharedPreferences().getString(getString(preferenceKey), null);
     }
 
 

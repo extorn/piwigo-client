@@ -11,13 +11,13 @@ import delit.piwigoclient.model.piwigo.IdentifiableItemStore;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link T}
  */
-public abstract class IdentifiableListViewAdapter<T extends Identifiable, V extends IdentifiableItemStore<T>, S extends CustomViewHolder<T>> extends BaseRecyclerViewAdapter<T,S> {
+public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdapterPreferences, T extends Identifiable, V extends IdentifiableItemStore<T>, S extends CustomViewHolder<P, T>> extends BaseRecyclerViewAdapter<P, T,S> {
 
     private final V itemStore;
 
 
-    public IdentifiableListViewAdapter(final V itemStore, MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
-        super(multiSelectStatusListener, captureActionClicks);
+    public IdentifiableListViewAdapter(final V itemStore, MultiSelectStatusListener multiSelectStatusListener, P prefs) {
+        super(multiSelectStatusListener, prefs);
         this.itemStore = itemStore;
     }
 
@@ -82,7 +82,7 @@ public abstract class IdentifiableListViewAdapter<T extends Identifiable, V exte
     }
 
     @Override
-    protected int getItemPosition(T item) {
+    public int getItemPosition(T item) {
         return itemStore.getItemIdx(item);
     }
 

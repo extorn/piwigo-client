@@ -7,7 +7,7 @@ import android.widget.TextView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.AppCompatCheckboxTriState;
 
-public abstract class BaseViewHolder<A> extends CustomViewHolder<A> {
+public abstract class BaseViewHolder<P extends BaseRecyclerViewAdapterPreferences, A> extends CustomViewHolder<P, A> {
     private TextView txtTitle;
     private TextView detailsTitle;
     private View deleteButton;
@@ -50,7 +50,7 @@ public abstract class BaseViewHolder<A> extends CustomViewHolder<A> {
 
         checkBox = itemView.findViewById(R.id.checked);
         checkBox.setClickable(getItemActionListener().getParentAdapter().isItemSelectionAllowed());
-        checkBox.setOnCheckedChangeListener(getItemActionListener().getParentAdapter().new ItemSelectionListener(this));
+        checkBox.setOnCheckedChangeListener(getItemActionListener().getParentAdapter().new ItemSelectionListener(getItemActionListener().getParentAdapter(), this));
 
         txtTitle = itemView.findViewById(R.id.name);
 

@@ -7,6 +7,7 @@ import java.util.HashSet;
 
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.common.MultiSourceListAdapter;
+import delit.piwigoclient.ui.common.SelectableItemsAdapter;
 
 /**
  * Created by gareth on 22/06/17.
@@ -31,4 +32,5 @@ public class AlbumSelectionListAdapter extends MultiSourceListAdapter<CategoryIt
     public Long getItemParentId(CategoryItemStub item) {
         return item.getParentId();
     }
+
 }

@@ -337,7 +337,7 @@ public class PiwigoResponseBufferingHandler {
     /**
      * Marker interface
      */
-    public interface ErrorResponse {
+    public interface ErrorResponse extends Response {
     }
 
     /**

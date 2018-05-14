@@ -24,23 +24,30 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.RecyclerViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter> {
+public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String GROUPS_MODEL = "groupsModel";
     private static final String GROUPS_PAGE_BEING_LOADED = "groupsPageBeingLoaded";
     private PiwigoGroups groupsModel = new PiwigoGroups();
     private int pageToLoadNow = -1;
 
-    public static GroupSelectFragment newInstance(boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, int actionId, HashSet<Long> initialSelection) {
+    public static GroupSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         GroupSelectFragment fragment = new GroupSelectFragment();
-        fragment.setArguments(buildArgsBundle(multiSelectEnabled, allowEditing, allowAddition, false, actionId, initialSelection));
+        fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
         return fragment;
+    }
+
+    @Override
+    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
+        return new BaseRecyclerViewAdapterPreferences();
     }
 
     @Override
@@ -62,29 +69,13 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             return null;
         }
 
-        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-        GroupRecyclerViewAdapter viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusListener<Group>() {
-            @Override
-            public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
-            }
+        boolean editingEnabled = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+        if(!editingEnabled) {
+            getViewPrefs().locked();
+        }
 
-            @Override
-            public void onItemSelectionCountChanged(int size) {
-            }
-
-            @Override
-            public void onItemDeleteRequested(Group g) {
-            }
-            @Override
-            public void onItemClick(Group item) {
-
-            }
-
-            @Override
-            public void onItemLongClick(Group item) {
-
-            }
-        }, captureActionClicks);
+        GroupRecyclerViewAdapter viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter() {
+        }, getViewPrefs());
         if(!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();
         }

@@ -17,7 +17,7 @@ import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 
 public class ConnectionPreferences {
 
-    public static String getConnectionProfile(SharedPreferences prefs, Context context) {
+    public static String getActiveConnectionProfile(SharedPreferences prefs, Context context) {
         return prefs.getString(context.getString(R.string.preference_piwigo_connection_profile_key), "");
     }
 
@@ -51,16 +51,20 @@ public class ConnectionPreferences {
         return activeProfile;
     }
 
-    private static class ProfilePreferences {
+    public static ProfilePreferences getPreferences(String profile) {
+        return new ProfilePreferences(profile);
+    }
+
+    public static class ProfilePreferences {
         private final String prefix;
 
-        public ProfilePreferences(String prefix) {
+        private ProfilePreferences(String prefix) {
             this.prefix = prefix;
         }
         
         
         private String getKey(Context context, @StringRes int keyId) {
-            if(this.prefix != null) {
+            if(this.prefix != null && this.prefix.length() > 0) {
                 return prefix + ':' + context.getString(keyId);
             }
             return context.getString(keyId);

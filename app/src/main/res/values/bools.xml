@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <bool name="preference_data_upload_automatic_upload_enable_default">false</bool>
+    <bool name="preference_data_upload_automatic_upload_wireless_only_default">true</bool>
+    <bool name="preference_data_upload_automatic_enabled_default">true</bool>
+    <bool name="preference_data_upload_automatic_server_delete_uploaded_default">true</bool>
+
 </resources>
