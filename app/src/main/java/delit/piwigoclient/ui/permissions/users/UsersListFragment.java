@@ -59,7 +59,7 @@ public class UsersListFragment extends MyFragment {
     private BaseRecyclerViewAdapterPreferences viewPrefs;
 
     public static UsersListFragment newInstance() {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().unlocked(false, false);
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(false, false).deletable();
         prefs.setAllowItemAddition(true);
         Bundle args = new Bundle();
         prefs.storeToBundle(args);

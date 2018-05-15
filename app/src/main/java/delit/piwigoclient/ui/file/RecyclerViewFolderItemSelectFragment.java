@@ -63,7 +63,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         boolean editingEnabled = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
         if(!editingEnabled) {
-            getViewPrefs().locked();
+            getViewPrefs().readonly();
         }
 
         final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(activeFolder, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>() {

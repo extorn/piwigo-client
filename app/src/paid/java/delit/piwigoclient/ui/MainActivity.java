@@ -45,7 +45,7 @@ public class MainActivity extends AbstractMainActivity {
     }
 
     protected void showTags() {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().locked();
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().readonly();
         TagsListFragment fragment = TagsListFragment.newInstance(prefs);
         showFragmentNow(fragment);
     }
@@ -57,12 +57,10 @@ public class MainActivity extends AbstractMainActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(TagSelectionNeededEvent event) {
-        BaseRecyclerViewAdapterPreferences prefs;
-        if(event.isAllowEditing()) {
-            prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-            prefs.setAllowItemAddition(true);
-        } else {
-            prefs = new BaseRecyclerViewAdapterPreferences().locked();
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        prefs.setAllowItemAddition(true);
+        if(!event.isAllowEditing()) {
+            prefs.readonly();
         }
         showTagSelectionFragment(event.getActionId(), prefs , event.getInitialSelection());
     }

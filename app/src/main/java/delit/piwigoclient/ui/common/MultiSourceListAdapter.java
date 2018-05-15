@@ -1,16 +1,19 @@
 package delit.piwigoclient.ui.common;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.LongSparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.util.DisplayUtils;
 
@@ -18,9 +21,11 @@ import delit.piwigoclient.util.DisplayUtils;
  * Created by gareth on 22/06/17.
  */
 
-public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements Enableable {
+public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements Enableable, SelectableItemsAdapter<T> {
 
     private final Context context;
+    private HashSet<Long> selectedResourceIds = new HashSet<>(0);
+    private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
     private HashSet<Long> indirectlySelectedItems;
     private final ArrayList<T> availableItems;
     private boolean enabled;
@@ -123,7 +128,9 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
 
         final AppCompatCheckboxTriState imageView = view.findViewById(R.id.permission_status_icon);
         imageView.setEnabled(enabled);
-        imageView.setAlwaysChecked(indirectlySelectedItems != null && indirectlySelectedItems.contains(thisItemId));
+        boolean alwaysChecked = indirectlySelectedItems != null && indirectlySelectedItems.contains(thisItemId);
+        imageView.setAlwaysChecked(alwaysChecked);
+        imageView.setOnCheckedChangeListener(new ItemSelectionListener(position));
 
         // return the view, populated with data, for display
         return view;
@@ -190,5 +197,94 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
     public void setIndirectlySelectedItems(HashSet<Long> indirectAlbumPermissions) {
         indirectlySelectedItems = indirectAlbumPermissions;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public HashSet<T> getSelectedItems() {
+        try {
+            HashSet<T> selectedItems = new HashSet<>();
+            for (Long selectedItemId : selectedResourceIds) {
+                selectedItems.add(getItemById(selectedItemId));
+            }
+            return selectedItems;
+        } catch(RuntimeException e) {
+            throw new IllegalStateException("Not all items are loaded yet. Unable to provide a list of them");
+        }
+    }
+
+    @Override
+    public HashSet<Long> getSelectedItemIds() {
+        return selectedResourceIds;
+    }
+
+    @Override
+    public void clearSelectedItemIds() {
+        throw new UnsupportedOperationException("can't do this without an observer in the list");
+//        selectedResourceIds.clear();
+//        notifyItemRangeChanged(0, getItemCount());
+    }
+
+    @Override
+    public void selectAllItemIds() {
+        throw new UnsupportedOperationException("can't do this without an observer in the list");
+//        notifyItemRangeChanged(0, getItemCount());
+    }
+
+    @Override
+    public void setItemSelected(Long selectedItemId) {
+        throw new UnsupportedOperationException("can't do this without an observer in the list");
+//        selectedResourceIds.add(selectedItemId);
+//        try {
+//            int idx = getPosition(selectedItemId);
+//            notifyItemChanged(idx);
+//        } catch(IllegalArgumentException e) {
+//            if(BuildConfig.DEBUG) {
+//                Log.e(TAG, "Item not available to select (probably not loaded yet)", e);
+//            }
+//        }
+    }
+
+    @Override
+    public void setInitiallySelectedItems(HashSet<Long> initialSelection) {
+        this.initialSelectedResourceIds = initialSelection != null ? new HashSet<>(initialSelection) : new HashSet<Long>(0);
+    }
+
+    @Override
+    public void setSelectedItems(HashSet<Long> selectedResourceIds) {
+        this.selectedResourceIds = selectedResourceIds;
+    }
+
+    @Override
+    public boolean isAllowItemDeselection(long itemId) {
+        return !indirectlySelectedItems.contains(itemId);
+//        return !prefs.isInitialSelectionLocked() || !initialSelectedResourceIds.contains(itemId);
+    }
+
+    protected class ItemSelectionListener implements CompoundButton.OnCheckedChangeListener {
+
+        private final int position;
+
+        public ItemSelectionListener(int position) {
+            this.position = position;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            long itemId = getItemId(position);
+            boolean changed = false;
+            if (isChecked) {
+                changed = selectedResourceIds.add(itemId);
+            } else {
+                if(isAllowItemDeselection(itemId)) {
+                    changed = selectedResourceIds.remove(itemId);
+                } else {
+                    // re-check the button.
+                    buttonView.setChecked(true);
+                }
+            }
+            if (changed) {
+                //multiSelectStatusListener.onItemSelectionCountChanged(adapter, selectedResourceIds.size());
+            }
+        }
     }
 }

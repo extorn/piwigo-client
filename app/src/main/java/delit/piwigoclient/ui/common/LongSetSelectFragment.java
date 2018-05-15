@@ -274,7 +274,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         for(long selectedId : selectedItemIds) {
             selectedIdsSet.add(selectedId);
         }
-        // Now just for added security - make certain it has all the initial selection if locked
+        // Now just for added security - make certain it has all the initial selection if readonly
         if(viewPrefs.isInitialSelectionLocked()) {
             selectedIdsSet.addAll(initialSelection);
         }

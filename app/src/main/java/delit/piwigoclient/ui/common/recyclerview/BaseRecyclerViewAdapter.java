@@ -288,7 +288,8 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
-    protected boolean isAllowItemDeselection(long itemId) {
+    @Override
+    public boolean isAllowItemDeselection(long itemId) {
         return !prefs.isInitialSelectionLocked() || !initialSelectedResourceIds.contains(itemId);
     }
 

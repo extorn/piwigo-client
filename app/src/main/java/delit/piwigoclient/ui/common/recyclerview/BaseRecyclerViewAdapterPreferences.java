@@ -9,16 +9,12 @@ public class BaseRecyclerViewAdapterPreferences {
         private boolean allowItemDeletion;
         private boolean allowItemAddition;
         private boolean enabled;
+        private boolean readonly;
 
         public BaseRecyclerViewAdapterPreferences(){}
 
-        public BaseRecyclerViewAdapterPreferences locked() {
-            allowItemSelection = false;
-            initialSelectionLocked = true;
-            multiSelectionEnabled = false;
-            allowItemDeletion = false;
-            allowItemAddition = false;
-            enabled = true;
+        public BaseRecyclerViewAdapterPreferences readonly() {
+            readonly = true;
             return this;
         }
 
@@ -32,8 +28,7 @@ public class BaseRecyclerViewAdapterPreferences {
             return this;
         }
 
-        public BaseRecyclerViewAdapterPreferences unlocked(boolean multiSelectionAllowed, boolean initialSelectionLocked) {
-            selectable(multiSelectionAllowed, initialSelectionLocked);
+        public BaseRecyclerViewAdapterPreferences deletable() {
             allowItemDeletion = true;
             return this;
         }
@@ -46,6 +41,7 @@ public class BaseRecyclerViewAdapterPreferences {
             b.putBoolean("allowItemDeletion", allowItemDeletion);
             b.putBoolean("allowItemAddition", allowItemAddition);
             b.putBoolean("enabled", enabled);
+            b.putBoolean("readonly", readonly);
             parent.putBundle("BaseRecyclerViewAdapterPreferences", b);
             return parent;
         }
@@ -58,11 +54,12 @@ public class BaseRecyclerViewAdapterPreferences {
             allowItemDeletion = b.getBoolean("allowItemDeletion");
             allowItemAddition = b.getBoolean("allowItemAddition");
             enabled = b.getBoolean("enabled");
+            readonly = b.getBoolean("readonly");
             return this;
         }
 
         public boolean isReadOnly() {
-            return !allowItemDeletion && !allowItemSelection && !allowItemAddition;
+            return readonly;
         }
 
         public boolean isAllowItemSelection() {
@@ -70,7 +67,7 @@ public class BaseRecyclerViewAdapterPreferences {
         }
 
         public boolean isAllowItemAddition() {
-            return allowItemAddition;
+            return allowItemAddition && !readonly;
         }
 
         public boolean isInitialSelectionLocked() {
@@ -82,11 +79,11 @@ public class BaseRecyclerViewAdapterPreferences {
         }
 
         public boolean isAllowItemDeletion() {
-            return allowItemDeletion;
+            return allowItemDeletion && !readonly;
         }
 
         public boolean isEnabled() {
-            return enabled;
+            return enabled && !readonly;
         }
 
         public void setAllowItemSelection(boolean allowItemSelection) {

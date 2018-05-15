@@ -90,7 +90,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
 
         boolean editingEnabled = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
         if(!editingEnabled) {
-            getViewPrefs().locked();
+            getViewPrefs().readonly();
         }
 
         if (savedInstanceState != null) {
@@ -125,6 +125,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
             //TODO use list item layout as per AvailableAlbumsListAdapter
 //            int listItemLayout = isMultiSelectEnabled()? android.R.layout.simple_list_item_multiple_choice : android.R.layout.simple_list_item_single_choice;
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableItems, indirectSelection, isEditingEnabled());
+            availableItemsAdapter.setInitiallySelectedItems(getCurrentSelection());
             ListView listView = getList();
             listView.setAdapter(availableItemsAdapter);
             listView.requestLayout();

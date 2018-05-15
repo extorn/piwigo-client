@@ -741,6 +741,7 @@ public class UserFragment extends MyFragment {
         } else if(!SetUtils.equals(adapter.getIndirectlySelectedItems(), indirectAlbumPermissions)) {
             adapter.setIndirectlySelectedItems(indirectAlbumPermissions);
         }
+        adapter.setInitiallySelectedItems(directAlbumPermissions);
         albumPermissionsField.clearChoices();
         if(directAlbumPermissions != null && directAlbumPermissions.size() > 0) {
             for (Long selectedAlbum : directAlbumPermissions) {

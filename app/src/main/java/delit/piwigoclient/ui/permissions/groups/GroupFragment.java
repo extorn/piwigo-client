@@ -641,8 +641,8 @@ public class GroupFragment extends MyFragment {
         if(adapter == null) {
             adapter = new AlbumSelectionListAdapter(this.getContext(), availableGalleries, null, false);
             albumAccessRightsField.setAdapter(adapter);
-
         }
+        adapter.setInitiallySelectedItems(getLatestAlbumPermissions());
         albumAccessRightsField.clearChoices();
         for (Long selectedAlbum : getLatestAlbumPermissions()) {
             int itemPos = adapter.getPosition(selectedAlbum);
