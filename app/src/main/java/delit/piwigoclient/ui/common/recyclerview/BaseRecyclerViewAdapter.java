@@ -89,7 +89,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
 
     @Override
     public int getItemViewType(int position) {
-        //groups.getItemByIdx(position).getType();
+        //items.getItemByIdx(position).getType();
         // override this method for multiple item types
         return super.getItemViewType(position);
     }
@@ -177,26 +177,26 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
-    public void remove(T group) {
-        int idxRemoved = getItemPosition(group);
+    public void remove(T item) {
+        int idxRemoved = getItemPosition(item);
         if(idxRemoved >= 0) {
             removeItemFromInternalStore(idxRemoved);
             notifyItemRemoved(idxRemoved);
         }
     }
 
-    public void replaceOrAddItem(T group) {
+    public void replaceOrAddItem(T item) {
         T itemToBeReplaced = null;
         try {
-            itemToBeReplaced = getItemFromInternalStoreMatching(group);
+            itemToBeReplaced = getItemFromInternalStoreMatching(item);
         } catch (IllegalArgumentException e) {
-            // thrown if the group isn't present.
+            // thrown if the item isn't present.
         }
         if (itemToBeReplaced != null) {
             int replaceIdx = getItemPosition(itemToBeReplaced);
-            replaceItemInInternalStore(replaceIdx, group);
+            replaceItemInInternalStore(replaceIdx, item);
         } else {
-            addItemToInternalStore(group);
+            addItemToInternalStore(item);
         }
     }
 

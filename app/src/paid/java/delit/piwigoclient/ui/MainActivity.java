@@ -45,7 +45,7 @@ public class MainActivity extends AbstractMainActivity {
     }
 
     protected void showTags() {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().readonly();
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(false, false);
         TagsListFragment fragment = TagsListFragment.newInstance(prefs);
         showFragmentNow(fragment);
     }

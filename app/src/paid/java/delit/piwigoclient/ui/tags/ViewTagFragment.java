@@ -57,7 +57,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
-import delit.piwigoclient.ui.events.TagAlteredEvent;
+import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.TagUpdatedEvent;
 import delit.piwigoclient.util.SetUtils;
 
@@ -262,7 +262,7 @@ public class ViewTagFragment extends MyFragment {
         int recentlyAlteredThresholdAge = prefs.getInt(getString(R.string.preference_gallery_recentlyAlteredAgeMillis_key), getResources().getInteger(R.integer.preference_gallery_recentlyAlteredAgeMillis_default));
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
 
-        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+        boolean captureActionClicks = false; // PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
 
         viewAdapter = new AlbumItemRecyclerViewAdapter(tagModel, recentlyAlteredThresholdDate, null, captureActionClicks);
 
@@ -695,8 +695,8 @@ public class ViewTagFragment extends MyFragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(TagAlteredEvent event) {
-        if (tag != null && tag.getId() == event.id) {
+    public void onEvent(TagContentAlteredEvent event) {
+        if (tag != null && tag.getId() == event.getId()) {
             tagIsDirty = true;
             if(isResumed()) {
                 reloadAlbumContent();

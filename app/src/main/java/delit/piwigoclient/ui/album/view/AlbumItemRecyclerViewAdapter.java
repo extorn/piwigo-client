@@ -390,8 +390,10 @@ public class AlbumItemRecyclerViewAdapter<T extends ResourceItem> extends Recycl
             if(!useMasonryStyle) {
                 ((ResizingPicassoLoader) holder.imageLoader).setCenterCrop(false);
             }
-            //Now trigger a load of the real data.
-            multiSelectStatusListener.notifyAlbumThumbnailInfoLoadNeeded((CategoryItem)holder.mItem);
+            if(multiSelectStatusListener != null) {
+                //Now trigger a load of the real data.
+                multiSelectStatusListener.notifyAlbumThumbnailInfoLoadNeeded((CategoryItem) holder.mItem);
+            }
         } else {
             holder.imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
             if(!useMasonryStyle) {
@@ -434,8 +436,10 @@ public class AlbumItemRecyclerViewAdapter<T extends ResourceItem> extends Recycl
         }
 //        notifyItemRangeChanged(0, getItemCount());
         notifyDataSetChanged();
-        multiSelectStatusListener.onMultiSelectStatusChanged(allowItemSelection);
-        multiSelectStatusListener.onItemSelectionCountChanged(selectedResourceIds.size());
+        if(multiSelectStatusListener != null) {
+            multiSelectStatusListener.onMultiSelectStatusChanged(allowItemSelection);
+            multiSelectStatusListener.onItemSelectionCountChanged(selectedResourceIds.size());
+        }
     }
 
     public boolean isItemSelectionAllowed() {
@@ -546,7 +550,7 @@ public class AlbumItemRecyclerViewAdapter<T extends ResourceItem> extends Recycl
             } else {
                 changed = selectedResourceIds.remove(holder.getItemId());
             }
-            if(changed) {
+            if(changed && multiSelectStatusListener != null) {
                 multiSelectStatusListener.onItemSelectionCountChanged(selectedResourceIds.size());
             }
         }
@@ -608,7 +612,7 @@ public class AlbumItemRecyclerViewAdapter<T extends ResourceItem> extends Recycl
         }
 
         private void onCategoryLongClick() {
-            if(captureActionClicks) {
+            if(captureActionClicks && multiSelectStatusListener != null) {
                 multiSelectStatusListener.onCategoryLongClick((CategoryItem)viewHolder.mItem);
             }
         }

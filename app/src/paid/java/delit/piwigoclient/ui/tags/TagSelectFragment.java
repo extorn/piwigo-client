@@ -272,6 +272,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
                 if(getListAdapter() != null && getListAdapter().getItemCount() > 0) {
+                    getViewPrefs().setInitialSelectionLocked(getViewPrefs().isAllowItemSelection() && !PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
                     getListAdapter().notifyDataSetChanged();
                     // force redraw of either list.
                     getList().invalidate();
@@ -305,12 +306,13 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             pageToLoadNow = -1;
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
             boolean isUserTagPluginSearchResult = response instanceof PluginUserTagsGetListResponseHandler.PiwigoUserTagsPluginGetTagsListRetrievedResponse;
-            int itemsAddedCount = tagsModel.addItemPage(isAdminPage || isUserTagPluginSearchResult, response.getTags());
+            int firstIndexInsertedAt = tagsModel.addItemPage(isAdminPage || isUserTagPluginSearchResult, response.getTags());
             HashSet<Long> selectedItemIds = getListAdapter().getSelectedItemIds();
             for (Long selectedItemId : selectedItemIds) {
                 getListAdapter().setItemSelected(selectedItemId);
             }
-            getListAdapter().notifyItemRangeInserted(0, itemsAddedCount);
+            // can't do an incremental refresh as we sort the data and it could cause interleaving.
+            getListAdapter().notifyDataSetChanged();;
             onListItemLoadSuccess();
             setAppropriateComponentState();
         }

@@ -45,6 +45,7 @@ import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
+import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.TagUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
 
@@ -63,6 +64,7 @@ public class TagsListFragment extends MyFragment {
     private CustomImageButton addListItemButton;
     private AlertDialog addNewTagDialog;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
+    private RecyclerView recyclerView;
 
     public static TagsListFragment newInstance(BaseRecyclerViewAdapterPreferences viewPrefs) {
         TagsListFragment fragment = new TagsListFragment();
@@ -152,25 +154,13 @@ public class TagsListFragment extends MyFragment {
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        recyclerView = (RecyclerView) view.findViewById(R.id.list);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
-
-            @Override
-            public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, Tag item) {
-                onDeleteTag(item);
-            }
-
-            @Override
-            public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, Tag item) {
-                onTagSelected(item);
-            }
-
-        }, viewPrefs);
+        viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagListSelectListener(), viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
 
@@ -382,6 +372,14 @@ public class TagsListFragment extends MyFragment {
         viewAdapter.replaceOrAddItem(event.getTag());
     }
 
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(TagContentAlteredEvent event) {
+        Tag item = viewAdapter.getItemById(event.getId());
+        item.setUsageCount(item.getUsageCount() + event.getContentChange());
+        viewAdapter.notifyItemChanged(viewAdapter.getItemPosition(item));
+    }
+
 //    public void onTagDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteTagResponse response) {
 //        Tag tag = deleteActionsPending.remove(response.getMessageId());
 //        viewAdapter.remove(tag);
@@ -401,5 +399,19 @@ public class TagsListFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AppUnlockedEvent event) {
         setViewControlStatusBasedOnSessionState();
+    }
+
+    class TagListSelectListener extends TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag> {
+
+        @Override
+        public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, Tag item) {
+            onDeleteTag(item);
+        }
+
+        @Override
+        public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, Tag item) {
+            onTagSelected(item);
+        }
+
     }
 }

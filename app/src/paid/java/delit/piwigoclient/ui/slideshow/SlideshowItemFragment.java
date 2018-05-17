@@ -12,6 +12,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -19,7 +20,7 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
-import delit.piwigoclient.ui.events.TagAlteredEvent;
+import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.util.SetUtils;
 
@@ -29,13 +30,13 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     private static final String STATE_UPDATED_TAGS_SET = "updatedTagSet";
     private static final String STATE_CHANGED_TAGS_SET = "changedTagSet";
     private HashSet<Tag> updatedTagsSet;
-    private HashSet<Tag> changedTags;
+    private HashSet<TagContentAlteredEvent> changedTagsEvents;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_UPDATED_TAGS_SET, updatedTagsSet);
-        outState.putSerializable(STATE_CHANGED_TAGS_SET, changedTags);
+        outState.putSerializable(STATE_CHANGED_TAGS_SET, changedTagsEvents);
     }
 
     @Override
@@ -69,7 +70,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     @Override
     public void onImageDeleted() {
         for (Tag tag : getModel().getTags()) {
-            EventBus.getDefault().post(new TagAlteredEvent(tag.getId()));
+            EventBus.getDefault().post(new TagContentAlteredEvent(tag.getId(), -1));
         }
         super.onImageDeleted();
     }
@@ -80,7 +81,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         if (savedInstanceState != null) {
             //restore saved state
             updatedTagsSet = (HashSet<Tag>) savedInstanceState.getSerializable(STATE_UPDATED_TAGS_SET);
-            changedTags = (HashSet<Tag>) savedInstanceState.getSerializable(STATE_CHANGED_TAGS_SET);
+            changedTagsEvents = (HashSet<TagContentAlteredEvent>) savedInstanceState.getSerializable(STATE_CHANGED_TAGS_SET);
         }
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -95,7 +96,15 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
                 // no changes
                 updatedTagsSet = null;
             } else {
-                changedTags = SetUtils.differences(newTags, currentTags);
+                Set<Tag> added = SetUtils.difference(newTags, currentTags);
+                Set<Tag> deleted = SetUtils.difference(currentTags, newTags);
+                changedTagsEvents = new HashSet<>(added.size() + deleted.size());
+                for(Tag newTag : added) {
+                    changedTagsEvents.add(new TagContentAlteredEvent(newTag.getId(), 1));
+                }
+                for(Tag newTag : deleted) {
+                    changedTagsEvents.add(new TagContentAlteredEvent(newTag.getId(), -1));
+                }
             }
         }
     }
@@ -103,12 +112,13 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     @Override
     protected void onResourceInfoAltered(final T resourceItem) {
         super.onResourceInfoAltered(resourceItem);
-        if (changedTags != null) {
+        if (changedTagsEvents != null) {
             // ensure all necessary tags are updated.
-            for (Tag tag : changedTags) {
-                EventBus.getDefault().post(new TagAlteredEvent(tag.getId()));
+            for (TagContentAlteredEvent tagEvent : changedTagsEvents) {
+                EventBus.getDefault().post(tagEvent);
             }
-            changedTags = null;
+            changedTagsEvents.clear();
+            changedTagsEvents = null;
         }
     }
 

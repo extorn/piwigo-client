@@ -97,4 +97,8 @@ public class BaseRecyclerViewAdapterPreferences {
     public void setAllowItemAddition(boolean allowItemAddition) {
         this.allowItemAddition = allowItemAddition;
     }
+
+    public void setInitialSelectionLocked(boolean initialSelectionLocked) {
+        this.initialSelectionLocked = initialSelectionLocked;
+    }
 }

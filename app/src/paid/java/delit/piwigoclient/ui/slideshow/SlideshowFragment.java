@@ -14,7 +14,7 @@ import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
-import delit.piwigoclient.ui.events.TagAlteredEvent;
+import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 
 /**
  * Created by gareth on 14/05/17.
@@ -55,9 +55,9 @@ public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshow
     }
 
     @Subscribe
-    public void onEvent(TagAlteredEvent tagAlteredEvent) {
+    public void onEvent(TagContentAlteredEvent tagContentAlteredEvent) {
         ResourceContainer<T> gallery = getGallery();
-        if(gallery instanceof PiwigoTag && gallery.getId() == tagAlteredEvent.id) {
+        if(gallery instanceof PiwigoTag && gallery.getId() == tagContentAlteredEvent.getId()) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync));
         }
     }
