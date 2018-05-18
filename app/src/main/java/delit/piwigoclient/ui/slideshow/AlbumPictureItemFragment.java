@@ -128,7 +128,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!loader.isImageLoaded()) {
+                if(loader != null && !loader.isImageLoaded()) {
                     loader.load();
                 }
             }
