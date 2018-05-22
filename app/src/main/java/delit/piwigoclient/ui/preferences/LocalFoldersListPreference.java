@@ -133,7 +133,7 @@ public class LocalFoldersListPreference extends Preference {
     }
 
 
-    private static class SavedState extends BaseSavedState {
+    public static class SavedState extends BaseSavedState {
 
         public static final Creator<SavedState> CREATOR =
                 new Creator<SavedState>() {

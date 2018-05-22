@@ -18,19 +18,19 @@ public class BaseRecyclerViewAdapterPreferences {
             return this;
         }
 
-        public BaseRecyclerViewAdapterPreferences selectable(boolean multiSelectionAllowed, boolean initialSelectionLocked) {
+        public <Q extends BaseRecyclerViewAdapterPreferences> Q selectable(boolean multiSelectionAllowed, boolean initialSelectionLocked) {
             allowItemSelection = true;
             this.initialSelectionLocked = initialSelectionLocked;
             this.multiSelectionEnabled = multiSelectionAllowed;
             allowItemDeletion = false;
             allowItemAddition = false;
             enabled = true;
-            return this;
+            return (Q) this;
         }
 
-        public BaseRecyclerViewAdapterPreferences deletable() {
+        public <Q extends BaseRecyclerViewAdapterPreferences> Q deletable() {
             allowItemDeletion = true;
-            return this;
+            return (Q) this;
         }
 
         public Bundle storeToBundle(Bundle parent) {

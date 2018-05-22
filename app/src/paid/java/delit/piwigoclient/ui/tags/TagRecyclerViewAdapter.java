@@ -23,7 +23,7 @@ public class TagRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecy
 
 
     @Override
-    public TagViewHolder buildViewHolder(View view) {
+    public TagViewHolder buildViewHolder(View view, int viewType) {
         return new TagViewHolder(view);
     }
 

@@ -243,7 +243,7 @@ public class EditableListPreference extends DialogPreference {
 //        }
     }
 
-    private static class SavedState extends BaseSavedState {
+    public static class SavedState extends BaseSavedState {
         private String value;
 
         public SavedState(Parcel source) {

@@ -555,7 +555,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         }
     }
 
-    private static class SavedState extends BaseSavedState {
+    public static class SavedState extends BaseSavedState {
 
 
         private static final char[] ksPass = new char[] {'O','g','r','S','W','1','n','s','h','E','H','D','8','b','v','c','7','t','Z','J'};

@@ -83,6 +83,7 @@ import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumDeletedEvent;
 import delit.piwigoclient.ui.events.AlbumSelectedEvent;
@@ -178,6 +179,7 @@ public class ViewAlbumFragment extends MyFragment {
     private AppCompatImageView actionIndicatorImg;
     private RecyclerView galleryListView;
     private AlbumViewAdapterListener viewAdapterListener;
+    private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
 
 
     /**
@@ -257,6 +259,7 @@ public class ViewAlbumFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        viewPrefs.storeToBundle(outState);
         outState.putSerializable(ARG_GALLERY, gallery);
         outState.putSerializable(STATE_GALLERY_MODEL, galleryModel);
         outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
@@ -273,6 +276,37 @@ public class ViewAlbumFragment extends MyFragment {
         outState.putLong(STATE_USER_GUID, userGuid);
     }
 
+    private AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
+        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+        captureActionClicks &= (getBasket().getItemCount() == 0 || getBasket().getContentParentId() == gallery.getId());
+
+        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
+        boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
+
+        boolean showLargeAlbumThumbnails = prefs.getBoolean(getString(R.string.preference_gallery_show_large_thumbnail_key), getResources().getBoolean(R.bool.preference_gallery_show_large_thumbnail_default));
+
+        boolean useMasonryStyle = prefs.getBoolean(getString(R.string.preference_gallery_masonry_view_key), getResources().getBoolean(R.bool.preference_gallery_masonry_view_default));
+
+        boolean showResourceNames = prefs.getBoolean(getString(R.string.preference_gallery_show_image_name_key), getResources().getBoolean(R.bool.preference_gallery_show_image_name_default));
+
+        int recentlyAlteredThresholdAge = prefs.getInt(getString(R.string.preference_gallery_recentlyAlteredAgeMillis_key), getResources().getInteger(R.integer.preference_gallery_recentlyAlteredAgeMillis_default));
+        Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
+
+        if(viewPrefs == null) {
+            viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
+        }
+
+        viewPrefs.selectable(captureActionClicks, false);
+        viewPrefs.withDarkMode(useDarkMode);
+        viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
+        viewPrefs.withMasonryStyle(useMasonryStyle);
+        viewPrefs.withShowingAlbumNames(showResourceNames);
+        viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
+        viewPrefs.withAlbumWidth(getScreenWidth() / albumsPerRow);
+        viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
+        return viewPrefs;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -284,6 +318,8 @@ public class ViewAlbumFragment extends MyFragment {
             galleryIsDirty = true;
         } else if (savedInstanceState != null) {
             //restore saved state
+            viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
+            viewPrefs.loadFromBundle(savedInstanceState);
             editingItemDetails = savedInstanceState.getBoolean(STATE_EDITING_ITEM_DETAILS);
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
@@ -317,6 +353,8 @@ public class ViewAlbumFragment extends MyFragment {
             }
         }
 
+        updateViewPrefs();
+
         userGuid = PiwigoSessionDetails.getUserGuid();
         if(galleryModel == null) {
             galleryIsDirty = true;
@@ -348,10 +386,8 @@ public class ViewAlbumFragment extends MyFragment {
         }
 
         preferredThumbnailSize = prefs.getString(getContext().getString(R.string.preference_gallery_item_thumbnail_size_key), getContext().getString(R.string.preference_gallery_item_thumbnail_size_default));
-        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
-        boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
 
-        if(useDarkMode) {
+        if(viewPrefs.isUseDarkMode()) {
             view.setBackgroundColor(Color.BLACK);
         }
 
@@ -432,19 +468,15 @@ public class ViewAlbumFragment extends MyFragment {
         // Set the adapter
         galleryListView = view.findViewById(R.id.gallery_list);
 
-        boolean showLargeAlbumThumbnails = prefs.getBoolean(getString(R.string.preference_gallery_show_large_thumbnail_key), getResources().getBoolean(R.bool.preference_gallery_show_large_thumbnail_default));
-
         RecyclerView recyclerView = galleryListView;
 
         if (!galleryIsDirty) {
             emptyGalleryLabel.setVisibility(galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
         }
 
-        boolean useMasonryStyle = prefs.getBoolean(getString(R.string.preference_gallery_masonry_view_key), getResources().getBoolean(R.bool.preference_gallery_masonry_view_default));
-
         // need to wait for the gallery model to be initialised.
         RecyclerView.LayoutManager gridLayoutMan;
-        if(useMasonryStyle) {
+        if(viewPrefs.isUseMasonryStyle()) {
             gridLayoutMan = new StaggeredGridLayoutManager(colsOnScreen, StaggeredGridLayoutManager.VERTICAL);
         } else {
             if(imagesOnScreen % albumsPerRow > 0) {
@@ -455,29 +487,15 @@ public class ViewAlbumFragment extends MyFragment {
 
         recyclerView.setLayoutManager(gridLayoutMan);
 
-        if(!useMasonryStyle) {
+        if(!viewPrefs.isUseMasonryStyle()) {
             int colsPerAlbum = colsOnScreen / albumsPerRow;
             int colsPerImage = colsOnScreen / imagesOnScreen;
             ((GridLayoutManager)gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(galleryModel, colsPerAlbum, colsPerImage));
         }
 
-        int recentlyAlteredThresholdAge = prefs.getInt(getString(R.string.preference_gallery_recentlyAlteredAgeMillis_key), getResources().getInteger(R.integer.preference_gallery_recentlyAlteredAgeMillis_default));
-        Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
-
-        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-        captureActionClicks &= (getBasket().getItemCount() == 0 || getBasket().getContentParentId() == gallery.getId());
-
         viewAdapterListener = new AlbumViewAdapterListener();
-        viewAdapter = new AlbumItemRecyclerViewAdapter(galleryModel, recentlyAlteredThresholdDate, viewAdapterListener, captureActionClicks);
 
-        boolean showResourceNames = prefs.getBoolean(getString(R.string.preference_gallery_show_image_name_key), getResources().getBoolean(R.bool.preference_gallery_show_image_name_default));
-
-        viewAdapter.setUseDarkMode(useDarkMode);
-        viewAdapter.setShowLargeAlbumThumbnails(showLargeAlbumThumbnails);
-        viewAdapter.setShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
-        viewAdapter.setMasonryStyle(useMasonryStyle);
-        viewAdapter.setAlbumWidth(getScreenWidth() / albumsPerRow);
-        viewAdapter.setShowResourceNames(showResourceNames);
+        viewAdapter = new AlbumItemRecyclerViewAdapter(container.getContext(), galleryModel, viewAdapterListener, viewPrefs);
 
         Basket basket = getBasket();
 
@@ -669,7 +687,9 @@ public class ViewAlbumFragment extends MyFragment {
         Set<Long> selectedItems = viewAdapter.getSelectedItemIds();
         for(GalleryItem item : galleryModel.getItems()) {
             if(selectedItems.contains(item.getId())) {
-                basket.addItem(action, (ResourceItem)item, gallery);
+                if(item instanceof ResourceItem) {
+                    basket.addItem(action, (ResourceItem) item, gallery);
+                }
             }
         }
         updateBasketDisplay(basket);
@@ -679,7 +699,10 @@ public class ViewAlbumFragment extends MyFragment {
 
         boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
         captureActionClicks &= (getBasket().getItemCount() == 0 || getBasket().getContentParentId() == gallery.getId());
-        viewAdapter.setCaptureActionClicks(captureActionClicks);
+        if(viewAdapter.isMultiSelectionAllowed() != captureActionClicks) {
+            viewPrefs.selectable(captureActionClicks, false);
+            viewAdapter.notifyDataSetChanged(); //TODO check this works (refresh the whole list, redrawing all with/without select box as appropriate)
+        }
 
         int basketItemCount = basket.getItemCount();
         if(basketItemCount == 0) {
@@ -1865,7 +1888,10 @@ public class ViewAlbumFragment extends MyFragment {
                 }
             }
             boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-            viewAdapter.setCaptureActionClicks(captureActionClicks);
+            if(captureActionClicks != viewAdapter.getAdapterPrefs().isMultiSelectionEnabled()) {
+                viewAdapter.getAdapterPrefs().selectable(captureActionClicks, false);
+                viewAdapter.notifyDataSetChanged(); //TODO check this does what it should...
+            }
 
             Basket basket = getBasket();
             basket.clear();
@@ -1884,7 +1910,10 @@ public class ViewAlbumFragment extends MyFragment {
                 setEditItemDetailsControlsStatus();
             }
             boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-            viewAdapter.setCaptureActionClicks(captureActionClicks);
+            if(captureActionClicks != viewAdapter.getAdapterPrefs().isMultiSelectionEnabled()) {
+                viewAdapter.getAdapterPrefs().selectable(captureActionClicks, false);
+                viewAdapter.notifyDataSetChanged(); //TODO check this does what it should...
+            }
         } else {
             // if not showing, just flush the state and rebuild the page
             galleryIsDirty = true;
@@ -1905,9 +1934,9 @@ public class ViewAlbumFragment extends MyFragment {
 
         private final int colsPerAlbum;
         private final int colsPerImage;
-        private final ResourceContainer<CategoryItem> galleryModel;
+        private final ResourceContainer<CategoryItem, GalleryItem> galleryModel;
 
-        public SpanSizeLookup(ResourceContainer<CategoryItem> galleryModel, int colsPerAlbum, int colsPerImage) {
+        public SpanSizeLookup(ResourceContainer<CategoryItem, GalleryItem> galleryModel, int colsPerAlbum, int colsPerImage) {
             this.colsPerAlbum = colsPerAlbum;
             this.colsPerImage = colsPerImage;
             this.galleryModel = galleryModel;
@@ -1939,17 +1968,17 @@ public class ViewAlbumFragment extends MyFragment {
         }
     }
 
-    private class AlbumViewAdapterListener implements AlbumItemRecyclerViewAdapter.MultiSelectStatusListener {
+    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter {
 
         private Map<Long, CategoryItem> albumThumbnailLoadActions = new HashMap<>();
 
-        @Override
-        public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
-//                bulkActionsContainer.setVisibility(multiSelectEnabled?VISIBLE:GONE);
-        }
-
         public Map<Long, CategoryItem> getAlbumThumbnailLoadActions() {
             return albumThumbnailLoadActions;
+        }
+
+        @Override
+        public void onMultiSelectStatusChanged(BaseRecyclerViewAdapter adapter, boolean multiSelectEnabled) {
+//            bulkActionsContainer.setVisibility(multiSelectEnabled?VISIBLE:GONE);
         }
 
         public void setAlbumThumbnailLoadActions(Map<Long, CategoryItem> albumThumbnailLoadActions) {
@@ -1957,7 +1986,7 @@ public class ViewAlbumFragment extends MyFragment {
         }
 
         @Override
-        public void onItemSelectionCountChanged(int size) {
+        public void onItemSelectionCountChanged(BaseRecyclerViewAdapter adapter, int size) {
             bulkActionsContainer.setVisibility(size > 0 || getBasket().getItemCount() > 0 ?VISIBLE:GONE);
             updateBasketDisplay(getBasket());
         }
@@ -1966,6 +1995,7 @@ public class ViewAlbumFragment extends MyFragment {
         public void onCategoryLongClick(CategoryItem album) {
             onAlbumDeleteRequest(album);
         }
+
 
         @Override
         public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
@@ -1989,7 +2019,7 @@ public class ViewAlbumFragment extends MyFragment {
             RecyclerView.ViewHolder vh = galleryListView.findViewHolderForItemId(item.getId());
             if(vh != null) {
                 // item currently displaying.
-                viewAdapter.redrawItem((AlbumItemRecyclerViewAdapter.ViewHolder) vh, item);
+                viewAdapter.redrawItem((AlbumItemRecyclerViewAdapter.AlbumItemViewHolder) vh, item);
             }
 
             return true;

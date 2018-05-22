@@ -230,7 +230,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
         setValue(myState.value);
     }
 
-    private static class SavedState extends BaseSavedState {
+    public static class SavedState extends BaseSavedState {
 
         public static final Creator<SavedState> CREATOR =
                 new Creator<ServerConnectionsListPreference.SavedState>() {

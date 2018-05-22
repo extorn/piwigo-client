@@ -29,7 +29,7 @@ public class UserRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRec
     }
 
     @Override
-    public UserViewHolder buildViewHolder(View view) {
+    public UserViewHolder buildViewHolder(View view, int viewType) {
         return new UserViewHolder(view);
     }
 

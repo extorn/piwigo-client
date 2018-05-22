@@ -276,7 +276,7 @@ public class PiwigoResponseBufferingHandler {
                 iterator.remove();
             }
         }
-        return messageIdsToCheck;
+        return new HashSet<Long>(messageIdsToCheck);
     }
 
     public interface PiwigoResponse extends Response {

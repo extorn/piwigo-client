@@ -50,10 +50,13 @@ import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
@@ -95,6 +98,7 @@ public class ViewTagFragment extends MyFragment {
     private RecyclerView tagListView;
     private TextView emptyTagLabel;
     private boolean tagIsDirty;
+    private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
 
 
     /**
@@ -144,11 +148,42 @@ public class ViewTagFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        viewPrefs.storeToBundle(outState);
         outState.putSerializable(ARG_TAG, tag);
         outState.putSerializable(STATE_TAG_MODEL, tagModel);
         outState.putSerializable(STATE_TAG_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putSerializable(STATE_TAG_LOADS_TO_RETRY, itemsToLoad);
         outState.putSerializable(STATE_DELETE_ACTION_DATA, deleteActionData);
+    }
+
+    private AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
+        boolean captureActionClicks = false; //PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+
+        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
+        boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
+
+        boolean showLargeAlbumThumbnails = prefs.getBoolean(getString(R.string.preference_gallery_show_large_thumbnail_key), getResources().getBoolean(R.bool.preference_gallery_show_large_thumbnail_default));
+
+        boolean useMasonryStyle = prefs.getBoolean(getString(R.string.preference_gallery_masonry_view_key), getResources().getBoolean(R.bool.preference_gallery_masonry_view_default));
+
+        boolean showResourceNames = prefs.getBoolean(getString(R.string.preference_gallery_show_image_name_key), getResources().getBoolean(R.bool.preference_gallery_show_image_name_default));
+
+        int recentlyAlteredThresholdAge = prefs.getInt(getString(R.string.preference_gallery_recentlyAlteredAgeMillis_key), getResources().getInteger(R.integer.preference_gallery_recentlyAlteredAgeMillis_default));
+        Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
+
+        if(viewPrefs == null) {
+            viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
+        }
+
+        viewPrefs.selectable(captureActionClicks, false);
+        viewPrefs.withDarkMode(useDarkMode);
+        viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
+        viewPrefs.withMasonryStyle(useMasonryStyle);
+        viewPrefs.withShowingAlbumNames(showResourceNames);
+        viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
+//        viewPrefs.withAlbumWidth(getScreenWidth() / albumsPerRow);
+        viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
+        return viewPrefs;
     }
 
     @Nullable
@@ -198,10 +233,7 @@ public class ViewTagFragment extends MyFragment {
             return view;
         }
 
-        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
-        boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
-
-        if(useDarkMode) {
+        if(viewPrefs.isUseDarkMode()) {
             view.setBackgroundColor(Color.BLACK);
         }
 
@@ -242,11 +274,9 @@ public class ViewTagFragment extends MyFragment {
             emptyTagLabel.setVisibility(tagModel.getItemCount() == 0 ? VISIBLE : GONE);
         }
 
-        boolean useMasonryStyle = prefs.getBoolean(getString(R.string.preference_gallery_masonry_view_key), getResources().getBoolean(R.bool.preference_gallery_masonry_view_default));
-
         // need to wait for the tag model to be initialised.
         RecyclerView.LayoutManager gridLayoutMan;
-        if(useMasonryStyle) {
+        if(viewPrefs.isUseMasonryStyle()) {
             gridLayoutMan = new StaggeredGridLayoutManager(colsOnScreen, StaggeredGridLayoutManager.VERTICAL);
         } else {
             gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
@@ -254,26 +284,12 @@ public class ViewTagFragment extends MyFragment {
 
         recyclerView.setLayoutManager(gridLayoutMan);
 
-        if(!useMasonryStyle) {
+        if(!viewPrefs.isUseMasonryStyle()) {
             int colsPerImage = colsOnScreen / imagesOnScreen;
             ((GridLayoutManager)gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(tagModel, colsPerImage));
         }
 
-        int recentlyAlteredThresholdAge = prefs.getInt(getString(R.string.preference_gallery_recentlyAlteredAgeMillis_key), getResources().getInteger(R.integer.preference_gallery_recentlyAlteredAgeMillis_default));
-        Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
-
-        boolean captureActionClicks = false; // PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-
-        viewAdapter = new AlbumItemRecyclerViewAdapter(tagModel, recentlyAlteredThresholdDate, null, captureActionClicks);
-
-        boolean showResourceNames = prefs.getBoolean(getString(R.string.preference_gallery_show_image_name_key), getResources().getBoolean(R.bool.preference_gallery_show_image_name_default));
-
-        viewAdapter.setUseDarkMode(useDarkMode);
-        // used for resources too (slightly misleading field name)
-        viewAdapter.setShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
-        viewAdapter.setMasonryStyle(useMasonryStyle);
-        viewAdapter.setShowResourceNames(showResourceNames);
-
+        viewAdapter = new AlbumItemRecyclerViewAdapter(container.getContext(), tagModel, null, viewPrefs);
 
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
 
@@ -663,8 +679,8 @@ public class ViewTagFragment extends MyFragment {
     public void onEvent(AppLockedEvent event) {
         if(isResumed()) {
             displayControlsBasedOnSessionState();
-            boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-            viewAdapter.setCaptureActionClicks(captureActionClicks);
+            /*boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+            viewAdapter.setCaptureActionClicks(captureActionClicks);*/
         } else {
             // if not showing, just flush the state and rebuild the page
             tagIsDirty = true;
@@ -675,8 +691,8 @@ public class ViewTagFragment extends MyFragment {
     public void onEvent(AppUnlockedEvent event) {
         if(isResumed()) {
             displayControlsBasedOnSessionState();
-            boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-            viewAdapter.setCaptureActionClicks(captureActionClicks);
+            /*boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+            viewAdapter.setCaptureActionClicks(captureActionClicks);*/
         } else {
             // if not showing, just flush the state and rebuild the page
             tagIsDirty = true;
@@ -734,37 +750,28 @@ public class ViewTagFragment extends MyFragment {
         }
     }
 
-    private class AlbumViewAdapterListener implements AlbumItemRecyclerViewAdapter.MultiSelectStatusListener {
-
-        private Map<Long, CategoryItem> albumThumbnailLoadActions = new HashMap<>();
+    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter {
 
         @Override
-        public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
-//                bulkActionsContainer.setVisibility(multiSelectEnabled?VISIBLE:GONE);
-        }
-
-        public Map<Long, CategoryItem> getAlbumThumbnailLoadActions() {
-            return albumThumbnailLoadActions;
-        }
-
-        public void setAlbumThumbnailLoadActions(Map<Long, CategoryItem> albumThumbnailLoadActions) {
-            this.albumThumbnailLoadActions = albumThumbnailLoadActions;
+        public void onMultiSelectStatusChanged(BaseRecyclerViewAdapter adapter, boolean multiSelectEnabled) {
+//            bulkActionsContainer.setVisibility(multiSelectEnabled?VISIBLE:GONE);
         }
 
         @Override
-        public void onItemSelectionCountChanged(int size) {
+        public void onItemSelectionCountChanged(BaseRecyclerViewAdapter adapter, int size) {
             bulkActionsContainer.setVisibility(size > 0?VISIBLE:GONE);
+//            bulkActionsContainer.setVisibility(size > 0 || getBasket().getItemCount() > 0 ?VISIBLE:GONE);
+//            updateBasketDisplay(getBasket());
         }
 
         @Override
         public void onCategoryLongClick(CategoryItem album) {
-            onAlbumDeleteRequest(album);
         }
 
         @Override
         public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
-            // Do nothing since this will only occur if the image is missing from the server.
-            return;
         }
+
+
     }
 }

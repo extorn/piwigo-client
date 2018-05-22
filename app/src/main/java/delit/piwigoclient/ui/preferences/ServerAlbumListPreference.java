@@ -299,7 +299,7 @@ public class ServerAlbumListPreference extends DialogPreference {
         this.connectionProfileNamePreferenceKey = myState.connectionProfileNamePreferenceKey;
     }
 
-    private static class SavedState extends BaseSavedState {
+    public static class SavedState extends BaseSavedState {
 
         public static final Creator<SavedState> CREATOR =
                 new Creator<ServerAlbumListPreference.SavedState>() {

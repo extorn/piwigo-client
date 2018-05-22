@@ -21,7 +21,7 @@ public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRe
     }
 
     @Override
-    public GroupViewHolder buildViewHolder(View view) {
+    public GroupViewHolder buildViewHolder(View view, int viewType) {
         return new GroupViewHolder(view);
     }
 

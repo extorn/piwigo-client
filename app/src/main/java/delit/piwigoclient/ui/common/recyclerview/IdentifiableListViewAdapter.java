@@ -11,7 +11,7 @@ import delit.piwigoclient.model.piwigo.IdentifiableItemStore;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link T}
  */
-public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdapterPreferences, T extends Identifiable, V extends IdentifiableItemStore<T>, S extends CustomViewHolder<P, T>> extends BaseRecyclerViewAdapter<P, T,S> {
+public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdapterPreferences, T extends Identifiable, V extends IdentifiableItemStore<T>, S extends CustomViewHolder<P, T>> extends BaseRecyclerViewAdapter<P, T, S> {
 
     private final V itemStore;
 
@@ -27,13 +27,17 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
     }
 
     @Override
-    public abstract S buildViewHolder(View view);
+    public abstract S buildViewHolder(View view, int viewType);
 
     @Override
     protected void removeItemFromInternalStore(int idxRemoved) {
         if(idxRemoved >= 0 && idxRemoved < itemStore.getItemCount()) {
             itemStore.getItems().remove(idxRemoved);
         }
+    }
+
+    protected V getItemStore() {
+        return itemStore;
     }
 
     @Override

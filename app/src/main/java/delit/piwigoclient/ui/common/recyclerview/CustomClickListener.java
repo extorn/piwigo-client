@@ -5,11 +5,15 @@ import android.view.View;
 public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T, S extends CustomViewHolder<V, T>> implements View.OnClickListener, View.OnLongClickListener {
 
     private final S viewHolder;
-    private final BaseRecyclerViewAdapter<V, T, S> parentAdapter;
+    private final BaseRecyclerViewAdapter<V,T,S> parentAdapter;
 
-    public CustomClickListener(S viewHolder, BaseRecyclerViewAdapter<V, T, S> parentAdapter) {
+    public <Q extends BaseRecyclerViewAdapter<V,T,S>> CustomClickListener(S viewHolder, Q parentAdapter) {
         this.viewHolder = viewHolder;
         this.parentAdapter = parentAdapter;
+    }
+
+    public S getViewHolder() {
+        return viewHolder;
     }
 
     @Override
@@ -42,7 +46,7 @@ public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T
         return true;
     }
 
-    public BaseRecyclerViewAdapter<V, T, S> getParentAdapter() {
-        return parentAdapter;
+    public <Q extends BaseRecyclerViewAdapter<V,T,S>> Q getParentAdapter() {
+        return (Q) parentAdapter;
     }
 }

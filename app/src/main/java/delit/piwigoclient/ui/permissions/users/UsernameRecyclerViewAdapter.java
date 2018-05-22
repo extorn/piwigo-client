@@ -35,7 +35,7 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Bas
     }
 
     @Override
-    public UsernameViewHolder buildViewHolder(View view) {
+    public UsernameViewHolder buildViewHolder(View view, int viewType) {
         return new UsernameViewHolder(view);
     }
 

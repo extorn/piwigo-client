@@ -65,7 +65,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     private static final String STATE_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
     private static final String STATE_ACTIVE_LOAD_THREADS = "activeLoadThreads";
     private CustomViewPager viewPager;
-    private ResourceContainer<T> gallery;
+    private ResourceContainer<T, GalleryItem> gallery;
     private int rawCurrentGalleryItemPosition;
     private View progressIndicator;
     private final HashSet<Integer> pagesBeingLoaded = new HashSet<>();
@@ -216,7 +216,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         progressIndicator.setVisibility(VISIBLE);
     }
 
-    protected ResourceContainer<T> getGallery() {
+    protected ResourceContainer<T, GalleryItem> getGallery() {
         return gallery;
     }
 
@@ -473,7 +473,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         }
     }
 
-    protected abstract long invokeResourcePageLoader(ResourceContainer<T> containerDetails, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList);
+    protected abstract long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> containerDetails, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList);
 
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {

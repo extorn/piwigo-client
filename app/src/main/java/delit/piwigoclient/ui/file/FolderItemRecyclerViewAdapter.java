@@ -1,11 +1,9 @@
 package delit.piwigoclient.ui.file;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.View;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
@@ -26,7 +24,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     @Override
-    public FolderItemViewHolder buildViewHolder(View view) {
+    public FolderItemViewHolder buildViewHolder(View view, int viewType) {
         return null;
     }
 

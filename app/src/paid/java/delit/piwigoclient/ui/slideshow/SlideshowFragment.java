@@ -22,7 +22,7 @@ import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 
 public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshowFragment<T> {
 
-    public static <S extends Identifiable> SlideshowFragment<S> newInstance(ResourceContainer<S> gallery, GalleryItem currentGalleryItem) {
+    public static <S extends Identifiable> SlideshowFragment<S> newInstance(ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         SlideshowFragment<S> fragment = new SlideshowFragment<S>();
         fragment.setArguments(buildArgs(gallery, currentGalleryItem));
         return fragment;
@@ -41,7 +41,7 @@ public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshow
     }
 
     @Override
-    protected long invokeResourcePageLoader(ResourceContainer<T> container, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList) {
+    protected long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> container, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList) {
         T containerDetails = container.getContainerDetails();
         long loadingMessageId;
         if(containerDetails instanceof CategoryItem) {
@@ -56,7 +56,7 @@ public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshow
 
     @Subscribe
     public void onEvent(TagContentAlteredEvent tagContentAlteredEvent) {
-        ResourceContainer<T> gallery = getGallery();
+        ResourceContainer<T,GalleryItem> gallery = getGallery();
         if(gallery instanceof PiwigoTag && gallery.getId() == tagContentAlteredEvent.getId()) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync));
         }

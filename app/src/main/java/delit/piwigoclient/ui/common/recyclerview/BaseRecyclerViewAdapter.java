@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +14,7 @@ import java.util.HashSet;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.ui.common.Enableable;
 import delit.piwigoclient.ui.common.SelectableItemsAdapter;
 
@@ -33,16 +33,20 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     private HashSet<Long> selectedResourceIds = new HashSet<>(0);
     private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
 
-    public BaseRecyclerViewAdapter(MultiSelectStatusListener multiSelectStatusListener, V prefs) {
+    public <P extends MultiSelectStatusListener<T>> BaseRecyclerViewAdapter(P multiSelectStatusListener, V prefs) {
         this.setHasStableIds(true);
         this.multiSelectStatusListener = multiSelectStatusListener;
         this.prefs = prefs;
     }
 
+    public V getAdapterPrefs() {
+        return prefs;
+    }
+
     @Override
     public abstract long getItemId(int position);
 
-    public abstract S buildViewHolder(View view);
+    public abstract S buildViewHolder(View view, int viewType);
 
     protected abstract T getItemById(Long selectedId);
 
@@ -70,15 +74,25 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         this.initialSelectedResourceIds = initialSelection != null ? new HashSet<>(initialSelection) : new HashSet<Long>(0);
     }
 
+    public boolean isItemSelected(Long itemId) {
+        return selectedResourceIds.contains(itemId);
+    }
+
+    @NonNull
+    protected View inflateView(@NonNull ViewGroup parent, int viewType) {
+        return LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
+    }
+
     @NonNull
     @Override
     public S onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         setContext(parent.getContext());
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
+        View view = inflateView(parent, viewType);
 
-        final S viewHolder = buildViewHolder(view);
-        viewHolder.internalCacheViewFieldsAndConfigure(buildCustomClickListener(viewHolder));
+        final S viewHolder = buildViewHolder(view, viewType);
+        CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
+        viewHolder.internalCacheViewFieldsAndConfigure(clickListener);
 
         return viewHolder;
     }
@@ -107,7 +121,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         this.context = context;
     }
 
-    private Context getContext() {
+    protected Context getContext() {
         return context;
     }
 
@@ -217,7 +231,6 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
-
     public static class MultiSelectStatusAdapter<T> implements MultiSelectStatusListener<T> {
 
         @Override
@@ -301,9 +314,8 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         multiSelectStatusListener.onItemDeleteRequested(this, viewHolder.getItem());
     }
 
-
-    public MultiSelectStatusListener<T> getMultiSelectStatusListener() {
-        return multiSelectStatusListener;
+    public <P extends MultiSelectStatusListener<T>> P getMultiSelectStatusListener() {
+        return (P)multiSelectStatusListener;
     }
 
 }
