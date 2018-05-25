@@ -297,6 +297,7 @@ public class ViewAlbumFragment extends MyFragment {
         }
 
         viewPrefs.selectable(captureActionClicks, false);
+        viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         viewPrefs.withDarkMode(useDarkMode);
         viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
         viewPrefs.withMasonryStyle(useMasonryStyle);

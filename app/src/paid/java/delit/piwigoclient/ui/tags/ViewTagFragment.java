@@ -51,6 +51,7 @@ import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.MyFragment;
@@ -83,7 +84,6 @@ public class ViewTagFragment extends MyFragment {
     private AlbumItemRecyclerViewAdapter viewAdapter;
     private FloatingActionButton retryActionButton;
     private TextView tagNameHeader;
-    private CustomImageButton deleteButton;
     private RelativeLayout bulkActionsContainer;
     private FloatingActionButton bulkActionButtonDelete;
     // Start fields maintained in saved session state.
@@ -176,6 +176,7 @@ public class ViewTagFragment extends MyFragment {
         }
 
         viewPrefs.selectable(captureActionClicks, false);
+        viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         viewPrefs.withDarkMode(useDarkMode);
         viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
         viewPrefs.withMasonryStyle(useMasonryStyle);
@@ -197,14 +198,16 @@ public class ViewTagFragment extends MyFragment {
             tagIsDirty = true;
         } else if (savedInstanceState != null) {
             //restore saved state
+            viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
+            viewPrefs.loadFromBundle(savedInstanceState);
             tagModel = (PiwigoTag) savedInstanceState.getSerializable(STATE_TAG_MODEL);
             tag = (Tag) savedInstanceState.getSerializable(ARG_TAG);
             // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid() != userGuid;
             tagIsDirty = tagIsDirty || savedInstanceState.getBoolean(STATE_TAG_DIRTY);
-            SetUtils.setNotNull(loadingMessageIds,(HashMap)savedInstanceState.getSerializable(STATE_TAG_ACTIVE_LOAD_THREADS));
-            SetUtils.setNotNull(itemsToLoad,(ArrayList)savedInstanceState.getSerializable(STATE_TAG_LOADS_TO_RETRY));
+            SetUtils.setNotNull(loadingMessageIds,(HashMap<Long,String>)savedInstanceState.getSerializable(STATE_TAG_ACTIVE_LOAD_THREADS));
+            SetUtils.setNotNull(itemsToLoad,(ArrayList<String>)savedInstanceState.getSerializable(STATE_TAG_LOADS_TO_RETRY));
             if(deleteActionData != null && deleteActionData.isEmpty()) {
                 deleteActionData = null;
             } else {
@@ -218,6 +221,8 @@ public class ViewTagFragment extends MyFragment {
             // force reload of all tagged content.
             tagModel = null;
         }
+
+        updateViewPrefs();
 
         userGuid = PiwigoSessionDetails.getUserGuid();
         if(tagModel == null) {
@@ -266,7 +271,7 @@ public class ViewTagFragment extends MyFragment {
 //        viewInOrientation = getResources().getConfiguration().orientation;
 
         // Set the adapter
-        tagListView = (RecyclerView)view.findViewById(R.id.tag_list);
+        tagListView = view.findViewById(R.id.tag_list);
 
         RecyclerView recyclerView = tagListView;
 
@@ -289,7 +294,7 @@ public class ViewTagFragment extends MyFragment {
             ((GridLayoutManager)gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(tagModel, colsPerImage));
         }
 
-        viewAdapter = new AlbumItemRecyclerViewAdapter(container.getContext(), tagModel, null, viewPrefs);
+        viewAdapter = new AlbumItemRecyclerViewAdapter(container.getContext(), tagModel, new AlbumViewAdapterListener(), viewPrefs);
 
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
 
@@ -342,35 +347,6 @@ public class ViewTagFragment extends MyFragment {
                 onDeleteResources(deleteActionData);
             }
         }
-    }
-
-    private void onAlbumDeleteRequest(final CategoryItem album) {
-        String msg = String.format(getString(R.string.alert_confirm_really_delete_album_from_server_pattern),album.getName());
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
-
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if(Boolean.TRUE == positiveAnswer) {
-                    String msg = String.format(getString(R.string.alert_confirm_really_really_delete_album_from_server_pattern),album.getName(), album.getPhotoCount(), album.getSubCategories(), album.getTotalPhotos() - album.getPhotoCount());
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-                        @Override
-                        public void onDismiss(AlertDialog dialog) {
-                        }
-
-                        @Override
-                        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                            if(Boolean.TRUE == positiveAnswer) {
-                                addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()).invokeAsync(getContext()));
-                            }
-                        }
-                    });
-                }
-            }
-        });
     }
 
     private static class DeleteActionData implements Serializable {
@@ -481,16 +457,16 @@ public class ViewTagFragment extends MyFragment {
                     if (Boolean.TRUE == positiveAnswer) {
                         addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(deleteActionData.getSelectedItemIds()).invokeAsync( getContext()));
                     } else if (Boolean.FALSE == positiveAnswer) {
-                        HashSet<Long> itemIdsForPermananentDelete = (HashSet<Long>) deleteActionData.getSelectedItemIds().clone();
-                        HashSet<ResourceItem> itemsForPermananentDelete = (HashSet<ResourceItem>) deleteActionData.getSelectedItems().clone();
+                        HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItemIds());
+                        HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItems());
                         for (ResourceItem item : sharedResources) {
-                            itemIdsForPermananentDelete.remove(item.getId());
-                            itemsForPermananentDelete.remove(item);
+                            itemIdsForPermanentDelete.remove(item.getId());
+                            itemsForPermanentDelete.remove(item);
                             item.getLinkedAlbums().remove(tag.getId());
                             addActiveServiceCall(R.string.progress_unlink_resources, new ImageUpdateInfoResponseHandler(item).invokeAsync(getContext()));
                         }
                         //now we need to delete the rest.
-                        deleteResourcesFromServerForever(itemIdsForPermananentDelete, itemsForPermananentDelete);
+                        deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
                     }
                 }
             });
@@ -565,11 +541,7 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private void displayControlsBasedOnSessionState() {
-        if (PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode()) {
-            deleteButton.setVisibility(VISIBLE);
-        } else {
-            deleteButton.setVisibility(GONE);
-        }
+
     }
 
     private void setTagHeadings() {

@@ -272,12 +272,12 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
 
     }
 
-    protected class ItemSelectionListener implements CompoundButton.OnCheckedChangeListener {
+    protected class ItemSelectionListener<X extends BaseRecyclerViewAdapter<V,T,S>> implements CompoundButton.OnCheckedChangeListener {
 
         private final S holder;
-        private BaseRecyclerViewAdapter<V,T,S> adapter;
+        private X adapter;
 
-        public ItemSelectionListener(BaseRecyclerViewAdapter<V,T,S> adapter, S holder) {
+        public ItemSelectionListener(X adapter, S holder) {
             this.adapter = adapter;
             this.holder = holder;
         }

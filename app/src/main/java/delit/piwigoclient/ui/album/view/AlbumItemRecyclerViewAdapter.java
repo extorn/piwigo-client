@@ -53,7 +53,7 @@ import static delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPrefe
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
  * FIXME This is broken. swap for a new class based upon IdentifiableListViewAdapter
  */
-public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends IdentifiableListViewAdapter<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, ResourceContainer<T, GalleryItem>, AlbumItemRecyclerViewAdapter.AlbumItemViewHolder<GalleryItem>> {
+public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends IdentifiableListViewAdapter<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, ResourceContainer<T, GalleryItem>, AlbumItemRecyclerViewAdapter.AlbumItemViewHolder<T>> {
 
 
 
@@ -122,115 +122,8 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
     @Override
     public AlbumItemViewHolder buildViewHolder(View view, int viewType) {
 
-        final AlbumItemViewHolder viewHolder = new AlbumItemViewHolder(view, this);
-
-        if(viewType == GalleryItem.PICTURE_RESOURCE_TYPE || viewType == GalleryItem.VIDEO_RESOURCE_TYPE) {
-            // Albums are not checkable.
-            viewHolder.checkBox.setOnCheckedChangeListener(new ItemSelectionListener(this, viewHolder));
-        }
-        if(viewType == GalleryItem.VIDEO_RESOURCE_TYPE || viewType  == GalleryItem.PICTURE_RESOURCE_TYPE || viewType == GalleryItem.CATEGORY_TYPE) {
-            final ViewTreeObserver.OnPreDrawListener predrawListener;
-            if(!getAdapterPrefs().isUseMasonryStyle()) {
-                viewHolder.imageLoader = new ResizingPicassoLoader(viewHolder.mImageView, 0, 0);
-                predrawListener = new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        try {
-                            if (!viewHolder.imageLoader.isImageLoaded() && !viewHolder.imageLoader.isImageLoading()) {
-
-                                int desiredScalingQuality = getAdapterPrefs().getScalingQuality();
-                                int imgSize = desiredScalingQuality;
-                                if (imgSize == Integer.MAX_VALUE) {
-                                    imgSize = viewHolder.mImageView.getMeasuredWidth();
-                                } else {
-                                    // need that math.max to ensure that the image size remains positive
-                                    //FIXME How can this ever be called before the ImageView object has a size?
-                                    imgSize = Math.max(SCALING_QUALITY_VLOW,Math.min(desiredScalingQuality, viewHolder.mImageView.getMeasuredWidth()));
-                                }
-                                ((ResizingPicassoLoader) viewHolder.imageLoader).setResizeTo(imgSize, imgSize);
-                                viewHolder.imageLoader.load();
-                            }
-                        } catch (IllegalStateException e) {
-                            // image loader not configured yet...
-                        }
-                        return true;
-                    }
-                };
-            } else {
-                viewHolder.imageLoader = new PicassoLoader(viewHolder.mImageView);
-                predrawListener = new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        try {
-                            if (!viewHolder.imageLoader.isImageLoaded() && !viewHolder.imageLoader.isImageLoading()) {
-                                viewHolder.imageLoader.load();
-                            }
-                        } catch(IllegalStateException e) {
-                            // image loader not configured yet...
-                        }
-                        return true;
-                    }
-                };
-            }
-            viewHolder.mImageView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-                @Override
-                public void onViewAttachedToWindow(View v) {
-                    viewHolder.mImageView.getViewTreeObserver().addOnPreDrawListener(predrawListener);
-                }
-
-                @Override
-                public void onViewDetachedFromWindow(View v) {
-                    viewHolder.mImageView.getViewTreeObserver().removeOnPreDrawListener(predrawListener);
-                }
-            });
-            viewHolder.itemActionListener = new AlbumItemCustomClickListener(viewHolder, this);
-            viewHolder.mImageView.setOnClickListener(viewHolder.itemActionListener);
-            viewHolder.mImageView.setOnLongClickListener(viewHolder.itemActionListener);
-        }
-
-        if(viewType == GalleryItem.CATEGORY_TYPE && !getAdapterPrefs().isShowLargeAlbumThumbnails()) {
-            viewHolder.itemView.setOnClickListener(viewHolder.itemActionListener);
-            viewHolder.itemView.setOnLongClickListener(viewHolder.itemActionListener);
-        }
-
-        setItemBackground(viewType, viewHolder);
-
+        final AlbumItemViewHolder viewHolder = new AlbumItemViewHolder(view, this, viewType);
         return viewHolder;
-    }
-
-    private void setItemBackground(int viewType, AlbumItemViewHolder viewHolder) {
-        if(viewType == GalleryItem.CATEGORY_TYPE) {
-            if (getAdapterPrefs().isUseDarkMode()) {
-                if (getAdapterPrefs().isUseMasonryStyle()) {
-                    // needed for the background behind the title text
-                    viewHolder.itemView.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);
-                    // needed for images that don't load correctly.
-                    viewHolder.mImageView.setBackgroundColor(Color.WHITE);
-                } else {
-                    viewHolder.itemView.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);
-                }
-                if (viewHolder.mImageContainer != null) {
-                    // will be null for categories in list view.
-                    viewHolder.mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);
-                }
-            }
-        } else {
-            if (getAdapterPrefs().isUseDarkMode()) {
-                if (getAdapterPrefs().isUseMasonryStyle()) {
-                    // needed for the background behind the title text
-                    viewHolder.itemView.setBackgroundResource(R.color.black_overlay);
-                    // needed for images that don't load correctly.
-                    viewHolder.mImageView.setBackgroundColor(Color.WHITE);
-                } else {
-                    viewHolder.itemView.setBackgroundColor(Color.WHITE);
-                }
-                if(viewHolder.mImageContainer != null) {
-                    // will be null for categories in list view.
-//                viewHolder.mImageContainer.setBackgroundColor(resources.getColor(R.color.black_overlay_dark));
-                    viewHolder.mImageContainer.setBackgroundResource(R.color.black_overlay);
-                }
-            }
-        }
     }
 
     @Override
@@ -249,26 +142,27 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
     public void onBindViewHolder(@NonNull AlbumItemViewHolder holder, int position) {
         GalleryItem newItem = getItemByPosition(position);
         if(!isHolderOutOfSync(holder, newItem)) {
-            // rendering the same item.
+            // rendering the same item
             holder.updateCheckableStatus();
         } else {
             super.onBindViewHolder(holder, position);
         }
     }
 
-    public void redrawItem(AlbumItemViewHolder vh, CategoryItem item) {
+    public void redrawItem(AlbumItemViewHolder<T> vh, CategoryItem item) {
         // clone the item into the view holder item (will not be same object if serialization has occurred)
-        vh.mItem.copyFrom(item, true);
+        vh.getItem().copyFrom(item, true);
         // find item index.
 
-        int idx = getItemPosition(vh.mItem);
+        int idx = getItemPosition(vh.getItem());
         notifyItemChanged(idx);
         // clear the item in the view holder (to ensure it is redrawn - will be reloaded from the galleryList).
-        vh.mItem = null;
+        vh.setItem(null);
         onBindViewHolder(vh, idx);
     }
 
-    public static class AlbumItemViewHolder<T extends GalleryItem> extends CustomViewHolder<AlbumItemRecyclerViewAdapterPreferences, T> {
+    public static class AlbumItemViewHolder<S extends Identifiable> extends CustomViewHolder<AlbumItemRecyclerViewAdapterPreferences, GalleryItem> {
+        private final int viewType;
         public AppCompatCheckBox checkBox;
         public AppCompatImageView mImageView;
         public TextView mNameView;
@@ -279,20 +173,20 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
         private SquareLinearLayout mImageContainer;
         public AppCompatImageView mTypeIndicatorImg;
         private PicassoLoader imageLoader;
-        public GalleryItem mItem;
         public AlbumItemCustomClickListener itemActionListener;
-        private AlbumItemRecyclerViewAdapter<T> parentAdapter;
+        private AlbumItemRecyclerViewAdapter<S> parentAdapter;
 
-        public AlbumItemViewHolder(View view, AlbumItemRecyclerViewAdapter<T> parentAdapter) {
+        public AlbumItemViewHolder(View view, AlbumItemRecyclerViewAdapter<S> parentAdapter, int viewType) {
             super(view);
             this.parentAdapter = parentAdapter;
+            this.viewType = viewType;
 
         }
 
         private void updateCheckableStatus() {
-            if(mItem.getType() == GalleryItem.PICTURE_RESOURCE_TYPE || mItem.getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
+            if(getItem().getType() == GalleryItem.PICTURE_RESOURCE_TYPE || getItem().getType() == GalleryItem.VIDEO_RESOURCE_TYPE) {
                 checkBox.setVisibility(parentAdapter.getAdapterPrefs().isAllowItemSelection() ? View.VISIBLE : GONE);
-                checkBox.setChecked(parentAdapter.isItemSelected(mItem.getId()));
+                checkBox.setChecked(parentAdapter.isItemSelected(getItem().getId()));
             } else if(checkBox != null) {
                 // only in masonry view mode at the moment.
                 checkBox.setVisibility(GONE);
@@ -301,6 +195,9 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
         @Override
         public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
+
+            setItem(newItem);
+
             if(newItem.getType() == GalleryItem.CATEGORY_ADVERT_TYPE || newItem.getType() == GalleryItem.RESOURCE_ADVERT_TYPE) {
                 // no need to configure this view.
                 return;
@@ -441,11 +338,118 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
             mRecentlyAlteredMarkerView = itemView.findViewById(R.id.newly_altered_marker_image);
             mImageContainer = itemView.findViewById(R.id.thumbnail_container);
             mTypeIndicatorImg = itemView.findViewById(R.id.type_indicator);
+
+            if(viewType == GalleryItem.PICTURE_RESOURCE_TYPE || viewType == GalleryItem.VIDEO_RESOURCE_TYPE) {
+                // Albums are not checkable.
+                checkBox.setOnCheckedChangeListener(parentAdapter.new ItemSelectionListener<AlbumItemRecyclerViewAdapter<S>>(parentAdapter, this));
+            }
+            if(viewType == GalleryItem.VIDEO_RESOURCE_TYPE || viewType  == GalleryItem.PICTURE_RESOURCE_TYPE || viewType == GalleryItem.CATEGORY_TYPE) {
+                final ViewTreeObserver.OnPreDrawListener predrawListener;
+                if(!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+                    imageLoader = new ResizingPicassoLoader(mImageView, 0, 0);
+                    predrawListener = new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            try {
+                                if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading()) {
+
+                                    int desiredScalingQuality = parentAdapter.getAdapterPrefs().getScalingQuality();
+                                    int imgSize = desiredScalingQuality;
+                                    if (imgSize == Integer.MAX_VALUE) {
+                                        imgSize = mImageView.getMeasuredWidth();
+                                    } else {
+                                        // need that math.max to ensure that the image size remains positive
+                                        //FIXME How can this ever be called before the ImageView object has a size?
+                                        imgSize = Math.max(SCALING_QUALITY_VLOW,Math.min(desiredScalingQuality, mImageView.getMeasuredWidth()));
+                                    }
+                                    ((ResizingPicassoLoader) imageLoader).setResizeTo(imgSize, imgSize);
+                                    imageLoader.load();
+                                }
+                            } catch (IllegalStateException e) {
+                                // image loader not configured yet...
+                            }
+                            return true;
+                        }
+                    };
+                } else {
+                    imageLoader = new PicassoLoader(mImageView);
+                    predrawListener = new ViewTreeObserver.OnPreDrawListener() {
+                        @Override
+                        public boolean onPreDraw() {
+                            try {
+                                if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading()) {
+                                    imageLoader.load();
+                                }
+                            } catch(IllegalStateException e) {
+                                // image loader not configured yet...
+                            }
+                            return true;
+                        }
+                    };
+                }
+                mImageView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                    @Override
+                    public void onViewAttachedToWindow(View v) {
+                        mImageView.getViewTreeObserver().addOnPreDrawListener(predrawListener);
+                    }
+
+                    @Override
+                    public void onViewDetachedFromWindow(View v) {
+                        mImageView.getViewTreeObserver().removeOnPreDrawListener(predrawListener);
+                    }
+                });
+                itemActionListener = new AlbumItemCustomClickListener(this, this.parentAdapter);
+                mImageView.setOnClickListener(itemActionListener);
+                mImageView.setOnLongClickListener(itemActionListener);
+            }
+
+            if(viewType == GalleryItem.CATEGORY_TYPE && !parentAdapter.getAdapterPrefs().isShowLargeAlbumThumbnails()) {
+                itemView.setOnClickListener(itemActionListener);
+                itemView.setOnLongClickListener(itemActionListener);
+            }
+
+            setItemBackground(viewType, this);
+
+        }
+
+        private void setItemBackground(int viewType, AlbumItemViewHolder viewHolder) {
+            if(viewType == GalleryItem.CATEGORY_TYPE) {
+                if (parentAdapter.getAdapterPrefs().isUseDarkMode()) {
+                    if (parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+                        // needed for the background behind the title text
+                        itemView.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);
+                        // needed for images that don't load correctly.
+                        mImageView.setBackgroundColor(Color.WHITE);
+                    } else {
+                        itemView.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);
+                    }
+                    if (mImageContainer != null) {
+                        // will be null for categories in list view.
+                        mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);
+                    }
+                }
+            } else {
+                if (parentAdapter.getAdapterPrefs().isUseDarkMode()) {
+                    if (parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+                        // needed for the background behind the title text
+                        itemView.setBackgroundResource(R.color.black_overlay);
+                        // needed for images that don't load correctly.
+                        mImageView.setBackgroundColor(Color.WHITE);
+                    } else {
+                        itemView.setBackgroundColor(Color.WHITE);
+                    }
+                    if(mImageContainer != null) {
+                        // will be null for categories in list view.
+//                mImageContainer.setBackgroundColor(resources.getColor(R.color.black_overlay_dark));
+                        mImageContainer.setBackgroundResource(R.color.black_overlay);
+                    }
+                }
+            }
         }
 
         @Override
         public void setChecked(boolean checked) {
-
+            checkBox.setChecked(checked);
         }
 
         @Override
@@ -455,7 +459,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
     }
 
     @Override
-    protected CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<GalleryItem>> buildCustomClickListener(AlbumItemViewHolder<GalleryItem> viewHolder) {
+    protected CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<T>> buildCustomClickListener(AlbumItemViewHolder<T> viewHolder) {
         return new AlbumItemCustomClickListener(viewHolder, this);
     }
 
@@ -478,24 +482,24 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
         }
     }
 
-    private static class AlbumItemCustomClickListener<T extends Identifiable> extends CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<GalleryItem>> {
+    private static class AlbumItemCustomClickListener<T extends Identifiable> extends CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<T>> {
 
         private int manualRetries = 0;
         private final int maxManualRetries = 2;
 
-        public AlbumItemCustomClickListener(AlbumItemViewHolder<GalleryItem> viewHolder, AlbumItemRecyclerViewAdapter<T> adapter) {
+        public AlbumItemCustomClickListener(AlbumItemViewHolder<T> viewHolder, AlbumItemRecyclerViewAdapter<T> adapter) {
             super(viewHolder, adapter);
         }
 
         @Override
-        public AlbumItemRecyclerViewAdapter<GalleryItem> getParentAdapter() {
+        public AlbumItemRecyclerViewAdapter<T> getParentAdapter() {
             return super.getParentAdapter();
         }
 
         private void onCategoryClick() {
             if (!getParentAdapter().getAdapterPrefs().isAllowItemSelection()) {
                 //If not currently in multiselect mode
-                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(getParentAdapter().getItemStore(), getViewHolder().mItem);
+                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(getParentAdapter().getItemStore(), getViewHolder().getItem());
                 EventBus.getDefault().post(event);
             }
         }
@@ -503,16 +507,16 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
         private void onNonCategoryClick() {
             if (!getParentAdapter().getAdapterPrefs().isAllowItemSelection()) {
                 //If not currently in multiselect mode
-                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(getParentAdapter().getItemStore(), getViewHolder().mItem);
+                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(getParentAdapter().getItemStore(), getViewHolder().getItem());
                 EventBus.getDefault().post(event);
             } else if (getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled()) {
                 // Are allowing access to admin functions within the album
 
                 // multi selection mode is enabled.
                 if (getParentAdapter().getSelectedItemIds().contains(getViewHolder().getItemId())) {
-                    getViewHolder().checkBox.setChecked(false);
+                    getViewHolder().setChecked(false);
                 } else {
-                    getViewHolder().checkBox.setChecked(true);
+                    getViewHolder().setChecked(true);
                 }
                 //TODO Not sure why we'd call this?
                 getViewHolder().itemView.setPressed(false);
@@ -525,7 +529,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
                 manualRetries++;
                 getViewHolder().imageLoader.load();
             } else {
-                if(getViewHolder().mItem.getType() == GalleryItem.CATEGORY_TYPE) {
+                if(getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
                     onCategoryClick();
                 } else {
                     onNonCategoryClick();
@@ -540,7 +544,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
         private void onCategoryLongClick() {
             if(getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled() && getParentAdapter().getMultiSelectStatusListener() != null) {
                 MultiSelectStatusAdapter multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
-                multiSelectListener.onCategoryLongClick((CategoryItem)getViewHolder().mItem);
+                multiSelectListener.onCategoryLongClick((CategoryItem)getViewHolder().getItem());
             }
         }
 
@@ -548,14 +552,14 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
             if(getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled()) {
                 getParentAdapter().toggleItemSelection();
                 if (getParentAdapter().getAdapterPrefs().isAllowItemSelection()) {
-                    getViewHolder().checkBox.setChecked(true);
+                    getViewHolder().setChecked(true);
                 }
             }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            if(getViewHolder().mItem.getType() == GalleryItem.CATEGORY_TYPE) {
+            if(getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
                 onCategoryLongClick();
             } else {
                 onNonCategoryLongClick();
