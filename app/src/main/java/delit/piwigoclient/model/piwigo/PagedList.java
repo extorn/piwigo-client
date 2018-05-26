@@ -103,7 +103,7 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     public abstract Long getItemId(T item);
 
     @Override
-    public T getItemById(Long selectedItemId) {
+    public T getItemById(long selectedItemId) {
         for (T item : items) {
             if(getItemId(item) == selectedItemId) {
                 return item;

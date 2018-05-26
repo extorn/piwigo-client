@@ -13,7 +13,7 @@ public interface IdentifiableItemStore<T> {
 
     int getItemCount();
 
-    T getItemById(Long selectedItemId);
+    T getItemById(long selectedItemId);
 
     void addItem(T item);
 

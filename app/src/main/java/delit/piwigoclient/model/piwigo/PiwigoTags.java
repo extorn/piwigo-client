@@ -55,7 +55,7 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     }
 
     @Override
-    public Tag getItemById(Long selectedItemId) {
+    public Tag getItemById(long selectedItemId) {
         for (Tag item : items) {
             if(item.getId() == selectedItemId) {
                 return item;

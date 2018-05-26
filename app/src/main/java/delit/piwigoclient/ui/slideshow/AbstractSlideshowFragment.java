@@ -252,7 +252,9 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemActionFinishedEvent event) {
         //TODO this is rubbish, store a reference to the parent in the resource items so we can test if this screen is relevant.
-        if((gallery instanceof PiwigoTag || event.getItem().getParentId().equals(gallery.getId())) && getUiHelper().isTrackingRequest(event.getActionId())) {
+        // parentId will be null if the parent is a Tag not an Album (viewing contents of a Tag).
+        if((event.getItem().getParentId() == null || event.getItem().getParentId().equals(gallery.getId()))
+                && getUiHelper().isTrackingRequest(event.getActionId())) {
             viewPager.setEnabled(true);
         }
     }

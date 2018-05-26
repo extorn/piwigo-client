@@ -58,8 +58,8 @@ public class LocalFoldersListPreference extends Preference {
     }
 
     @Override
-    protected View onCreateView(ViewGroup parent) {
-        View v = super.onCreateView(parent);
+    protected void onBindView(View view) {
+        super.onBindView(view);
         setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
             @Override
@@ -68,7 +68,6 @@ public class LocalFoldersListPreference extends Preference {
                 return true;
             }
         });
-        return v;
     }
 
     @Override

@@ -55,6 +55,7 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_delete">Delete</string>
     <string name="button_unlink">UnLink</string>
+    <string name="button_untag">Remove Tag</string>
     <string name="button_close">Close</string>
     <string name="alert_userTypePrefix">User Type</string>
     <string name="tools_menu_title">Tools</string>
@@ -152,6 +153,8 @@
     <string name="alert_confirm_really_delete_from_server">This will delete the item permanently from the server. Continue?</string>
     <string name="alert_confirm_really_delete_items_from_server">This will delete the items permanently from the server. Continue?</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">You\'ve requested to delete %1$d resources that are shared with other albums. Do you wish to delete these from all albums (and the server - permanently), or just unlink them from this album?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">You\'ve requested to delete %1$d resources. Do you wish to delete these from all albums (and the server) - permanently, or just unlink them from this tag?</string>
+    <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">You\'ve requested to delete %1$d resources. Do you wish to delete these from all albums (and the server) - permanently? (You cannot remove tags from images without the UserTags plugin installed on your server)</string>
     <string name="about_menu_title">About</string>
     <string name="licences_menu_title">Licence</string>
     <string name="about_heading">About This App</string>
@@ -622,6 +625,7 @@ SOFTWARE.
     <string name="progress_delete_resource">Deleting resource</string>
     <string name="progress_delete_resources">Deleting resources</string>
     <string name="progress_unlink_resources">Unlinking resources</string>
+    <string name="progress_untag_resources_pattern">Removing resources from tag %1$s</string>
     <string name="progress_copy_resources">Copying resources</string>
     <string name="progress_move_resources">Moving resources</string>
     <string name="progress_checking_with_server">Checking credentials with server</string>
@@ -776,4 +780,5 @@ SOFTWARE.
     <string name="server_connection_preference_summary_default">Please select a value</string>
     <string name="server_connection_preference_user_guest">guest</string>
     <string name="file_selection_heading">File Selection</string>
+    <string name="tag_heading_pattern">Tag: %1$s</string>
 </resources>

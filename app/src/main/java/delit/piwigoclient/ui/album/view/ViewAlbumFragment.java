@@ -314,6 +314,13 @@ public class ViewAlbumFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
+        return inflater.inflate(R.layout.fragment_gallery, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         if(!PiwigoSessionDetails.isFullyLoggedIn()) {
             // force a reload of the gallery if the session has been destroyed.
             galleryIsDirty = true;
@@ -372,8 +379,6 @@ public class ViewAlbumFragment extends MyFragment {
             }
         }
 
-        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
-
         if(galleryListView != null && isSessionDetailsChanged()) {
             if(gallery == CategoryItem.ROOT_ALBUM) {
                 // Root album can just be reloaded.
@@ -382,7 +387,7 @@ public class ViewAlbumFragment extends MyFragment {
                 // If the page has been initialised already (not first visit), and the session token has changed, force moving to parent album.
                 //TODO be cleverer - check if the website is the same (might be okay to try and reload the same album in that instance). N.b. would need to check for a 401 error
                 getFragmentManager().popBackStack();
-                return view;
+                return;
             }
         }
 
@@ -439,25 +444,17 @@ public class ViewAlbumFragment extends MyFragment {
         int bottomSheetOffsetDp = prefs.getInt(getString(R.string.preference_gallery_detail_sheet_offset_key), getResources().getInteger(R.integer.preference_gallery_detail_sheet_offset_default));
         bottomSheetBehavior.setPeekHeight(DisplayUtils.dpToPx(getContext(), bottomSheetOffsetDp));
 
-        if (gallery.isRoot()) {
+        bottomSheet.setVisibility(View.VISIBLE);
+        actionButton.setVisibility(View.VISIBLE);
+        actionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                informationShowing = !informationShowing;
+                updateInformationShowingStatus();
+            }
+        });
 
-            bottomSheet.setVisibility(GONE);
-            actionButton.setVisibility(GONE);
-
-        } else {
-
-            bottomSheet.setVisibility(View.VISIBLE);
-            actionButton.setVisibility(View.VISIBLE);
-            actionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    informationShowing = !informationShowing;
-                    updateInformationShowingStatus();
-                }
-            });
-
-            setupBottomSheet(bottomSheet);
-        }
+        setupBottomSheet(bottomSheet);
 
         int imagesOnScreen = selectBestColumnCountForScreenSize();
         albumsPerRow = getAlbumsPerRow();
@@ -496,7 +493,7 @@ public class ViewAlbumFragment extends MyFragment {
 
         viewAdapterListener = new AlbumViewAdapterListener();
 
-        viewAdapter = new AlbumItemRecyclerViewAdapter(container.getContext(), galleryModel, viewAdapterListener, viewPrefs);
+        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), galleryModel, viewAdapterListener, viewPrefs);
 
         Basket basket = getBasket();
 
@@ -610,8 +607,6 @@ public class ViewAlbumFragment extends MyFragment {
 
         //display bottom sheet if needed
         updateInformationShowingStatus();
-
-        return view;
     }
 
     private void loadAdminListOfAlbums() {
@@ -721,6 +716,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         }
 
+        displayControlsBasedOnSessionState();
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()||getBasket().getItemCount() > 0?VISIBLE:GONE);
         bulkActionButtonDelete.setVisibility(viewAdapter.isItemSelectionAllowed()&& basket.getItemCount() == 0?VISIBLE:GONE);
         bulkActionButtonCopy.setVisibility(viewAdapter.isItemSelectionAllowed()&& (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
@@ -1000,29 +996,23 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     private void setupBottomSheet(final View bottomSheet) {
-        galleryNameView = bottomSheet.findViewById(R.id.gallery_details_name);
-        galleryNameView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
 
-                if (galleryNameView.getLineCount() > galleryNameView.getMaxLines()) {
-                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
-                }
-                return false;
-            }
-        });
-        galleryDescriptionView = bottomSheet.findViewById(R.id.gallery_details_description);
-        galleryDescriptionView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (galleryDescriptionView.getLineCount() > galleryDescriptionView.getMaxLines()) {
-                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
-                }
-                return false;
-            }
-        });
+        int editFieldVisibility = VISIBLE;
+        if (gallery.isRoot()) {
+            editFieldVisibility = GONE;
+        }
+
+        View editFields = bottomSheet.findViewById(R.id.gallery_details_edit_fields);
+        editFields.setVisibility(editFieldVisibility);
+
+        // always setting them up eliminates the chance they might be null.
+        setupEditFields(editFields);
+        if (!gallery.isRoot()) {
+            fillGalleryEditFields();
+        }
 
         saveButton = bottomSheet.findViewById(R.id.gallery_details_save_button);
+        saveButton.setVisibility(editFieldVisibility);
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_save_black_24dp).into(saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1033,7 +1023,9 @@ public class ViewAlbumFragment extends MyFragment {
                 updateAlbumDetails();
             }
         });
+
         discardButton = bottomSheet.findViewById(R.id.gallery_details_discard_button);
+        discardButton.setVisibility(editFieldVisibility);
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_undo_black_24dp).into(discardButton);
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1044,7 +1036,10 @@ public class ViewAlbumFragment extends MyFragment {
                 fillGalleryEditFields();
             }
         });
+
+
         editButton = bottomSheet.findViewById(R.id.gallery_details_edit_button);
+        editButton.setVisibility(editFieldVisibility);
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_mode_edit_black_24dp).into(editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1066,17 +1061,63 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        View galleryEditFieldsView = bottomSheet.findViewById(R.id.gallery_details_edit_fields);
+        deleteButton = bottomSheet.findViewById(R.id.gallery_action_delete);
+        deleteButton.setVisibility(editFieldVisibility);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(deleteButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAlbumDeleteRequest(gallery);
+            }
+        });
 
-        if (CategoryItem.ROOT_ALBUM == gallery) {
-            galleryEditFieldsView.setVisibility(GONE);
+        pasteButton = bottomSheet.findViewById(R.id.gallery_action_paste);
+        pasteButton.setVisibility(editFieldVisibility);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_paste_black_24dp).into(pasteButton);
+        pasteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onMoveItem(gallery);
+            }
+        });
 
-        } else {
-            galleryEditFieldsView.setVisibility(View.VISIBLE);
-        }
+        cutButton = bottomSheet.findViewById(R.id.gallery_action_cut);
+        cutButton.setVisibility(editFieldVisibility);
+        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_cut_black_24px).into(cutButton);
+        cutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCopyItem(gallery);
+            }
+        });
 
-        allowedGroupsFieldLabel = bottomSheet.findViewById(R.id.gallery_details_allowed_groups_label);
-        allowedGroupsField = bottomSheet.findViewById(R.id.gallery_details_allowed_groups);
+    }
+
+    private void setupEditFields(View editFields) {
+        galleryNameView = editFields.findViewById(R.id.gallery_details_name);
+        galleryNameView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if (galleryNameView.getLineCount() > galleryNameView.getMaxLines()) {
+                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
+                }
+                return false;
+            }
+        });
+        galleryDescriptionView = editFields.findViewById(R.id.gallery_details_description);
+        galleryDescriptionView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (galleryDescriptionView.getLineCount() > galleryDescriptionView.getMaxLines()) {
+                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
+                }
+                return false;
+            }
+        });
+
+        allowedGroupsFieldLabel = editFields.findViewById(R.id.gallery_details_allowed_groups_label);
+        allowedGroupsField = editFields.findViewById(R.id.gallery_details_allowed_groups);
         allowedGroupsField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1092,8 +1133,8 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        allowedUsersFieldLabel = bottomSheet.findViewById(R.id.gallery_details_allowed_users_label);
-        allowedUsersField = bottomSheet.findViewById(R.id.gallery_details_allowed_users);
+        allowedUsersFieldLabel = editFields.findViewById(R.id.gallery_details_allowed_users_label);
+        allowedUsersField = editFields.findViewById(R.id.gallery_details_allowed_users);
         allowedUsersField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1116,7 +1157,7 @@ public class ViewAlbumFragment extends MyFragment {
             }
         });
 
-        galleryPrivacyStatusField = bottomSheet.findViewById(R.id.gallery_details_status);
+        galleryPrivacyStatusField = editFields.findViewById(R.id.gallery_details_status);
         galleryPrivacyStatusField.setChecked(gallery.isPrivate());
         checkedListener = new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -1133,35 +1174,6 @@ public class ViewAlbumFragment extends MyFragment {
             }
         };
         galleryPrivacyStatusField.setOnCheckedChangeListener(checkedListener);
-
-        deleteButton = bottomSheet.findViewById(R.id.gallery_action_delete);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(deleteButton);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onAlbumDeleteRequest(gallery);
-            }
-        });
-
-        pasteButton = bottomSheet.findViewById(R.id.gallery_action_paste);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_paste_black_24dp).into(pasteButton);
-        pasteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onMoveItem(gallery);
-            }
-        });
-
-        cutButton = bottomSheet.findViewById(R.id.gallery_action_cut);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_cut_black_24px).into(cutButton);
-        cutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCopyItem(gallery);
-            }
-        });
-
-        fillGalleryEditFields();
     }
 
     private void loadAlbumPermissions() {

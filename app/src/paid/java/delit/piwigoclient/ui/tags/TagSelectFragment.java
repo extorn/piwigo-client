@@ -271,8 +271,8 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
+                getViewPrefs().setInitialSelectionLocked(getViewPrefs().isAllowItemSelection() && !PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
                 if(getListAdapter() != null && getListAdapter().getItemCount() > 0) {
-                    getViewPrefs().setInitialSelectionLocked(getViewPrefs().isAllowItemSelection() && !PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
                     getListAdapter().notifyDataSetChanged();
                     // force redraw of either list.
                     getList().invalidate();

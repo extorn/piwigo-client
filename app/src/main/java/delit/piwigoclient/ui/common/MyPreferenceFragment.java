@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,13 +79,12 @@ public class MyPreferenceFragment extends PreferenceFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle savedInstanceState) {
-        View v = super.onCreateView(paramLayoutInflater, paramViewGroup, savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         if (savedInstanceState != null) {
             uiHelper.onRestoreSavedInstanceState(savedInstanceState);
         }
         uiHelper.registerToActiveServiceCalls();
-        return v;
     }
 
     protected Preference findPreference(int preferenceId) {

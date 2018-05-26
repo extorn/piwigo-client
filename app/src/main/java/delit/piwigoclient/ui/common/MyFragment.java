@@ -32,7 +32,11 @@ public class MyFragment extends Fragment {
     private String piwigoServerConnected;
 
     protected long addActiveServiceCall(int titleStringId, long messageId) {
-        uiHelper.addActiveServiceCall(getString(titleStringId), messageId);
+        return addActiveServiceCall(getString(titleStringId), messageId);
+    }
+
+    protected long addActiveServiceCall(String title, long messageId) {
+        uiHelper.addActiveServiceCall(title, messageId);
         return messageId;
     }
 

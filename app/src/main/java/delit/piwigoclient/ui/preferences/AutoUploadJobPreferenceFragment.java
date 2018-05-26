@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,13 +100,17 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        View v = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
+        return super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
 //        Preference p = findPreference(R.string.preference_data_upload_automatic_server_key);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         addPreferencesFromResource(R.xml.pref_auto_upload_job);
         setHasOptionsMenu(true);
 
         invokePreferenceValuesValidation();
-        return v;
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
