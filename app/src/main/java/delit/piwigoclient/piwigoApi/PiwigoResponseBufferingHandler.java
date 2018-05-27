@@ -1224,16 +1224,9 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends BasePiwigoResponse {
-        private final T resource;
-
-        public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, T resource) {
-            super(messageId, piwigoMethod, true);
-            this.resource = resource;
-        }
-
-        public T getResource() {
-            return resource;
+    public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends PiwigoResourceItemResponse {
+        public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
+            super(messageId, piwigoMethod, piwigoResource);
         }
     }
 

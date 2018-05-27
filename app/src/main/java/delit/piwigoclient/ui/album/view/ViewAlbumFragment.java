@@ -1356,8 +1356,8 @@ public class ViewAlbumFragment extends MyFragment {
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateAlbumContentResponse) {
                     onAlbumContentAltered((PiwigoResponseBufferingHandler.PiwigoUpdateAlbumContentResponse) response);
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) {
-
-                    if(!viewAdapterListener.handleAlbumThumbnailInfoLoaded(response.getMessageId(), ((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse)response).getResource())) {
+                    PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse r = ((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse)response);
+                    if(!viewAdapterListener.handleAlbumThumbnailInfoLoaded(response.getMessageId(), r.getPiwigoResource())) {
                         if (deleteActionData != null && !deleteActionData.isEmpty()) {
                             //currently mid delete of resources.
                             onResourceUnlinked((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) response);
@@ -1428,7 +1428,7 @@ public class ViewAlbumFragment extends MyFragment {
     }
 
     private void onResourceUnlinked(PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse response) {
-        deleteActionData.removeProcessedResource(response.getResource());
+        deleteActionData.removeProcessedResource(response.getPiwigoResource());
     }
 
     private void onResourceInfoRetrieved(PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse response) {
@@ -1488,9 +1488,9 @@ public class ViewAlbumFragment extends MyFragment {
 
         Basket basket = getBasket();
         CategoryItem movedParent = basket.getContentParent();
-        basket.removeItem(response.getResource());
+        basket.removeItem(response.getPiwigoResource());
         movedParent.reducePhotoCount();
-        if(movedParent.getRepresentativePictureId() != null && response.getResource().getId() == movedParent.getRepresentativePictureId()) {
+        if(movedParent.getRepresentativePictureId() != null && response.getPiwigoResource().getId() == movedParent.getRepresentativePictureId()) {
             if(movedParent.getPhotoCount() > 0) {
                 movedResourceParentUpdateRequired = true;
             }

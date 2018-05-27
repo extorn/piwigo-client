@@ -126,6 +126,16 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
         return items.remove(idx);
     }
 
+    @Override
+    public void remove(T item) {
+        items.remove(item);
+    }
+
+    @Override
+    public boolean removeAll(Collection<T> itemsForDeletion) {
+        return items.removeAll(itemsForDeletion);
+    }
+
     public boolean addMissingItems(List<? extends T> newItems) {
         if(newItems == null) {
             return false;

@@ -1,6 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by gareth on 08/04/18.
@@ -18,4 +19,8 @@ public interface IdentifiableItemStore<T> {
     void addItem(T item);
 
     int getItemIdx(T newTag);
+
+    boolean removeAll(Collection<T> itemsForDeletion);
+
+    void remove(T r);
 }

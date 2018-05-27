@@ -2,6 +2,7 @@ package delit.piwigoclient.model.piwigo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -99,6 +100,16 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     @Override
     public int getItemIdx(Tag newTag) {
         return items.indexOf(newTag);
+    }
+
+    @Override
+    public boolean removeAll(Collection<Tag> itemsForDeletion) {
+        return items.removeAll(itemsForDeletion);
+    }
+
+    @Override
+    public void remove(Tag r) {
+        items.remove(r);
     }
 
 }
