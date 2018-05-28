@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.album.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,7 +25,9 @@ import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
+import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateTagsResponseHandler;
@@ -52,6 +55,24 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
             tagMembershipChangesAction = (AddTagsToResourcesAction) savedInstanceState.getSerializable(STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING);
         }
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
+        AlbumItemRecyclerViewAdapterPreferences prefs = super.updateViewPrefs();
+        prefs.withAllowMultiSelect(getMultiSelectionAllowed());
+
+        if(PiwigoSessionDetails.isFullyLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()) {
+            addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
+        }
+        return prefs;
+    }
+
+    private boolean getMultiSelectionAllowed() {
+        boolean captureActionClicks = getViewPrefs().isMultiSelectionEnabled();
+        captureActionClicks |= (PiwigoSessionDetails.isFullyLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
+        captureActionClicks &= !isAppInReadOnlyMode();
+        return captureActionClicks;
     }
 
     @Override
@@ -105,6 +126,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(TagSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
+            viewAdapter.toggleItemSelection();
             tagMembershipChangesAction.setTagsToAdd(event.getSelectedItems());
             getResourceInfo(tagMembershipChangesAction.selectedResources);
         }
@@ -153,6 +175,22 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
         for(ResourceItem item : selectedResources) {
             addActiveServiceCall(R.string.progress_resource_details_updating,new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext()));
+        }
+    }
+
+    @Override
+    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+        return new ViewAlbumPiwigoResponseListener();
+    }
+
+    protected class ViewAlbumPiwigoResponseListener extends CustomPiwigoResponseListener {
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
+                getViewPrefs().withAllowMultiSelect(getMultiSelectionAllowed());
+            } else {
+                super.onAfterHandlePiwigoResponse(response);
+            }
         }
     }
 

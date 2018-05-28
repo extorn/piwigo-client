@@ -278,7 +278,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         outState.putLong(STATE_USER_GUID, userGuid);
     }
 
-    private AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
+    protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
         boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
         captureActionClicks &= (getBasket().getItemCount() == 0 || getBasket().getContentParentId() == gallery.getId());
 
@@ -307,6 +307,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
         viewPrefs.withAlbumWidth(getScreenWidth() / albumsPerRow);
         viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
+        return viewPrefs;
+    }
+
+    public AlbumItemRecyclerViewAdapterPreferences getViewPrefs() {
         return viewPrefs;
     }
 
@@ -1338,7 +1342,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    protected class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {

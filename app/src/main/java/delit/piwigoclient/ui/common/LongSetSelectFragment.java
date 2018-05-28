@@ -123,7 +123,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         outState.putBoolean(STATE_SELECT_TOGGLE, selectToggle);
     }
 
-    private boolean isNotAuthorisedToAlterState() {
+    protected boolean isNotAuthorisedToAlterState() {
         return (!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode();
     }
 

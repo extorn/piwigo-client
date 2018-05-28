@@ -65,6 +65,20 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         outState.putInt(TAGS_PAGE_BEING_LOADED, pageToLoadNow);
     }
 
+    private boolean isTagSelectionAllowed() {
+        if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+            return false;
+        }
+        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
+        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
+        return allowTagEdit;
+    }
+
+    @Override
+    protected boolean isNotAuthorisedToAlterState() {
+        return !isTagSelectionAllowed();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,7 +99,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             return null;
         }
 
-        boolean editingEnabled = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+        boolean editingEnabled = isTagSelectionAllowed();
         if(!editingEnabled) {
             getViewPrefs().readonly();
         }
