@@ -68,7 +68,8 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         return prefs;
     }
 
-    private boolean getMultiSelectionAllowed() {
+    @Override
+    protected boolean getMultiSelectionAllowed() {
         boolean captureActionClicks = getViewPrefs().isMultiSelectionEnabled();
         captureActionClicks |= (PiwigoSessionDetails.isFullyLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
         captureActionClicks &= !isAppInReadOnlyMode();

@@ -528,16 +528,36 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         updateInformationShowingStatus();
     }
 
+    private boolean showBulkDeleteAction(Basket basket) {
+        return PiwigoSessionDetails.isAdminUser() && viewAdapter.isItemSelectionAllowed() && basket.getItemCount() == 0;
+    }
+
+    private boolean showBulkCopyAction(Basket basket) {
+        return PiwigoSessionDetails.isAdminUser() && viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId());
+    }
+
+    private boolean showBulkCutAction(Basket basket) {
+        return PiwigoSessionDetails.isAdminUser() && viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId());
+    }
+
+    private boolean showBulkPasteAction(Basket basket) {
+        return PiwigoSessionDetails.isAdminUser() &&  !viewAdapter.isItemSelectionAllowed() && basket.getItemCount() > 0 && gallery.getId() != CategoryItem.ROOT_ALBUM.getId() && gallery.getId() != basket.getContentParentId();
+    }
+
+    private boolean showBulkActionsContainer(Basket basket) {
+        return viewAdapter.isItemSelectionAllowed()||getBasket().getItemCount() > 0;
+    }
+
     protected void setupBulkActionsControls(Basket basket) {
 
-        bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()||getBasket().getItemCount() > 0?VISIBLE:GONE);
+        bulkActionsContainer.setVisibility(showBulkActionsContainer(basket)?VISIBLE:GONE);
 
         bulkActionButtonTag = bulkActionsContainer.findViewById(R.id.gallery_action_tag_bulk);
         bulkActionButtonTag.setVisibility(View.GONE);
 
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(bulkActionButtonDelete);
-        bulkActionButtonDelete.setVisibility(viewAdapter.isItemSelectionAllowed() && basket.getItemCount() == 0?VISIBLE:GONE);
+        bulkActionButtonDelete.setVisibility(showBulkDeleteAction(basket)?VISIBLE:GONE);
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -550,7 +570,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_copy_black_24px).into(bulkActionButtonCopy);
-        bulkActionButtonCopy.setVisibility(viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
+        bulkActionButtonCopy.setVisibility(showBulkCopyAction(basket)?VISIBLE:GONE);
         bulkActionButtonCopy.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -564,7 +584,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_cut_black_24px).into(bulkActionButtonCut);
-        bulkActionButtonCut.setVisibility(viewAdapter.isItemSelectionAllowed() && (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
+        bulkActionButtonCut.setVisibility(showBulkCutAction(basket)?VISIBLE:GONE);
         bulkActionButtonCut.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -578,7 +598,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_paste_black_24dp).into(bulkActionButtonPaste);
-        bulkActionButtonPaste.setVisibility(!viewAdapter.isItemSelectionAllowed() && basket.getItemCount() > 0 && gallery.getId() != CategoryItem.ROOT_ALBUM.getId() && gallery.getId() != basket.getContentParentId()?VISIBLE:GONE);
+        bulkActionButtonPaste.setVisibility(showBulkPasteAction(basket)?VISIBLE:GONE);
         bulkActionButtonPaste.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -706,12 +726,18 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         updateBasketDisplay(basket);
     }
 
-    protected void updateBasketDisplay(Basket basket) {
-
+    protected boolean getMultiSelectionAllowed() {
         boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
         captureActionClicks &= (getBasket().getItemCount() == 0 || getBasket().getContentParentId() == gallery.getId());
-        if(viewAdapter.isMultiSelectionAllowed() != captureActionClicks) {
-            viewPrefs.selectable(captureActionClicks, false);
+        return captureActionClicks;
+    }
+
+    protected void updateBasketDisplay(Basket basket) {
+
+
+        boolean shouldMultiSelectBeEnabled = getMultiSelectionAllowed();
+        if(viewAdapter.isMultiSelectionAllowed() != shouldMultiSelectBeEnabled) {
+            viewPrefs.selectable(shouldMultiSelectBeEnabled, false);
             viewAdapter.notifyDataSetChanged(); //TODO check this works (refresh the whole list, redrawing all with/without select box as appropriate)
         }
 
@@ -732,11 +758,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
 
         displayControlsBasedOnSessionState();
-        bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()||getBasket().getItemCount() > 0?VISIBLE:GONE);
-        bulkActionButtonDelete.setVisibility(viewAdapter.isItemSelectionAllowed()&& basket.getItemCount() == 0?VISIBLE:GONE);
-        bulkActionButtonCopy.setVisibility(viewAdapter.isItemSelectionAllowed()&& (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
-        bulkActionButtonCut.setVisibility(viewAdapter.isItemSelectionAllowed()&& (basket.getItemCount() == 0 || gallery.getId() == basket.getContentParentId())?VISIBLE:GONE);
-        bulkActionButtonPaste.setVisibility(!viewAdapter.isItemSelectionAllowed() && basket.getItemCount() > 0 && gallery.getId() != CategoryItem.ROOT_ALBUM.getId() && gallery.getId() != basket.getContentParentId()?VISIBLE:GONE);
+        bulkActionsContainer.setVisibility(showBulkActionsContainer(basket)?VISIBLE:GONE);
+        bulkActionButtonDelete.setVisibility(showBulkDeleteAction(basket)?VISIBLE:GONE);
+        bulkActionButtonCopy.setVisibility(showBulkCopyAction(basket)?VISIBLE:GONE);
+        bulkActionButtonCut.setVisibility(showBulkCutAction(basket)?VISIBLE:GONE);
+        bulkActionButtonPaste.setVisibility(showBulkPasteAction(basket)?VISIBLE:GONE);
 
     }
 
