@@ -58,7 +58,7 @@ public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshow
     public void onEvent(TagContentAlteredEvent tagContentAlteredEvent) {
         ResourceContainer<T,GalleryItem> gallery = getGallery();
         if(gallery instanceof PiwigoTag && gallery.getId() == tagContentAlteredEvent.getId()) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync));
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_tag));
         }
     }
 }

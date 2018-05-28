@@ -23,6 +23,14 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
 
         @Override
         public int compare(Tag o1, Tag o2) {
+            // bubble tags with images to the top.
+            if(o1.getUsageCount() == 0 && o2.getUsageCount() != 0) {
+                return 1;
+            }
+            if(o1.getUsageCount() != 0 && o2.getUsageCount() == 0) {
+                return -1;
+            }
+            // sort all tags into name order
             return o1.getName().compareTo(o2.getName());
         }
     };

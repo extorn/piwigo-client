@@ -612,8 +612,22 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoUserTagsUpdateTagsListResponse extends PiwigoResourceItemResponse {
+        private String error;
+
         public PiwigoUserTagsUpdateTagsListResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
             super(messageId, piwigoMethod, piwigoResource);
+        }
+
+        public void setError(String error) {
+            this.error = error;
+        }
+
+        public boolean hasError() {
+            return error != null;
+        }
+
+        public String getError() {
+            return error;
         }
     }
 

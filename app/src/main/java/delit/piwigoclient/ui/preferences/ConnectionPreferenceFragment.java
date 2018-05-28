@@ -384,7 +384,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) {
                 PiwigoResponseBufferingHandler.PiwigoOnLoginResponse rsp = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) response;
-                if(rsp.isSessionRetrieved() && rsp.isUserDetailsRetrieved()) {
+                if(PiwigoSessionDetails.isFullyLoggedIn() && rsp.isUserDetailsRetrieved()) {
                     onLogin(rsp.getOldCredentials());
                 }
             } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse) {

@@ -808,7 +808,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<T> r = ((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<T>) response);
                 onResourceInfoAltered((T)r.getPiwigoResource());
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) {
-                onResourceTagsUpdated(((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
+                if(((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).hasError()) {
+                    showOrQueueMessage(R.string.alert_error, ((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).getError());
+                } else {
+                    onResourceTagsUpdated(((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
+                }
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
                 onGetSubAlbumNames((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse) {

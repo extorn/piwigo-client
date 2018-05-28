@@ -271,7 +271,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     @Subscribe
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
         if(gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.id) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync));
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_album));
         }
     }
 

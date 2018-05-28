@@ -43,6 +43,7 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
@@ -155,7 +156,10 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
-        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+
+        if(PiwigoSessionDetails.isFullyLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()) {
+            addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
+        }
 
         boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
         boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
@@ -173,7 +177,7 @@ public class ViewTagFragment extends MyFragment {
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
         }
 
-        viewPrefs.selectable(captureActionClicks, false);
+        viewPrefs.selectable(getMultiSelectionAllowed(), false);
         viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         viewPrefs.withDarkMode(useDarkMode);
         viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
@@ -183,6 +187,13 @@ public class ViewTagFragment extends MyFragment {
 //        viewPrefs.withAlbumWidth(getScreenWidth() / albumsPerRow);
         viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
         return viewPrefs;
+    }
+
+    private boolean getMultiSelectionAllowed() {
+        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser();
+        captureActionClicks |= (PiwigoSessionDetails.isFullyLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
+        captureActionClicks &= !isAppInReadOnlyMode();
+        return captureActionClicks;
     }
 
     @Nullable
@@ -411,7 +422,7 @@ public class ViewTagFragment extends MyFragment {
             selectedItemIds.remove(resource.getId());
             selectedItems.remove(resource);
             itemsUpdated.remove(resource.getId());
-            return selectedItemIds.size() == 0;
+            return selectedItemIds.isEmpty() && itemsUpdated.isEmpty();
         }
 
         public boolean removeProcessedResources(HashSet<Long> deletedItemIds) {
@@ -425,7 +436,7 @@ public class ViewTagFragment extends MyFragment {
                     it.remove();
                 }
             }
-            return selectedItemIds.size() == 0;
+            return selectedItemIds.isEmpty();
         }
 
         public boolean isEmpty() {
@@ -434,6 +445,7 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private void onDeleteResources(final DeleteActionData deleteActionData) {
+
         if (!deleteActionData.isResourceInfoAvailable()) {
             String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
@@ -450,17 +462,14 @@ public class ViewTagFragment extends MyFragment {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-
-                HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItemIds());
-                HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItems());
-
+                viewAdapter.toggleItemSelection();
                 if (Boolean.TRUE == positiveAnswer) {
+                    HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItemIds());
+                    HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItems());
                     deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
                 } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
 
-                    for (ResourceItem item : itemsForPermanentDelete) {
-                        itemIdsForPermanentDelete.remove(item.getId());
-                        itemsForPermanentDelete.remove(item);
+                    for (ResourceItem item : deleteActionData.getSelectedItems()) {
                         item.getTags().remove(tag);
                         if(PiwigoSessionDetails.isAdminUser()) {
                             addActiveServiceCall(getString(R.string.progress_untag_resources_pattern, tag.getName()), new ImageUpdateInfoResponseHandler(item).invokeAsync(getContext()));
@@ -598,6 +607,17 @@ public class ViewTagFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
+    private void onTagUpdateResponse(PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse rsp) {
+        if(rsp.hasError()) {
+            String errorMsg = getString(R.string.error_updating_tag_pattern, rsp.getPiwigoResource().getName(), rsp.getError());
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, errorMsg);
+            rsp.getPiwigoResource().getTags().add(tag); // removal failed, re-add this tag.
+        } else {
+            ResourceItem r = rsp.getPiwigoResource();
+            onItemRemovedFromTag(r);
+        }
+    }
+
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
 
         @Override
@@ -614,16 +634,18 @@ public class ViewTagFragment extends MyFragment {
 
                 if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) {
                     onGetResources((PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) response);
-                } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse) {
-                    onAlbumDeleted((PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse) response);
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse) {
                     onResourceInfoRetrieved((PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse) response);
+                } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse) {
+                    ResourceItem r = ((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) response).getPiwigoResource();
+                    onItemRemovedFromServer(r);
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) {
                     ResourceItem r = ((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) response).getPiwigoResource();
                     onItemRemovedFromTag(r);
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) {
-                    ResourceItem r = ((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource();
-                    onItemRemovedFromTag(r);
+                    onTagUpdateResponse(((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response));
+                } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
+                    viewPrefs.withAllowMultiSelect(getMultiSelectionAllowed());
                 } else {
                     String failedCall = loadingMessageIds.get(response.getMessageId());
                     synchronized (itemsToLoad) {
@@ -640,10 +662,21 @@ public class ViewTagFragment extends MyFragment {
         }
     }
 
+    private void onItemRemovedFromServer(ResourceItem r) {
+        onItemRemovedFromTag(r);
+        for(Long albumId : r.getLinkedAlbums()) {
+            EventBus.getDefault().post(new AlbumAlteredEvent(albumId));
+        }
+    }
+
     private void onItemRemovedFromTag(ResourceItem r) {
         int itemIdx = tagModel.getItemIdx(r);
         tagModel.remove(itemIdx);
         viewAdapter.notifyItemRemoved(itemIdx);
+        if(deleteActionData.removeProcessedResource(r)) {
+            deleteActionData = null;
+        }
+        EventBus.getDefault().post(new TagContentAlteredEvent(tag.getId(), -1));
     }
 
     private void onReloadAlbum() {
@@ -666,13 +699,6 @@ public class ViewTagFragment extends MyFragment {
         synchronized (this) {
             tagModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
             viewAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private void onAlbumDeleted(PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse response) {
-        tagIsDirty = true;
-        if(isResumed()) {
-            reloadAlbumContent();
         }
     }
 
@@ -715,9 +741,6 @@ public class ViewTagFragment extends MyFragment {
     public void onEvent(TagContentAlteredEvent event) {
         if (tag != null && tag.getId() == event.getId()) {
             tagIsDirty = true;
-            if(isResumed()) {
-                reloadAlbumContent();
-            }
         }
     }
 
@@ -753,8 +776,9 @@ public class ViewTagFragment extends MyFragment {
 
     private void onResourceInfoRetrieved(PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse response) {
         this.deleteActionData.updateLinkedAlbums(response.getResource());
-        this.deleteActionData.isResourceInfoAvailable();
-        onDeleteResources(deleteActionData);
+        if(this.deleteActionData.isResourceInfoAvailable()) {
+            onDeleteResources(deleteActionData);
+        }
     }
 
     private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter {

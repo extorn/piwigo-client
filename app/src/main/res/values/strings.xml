@@ -663,7 +663,8 @@ SOFTWARE.
     <string name="upload_username_title">Upload as</string>
     <string name="certificates_heading">Certificates</string>
     <string name="preference_connections_category_client_certificate_auth">Client Certificate Authentication</string>
-    <string name="alert_slideshow_out_of_sync">This slideshow no longer accurately reflects the current album contents</string>
+    <string name="alert_slideshow_out_of_sync_with_album">This slideshow no longer accurately reflects the current album contents</string>
+    <string name="alert_slideshow_out_of_sync_with_tag">This slideshow no longer accurately reflects the current tag contents</string>
     <string name="alert_error_app_not_yet_configured">App not yet configured and connected to a PIWIGO server. Please open the app manually and configure it before attempting to share items with it.</string>
     <string name="error_server_configuration_invalid">Unacceptable piwigo server details, please check app connection configuration</string>
     <string name="alert_image_show_image_select_max_zoom">Max Zoom Factor</string>
@@ -781,4 +782,5 @@ SOFTWARE.
     <string name="server_connection_preference_user_guest">guest</string>
     <string name="file_selection_heading">File Selection</string>
     <string name="tag_heading_pattern">Tag: %1$s</string>
+    <string name="error_updating_tag_pattern">Error removing resource (%1$s) from tag: %2$s</string>
 </resources>
