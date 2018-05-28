@@ -450,8 +450,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         int bottomSheetOffsetDp = prefs.getInt(getString(R.string.preference_gallery_detail_sheet_offset_key), getResources().getInteger(R.integer.preference_gallery_detail_sheet_offset_default));
         bottomSheetBehavior.setPeekHeight(DisplayUtils.dpToPx(getContext(), bottomSheetOffsetDp));
 
-        bottomSheet.setVisibility(View.VISIBLE);
-        actionButton.setVisibility(View.VISIBLE);
+        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser() || gallery != CategoryItem.ROOT_ALBUM;
+        bottomSheet.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
+        actionButton.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
