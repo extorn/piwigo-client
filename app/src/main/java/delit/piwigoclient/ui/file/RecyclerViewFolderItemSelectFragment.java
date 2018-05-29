@@ -32,14 +32,14 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     private File activeFolder;
 
 
-    public static RecyclerViewFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId, File initialFolder, HashSet<File> initialSelection) {
+    public static RecyclerViewFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId, File initialFolder) {
         RecyclerViewFolderItemSelectFragment fragment = new RecyclerViewFolderItemSelectFragment();
-        fragment.setArguments(RecyclerViewFolderItemSelectFragment.buildArgsBundle(prefs, actionId, initialFolder, initialSelection));
+        fragment.setArguments(RecyclerViewFolderItemSelectFragment.buildArgsBundle(prefs, actionId, initialFolder));
         return fragment;
     }
 
-    public static Bundle buildArgsBundle(FolderItemViewAdapterPreferences prefs, int actionId, File initialFolder, HashSet<File> initialSelection) {
-        Bundle args = LongSetSelectFragment.buildArgsBundle(prefs, actionId, initialSelection);
+    public static Bundle buildArgsBundle(FolderItemViewAdapterPreferences prefs, int actionId, File initialFolder) {
+        Bundle args = LongSetSelectFragment.buildArgsBundle(prefs, actionId, null);
         args.putSerializable(ACTIVE_FOLDER, initialFolder.getAbsolutePath());
         return args;
     }

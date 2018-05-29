@@ -32,7 +32,8 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.upload.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.util.ObjectUtils;
 
 /**
@@ -203,8 +204,10 @@ public class ServerAlbumListPreference extends DialogPreference {
 
     private void addAlbumsToUI(ArrayList<CategoryItemStub> albumNames) {
 
-        int listItemLayout = android.R.layout.simple_list_item_single_choice;
-        AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(CategoryItem.ROOT_ALBUM, getContext(), listItemLayout);
+        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
+        viewPrefs.selectable(false, false);
+        viewPrefs.withShowHierachy();
+        AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(viewPrefs, CategoryItem.ROOT_ALBUM, getContext());
         adapter.addAll(albumNames);
         itemListView.setAdapter(adapter);
         // clear checked items

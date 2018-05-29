@@ -1,5 +1,7 @@
 package delit.piwigoclient.ui.album.view;
 
+import android.os.Bundle;
+
 import java.util.Date;
 
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
@@ -29,6 +31,39 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         public static final int SCALING_QUALITY_VLOW = 60;
 
         public AlbumItemRecyclerViewAdapterPreferences(){}
+
+        @Override
+        public Bundle storeToBundle(Bundle parent) {
+                Bundle b = new Bundle();
+                b.putSerializable("recentlyAlteredThresholdDate", recentlyAlteredThresholdDate);
+                b.putString("preferredThumbnailSize", preferredThumbnailSize);
+                b.putBoolean("useDarkMode", useDarkMode);
+                b.putBoolean("showAlbumThumbnailsZoomed", showAlbumThumbnailsZoomed);
+                b.putBoolean("showLargeAlbumThumbnails", showLargeAlbumThumbnails);
+                b.putFloat("albumWidth", albumWidth);
+                b.putBoolean("showResourceNames", showResourceNames);
+                b.putBoolean("useMasonryStyle", useMasonryStyle);
+//                b.putInt("scalingQuality", scalingQuality);
+                parent.putBundle("AlbumItemRecyclerViewAdapterPreferences", b);
+                super.storeToBundle(b);
+                return parent;
+        }
+
+        @Override
+        public AlbumItemRecyclerViewAdapterPreferences loadFromBundle(Bundle parent) {
+                Bundle b = parent.getBundle("AlbumItemRecyclerViewAdapterPreferences");
+                recentlyAlteredThresholdDate = (Date) b.getSerializable("recentlyAlteredThresholdDate");
+                preferredThumbnailSize = b.getString("preferredThumbnailSize");
+                useDarkMode = b.getBoolean("useDarkMode");
+                showAlbumThumbnailsZoomed = b.getBoolean("showAlbumThumbnailsZoomed");
+                showLargeAlbumThumbnails = b.getBoolean("showLargeAlbumThumbnails");
+                albumWidth = b.getFloat("albumWidth");
+                showResourceNames = b.getBoolean("showResourceNames");
+                useMasonryStyle = b.getBoolean("useMasonryStyle");
+//                scalingQuality = b.getInt("scalingQuality");
+                super.loadFromBundle(b);
+                return this;
+        }
 
         public AlbumItemRecyclerViewAdapterPreferences withRecentlyAlteredThresholdDate(Date recentlyAlteredThresholdDate) {
             this.recentlyAlteredThresholdDate = recentlyAlteredThresholdDate;

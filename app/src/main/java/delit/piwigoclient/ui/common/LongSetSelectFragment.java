@@ -54,7 +54,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     private CustomImageButton addListItemButton;
     private Z viewPrefs;
 
-    public static <Long> Bundle buildArgsBundle(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+    public static Bundle buildArgsBundle(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
         args.putInt(STATE_ACTION_ID, actionId);

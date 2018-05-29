@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.ui.upload.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 
 /**
  * Created by gareth on 31/08/17.
@@ -28,8 +29,10 @@ public class SelectAlbumDialog {
     }
 
     public AlertDialog buildDialog(ArrayList<CategoryItemStub> albumNames, final DialogInterface.OnClickListener positiveActionListener) {
-
-        availableGalleries = new AvailableAlbumsListAdapter(CategoryItem.ROOT_ALBUM, context, android.R.layout.simple_list_item_single_choice);
+        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
+        viewPrefs.selectable(false, false);
+        viewPrefs.withShowHierachy();
+        availableGalleries = new AvailableAlbumsListAdapter(viewPrefs, CategoryItem.ROOT_ALBUM, context);
 
         this.availableGalleries.clear();
         this.availableGalleries.add(CategoryItemStub.ROOT_GALLERY);

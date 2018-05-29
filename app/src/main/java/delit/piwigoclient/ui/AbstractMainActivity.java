@@ -37,6 +37,7 @@ import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.album.AlbumSelectFragment;
+import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
@@ -577,7 +578,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         showFragmentNow(fragment);
     }
 
-    private void showAlbumSelectionFragment(int actionId, BaseRecyclerViewAdapterPreferences prefs, HashSet<Long> currentSelection) {
+    private void showAlbumSelectionFragment(int actionId, AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs, HashSet<Long> currentSelection) {
         AlbumSelectFragment fragment = AlbumSelectFragment.newInstance(prefs, actionId, currentSelection);
         showFragmentNow(fragment);
     }
@@ -743,7 +744,9 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumSelectionNeededEvent event) {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
+        prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        prefs.withShowHierachy();
         if(!event.isAllowEditing()) {
             prefs.readonly();
         }

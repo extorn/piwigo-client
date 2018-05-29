@@ -52,10 +52,11 @@ import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.NewPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.MyApplication;
+import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
@@ -173,8 +174,12 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             adView.setVisibility(View.GONE);
         }
 
+        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
+        viewPrefs.selectable(false, false);
+        viewPrefs.withShowHierachy();
+
         selectedGallerySpinner = view.findViewById(R.id.selected_gallery);
-        availableGalleries = new AvailableAlbumsListAdapter(currentGallery, getContext(), android.R.layout.simple_spinner_item);
+        availableGalleries = new AvailableAlbumsListAdapter(viewPrefs, currentGallery, getContext(), android.R.layout.simple_spinner_item);
         availableGalleries.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         selectedGallerySpinner.setEnabled(false);
         selectedGallerySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

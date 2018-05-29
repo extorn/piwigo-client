@@ -25,30 +25,30 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandle
 import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
-import delit.piwigoclient.ui.upload.AvailableAlbumsListAdapter;
 
 /**
  * Created by gareth on 26/05/17.
  */
-public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, BaseRecyclerViewAdapterPreferences> {
+public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private ArrayList<CategoryItemStub> availableAlbums;
 
-    public static AlbumSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+    public static AlbumSelectFragment newInstance(AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         AlbumSelectFragment fragment = new AlbumSelectFragment();
         fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
         return fragment;
     }
 
     @Override
-    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
-        return new BaseRecyclerViewAdapterPreferences();
+    protected AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences createEmptyPrefs() {
+        return new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        getViewPrefs().storeToBundle(outState);
         outState.putSerializable(STATE_AVAILABLE_ITEMS, availableAlbums);
     }
 
@@ -66,6 +66,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
 
         if (savedInstanceState != null) {
             availableAlbums = (ArrayList<CategoryItemStub>) savedInstanceState.getSerializable(STATE_AVAILABLE_ITEMS);
+            createEmptyPrefs().loadFromBundle(savedInstanceState);
         }
 
         return v;
@@ -93,8 +94,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         if (availableAlbums == null) {
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         } else if(getListAdapter() == null) {
-            int listItemLayout = isMultiSelectEnabled()? android.R.layout.simple_list_item_multiple_choice : android.R.layout.simple_list_item_single_choice;
-            AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(CategoryItem.ROOT_ALBUM, getContext(), listItemLayout);
+            AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), CategoryItem.ROOT_ALBUM, getContext());
             availableGalleries.clear();
             // leaving the root album out prevents it's selection (not wanted).
 //            availableGalleries.add(CategoryItemStub.ROOT_GALLERY);
