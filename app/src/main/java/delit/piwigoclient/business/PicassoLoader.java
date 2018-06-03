@@ -117,7 +117,7 @@ public class PicassoLoader implements Callback {
     }
 
     protected RequestCreator buildLoader() {
-        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext())).error(R.drawable.ic_error_black_24px);
+        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext())).error(R.drawable.ic_error_black_240px);
         if(placeholderLoaded) {
             rc.noPlaceholder();
         } else {

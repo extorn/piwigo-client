@@ -199,7 +199,7 @@ public class CreateAlbumFragment extends MyFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (PiwigoSessionDetails.isFullyLoggedIn() && (!PiwigoSessionDetails.isAdminUser() || isAppInReadOnlyMode())) {
+        if (!isAllowedToCreateAlbum()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -293,6 +293,11 @@ public class CreateAlbumFragment extends MyFragment {
         setGalleryPermissionsFieldsVisibility();
 
         return view;
+    }
+
+    private boolean isAllowedToCreateAlbum() {
+        boolean isAuthorisedNonAdminUser = PiwigoSessionDetails.isFullyLoggedIn() && PiwigoSessionDetails.isUseCommunityPlugin();
+        return !isAppInReadOnlyMode() && (isAuthorisedNonAdminUser || PiwigoSessionDetails.isAdminUser());
     }
 
     private HashSet<Long> buildPreselectedUserIds(List<Username> selectedUsernames) {

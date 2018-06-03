@@ -351,7 +351,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
                         @Override
                         public boolean onPreDraw() {
                             try {
-                                if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading()) {
+                                if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading() && !imageLoader.isImageUnavailable()) {
 
                                     int desiredScalingQuality = parentAdapter.getAdapterPrefs().getScalingQuality();
                                     int imgSize = desiredScalingQuality;

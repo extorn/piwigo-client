@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.squareup.picasso.Downloader;
 import com.squareup.picasso.MyPicasso;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
@@ -20,7 +21,9 @@ import com.squareup.picasso.RequestHandler;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.R;
 import delit.piwigoclient.business.CustomImageDownloader;
 import delit.piwigoclient.business.PicassoLoader;
 
@@ -51,10 +54,17 @@ public class PicassoFactory {
             if (picasso == null) {
                 errorHandler = new PicassoErrorHandler();
                 // request handler would work but it cant because it doesnt get in before the broken one!
-                picasso = new MyPicasso.Builder(context).addRequestHandler(new ResourceRequestHandler(context)).addRequestHandler(new VideoRequestHandler()).listener(errorHandler).downloader(new CustomImageDownloader(context)).build();
+                picasso = new MyPicasso.Builder(context).addRequestHandler(new ResourceRequestHandler(context)).addRequestHandler(new VideoRequestHandler()).listener(errorHandler).downloader(getDownloader(context)).build();
             }
             return picasso;
         }
+    }
+
+    private Downloader getDownloader(Context context) {
+        CustomImageDownloader dldr = new CustomImageDownloader(context);
+        dldr.addErrorDrawable(HttpStatus.SC_UNAUTHORIZED, R.drawable.ic_image_locked_black_240dp);
+        dldr.addErrorDrawable(HttpStatus.SC_NOT_FOUND, R.drawable.ic_broken_image_black_240dp);
+        return dldr;
     }
 
     class VideoRequestHandler extends RequestHandler {
