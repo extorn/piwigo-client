@@ -2,6 +2,7 @@ package delit.piwigoclient.model.piwigo;
 
 import android.content.Context;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ public class PiwigoSessionDetails {
     public static final int LOGGED_IN = 1;
     public static final int LOGGED_IN_WITH_SESSION_DETAILS = 2;
     public static final int LOGGED_IN_WITH_SESSION_AND_USER_DETAILS = 3;
+    private final Date retrievedAt;
     private Set<String> methodsAvailable;
     private final long userGuid;
     private final String username;
@@ -42,6 +44,7 @@ public class PiwigoSessionDetails {
         this.availableImageSizes = availableImageSizes;
         this.sessionToken = sessionToken;
         this.loginStatus = LOGGED_IN_WITH_SESSION_DETAILS;
+        this.retrievedAt = new Date();
     }
 
     public PiwigoSessionDetails(String serverUrl, long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, Set<String> allowedFileTypes, long webInterfaceUploadChunkSizeKB, String sessionToken) {
@@ -51,11 +54,14 @@ public class PiwigoSessionDetails {
         this.userType = userType;
         this.piwigoVersion = piwigoVersion;
         this.availableImageSizes = availableImageSizes;
-        this.allowedFileTypes = allowedFileTypes;
-        this.webInterfaceUploadChunkSizeKB = webInterfaceUploadChunkSizeKB;
         this.sessionToken = sessionToken;
         this.loginStatus = LOGGED_IN_WITH_SESSION_DETAILS;
+        this.retrievedAt = new Date();
+        // extra params
+        this.allowedFileTypes = allowedFileTypes;
+        this.webInterfaceUploadChunkSizeKB = webInterfaceUploadChunkSizeKB;
     }
+
 
     public void setSessionMayHaveExpired() {
         this.sessionMayHaveExpired = true;
@@ -212,5 +218,10 @@ public class PiwigoSessionDetails {
 
     public boolean isUseUserTagPluginForSearch() {
         return isMethodAvailable("user_tags.tags.list");
+    }
+
+    public boolean isOlderThanSeconds(int i) {
+        long ageMillis = System.currentTimeMillis() - retrievedAt.getTime();
+        return ageMillis > (1000 * i);
     }
 }

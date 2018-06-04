@@ -192,7 +192,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
                         // Ensure that the login code knows that the current session token may be invalid despite seemingly being okay
                         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance();
-                        if(sessionDetails != null) {
+                        if(sessionDetails != null && sessionDetails.isOlderThanSeconds(5)) {
                             sessionDetails.setSessionMayHaveExpired();
                         }
 

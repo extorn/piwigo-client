@@ -226,7 +226,10 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        String thread = Thread.currentThread().getName();
+//        String thread = Thread.currentThread().getName();
+        if(BuildConfig.DEBUG) {
+            Log.d(getTag(), "calling " + getPiwigoWsApiUri() + '&' + buildRequestParameters().toString());
+        }
         return client.post(getPiwigoWsApiUri(), getRequestParameters(), handler);
     }
 

@@ -119,23 +119,26 @@ public abstract class MyActivity extends AppCompatActivity {
     protected void removeFragmentsFromHistory(Class<? extends Fragment> fragmentClass, boolean includeMidSessionLogins) {
         boolean found = false;
         int i = 0;
+        int popToStateId = -1;
         while(!found && getSupportFragmentManager().getBackStackEntryCount() > i) {
             FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(i);
             if(fragmentClass.getName().equals(entry.getName())) {
                 found = true;
+                popToStateId = entry.getId();
                 if(i > 0) {
                     // if the previous item was a login action - force that off the stack too.
                     entry = getSupportFragmentManager().getBackStackEntryAt(i - 1);
                     if(LoginFragment.class.getName().equals(entry.getName())) {
                         i--;
                     }
+                    popToStateId = entry.getId();
                 }
             } else {
                 i++;
             }
         }
         if(found) {
-            getSupportFragmentManager().popBackStack(i, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getSupportFragmentManager().popBackStack(popToStateId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
 

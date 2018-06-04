@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.util.Md5SumUtils;
 
@@ -33,8 +34,9 @@ public class UploadJob implements Serializable {
     private static final Integer UPLOADED = 1;
     private static final Integer VERIFIED = 2;
     private static final Integer CONFIGURED = 3;
-    private static final Integer REQUIRES_DELETE = 4;
-    private static final Integer DELETED = 5;
+    private static final Integer PENDING_APPROVAL = 4;
+    private static final Integer REQUIRES_DELETE = 5;
+    private static final Integer DELETED = 6;
     private long temporaryUploadAlbum = -1;
     private volatile transient boolean submitted = false;
     private volatile transient boolean runningNow = false;
@@ -88,15 +90,26 @@ public class UploadJob implements Serializable {
 //    }
 
     public HashSet<File> getFilesProcessedToEnd() {
+        return getFilesWithStatus(PENDING_APPROVAL, CONFIGURED, DELETED, CANCELLED);
+    }
+
+    public HashSet<File> getFilesWithStatus(Integer ... statuses) {
         HashSet<File> filesProcessedToEnd = new HashSet<>();
         for(Map.Entry<File,Integer> fileStatusEntry : fileUploadStatus.entrySet()) {
             Integer status = fileStatusEntry.getValue();
-            if(CONFIGURED.equals(status) || DELETED.equals(status) || CANCELLED.equals(status)) {
-                filesProcessedToEnd.add(fileStatusEntry.getKey());
+            for(Integer i : statuses) {
+                if(status.equals(i)) {
+                    filesProcessedToEnd.add(fileStatusEntry.getKey());
+                }
             }
         }
         return filesProcessedToEnd;
     }
+
+    public HashSet<File> getFilesPendingApproval() {
+        return getFilesWithStatus(PENDING_APPROVAL);
+    }
+
 
     public synchronized boolean needsVerification(File fileForUpload) {
         return UPLOADED.equals(fileUploadStatus.get(fileForUpload));
@@ -115,12 +128,13 @@ public class UploadJob implements Serializable {
     }
 
     public synchronized boolean isFileUploadComplete(File fileForUpload) {
-        return CONFIGURED.equals(fileUploadStatus.get(fileForUpload));
+        Integer status = fileUploadStatus.get(fileForUpload);
+        return PENDING_APPROVAL.equals(status) || CONFIGURED.equals(status);
     }
 
     public synchronized boolean uploadItemRequiresAction(File file) {
         Integer uploadStatus = fileUploadStatus.get(file);
-        return !(uploadStatus == null || CONFIGURED.equals(uploadStatus) || CANCELLED.equals(uploadStatus) || DELETED.equals(uploadStatus));
+        return !(uploadStatus == null || PENDING_APPROVAL.equals(uploadStatus) || CONFIGURED.equals(uploadStatus) || CANCELLED.equals(uploadStatus) || DELETED.equals(uploadStatus));
     }
 
     public long getResponseHandlerId() {
@@ -166,8 +180,9 @@ public class UploadJob implements Serializable {
 //        private static final Integer UPLOADED = 1;
 //        private static final Integer VERIFIED = 2;
 //        private static final Integer CONFIGURED = 3;
-//        private static final Integer REQUIRES_DELETE = 4;
-//        private static final Integer DELETED = 5;
+//        private static final Integer PENDING_APPROVAL = 4;
+//        private static final Integer REQUIRES_DELETE = 5;
+//        private static final Integer DELETED = 6;
         Integer status = fileUploadStatus.get(f);
         if(status == null) {
             status = Integer.MIN_VALUE;
@@ -230,7 +245,12 @@ public class UploadJob implements Serializable {
         } else {
             uploadData.setUploadedItem(itemOnServer);
         }
-        fileUploadStatus.put(fileForUpload, UPLOADED);
+        if(itemOnServer == null && PiwigoSessionDetails.isUseCommunityPlugin()) {
+            // to be expected if already uploaded but not yet approved.
+            fileUploadStatus.put(fileForUpload, PENDING_APPROVAL);
+        } else {
+            fileUploadStatus.put(fileForUpload, UPLOADED);
+        }
     }
 
     public synchronized ResourceItem getUploadedFileResource(File fileUploaded) {
@@ -323,7 +343,7 @@ public class UploadJob implements Serializable {
         private ResourceItem uploadedItem;
 
         public PartialUploadData(ResourceItem uploadedItem) {
-            this.uploadName = uploadedItem.getName();
+            this.uploadName = uploadedItem != null ? uploadedItem.getName() : null;
             this.uploadedItem = uploadedItem;
         }
 

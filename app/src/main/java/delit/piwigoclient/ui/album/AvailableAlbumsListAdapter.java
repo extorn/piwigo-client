@@ -8,13 +8,14 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.ui.common.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.CustomSelectListAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
@@ -37,11 +38,11 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
     }
 
     private static @IdRes int getTextFieldId(AvailableAlbumsListAdapterPreferences prefs) {
-        return prefs.isMultiSelectionEnabled()? R.id.actionable_list_item_text : 0;
+        return R.id.actionable_list_item_text;
     }
 
     private static @LayoutRes int getLayoutId(AvailableAlbumsListAdapterPreferences prefs) {
-        return prefs.isMultiSelectionEnabled()? R.layout.actionable_simple_triselect_list_item_layout : android.R.layout.simple_list_item_single_choice;
+        return prefs.isMultiSelectionEnabled()? R.layout.actionable_simple_triselect_list_item_layout : R.layout.actionable_simple_select_list_item_layout;
     }
 
     public AvailableAlbumsListAdapter(AvailableAlbumsListAdapterPreferences prefs, CategoryItem parentAlbum, @NonNull Context context) {
@@ -81,7 +82,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
                 textView.setPaddingRelative(paddingStart, textView.getPaddingTop(), textView.getPaddingEnd(), textView.getPaddingBottom());
             }
             if(isCustomView) {
-                AppCompatCheckboxTriState checkboxTriState = aView.findViewById(R.id.actionable_list_item_checked);
+                CompoundButton checkboxTriState = aView.findViewById(R.id.actionable_list_item_checked);
                 checkboxTriState.setEnabled(getPrefs().isEnabled());
 
                 CustomImageButton button = aView.findViewById(R.id.actionable_list_item_delete_button);

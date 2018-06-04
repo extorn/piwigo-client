@@ -108,7 +108,7 @@
         <item>Family</item>
         <item>Friends</item>
         <item>Contacts</item>
-        <item>------</item>
+        <item>Everybody</item>
     </string-array>
 
     <integer-array name="privacy_levels_values_array" translatable="false">
