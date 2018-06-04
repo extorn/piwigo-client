@@ -115,7 +115,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
         view.findViewById(R.id.list_action_toggle_all_button).setVisibility(View.GONE);
 
         TextView heading = view.findViewById(R.id.heading);
-        heading.setText(R.string.certificates_heading);
+        heading.setText(R.string.piwigo_connection_profile_heading);
         heading.setVisibility(View.VISIBLE);
 
         itemListView = view.findViewById(R.id.list);

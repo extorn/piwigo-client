@@ -784,4 +784,5 @@ SOFTWARE.
     <string name="tag_heading_pattern">Tag: %1$s</string>
     <string name="error_updating_tag_pattern">Error removing resource (%1$s) from tag: %2$s</string>
     <string name="alert_message_info_files_already_pending_approval_pattern">%1$d files were not uploaded as they are already uploaded but pending administrator approval.</string>
+    <string name="piwigo_connection_profile_heading">Connection Profile</string>
 </resources>
