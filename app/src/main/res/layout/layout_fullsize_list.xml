@@ -7,7 +7,7 @@
     <delit.piwigoclient.ui.common.CustomImageButton
         android:id="@+id/list_action_add_item_button"
         android:visibility="visible"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_add_circle_black_24px" />
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:text="Some Heading"
         style="@style/Base.TextAppearance.AppCompat.Headline"/>
 
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/list_adView"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:text="@string/cancel"/>
 
     <Button
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/list_adView"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:text="@string/list_ok_button"/>
 
     <com.google.android.gms.ads.AdView
@@ -72,8 +72,8 @@
         android:layout_width="match_parent"
         android:layout_above="@id/list_action_save_button"
         android:layout_below="@id/heading"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
         android:layout_alignWithParentIfMissing="true"/>
 

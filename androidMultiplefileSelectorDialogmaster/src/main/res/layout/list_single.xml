@@ -7,22 +7,22 @@
             android:id="@+id/img"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignParentLeft="true"/>
+            android:layout_alignParentStart="true"/>
         <TextView
             android:id="@+id/txt"
-            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
 
-            android:layout_toRightOf="@+id/img"
-            android:layout_toLeftOf="@+id/myCheckBox"/>
+            android:layout_toEndOf="@+id/img"
+            android:layout_toStartOf="@+id/myCheckBox"/>
     <CheckBox
         android:id="@+id/myCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:focusable="false"
         android:clickable="false"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:background="@drawable/customcheckbox_background"
         android:button="@drawable/customcheckbox"
         />

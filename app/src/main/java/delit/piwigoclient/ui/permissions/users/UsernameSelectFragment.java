@@ -87,8 +87,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
             return null;
         }
 
-        boolean editingEnabled = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-        if(!editingEnabled) {
+        if(isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
 

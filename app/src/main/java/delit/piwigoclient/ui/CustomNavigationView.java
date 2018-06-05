@@ -74,7 +74,12 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             headerView.setBackgroundColor(Color.BLACK);
         }
 
-        final String appVersion = ProjectUtils.getVersionName(getContext());
+        String appVersion;
+        if(isInEditMode()) {
+            appVersion = "1.0.0";
+        } else {
+            appVersion = ProjectUtils.getVersionName(getContext());
+        }
 
         TextView appName = headerView.findViewById(R.id.app_name);
         if(BuildConfig.PAID_VERSION) {
@@ -115,15 +120,19 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     public void inflateMenu(int resId) {
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
         if(uiHelper == null) {
-            uiHelper = new ViewGroupUIHelper(this, prefs, getContext());
-            CustomPiwigoListener listener = new CustomPiwigoListener();
-            listener.withUiHelper(this, uiHelper);
-            uiHelper.setPiwigoResponseListener(listener);
+            if(!isInEditMode()) {
+                // don't do this if showing in the IDE.
+                uiHelper = new ViewGroupUIHelper(this, prefs, getContext());
+                CustomPiwigoListener listener = new CustomPiwigoListener();
+                listener.withUiHelper(this, uiHelper);
+                uiHelper.setPiwigoResponseListener(listener);
+            }
         }
         super.inflateMenu(resId);
         setMenuVisibilityToMatchSessionState();
-
-        uiHelper.registerToActiveServiceCalls();
+        if(!isInEditMode()) {
+            uiHelper.registerToActiveServiceCalls();
+        }
         EventBus.getDefault().register(this);
     }
 

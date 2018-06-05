@@ -39,7 +39,7 @@ public class MappedArrayAdapter<T, S> extends ArrayAdapter<T> {
     public T getItemByValue(S value) {
         int idx = objectValues.indexOf(value);
         if(idx < 0) {
-            throw new IllegalStateException("item not found");
+            return null;
         }
         return getItem(idx);
     }

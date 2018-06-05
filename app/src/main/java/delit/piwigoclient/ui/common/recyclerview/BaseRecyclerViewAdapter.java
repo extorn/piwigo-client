@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -161,7 +162,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
             }
             return selectedItems;
         } catch(RuntimeException e) {
-            throw new IllegalStateException("Not all items are loaded yet. Unable to provide a list of them");
+            throw new IllegalStateException("Not all items are loaded yet. Unable to provide a list of them", e);
         }
     }
 
@@ -287,30 +288,49 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
             boolean changed = false;
             if (isChecked) {
                 changed = selectedResourceIds.add(holder.getItemId());
+                if(selectedResourceIds.size() > 1 && !isMultiSelectionAllowed()) {
+                    changed |= deselectAllOtherItems();
+                }
             } else {
-                if(isAllowItemDeselection(holder.getItemId())) {
-                    changed = selectedResourceIds.remove(holder.getItemId());
-                } else {
-                    // re-check the button.
-                    buttonView.setChecked(true);
+                if(selectedResourceIds.contains(holder.getItemId())) {
+                    if (isAllowItemDeselection(holder.getItemId())) {
+                        changed = selectedResourceIds.remove(holder.getItemId());
+                    } else {
+                        // re-check the button.
+                        buttonView.setChecked(true);
+                    }
                 }
             }
             if (changed) {
                 multiSelectStatusListener.onItemSelectionCountChanged(adapter, selectedResourceIds.size());
             }
         }
+
+        private boolean deselectAllOtherItems() {
+            boolean changed = false;
+            Iterator<Long> iter = selectedResourceIds.iterator();
+            while(iter.hasNext()) {
+                Long selectedId = iter.next();
+                if(!selectedId.equals(holder.getItemId()) && isAllowItemDeselection(selectedId)) {
+                    iter.remove();
+                    notifyItemChanged(getItemPosition(getItemById(selectedId)));
+                    changed = true;
+                }
+            }
+            return changed;
+        }
     }
 
     @Override
     public boolean isAllowItemDeselection(long itemId) {
-        return !prefs.isInitialSelectionLocked() || !initialSelectedResourceIds.contains(itemId);
+        return (!prefs.isInitialSelectionLocked() || !initialSelectedResourceIds.contains(itemId)) && (isMultiSelectionAllowed() || selectedResourceIds.size() > 1);
     }
 
     public boolean isMultiSelectionAllowed() {
         return prefs.isMultiSelectionEnabled();
     }
 
-    protected void onDeleteItem(S viewHolder, View v) {
+    public void onDeleteItem(S viewHolder, View v) {
         multiSelectStatusListener.onItemDeleteRequested(this, viewHolder.getItem());
     }
 

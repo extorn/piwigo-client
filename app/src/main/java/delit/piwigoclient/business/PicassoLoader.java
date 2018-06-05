@@ -1,6 +1,8 @@
 package delit.piwigoclient.business;
 
 import android.content.Context;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
@@ -32,6 +34,7 @@ public class PicassoLoader implements Callback {
     public static final String PICASSO_REQUEST_TAG = "PIWIGO";
     private String placeholderUri;
     private boolean placeholderLoaded;
+    private @DrawableRes int errorResourceId = R.drawable.ic_error_black_240px;
 
     public PicassoLoader(ImageView loadInto) {
         this.loadInto = loadInto;
@@ -54,6 +57,10 @@ public class PicassoLoader implements Callback {
 
         imageLoaded = true;
         onImageLoad(true);
+    }
+
+    public void withErrorDrawable(@DrawableRes int errorDrawable) {
+        this.errorResourceId = errorDrawable;
     }
 
     public boolean isImageLoaded() {
@@ -117,7 +124,7 @@ public class PicassoLoader implements Callback {
     }
 
     protected RequestCreator buildLoader() {
-        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext())).error(R.drawable.ic_error_black_240px);
+        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext())).error(errorResourceId);
         if(placeholderLoaded) {
             rc.noPlaceholder();
         } else {

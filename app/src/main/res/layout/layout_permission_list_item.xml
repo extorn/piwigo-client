@@ -14,11 +14,11 @@
     <TextView
         android:id="@+id/permission_text"
         android:text="some text"
-        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:layout_width="wrap_content"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="15dp"
-        android:layout_toRightOf="@id/permission_status_icon"
+        android:layout_toEndOf="@id/permission_status_icon"
         android:layout_height="wrap_content">
 
     </TextView>

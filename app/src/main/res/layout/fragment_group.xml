@@ -12,14 +12,14 @@
         android:layout_height="wrap_content">
         <delit.piwigoclient.ui.common.CustomImageButton
             android:id="@+id/group_action_edit_button"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
 
         <delit.piwigoclient.ui.common.CustomImageButton
             android:id="@+id/group_action_save_button"
-            android:layout_toRightOf="@id/group_action_edit_button"
+            android:layout_toEndOf="@id/group_action_edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_save_black_24dp"/>
@@ -29,11 +29,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_undo_black_24dp"
-            android:layout_toRightOf="@id/group_action_save_button"/>
+            android:layout_toEndOf="@id/group_action_save_button"/>
 
         <delit.piwigoclient.ui.common.CustomImageButton
             android:id="@+id/group_action_delete_button"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_delete_black_24px" />
@@ -62,8 +62,8 @@
                 android:text="@string/group_name_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
@@ -72,8 +72,8 @@
                 android:id="@+id/group_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:clickable="true"
                 android:inputType="text|textNoSuggestions"
                 android:maxLines="1"
@@ -84,8 +84,8 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
                 android:button="@null"
@@ -98,16 +98,16 @@
                 android:text="@string/group_members_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/group_members"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine|textNoSuggestions"
@@ -122,8 +122,8 @@
                 android:text="@string/group_access_rights_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
@@ -131,8 +131,8 @@
             <ListView
                 android:id="@+id/group_access_rights"
                 android:layout_width="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:clickable="true"
                 android:layout_height="160dp"/>
 

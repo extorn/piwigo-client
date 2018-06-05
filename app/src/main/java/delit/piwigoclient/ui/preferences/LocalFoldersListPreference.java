@@ -13,7 +13,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import delit.piwigoclient.ui.events.trackable.FolderSelectionCompleteEvent;
+import java.io.File;
+
+import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FolderSelectionNeededEvent;
 
 public class LocalFoldersListPreference extends Preference {
@@ -95,12 +97,15 @@ public class LocalFoldersListPreference extends Preference {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(FolderSelectionCompleteEvent event) {
+    public void onEvent(FileListSelectionCompleteEvent event) {
         if(event.getActionId() != this.folderSelectActionId) {
             return;
         }
         folderSelectActionId = -1;
-
+        File selectedFile = event.getSelectedFiles().get(0);
+        if(selectedFile.isDirectory()) {
+            setValue(selectedFile.getAbsolutePath());
+        }
     }
 
     @Override

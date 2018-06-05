@@ -88,8 +88,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
             return null;
         }
 
-        boolean editingEnabled = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-        if(!editingEnabled) {
+        if(isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
 

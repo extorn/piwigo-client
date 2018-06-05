@@ -3,6 +3,7 @@ package delit.piwigoclient.ui;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -66,6 +67,8 @@ import delit.piwigoclient.ui.events.trackable.FileListSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.FolderSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences;
+import delit.piwigoclient.ui.file.RecyclerViewFolderItemSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
@@ -435,6 +438,24 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(FolderSelectionNeededEvent event) {
+        String initialFolder = event.getInitialFolder();
+        if(initialFolder == null) {
+            //initialFolder = Environment.getRootDirectory().getAbsolutePath();
+//            initialFolder = Environment.getDataDirectory().getAbsolutePath();
+            initialFolder = Environment.getExternalStorageDirectory().getAbsolutePath();
+        } else {
+            File f = new File(initialFolder);
+            while(!f.exists()) {
+                f = f.getParentFile();
+            }
+            initialFolder = f.getAbsolutePath();
+        }
+        FolderItemViewAdapterPreferences prefs = new FolderItemViewAdapterPreferences(initialFolder);
+        prefs.forFolderSelection(true);
+        prefs.selectable(false, false);
+        RecyclerViewFolderItemSelectFragment fragment = RecyclerViewFolderItemSelectFragment.newInstance(prefs, event.getActionId());
+        showFragmentNow(fragment);
+/*
         Intent intent = new Intent(getBaseContext(), FileSelectionActivity.class);
 //        intent.putStringArrayListExtra(FileSelectionActivity.ARG_ALLOWED_FILE_TYPES, event.getAllowedFileTypes());
 //        intent.putExtra(FileSelectionActivity.ARG_SORT_A_TO_Z, event.isUseAlphabeticalSortOrder());
@@ -444,6 +465,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 //        }
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());
+        */
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

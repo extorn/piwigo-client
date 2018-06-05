@@ -100,8 +100,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             return null;
         }
 
-        boolean editingEnabled = isTagSelectionAllowed();
-        if(!editingEnabled) {
+        if(isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
 
