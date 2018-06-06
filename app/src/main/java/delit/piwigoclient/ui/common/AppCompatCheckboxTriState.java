@@ -44,6 +44,11 @@ public class AppCompatCheckboxTriState extends AppCompatCheckBox {
         }
     }
 
+    @Override
+    public void setChecked(boolean checked) {
+        super.setChecked(checked);
+    }
+
     // Constructors, view loading etc...
     @Override
     protected int[] onCreateDrawableState(int extraSpace) {

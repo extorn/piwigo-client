@@ -39,6 +39,11 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Bas
         return new UsernameViewHolder(view);
     }
 
+    @Override
+    public boolean isAllowItemDeselection(long itemId) {
+        return !indirectlySelectedItems.contains(itemId) && super.isAllowItemDeselection(itemId);
+    }
+
     public class UsernameViewHolder extends CustomViewHolder<BaseRecyclerViewAdapterPreferences, Username> {
         private TextView txtTitle;
         private TextView detailsTitle;
