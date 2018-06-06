@@ -514,13 +514,13 @@ public abstract class UIHelper<T> {
                 alert.setTitle(context.getString(R.string.alert_title_permissions_needed));
                 alert.setMessage(event.getJustification());
 
-                alert.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 //                        EventBus.getDefault().post(event);
                         requester.requestPermission(event.getActionId(), permissionsNeeded);
                     }
                 });
-                alert.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(context.getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing, automatically the dialog is going to be closed.
                         onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[permissionsNeeded.size()]), new int[0]);

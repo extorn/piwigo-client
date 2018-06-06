@@ -12,7 +12,6 @@ import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
-import paul.arian.fileselector.FileSelectionActivity;
 
 /**
  * Created by gareth on 14/06/17.
@@ -92,7 +91,7 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if (activity instanceof FileSelectionActivity) {
+        if (activity instanceof FileSelectActivity) {
             AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
         }
     }

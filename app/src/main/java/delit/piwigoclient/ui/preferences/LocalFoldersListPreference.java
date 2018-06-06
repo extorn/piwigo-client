@@ -2,21 +2,23 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.Preference;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
-import delit.piwigoclient.ui.events.trackable.FolderSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 
 public class LocalFoldersListPreference extends Preference {
 
@@ -90,14 +92,32 @@ public class LocalFoldersListPreference extends Preference {
     }
 
     private void requestFolderSelection() {
-        FolderSelectionNeededEvent fileSelectNeededEvent = new FolderSelectionNeededEvent();
-        fileSelectNeededEvent.setInitialFolder(getValue());
+        String initialFolder = getValue();
+        ArrayList<String> selection = new ArrayList<>();
+        if(initialFolder == null) {
+            initialFolder = Environment.getExternalStorageDirectory().getAbsolutePath();
+        } else {
+            File initialSelection = new File(initialFolder);
+            if(initialSelection.exists()) {
+                initialFolder = initialSelection.getParentFile().getAbsolutePath();
+                selection.add(initialSelection.getAbsolutePath());
+            } else {
+                while(!initialSelection.exists()) {
+                    initialSelection = initialSelection.getParentFile();
+                }
+                initialFolder = initialSelection.getAbsolutePath();
+            }
+        }
+        FileSelectionNeededEvent fileSelectNeededEvent = new FileSelectionNeededEvent(false, true, false);
+        fileSelectNeededEvent.withInitialFolder(initialFolder);
+        fileSelectNeededEvent.withVisibleContent(FileSelectionNeededEvent.ALPHABETICAL);
+        fileSelectNeededEvent.withInitialSelection(selection);
         folderSelectActionId = fileSelectNeededEvent.getActionId();
         EventBus.getDefault().post(fileSelectNeededEvent);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(FileListSelectionCompleteEvent event) {
+    public void onEvent(FileSelectionCompleteEvent event) {
         if(event.getActionId() != this.folderSelectActionId) {
             return;
         }

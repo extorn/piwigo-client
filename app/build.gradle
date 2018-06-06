@@ -69,7 +69,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':androidMultiplefileSelectorDialogmaster')
     implementation project(path: ':google-licencing-library')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 

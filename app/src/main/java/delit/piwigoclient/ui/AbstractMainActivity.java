@@ -3,7 +3,6 @@ package delit.piwigoclient.ui;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -62,13 +61,10 @@ import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionNeededEvent;
-import delit.piwigoclient.ui.events.trackable.FolderSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
-import delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences;
-import delit.piwigoclient.ui.file.RecyclerViewFolderItemSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
@@ -79,7 +75,6 @@ import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
 import hotchemi.android.rate.MyAppRate;
-import paul.arian.fileselector.FileSelectionActivity;
 
 public abstract class AbstractMainActivity extends MyActivity implements ComponentCallbacks2 {
 
@@ -437,42 +432,9 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(FolderSelectionNeededEvent event) {
-        String initialFolder = event.getInitialFolder();
-        if(initialFolder == null) {
-            //initialFolder = Environment.getRootDirectory().getAbsolutePath();
-//            initialFolder = Environment.getDataDirectory().getAbsolutePath();
-            initialFolder = Environment.getExternalStorageDirectory().getAbsolutePath();
-        } else {
-            File f = new File(initialFolder);
-            while(!f.exists()) {
-                f = f.getParentFile();
-            }
-            initialFolder = f.getAbsolutePath();
-        }
-        FolderItemViewAdapterPreferences prefs = new FolderItemViewAdapterPreferences(initialFolder);
-        prefs.forFolderSelection(true);
-        prefs.selectable(false, false);
-        RecyclerViewFolderItemSelectFragment fragment = RecyclerViewFolderItemSelectFragment.newInstance(prefs, event.getActionId());
-        showFragmentNow(fragment);
-/*
-        Intent intent = new Intent(getBaseContext(), FileSelectionActivity.class);
-//        intent.putStringArrayListExtra(FileSelectionActivity.ARG_ALLOWED_FILE_TYPES, event.getAllowedFileTypes());
-//        intent.putExtra(FileSelectionActivity.ARG_SORT_A_TO_Z, event.isUseAlphabeticalSortOrder());
-        intent.putExtra(FileSelectionActivity.ARG_FOLDER_SELECTION, true);
-//        if(!event.isShowFolderContents()) {
-//            intent.putExtra(FileSelectionActivity.ARG_ALLOWED_FILE_TYPES, new ArrayList<String>());
-//        }
-        setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
-        startActivityForResult(intent, event.getActionId());
-        */
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(FileListSelectionNeededEvent event) {
-        Intent intent = new Intent(getBaseContext(), FileSelectionActivity.class);
-        intent.putStringArrayListExtra(FileSelectionActivity.ARG_ALLOWED_FILE_TYPES, event.getAllowedFileTypes());
-        intent.putExtra(FileSelectionActivity.ARG_SORT_A_TO_Z, event.isUseAlphabeticalSortOrder());
+    public void onEvent(FileSelectionNeededEvent event) {
+        Intent intent = new Intent(getBaseContext(), FileSelectActivity.class);
+        intent.putExtra(FileSelectActivity.INTENT_DATA, event);
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());
     }
@@ -482,8 +444,9 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
             if (resultCode == RESULT_OK && data.getExtras() != null) {
-                ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectionActivity.SELECTED_FILES);
-                FileListSelectionCompleteEvent event = new FileListSelectionCompleteEvent(requestCode, filesForUpload);
+                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+                ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, filesForUpload);
                 EventBus.getDefault().post(event);
             }
         } else {

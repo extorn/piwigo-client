@@ -58,8 +58,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
         args.putInt(STATE_ACTION_ID, actionId);
-        HashSet<Long> selection = initialSelection != null ? initialSelection : new HashSet<Long>(0);
-        args.putSerializable(STATE_INITIAL_SELECTION, selection);
+        args.putSerializable(STATE_INITIAL_SELECTION, initialSelection);
         return args;
     }
 
@@ -221,22 +220,16 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     private void onToggleAllSelection() {
         if (!selectToggle) {
             selectAllListItems();
-            toggleAllSelectionButton.setText(getString(R.string.none));
+            toggleAllSelectionButton.setText(getString(R.string.button_none));
             selectToggle = true;
         } else {
-            if(viewPrefs.isInitialSelectionLocked()) {
+            if(viewPrefs.isInitialSelectionLocked() && initialSelection != null) {
                 selectOnlyListItems(Collections.unmodifiableSet(initialSelection));
             } else {
                 selectNoneListItems();
             }
-            toggleAllSelectionButton.setText(getString(R.string.all));
+            toggleAllSelectionButton.setText(getString(R.string.button_all));
             selectToggle = false;
-        }
-    }
-
-    private void onCancelChanges() {
-        if(isVisible()) {
-            getFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -247,8 +240,8 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     public void setListAdapter(X listAdapter) {
         this.listAdapter = listAdapter;
         if(listAdapter instanceof SelectableItemsAdapter) {
-            ((SelectableItemsAdapter)listAdapter).setSelectedItems(currentSelection);
             ((SelectableItemsAdapter) listAdapter).setInitiallySelectedItems(initialSelection);
+            ((SelectableItemsAdapter)listAdapter).setSelectedItems(currentSelection);
         } else if(viewPrefs.isInitialSelectionLocked()) {
             throw new IllegalStateException("Support for initial selection locking requires adapter to implement SelectableItemsAdapter");
         }
@@ -275,7 +268,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             selectedIdsSet.add(selectedId);
         }
         // Now just for added security - make certain it has all the initial selection if readonly
-        if(viewPrefs.isInitialSelectionLocked()) {
+        if(viewPrefs.isInitialSelectionLocked() && initialSelection != null) {
             selectedIdsSet.addAll(initialSelection);
         }
         onSelectActionComplete(selectedIdsSet);
@@ -283,7 +276,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     protected abstract void onSelectActionComplete(HashSet<Long> selectedIdsSet);
 
-    protected void cancel() {
+    protected void onCancelChanges() {
         if(isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }

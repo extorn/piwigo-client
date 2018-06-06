@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -33,10 +34,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -59,13 +57,12 @@ import delit.piwigoclient.ui.common.BiArrayAdapter;
 import delit.piwigoclient.ui.common.CustomImageButton;
 import delit.piwigoclient.ui.common.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.ArrayUtils;
 
@@ -146,7 +143,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void onEvent(FileListSelectionCompleteEvent stickyEvent) {
+    public void onEvent(FileSelectionCompleteEvent stickyEvent) {
         // Integer.MIN_VALUE is a special flag to allow external apps to call in and their events to always be handled.
         if(getUiHelper().isTrackingRequest(stickyEvent.getActionId()) || stickyEvent.getActionId() == Integer.MIN_VALUE) {
             EventBus.getDefault().removeStickyEvent(stickyEvent);
@@ -202,13 +199,14 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         fileSelectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FileListSelectionNeededEvent event = new FileListSelectionNeededEvent();
                 if(!PiwigoSessionDetails.isFullyLoggedIn()) {
                     String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
                     getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri),new LoginResponseHandler(getContext()).invokeAsync(getContext()));
                 } else {
+                    FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
                     ArrayList<String> allowedFileTypes = new ArrayList<>(PiwigoSessionDetails.getInstance().getAllowedFileTypes());
-                    event.setAllowedFileTypes(allowedFileTypes);
+                    event.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
+                    event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
                     getUiHelper().setTrackingRequest(event.getActionId());
                     EventBus.getDefault().post(event);
                 }

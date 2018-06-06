@@ -251,7 +251,10 @@ public abstract class MultiSourceListAdapter<T> extends BaseAdapter implements E
 
     @Override
     public void setSelectedItems(HashSet<Long> selectedResourceIds) {
-        this.selectedResourceIds = selectedResourceIds;
+        if(initialSelectedResourceIds == null) {
+            throw new IllegalStateException("initially selected items should never be null at this point");
+        }
+        this.selectedResourceIds = selectedResourceIds != null ? new HashSet<>(selectedResourceIds) : new HashSet<Long>(initialSelectedResourceIds);
     }
 
     @Override

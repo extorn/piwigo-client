@@ -222,7 +222,9 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     }
 
     public void addAll(List<File> filesForUpload) {
-        filesToUpload.addAll(filesForUpload);
+        ArrayList newFiles = new ArrayList(filesForUpload);
+        newFiles.removeAll(filesToUpload);
+        filesToUpload.addAll(newFiles);
         notifyDataSetChanged();
     }
 

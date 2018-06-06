@@ -121,7 +121,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
 
             @Override
             protected void onImageUnavailable() {
-                getLoadInto().setImageResource(R.drawable.blank);
+                getLoadInto().setImageResource(R.drawable.ic_file_gray_24dp);
             }
         };
 

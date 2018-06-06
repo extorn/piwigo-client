@@ -70,11 +70,6 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     @Override
     public abstract int getItemCount();
 
-    @Override
-    public void setInitiallySelectedItems(HashSet<Long> initialSelection) {
-        this.initialSelectedResourceIds = initialSelection != null ? new HashSet<>(initialSelection) : new HashSet<Long>(0);
-    }
-
     public boolean isItemSelected(Long itemId) {
         return selectedResourceIds.contains(itemId);
     }
@@ -126,8 +121,17 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         return context;
     }
 
+    @Override
+    public void setInitiallySelectedItems(HashSet<Long> initialSelection) {
+        this.initialSelectedResourceIds = initialSelection != null ? new HashSet<>(initialSelection) : new HashSet<Long>(0);
+    }
+
+    @Override
     public void setSelectedItems(HashSet<Long> selectedResourceIds) {
-        this.selectedResourceIds = selectedResourceIds;
+        if(initialSelectedResourceIds == null) {
+            throw new IllegalStateException("initially selected items should never be null at this point");
+        }
+        this.selectedResourceIds = selectedResourceIds != null ? new HashSet<>(selectedResourceIds) : new HashSet<Long>(initialSelectedResourceIds);
     }
 
     public void toggleItemSelection() {

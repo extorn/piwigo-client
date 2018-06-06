@@ -6,15 +6,11 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -24,23 +20,18 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.LongSetSelectFragment;
 import delit.piwigoclient.ui.common.MappedArrayAdapter;
 import delit.piwigoclient.ui.common.RecyclerViewLongSetSelectFragment;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 
-public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> {
+public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
     private static final String ACTIVE_FOLDER = "activeFolder";
-    private File activeFolder;
     private LinearLayout folderPathView;
     private Spinner spinner;
     private MappedArrayAdapter<String, File> folderRootsAdapter;
@@ -75,7 +66,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(ACTIVE_FOLDER, activeFolder);
+        outState.putSerializable(ACTIVE_FOLDER, getListAdapter().getActiveFolder());
     }
 
     @Nullable
@@ -151,6 +142,12 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             viewAdapter.toggleItemSelection();
         }
 
+        if (savedInstanceState != null) {
+            File activeFolder = (File) savedInstanceState.getSerializable(ACTIVE_FOLDER);
+            viewAdapter.setActiveFolder(activeFolder);
+        }
+
+        // will restore previous selection from state if any
         setListAdapter(viewAdapter);
 
         GridLayoutManager layoutMan = new GridLayoutManager(getContext(),6);
@@ -158,11 +155,20 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(viewAdapter);
 
-        if (savedInstanceState != null) {
-            activeFolder = (File) savedInstanceState.getSerializable(ACTIVE_FOLDER);
-        }
+
 
         return v;
+    }
+
+    @Override
+    public boolean onBackButton() {
+        File parent = getListAdapter().getActiveFolder().getParentFile();
+        if(parent.getName().isEmpty()) {
+            return false;
+        } else {
+            getListAdapter().updateContent(parent);
+            return true;
+        }
     }
 
     private static class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
@@ -225,11 +231,17 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<File> selectedItems = listAdapter.getSelectedItems();
-        EventBus.getDefault().post(new FileListSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems)));
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems)));
         // now pop this screen off the stack.
         if(isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
+    }
+
+    @Override
+    public void onCancelChanges() {
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), null));
+        super.onCancelChanges();
     }
 
 }

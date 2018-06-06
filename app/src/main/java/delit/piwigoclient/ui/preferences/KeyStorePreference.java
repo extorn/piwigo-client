@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
@@ -57,8 +58,8 @@ import javax.security.auth.x500.X500Principal;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomImageButton;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.util.X509Utils;
 import delit.piwigoclient.util.security.CertificateLoadException;
 import delit.piwigoclient.util.security.CertificateLoadOperationResult;
@@ -443,14 +444,15 @@ public abstract class KeyStorePreference extends DialogPreference {
     }
 
     private void addNewCertificate() {
-        FileListSelectionNeededEvent fileSelectionEvent = new FileListSelectionNeededEvent();
+        FileSelectionNeededEvent fileSelectionEvent = new FileSelectionNeededEvent(true, false, true);
         ArrayList allowedFileTypes = new ArrayList();
         if(!justKeysWanted) {
             allowedFileTypes.addAll(allowedCertificateFileTypes);
         }
         allowedFileTypes.addAll(allowedKeyFileTypes);
-        fileSelectionEvent.setAllowedFileTypes(allowedFileTypes);
-        fileSelectionEvent.setUseAlphabeticalSortOrder(false);
+        fileSelectionEvent.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
+        fileSelectionEvent.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.ALPHABETICAL);
+
         setTrackingRequest(fileSelectionEvent.getActionId());
         EventBus.getDefault().post(fileSelectionEvent);
     }
@@ -549,7 +551,7 @@ public abstract class KeyStorePreference extends DialogPreference {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(FileListSelectionCompleteEvent event) {
+    public void onEvent(FileSelectionCompleteEvent event) {
         if(isTrackingRequest(event.getActionId())) {
             onCertificatesSelected(event.getSelectedFiles());
         }

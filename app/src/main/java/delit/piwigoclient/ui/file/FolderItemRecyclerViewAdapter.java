@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -50,7 +51,25 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         super(multiSelectStatusListener, folderViewPrefs);
         this.navigationListener = navigationListener;
         updateContent(folderViewPrefs.getInitialFolderAsFile());
+    }
 
+    @Override
+    public void setInitiallySelectedItems(HashSet<Long> initialSelection) {
+        if(initialSelection != null) {
+            super.setInitiallySelectedItems(initialSelection);
+        } else {
+            List<String> initialSelectionItems = getAdapterPrefs().getInitialSelection();
+            if(initialSelectionItems != null) {
+                HashSet<Long> initialSelectionIds = new HashSet<>(initialSelectionItems.size());
+                for (String selectedItem : initialSelectionItems) {
+                    int pos = getItemPosition(new File(selectedItem));
+                    if (pos >= 0) {
+                        initialSelectionIds.add(getItemId(pos));
+                    }
+                }
+                super.setInitiallySelectedItems(initialSelectionIds);
+            }
+        }
     }
 
     protected void updateContent(File newContent) {
@@ -64,6 +83,14 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         currentDisplayContent = folderContent != null ? ArrayUtils.toArrayList(folderContent) : new ArrayList(0);
         Collections.sort(currentDisplayContent, getFileComparator());
         notifyDataSetChanged();
+    }
+
+    public File getActiveFolder() {
+        return activeFolder;
+    }
+
+    public void setActiveFolder(File activeFolder) {
+        this.activeFolder = activeFolder;
     }
 
     public interface NavigationListener {
@@ -92,7 +119,18 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                 if(!o1.isDirectory() && o2.isDirectory()) {
                     return 1;
                 }
-                return o1.getName().compareTo(o2.getName());
+                switch(getAdapterPrefs().getFileSortOrder()) {
+                    case FolderItemViewAdapterPreferences.ALPHABETICAL:
+                        return o1.getName().compareTo(o2.getName());
+                    case FolderItemViewAdapterPreferences.LAST_MODIFIED_DATE:
+                        if(o1.lastModified() == o2.lastModified()) {
+                            return o1.getName().compareTo(o2.getName());
+                        } else {
+                            return o1.lastModified() > o2.lastModified() ? 1 : -1;
+                        }
+                    default:
+                        return 0;
+                }
             }
         };
     }
@@ -106,14 +144,14 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         public void onClick(View v) {
             if(getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER) {
                 updateContent(getViewHolder().getItem());
-            } else if(getAdapterPrefs().isSelectFiles()) {
+            } else if(getAdapterPrefs().isAllowFileSelection()) {
                 super.onClick(v);
             }
         }
 
         @Override
         public boolean onLongClick(View v) {
-            if(getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER && getAdapterPrefs().isSelectFolders()) {
+            if(getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER && getAdapterPrefs().isAllowFolderSelection()) {
                 super.onClick(v);
             }
             return super.onLongClick(v);
@@ -231,7 +269,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
-            getCheckBox().setVisibility(getAdapterPrefs().isSelectFolders()? View.VISIBLE : View.GONE);
+            getCheckBox().setVisibility(getAdapterPrefs().isAllowFolderSelection()? View.VISIBLE : View.GONE);
             getCheckBox().setChecked(getSelectedItems().contains(newItem));
             getCheckBox().setEnabled(isEnabled());
         }
@@ -257,7 +295,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
-            getCheckBox().setVisibility(getAdapterPrefs().isSelectFiles()? View.VISIBLE : View.GONE);
+            getCheckBox().setVisibility(getAdapterPrefs().isAllowFileSelection()? View.VISIBLE : View.GONE);
             getCheckBox().setChecked(getSelectedItems().contains(newItem));
             getCheckBox().setEnabled(isEnabled());
             getIconViewLoader().setFileToLoad(getItem());
@@ -266,7 +304,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         public void cacheViewFieldsAndConfigure() {
             super.cacheViewFieldsAndConfigure();
-            getIconViewLoader().withErrorDrawable(R.drawable.blank);
+            getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
             final ViewTreeObserver.OnPreDrawListener predrawListener = new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
