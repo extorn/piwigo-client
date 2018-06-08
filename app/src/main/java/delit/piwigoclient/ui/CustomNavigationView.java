@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -38,7 +37,7 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.UnlockAppEvent;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
+import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.util.ProjectUtils;
 
 /**

@@ -18,6 +18,11 @@ public class BaseRecyclerViewAdapterPreferences {
         return this;
     }
 
+    public <Q extends BaseRecyclerViewAdapterPreferences> Q notSelectable() {
+        allowItemSelection = false;
+        return (Q) this;
+    }
+
     public <Q extends BaseRecyclerViewAdapterPreferences> Q selectable(boolean multiSelectionAllowed, boolean initialSelectionLocked) {
         allowItemSelection = true;
         this.initialSelectionLocked = initialSelectionLocked;

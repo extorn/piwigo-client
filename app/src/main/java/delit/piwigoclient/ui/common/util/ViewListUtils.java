@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui;
+package delit.piwigoclient.ui.common.util;
 
 import android.view.View;
 import android.view.ViewGroup;

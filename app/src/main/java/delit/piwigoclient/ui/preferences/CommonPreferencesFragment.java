@@ -46,11 +46,11 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
  * to display a custom {@link ViewPager} title strip which gives continuous feedback to the user
  * when scrolling.
  */
-public class PreferencesFragment extends MyFragment {
+public class CommonPreferencesFragment extends MyFragment {
 
     static final String LOG_TAG = "PreferencesFragment";
 
-    public PreferencesFragment() {
+    public CommonPreferencesFragment() {
         // Required empty public constructor
     }
 
@@ -93,7 +93,7 @@ public class PreferencesFragment extends MyFragment {
       A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
      */
         ViewPager mViewPager = v.findViewById(R.id.viewpager);
-        mViewPager.setAdapter(new SamplePagerAdapter(getChildFragmentManager()));
+        mViewPager.setAdapter(buildPagerAdapter(getChildFragmentManager()));
 
         // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
         // it's PagerAdapter set.
@@ -113,15 +113,19 @@ public class PreferencesFragment extends MyFragment {
         }
     }
 
+    protected FragmentPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
+        return new CommonPreferencesPagerAdapter(childFragmentManager);
+    }
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} used to display pages in this sample.
      * The individual pages are simple and just display two lines of value. The important section of
      * this class is the {@link #getPageTitle(int)} method which controls what is displayed in the
      * {@link SlidingTabLayout}.
      */
-    class SamplePagerAdapter extends FragmentPagerAdapter {
+    protected class CommonPreferencesPagerAdapter extends FragmentPagerAdapter {
 
-        public SamplePagerAdapter(FragmentManager fm) {
+        public CommonPreferencesPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -134,8 +138,6 @@ public class PreferencesFragment extends MyFragment {
                     return getString(R.string.preference_page_gallery);
                 case 2:
                     return getString(R.string.preference_page_upload);
-                case 3:
-                    return getString(R.string.preference_page_auto_upload_jobs);
                 default:
                     throw new RuntimeException("PagerAdapter count doesn't match positions available");
             }
@@ -150,8 +152,6 @@ public class PreferencesFragment extends MyFragment {
                     return new GalleryPreferenceFragment();
                 case 2:
                     return new UploadPreferenceFragment();
-                case 3:
-                    return AutoUploadJobPreferenceFragment.newInstance(0);
                 default:
                     throw new RuntimeException("PagerAdapter count doesn't match positions available");
             }
@@ -159,7 +159,7 @@ public class PreferencesFragment extends MyFragment {
 
         @Override
         public int getCount() {
-            return 4;
+            return 3;
         }
 
     }

@@ -60,7 +60,6 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     @Override
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
         AlbumItemRecyclerViewAdapterPreferences prefs = super.updateViewPrefs();
-        prefs.withAllowMultiSelect(getMultiSelectionAllowed());
 
         if(PiwigoSessionDetails.isFullyLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()) {
             addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
@@ -69,11 +68,8 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     @Override
-    protected boolean getMultiSelectionAllowed() {
-        boolean captureActionClicks = getViewPrefs().isMultiSelectionEnabled();
-        captureActionClicks |= (PiwigoSessionDetails.isFullyLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
-        captureActionClicks &= !isAppInReadOnlyMode();
-        return captureActionClicks;
+    protected boolean isPreventItemSelection() {
+        return super.isPreventItemSelection() && !isTagSelectionAllowed();
     }
 
     @Override
@@ -104,12 +100,12 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     private boolean isTagSelectionAllowed() {
-        if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+        if(!PiwigoSessionDetails.isFullyLoggedIn() || isAppInReadOnlyMode()) {
             return false;
         }
-        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
-        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
-        return allowTagEdit;
+        boolean allowAdminEdit = PiwigoSessionDetails.isAdminUser();
+        boolean allowUserEdit = PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
+        return allowAdminEdit || allowUserEdit;
     }
 
     private void onShowTagsSelection() {
@@ -188,7 +184,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
-                getViewPrefs().withAllowMultiSelect(getMultiSelectionAllowed());
+                getViewPrefs().setAllowItemSelection(!isPreventItemSelection());
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }

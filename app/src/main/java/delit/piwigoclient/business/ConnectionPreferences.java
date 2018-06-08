@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
+import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 
 /**
  * Created by gareth on 22/01/18.

@@ -25,6 +25,7 @@ import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
+import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 import delit.piwigoclient.ui.events.ThemeAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.DisplayUtils;

@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.preferences;
+package delit.piwigoclient.ui.common.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 
 /**
  * Created by gareth on 04/11/17.

@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.preferences;
+package delit.piwigoclient.ui.common.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

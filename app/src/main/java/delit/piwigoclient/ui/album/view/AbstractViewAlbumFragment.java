@@ -279,7 +279,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
-        boolean captureActionClicks = getMultiSelectionAllowed();
 
         boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
         boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
@@ -297,7 +296,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
         }
 
-        viewPrefs.selectable(captureActionClicks, false);
+        viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
         viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         viewPrefs.withDarkMode(useDarkMode);
         viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
@@ -725,18 +724,17 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         updateBasketDisplay(basket);
     }
 
-    protected boolean getMultiSelectionAllowed() {
-        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-        captureActionClicks &= (getBasket().getItemCount() == 0 || getBasket().getContentParentId() == gallery.getId());
-        return captureActionClicks;
+    protected boolean isPreventItemSelection() {
+        if(isAppInReadOnlyMode() || !PiwigoSessionDetails.isAdminUser()) {
+            return true;
+        }
+        return getBasket().getItemCount() > 0 && getBasket().getContentParentId() != gallery.getId();
     }
 
     protected void updateBasketDisplay(Basket basket) {
 
-
-        boolean shouldMultiSelectBeEnabled = getMultiSelectionAllowed();
-        if(viewAdapter.isMultiSelectionAllowed() != shouldMultiSelectBeEnabled) {
-            viewPrefs.selectable(shouldMultiSelectBeEnabled, false);
+        if(viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
+            viewPrefs.setAllowItemSelection(false);
             viewAdapter.notifyDataSetChanged(); //TODO check this works (refresh the whole list, redrawing all with/without select box as appropriate)
         }
 
@@ -1948,9 +1946,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     displayControlsBasedOnSessionState();
                 }
             }
-            boolean captureActionClicks = getMultiSelectionAllowed();
-            if(captureActionClicks != viewAdapter.isMultiSelectionAllowed()) {
-                viewAdapter.getAdapterPrefs().selectable(captureActionClicks, false);
+            if(viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
+                viewPrefs.setAllowItemSelection(false);
                 viewAdapter.notifyDataSetChanged(); //TODO check this does what it should...
             }
 
@@ -1970,9 +1967,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 displayControlsBasedOnSessionState();
                 setEditItemDetailsControlsStatus();
             }
-            boolean captureActionClicks = getMultiSelectionAllowed();
-            if(captureActionClicks != viewAdapter.isMultiSelectionAllowed()) {
-                viewAdapter.getAdapterPrefs().selectable(captureActionClicks, false);
+            if(viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
+                viewPrefs.setAllowItemSelection(false);
                 viewAdapter.notifyDataSetChanged(); //TODO check this does what it should...
             }
         } else {

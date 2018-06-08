@@ -42,7 +42,7 @@
             android:summary="@string/preference_data_upload_automatic_server_album_summary"
             android:dependency="@string/preference_data_upload_automatic_enabled_key"/>
 
-        <delit.piwigoclient.ui.preferences.LocalFoldersListPreference
+        <delit.piwigoclient.ui.common.preference.LocalFoldersListPreference
             android:title="@string/preference_data_upload_automatic_local_folder_title"
             android:key="@string/preference_data_upload_automatic_local_folder_key"
             android:summary="@string/preference_data_upload_automatic_local_folder_summary"
@@ -55,7 +55,7 @@
             android:title="@string/preference_data_upload_automatic_server_delete_uploaded_title"
             android:dependency="@string/preference_data_upload_automatic_enabled_key"/>
 
-        <delit.piwigoclient.ui.preferences.EditTextPreference
+        <delit.piwigoclient.ui.common.preference.EditTextPreference
             android:capitalize="none"
             android:inputType="none"
             android:key="@string/preference_data_upload_automatic_server_file_exts_uploaded_key"
@@ -67,7 +67,7 @@
             android:summary="@string/preference_data_upload_automatic_server_file_exts_uploaded_summary"
             android:dependency="@string/preference_data_upload_automatic_enabled_key"/>
 
-        <delit.piwigoclient.ui.preferences.NumberPickerPreference
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_data_upload_automatic_max_upload_size_mb_default"
             app:minValue="0"
             app:maxValue="150"

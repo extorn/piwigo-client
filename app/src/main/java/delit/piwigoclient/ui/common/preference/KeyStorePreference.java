@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.preferences;
+package delit.piwigoclient.ui.common.preference;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;

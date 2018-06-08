@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package delit.piwigoclient.ui.preferences;
+package delit.piwigoclient.ui.common.preference;
 
 
 import android.content.Context;

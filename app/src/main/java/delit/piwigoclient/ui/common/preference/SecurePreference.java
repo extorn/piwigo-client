@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.preferences;
+package delit.piwigoclient.ui.common.preference;
 
 /**
  * Created by gareth on 07/11/17.
