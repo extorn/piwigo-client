@@ -2,6 +2,7 @@ package delit.piwigoclient.model.piwigo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -18,10 +19,18 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     public PiwigoTags() {
     }
 
-    private final Comparator<Tag> tagComparator = new Comparator<Tag>() {
+    private transient final Comparator<Tag> tagComparator = new Comparator<Tag>() {
 
         @Override
         public int compare(Tag o1, Tag o2) {
+            // bubble tags with images to the top.
+            if(o1.getUsageCount() == 0 && o2.getUsageCount() != 0) {
+                return 1;
+            }
+            if(o1.getUsageCount() != 0 && o2.getUsageCount() == 0) {
+                return -1;
+            }
+            // sort all tags into name order
             return o1.getName().compareTo(o2.getName());
         }
     };
@@ -55,7 +64,7 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     }
 
     @Override
-    public Tag getItemById(Long selectedItemId) {
+    public Tag getItemById(long selectedItemId) {
         for (Tag item : items) {
             if(item.getId() == selectedItemId) {
                 return item;
@@ -77,9 +86,10 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
             // overwrite those already in the store.
             getItems().removeAll(tags);
         }
+        int insertAt = items.size();
         items.addAll(tags);
         sort();
-        return tags.size();
+        return insertAt;
     }
 
     public int getPagesLoaded() {
@@ -98,6 +108,16 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     @Override
     public int getItemIdx(Tag newTag) {
         return items.indexOf(newTag);
+    }
+
+    @Override
+    public boolean removeAll(Collection<Tag> itemsForDeletion) {
+        return items.removeAll(itemsForDeletion);
+    }
+
+    @Override
+    public void remove(Tag r) {
+        items.remove(r);
     }
 
 }

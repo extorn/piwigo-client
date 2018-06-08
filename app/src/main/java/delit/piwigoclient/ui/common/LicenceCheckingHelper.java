@@ -17,7 +17,7 @@ import java.util.Random;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.preferences.PreferenceUtils;
+import delit.piwigoclient.ui.common.util.PreferenceUtils;
 
 /**
  * Created by gareth on 28/10/17.

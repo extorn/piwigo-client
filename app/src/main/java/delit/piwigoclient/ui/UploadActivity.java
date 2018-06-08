@@ -31,12 +31,13 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
@@ -44,7 +45,6 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.upload.UploadFragment;
-import paul.arian.fileselector.FileSelectionActivity;
 
 /**
  * Created by gareth on 12/07/17.
@@ -283,10 +283,9 @@ public class UploadActivity extends MyActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(FileListSelectionNeededEvent event) {
-        Intent intent = new Intent(getBaseContext(), FileSelectionActivity.class);
-        intent.putStringArrayListExtra(FileSelectionActivity.ARG_ALLOWED_FILE_TYPES, event.getAllowedFileTypes());
-        intent.putExtra(FileSelectionActivity.ARG_SORT_A_TO_Z, event.isUseAlphabeticalSortOrder());
+    public void onEvent(FileSelectionNeededEvent event) {
+        Intent intent = new Intent(getBaseContext(), FileSelectActivity.class);
+        intent.putExtra(FileSelectActivity.INTENT_DATA, event);
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());
     }
@@ -296,14 +295,15 @@ public class UploadActivity extends MyActivity {
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
             if (resultCode == RESULT_OK) {
-                ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectionActivity.SELECTED_FILES);
+                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+                ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
 
                 int eventId = requestCode;
                 if(requestCode != fileSelectionEventId) {
                     // this is an unexpected event - need to ensure the upload fragment will pick it up.
                     eventId = Integer.MIN_VALUE;
                 }
-                FileListSelectionCompleteEvent event = new FileListSelectionCompleteEvent(eventId, filesForUpload);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload);
 
                 EventBus.getDefault().postSticky(event);
             }
@@ -321,13 +321,21 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), false, event.getActionId(), event.getIndirectSelection(),  event.getInitialSelection());
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        if(!event.isAllowEditing()) {
+            prefs.readonly();
+        }
+        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(),  event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final GroupSelectionNeededEvent event) {
-        GroupSelectFragment fragment = GroupSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), false, event.getActionId(), event.getInitialSelection());
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        if(!event.isAllowEditing()) {
+            prefs.readonly();
+        }
+        GroupSelectFragment fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
@@ -342,7 +350,7 @@ public class UploadActivity extends MyActivity {
                 fileSelectionEventIdToUse = Integer.MIN_VALUE;
             }
             if(event.areAllPermissionsGranted()) {
-                FileListSelectionCompleteEvent evt = new FileListSelectionCompleteEvent(fileSelectionEventIdToUse, handleSentFiles());
+                FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventIdToUse, handleSentFiles());
                 EventBus.getDefault().postSticky(evt);
             } else {
                 createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);

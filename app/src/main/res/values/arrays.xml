@@ -108,7 +108,7 @@
         <item>Family</item>
         <item>Friends</item>
         <item>Contacts</item>
-        <item>------</item>
+        <item>Everybody</item>
     </string-array>
 
     <integer-array name="privacy_levels_values_array" translatable="false">
@@ -148,32 +148,52 @@
         <item>"Changes:
          - ? German, French, other translations for the app ?"
         </item>
-        <item>1.3.86</item>
+        <item>1.3.89</item>
         <item>"Changes:
          - User interface refinements
          - Support for favorites - depends on PIWIGO API enhancement
          - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"
         </item>
-        <item>1.3.85</item>
+        <item>1.3.88</item>
         <item>"Changes:
          - Possibly - allow linking the upload process to a compression routine for videos
          - Rework of the way popup messages and progress indicators are shown so they always appear - investigate using Toast messages
          - Possibly - The ability to delete an album, but not its contents (creating orphans)
          - Possibly - Orphan file management"
         </item>
-        <item>1.3.84</item>
-        <item>"Changes:
-         - Paid App Only : (Maybe) : Support for user comments"
-        </item>
-        <item>1.3.83</item>
+        <item>1.3.87</item>
         <item>"Changes:
          - Paid App Only : Poll a device folder and automatically upload any content found to a specified Piwigo profile
-         - Paid App Only : (Maybe) : Notify user of server updates that are available
-         Bugfix:
-         - Fix upload does nothing when opened from within the app (sharing images with app worked okay)"
+         - Paid App Only : (Maybe) : Support for user comments
+         - Paid App Only : (Maybe) : Notify user of server updates that are available"
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.86</item>
+        <item>"Changes:
+         - Rewrite and consolidation of list rendering
+         - Rewrite of the file selection activity
+         - Paid App Only : New preferences screen for up coming automatic upload job (hidden at present)
+         - Paid App Only : More functionality in Tag management
+         Bugfix:
+         - File upload bugs (community plugin)
+         - Other Bugs affecting app stability
+         - Bugs in selection album / user screens"
+        </item>
+        <item>1.3.85</item>
+        <item>"Bugfix:
+         - Minor bug fixes"
+        </item>
+        <item>1.3.84</item>
+        <item>"Bugfix:
+         - Upload fails due to bug (thanks to Gerald for pointing this out)
+         - Tags pages cannot be saved to state (cause crash)"
+        </item>
+        <item>1.3.83</item>
+        <item>"Bugfix:
+         - Selecting upload album dropdown after navigation from root album crashes app
+         - Threading bug fixed"
+        </item>
         <item>1.3.82</item>
         <item>"Changes:
          - Paid App Only : Added support for tags (both native and with the user tags plugin)

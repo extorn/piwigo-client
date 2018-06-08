@@ -37,13 +37,13 @@
                 android:text="@string/planned_releases"
                 style="@style/Base.TextAppearance.AppCompat.Title"/>
 
-            <delit.piwigoclient.ui.common.StaticListView
+            <delit.piwigoclient.ui.common.list.StaticListView
                 android:id="@+id/about_planned_releases"
                 android:clickable="false"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="5dp"
                 />
 
@@ -54,13 +54,13 @@
                 android:text="@string/release_history"
                 style="@style/Base.TextAppearance.AppCompat.Title"/>
 
-            <delit.piwigoclient.ui.common.StaticListView
+            <delit.piwigoclient.ui.common.list.StaticListView
                 android:id="@+id/about_release_history"
                 android:clickable="false"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="5dp"
                 />
 

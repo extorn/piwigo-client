@@ -4,21 +4,21 @@ package delit.piwigoclient.model.piwigo;
  * Created by gareth on 06/04/18.
  */
 
-public abstract class ResourceContainer<T extends Identifiable> extends PagedList<GalleryItem> implements Identifiable {
+public abstract class ResourceContainer<S extends Identifiable, T extends Identifiable> extends IdentifiablePagedList<T> implements Identifiable {
 
-    private final T containerDetails;
+    private final S containerDetails;
 
-    public ResourceContainer(T containerDetails, String itemType) {
+    public ResourceContainer(S containerDetails, String itemType) {
         this(containerDetails, itemType, 10);
     }
 
-    public ResourceContainer(T containerDetails, String itemType, int maxExpectedItemCount) {
+    public ResourceContainer(S containerDetails, String itemType, int maxExpectedItemCount) {
         super(itemType, maxExpectedItemCount);
         this.containerDetails = containerDetails;
     }
 
     public ResourceItem getResourceItemById(long itemId) {
-        GalleryItem item = getItemById(itemId);
+        T item = getItemById(itemId);
         if(item instanceof ResourceItem) {
             return (ResourceItem) item;
         }
@@ -31,7 +31,7 @@ public abstract class ResourceContainer<T extends Identifiable> extends PagedLis
 
     public abstract long getImgResourceCount();
 
-    public T getContainerDetails() {
+    public S getContainerDetails() {
         return containerDetails;
     }
 

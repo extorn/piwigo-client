@@ -12,7 +12,7 @@ import java.util.TreeSet;
  * Created by gareth on 02/01/18.
  */
 
-public class PagedList<T extends Identifiable> implements IdentifiableItemStore<T>, Serializable {
+public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializable {
 
     private final String itemType;
     private final SortedSet<Integer> pagesLoaded = new TreeSet<>();
@@ -100,10 +100,12 @@ public class PagedList<T extends Identifiable> implements IdentifiableItemStore<
         return fullyLoaded;
     }
 
+    public abstract Long getItemId(T item);
+
     @Override
-    public T getItemById(Long selectedItemId) {
+    public T getItemById(long selectedItemId) {
         for (T item : items) {
-            if(item.getId() == selectedItemId) {
+            if(getItemId(item) == selectedItemId) {
                 return item;
             }
         }
@@ -122,6 +124,16 @@ public class PagedList<T extends Identifiable> implements IdentifiableItemStore<
 
     public T remove(int idx) {
         return items.remove(idx);
+    }
+
+    @Override
+    public void remove(T item) {
+        items.remove(item);
+    }
+
+    @Override
+    public boolean removeAll(Collection<T> itemsForDeletion) {
+        return items.removeAll(itemsForDeletion);
     }
 
     public boolean addMissingItems(List<? extends T> newItems) {

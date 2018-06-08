@@ -18,31 +18,31 @@
             android:indeterminate="true"
             android:visibility="visible" />
 
-        <delit.piwigoclient.ui.common.CustomImageButton
+        <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/slideshow_resource_action_direct_download"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:visibility="visible"/>
 
-        <delit.piwigoclient.ui.common.CustomImageButton
+        <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
-            android:layout_toRightOf="@id/slideshow_resource_action_direct_download"
+            android:layout_toEndOf="@id/slideshow_resource_action_direct_download"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:visibility="visible"/>
 
         <TextView
             android:id="@+id/slideshow_resource_item_x_of_y_text"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:visibility="visible"
             android:text="x/y"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:visibility="gone"
             android:isIndicator="true"
             android:numStars="5"
@@ -91,7 +91,8 @@
             android:clickable="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="-20dp"
-            app:fabSize="mini"/>
+            app:fabSize="mini"
+            android:focusable="true" />
 
         <LinearLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"
@@ -101,8 +102,8 @@
             android:orientation="vertical"
             android:padding="5dp"
             android:layout_marginTop="0dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp">
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -114,63 +115,63 @@
                     style="@style/Widget.AppCompat.RatingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
+                    android:layout_gravity="end"
                     android:isIndicator="false"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:numStars="5"
                     android:stepSize="1" />
 
-                <delit.piwigoclient.ui.common.CustomImageButton
+                <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_edit_button"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:layout_below="@+id/slideshow_image_ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <delit.piwigoclient.ui.common.CustomImageButton
+                <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_save_button"
-                    android:layout_toRightOf="@+id/slideshow_resource_action_edit_button"
+                    android:layout_toEndOf="@+id/slideshow_resource_action_edit_button"
                     android:layout_below="@+id/slideshow_image_ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_edit_button" />
 
-                <delit.piwigoclient.ui.common.CustomImageButton
+                <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_discard_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/slideshow_resource_action_save_button"
+                    android:layout_toEndOf="@+id/slideshow_resource_action_save_button"
                     android:layout_alignBottom="@+id/slideshow_resource_action_save_button"/>
 
-                <delit.piwigoclient.ui.common.CustomImageButton
+                <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_move"
-                    android:layout_toLeftOf="@+id/slideshow_resource_action_download"
+                    android:layout_toStartOf="@+id/slideshow_resource_action_download"
                     android:layout_alignBottom="@+id/slideshow_resource_action_download"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-                <delit.piwigoclient.ui.common.CustomImageButton
+                <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_copy"
-                    android:layout_toLeftOf="@+id/slideshow_resource_action_move"
+                    android:layout_toStartOf="@+id/slideshow_resource_action_move"
                     android:layout_alignBottom="@+id/slideshow_resource_action_move"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/slideshow_resource_action_copy"/>
 
-                <delit.piwigoclient.ui.common.CustomImageButton
+                <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_delete"
-                    android:layout_toLeftOf="@+id/slideshow_resource_action_copy"
+                    android:layout_toStartOf="@+id/slideshow_resource_action_copy"
                     android:layout_alignBottom="@+id/slideshow_resource_action_copy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-                <delit.piwigoclient.ui.common.CustomImageButton
+                <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_download"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:layout_below="@+id/slideshow_image_ratingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"/>
+                    android:layout_gravity="end"/>
 
 
                 <LinearLayout
@@ -182,6 +183,7 @@
 
                     <TextView
                         android:id="@+id/slideshow_image_details_name_label"
+                        android:labelFor="@+id/slideshow_image_details_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/slideshow_image_details_name_title" />
@@ -193,10 +195,12 @@
                         android:inputType="textMultiLine"
                         android:clickable="true"
                         android:maxLines="3"
-                        android:textColor="@drawable/edit_text_color_selector"/>
+                        android:textColor="@drawable/edit_text_color_selector"
+                        android:focusable="true" />
 
                     <TextView
                         android:id="@+id/slideshow_image_details_description_label"
+                        android:labelFor="@+id/slideshow_image_details_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/slideshow_image_details_description_title" />
@@ -211,6 +215,7 @@
 
                     <TextView
                         android:id="@+id/slideshow_image_details_linked_albums_label"
+                        android:labelFor="@+id/slideshow_image_details_linked_albums"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/slideshow_image_details_linked_albums_title" />
@@ -224,6 +229,7 @@
 
                     <TextView
                         android:id="@+id/slideshow_image_details_tags_label"
+                        android:labelFor="@+id/slideshow_image_details_tags"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/slideshow_image_details_tags_title" />
@@ -237,6 +243,7 @@
 
                     <TextView
                         android:id="@+id/slideshow_image_details_privacy_level"
+                        android:labelFor="@+id/privacy_level"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/upload_file_privacy_level_title"

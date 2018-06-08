@@ -49,8 +49,8 @@
 
         <EditText
             android:id="@+id/createGallery_galleryName"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
@@ -67,8 +67,8 @@
 
         <EditText
             android:id="@+id/createGallery_galleryDescription"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
@@ -108,8 +108,8 @@
                 android:text="@string/createGallery_permissions_allowedGroupsTitle" />
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/createGallery_permissions_allowedGroups"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine|textNoSuggestions"
@@ -132,8 +132,8 @@
                 android:text="@string/createGallery_permissions_allowedUsersTitle" />
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/createGallery_permissions_allowedUsers"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine|textNoSuggestions"

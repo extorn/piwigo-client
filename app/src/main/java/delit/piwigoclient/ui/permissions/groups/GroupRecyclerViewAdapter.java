@@ -7,24 +7,25 @@ import android.view.View;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGroups;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.recyclerview.BaseViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Group}
  */
-public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<Group, PiwigoGroups, GroupRecyclerViewAdapter.GroupViewHolder> {
+public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Group, PiwigoGroups, GroupRecyclerViewAdapter.GroupViewHolder> {
 
-    public GroupRecyclerViewAdapter(final PiwigoGroups groups, MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
-        super(groups, multiSelectStatusListener, captureActionClicks);
+    public GroupRecyclerViewAdapter(final PiwigoGroups groups, MultiSelectStatusListener multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
+        super(groups, multiSelectStatusListener, prefs);
     }
 
     @Override
-    public GroupViewHolder buildViewHolder(View view) {
+    public GroupViewHolder buildViewHolder(View view, int viewType) {
         return new GroupViewHolder(view);
     }
 
-    public class GroupViewHolder extends BaseViewHolder<Group> {
+    public class GroupViewHolder extends BaseViewHolder<BaseRecyclerViewAdapterPreferences, Group> {
 
         public GroupViewHolder(View view) {
             super(view);
@@ -37,7 +38,7 @@ public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<Group,
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
-            getCheckBox().setVisibility(isCaptureActionClicks() ? View.VISIBLE : View.GONE);
+            getCheckBox().setVisibility(isMultiSelectionAllowed() ? View.VISIBLE : View.GONE);
             getCheckBox().setChecked(getSelectedItemIds().contains(newItem.getId()));
             getCheckBox().setEnabled(isEnabled());
         }

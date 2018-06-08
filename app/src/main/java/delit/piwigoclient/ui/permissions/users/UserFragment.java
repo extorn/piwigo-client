@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -54,10 +53,12 @@ import delit.piwigoclient.piwigoApi.handlers.UserPermissionsAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UserPermissionsRemovedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UserUpdateInfoResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.util.ViewListUtils;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
-import delit.piwigoclient.ui.common.CustomImageButton;
-import delit.piwigoclient.ui.common.MyFragment;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.UserDeletedEvent;
 import delit.piwigoclient.ui.events.UserUpdatedEvent;
@@ -118,7 +119,7 @@ public class UserFragment extends MyFragment {
     private ArrayList<CategoryItemStub> availableGalleries;
     private boolean fieldsEditable = false;
     private ListView albumPermissionsField;
-    private HashSet<Long> saveActionIds;
+    private final HashSet<Long> saveActionIds = new HashSet<>(5);
     private HashSet<Long> currentDirectAlbumPermissions;
     private HashSet<Long> currentIndirectAlbumPermissions;
     private HashSet<Long> newDirectAlbumPermissions;
@@ -278,7 +279,7 @@ public class UserFragment extends MyFragment {
             newUser = (User) savedInstanceState.getSerializable(NEW_USER);
             fieldsEditable = savedInstanceState.getBoolean(STATE_FIELDS_EDITABLE);
             newGroupMembership = (HashSet<Group>) savedInstanceState.getSerializable(STATE_NEW_GROUP_MEMBERSHIP);
-            saveActionIds = (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_SAVE_ACTION_IDS);
+            SetUtils.setNotNull(saveActionIds,(HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_SAVE_ACTION_IDS));
             selectGroupsActionId = savedInstanceState.getInt(STATE_SELECT_GROUPS_ACTION_ID);
         }
 
@@ -360,14 +361,13 @@ public class UserFragment extends MyFragment {
         });
 
         albumPermissionsField = v.findViewById(R.id.user_access_rights);
-        albumPermissionsField.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        albumPermissionsField.setOnTouchListener(new CustomClickTouchListener(getContext()) {
+        albumPermissionsField.setOnTouchListener(new CustomClickTouchListener(albumPermissionsField) {
             @Override
             public boolean onClick() {
                 onExpandPermissions();
                 return true;
             }
-        });
+        }.withScrollingWhenNested());
 
         setFieldsEditable(fieldsEditable);
         if(newUser != null) {
@@ -405,7 +405,6 @@ public class UserFragment extends MyFragment {
     }
 
     private void saveUserChanges() {
-        saveActionIds = new HashSet<>(5);
         newUser = setModelFromFields(new User());
         setFieldsEditable(false);
         if(newUser.getId() < 0) {
@@ -733,23 +732,17 @@ public class UserFragment extends MyFragment {
     }
 
 
-    private synchronized void populateAlbumPermissionsList(HashSet<Long> directAlbumPermissions, HashSet<Long> indirectAlbumPermissions) {
+    private synchronized void populateAlbumPermissionsList(HashSet<Long> initialSelection, HashSet<Long> indirectAlbumPermissions) {
         AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter)albumPermissionsField.getAdapter();
         if(adapter == null) {
-            adapter = new AlbumSelectionListAdapter(this.getContext(), availableGalleries, indirectAlbumPermissions, false);
-            albumPermissionsField.setAdapter(adapter);
-
-        } else if(!SetUtils.equals(adapter.getIndirectlySelectedItems(), indirectAlbumPermissions)) {
-            adapter.setIndirectlySelectedItems(indirectAlbumPermissions);
-        }
-        albumPermissionsField.clearChoices();
-        if(directAlbumPermissions != null && directAlbumPermissions.size() > 0) {
-            for (Long selectedAlbum : directAlbumPermissions) {
-                int itemPos = adapter.getPosition(selectedAlbum);
-                if (itemPos >= 0) {
-                    albumPermissionsField.setItemChecked(itemPos, true);
-                }
-            }
+            BaseRecyclerViewAdapterPreferences adapterPreferences = new BaseRecyclerViewAdapterPreferences();
+            adapterPreferences.selectable(true, false);
+            adapterPreferences.readonly();
+            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, indirectAlbumPermissions, adapterPreferences);
+            availableItemsAdapter.linkToListView(albumPermissionsField, initialSelection, initialSelection);
+            ViewListUtils.setListViewHeightBasedOnChildren(albumPermissionsField, 6);
+        } else if(!SetUtils.equals(adapter.getSelectedItems(), initialSelection)) {
+            adapter.setSelectedItems(initialSelection);
         }
     }
 

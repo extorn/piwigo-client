@@ -37,9 +37,11 @@ import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.album.AlbumSelectFragment;
+import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumDeletedEvent;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
@@ -59,8 +61,8 @@ import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
@@ -73,7 +75,6 @@ import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
 import hotchemi.android.rate.MyAppRate;
-import paul.arian.fileselector.FileSelectionActivity;
 
 public abstract class AbstractMainActivity extends MyActivity implements ComponentCallbacks2 {
 
@@ -365,7 +366,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     protected abstract void showTags();
 
     private void showAlbumPermissions(final ArrayList<CategoryItemStub> availableAlbums, final HashSet<Long> directAlbumPermissions, final HashSet<Long> indirectAlbumPermissions, boolean allowEdit, int actionId) {
-        delit.piwigoclient.ui.permissions.AlbumSelectFragment fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, true, allowEdit, false, actionId, indirectAlbumPermissions, directAlbumPermissions);
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(true, false);
+        if(!allowEdit) {
+            prefs.readonly();
+        }
+        delit.piwigoclient.ui.permissions.AlbumSelectFragment fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, prefs, actionId, indirectAlbumPermissions, directAlbumPermissions);
         showFragmentNow(fragment);
     }
 
@@ -427,10 +432,9 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(FileListSelectionNeededEvent event) {
-        Intent intent = new Intent(getBaseContext(), FileSelectionActivity.class);
-        intent.putStringArrayListExtra(FileSelectionActivity.ARG_ALLOWED_FILE_TYPES, event.getAllowedFileTypes());
-        intent.putExtra(FileSelectionActivity.ARG_SORT_A_TO_Z, event.isUseAlphabeticalSortOrder());
+    public void onEvent(FileSelectionNeededEvent event) {
+        Intent intent = new Intent(getBaseContext(), FileSelectActivity.class);
+        intent.putExtra(FileSelectActivity.INTENT_DATA, event);
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());
     }
@@ -440,8 +444,9 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
             if (resultCode == RESULT_OK && data.getExtras() != null) {
-                ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectionActivity.SELECTED_FILES);
-                FileListSelectionCompleteEvent event = new FileListSelectionCompleteEvent(requestCode, filesForUpload);
+                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+                ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, filesForUpload);
                 EventBus.getDefault().post(event);
             }
         } else {
@@ -544,7 +549,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UsernameSelectionNeededEvent event) {
-        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), event.isInitialSelectionLocked(), event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        if(!event.isAllowEditing()) {
+            prefs.readonly();
+        }
+        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
@@ -554,8 +563,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         showFragmentNow(fragment);
     }
 
-    private void showAlbumSelectionFragment(int actionId, boolean allowMultiSelect, boolean allowEditing, HashSet<Long> currentSelection) {
-        AlbumSelectFragment fragment = AlbumSelectFragment.newInstance(allowMultiSelect, allowEditing, false, actionId, currentSelection);
+    private void showAlbumSelectionFragment(int actionId, AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs, HashSet<Long> currentSelection) {
+        AlbumSelectFragment fragment = AlbumSelectFragment.newInstance(prefs, actionId, currentSelection);
         showFragmentNow(fragment);
     }
 
@@ -615,7 +624,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final GroupSelectionNeededEvent event) {
-        GroupSelectFragment fragment = GroupSelectFragment.newInstance(event.isAllowMultiSelect(), event.isAllowEditing(), event.isInitialSelectionLocked(), event.getActionId(), event.getInitialSelection());
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        if(!event.isAllowEditing()) {
+            prefs.readonly();
+        }
+        GroupSelectFragment fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
@@ -716,7 +729,13 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumSelectionNeededEvent event) {
-        showAlbumSelectionFragment(event.getActionId(), event.isAllowMultiSelect(), event.isAllowEditing(), event.getInitialSelection());
+        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
+        prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        prefs.withShowHierachy();
+        if(!event.isAllowEditing()) {
+            prefs.readonly();
+        }
+        showAlbumSelectionFragment(event.getActionId(), prefs, event.getInitialSelection());
     }
 
 }

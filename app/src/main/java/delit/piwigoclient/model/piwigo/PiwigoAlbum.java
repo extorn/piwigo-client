@@ -11,7 +11,7 @@ import java.util.List;
  * Android template wizards.
  * <p>
  */
-public class PiwigoAlbum extends ResourceContainer<CategoryItem> implements Serializable {
+public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> implements Serializable {
 
     private int subAlbumCount;
     private int spacerAlbums;

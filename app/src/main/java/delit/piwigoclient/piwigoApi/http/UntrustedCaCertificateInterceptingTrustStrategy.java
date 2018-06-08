@@ -7,6 +7,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -18,15 +21,26 @@ import delit.piwigoclient.util.X509Utils;
  * Created by gareth on 17/10/17.
  */
 
-public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSignedStrategy {
+public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSignedStrategy implements Observer {
 
     private final Set<String> certThumbprints;
-    private static Set<String> preNotifiedCerts;
+    private Set<String> preNotifiedCerts;
+    private static Observable observable = new Observable();
 
-    public UntrustedCaCertificateInterceptingTrustStrategy(KeyStore trustedCAKeystore, Set<String> preNotifiedCerts) {
+    @Override
+    public void update(Observable o, Object arg) {
+        String thumbprint = (String)arg;
+        synchronized (preNotifiedCerts) {
+            if(!preNotifiedCerts.contains(thumbprint)) {
+                preNotifiedCerts.add(thumbprint);
+            }
+        }
+    }
+
+    public UntrustedCaCertificateInterceptingTrustStrategy(KeyStore trustedCAKeystore, Set<String> preNotifiedCertsSet) {
         certThumbprints = X509Utils.listAliasesInStore(trustedCAKeystore);
-        //FIXME - this is probably dangerous.
-        this.preNotifiedCerts = new ConcurrentSkipListSet<>(preNotifiedCerts);
+        preNotifiedCerts = new HashSet<>(preNotifiedCertsSet);
+        observable.addObserver(this);
     }
 
 
@@ -47,6 +61,7 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
                         if(!preNotifiedCerts.contains(thumbprint)) {
                             preNotifiedCerts.add(thumbprint);
                             untrustedCerts.put(thumbprint, chain[i]);
+                            observable.notifyObservers(thumbprint);
                         }
                     }
                 }

@@ -1,6 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
@@ -43,7 +45,21 @@ public class PluginUserTagsUpdateResourceTagsListResponseHandler<T extends Resou
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
 
+        String errorStr = null;
+        if(rsp.isJsonObject()) {
+            JsonObject rspObj = ((JsonObject)rsp);
+            if(rspObj.has("error")) {
+                JsonArray errors = rspObj.getAsJsonArray("error");
+                StringBuilder sb = new StringBuilder();
+                for(JsonElement error: errors) {
+                    sb.append(error.getAsString());
+                    sb.append('\n');
+                }
+                errorStr = sb.toString();
+            }
+        }
         PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse r = new PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse(getMessageId(), getPiwigoMethod(), resource);
+        r.setError(errorStr);
         storeResponse(r);
     }
 

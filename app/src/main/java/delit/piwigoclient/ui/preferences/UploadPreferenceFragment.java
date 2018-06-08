@@ -9,7 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.common.MyPreferenceFragment;
+import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
+import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 
 /**
  * Created by gareth on 12/05/17.

@@ -55,6 +55,7 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_delete">Delete</string>
     <string name="button_unlink">UnLink</string>
+    <string name="button_untag">Remove Tag</string>
     <string name="button_close">Close</string>
     <string name="alert_userTypePrefix">User Type</string>
     <string name="tools_menu_title">Tools</string>
@@ -152,6 +153,8 @@
     <string name="alert_confirm_really_delete_from_server">This will delete the item permanently from the server. Continue?</string>
     <string name="alert_confirm_really_delete_items_from_server">This will delete the items permanently from the server. Continue?</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">You\'ve requested to delete %1$d resources that are shared with other albums. Do you wish to delete these from all albums (and the server - permanently), or just unlink them from this album?</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">You\'ve requested to delete %1$d resources. Do you wish to delete these from all albums (and the server) - permanently, or just unlink them from this tag?</string>
+    <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">You\'ve requested to delete %1$d resources. Do you wish to delete these from all albums (and the server) - permanently? (You cannot remove tags from images without the UserTags plugin installed on your server)</string>
     <string name="about_menu_title">About</string>
     <string name="licences_menu_title">Licence</string>
     <string name="about_heading">About This App</string>
@@ -292,37 +295,6 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
-
-
-
-
-
-
-
-
-*** Android Multiple File Selector Dialog - paul.arian.fileselector
-
-The MIT License (MIT)
-
-Copyright © 2015 Shintaro Katafuchi
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
 
 
 
@@ -622,6 +594,7 @@ SOFTWARE.
     <string name="progress_delete_resource">Deleting resource</string>
     <string name="progress_delete_resources">Deleting resources</string>
     <string name="progress_unlink_resources">Unlinking resources</string>
+    <string name="progress_untag_resources_pattern">Removing resources from tag %1$s</string>
     <string name="progress_copy_resources">Copying resources</string>
     <string name="progress_move_resources">Moving resources</string>
     <string name="progress_checking_with_server">Checking credentials with server</string>
@@ -659,7 +632,8 @@ SOFTWARE.
     <string name="upload_username_title">Upload as</string>
     <string name="certificates_heading">Certificates</string>
     <string name="preference_connections_category_client_certificate_auth">Client Certificate Authentication</string>
-    <string name="alert_slideshow_out_of_sync">This slideshow no longer accurately reflects the current album contents</string>
+    <string name="alert_slideshow_out_of_sync_with_album">This slideshow no longer accurately reflects the current album contents</string>
+    <string name="alert_slideshow_out_of_sync_with_tag">This slideshow no longer accurately reflects the current tag contents</string>
     <string name="alert_error_app_not_yet_configured">App not yet configured and connected to a PIWIGO server. Please open the app manually and configure it before attempting to share items with it.</string>
     <string name="error_server_configuration_invalid">Unacceptable piwigo server details, please check app connection configuration</string>
     <string name="alert_image_show_image_select_max_zoom">Max Zoom Factor</string>
@@ -773,4 +747,18 @@ SOFTWARE.
     <string name="paid_feature_only">paid app only</string>
     <string name="slideshow_image_details_tags_title">Tags</string>
     <string name="button_search">Search</string>
+    <string name="server_connection_preference_summary_default">Please select a value</string>
+    <string name="server_connection_preference_user_guest">guest</string>
+    <string name="file_selection_heading">File Selection</string>
+    <string name="tag_heading_pattern">Tag: %1$s</string>
+    <string name="error_updating_tag_pattern">Error removing resource (%1$s) from tag: %2$s</string>
+    <string name="alert_message_info_files_already_pending_approval_pattern">%1$d files were not uploaded as they are already uploaded but pending administrator approval.</string>
+    <string name="piwigo_connection_profile_heading">Connection Profile</string>
+    <string name="folder_root_label">Selector Root</string>
+    <string name="folder_root_root">Device Root</string>
+    <string name="folder_root_userdata">User Data</string>
+    <string name="folder_extstorage">External Storage</string>
+    <string name="folder_default">Default</string>
+    <string name="button_all">Check All</string>
+    <string name="button_none">Check None</string>
 </resources>

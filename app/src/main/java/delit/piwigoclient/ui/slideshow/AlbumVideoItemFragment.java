@@ -45,7 +45,7 @@ import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
-import delit.piwigoclient.ui.common.CustomImageButton;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.IOUtils;
@@ -177,7 +177,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
         simpleExoPlayerView.setPlayer(buildPlayer(model));
 
-        simpleExoPlayerView.setOnTouchListener(new CustomClickTouchListener(getContext()) {
+        simpleExoPlayerView.setOnTouchListener(new CustomClickTouchListener(simpleExoPlayerView) {
             @Override
             public void onLongClick() {
                 if(!isUseCache()) {

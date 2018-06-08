@@ -34,8 +34,11 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.MyPreferenceFragment;
+import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.preference.ClientCertificatePreference;
+import delit.piwigoclient.ui.common.preference.EditableListPreference;
+import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.SetUtils;
@@ -66,7 +69,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             if(val && !initialising) {
                 // If we're enabling this feature, flush the list.
 
-                runningTask = new LoadCertificatesTask(getUiHelper(), prefs, preference.getPreferenceManager());
+                runningTask = new LoadCertificatesTask(getUiHelper(), getPrefs(), preference.getPreferenceManager());
                 runningTask.execute(getContext());
             } else {
                 preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_select_trusted_certificate_key)).setEnabled(val);
@@ -77,7 +80,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     private final transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(final Preference preference, Object value) {
-            String currentPersistedValue = prefs.getString(preference.getKey(), null);
+            String currentPersistedValue = getPrefs().getString(preference.getKey(), null);
             final String newValue = (String) value;
             boolean valueChanged = (newValue != null && !newValue.equals(currentPersistedValue));
 
@@ -178,7 +181,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         initialising = true;
         Preference serverAddressPref = findPreference(R.string.preference_piwigo_server_address_key);
         serverAddressPref.setOnPreferenceChangeListener(serverAddressPrefListener);
-        serverAddressPrefListener.onPreferenceChange(serverAddressPref, prefs.getString(serverAddressPref.getKey(), ""));
+        serverAddressPrefListener.onPreferenceChange(serverAddressPref, getPrefs().getString(serverAddressPref.getKey(), ""));
         findPreference(R.string.preference_piwigo_server_username_key).setOnPreferenceChangeListener(simplePreferenceListener);
         findPreference(R.string.preference_piwigo_server_password_key).setOnPreferenceChangeListener(simplePreferenceListener);
 
@@ -195,12 +198,12 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             public void onItemSelectionChanged(String oldSelection, String newSelection, boolean oldSelectionExists) {
                 if(oldSelection != null) {
                     // clone the current working copy of prefs to the previous active selection
-                    ConnectionPreferences.clonePreferences(prefs, getContext(), null, oldSelection);
+                    ConnectionPreferences.clonePreferences(getPrefs(), getContext(), null, oldSelection);
 //                    if(!oldSelectionExists) {
 //                        ConnectionPreferences.deletePreferences(prefs, getContext(), oldSelection);
 //                    }
                     // copy those profile values to the working app copy of prefs
-                    ConnectionPreferences.clonePreferences(prefs, getContext(), newSelection, null);
+                    ConnectionPreferences.clonePreferences(getPrefs(), getContext(), newSelection, null);
 
                     // refresh all preference values on the page.
                     setPreferenceScreen(null);
@@ -213,13 +216,13 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
             @Override
             public void onItemAltered(String oldValue, String newValue) {
-                ConnectionPreferences.clonePreferences(prefs, getContext(), oldValue, newValue);
-                ConnectionPreferences.deletePreferences(prefs, getContext(), oldValue);
+                ConnectionPreferences.clonePreferences(getPrefs(), getContext(), oldValue, newValue);
+                ConnectionPreferences.deletePreferences(getPrefs(), getContext(), oldValue);
             }
 
             @Override
             public void onItemRemoved(String oldValue) {
-                ConnectionPreferences.deletePreferences(prefs, getContext(), oldValue);
+                ConnectionPreferences.deletePreferences(getPrefs(), getContext(), oldValue);
             }
         });
 
@@ -239,11 +242,11 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                 Set<String> newAliases = X509Utils.listAliasesInStore(newValue);
                 Set<String> removedCertThumbprints = SetUtils.difference(X509Utils.listAliasesInStore(currentValue), newAliases);
                 if(removedCertThumbprints.size() > 0) {
-                    Set<String> preProcessedCerts = prefs.getStringSet(getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>(newAliases.size()));
+                    Set<String> preProcessedCerts = getPrefs().getStringSet(getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>(newAliases.size()));
                     for (String removedThumbprint : removedCertThumbprints) {
                         preProcessedCerts.remove(removedThumbprint);
                     }
-                    prefs.edit().putStringSet(getString(R.string.preference_pre_user_notified_certificates_key), preProcessedCerts).commit();
+                    getPrefs().edit().putStringSet(getString(R.string.preference_pre_user_notified_certificates_key), preProcessedCerts).commit();
                 }
                 return true;
             }
@@ -360,7 +363,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
 
     private void testLogin() {
-        String serverUri = ConnectionPreferences.getPiwigoServerAddress(prefs, getContext());
+        String serverUri = ConnectionPreferences.getPiwigoServerAddress(getPrefs(), getContext());
         if(serverUri == null || serverUri.trim().isEmpty()) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
@@ -384,7 +387,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) {
                 PiwigoResponseBufferingHandler.PiwigoOnLoginResponse rsp = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) response;
-                if(rsp.isSessionRetrieved() && rsp.isUserDetailsRetrieved()) {
+                if(PiwigoSessionDetails.isFullyLoggedIn() && rsp.isUserDetailsRetrieved()) {
                     onLogin(rsp.getOldCredentials());
                 }
             } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse) {
@@ -397,7 +400,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse && ((PiwigoResponseBufferingHandler.BasePiwigoResponse)response).getPiwigoMethod().equals(LogoutResponseHandler.METHOD)) {
                 //TODO find a nicer way of this.
                 // logout failed. Lets just wipe the login state manually for now.
-                PiwigoSessionDetails.logout();
+                PiwigoSessionDetails.logout(getContext());
                 if(loginOnLogout) {
                     loginOnLogout = false;
                     testLogin();

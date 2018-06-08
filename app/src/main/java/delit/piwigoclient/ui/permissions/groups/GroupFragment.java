@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -50,10 +49,12 @@ import delit.piwigoclient.piwigoApi.handlers.GroupRemoveMembersResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.util.ViewListUtils;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
-import delit.piwigoclient.ui.common.CustomImageButton;
-import delit.piwigoclient.ui.common.MyFragment;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.GroupDeletedEvent;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
@@ -62,6 +63,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEve
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapter;
+import delit.piwigoclient.util.SetUtils;
 
 /**
  * Created by gareth on 21/06/17.
@@ -100,10 +102,9 @@ public class GroupFragment extends MyFragment {
     private ArrayList<CategoryItemStub> availableGalleries;
     private boolean fieldsEditable;
     private CheckBox isDefaultField;
-    private HashSet<Long> memberSaveActionIds;
-    private HashSet<Long> permissionsSaveActionIds;
+    private final HashSet<Long> memberSaveActionIds = new HashSet<>(2);
+    private final HashSet<Long> permissionsSaveActionIds = new HashSet<>(2);
     private int selectUsersActionId;
-
 
     public static GroupFragment newInstance(Group group) {
         GroupFragment fragment = new GroupFragment();
@@ -190,8 +191,10 @@ public class GroupFragment extends MyFragment {
             newAccessibleAlbumIds = (HashSet<Long>) savedInstanceState.getSerializable(NEW_ACCESSIBLE_ALBUM_IDS);
             availableGalleries = (ArrayList<CategoryItemStub>) savedInstanceState.getSerializable(AVAILABLE_ALBUMS);
             fieldsEditable = savedInstanceState.getBoolean(STATE_FIELDS_EDITABLE);
-            memberSaveActionIds = (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_MEMBER_SAVE_ACTION_IDS);
-            permissionsSaveActionIds = (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS);
+            SetUtils.setNotNull(memberSaveActionIds, (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_MEMBER_SAVE_ACTION_IDS));
+
+            permissionsSaveActionIds.clear();
+            permissionsSaveActionIds.addAll((HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS));
             selectUsersActionId = savedInstanceState.getInt(STATE_SELECT_USERS_ACTION_ID);
         }
 
@@ -206,14 +209,13 @@ public class GroupFragment extends MyFragment {
         isDefaultField = v.findViewById(R.id.group_is_default);
 
         albumAccessRightsField = v.findViewById(R.id.group_access_rights);
-        albumAccessRightsField.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        albumAccessRightsField.setOnTouchListener(new CustomClickTouchListener(getContext()) {
+        albumAccessRightsField.setOnTouchListener(new CustomClickTouchListener(albumAccessRightsField) {
             @Override
             public boolean onClick() {
                 onExpandPermissions();
                 return true;
             }
-        });
+        }.withScrollingWhenNested());
 
         editButton = v.findViewById(R.id.group_action_edit_button);
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -299,9 +301,6 @@ public class GroupFragment extends MyFragment {
 
     private void saveGroupChanges() {
         setFieldsEditable(false);
-
-        memberSaveActionIds = new HashSet<>(2);
-        permissionsSaveActionIds = new HashSet<>(2);
         String name = groupNameField.getText().toString();
         boolean isDefault = isDefaultField.isChecked();
         newGroup = new Group(currentGroup.getId(), name, isDefault);
@@ -640,16 +639,14 @@ public class GroupFragment extends MyFragment {
     private void populateAlbumPermissionsList() {
         AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter)albumAccessRightsField.getAdapter();
         if(adapter == null) {
-            adapter = new AlbumSelectionListAdapter(this.getContext(), availableGalleries, null, false);
-            albumAccessRightsField.setAdapter(adapter);
-
-        }
-        albumAccessRightsField.clearChoices();
-        for (Long selectedAlbum : getLatestAlbumPermissions()) {
-            int itemPos = adapter.getPosition(selectedAlbum);
-            if (itemPos >= 0) {
-                albumAccessRightsField.setItemChecked(itemPos, true);
-            }
+            BaseRecyclerViewAdapterPreferences adapterPreferences = new BaseRecyclerViewAdapterPreferences();
+            adapterPreferences.selectable(true, false);
+            adapterPreferences.readonly();
+            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, adapterPreferences);
+            availableItemsAdapter.linkToListView(albumAccessRightsField, getLatestAlbumPermissions(), getLatestAlbumPermissions());
+            ViewListUtils.setListViewHeightBasedOnChildren(albumAccessRightsField, 6);
+        } else {
+            adapter.setSelectedItems(getLatestAlbumPermissions());
         }
     }
 

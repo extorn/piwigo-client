@@ -10,44 +10,47 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import java.util.HashSet;
+import java.util.Iterator;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.ui.common.Enableable;
-import delit.piwigoclient.ui.common.SelectableItemsAdapter;
+import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
+ *
+ * @param <T> Item
+ * @param <S> ViewHolder for each Item
  */
-public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> extends RecyclerView.Adapter<S> implements Enableable, SelectableItemsAdapter<T> {
+public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterPreferences, T, S extends CustomViewHolder<V, T>> extends RecyclerView.Adapter<S> implements Enableable, SelectableItemsAdapter<T> {
 
     private static final String TAG = "BaseRecyclerViewAdapter";
     private Context context;
-    private boolean allowItemSelection;
     private final MultiSelectStatusListener<T> multiSelectStatusListener;
+    private V prefs;
     private HashSet<Long> selectedResourceIds = new HashSet<>(0);
     private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
-    private boolean initialSelectionLocked;
-    private boolean captureActionClicks;
-    private boolean allowItemDeletion;
-    private boolean enabled;
 
-
-    public BaseRecyclerViewAdapter(MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
+    public <P extends MultiSelectStatusListener<T>> BaseRecyclerViewAdapter(P multiSelectStatusListener, V prefs) {
         this.setHasStableIds(true);
         this.multiSelectStatusListener = multiSelectStatusListener;
-        this.captureActionClicks = captureActionClicks;
+        this.prefs = prefs;
+    }
+
+    public V getAdapterPrefs() {
+        return prefs;
     }
 
     @Override
     public abstract long getItemId(int position);
 
-    public abstract S buildViewHolder(View view);
+    public abstract S buildViewHolder(View view, int viewType);
 
     protected abstract T getItemById(Long selectedId);
 
-    protected abstract int getItemPosition(T item);
+    public abstract int getItemPosition(T item);
 
     protected abstract void removeItemFromInternalStore(int idxRemoved);
 
@@ -66,46 +69,36 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
     @Override
     public abstract int getItemCount();
 
-    public void setAllowItemDeletion(boolean allowItemDeletion) {
-        this.allowItemDeletion = allowItemDeletion;
+    public boolean isItemSelected(Long itemId) {
+        return selectedResourceIds.contains(itemId);
     }
 
-    public void setCaptureActionClicks(boolean captureActionClicks) {
-
-        this.captureActionClicks = captureActionClicks;
-        if (!captureActionClicks) {
-            if (allowItemSelection) {
-                toggleItemSelection();
-            }
-        }
-    }
-
-    @Override
-    public void setInitiallySelectedItems(HashSet<Long> initialSelection, boolean initialSelectionLocked) {
-        this.initialSelectedResourceIds = initialSelection != null ? new HashSet<>(initialSelection) : new HashSet<Long>(0);
-        this.initialSelectionLocked = initialSelectionLocked;
+    @NonNull
+    protected View inflateView(@NonNull ViewGroup parent, int viewType) {
+        return LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
     }
 
     @NonNull
     @Override
     public S onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         setContext(parent.getContext());
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
+        View view = inflateView(parent, viewType);
 
-        final S viewHolder = buildViewHolder(view);
-        viewHolder.internalCacheViewFieldsAndConfigure(buildCustomClickListener(viewHolder));
+        final S viewHolder = buildViewHolder(view, viewType);
+        CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
+        viewHolder.internalCacheViewFieldsAndConfigure(clickListener);
 
         return viewHolder;
     }
 
-    protected CustomClickListener<T,? extends CustomViewHolder<T>> buildCustomClickListener(S viewHolder) {
+    protected CustomClickListener<V, T, S> buildCustomClickListener(S viewHolder) {
         return new CustomClickListener<>(viewHolder, this);
     }
 
     @Override
     public int getItemViewType(int position) {
-        //groups.getItemByIdx(position).getType();
+        //items.getItemByIdx(position).getType();
         // override this method for multiple item types
         return super.getItemViewType(position);
     }
@@ -115,7 +108,7 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
         T newItem = getItemByPosition(position);
         if (isHolderOutOfSync(holder, newItem)) {
             // store the item in this recyclable holder.
-            holder.fillValues(getContext(), newItem, allowItemDeletion);
+            holder.fillValues(getContext(), newItem, prefs.isAllowItemDeletion());
         }
     }
 
@@ -123,26 +116,35 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
         this.context = context;
     }
 
-    private Context getContext() {
+    protected Context getContext() {
         return context;
     }
 
+    @Override
+    public void setInitiallySelectedItems(HashSet<Long> initialSelection) {
+        this.initialSelectedResourceIds = initialSelection != null ? new HashSet<>(initialSelection) : new HashSet<Long>(0);
+    }
+
+    @Override
     public void setSelectedItems(HashSet<Long> selectedResourceIds) {
-        this.selectedResourceIds = selectedResourceIds;
+        if(initialSelectedResourceIds == null) {
+            throw new IllegalStateException("initially selected items should never be null at this point");
+        }
+        this.selectedResourceIds = selectedResourceIds != null ? new HashSet<>(selectedResourceIds) : new HashSet<Long>(initialSelectedResourceIds);
     }
 
     public void toggleItemSelection() {
-        this.allowItemSelection = !allowItemSelection;
-        if (!allowItemSelection) {
+        prefs.setAllowItemSelection(!prefs.isAllowItemSelection());
+        if (!prefs.isAllowItemSelection()) {
             selectedResourceIds.clear();
         }
         notifyItemRangeChanged(0, getItemCount());
-        multiSelectStatusListener.onMultiSelectStatusChanged(allowItemSelection);
-        multiSelectStatusListener.onItemSelectionCountChanged(selectedResourceIds.size());
+        multiSelectStatusListener.onMultiSelectStatusChanged(this, prefs.isAllowItemSelection());
+        multiSelectStatusListener.onItemSelectionCountChanged(this, selectedResourceIds.size());
     }
 
     public boolean isItemSelectionAllowed() {
-        return allowItemSelection;
+        return prefs.isAllowItemSelection();
     }
 
     @Override
@@ -163,7 +165,7 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
             }
             return selectedItems;
         } catch(RuntimeException e) {
-            throw new IllegalStateException("Not all items are loaded yet. Unable to provide a list of them");
+            throw new IllegalStateException("Not all items are loaded yet. Unable to provide a list of them", e);
         }
     }
 
@@ -193,65 +195,94 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
         }
     }
 
-    public void remove(T group) {
-        int idxRemoved = getItemPosition(group);
+    public void remove(T item) {
+        int idxRemoved = getItemPosition(item);
         if(idxRemoved >= 0) {
             removeItemFromInternalStore(idxRemoved);
             notifyItemRemoved(idxRemoved);
         }
     }
 
-    public void replaceOrAddItem(T group) {
+    public void replaceOrAddItem(T item) {
         T itemToBeReplaced = null;
         try {
-            itemToBeReplaced = getItemFromInternalStoreMatching(group);
+            itemToBeReplaced = getItemFromInternalStoreMatching(item);
         } catch (IllegalArgumentException e) {
-            // thrown if the group isn't present.
+            // thrown if the item isn't present.
         }
         if (itemToBeReplaced != null) {
             int replaceIdx = getItemPosition(itemToBeReplaced);
-            replaceItemInInternalStore(replaceIdx, group);
+            replaceItemInInternalStore(replaceIdx, item);
         } else {
-            addItemToInternalStore(group);
+            addItemToInternalStore(item);
         }
     }
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return prefs.isEnabled();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
         boolean changed = false;
-        if (this.enabled != enabled) {
+        if (enabled != prefs.isEnabled()) {
             changed = true;
         }
-        this.enabled = enabled;
+        prefs.setEnabled(enabled);
         if (changed) {
             notifyDataSetChanged();
         }
     }
 
+    public static class MultiSelectStatusAdapter<T> implements MultiSelectStatusListener<T> {
+
+        @Override
+        public <A extends BaseRecyclerViewAdapter> void onMultiSelectStatusChanged(A adapter, boolean multiSelectEnabled) {
+
+        }
+
+        @Override
+        public <A extends BaseRecyclerViewAdapter> void onItemSelectionCountChanged(A adapter, int size) {
+
+        }
+
+        @Override
+        public <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, T g) {
+
+        }
+
+        @Override
+        public <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, T item) {
+
+        }
+
+        @Override
+        public <A extends BaseRecyclerViewAdapter> void onItemLongClick(A adapter, T item) {
+
+        }
+    }
 
     public interface MultiSelectStatusListener<T> {
-        void onMultiSelectStatusChanged(boolean multiSelectEnabled);
+        <A extends BaseRecyclerViewAdapter> void onMultiSelectStatusChanged(A adapter, boolean multiSelectEnabled);
 
-        void onItemSelectionCountChanged(int size);
+        <A extends BaseRecyclerViewAdapter> void onItemSelectionCountChanged(A adapter, int size);
 
-        void onItemDeleteRequested(T g);
+        <A extends BaseRecyclerViewAdapter> void onItemDeleteRequested(A adapter, T g);
 
-        void onItemClick(T item);
+        <A extends BaseRecyclerViewAdapter> void onItemClick(A adapter, T item);
 
-        void onItemLongClick(T item);
+        <A extends BaseRecyclerViewAdapter> void onItemLongClick(A adapter, T item);
 
     }
 
-    protected class ItemSelectionListener implements CompoundButton.OnCheckedChangeListener {
+    protected class ItemSelectionListener<X extends BaseRecyclerViewAdapter<V,T,S>> implements CompoundButton.OnCheckedChangeListener {
 
         private final S holder;
+        private X adapter;
 
-        public ItemSelectionListener(S holder) {
+        public ItemSelectionListener(X adapter, S holder) {
+            this.adapter = adapter;
             this.holder = holder;
         }
 
@@ -260,34 +291,54 @@ public abstract class BaseRecyclerViewAdapter<T, S extends CustomViewHolder<T>> 
             boolean changed = false;
             if (isChecked) {
                 changed = selectedResourceIds.add(holder.getItemId());
+                if(selectedResourceIds.size() > 1 && !isMultiSelectionAllowed()) {
+                    changed |= deselectAllOtherItems();
+                }
             } else {
-                if(isAllowItemDeselection(holder.getItemId())) {
-                    changed = selectedResourceIds.remove(holder.getItemId());
-                } else {
-                    // re-check the button.
-                    buttonView.setChecked(true);
+                if(selectedResourceIds.contains(holder.getItemId())) {
+                    if (isAllowItemDeselection(holder.getItemId())) {
+                        changed = selectedResourceIds.remove(holder.getItemId());
+                    } else {
+                        // re-check the button.
+                        buttonView.setChecked(true);
+                    }
                 }
             }
             if (changed) {
-                multiSelectStatusListener.onItemSelectionCountChanged(selectedResourceIds.size());
+                multiSelectStatusListener.onItemSelectionCountChanged(adapter, selectedResourceIds.size());
             }
+        }
+
+        private boolean deselectAllOtherItems() {
+            boolean changed = false;
+            Iterator<Long> iter = selectedResourceIds.iterator();
+            while(iter.hasNext()) {
+                Long selectedId = iter.next();
+                if(!selectedId.equals(holder.getItemId()) && isAllowItemDeselection(selectedId)) {
+                    iter.remove();
+                    notifyItemChanged(getItemPosition(getItemById(selectedId)));
+                    changed = true;
+                }
+            }
+            return changed;
         }
     }
 
-    protected boolean isAllowItemDeselection(long itemId) {
-        return !initialSelectionLocked || !initialSelectedResourceIds.contains(itemId);
+    @Override
+    public boolean isAllowItemDeselection(long itemId) {
+        return (!prefs.isInitialSelectionLocked() || !initialSelectedResourceIds.contains(itemId)) && (isMultiSelectionAllowed() || selectedResourceIds.size() > 1);
     }
 
-    public boolean isCaptureActionClicks() {
-        return captureActionClicks;
+    public boolean isMultiSelectionAllowed() {
+        return prefs.isMultiSelectionEnabled();
     }
 
-    protected void onDeleteItem(S viewHolder, View v) {
-        multiSelectStatusListener.onItemDeleteRequested(viewHolder.getItem());
+    public void onDeleteItem(S viewHolder, View v) {
+        multiSelectStatusListener.onItemDeleteRequested(this, viewHolder.getItem());
     }
 
-
-    public MultiSelectStatusListener<T> getMultiSelectStatusListener() {
-        return multiSelectStatusListener;
+    public <P extends MultiSelectStatusListener<T>> P getMultiSelectStatusListener() {
+        return (P)multiSelectStatusListener;
     }
+
 }

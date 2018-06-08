@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,31 +11,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
-        <delit.piwigoclient.ui.common.CustomImageButton
+        <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/user_action_edit_button"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
 
-        <delit.piwigoclient.ui.common.CustomImageButton
+        <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/user_action_save_button"
-            android:layout_toRightOf="@id/user_action_edit_button"
+            android:layout_toEndOf="@id/user_action_edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_save_black_24dp"/>
 
-        <delit.piwigoclient.ui.common.CustomImageButton
+        <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/user_action_discard_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_undo_black_24dp"
-            android:layout_toRightOf="@id/user_action_save_button"/>
+            android:layout_toEndOf="@id/user_action_save_button"/>
 
-        <delit.piwigoclient.ui.common.CustomImageButton
+        <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/user_action_delete_button"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_delete_black_24px" />
@@ -43,13 +42,10 @@
 
     <ScrollView
         android:id="@+id/user_edit_scrollview"
-        android:layout_below="@id/user_edit_controls"
-        android:layout_above="@+id/user_adView"
-        android:layout_alignWithParentIfMissing="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -57,20 +53,21 @@
             <TextView
                 android:id="@+id/user_username_heading"
                 style="@style/Base.TextAppearance.AppCompat.Headline"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="7px"
+                android:layout_marginBottom="7dp"
                 android:text="@string/user_user_heading" />
 
             <TextView
                 android:id="@+id/user_username_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:labelFor="@+id/user_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
                 android:text="@string/user_username_title" />
@@ -79,20 +76,22 @@
                 android:id="@+id/user_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:clickable="true"
                 android:inputType="text|textNoSuggestions"
                 android:maxLines="1"
-                android:textColor="@drawable/edit_text_color_selector" />
+                android:textColor="@drawable/edit_text_color_selector"
+                android:focusable="true" />
 
             <TextView
                 android:id="@+id/user_password_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:labelFor="@+id/user_password_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
                 android:text="@string/user_password_title" />
@@ -101,20 +100,22 @@
                 android:id="@+id/user_password_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:clickable="true"
                 android:inputType="textWebPassword"
                 android:maxLines="1"
-                android:textColor="@drawable/edit_text_color_selector" />
+                android:textColor="@drawable/edit_text_color_selector"
+                android:focusable="true" />
 
             <TextView
                 android:id="@+id/user_usertype_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:labelFor="@+id/user_usertype"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
                 android:text="@string/user_usertype_title" />
@@ -129,10 +130,11 @@
             <TextView
                 android:id="@+id/user_privacy_level_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:labelFor="@+id/user_privacy_level"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
                 android:text="@string/user_privacy_level_title" />
@@ -147,10 +149,11 @@
             <TextView
                 android:id="@+id/user_email_label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:labelFor="@+id/user_email_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
                 android:text="@string/user_email_title" />
@@ -159,12 +162,13 @@
                 android:id="@+id/user_email_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:clickable="true"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
-                android:textColor="@drawable/edit_text_color_selector" />
+                android:textColor="@drawable/edit_text_color_selector"
+                android:focusable="true" />
 
 
             <TextView
@@ -172,16 +176,16 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
                 android:text="@string/user_lastvisit_title" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/user_lastvisit"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text|textNoSuggestions"
@@ -196,13 +200,13 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
                 android:button="@null"
                 android:textColor="@drawable/edit_text_color_selector"
-                android:drawableRight="@drawable/always_clear_checkbox"
+                android:drawableEnd="@drawable/always_clear_checkbox"
                 android:text="@string/user_high_definition_title" />
 
             <TextView
@@ -210,16 +214,16 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
                 android:text="@string/user_groups_title" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/user_groups"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine|textNoSuggestions"
@@ -235,8 +239,8 @@
                 android:text="@string/user_access_rights_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginTop="7dp"
                 android:layout_marginBottom="3dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
@@ -244,10 +248,9 @@
             <ListView
                 android:id="@+id/user_access_rights"
                 android:layout_width="match_parent"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:clickable="true"
-                android:layout_height="160dp"/>
+                android:layout_height="160dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"/>
 
         </LinearLayout>
 
@@ -259,9 +262,8 @@
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
         ads:adUnitId="@string/ad_id_user_edit_banner">
     </com.google.android.gms.ads.AdView>
 
-</RelativeLayout>
+</LinearLayout>

@@ -9,10 +9,9 @@ import android.support.v7.app.AppCompatDelegate;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
+import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
-import paul.arian.fileselector.FileSelectionActivity;
 
 /**
  * Created by gareth on 14/06/17.
@@ -26,19 +25,8 @@ public class MyApplication extends Application implements Application.ActivityLi
     }
 
     private transient SharedPreferences prefs;
-    private static MyApplication instance;
-    private Activity currentActivity;
 
     public MyApplication() {
-        instance = this;
-    }
-
-    public static MyApplication getInstance() {
-        return instance;
-    }
-
-    public Activity getCurrentActivity() {
-        return currentActivity;
     }
 
     private void upgradeAnyPreferencesIfRequired() {
@@ -94,7 +82,6 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-        currentActivity = activity;
     }
 
     @Override
@@ -104,17 +91,13 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityResumed(Activity activity) {
-        currentActivity = activity;
-        if (activity instanceof FileSelectionActivity) {
+        if (activity instanceof FileSelectActivity) {
             AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
         }
     }
 
     @Override
     public void onActivityPaused(Activity activity) {
-        if(activity == currentActivity) {
-            currentActivity = null;
-        }
     }
 
     @Override

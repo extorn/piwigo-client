@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Android template wizards.
  * <p>
  */
-public class PiwigoTag extends ResourceContainer<Tag> implements Serializable {
+public class PiwigoTag extends ResourceContainer<Tag, GalleryItem> implements Serializable {
 
     public PiwigoTag(Tag tag) {
         super(tag, "ResourceItem", tag.getUsageCount());

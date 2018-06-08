@@ -27,11 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.UploadFileChunk;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
@@ -434,13 +436,22 @@ public class NewPiwigoUploadService extends IntentService {
 
             ImageGetInfoResponseHandler handler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null), multimediaExtensionList);
             int allowedAttempts = 2;
-            while (!handler.isSuccess() && allowedAttempts > 0) {
+            boolean success = false;
+            while (!success && allowedAttempts > 0) {
                 allowedAttempts--;
                 // this is blocking
                 callPiwigoServer(handler);
                 if (handler.isSuccess()) {
+                    success = true;
                     PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse rsp =(PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse)handler.getResponse();
                     thisUploadJob.addFileUploaded(entry.getKey(), rsp.getResource());
+                } else if(PiwigoSessionDetails.isUseCommunityPlugin() && handler.getResponse() instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
+                    PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse rsp = (PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) handler.getResponse();
+                    if(rsp.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+                        success = true; // image is on the server, but not yet approved.
+                        thisUploadJob.addFileUploaded(entry.getKey(), null);
+                        postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse(getNextMessageId(), entry.getKey(), thisUploadJob.getUploadProgress(entry.getKey())));
+                    }
                 }
             }
         }

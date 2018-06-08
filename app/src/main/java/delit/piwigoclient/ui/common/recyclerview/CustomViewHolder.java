@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-public abstract class CustomViewHolder<T> extends RecyclerView.ViewHolder {
+public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferences, T> extends RecyclerView.ViewHolder {
 
     private T item;
     private CustomClickListener itemActionListener;
@@ -27,7 +27,7 @@ public abstract class CustomViewHolder<T> extends RecyclerView.ViewHolder {
         this.item = item;
     }
 
-    public void internalCacheViewFieldsAndConfigure(CustomClickListener<T, ? extends CustomViewHolder<T>> itemActionListener) {
+    public void internalCacheViewFieldsAndConfigure(CustomClickListener<V, T, ? extends CustomViewHolder<V, T>> itemActionListener) {
         this.itemActionListener = itemActionListener;
         itemView.setOnClickListener(itemActionListener);
         itemView.setOnLongClickListener(itemActionListener);

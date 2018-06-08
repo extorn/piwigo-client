@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -267,6 +268,17 @@ public class PiwigoResponseBufferingHandler {
         handlers.put(newHandler.getHandlerId(), newHandler);
     }
 
+    public synchronized Set<Long> getUnknownMessageIds(Set<Long> messageIdsToCheck) {
+        Iterator<Long> iterator = messageIdsToCheck.iterator();
+        while (iterator.hasNext()) {
+            Long next =  iterator.next();
+            if(!handlerResponseMap.containsKey(next)) {
+                iterator.remove();
+            }
+        }
+        return new HashSet<Long>(messageIdsToCheck);
+    }
+
     public interface PiwigoResponse extends Response {
         String getPiwigoMethod();
     }
@@ -325,7 +337,7 @@ public class PiwigoResponseBufferingHandler {
     /**
      * Marker interface
      */
-    public interface ErrorResponse {
+    public interface ErrorResponse extends Response {
     }
 
     /**
@@ -600,8 +612,22 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoUserTagsUpdateTagsListResponse extends PiwigoResourceItemResponse {
+        private String error;
+
         public PiwigoUserTagsUpdateTagsListResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
             super(messageId, piwigoMethod, piwigoResource);
+        }
+
+        public void setError(String error) {
+            this.error = error;
+        }
+
+        public boolean hasError() {
+            return error != null;
+        }
+
+        public String getError() {
+            return error;
         }
     }
 
@@ -1212,16 +1238,9 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends BasePiwigoResponse {
-        private final T resource;
-
-        public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, T resource) {
-            super(messageId, piwigoMethod, true);
-            this.resource = resource;
-        }
-
-        public T getResource() {
-            return resource;
+    public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends PiwigoResourceItemResponse {
+        public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
+            super(messageId, piwigoMethod, piwigoResource);
         }
     }
 

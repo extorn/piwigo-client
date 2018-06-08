@@ -22,7 +22,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -30,7 +29,6 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
-import delit.piwigoclient.model.piwigo.PiwigoTag;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
@@ -38,8 +36,8 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomViewPager;
-import delit.piwigoclient.ui.common.MyFragment;
-import delit.piwigoclient.ui.common.MyFragmentRecyclerPagerAdapter;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
+import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
@@ -48,6 +46,7 @@ import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
+import delit.piwigoclient.util.SetUtils;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static android.view.View.GONE;
@@ -62,11 +61,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 //    private static final String TAG = "SlideshowFragment";
     private static final String STATE_GALLERY = "gallery";
     private static final String STATE_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
+    private static final String STATE_ACTIVE_LOAD_THREADS = "activeLoadThreads";
     private CustomViewPager viewPager;
-    private ResourceContainer<T> gallery;
+    private ResourceContainer<T, GalleryItem> gallery;
     private int rawCurrentGalleryItemPosition;
     private View progressIndicator;
-    private final Set<Integer> pagesBeingLoaded = new HashSet<>();
+    private final HashSet<Integer> pagesBeingLoaded = new HashSet<>();
     private GalleryItemAdapter galleryItemAdapter;
 
     public static Bundle buildArgs(ResourceContainer gallery, GalleryItem currentGalleryItem) {
@@ -81,6 +81,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_GALLERY, gallery);
         outState.putInt(STATE_GALLERY_ITEM_DISPLAYED, rawCurrentGalleryItemPosition);
+        outState.putSerializable(STATE_ACTIVE_LOAD_THREADS, pagesBeingLoaded);
     }
 
     @Override
@@ -129,6 +130,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         if (configurationBundle != null) {
             gallery = (ResourceContainer) configurationBundle.getSerializable(STATE_GALLERY);
             rawCurrentGalleryItemPosition = configurationBundle.getInt(STATE_GALLERY_ITEM_DISPLAYED);
+            pagesBeingLoaded.clear();
+            SetUtils.setNotNull(pagesBeingLoaded, (HashSet<Integer>) configurationBundle.getSerializable(STATE_ACTIVE_LOAD_THREADS));
         }
 
         if(viewPager != null && isSessionDetailsChanged()) {
@@ -211,7 +214,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         progressIndicator.setVisibility(VISIBLE);
     }
 
-    protected ResourceContainer<T> getGallery() {
+    protected ResourceContainer<T, GalleryItem> getGallery() {
         return gallery;
     }
 
@@ -247,7 +250,9 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemActionFinishedEvent event) {
         //TODO this is rubbish, store a reference to the parent in the resource items so we can test if this screen is relevant.
-        if((gallery instanceof PiwigoTag || event.getItem().getParentId().equals(gallery.getId())) && getUiHelper().isTrackingRequest(event.getActionId())) {
+        // parentId will be null if the parent is a Tag not an Album (viewing contents of a Tag).
+        if((event.getItem().getParentId() == null || event.getItem().getParentId().equals(gallery.getId()))
+                && getUiHelper().isTrackingRequest(event.getActionId())) {
             viewPager.setEnabled(true);
         }
     }
@@ -264,7 +269,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     @Subscribe
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
         if(gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.id) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync));
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_album));
         }
     }
 
@@ -468,7 +473,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         }
     }
 
-    protected abstract long invokeResourcePageLoader(ResourceContainer<T> containerDetails, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList);
+    protected abstract long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> containerDetails, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList);
 
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
@@ -497,7 +502,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         }
 
         public void onGetResources(final PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse response) {
-            synchronized (gallery) {
+            synchronized (this) {
                 gallery.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
                 pagesBeingLoaded.remove(response.getPage());
                 viewPager.getAdapter().notifyDataSetChanged();

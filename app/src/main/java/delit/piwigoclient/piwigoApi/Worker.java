@@ -82,7 +82,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                 HTTP_THREAD_POOL_EXECUTOR.setMaximumPoolSize(newMaxPoolSize);
             }
         } catch(RuntimeException e) {
-            handler.sendFailureMessage(-1, null, null, new IllegalStateException(MyApplication.getInstance().getString(R.string.error_building_http_engine), e));
+            handler.sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
         }
 
     }

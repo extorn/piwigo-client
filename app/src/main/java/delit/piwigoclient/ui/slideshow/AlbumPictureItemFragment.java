@@ -30,7 +30,7 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.PicassoFactory;
-import delit.piwigoclient.ui.common.CustomImageButton;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
@@ -121,14 +121,14 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
 
             @Override
             protected void onImageUnavailable() {
-                getLoadInto().setImageResource(R.drawable.blank);
+                getLoadInto().setImageResource(R.drawable.ic_file_gray_24dp);
             }
         };
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!loader.isImageLoaded()) {
+                if(loader != null && !loader.isImageLoaded()) {
                     loader.load();
                 }
             }

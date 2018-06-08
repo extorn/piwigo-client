@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -20,7 +21,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
@@ -52,17 +52,19 @@ import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.NewPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.MyApplication;
-import delit.piwigoclient.ui.common.CustomImageButton;
-import delit.piwigoclient.ui.common.MyFragment;
+import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.common.list.BiArrayAdapter;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionCompleteEvent;
-import delit.piwigoclient.ui.events.trackable.FileListSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.util.ArrayUtils;
 
 
 /**
@@ -90,7 +92,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     private Spinner privacyLevelSpinner;
     private CustomImageButton fileSelectButton;
     private CategoryItem currentGallery;
-    private int privacyLevelWantedSelection;
+    private long privacyLevelWanted;
     private Long uploadToAlbumId;
     private Long uploadJobId;
     private ArrayList<File> filesForUpload = new ArrayList<>();
@@ -115,7 +117,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(SAVED_STATE_CURRENT_GALLERY, currentGallery);
-        outState.putInt(SAVED_STATE_PRIVACY_LEVEL_WANTED, privacyLevelWantedSelection);
+        outState.putLong(SAVED_STATE_PRIVACY_LEVEL_WANTED, privacyLevelWanted);
         outState.putLong(SAVED_STATE_UPLOAD_ALBUM_ID, uploadToAlbumId);
         outState.putSerializable(SAVED_STATE_FILES_BEING_UPLOADED, filesForUpload);
         outState.putLong(SAVED_SUB_CAT_NAMES_ACTION_ID, subCategoryNamesActionId);
@@ -141,7 +143,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void onEvent(FileListSelectionCompleteEvent stickyEvent) {
+    public void onEvent(FileSelectionCompleteEvent stickyEvent) {
         // Integer.MIN_VALUE is a special flag to allow external apps to call in and their events to always be handled.
         if(getUiHelper().isTrackingRequest(stickyEvent.getActionId()) || stickyEvent.getActionId() == Integer.MIN_VALUE) {
             EventBus.getDefault().removeStickyEvent(stickyEvent);
@@ -173,8 +175,12 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             adView.setVisibility(View.GONE);
         }
 
+        AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
+        viewPrefs.selectable(false, false);
+        viewPrefs.withShowHierachy();
+
         selectedGallerySpinner = view.findViewById(R.id.selected_gallery);
-        availableGalleries = new AvailableAlbumsListAdapter(currentGallery, getContext(), android.R.layout.simple_spinner_item);
+        availableGalleries = new AvailableAlbumsListAdapter(viewPrefs, currentGallery, getContext(), android.R.layout.simple_spinner_item);
         availableGalleries.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         selectedGallerySpinner.setEnabled(false);
         selectedGallerySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -193,13 +199,14 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         fileSelectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FileListSelectionNeededEvent event = new FileListSelectionNeededEvent();
                 if(!PiwigoSessionDetails.isFullyLoggedIn()) {
                     String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
                     getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri),new LoginResponseHandler(getContext()).invokeAsync(getContext()));
                 } else {
+                    FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
                     ArrayList<String> allowedFileTypes = new ArrayList<>(PiwigoSessionDetails.getInstance().getAllowedFileTypes());
-                    event.setAllowedFileTypes(allowedFileTypes);
+                    event.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
+                    event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
                     getUiHelper().setTrackingRequest(event.getActionId());
                     EventBus.getDefault().post(event);
                 }
@@ -224,17 +231,23 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         filesForUploadView = view.findViewById(R.id.selected_files_for_upload);
 
         privacyLevelSpinner = view.findViewById(R.id.privacy_level);
-// Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> privacyLevelOptionsAdapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.privacy_levels_groups_array, android.R.layout.simple_spinner_item);
-// Specify the layout to use when the list of choices appears
+
+        CharSequence[] privacyLevelsText = getResources().getTextArray(R.array.privacy_levels_groups_array);
+        long[] privacyLevelsValues = ArrayUtils.getLongArray(getResources().getIntArray(R.array.privacy_levels_values_array));
+        BiArrayAdapter<CharSequence> privacyLevelOptionsAdapter = new BiArrayAdapter(getContext(), android.R.layout.simple_spinner_item, 0, privacyLevelsText, privacyLevelsValues);
+//        if(!PiwigoSessionDetails.isAdminUser()) {
+//            // remove the "admin only" privacy option.
+//            privacyLevelOptionsAdapter.remove(privacyLevelOptionsAdapter.getItemById(8)); // Admin ID
+//        }
+        // Specify the layout to use when the list of choices appears
         privacyLevelOptionsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
 // Apply the filesToUploadAdapter to the spinner
         privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
         privacyLevelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                privacyLevelWantedSelection = position;
+                privacyLevelWanted = id;
             }
 
             @Override
@@ -255,7 +268,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         if (savedInstanceState != null) {
             // update view with saved data
             currentGallery = (CategoryItem) savedInstanceState.getSerializable(SAVED_STATE_CURRENT_GALLERY);
-            privacyLevelWantedSelection = savedInstanceState.getInt(SAVED_STATE_PRIVACY_LEVEL_WANTED);
+            privacyLevelWanted = savedInstanceState.getLong(SAVED_STATE_PRIVACY_LEVEL_WANTED);
             uploadToAlbumId = savedInstanceState.getLong(SAVED_STATE_UPLOAD_ALBUM_ID);
             if(savedInstanceState.containsKey(SAVED_STATE_UPLOAD_JOB_ID)) {
                 uploadJobId = savedInstanceState.getLong(SAVED_STATE_UPLOAD_JOB_ID);
@@ -282,8 +295,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             // item may not be found if it has just been deleted from the server or we have changed server we're connected to.
             selectedGallerySpinner.setSelection(position);
         }
-        if(privacyLevelWantedSelection >= 0) {
-            privacyLevelSpinner.setSelection(privacyLevelWantedSelection);
+        if(privacyLevelWanted >= 0) {
+            privacyLevelSpinner.setSelection(privacyLevelOptionsAdapter.getPosition(privacyLevelWanted));
         }
 
         boolean showLargeFileThumbnails = prefs.getBoolean(getString(R.string.preference_data_upload_large_thumbnail_key), getResources().getBoolean(R.bool.preference_data_upload_large_thumbnail_default));
@@ -383,9 +396,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                 selectedGallerySpinner.setSelection(position);
             }
 
-            privacyLevelWantedSelection = getPrivacyLevelSelection(uploadJob.getPrivacyLevelWanted());
-            if(privacyLevelWantedSelection >= 0) {
-                privacyLevelSpinner.setSelection(privacyLevelWantedSelection);
+            privacyLevelWanted = uploadJob.getPrivacyLevelWanted();
+            if(privacyLevelWanted >= 0) {
+                privacyLevelSpinner.setSelection(((BiArrayAdapter)privacyLevelSpinner.getAdapter()).getPosition(privacyLevelWanted));
             }
 
             ArrayList<File> filesToBeUploaded = uploadJob.getFilesNotYetUploaded();
@@ -490,7 +503,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         boolean useTempFolder = !PiwigoSessionDetails.isUseCommunityPlugin();
 
         long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
-        return NewPiwigoUploadService.createUploadJob(getContext(), filesForUpload, uploadToCategory, getPrivacyLevelWanted(), handlerId, useTempFolder);
+        return NewPiwigoUploadService.createUploadJob(getContext(), filesForUpload, uploadToCategory, (int) privacyLevelWanted, handlerId, useTempFolder);
     }
 
     private void allowUserUploadConfiguration(UploadJob uploadJob) {
@@ -550,8 +563,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
     private void notifyUser(Context context, int titleId, String message) {
         if(getContext() == null) {
-            Context ctx = MyApplication.getInstance();
-            notifyUserUploadStatus(ctx, message);
+            notifyUserUploadStatus(context.getApplicationContext(), message);
         } else {
             getUiHelper().showOrQueueDialogMessage(titleId, message);
         }
@@ -574,20 +586,6 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 //      Clear the last notification
         getUiHelper().clearNotification(TAG, 1);
         getUiHelper().showNotification(TAG, 1, mBuilder.build());
-    }
-
-    private int getPrivacyLevelWanted() {
-        return getResources().getIntArray(R.array.privacy_levels_values_array)[privacyLevelWantedSelection];
-    }
-
-    private int getPrivacyLevelSelection(int privacyLevel) {
-        int[] privacyLevels = getResources().getIntArray(R.array.privacy_levels_values_array);
-        for(int i = 0; i < privacyLevels.length; i++) {
-            if(privacyLevels[i] == privacyLevel) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     @Override
@@ -773,6 +771,11 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                 uploadJobId = null;
                 if (UploadFragment.this.isAdded()) {
                     NewPiwigoUploadService.removeJob(job);
+                }
+                HashSet<File> filesPendingApproval = job.getFilesPendingApproval();
+                if(filesPendingApproval.size() > 0) {
+                    String msg = getString(R.string.alert_message_info_files_already_pending_approval_pattern, filesPendingApproval.size());
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, msg);
                 }
             } else {
                 int errMsgResourceId = R.string.alert_message_error_uploading_start;

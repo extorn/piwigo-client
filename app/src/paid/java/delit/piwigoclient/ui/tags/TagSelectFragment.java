@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -31,25 +32,31 @@ import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsGetListResponseHandle
 import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
-import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.RecyclerViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter> {
+public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String TAGS_MODEL = "tagsModel";
     private static final String TAGS_PAGE_BEING_LOADED = "tagsPageBeingLoaded";
     private PiwigoTags tagsModel = new PiwigoTags();
     private int pageToLoadNow = -1;
 
-    public static TagSelectFragment newInstance(boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, boolean initialSelectionLocked, int actionId, HashSet<Long> initialSelection) {
+    public static TagSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         TagSelectFragment fragment = new TagSelectFragment();
-        fragment.setArguments(buildArgsBundle(multiSelectEnabled, allowEditing, allowAddition, initialSelectionLocked, actionId, initialSelection));
+        fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
         return fragment;
+    }
+
+    @Override
+    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
+        return new BaseRecyclerViewAdapterPreferences();
     }
 
     @Override
@@ -57,6 +64,20 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         super.onSaveInstanceState(outState);
         outState.putSerializable(TAGS_MODEL, tagsModel);
         outState.putInt(TAGS_PAGE_BEING_LOADED, pageToLoadNow);
+    }
+
+    private boolean isTagSelectionAllowed() {
+        if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+            return false;
+        }
+        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
+        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
+        return allowTagEdit;
+    }
+
+    @Override
+    protected boolean isNotAuthorisedToAlterState() {
+        return !isTagSelectionAllowed();
     }
 
     @Nullable
@@ -79,33 +100,12 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             return null;
         }
 
-        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusListener<Tag>() {
-            @Override
-            public void onMultiSelectStatusChanged(boolean multiSelectEnabled) {
-            }
-
-            @Override
-            public void onItemSelectionCountChanged(int size) {
-            }
-
-            @Override
-            public void onItemDeleteRequested(Tag g) {
-            }
-            @Override
-            public void onItemClick(Tag item) {
-
-            }
-
-            @Override
-            public void onItemLongClick(Tag item) {
-
-            }
-        }, captureActionClicks);
-        if(!viewAdapter.isItemSelectionAllowed()) {
-            viewAdapter.toggleItemSelection();
+        if(isNotAuthorisedToAlterState()) {
+            getViewPrefs().readonly();
         }
 
+        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
+        }, getViewPrefs());
         setListAdapter(viewAdapter);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());
@@ -143,48 +143,67 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         final View v = LayoutInflater.from(getContext()).inflate(R.layout.create_tag ,null);
         EditText tagNameEdit = (EditText)v.findViewById(R.id.tag_tagname);
 
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                AlertDialog alert = (AlertDialog)dialog;
-                EditText tagNameEdit = (EditText)alert.findViewById(R.id.tag_tagname);
-                String tagName = tagNameEdit.getText().toString();
-
-                if(which == AlertDialog.BUTTON_POSITIVE) {
-                    onPositiveButton(tagName);
-                } else if(which == AlertDialog.BUTTON_NEUTRAL) {
-                    onNeutralButton(tagName);
-                }
-
-            }
-
-            private void onNeutralButton(String tagName) {
-                if(PiwigoSessionDetails.isLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForSearch()) {
-                    addMatchingTagsForSelection(tagName);
-                } else {
-                    // sink this click - the user is trying to rush ahead before the UI has finished loading.
-                }
-            }
-
-            private void onPositiveButton(String tagName) {
-                if(PiwigoSessionDetails.isLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate()) {
-                    addNewTagForSelection(tagName);
-                } else if(PiwigoSessionDetails.isAdminUser()) {
-                    createNewTag(tagName);
-                } else if(PiwigoSessionDetails.isLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()){
-                    // sink this click - the user is trying to rush ahead before the UI has finished loading.
-                }
-            }
-        };
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext()).setView(v)
-                .setNegativeButton(R.string.button_cancel, listener);
+                .setNegativeButton(R.string.button_cancel, null);
         if(PiwigoSessionDetails.getInstance().isUseUserTagPluginForSearch()) {
-            dialogBuilder.setNeutralButton(R.string.button_search, listener);
+            dialogBuilder.setNeutralButton(R.string.button_search, null);
         }
-        final AlertDialog dialog = dialogBuilder.setPositiveButton(R.string.button_ok, listener)
-                .show();
+        dialogBuilder.setPositiveButton(R.string.button_ok, null);
+        final AlertDialog dialog = dialogBuilder.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+
+                View.OnClickListener listener = new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog alert = (AlertDialog)dialog;
+                        EditText tagNameEdit = alert.findViewById(R.id.tag_tagname);
+                        String tagName = tagNameEdit.getText().toString();
+                        if(tagName.length() == 0) {
+                            //do nothing.
+                            return;
+                        }
+
+                        if(v == alert.getButton(AlertDialog.BUTTON_POSITIVE)) {
+                            onPositiveButton(tagName);
+                        } else if(v == alert.getButton(AlertDialog.BUTTON_NEUTRAL)) {
+                            onNeutralButton(tagName);
+                        }
+                    }
+                    private void onNeutralButton(String tagName) {
+                        if(PiwigoSessionDetails.isLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForSearch()) {
+                            addMatchingTagsForSelection(tagName);
+                        } else {
+                            // sink this click - the user is trying to rush ahead before the UI has finished loading.
+                        }
+                    }
+
+                    private void onPositiveButton(String tagName) {
+                        if(PiwigoSessionDetails.isLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate()) {
+                            addNewTagForSelection(tagName);
+                        } else if(PiwigoSessionDetails.isAdminUser()) {
+                            createNewTag(tagName);
+                        } else if(PiwigoSessionDetails.isLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()){
+                            // sink this click - the user is trying to rush ahead before the UI has finished loading.
+                        }
+                    }
+                };
+
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(listener);
+                button.setEnabled(false);
+                button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+                if(button != null) {
+                    button.setOnClickListener(listener);
+                    button.setEnabled(false);
+                }
+            }
+        });
+
+        dialog.show();
 
         tagNameEdit.addTextChangedListener(new TextWatcher() {
 
@@ -201,7 +220,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
                     ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(tagName.length() > 0);
                 }
                 ((AlertDialog) dialog).getButton(
-                        AlertDialog.BUTTON_POSITIVE).setEnabled(!tagsModel.containsTag(tagName));
+                        AlertDialog.BUTTON_POSITIVE).setEnabled(tagName.length() > 0 && !tagsModel.containsTag(tagName));
             }
 
             @Override
@@ -285,6 +304,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
+                getViewPrefs().setInitialSelectionLocked(getViewPrefs().isAllowItemSelection() && !PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
                 if(getListAdapter() != null && getListAdapter().getItemCount() > 0) {
                     getListAdapter().notifyDataSetChanged();
                     // force redraw of either list.
@@ -315,16 +335,17 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     public void onTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
-        synchronized (tagsModel) {
+        synchronized (this) {
             pageToLoadNow = -1;
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
             boolean isUserTagPluginSearchResult = response instanceof PluginUserTagsGetListResponseHandler.PiwigoUserTagsPluginGetTagsListRetrievedResponse;
-            int itemsAddedCount = tagsModel.addItemPage(isAdminPage || isUserTagPluginSearchResult, response.getTags());
+            int firstIndexInsertedAt = tagsModel.addItemPage(isAdminPage || isUserTagPluginSearchResult, response.getTags());
             HashSet<Long> selectedItemIds = getListAdapter().getSelectedItemIds();
             for (Long selectedItemId : selectedItemIds) {
                 getListAdapter().setItemSelected(selectedItemId);
             }
-            getListAdapter().notifyItemRangeInserted(0, itemsAddedCount);
+            // can't do an incremental refresh as we sort the data and it could cause interleaving.
+            getListAdapter().notifyDataSetChanged();;
             onListItemLoadSuccess();
             setAppropriateComponentState();
         }

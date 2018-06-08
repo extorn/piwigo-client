@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -62,12 +63,29 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
                 CategoryItemStub parentAlbum = availableGalleriesMap.get(parentId);
                 album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
             } else {
-                album.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
+                if(category.has("uppercats")) {
+                    String parentCatsCsv = category.get("uppercats").getAsString();
+                    List<Long> parentage = toParentageChain(id, parentCatsCsv);
+                    album.setParentageChain(parentage);
+                } else {
+                    album.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
+                }
             }
             availableGalleries.add(album);
             availableGalleriesMap.put(album.getId(), album);
         }
         PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse r = new PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
         storeResponse(r);
+    }
+
+    private List<Long> toParentageChain(long thisAlbumId, String parentCatsCsv) {
+        String[] cats = parentCatsCsv.split(",");
+        ArrayList<Long> list = new ArrayList();
+        list.add(CategoryItem.ROOT_ALBUM.getId());
+        for(String cat : cats) {
+            list.add(Long.valueOf(cat));
+        }
+        list.remove(thisAlbumId);
+        return list;
     }
 }

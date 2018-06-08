@@ -10,29 +10,30 @@ import java.util.List;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoUsers;
 import delit.piwigoclient.model.piwigo.User;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.recyclerview.BaseViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link User}
  */
-public class UserRecyclerViewAdapter extends IdentifiableListViewAdapter<User, PiwigoUsers, UserRecyclerViewAdapter.UserViewHolder> {
+public class UserRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, User, PiwigoUsers, UserRecyclerViewAdapter.UserViewHolder> {
 
     private final List<String> userTypes;
     private final List<String> userTypeValues;
 
-    public UserRecyclerViewAdapter(final Context context, final PiwigoUsers users, MultiSelectStatusListener multiSelectStatusListener, boolean captureActionClicks) {
-        super(users, multiSelectStatusListener, captureActionClicks);
+    public UserRecyclerViewAdapter(final Context context, final PiwigoUsers users, MultiSelectStatusListener multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
+        super(users, multiSelectStatusListener, prefs);
         userTypes = Arrays.asList(context.getResources().getStringArray(R.array.user_types_array));
         userTypeValues = Arrays.asList(context.getResources().getStringArray(R.array.user_types_values_array));
     }
 
     @Override
-    public UserViewHolder buildViewHolder(View view) {
+    public UserViewHolder buildViewHolder(View view, int viewType) {
         return new UserViewHolder(view);
     }
 
-    public class UserViewHolder extends BaseViewHolder<User> {
+    public class UserViewHolder extends BaseViewHolder<BaseRecyclerViewAdapterPreferences, User> {
 
         public UserViewHolder(View view) {
             super(view);
@@ -48,7 +49,7 @@ public class UserRecyclerViewAdapter extends IdentifiableListViewAdapter<User, P
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
-            getCheckBox().setVisibility(isCaptureActionClicks() ? View.VISIBLE : View.GONE);
+            getCheckBox().setVisibility(isMultiSelectionAllowed() ? View.VISIBLE : View.GONE);
             getCheckBox().setChecked(getSelectedItemIds().contains(newItem.getId()));
             getCheckBox().setEnabled(isEnabled());
         }

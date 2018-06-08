@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="16dp"
-    android:layout_marginRight="16dp"
+    android:layout_marginEnd="16dp"
     android:background="@drawable/curved_corners_layout_bg_dark">
 
     <delit.piwigoclient.ui.common.SquareLinearLayout
@@ -18,15 +18,15 @@
             android:id="@+id/resource_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="120px"
-            android:minWidth="120px"
+            android:minHeight="120dp"
+            android:minWidth="120dp"
             android:scaleType="fitCenter" />
 
     </delit.piwigoclient.ui.common.SquareLinearLayout>
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/newly_altered_marker_image"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_width="24dp"
         android:layout_height="24dp"/>
 
@@ -59,8 +59,8 @@
 
         <TextView
             android:id="@+id/album_photoCount"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
             android:layout_marginBottom="3dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,8 +70,8 @@
 
         <TextView
             android:id="@+id/album_subCategories"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
             android:layout_marginBottom="3dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

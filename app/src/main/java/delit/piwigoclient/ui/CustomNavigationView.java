@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -38,7 +37,7 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.UnlockAppEvent;
-import delit.piwigoclient.ui.preferences.SecurePrefsUtil;
+import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.util.ProjectUtils;
 
 /**
@@ -74,7 +73,12 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             headerView.setBackgroundColor(Color.BLACK);
         }
 
-        final String appVersion = ProjectUtils.getVersionName(getContext());
+        String appVersion;
+        if(isInEditMode()) {
+            appVersion = "1.0.0";
+        } else {
+            appVersion = ProjectUtils.getVersionName(getContext());
+        }
 
         TextView appName = headerView.findViewById(R.id.app_name);
         if(BuildConfig.PAID_VERSION) {
@@ -85,40 +89,49 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
         final TextView email = headerView.findViewById(R.id.admin_email);
 
-        final Activity activity = MyApplication.getInstance().getCurrentActivity();
-
         email.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain"); // send email as plain text
-                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email.getText().toString()});
-                intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
-                String serverVersion = "Unknown";
-                if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-                    serverVersion = PiwigoSessionDetails.getInstance().getPiwigoVersion();
-                }
-                intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: "+ appVersion +"\nType and model of Device Being Used:\n");
-                activity.startActivity(Intent.createChooser(intent, ""));
+                sendEmail(((TextView)v).getText().toString());
             }
         });
 
         return headerView;
     }
 
+    private void sendEmail(String email) {
+
+        final String appVersion = ProjectUtils.getVersionName(getContext());
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain"); // send email as plain text
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
+        String serverVersion = "Unknown";
+        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
+            serverVersion = PiwigoSessionDetails.getInstance().getPiwigoVersion();
+        }
+        intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: "+ appVersion +"\nType and model of Device Being Used:\n");
+        getContext().startActivity(Intent.createChooser(intent, ""));
+    }
+
     @Override
     public void inflateMenu(int resId) {
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
         if(uiHelper == null) {
-            uiHelper = new ViewGroupUIHelper(this, prefs, getContext());
-            CustomPiwigoListener listener = new CustomPiwigoListener();
-            listener.withUiHelper(this, uiHelper);
-            uiHelper.setPiwigoResponseListener(listener);
+            if(!isInEditMode()) {
+                // don't do this if showing in the IDE.
+                uiHelper = new ViewGroupUIHelper(this, prefs, getContext());
+                CustomPiwigoListener listener = new CustomPiwigoListener();
+                listener.withUiHelper(this, uiHelper);
+                uiHelper.setPiwigoResponseListener(listener);
+            }
         }
         super.inflateMenu(resId);
         setMenuVisibilityToMatchSessionState();
-
-        uiHelper.registerToActiveServiceCalls();
+        if(!isInEditMode()) {
+            uiHelper.registerToActiveServiceCalls();
+        }
         EventBus.getDefault().register(this);
     }
 

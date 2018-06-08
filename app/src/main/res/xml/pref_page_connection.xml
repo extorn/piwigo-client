@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <!-- Look at this as a way of auto enable disable prefs - android:dependency="EnablePreferences" -->
-    <delit.piwigoclient.ui.preferences.EditableListPreference
+    <delit.piwigoclient.ui.common.preference.EditableListPreference
         android:title="@string/preference_piwigo_connection_profile_title"
         android:key="@string/preference_piwigo_connection_profile_key"
         android:summary="@string/preference_piwigo_connection_profile_summary"
@@ -11,7 +11,7 @@
     <PreferenceCategory
     android:layout="@android:layout/preference_category"
     android:title="@string/preference_connections_category_piwigo">
-        <delit.piwigoclient.ui.preferences.EditTextPreference
+        <delit.piwigoclient.ui.common.preference.EditTextPreference
             android:capitalize="words"
             android:inputType="none"
             android:key="@string/preference_piwigo_server_address_key"
@@ -20,7 +20,7 @@
             android:singleLine="true"
             android:title="@string/preference_piwigo_server_address_title"
             android:summary="@string/preference_piwigo_server_address_summary"/>
-        <delit.piwigoclient.ui.preferences.SecureEditTextPreference
+        <delit.piwigoclient.ui.common.preference.SecureEditTextPreference
             android:capitalize="none"
             android:inputType="none"
             android:key="@string/preference_piwigo_server_username_key"
@@ -29,7 +29,7 @@
             android:singleLine="true"
             android:title="@string/preference_piwigo_server_username_title"
             android:summary="@string/preference_piwigo_server_username_summary"/>
-        <delit.piwigoclient.ui.preferences.SecureEditTextPreference
+        <delit.piwigoclient.ui.common.preference.SecureEditTextPreference
             android:capitalize="none"
             android:inputType="textPassword"
             android:key="@string/preference_piwigo_server_password_key"
@@ -56,7 +56,7 @@
         android:key="@string/preference_server_use_basic_auth_key"
         android:summary="@string/preference_server_use_basic_auth_summary"
         android:title="@string/preference_server_use_basic_auth_title" />
-    <delit.piwigoclient.ui.preferences.SecureEditTextPreference
+    <delit.piwigoclient.ui.common.preference.SecureEditTextPreference
         android:capitalize="none"
         android:inputType="textCapWords"
         android:key="@string/preference_server_basic_auth_username_key"
@@ -65,7 +65,7 @@
         android:singleLine="true"
         android:title="@string/preference_server_basic_auth_username_title"
         android:dependency="@string/preference_server_use_basic_auth_key"/>
-    <delit.piwigoclient.ui.preferences.SecureEditTextPreference
+    <delit.piwigoclient.ui.common.preference.SecureEditTextPreference
         android:capitalize="none"
         android:inputType="textPassword"
         android:key="@string/preference_server_basic_auth_password_key"
@@ -84,7 +84,7 @@
             android:key="@string/preference_server_use_custom_trusted_ca_certs_key"
             android:summary="@string/preference_server_use_custom_trusted_ca_certs_summary"
             android:title="@string/preference_server_use_custom_trusted_ca_certs_title" />
-        <delit.piwigoclient.ui.preferences.TrustedCaCertificatesPreference
+        <delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference
             android:title="@string/preference_select_trusted_certificate_title"
             android:key="@string/preference_select_trusted_certificate_key"
             android:summary="@string/preference_select_trusted_certificate_summary"/>
@@ -97,7 +97,7 @@
             android:key="@string/preference_server_use_client_certs_key"
             android:summary="@string/preference_server_use_client_certs_summary"
             android:title="@string/preference_server_use_client_certs_title" />
-        <delit.piwigoclient.ui.preferences.ClientCertificatePreference
+        <delit.piwigoclient.ui.common.preference.ClientCertificatePreference
             android:title="@string/preference_select_client_certificate_title"
             android:key="@string/preference_select_client_certificate_key"
             android:summary="@string/preference_select_client_certificate_summary"
@@ -111,7 +111,7 @@
             android:key="@string/preference_server_connection_allow_redirects_key"
             android:summary="@string/preference_server_connection_allow_redirects_summary"
             android:title="@string/preference_server_connection_allow_redirects_title" />
-        <delit.piwigoclient.ui.preferences.NumberPickerPreference
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_server_connection_max_redirects_default"
             app:minValue="0"
             app:maxValue="100"
@@ -121,7 +121,7 @@
             android:dependency="@string/preference_server_connection_allow_redirects_key"
             android:summary="@string/preference_server_connection_max_redirects_summary"/>
 
-        <delit.piwigoclient.ui.preferences.NumberPickerPreference
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_server_socketTimeout_millisecs_default"
             app:minValue="1000"
             app:maxValue="15000"
@@ -130,7 +130,7 @@
             android:title="@string/preference_server_socketTimeout_millisecs_title"
             android:summary="@string/preference_server_socketTimeout_millisecs_summary"/>
 
-        <delit.piwigoclient.ui.preferences.NumberPickerPreference
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_server_connection_retries_default"
             app:minValue="0"
             app:maxValue="10"
@@ -153,7 +153,7 @@
             android:title="@string/preference_caching_clearResponseCache_title"
             android:key="@string/preference_caching_clearResponseCache_key"
             android:summary="@string/preference_caching_clearResponseCache_summary"/>
-        <delit.piwigoclient.ui.preferences.NumberPickerPreference
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_caching_max_cache_entries_default"
             app:minValue="0"
             app:maxValue="10000"
@@ -161,7 +161,7 @@
             android:key="@string/preference_caching_max_cache_entries_key"
             android:title="@string/preference_caching_max_cache_entries_title"
             android:summary="@string/preference_caching_max_cache_entries_summary"/>
-        <delit.piwigoclient.ui.preferences.NumberPickerPreference
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_caching_max_cache_entry_size_default"
             app:minValue="0"
             app:maxValue="10240"

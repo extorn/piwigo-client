@@ -249,24 +249,24 @@ public abstract class UIHelper<T> {
      */
     public void addActiveServiceCall(long messageId) {
         activeServiceCalls.add(messageId);
-        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
         if (progressDialog != null && !progressDialog.isShowing()) {
             // assume it still has the correct text... (fingers crossed)
             if(canShowDialog()) {
                 showProgressDialog();
             }
         }
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
     public void addActiveServiceCall(String titleString, long messageId) {
         activeServiceCalls.add(messageId);
-        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
         if (progressDialog != null && !progressDialog.isShowing()) {
             progressDialog.setTitle(titleString);
             if(canShowDialog()) {
                 showProgressDialog();
             }
         }
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
     private class DismissListener implements DialogInterface.OnDismissListener {
@@ -514,13 +514,13 @@ public abstract class UIHelper<T> {
                 alert.setTitle(context.getString(R.string.alert_title_permissions_needed));
                 alert.setMessage(event.getJustification());
 
-                alert.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                alert.setPositiveButton(context.getString(R.string.button_ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
 //                        EventBus.getDefault().post(event);
                         requester.requestPermission(event.getActionId(), permissionsNeeded);
                     }
                 });
-                alert.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                alert.setNegativeButton(context.getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing, automatically the dialog is going to be closed.
                         onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[permissionsNeeded.size()]), new int[0]);
@@ -579,9 +579,7 @@ public abstract class UIHelper<T> {
     }
 
     public void dismissProgressDialog() {
-        if (progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
+        progressDialog.dismiss();
     }
 
     public interface QuestionResultListener extends Serializable {
@@ -654,7 +652,7 @@ public abstract class UIHelper<T> {
                     PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
                         @Override
                         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-                            showOrQueueDialogMessage(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
+                            showOrQueueMessage(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
                         }
                     });
                 }

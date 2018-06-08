@@ -4,7 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -15,6 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -22,23 +26,24 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
-import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.fragment.ListViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSelectionListAdapter> {
+public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSelectionListAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private ArrayList<CategoryItemStub> availableItems;
     private HashSet<Long> indirectSelection;
 
-    public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, boolean multiSelectEnabled, boolean allowEditing, boolean allowAddition, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
+    public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
         AlbumSelectFragment fragment = new AlbumSelectFragment();
-        Bundle args = buildArgsBundle(multiSelectEnabled, allowEditing, allowAddition, false, actionId, initialSelection);
+        Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if(indirectSelection != null) {
             args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
@@ -60,6 +65,11 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     }
 
     @Override
+    protected BaseRecyclerViewAdapterPreferences createEmptyPrefs() {
+        return new BaseRecyclerViewAdapterPreferences();
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_AVAILABLE_ITEMS, availableItems);
@@ -78,6 +88,10 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
+        }
+
+        if(isNotAuthorisedToAlterState()) {
+            getViewPrefs().readonly();
         }
 
         if (savedInstanceState != null) {
@@ -109,25 +123,9 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
             //TODO FEATURE: Support albums list paging (load page size from settings)
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         } else if(getListAdapter() == null) {
-            //TODO use list item layout as per AvailableAlbumsListAdapter
-//            int listItemLayout = isMultiSelectEnabled()? android.R.layout.simple_list_item_multiple_choice : android.R.layout.simple_list_item_single_choice;
-            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableItems, indirectSelection, isEditingEnabled());
+            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableItems, indirectSelection, getViewPrefs());
             ListView listView = getList();
-            listView.setAdapter(availableItemsAdapter);
-            listView.requestLayout();
-            if(isMultiSelectEnabled()) {
-                listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-            } else {
-                listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-            }
-
-            for(Long selectedItemId : getCurrentSelection()) {
-                int itemPos = availableItemsAdapter.getPosition(selectedItemId);
-                if(itemPos >= 0) {
-                    listView.setItemChecked(itemPos, true);
-                }
-            }
-
+            availableItemsAdapter.linkToListView(listView, getInitialSelection(), getCurrentSelection());
             setListAdapter(availableItemsAdapter);
             setAppropriateComponentState();
         }
@@ -167,7 +165,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         getUiHelper().dismissProgressDialog();
 //        if (response.getItemsOnPage() == response.getPageSize()) {
 //            //TODO FEATURE: Support groups paging
-//            getUiHelper().showOrQueueDialogMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));
+//            getUiHelper().showOrQueueMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));
 //        }
         availableItems = response.getAlbumNames();
         populateListWithItems();
