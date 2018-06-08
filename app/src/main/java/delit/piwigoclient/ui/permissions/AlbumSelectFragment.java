@@ -4,7 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -20,11 +23,10 @@ import java.util.Iterator;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
-import delit.piwigoclient.ui.common.ListViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.fragment.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
 
@@ -121,27 +123,9 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
             //TODO FEATURE: Support albums list paging (load page size from settings)
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         } else if(getListAdapter() == null) {
-            //TODO use list item layout as per AvailableAlbumsListAdapter
-//            int listItemLayout = isMultiSelectEnabled()? android.R.layout.simple_list_item_multiple_choice : android.R.layout.simple_list_item_single_choice;
-            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableItems, indirectSelection, isEditingEnabled());
-            availableItemsAdapter.setInitiallySelectedItems(getCurrentSelection());
+            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableItems, indirectSelection, getViewPrefs());
             ListView listView = getList();
-            listView.setAdapter(availableItemsAdapter);
-            listView.requestLayout();
-            if(isMultiSelectEnabled()) {
-                listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-            } else {
-                listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-            }
-
-            for (Iterator<Long> it = getCurrentSelection().iterator(); it.hasNext(); ) {
-                Long selectedItemId = it.next();
-                int itemPos = availableItemsAdapter.getPosition(selectedItemId);
-                if(itemPos >= 0) {
-                    listView.setItemChecked(itemPos, true);
-                }
-            }
-
+            availableItemsAdapter.linkToListView(listView, getInitialSelection(), getCurrentSelection());
             setListAdapter(availableItemsAdapter);
             setAppropriateComponentState();
         }

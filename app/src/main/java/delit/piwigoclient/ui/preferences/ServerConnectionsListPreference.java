@@ -22,7 +22,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.common.util.Strings;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -30,10 +29,8 @@ import java.util.Set;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.CustomImageButton;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.util.ObjectUtils;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by gareth on 15/07/17.

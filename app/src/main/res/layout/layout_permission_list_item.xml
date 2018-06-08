@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<delit.piwigoclient.ui.common.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--delit.piwigoclient.ui.common.list.Checkable -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <delit.piwigoclient.ui.common.AppCompatCheckboxTriState
+    <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
         android:id="@+id/permission_status_icon"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
@@ -22,4 +23,4 @@
         android:layout_height="wrap_content">
 
     </TextView>
-</delit.piwigoclient.ui.common.CheckableRelativeLayout>
+</RelativeLayout>

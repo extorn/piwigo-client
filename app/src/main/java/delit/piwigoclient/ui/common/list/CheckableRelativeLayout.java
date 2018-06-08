@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.common;
+package delit.piwigoclient.ui.common.list;
 
 import android.content.Context;
 import android.util.AttributeSet;

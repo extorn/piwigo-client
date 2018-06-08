@@ -50,10 +50,12 @@ import delit.piwigoclient.piwigoApi.handlers.GroupRemoveMembersResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.ViewListUtils;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
-import delit.piwigoclient.ui.common.CustomImageButton;
-import delit.piwigoclient.ui.common.MyFragment;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.GroupDeletedEvent;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
@@ -208,14 +210,13 @@ public class GroupFragment extends MyFragment {
         isDefaultField = v.findViewById(R.id.group_is_default);
 
         albumAccessRightsField = v.findViewById(R.id.group_access_rights);
-        albumAccessRightsField.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        albumAccessRightsField.setOnTouchListener(new CustomClickTouchListener(getContext()) {
+        albumAccessRightsField.setOnTouchListener(new CustomClickTouchListener(albumAccessRightsField) {
             @Override
             public boolean onClick() {
                 onExpandPermissions();
                 return true;
             }
-        });
+        }.withScrollingWhenNested());
 
         editButton = v.findViewById(R.id.group_action_edit_button);
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -639,16 +640,14 @@ public class GroupFragment extends MyFragment {
     private void populateAlbumPermissionsList() {
         AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter)albumAccessRightsField.getAdapter();
         if(adapter == null) {
-            adapter = new AlbumSelectionListAdapter(this.getContext(), availableGalleries, null, false);
-            albumAccessRightsField.setAdapter(adapter);
-        }
-        adapter.setInitiallySelectedItems(getLatestAlbumPermissions());
-        albumAccessRightsField.clearChoices();
-        for (Long selectedAlbum : getLatestAlbumPermissions()) {
-            int itemPos = adapter.getPosition(selectedAlbum);
-            if (itemPos >= 0) {
-                albumAccessRightsField.setItemChecked(itemPos, true);
-            }
+            BaseRecyclerViewAdapterPreferences adapterPreferences = new BaseRecyclerViewAdapterPreferences();
+            adapterPreferences.selectable(true, false);
+            adapterPreferences.readonly();
+            AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, adapterPreferences);
+            availableItemsAdapter.linkToListView(albumAccessRightsField, getLatestAlbumPermissions(), getLatestAlbumPermissions());
+            ViewListUtils.setListViewHeightBasedOnChildren(albumAccessRightsField, 6);
+        } else {
+            adapter.setSelectedItems(getLatestAlbumPermissions());
         }
     }
 

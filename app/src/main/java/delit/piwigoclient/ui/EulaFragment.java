@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -20,7 +19,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.ui.common.MyFragment;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
 import delit.piwigoclient.ui.events.EulaNotAgreedEvent;
 import delit.piwigoclient.util.ProjectUtils;

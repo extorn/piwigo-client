@@ -5,6 +5,7 @@ import android.content.Context;
 import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
+import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
@@ -28,7 +29,7 @@ public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshow
     }
 
     @Override
-    protected long invokeResourcePageLoader(ResourceContainer<T> container, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList) {
+    protected long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> container, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList) {
         T containerDetails = container.getContainerDetails();
         long loadingMessageId;
         if(containerDetails instanceof CategoryItem) {

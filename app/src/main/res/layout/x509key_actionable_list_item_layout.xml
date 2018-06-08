@@ -74,7 +74,7 @@
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
         android:text="Valid To : 12/12/2012"/>
-    <delit.piwigoclient.ui.common.CustomImageButton
+    <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/list_item_delete_button"
         android:layout_alignParentEnd="true"
         android:layout_width="wrap_content"

@@ -25,7 +25,7 @@
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown" />
 
-    <delit.piwigoclient.ui.common.CustomImageButton
+    <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/add_new_gallery_button"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/upload_to_label"
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:text="@string/files_for_upload_title" />
 
-    <delit.piwigoclient.ui.common.CustomImageButton
+    <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/select_files_for_upload_button"
         android:layout_below="@+id/selected_gallery"
         android:layout_alignParentEnd="true"

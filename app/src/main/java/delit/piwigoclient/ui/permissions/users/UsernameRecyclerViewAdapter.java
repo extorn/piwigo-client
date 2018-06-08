@@ -11,7 +11,7 @@ import java.util.List;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoUsernames;
 import delit.piwigoclient.model.piwigo.Username;
-import delit.piwigoclient.ui.common.AppCompatCheckboxTriState;
+import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
@@ -37,11 +37,6 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Bas
     @Override
     public UsernameViewHolder buildViewHolder(View view, int viewType) {
         return new UsernameViewHolder(view);
-    }
-
-    @Override
-    public boolean isAllowItemDeselection(long itemId) {
-        return !indirectlySelectedItems.contains(itemId) && super.isAllowItemDeselection(itemId);
     }
 
     public class UsernameViewHolder extends CustomViewHolder<BaseRecyclerViewAdapterPreferences, Username> {

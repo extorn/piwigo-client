@@ -79,9 +79,9 @@ import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.ControllableBottomSheetBehavior;
-import delit.piwigoclient.ui.common.CustomImageButton;
-import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.MyFragment;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
@@ -279,8 +279,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
-        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-        captureActionClicks &= (getBasket().getItemCount() == 0 || getBasket().getContentParentId() == gallery.getId());
+        boolean captureActionClicks = getMultiSelectionAllowed();
 
         boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
         boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
@@ -1949,8 +1948,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     displayControlsBasedOnSessionState();
                 }
             }
-            boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-            if(captureActionClicks != viewAdapter.getAdapterPrefs().isMultiSelectionEnabled()) {
+            boolean captureActionClicks = getMultiSelectionAllowed();
+            if(captureActionClicks != viewAdapter.isMultiSelectionAllowed()) {
                 viewAdapter.getAdapterPrefs().selectable(captureActionClicks, false);
                 viewAdapter.notifyDataSetChanged(); //TODO check this does what it should...
             }
@@ -1971,8 +1970,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 displayControlsBasedOnSessionState();
                 setEditItemDetailsControlsStatus();
             }
-            boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
-            if(captureActionClicks != viewAdapter.getAdapterPrefs().isMultiSelectionEnabled()) {
+            boolean captureActionClicks = getMultiSelectionAllowed();
+            if(captureActionClicks != viewAdapter.isMultiSelectionAllowed()) {
                 viewAdapter.getAdapterPrefs().selectable(captureActionClicks, false);
                 viewAdapter.notifyDataSetChanged(); //TODO check this does what it should...
             }

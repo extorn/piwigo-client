@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants">
 
-    <delit.piwigoclient.ui.common.AppCompatCheckboxTriState
+    <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
         android:id="@+id/checked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"/>
 
-    <delit.piwigoclient.ui.common.CustomImageButton
+    <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/list_item_delete_button"
         android:layout_alignParentEnd="true"
 

@@ -32,8 +32,8 @@ import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsGetListResponseHandle
 import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
-import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.RecyclerViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 

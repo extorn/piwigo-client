@@ -35,7 +35,7 @@ import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.CustomImageButton;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
 
 /**
  * Created by gareth on 23/01/18.

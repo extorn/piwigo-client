@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.file;
 
 import android.content.Context;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,15 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.util.ArrayUtils;
-import com.google.android.gms.common.util.ListUtils;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -27,15 +20,11 @@ import java.util.List;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ResizingPicassoLoader;
-import delit.piwigoclient.ui.PicassoFactory;
-import delit.piwigoclient.ui.common.AppCompatCheckboxTriState;
+import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 import delit.piwigoclient.util.ObjectUtils;
-import delit.piwigoclient.util.SetUtils;
-
-import static delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences.SCALING_QUALITY_VLOW;
 
 public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemRecyclerViewAdapter.FolderItemViewHolder> {
 

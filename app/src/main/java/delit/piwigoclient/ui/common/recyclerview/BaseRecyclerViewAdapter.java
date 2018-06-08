@@ -15,9 +15,8 @@ import java.util.Iterator;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.ui.common.Enableable;
-import delit.piwigoclient.ui.common.SelectableItemsAdapter;
+import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}

@@ -57,7 +57,7 @@ import javax.security.auth.x500.X500Principal;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.CustomImageButton;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.util.X509Utils;

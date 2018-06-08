@@ -25,9 +25,9 @@ import java.util.List;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.BackButtonHandler;
-import delit.piwigoclient.ui.common.LongSetSelectFragment;
-import delit.piwigoclient.ui.common.MappedArrayAdapter;
-import delit.piwigoclient.ui.common.RecyclerViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
+import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
+import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 
 public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {

@@ -32,9 +32,9 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.CustomImageButton;
-import delit.piwigoclient.ui.common.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.MyFragment;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
@@ -73,6 +73,9 @@ public class GroupsListFragment extends MyFragment {
         if(getArguments() != null) {
             viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(getArguments());
             setArguments(null);
+        }
+        if(savedInstanceState != null) {
+            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
         super.onCreate(savedInstanceState);
     }

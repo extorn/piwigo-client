@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.common.AppCompatCheckboxTriState;
+import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 
 public abstract class BaseViewHolder<P extends BaseRecyclerViewAdapterPreferences, A> extends CustomViewHolder<P, A> {
     private TextView txtTitle;
