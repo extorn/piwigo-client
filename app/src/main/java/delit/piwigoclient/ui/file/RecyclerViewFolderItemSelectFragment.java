@@ -229,7 +229,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     }
 
     @Override
-    protected void populateListWithItems() {
+    protected void rerunRetrievalForFailedPages() {
     }
 
     @Override

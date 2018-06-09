@@ -206,9 +206,11 @@ public class UsersListFragment extends MyFragment {
     }
 
     private void loadUsersPage(int pageToLoad) {
-        this.pageToLoadNow = pageToLoad;
-        int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-        addActiveServiceCall(R.string.progress_loading_users,new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
+        if(!usersModel.isPageLoaded(pageToLoad)) {
+            this.pageToLoadNow = pageToLoad;
+            int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
+            addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
+        }
     }
 
     private void addNewUser() {

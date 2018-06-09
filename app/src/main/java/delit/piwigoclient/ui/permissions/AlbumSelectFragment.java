@@ -109,11 +109,11 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         if(isServerConnectionChanged()) {
             return;
         }
-        populateListWithItems();
+        rerunRetrievalForFailedPages();
     }
 
     @Override
-    protected void populateListWithItems() {
+    protected void rerunRetrievalForFailedPages() {
         if (availableItems == null) {
             //TODO FEATURE: Support albums list paging (load page size from settings)
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
@@ -163,6 +163,6 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
 //            getUiHelper().showOrQueueMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));
 //        }
         availableItems = response.getAlbumNames();
-        populateListWithItems();
+        rerunRetrievalForFailedPages();
     }
 }

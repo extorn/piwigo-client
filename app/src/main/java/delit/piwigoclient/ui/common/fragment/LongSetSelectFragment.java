@@ -194,7 +194,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getActionMasked() == MotionEvent.ACTION_UP) {
                     reloadListButton.setVisibility(View.GONE);
-                    populateListWithItems();
+                    rerunRetrievalForFailedPages();
                 }
                 return true;
             }
@@ -249,7 +249,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         reloadListButton.setVisibility(View.GONE);
     }
 
-    protected abstract void populateListWithItems();
+    protected abstract void rerunRetrievalForFailedPages();
 
     protected abstract long[] getSelectedItemIds();
 

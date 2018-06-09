@@ -17,6 +17,7 @@ import java.util.HashSet;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.Group;
+import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.model.piwigo.PiwigoGroups;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -33,9 +34,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String GROUPS_MODEL = "groupsModel";
-    private static final String GROUPS_PAGE_BEING_LOADED = "groupsPageBeingLoaded";
     private PiwigoGroups groupsModel = new PiwigoGroups();
-    private int pageToLoadNow = -1;
 
     public static GroupSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         GroupSelectFragment fragment = new GroupSelectFragment();
@@ -52,7 +51,6 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(GROUPS_MODEL, groupsModel);
-        outState.putInt(GROUPS_PAGE_BEING_LOADED, pageToLoadNow);
     }
 
     @Nullable
@@ -77,6 +75,8 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             viewAdapter.toggleItemSelection();
         }
 
+        viewAdapter.setInitiallySelectedItems(getInitialSelection());
+        viewAdapter.setSelectedItems(getInitialSelection());
         setListAdapter(viewAdapter);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());
@@ -100,7 +100,6 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
 
         if (savedInstanceState != null) {
             groupsModel = (PiwigoGroups) savedInstanceState.getSerializable(GROUPS_MODEL);
-            pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
         }
 
         return v;
@@ -115,9 +114,11 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     @Override
     public void onResume() {
         super.onResume();
+
         if(isServerConnectionChanged()) {
             return;
         }
+
         if(groupsModel.getPagesLoaded() == 0) {
             getListAdapter().notifyDataSetChanged();
             loadGroupsPage(0);
@@ -125,15 +126,30 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     }
 
     private void loadGroupsPage(int pageToLoad) {
-        this.pageToLoadNow = pageToLoad;
-        int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
-        addActiveServiceCall(R.string.progress_loading_groups,new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
+
+        groupsModel.acquirePageLoadLock();
+        try {
+            if(groupsModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+                return;
+            }
+
+            int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
+            groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+        } finally {
+            groupsModel.releasePageLoadLock();
+        }
     }
 
     @Override
-    protected void populateListWithItems() {
-        if(pageToLoadNow > 0) {
-            loadGroupsPage(pageToLoadNow);
+    protected void rerunRetrievalForFailedPages() {
+        groupsModel.acquirePageLoadLock();
+        try {
+            for(Integer reloadPageNum = null; reloadPageNum != null; reloadPageNum = groupsModel.getNextPageToReload()) {
+                loadGroupsPage(reloadPageNum);
+            }
+
+        } finally {
+            groupsModel.releasePageLoadLock();
         }
     }
 
@@ -142,10 +158,19 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         GroupRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<Long> groupsNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
         if(groupsNeededToBeLoaded.size() > 0) {
-            //TODO what if there are more than the max page size?! Paging needed :-(
-            pageToLoadNow = Integer.MAX_VALUE; // flag that this is a special one off load.
-            addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(groupsNeededToBeLoaded, 0, groupsNeededToBeLoaded.size()).invokeAsync(getContext()));
-            return;
+            groupsModel.acquirePageLoadLock();
+            try {
+                if(groupsModel.isPageLoadedOrBeingLoaded(PagedList.MISSING_ITEMS_PAGE)) {
+                    // already in progress... wait it out.
+                    return;
+                }
+                //TODO what if there are more than the max page size?! Paging needed :-(
+                // flag that this is a special one off load.
+                groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(groupsNeededToBeLoaded).invokeAsync(getContext())), PagedList.MISSING_ITEMS_PAGE);
+                return;
+            } finally {
+                groupsModel.releasePageLoadLock();
+            }
         }
         HashSet<Group> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new GroupSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
@@ -166,36 +191,44 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
                 onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else {
-                onListItemLoadFailed();
+                onGroupsLoadFailed(response);
             }
         }
     }
 
+    protected void onGroupsLoadFailed(PiwigoResponseBufferingHandler.Response response) {
+        groupsModel.acquirePageLoadLock();
+        try {
+            groupsModel.recordPageLoadFailed(response.getMessageId());
+            onListItemLoadFailed();
+        } finally {
+            groupsModel.releasePageLoadLock();
+        }
+    }
+
     private void onGroupsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
-        synchronized (this) {
-            if(pageToLoadNow == Integer.MAX_VALUE) {
+        groupsModel.acquirePageLoadLock();
+        try {
+            groupsModel.recordPageLoadSucceeded(response.getMessageId());
+            if(response.getPage() == PagedList.MISSING_ITEMS_PAGE) {
                 // this is a special page of all missing items from those selected.
-                pageToLoadNow = -1;
                 int firstIdxAdded = groupsModel.addItemPage(groupsModel.getPagesLoaded(), response.getPageSize(), response.getGroups());
-                HashSet<Long> selectedItemIds = getListAdapter().getSelectedItemIds();
-                for (Long selectedItemId : selectedItemIds) {
-                    getListAdapter().setItemSelected(selectedItemId);
-                }
                 getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());
-                onListItemLoadSuccess();
+                if(groupsModel.hasNoFailedPageLoads()) {
+                    onListItemLoadSuccess();
+                }
                 setAppropriateComponentState();
-                onSelectActionComplete(selectedItemIds);
+                onSelectActionComplete(getListAdapter().getSelectedItemIds());
                 return;
             }
-            pageToLoadNow = -1;
             int firstIdxAdded = groupsModel.addItemPage(response.getPage(), response.getPageSize(), response.getGroups());
-            HashSet<Long> selectedItemIds = getListAdapter().getSelectedItemIds();
-            for (Long selectedItemId : selectedItemIds) {
-                getListAdapter().setItemSelected(selectedItemId);
-            }
             getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());
-            onListItemLoadSuccess();
             setAppropriateComponentState();
+            if(groupsModel.hasNoFailedPageLoads()) {
+                onListItemLoadSuccess();
+            }
+        } finally {
+            groupsModel.releasePageLoadLock();
         }
     }
 }

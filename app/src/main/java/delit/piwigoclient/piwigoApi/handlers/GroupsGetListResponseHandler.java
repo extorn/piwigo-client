@@ -6,37 +6,42 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import delit.piwigoclient.model.piwigo.Group;
+import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GroupsListRspHdlr";
-    private final long page;
-    private final long pageSize;
+    private final int page;
+    private final int pageSize;
     private final Set<Long> groupIds;
 
-    public GroupsGetListResponseHandler(long page, long pageSize) {
-        this(null, page, pageSize);
+    public GroupsGetListResponseHandler(Collection<Long> groupIds) {
+        super("pwg.groups.getList", TAG);
+        this.groupIds = null;
+        page = PagedList.MISSING_ITEMS_PAGE;
+        pageSize = groupIds.size();
     }
 
-    public GroupsGetListResponseHandler(Set<Long> groupIds, long page, long pageSize) {
+    public GroupsGetListResponseHandler(int page, int pageSize) {
         super("pwg.groups.getList", TAG);
+        this.groupIds = null;
         this.page = page;
         this.pageSize = pageSize;
-        this.groupIds = groupIds;
     }
 
     @Override
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
-        params.put("page", String.valueOf(page));
+        params.put("page", page == PagedList.MISSING_ITEMS_PAGE ? "0" : String.valueOf(page));
         params.put("per_page", String.valueOf(pageSize));
         if(groupIds != null) {
             for (Long groupId : groupIds) {
@@ -56,6 +61,9 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         int itemsOnPage = pagingObj.get("count").getAsInt();
         JsonArray groupsObj = result.get("groups").getAsJsonArray();
         HashSet<Group> groups = parseGroupsFromJson(groupsObj);
+        if(this.page == PagedList.MISSING_ITEMS_PAGE) {
+            page = this.page;
+        }
         PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, groups);
         storeResponse(r);
     }

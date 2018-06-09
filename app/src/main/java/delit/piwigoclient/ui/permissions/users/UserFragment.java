@@ -385,7 +385,7 @@ public class UserFragment extends MyFragment {
         } else {
             if (currentGroupMembership == null) {
                 if (user.getGroups().size() > 0) {
-                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups(), 0, 100).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()).invokeAsync(getContext()));
                 } else {
                     currentGroupMembership = new HashSet<>();
                 }

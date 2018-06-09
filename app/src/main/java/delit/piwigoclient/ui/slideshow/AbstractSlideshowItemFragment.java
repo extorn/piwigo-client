@@ -545,7 +545,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     public void displayItemDetailsControlsBasedOnSessionState() {
 
-        boolean allowTagEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
+        boolean allowTagEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
         boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
 
         setControlVisible(saveButton, allowFullEdit || allowTagEdit);

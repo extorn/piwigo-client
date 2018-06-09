@@ -3,10 +3,13 @@ package delit.piwigoclient.model.piwigo;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by gareth on 02/01/18.
@@ -14,10 +17,14 @@ import java.util.TreeSet;
 
 public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializable {
 
+    public static int MISSING_ITEMS_PAGE = -1;
     private final String itemType;
     private final SortedSet<Integer> pagesLoaded = new TreeSet<>();
     private boolean fullyLoaded;
     private final ArrayList<T> items;
+    private transient ReentrantLock pageLoadLock = new ReentrantLock();
+    private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
+    private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
 
     public PagedList(String itemType) {
         this(itemType, 10);
@@ -30,6 +37,47 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
 
     public void updateMaxExpectedItemCount(int newCount) {
         items.ensureCapacity(newCount);
+    }
+
+    public void acquirePageLoadLock() {
+        pageLoadLock.lock();
+    }
+
+    public void releasePageLoadLock() {
+        pageLoadLock.unlock();
+    }
+
+    public void recordPageBeingLoaded(long loaderId, int pageNum) {
+        pagesBeingLoaded.put(loaderId, pageNum);
+    }
+
+    public boolean isPageLoadedOrBeingLoaded(int pageNum) {
+        return pagesLoaded.contains(pageNum) || pagesBeingLoaded.containsValue(pageNum);
+    }
+
+    public boolean hasNoFailedPageLoads() {
+        return pagesFailedToLoad.isEmpty();
+    }
+
+    public Integer getNextPageToReload() {
+        Integer retVal = null;
+        if(!pagesFailedToLoad.isEmpty()) {
+            Iterator<Integer> iter = pagesFailedToLoad.iterator();
+            retVal = iter.next();
+            iter.remove();
+        }
+        return retVal;
+    }
+
+    public void recordPageLoadSucceeded(long loaderId) {
+        pagesBeingLoaded.remove(loaderId);
+    }
+
+    public void recordPageLoadFailed(long loaderId) {
+        Integer pageNum = pagesBeingLoaded.remove(loaderId);
+        if(pageNum != null) {
+            pagesFailedToLoad.add(pageNum);
+        }
     }
 
     private int earlierLoadedPages(int page) {
@@ -153,5 +201,9 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     @Override
     public int getItemIdx(T newTag) {
         return items.indexOf(newTag);
+    }
+
+    public boolean isPageLoaded(int pageNum) {
+        return pagesLoaded.contains(pageNum);
     }
 }
