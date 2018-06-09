@@ -27,6 +27,7 @@ import java.util.Map;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -172,13 +173,29 @@ public class UploadActivity extends MyActivity {
             removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
         } else {
-            createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
+            if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+                runLogin();
+            }
+        }
+    }
+
+    private void runLogin() {
+        String serverUri = ConnectionPreferences.getPiwigoServerAddress(prefs, getApplicationContext());
+        if(serverUri == null || serverUri.trim().isEmpty()) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
+        } else {
+            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(getApplicationContext()).invokeAsync(getApplicationContext()));
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PiwigoLoginSuccessEvent event) {
-        showUploadFragment();
+        boolean isAdminUser = PiwigoSessionDetails.isAdminUser();
+        if(isAdminUser) {
+            showUploadFragment();
+        } else {
+            createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
