@@ -28,6 +28,7 @@ import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsGetListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
@@ -44,9 +45,7 @@ import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String TAGS_MODEL = "tagsModel";
-    private static final String TAGS_PAGE_BEING_LOADED = "tagsPageBeingLoaded";
     private PiwigoTags tagsModel = new PiwigoTags();
-    private int pageToLoadNow = -1;
 
     public static TagSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         TagSelectFragment fragment = new TagSelectFragment();
@@ -63,7 +62,6 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(TAGS_MODEL, tagsModel);
-        outState.putInt(TAGS_PAGE_BEING_LOADED, pageToLoadNow);
     }
 
     private boolean isTagSelectionAllowed() {
@@ -106,6 +104,12 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
         TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
         }, getViewPrefs());
+        /*if(!viewAdapter.isItemSelectionAllowed()) {
+            viewAdapter.toggleItemSelection();
+        }*/
+
+        viewAdapter.setInitiallySelectedItems(getInitialSelection());
+        viewAdapter.setSelectedItems(getInitialSelection());
         setListAdapter(viewAdapter);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());
@@ -129,7 +133,6 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
         if (savedInstanceState != null) {
             tagsModel = (PiwigoTags) savedInstanceState.getSerializable(TAGS_MODEL);
-            pageToLoadNow = savedInstanceState.getInt(TAGS_PAGE_BEING_LOADED);
         }
 
         return v;
@@ -247,6 +250,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     @Override
     public void onResume() {
         super.onResume();
+
         if(isServerConnectionChanged()) {
             return;
         }
@@ -257,22 +261,35 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     private void loadTagsPage(int pageToLoad) {
-        this.pageToLoadNow = pageToLoad;
-        //NOTE: Paging not supported by API yet - so don't bother doing any. Note that the PiwigoTags object has been hacked to this effect.
+        tagsModel.acquirePageLoadLock();
+        try {
+            if(tagsModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+                return;
+            }
+            //NOTE: Paging not supported by API yet - so don't bother doing any. Note that the PiwigoTags object has been hacked to this effect.
 //        int pageSize = prefs.getInt(getString(R.string.preference_tags_request_pagesize_key), getResources().getInteger(R.integer.preference_tags_request_pagesize_default));
-        if(PiwigoSessionDetails.isLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()) {
-            addActiveServiceCall(R.string.progress_loading_tags, new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
-        }
-        addActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
-        if(PiwigoSessionDetails.isAdminUser()) {
-            addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
+            if(PiwigoSessionDetails.isLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()) {
+                tagsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_tags, new GetMethodsAvailableResponseHandler().invokeAsync(getContext())), 0);
+            }
+            addActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
+            if(PiwigoSessionDetails.isAdminUser()) {
+                tagsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext())), 0);
+            }
+        } finally {
+            tagsModel.releasePageLoadLock();
         }
     }
 
     @Override
-    protected void populateListWithItems() {
-        if(pageToLoadNow > 0) {
-            loadTagsPage(pageToLoadNow);
+    protected void rerunRetrievalForFailedPages() {
+        tagsModel.acquirePageLoadLock();
+        try {
+            for(Integer reloadPageNum = null; reloadPageNum != null; reloadPageNum = tagsModel.getNextPageToReload()) {
+                loadTagsPage(reloadPageNum);
+            }
+
+        } finally {
+            tagsModel.releasePageLoadLock();
         }
     }
 
@@ -282,10 +299,6 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         HashSet<Long> tagsNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
         if(tagsNeededToBeLoaded.size() > 0) {
             throw new UnsupportedOperationException("Paging not supported for tags");
-//            //TODO what if there are more than the max page size?! Paging needed :-(
-//            pageToLoadNow = Integer.MAX_VALUE; // flag that this is a special one off load.
-//            addActiveServiceCall(R.string.progress_loading_tags, PiwigoAccessService.startActionGetTagsList(tagsNeededToBeLoaded, 0, tagsNeededToBeLoaded.size(), getContext()));
-//            return;
         }
         HashSet<Tag> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new TagSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
@@ -315,8 +328,18 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             } else if (response instanceof TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) {
                 onTagsLoaded((TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) response);
             } else {
-                onListItemLoadFailed();
+                onTagsLoadFailed(response);
             }
+        }
+    }
+
+    protected void onTagsLoadFailed(PiwigoResponseBufferingHandler.Response response) {
+        tagsModel.acquirePageLoadLock();
+        try {
+            tagsModel.recordPageLoadFailed(response.getMessageId());
+            onListItemLoadFailed();
+        } finally {
+            tagsModel.releasePageLoadLock();
         }
     }
 
@@ -335,8 +358,9 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     public void onTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
-        synchronized (this) {
-            pageToLoadNow = -1;
+        tagsModel.acquirePageLoadLock();
+        try {
+            tagsModel.recordPageLoadSucceeded(response.getMessageId());
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
             boolean isUserTagPluginSearchResult = response instanceof PluginUserTagsGetListResponseHandler.PiwigoUserTagsPluginGetTagsListRetrievedResponse;
             int firstIndexInsertedAt = tagsModel.addItemPage(isAdminPage || isUserTagPluginSearchResult, response.getTags());
@@ -346,8 +370,12 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             }
             // can't do an incremental refresh as we sort the data and it could cause interleaving.
             getListAdapter().notifyDataSetChanged();;
-            onListItemLoadSuccess();
+            if(tagsModel.hasNoFailedPageLoads()) {
+                onListItemLoadSuccess();
+            }
             setAppropriateComponentState();
+        } finally {
+            tagsModel.releasePageLoadLock();
         }
     }
 }
