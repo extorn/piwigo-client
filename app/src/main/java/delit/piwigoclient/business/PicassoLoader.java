@@ -1,6 +1,7 @@
 package delit.piwigoclient.business;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.widget.ImageView;
 
@@ -127,7 +128,11 @@ public class PicassoLoader implements Callback {
         if(placeholderLoaded) {
             rc.noPlaceholder();
         } else {
-            rc.placeholder(R.drawable.ic_file_gray_24dp);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                rc.placeholder(R.drawable.ic_file_gray_24dp);
+            } else {
+                loadInto.setImageResource(R.drawable.ic_file_gray_24dp);
+            }
         }
 
         if(Math.abs(rotation) > Float.MIN_NORMAL) {

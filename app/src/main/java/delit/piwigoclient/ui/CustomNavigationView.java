@@ -32,12 +32,12 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.ViewGroupUIHelper;
+import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.UnlockAppEvent;
-import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.util.ProjectUtils;
 
 /**

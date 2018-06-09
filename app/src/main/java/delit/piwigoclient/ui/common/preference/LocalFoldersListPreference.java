@@ -15,7 +15,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;

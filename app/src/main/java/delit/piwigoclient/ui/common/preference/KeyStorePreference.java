@@ -23,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -174,8 +173,7 @@ public abstract class KeyStorePreference extends DialogPreference {
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }
@@ -503,21 +501,6 @@ public abstract class KeyStorePreference extends DialogPreference {
         }
     }
 
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        final Parcelable superState = super.onSaveInstanceState();
-        if (isPersistent()) {
-            // No need to save instance state since it's persistent
-            return superState;
-        }
-
-        final SavedState myState = new SavedState(superState);
-        myState.value = getValue();
-        myState.trackedRequest = trackedRequest;
-        myState.keystoreLoadOperationProgress = keystoreLoadOperationResult;
-        return myState;
-    }
-
     protected void setTrackingRequest(int requestId) {
         trackedRequest = requestId;
     }
@@ -531,23 +514,39 @@ public abstract class KeyStorePreference extends DialogPreference {
     }
 
     @Override
+    protected Parcelable onSaveInstanceState() {
+        final Parcelable superState = super.onSaveInstanceState();
+        if (isPersistent()) {
+            // No need to save instance state since it's persistent
+            return superState;
+        }
+
+        final KeystorePrefSavedState myState = new KeystorePrefSavedState(superState);
+        myState.value = getValue();
+        myState.trackedRequest = trackedRequest;
+        myState.keystoreLoadOperationProgress = keystoreLoadOperationResult;
+        return myState;
+    }
+
+    @Override
     protected void onRestoreInstanceState(Parcelable state) {
-        if (state == null || !state.getClass().equals(SavedState.class)) {
+        if (state == null || !state.getClass().equals(KeystorePrefSavedState.class)) {
             // Didn't save state for us in onSaveInstanceState
             super.onRestoreInstanceState(state);
             return;
         }
 
-        SavedState myState = (SavedState) state;
-        super.onRestoreInstanceState(myState.getSuperState());
+        KeystorePrefSavedState myState = (KeystorePrefSavedState) state;
+
         setValue(myState.value);
         trackedRequest = myState.trackedRequest;
         keystoreLoadOperationResult = myState.keystoreLoadOperationProgress;
 
-
         if(keystoreLoadOperationResult != null) {
             showLoadErrors();
         }
+
+        super.onRestoreInstanceState(myState.getSuperState());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -557,19 +556,18 @@ public abstract class KeyStorePreference extends DialogPreference {
         }
     }
 
-    public static class SavedState extends BaseSavedState {
-
+    private static class KeystorePrefSavedState extends BaseSavedState {
 
         private static final char[] ksPass = new char[] {'O','g','r','S','W','1','n','s','h','E','H','D','8','b','v','c','7','t','Z','J'};
 
-        public static final Creator<SavedState> CREATOR =
-                new Creator<KeyStorePreference.SavedState>() {
-                    public KeyStorePreference.SavedState createFromParcel(Parcel in) {
-                        return new KeyStorePreference.SavedState(in);
+        public static final Creator<KeystorePrefSavedState> CREATOR =
+                new Creator<KeystorePrefSavedState>() {
+                    public KeystorePrefSavedState createFromParcel(Parcel in) {
+                        return new KeystorePrefSavedState(in);
                     }
 
-                    public KeyStorePreference.SavedState[] newArray(int size) {
-                        return new KeyStorePreference.SavedState[size];
+                    public KeystorePrefSavedState[] newArray(int size) {
+                        return new KeystorePrefSavedState[size];
                     }
                 };
         private int ksByteCount;
@@ -578,7 +576,7 @@ public abstract class KeyStorePreference extends DialogPreference {
         private int trackedRequest;
         private LoadOperationResult keystoreLoadOperationProgress;
 
-        public SavedState(Parcel source) {
+        public KeystorePrefSavedState(Parcel source) {
             super(source);
             ksByteCount = source.readInt();
             ksType = source.readString();
@@ -589,7 +587,7 @@ public abstract class KeyStorePreference extends DialogPreference {
             keystoreLoadOperationProgress = (LoadOperationResult)source.readSerializable();
         }
 
-        public SavedState(Parcelable superState) {
+        public KeystorePrefSavedState(Parcelable superState) {
             super(superState);
         }
 

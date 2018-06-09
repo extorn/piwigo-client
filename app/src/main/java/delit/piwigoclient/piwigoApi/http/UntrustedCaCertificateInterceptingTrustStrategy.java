@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import cz.msebera.android.httpclient.conn.ssl.TrustSelfSignedStrategy;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;

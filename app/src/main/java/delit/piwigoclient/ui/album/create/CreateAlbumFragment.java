@@ -13,7 +13,6 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -219,8 +218,7 @@ public class CreateAlbumFragment extends MyFragment {
 
         AdView adView = view.findViewById(R.id.createGallery_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }

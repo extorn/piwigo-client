@@ -1,36 +1,22 @@
 package delit.piwigoclient.ui.common.list;
 
 import android.content.Context;
-import android.util.Log;
 import android.util.LongSparseArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Checkable;
 import android.widget.CompoundButton;
-import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.common.util.ListUtils;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.Enableable;
+import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.SetUtils;

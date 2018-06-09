@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.preference.DialogPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;

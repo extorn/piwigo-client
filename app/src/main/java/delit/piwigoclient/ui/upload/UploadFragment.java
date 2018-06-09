@@ -24,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -53,10 +52,10 @@ import delit.piwigoclient.piwigoApi.upload.NewPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
-import delit.piwigoclient.ui.common.list.BiArrayAdapter;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.list.BiArrayAdapter;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
@@ -169,8 +168,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         AdView adView = view.findViewById(R.id.upload_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }

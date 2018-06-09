@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
-import delit.piwigoclient.ui.MyApplication;
 
 /**
  * Created by gareth on 25/05/17.

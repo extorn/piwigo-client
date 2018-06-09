@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -27,8 +26,8 @@ import java.util.Set;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.Enableable;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -150,12 +149,10 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }
-
 
         TextView headingField = view.findViewById(R.id.heading);
         setPageHeading(headingField);

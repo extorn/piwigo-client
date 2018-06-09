@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import delit.piwigoclient.R;
@@ -33,8 +32,7 @@ public class TopTipsFragment extends MyFragment {
 
         AdView adView = view.findViewById(R.id.toptips_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }

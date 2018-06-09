@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
@@ -31,9 +30,8 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.util.ObjectUtils;
 
 /**
@@ -129,8 +127,7 @@ public class ServerAlbumListPreference extends DialogPreference {
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }

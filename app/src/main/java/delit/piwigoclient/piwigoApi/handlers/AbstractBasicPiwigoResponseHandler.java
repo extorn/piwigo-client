@@ -27,7 +27,6 @@ import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
-import delit.piwigoclient.ui.MyApplication;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 
 /**

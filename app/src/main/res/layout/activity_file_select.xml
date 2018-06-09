@@ -6,20 +6,8 @@
     <FrameLayout
         android:id="@+id/app_content"
         android:layout_alignWithParentIfMissing="true"
-        android:layout_above="@+id/app_adView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </FrameLayout>
-
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/app_adView"
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/ad_id_app_preferences_banner">
-    </com.google.android.gms.ads.AdView>
 
 </RelativeLayout>

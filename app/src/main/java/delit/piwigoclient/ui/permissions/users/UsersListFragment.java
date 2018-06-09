@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -32,10 +31,10 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.UserDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsersGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
+import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -122,8 +121,7 @@ public class UsersListFragment extends MyFragment {
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }

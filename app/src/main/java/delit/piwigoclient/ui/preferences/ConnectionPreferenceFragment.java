@@ -34,8 +34,8 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.preference.ClientCertificatePreference;
 import delit.piwigoclient.ui.common.preference.EditableListPreference;
 import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
@@ -148,7 +148,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
                 // clear the existing session - it's not valid any more.
                 forkLogoutIfNeeded();
-                AdsManager.getInstance().updateShowAdvertsSetting(getContext());
+                AdsManager.getInstance().updateShowAdvertsSetting(getContext().getApplicationContext());
             }
 
             return true;

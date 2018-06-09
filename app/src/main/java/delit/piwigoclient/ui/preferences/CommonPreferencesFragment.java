@@ -27,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,8 +36,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.SlidingTabLayout;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 
 /**
@@ -82,8 +81,7 @@ public class CommonPreferencesFragment extends MyFragment {
 
         AdView adView = v.findViewById(R.id.prefs_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }

@@ -27,7 +27,6 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -79,10 +78,10 @@ import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.ControllableBottomSheetBehavior;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
+import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumDeletedEvent;
@@ -426,8 +425,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         AdView adView = view.findViewById(R.id.gallery_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.setVisibility(VISIBLE);
-            adView.loadAd(new AdRequest.Builder().build());
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(GONE);
         }
