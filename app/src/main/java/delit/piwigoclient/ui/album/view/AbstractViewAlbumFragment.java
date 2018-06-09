@@ -302,7 +302,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         viewPrefs.withMasonryStyle(useMasonryStyle);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
-        viewPrefs.withAlbumWidth(getScreenWidth() / albumsPerRow);
+        viewPrefs.withAlbumWidth(getScreenWidth() / getAlbumsPerRow());
         viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
         return viewPrefs;
     }
@@ -363,6 +363,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 albumAdminList = null;
             }
         }
+
+        int imagesOnScreen = selectBestColumnCountForScreenSize();
+        colsOnScreen = imagesOnScreen;
 
         updateViewPrefs();
 
@@ -459,11 +462,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         setupBottomSheet(bottomSheet);
 
-        int imagesOnScreen = selectBestColumnCountForScreenSize();
-        albumsPerRow = getAlbumsPerRow();
-        colsOnScreen = imagesOnScreen;
-
-
 //        viewInOrientation = getResources().getConfiguration().orientation;
 
         // Set the adapter
@@ -480,8 +478,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         if(viewPrefs.isUseMasonryStyle()) {
             gridLayoutMan = new StaggeredGridLayoutManager(colsOnScreen, StaggeredGridLayoutManager.VERTICAL);
         } else {
-            if(imagesOnScreen % albumsPerRow > 0) {
-                colsOnScreen = imagesOnScreen * albumsPerRow;
+            if(imagesOnScreen % getAlbumsPerRow() > 0) {
+                colsOnScreen = imagesOnScreen * getAlbumsPerRow();
             }
             gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
         }
@@ -489,7 +487,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         recyclerView.setLayoutManager(gridLayoutMan);
 
         if(!viewPrefs.isUseMasonryStyle()) {
-            int colsPerAlbum = colsOnScreen / albumsPerRow;
+            int colsPerAlbum = colsOnScreen / getAlbumsPerRow();
             int colsPerImage = colsOnScreen / imagesOnScreen;
             ((GridLayoutManager)gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(galleryModel, colsPerAlbum, colsPerImage));
         }
@@ -665,11 +663,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private int getAlbumsPerRow() {
-        int albumsPerRow = getDefaultAlbumColumnCount();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            albumsPerRow = prefs.getInt(getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key), albumsPerRow);
-        } else {
-            albumsPerRow = prefs.getInt(getString(R.string.preference_gallery_albums_preferredColumnsPortrait_key), albumsPerRow);
+        if(albumsPerRow == 0) {
+            albumsPerRow = getDefaultAlbumColumnCount();
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                albumsPerRow = prefs.getInt(getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key), albumsPerRow);
+            } else {
+                albumsPerRow = prefs.getInt(getString(R.string.preference_gallery_albums_preferredColumnsPortrait_key), albumsPerRow);
+            }
         }
         return albumsPerRow;
     }
@@ -948,9 +948,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         } else if(itemsToLoad.size() > 0) {
             onReloadAlbum();
         } else {
-            int spacerAlbumsNeeded = galleryModel.getSubAlbumCount() % albumsPerRow;
+            int spacerAlbumsNeeded = galleryModel.getSubAlbumCount() % getAlbumsPerRow();
             if(spacerAlbumsNeeded > 0) {
-                spacerAlbumsNeeded = albumsPerRow - spacerAlbumsNeeded;
+                spacerAlbumsNeeded = getAlbumsPerRow() - spacerAlbumsNeeded;
             }
             galleryModel.setSpacerAlbumCount(spacerAlbumsNeeded);
             viewAdapter.notifyDataSetChanged();
@@ -1463,7 +1463,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             // categories have finished loading. Let's superimpose those not already present.
             boolean changed = galleryModel.addMissingAlbums(adminCategories);
             if(changed) {
-                galleryModel.updateSpacerAlbumCount(albumsPerRow);
+                galleryModel.updateSpacerAlbumCount(getAlbumsPerRow());
                 viewAdapter.notifyDataSetChanged();
             }
         }
@@ -1640,7 +1640,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 // sink changed value - don't care here.
                 galleryModel.addMissingAlbums(adminCategories);
             }
-            galleryModel.updateSpacerAlbumCount(albumsPerRow);
+            galleryModel.updateSpacerAlbumCount(getAlbumsPerRow());
             viewAdapter.notifyDataSetChanged();
         }
     }
