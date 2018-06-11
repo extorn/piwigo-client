@@ -2,6 +2,8 @@ package delit.piwigoclient.model.piwigo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import static delit.piwigoclient.model.piwigo.CategoryItem.ROOT_ALBUM;
@@ -66,6 +68,16 @@ public class PiwigoAlbumAdminList implements Serializable {
         if(children != null) {
             for(CategoryItem child : children) {
                 flattenTree(flatTree, child);
+            }
+        }
+    }
+
+    public void removeAlbumById(long albumId) {
+        CategoryItem item = null;
+        for(Iterator<CategoryItem> iter = rootAlbums.iterator(); iter.hasNext(); item = iter.next()) {
+            if(item.getId() == albumId) {
+                iter.remove();
+                return;
             }
         }
     }

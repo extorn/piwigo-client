@@ -90,6 +90,7 @@ import delit.piwigoclient.ui.events.AlbumSelectedEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
+import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
@@ -182,7 +183,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private RecyclerView galleryListView;
     private AlbumViewAdapterListener viewAdapterListener;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
-
+    private View bottomSheetActionButton;
+    private View bottomSheet;
 
 
     /**
@@ -443,24 +445,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         setGalleryHeadings();
 
-        FloatingActionButton actionButton = view.findViewById(R.id.gallery_actionButton_details);
+        bottomSheetActionButton = view.findViewById(R.id.gallery_actionButton_details);
 
-        View bottomSheet = view.findViewById(R.id.gallery_bottom_sheet);
-        bottomSheetBehavior = ControllableBottomSheetBehavior.from(bottomSheet);
-
-        int bottomSheetOffsetDp = prefs.getInt(getString(R.string.preference_gallery_detail_sheet_offset_key), getResources().getInteger(R.integer.preference_gallery_detail_sheet_offset_default));
-        bottomSheetBehavior.setPeekHeight(DisplayUtils.dpToPx(getContext(), bottomSheetOffsetDp));
-
-        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || gallery != CategoryItem.ROOT_ALBUM;
-        bottomSheet.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
-        actionButton.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                informationShowing = !informationShowing;
-                updateInformationShowingStatus();
-            }
-        });
+        bottomSheet = view.findViewById(R.id.gallery_bottom_sheet);
 
         setupBottomSheet(bottomSheet);
 
@@ -1035,6 +1022,23 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void setupBottomSheet(final View bottomSheet) {
 
+        bottomSheetBehavior = ControllableBottomSheetBehavior.from(bottomSheet);
+
+        int bottomSheetOffsetDp = prefs.getInt(getString(R.string.preference_gallery_detail_sheet_offset_key), getResources().getInteger(R.integer.preference_gallery_detail_sheet_offset_default));
+        bottomSheetBehavior.setPeekHeight(DisplayUtils.dpToPx(getContext(), bottomSheetOffsetDp));
+
+        bottomSheetActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                informationShowing = !informationShowing;
+                updateInformationShowingStatus();
+            }
+        });
+
+        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || gallery != CategoryItem.ROOT_ALBUM;
+        bottomSheet.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
+        bottomSheetActionButton.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
+
         int editFieldVisibility = VISIBLE;
         if (gallery.isRoot()) {
             editFieldVisibility = GONE;
@@ -1246,6 +1250,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void setEditItemDetailsControlsStatus() {
+        boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || gallery != CategoryItem.ROOT_ALBUM;
+        bottomSheet.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
+        bottomSheetActionButton.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
+
         addNewAlbumButton.setEnabled(!editingItemDetails);
 
         galleryNameView.setEnabled(editingItemDetails);
@@ -1861,6 +1869,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             AlbumDeletedEvent event = new AlbumDeletedEvent(gallery);
             EventBus.getDefault().post(event);
         } else {
+            albumAdminList.removeAlbumById(response.getAlbumId());
             for(Long itemParent : gallery.getParentageChain()) {
                 EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
             }
@@ -1936,6 +1945,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100).invokeAsync(getContext()));
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PiwigoLoginSuccessEvent event) {
+        setEditItemDetailsControlsStatus();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
