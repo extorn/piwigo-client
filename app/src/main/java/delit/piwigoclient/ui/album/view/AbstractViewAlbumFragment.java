@@ -100,6 +100,7 @@ import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 /**
@@ -1263,10 +1264,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void displayControlsBasedOnSessionState() {
         if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode()) {
-            saveButton.setVisibility(VISIBLE);
-            discardButton.setVisibility(VISIBLE);
-            editButton.setVisibility(VISIBLE);
-            deleteButton.setVisibility(VISIBLE);
+            saveButton.setVisibility(gallery.isRoot()?INVISIBLE:VISIBLE);
+            discardButton.setVisibility(gallery.isRoot()?INVISIBLE:VISIBLE);
+            editButton.setVisibility(gallery.isRoot()?INVISIBLE:VISIBLE);
+            deleteButton.setVisibility(gallery.isRoot()?INVISIBLE:VISIBLE);
             addNewAlbumButton.setVisibility(VISIBLE);
             //TODO make visible once functionality written.
             cutButton.setVisibility(GONE);
