@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.PicassoFactory;
@@ -59,13 +60,14 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
             if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_thumbnail_size_key))) {
-                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(stringValue)) {
+                if (sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_thumbnail_size_not_natively_supported_by_server));
                 }
             } else if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key))) {
-                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(stringValue)) {
+                if (sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_slideshow_image_size_not_natively_supported_by_server));
                 }
             }

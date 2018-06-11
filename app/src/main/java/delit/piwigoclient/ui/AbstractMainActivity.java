@@ -192,7 +192,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 // Can and need to login to the server, so lets do that.
                 boolean haveBeenLoggedIn = null != getSupportFragmentManager().findFragmentByTag(LoginFragment.class.getName());
 
-                if(haveBeenLoggedIn && !PiwigoSessionDetails.isFullyLoggedIn()) {
+                if(haveBeenLoggedIn && !PiwigoSessionDetails.isFullyLoggedIn((ConnectionPreferences.getActiveProfile()))) {
 
                     // clear the backstack - its for an old session (clear stack back to first session login).
                     for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {

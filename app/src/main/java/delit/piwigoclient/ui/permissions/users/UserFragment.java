@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.Group;
@@ -251,7 +252,7 @@ public class UserFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if((!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
+        if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -484,7 +485,7 @@ public class UserFragment extends MyFragment {
     }
 
     private void deleteUser(final User user) {
-        String currentUser = PiwigoSessionDetails.getInstance().getUsername();
+        String currentUser = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getUsername();
         if (currentUser.equals(user.getUsername())) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_delete_yourself_pattern), currentUser));
         } else {

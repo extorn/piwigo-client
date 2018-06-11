@@ -50,7 +50,7 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
 
             JsonElement nameElem = category.get("name");
             String name = null;
-            if(nameElem != null && !nameElem.isJsonNull()) {
+            if (nameElem != null && !nameElem.isJsonNull()) {
                 name = category.get("name").getAsString();
             }
 
@@ -59,11 +59,11 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
 //                parentId = category.get("id_uppercat").getAsLong();
 //            }
             String[] parentage = category.get("uppercats").getAsString().split(",");
-            if(parentage.length >= 2) {
+            if (parentage.length >= 2) {
                 parentId = Long.valueOf(parentage[parentage.length - 2]);
             }
             CategoryItemStub album = new CategoryItemStub(name, id);
-            if(parentId != null) {
+            if (parentId != null) {
                 CategoryItemStub parentAlbum = availableGalleriesMap.get(parentId);
                 album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
             } else {

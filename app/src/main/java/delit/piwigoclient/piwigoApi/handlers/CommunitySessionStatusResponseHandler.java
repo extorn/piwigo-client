@@ -59,8 +59,8 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
     protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
         int errorCode = rsp.getErr();
         String errorMessage = rsp.getMessage();
-        if(errorCode == 501 && "Method name is not valid".equals(errorMessage)) {
-            PiwigoSessionDetails.getInstance().setUseCommunityPlugin(false);
+        if (errorCode == 501 && "Method name is not valid".equals(errorMessage)) {
+            PiwigoSessionDetails.getInstance(getConnectionPrefs()).setUseCommunityPlugin(false);
             PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), null);
             storeResponse(r);
         } else {
@@ -75,13 +75,14 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
         String uploadToAlbumsList = result.get("upload_categories_getList_method").getAsString();
         String realUserStatus = result.get("real_user_status").getAsString();
 
-        if(uploadToAlbumsList.equals("community.categories.getList")
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (uploadToAlbumsList.equals("community.categories.getList")
                 || (uploadToAlbumsList.equals("pwg.categories.getAdminList") && forceUsingCommunityPlugin)) {
-            PiwigoSessionDetails.getInstance().setUseCommunityPlugin(true);
+            sessionDetails.setUseCommunityPlugin(true);
         } else {
-            PiwigoSessionDetails.getInstance().setUseCommunityPlugin(false);
+            sessionDetails.setUseCommunityPlugin(false);
         }
-        PiwigoSessionDetails.getInstance().updateUserType(realUserStatus);
+        sessionDetails.updateUserType(realUserStatus);
         PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), uploadToAlbumsList);
         storeResponse(r);
     }

@@ -38,7 +38,7 @@ public class GroupAddResponseHandler<T extends ResourceItem> extends AbstractPiw
         JsonObject result = rsp.getAsJsonObject();
         JsonArray groupsObj = result.get("groups").getAsJsonArray();
         HashSet<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
-        if(groups.size() != 1) {
+        if (groups.size() != 1) {
             throw new JSONException("Expected one group to be returned, but there were " + groups.size());
         }
         PiwigoResponseBufferingHandler.PiwigoAddGroupResponse r = new PiwigoResponseBufferingHandler.PiwigoAddGroupResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());

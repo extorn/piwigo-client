@@ -25,8 +25,9 @@ public class UserUpdateInfoResponseHandler<T extends ResourceItem> extends Abstr
     @Override
     public RequestParams buildRequestParameters() {
         String sessionToken = "";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            sessionToken = PiwigoSessionDetails.getInstance().getSessionToken();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
         }
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
@@ -34,14 +35,14 @@ public class UserUpdateInfoResponseHandler<T extends ResourceItem> extends Abstr
         params.put("method", getPiwigoMethod());
         params.put("user_id", String.valueOf(user.getId()));
         params.put("username", user.getUsername());
-        if(user.getPassword() != null) {
+        if (user.getPassword() != null) {
             params.put("password", user.getPassword());
         }
         params.put("email", user.getEmail());
         params.put("status", user.getUserType());
         params.put("level", String.valueOf(user.getPrivacyLevel()));
         params.put("enabled_high", String.valueOf(user.isHighDefinitionEnabled()));
-        if(user.getGroups() != null && user.getGroups().size() > 0) {
+        if (user.getGroups() != null && user.getGroups().size() > 0) {
             for (Long groupId : user.getGroups()) {
                 params.add("group_id[]", String.valueOf(groupId));
             }
@@ -55,7 +56,7 @@ public class UserUpdateInfoResponseHandler<T extends ResourceItem> extends Abstr
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        if(user.getGroups() == null) {
+        if (user.getGroups() == null) {
             user.setGroups(new HashSet<Long>(0));
         }
         PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse r = new PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse(getMessageId(), getPiwigoMethod(), user);

@@ -1,10 +1,8 @@
 package delit.piwigoclient.business;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 
 import com.squareup.picasso.Downloader;
@@ -25,12 +23,10 @@ import delit.piwigoclient.ui.PicassoFactory;
 public class CustomImageDownloader implements Downloader {
 
     private final Context context;
-    private final SharedPreferences prefs;
     private final Map<Integer, Integer> errorDrawables = new HashMap<>();
 
     public CustomImageDownloader(Context context) {
         this.context = context;
-        prefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public CustomImageDownloader addErrorDrawable(int statusCode, @DrawableRes int drawable) {
@@ -43,8 +39,7 @@ public class CustomImageDownloader implements Downloader {
 
         String uriToCall = uri.toString();
         ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(uriToCall);
-        String piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
-        handler.setCallDetails(context, piwigoServerUrl, false);
+        handler.setCallDetails(context, ConnectionPreferences.getActiveProfile(), false);
         handler.runCall();
 
         if(!handler.isSuccess()) {

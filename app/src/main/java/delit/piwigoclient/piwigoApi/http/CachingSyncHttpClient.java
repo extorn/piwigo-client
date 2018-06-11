@@ -34,9 +34,9 @@ public class CachingSyncHttpClient extends CachingAsyncHttpClient {
 
         responseHandler.setUseSynchronousMode(true);
 
-		/*
+        /*
          * will execute the request directly
-		*/
+         */
         newAsyncHttpRequest(client, httpContext, uriRequest, contentType, responseHandler, context).run();
 
         // Return a Request Handle that cannot be used to cancel the request

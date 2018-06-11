@@ -38,10 +38,10 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         if (!parentAlbum.isRoot()) {
             params.put("cat_id", String.valueOf(parentAlbum.getId()));
         }
-        if(thumbnailSize != null) {
+        if (thumbnailSize != null) {
             params.put("thumbnail_size", thumbnailSize);
         }
-        if(recursive == true || !PiwigoSessionDetails.isUseCommunityPlugin()) {
+        if (recursive == true || !PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs())) {
             // community plugin is very broken!
             params.put("recursive", String.valueOf(recursive));
         }
@@ -63,7 +63,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
 
             JsonElement nameElem = category.get("name");
             String name = null;
-            if(nameElem != null && !nameElem.isJsonNull()) {
+            if (nameElem != null && !nameElem.isJsonNull()) {
                 name = nameElem.getAsString();
             }
 
@@ -73,28 +73,28 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
 
             JsonElement descriptionElem = category.get("comment");
             String description = null;
-            if(descriptionElem != null && !descriptionElem.isJsonNull()) {
+            if (descriptionElem != null && !descriptionElem.isJsonNull()) {
                 description = descriptionElem.getAsString();
             }
 
             boolean isPublic = false;
             //TODO No support in community plugin for anything except private albums for PIWIGO API.
-            if(!PiwigoSessionDetails.isUseCommunityPlugin() || PiwigoSessionDetails.isAdminUser()) {
+            if (!PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs()) || PiwigoSessionDetails.isAdminUser(getConnectionPrefs())) {
                 isPublic = "public".equals(category.get("status").getAsString());
             }
 
             JsonElement maxDateLastJsonElem = category.get("max_date_last");
             String dateLastAlteredStr = null;
-            if(maxDateLastJsonElem != null && !maxDateLastJsonElem.isJsonNull()) {
+            if (maxDateLastJsonElem != null && !maxDateLastJsonElem.isJsonNull()) {
                 dateLastAlteredStr = maxDateLastJsonElem.getAsString();
             }
 
             String thumbnail = null;
             Long representativePictureId = null;
-            if(category.has("representative_picture_id") && !category.get("representative_picture_id").isJsonNull()) {
+            if (category.has("representative_picture_id") && !category.get("representative_picture_id").isJsonNull()) {
                 representativePictureId = category.get("representative_picture_id").getAsLong();
             }
-            if(category.has("tn_url") && !category.get("tn_url").isJsonNull()) {
+            if (category.has("tn_url") && !category.get("tn_url").isJsonNull()) {
                 thumbnail = category.get("tn_url").getAsString();
             }
 

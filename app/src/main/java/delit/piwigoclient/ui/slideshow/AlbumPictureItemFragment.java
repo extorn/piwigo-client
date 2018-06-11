@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -115,7 +116,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
                 } else {
                     imageView.setBackgroundColor(Color.DKGRAY);
                 }
-                EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken()));
+                EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
                 hideProgressIndicator();
             }
 

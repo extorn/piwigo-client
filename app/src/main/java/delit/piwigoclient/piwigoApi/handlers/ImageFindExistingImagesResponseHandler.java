@@ -39,7 +39,7 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
                     sb.append(',');
                 }
             }
-            if(nameUnique) {
+            if (nameUnique) {
                 params.put("filename_list", sb.toString());
             } else {
                 params.put("md5sum_list", sb.toString());
@@ -54,13 +54,13 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
 
         final HashMap<String, Long> preexistingItems = new HashMap<>();
 
-        if(rsp instanceof JsonObject) {
+        if (rsp instanceof JsonObject) {
             JsonObject results = rsp.getAsJsonObject();
             Iterator<String> resultsIter = results.keySet().iterator();
             while (resultsIter.hasNext()) {
                 String key = resultsIter.next();
                 JsonElement imageKeyJsonElement = results.get(key);
-                if(imageKeyJsonElement != null && !imageKeyJsonElement.isJsonNull()) {
+                if (imageKeyJsonElement != null && !imageKeyJsonElement.isJsonNull()) {
                     long imageId = imageKeyJsonElement.getAsLong();
                     preexistingItems.put(key, imageId);
                 }

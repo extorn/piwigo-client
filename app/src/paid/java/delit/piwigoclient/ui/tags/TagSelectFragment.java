@@ -22,13 +22,13 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.HashSet;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTags;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsGetListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
@@ -65,11 +65,12 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     private boolean isTagSelectionAllowed() {
-        if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
             return false;
         }
-        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
-        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
+        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails.isAdminUser();
+        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && sessionDetails.isUseUserTagPluginForUpdate());
         return allowTagEdit;
     }
 
@@ -149,7 +150,8 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext()).setView(v)
                 .setNegativeButton(R.string.button_cancel, null);
-        if(PiwigoSessionDetails.getInstance().isUseUserTagPluginForSearch()) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(sessionDetails != null && sessionDetails.isUseUserTagPluginForSearch()) {
             dialogBuilder.setNeutralButton(R.string.button_search, null);
         }
         dialogBuilder.setPositiveButton(R.string.button_ok, null);
@@ -177,7 +179,8 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
                         }
                     }
                     private void onNeutralButton(String tagName) {
-                        if(PiwigoSessionDetails.isLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForSearch()) {
+                        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                        if(sessionDetails != null && sessionDetails.isLoggedIn() && sessionDetails.isUseUserTagPluginForSearch()) {
                             addMatchingTagsForSelection(tagName);
                         } else {
                             // sink this click - the user is trying to rush ahead before the UI has finished loading.
@@ -185,11 +188,12 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
                     }
 
                     private void onPositiveButton(String tagName) {
-                        if(PiwigoSessionDetails.isLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate()) {
+                        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                        if(sessionDetails != null && sessionDetails.isLoggedIn() && sessionDetails.isUseUserTagPluginForUpdate()) {
                             addNewTagForSelection(tagName);
-                        } else if(PiwigoSessionDetails.isAdminUser()) {
+                        } else if(sessionDetails != null && sessionDetails.isAdminUser()) {
                             createNewTag(tagName);
-                        } else if(PiwigoSessionDetails.isLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()){
+                        } else if(sessionDetails != null && sessionDetails.isLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()){
                             // sink this click - the user is trying to rush ahead before the UI has finished loading.
                         }
                     }
@@ -266,13 +270,14 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             if(tagsModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
                 return;
             }
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
             //NOTE: Paging not supported by API yet - so don't bother doing any. Note that the PiwigoTags object has been hacked to this effect.
 //        int pageSize = prefs.getInt(getString(R.string.preference_tags_request_pagesize_key), getResources().getInteger(R.integer.preference_tags_request_pagesize_default));
-            if(PiwigoSessionDetails.isLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()) {
+            if(sessionDetails != null && sessionDetails.isLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
                 tagsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_tags, new GetMethodsAvailableResponseHandler().invokeAsync(getContext())), 0);
             }
             addActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
-            if(PiwigoSessionDetails.isAdminUser()) {
+            if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
                 tagsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext())), 0);
             }
         } finally {
@@ -317,7 +322,8 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
-                getViewPrefs().setInitialSelectionLocked(getViewPrefs().isAllowItemSelection() && !PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                getViewPrefs().setInitialSelectionLocked(getViewPrefs().isAllowItemSelection() && (sessionDetails == null || !sessionDetails.isUseUserTagPluginForUpdate()));
                 if(getListAdapter() != null && getListAdapter().getItemCount() > 0) {
                     getListAdapter().notifyDataSetChanged();
                     // force redraw of either list.

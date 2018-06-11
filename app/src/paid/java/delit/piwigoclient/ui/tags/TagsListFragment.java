@@ -27,6 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.concurrent.ConcurrentHashMap;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTags;
 import delit.piwigoclient.model.piwigo.Tag;
@@ -201,7 +202,7 @@ public class TagsListFragment extends MyFragment {
         this.pageToLoadNow = pageToLoad;
 //        int pageSize = prefs.getInt(getString(R.string.preference_tags_request_pagesize_key), getResources().getInteger(R.integer.preference_tags_request_pagesize_default));
         addActiveServiceCall(R.string.progress_loading_tags,new TagsGetListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
-        if(PiwigoSessionDetails.isAdminUser()) {
+        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
             addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
         }
     }

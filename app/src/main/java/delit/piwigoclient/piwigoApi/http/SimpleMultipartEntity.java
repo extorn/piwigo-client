@@ -29,7 +29,7 @@ class SimpleMultipartEntity implements HttpEntity {
 
     private final static char[] MULTIPART_CHARS =
             "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-
+    private static final SecureRandom rand = new SecureRandom();
     private final String boundary;
     private final byte[] boundaryLine;
     private final byte[] boundaryEnd;
@@ -40,8 +40,6 @@ class SimpleMultipartEntity implements HttpEntity {
     private final ResponseHandlerInterface progressHandler;
     private boolean isRepeatable;
     private long bytesWritten;
-    private static final SecureRandom rand = new SecureRandom();
-
     private long totalSize;
 
     public SimpleMultipartEntity(ResponseHandlerInterface progressHandler) {

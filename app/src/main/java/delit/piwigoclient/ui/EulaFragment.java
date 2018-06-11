@@ -17,6 +17,7 @@ import com.google.android.gms.ads.AdView;
 import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
@@ -94,8 +95,9 @@ public class EulaFragment extends MyFragment {
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
         intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
         String serverVersion = "Unknown";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            serverVersion = PiwigoSessionDetails.getInstance().getPiwigoVersion();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+            serverVersion = sessionDetails.getPiwigoVersion();
         }
         intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: "+ appVersion +"\nType and model of Device Being Used:\n");
         getContext().startActivity(Intent.createChooser(intent, ""));

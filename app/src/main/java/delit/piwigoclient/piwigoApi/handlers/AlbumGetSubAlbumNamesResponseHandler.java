@@ -50,20 +50,20 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
             long id = category.get("id").getAsLong();
             JsonElement nameElem = category.get("name");
             String name = null;
-            if(nameElem != null && !nameElem.isJsonNull()) {
+            if (nameElem != null && !nameElem.isJsonNull()) {
                 name = nameElem.getAsString();
             }
             Long parentId = null;
-            if(category.has("id_uppercat")
-                && !category.get("id_uppercat").isJsonNull()) {
+            if (category.has("id_uppercat")
+                    && !category.get("id_uppercat").isJsonNull()) {
                 parentId = category.get("id_uppercat").getAsLong();
             }
             CategoryItemStub album = new CategoryItemStub(name, id);
-            if(parentId != null) {
+            if (parentId != null) {
                 CategoryItemStub parentAlbum = availableGalleriesMap.get(parentId);
                 album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
             } else {
-                if(category.has("uppercats")) {
+                if (category.has("uppercats")) {
                     String parentCatsCsv = category.get("uppercats").getAsString();
                     List<Long> parentage = toParentageChain(id, parentCatsCsv);
                     album.setParentageChain(parentage);
@@ -82,7 +82,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
         String[] cats = parentCatsCsv.split(",");
         ArrayList<Long> list = new ArrayList();
         list.add(CategoryItem.ROOT_ALBUM.getId());
-        for(String cat : cats) {
+        for (String cat : cats) {
             list.add(Long.valueOf(cat));
         }
         list.remove(thisAlbumId);

@@ -14,7 +14,6 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Predicate;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.DataAsyncHttpResponseHandler;
-import com.loopj.android.http.PersistentCookieStore;
 
 import java.io.EOFException;
 import java.io.File;
@@ -38,6 +37,7 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.http.CachingSyncHttpClient;
 
@@ -73,7 +73,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
     private final TransferListener<? super HttpClientBasedHttpDataSource> listener;
     private final boolean cachingEnabled;
     private boolean notifyCacheListenerImmediatelyIfCached;
-    private PersistentCookieStore cookieStore;
     private CachingSyncHttpClient client;
     private final Context context;
 
@@ -170,8 +169,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
     }
 
     private void startClient() {
-        if(client == null) {
-            client = HttpClientFactory.getInstance(context).buildVideoDownloadSyncHttpClient(context);
+        if(client == null) { client = HttpClientFactory.getInstance(context).buildVideoDownloadSyncHttpClient(ConnectionPreferences.getPreferences(null), context);
         }
     }
 

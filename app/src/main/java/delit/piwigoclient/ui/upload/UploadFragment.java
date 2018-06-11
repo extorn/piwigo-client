@@ -157,7 +157,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if ((!PiwigoSessionDetails.isAdminUser() && !PiwigoSessionDetails.getInstance().isUseCommunityPlugin()) || isAppInReadOnlyMode()) {
+        final PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+
+        if ((sessionDetails == null || (!sessionDetails.isAdminUser() && !sessionDetails.isUseCommunityPlugin())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -197,12 +199,12 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         fileSelectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+                if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
                     String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
                     getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri),new LoginResponseHandler(getContext()).invokeAsync(getContext()));
                 } else {
                     FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
-                    ArrayList<String> allowedFileTypes = new ArrayList<>(PiwigoSessionDetails.getInstance().getAllowedFileTypes());
+                    ArrayList<String> allowedFileTypes = new ArrayList<>(sessionDetails.getAllowedFileTypes());
                     event.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
                     event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
                     getUiHelper().setTrackingRequest(event.getActionId());
@@ -233,7 +235,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         CharSequence[] privacyLevelsText = getResources().getTextArray(R.array.privacy_levels_groups_array);
         long[] privacyLevelsValues = ArrayUtils.getLongArray(getResources().getIntArray(R.array.privacy_levels_values_array));
         BiArrayAdapter<CharSequence> privacyLevelOptionsAdapter = new BiArrayAdapter(getContext(), android.R.layout.simple_spinner_item, 0, privacyLevelsText, privacyLevelsValues);
-//        if(!PiwigoSessionDetails.isAdminUser()) {
+//        if(!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
 //            // remove the "admin only" privacy option.
 //            privacyLevelOptionsAdapter.remove(privacyLevelOptionsAdapter.getItemById(8)); // Admin ID
 //        }
@@ -344,9 +346,10 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     }
 
     private void invokeRetrieveSubCategoryNamesCall() {
-        if(PiwigoSessionDetails.isAdminUser()) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
             subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler().invokeAsync(getContext()));
-        } else if(PiwigoSessionDetails.getInstance().isUseCommunityPlugin()) {
+        } else if(sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
             final boolean recursive = true;
             subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext()));
         } else {
@@ -498,10 +501,10 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             return null;
         }
 
-        boolean useTempFolder = !PiwigoSessionDetails.isUseCommunityPlugin();
+        boolean useTempFolder = !PiwigoSessionDetails.isUseCommunityPlugin(ConnectionPreferences.getActiveProfile());
 
         long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
-        return NewPiwigoUploadService.createUploadJob(getContext(), filesForUpload, uploadToCategory, (int) privacyLevelWanted, handlerId, useTempFolder);
+        return NewPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToCategory, (int) privacyLevelWanted, handlerId, useTempFolder);
     }
 
     private void allowUserUploadConfiguration(UploadJob uploadJob) {
@@ -653,8 +656,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     private void updateSpinnerWithNewAlbumsList(ArrayList<CategoryItemStub> albums) {
 
         this.availableGalleries.clear();
-
-        boolean autoSelectCommunityAlbum = PiwigoSessionDetails.isFullyLoggedIn() && PiwigoSessionDetails.isUseCommunityPlugin();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean autoSelectCommunityAlbum = sessionDetails != null && sessionDetails.isFullyLoggedIn() && sessionDetails.isUseCommunityPlugin();
 
         if (currentGallery.getId() == 0) {
             this.availableGalleries.add(CategoryItemStub.ROOT_GALLERY);
@@ -673,7 +676,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         if(autoSelectCommunityAlbum) {
             for(CategoryItemStub album : albums) {
-                if(album.getName().equals(PiwigoSessionDetails.getInstance().getUsername())) {
+                if(album.getName().equals(sessionDetails.getUsername())) {
                     position = availableGalleries.getPosition(album);
                     selectedGallerySpinner.setSelection(position);
                     break;

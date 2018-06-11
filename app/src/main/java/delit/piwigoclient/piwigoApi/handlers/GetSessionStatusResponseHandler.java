@@ -34,8 +34,9 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        if(PiwigoSessionDetails.getInstance() != null && !PiwigoSessionDetails.getInstance().isSessionMayHaveExpired()) {
-            onPiwigoSessionRetrieved();
+        PiwigoSessionDetails currentCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (currentCredentials != null && !currentCredentials.isSessionMayHaveExpired()) {
+            onPiwigoSessionRetrieved(currentCredentials);
             return null;
         } else {
             return super.runCall(client, handler);
@@ -44,20 +45,21 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoSessionDetails oldCredentials = PiwigoSessionDetails.getInstance();
-        PiwigoSessionDetails.setInstance(parseSessionDetails(rsp));
+        PiwigoSessionDetails oldCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails newCredentials = parseSessionDetails(rsp);
+        PiwigoSessionDetails.setInstance(getConnectionPrefs(), newCredentials);
 
         PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials);
-        onPiwigoSessionRetrieved();
+        onPiwigoSessionRetrieved(newCredentials);
         storeResponse(r);
     }
 
-    private void onPiwigoSessionRetrieved() {
-        if(PiwigoSessionDetails.getInstance() != null) {
+    private void onPiwigoSessionRetrieved(PiwigoSessionDetails newCredentials) {
+        if (newCredentials != null) {
             //TODO forcing true will allow thumbnails to be made available (with extra call) for albums hidden to admin users.
             CommunitySessionStatusResponseHandler communitySessionLoadHandler = new CommunitySessionStatusResponseHandler(false);
             runAndWaitForHandlerToFinish(communitySessionLoadHandler);
-            if(!PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
+            if (!newCredentials.isLoggedInWithSessionDetails()) {
                 reportNestedFailure(communitySessionLoadHandler);
             }
         }
@@ -71,7 +73,7 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         String piwigoVersion = result.get("version").getAsString();
         Set<String> availableSizes = new HashSet<>();
         JsonElement availableSizesJsonElem = result.get("available_sizes");
-        if(availableSizesJsonElem == null || availableSizesJsonElem.isJsonNull()) {
+        if (availableSizesJsonElem == null || availableSizesJsonElem.isJsonNull()) {
             // the sizes will be empty and thus warnings will be presented to the user.
         } else {
             JsonArray availableSizesArr = availableSizesJsonElem.getAsJsonArray();
@@ -87,12 +89,12 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         if (userStatus.equals("admin") || userStatus.equals("webmaster")) {
             JsonElement uploadChunkSizeElem = result.get("upload_form_chunk_size");
             long uploadChunkSizeKb = -1L;
-            if(uploadChunkSizeElem != null && !uploadChunkSizeElem.isJsonNull()) {
+            if (uploadChunkSizeElem != null && !uploadChunkSizeElem.isJsonNull()) {
                 uploadChunkSizeKb = uploadChunkSizeElem.getAsLong();
             }
             JsonElement fileTypesUploadAllowedJsonElem = result.get("upload_file_types");
             Set<String> uploadFileTypesSet;
-            if(fileTypesUploadAllowedJsonElem != null && !fileTypesUploadAllowedJsonElem.isJsonNull()) {
+            if (fileTypesUploadAllowedJsonElem != null && !fileTypesUploadAllowedJsonElem.isJsonNull()) {
                 String uploadFileTypes = fileTypesUploadAllowedJsonElem.getAsString();
                 StringTokenizer st = new StringTokenizer(uploadFileTypes, ",");
                 uploadFileTypesSet = new HashSet<>(st.countTokens());
@@ -102,9 +104,9 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
             } else {
                 uploadFileTypesSet = new HashSet<>(0);
             }
-            sessionDetails = new PiwigoSessionDetails(serverUrl, userGuid, user, userStatus, piwigoVersion, availableSizes, uploadFileTypesSet, uploadChunkSizeKb, token);
+            sessionDetails = new PiwigoSessionDetails(getConnectionPrefs(), serverUrl, userGuid, user, userStatus, piwigoVersion, availableSizes, uploadFileTypesSet, uploadChunkSizeKb, token);
         } else {
-            sessionDetails = new PiwigoSessionDetails(serverUrl, userGuid, user, userStatus, piwigoVersion, availableSizes, token);
+            sessionDetails = new PiwigoSessionDetails(getConnectionPrefs(), serverUrl, userGuid, user, userStatus, piwigoVersion, availableSizes, token);
         }
         return sessionDetails;
     }

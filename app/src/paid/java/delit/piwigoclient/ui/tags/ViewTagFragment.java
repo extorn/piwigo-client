@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -157,7 +158,8 @@ public class ViewTagFragment extends MyFragment {
 
     private AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
 
-        if(PiwigoSessionDetails.isFullyLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
             addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
         }
 
@@ -190,8 +192,9 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private boolean getMultiSelectionAllowed() {
-        boolean captureActionClicks = PiwigoSessionDetails.isAdminUser();
-        captureActionClicks |= (PiwigoSessionDetails.isFullyLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean captureActionClicks = sessionDetails != null && sessionDetails.isAdminUser();
+        captureActionClicks |= (sessionDetails != null && sessionDetails.isFullyLoggedIn() && sessionDetails.isUseUserTagPluginForUpdate());
         captureActionClicks &= !isAppInReadOnlyMode();
         return captureActionClicks;
     }
@@ -210,7 +213,8 @@ public class ViewTagFragment extends MyFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
             // force a reload of the tag if the session has been destroyed.
             tagIsDirty = true;
         } else if (savedInstanceState != null) {
@@ -221,7 +225,7 @@ public class ViewTagFragment extends MyFragment {
             tag = (Tag) savedInstanceState.getSerializable(ARG_TAG);
             // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
-            tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid() != userGuid;
+            tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
             tagIsDirty = tagIsDirty || savedInstanceState.getBoolean(STATE_TAG_DIRTY);
             SetUtils.setNotNull(loadingMessageIds,(HashMap<Long,String>)savedInstanceState.getSerializable(STATE_TAG_ACTIVE_LOAD_THREADS));
             SetUtils.setNotNull(itemsToLoad,(ArrayList<String>)savedInstanceState.getSerializable(STATE_TAG_LOADS_TO_RETRY));
@@ -241,7 +245,7 @@ public class ViewTagFragment extends MyFragment {
 
         updateViewPrefs();
 
-        userGuid = PiwigoSessionDetails.getUserGuid();
+        userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(tagModel == null) {
             tagIsDirty = true;
             tagModel = new PiwigoTag(tag);
@@ -471,9 +475,10 @@ public class ViewTagFragment extends MyFragment {
 
                     for (ResourceItem item : deleteActionData.getSelectedItems()) {
                         item.getTags().remove(tag);
-                        if(PiwigoSessionDetails.isAdminUser()) {
+                        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                        if(sessionDetails != null && sessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
                             addActiveServiceCall(getString(R.string.progress_untag_resources_pattern, tag.getName()), new ImageUpdateInfoResponseHandler(item).invokeAsync(getContext()));
-                        } else if(PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate()) {
+                        } else if(sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate()) {
                             addActiveServiceCall(getString(R.string.progress_untag_resources_pattern, tag.getName()), new PluginUserTagsUpdateResourceTagsListResponseHandler<>(item).invokeAsync(getContext()));
                         }
                     }
@@ -483,7 +488,8 @@ public class ViewTagFragment extends MyFragment {
             }
         };
 
-        boolean isTagAlterationSupported = PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate() || PiwigoSessionDetails.isAdminUser();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean isTagAlterationSupported = sessionDetails != null && (sessionDetails.isUseUserTagPluginForUpdate() || sessionDetails.isAdminUser());
 
         if(isTagAlterationSupported) {
             String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern, deleteActionData.getSelectedItemIds().size());
@@ -706,7 +712,7 @@ public class ViewTagFragment extends MyFragment {
     public void onEvent(AppLockedEvent event) {
         if(isResumed()) {
             displayControlsBasedOnSessionState();
-            /*boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+            /*boolean captureActionClicks = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
             viewAdapter.setCaptureActionClicks(captureActionClicks);*/
         } else {
             // if not showing, just flush the state and rebuild the page
@@ -718,7 +724,7 @@ public class ViewTagFragment extends MyFragment {
     public void onEvent(AppUnlockedEvent event) {
         if(isResumed()) {
             displayControlsBasedOnSessionState();
-            /*boolean captureActionClicks = PiwigoSessionDetails.isAdminUser() && !isAppInReadOnlyMode();
+            /*boolean captureActionClicks = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode();
             viewAdapter.setCaptureActionClicks(captureActionClicks);*/
         } else {
             // if not showing, just flush the state and rebuild the page

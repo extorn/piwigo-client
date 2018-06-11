@@ -32,8 +32,8 @@ public class GroupGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
-        if(groupIds.size() > 0) {
-            for(Long groupId : groupIds) {
+        if (groupIds.size() > 0) {
+            for (Long groupId : groupIds) {
                 params.add("group_id[]", groupId.toString());
             }
         } else {

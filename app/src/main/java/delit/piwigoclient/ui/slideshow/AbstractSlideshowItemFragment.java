@@ -48,6 +48,7 @@ import java.util.Locale;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -406,7 +407,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                     currentSelection = new HashSet<>(model.getLinkedAlbums());
                 }
 
-                boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
+                boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
 
                 AlbumSelectionNeededEvent albumSelectEvent = new AlbumSelectionNeededEvent(true, allowFullEdit && editingItemDetails, currentSelection);
                 getUiHelper().setTrackingRequest(albumSelectEvent.getActionId());
@@ -505,10 +506,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private void onShowTagsSelection() {
         HashSet<Tag> currentSelection = getLatestTagListForResource();
-        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
-        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
+        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate());
         allowTagEdit &= editingItemDetails;
-        boolean lockInitialSelection = allowTagEdit && !PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
+        boolean lockInitialSelection = allowTagEdit && !sessionDetails.isUseUserTagPluginForUpdate();
         //disable tag deselection if user tags plugin is not present but allow editing if is admin user. (bug in PIWIGO API)
         TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, allowTagEdit, lockInitialSelection, PiwigoUtils.toSetOfIds(currentSelection));
         getUiHelper().setTrackingRequest(tagSelectEvent.getActionId());
@@ -545,8 +547,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     public void displayItemDetailsControlsBasedOnSessionState() {
 
-        boolean allowTagEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isLoggedIn() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
-        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isLoggedIn() && sessionDetails.isUseUserTagPluginForUpdate();
+        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser();
 
         setControlVisible(saveButton, allowFullEdit || allowTagEdit);
         setControlVisible(discardButton, allowFullEdit || allowTagEdit);
@@ -587,8 +590,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private void setEditItemDetailsControlsStatus() {
 
-        boolean allowTagEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
-        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
+        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser();
 
         resourceNameView.setEnabled(allowFullEdit && editingItemDetails);
         resourceDescriptionView.setEnabled(allowFullEdit && editingItemDetails);
@@ -784,7 +788,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken()));
+            EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
         }
 
         @Override
@@ -937,7 +941,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     protected void onResourceInfoAltered(final T resourceItem) {
-        if (BuildConfig.PAID_VERSION && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate() && getUiHelper().getActiveServiceCallCount() == 0) {
+        if (BuildConfig.PAID_VERSION && PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isUseUserTagPluginForUpdate() && getUiHelper().getActiveServiceCallCount() == 0) {
             // tags have been updated already so we need to keep the existing ones.
             resourceItem.setTags(model.getTags());
         }

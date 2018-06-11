@@ -43,6 +43,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             return new Thread(r, "AsyncTask #" + mCount.getAndIncrement());
         }
     };
+
     static {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
                 CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
@@ -51,10 +52,8 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         HTTP_THREAD_POOL_EXECUTOR = threadPoolExecutor;
     }
 
-    private WeakReference<Context> context;
-
     private final String DEFAULT_TAG = "PwgAccessSvcAsyncTask";
-
+    private WeakReference<Context> context;
     private String tag = DEFAULT_TAG;
 
 
@@ -69,18 +68,19 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         return context.get();
     }
 
-    public void beforeCall() {}
+    public void beforeCall() {
+    }
 
     private void updatePoolSize(AbstractPiwigoDirectResponseHandler handler) {
         //Update the max pool size.
         try {
-            CachingAsyncHttpClient client = handler.getHttpClientFactory().getAsyncHttpClient(context.get());
-            if(client != null) {
+            CachingAsyncHttpClient client = handler.getHttpClientFactory().getAsyncHttpClient(handler.getConnectionPrefs(), context.get());
+            if (client != null) {
                 int newMaxPoolSize = client.getMaxConcurrentConnections();
                 HTTP_THREAD_POOL_EXECUTOR.setCorePoolSize(Math.min(newMaxPoolSize, Math.max(3, newMaxPoolSize / 2)));
                 HTTP_THREAD_POOL_EXECUTOR.setMaximumPoolSize(newMaxPoolSize);
             }
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             handler.sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
         }
 
@@ -98,37 +98,39 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             }
             long messageId = params[0];
             return executeCall(messageId);
-        } catch(RuntimeException e) {
-            if(BuildConfig.DEBUG) {
+        } catch (RuntimeException e) {
+            if (BuildConfig.DEBUG) {
                 Log.e(tag, "ASync code crashed unexpectedly", e);
             }
             return false;
         }
     }
 
+    protected ConnectionPreferences.ProfilePreferences getProfilePreferences() {
+        return ConnectionPreferences.getActiveProfile();
+    }
+
     protected boolean executeCall(long messageId) {
         SharedPreferences prefs = null;
-        if(context != null) {
+        if (context != null) {
             prefs = PreferenceManager.getDefaultSharedPreferences(context.get());
         }
-        String piwigoServerUrl = null;
-        if(PiwigoSessionDetails.isLoggedIn()) {
-            piwigoServerUrl = PiwigoSessionDetails.getInstance().getServerUrl();
-        } else if(prefs != null) {
-            piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context.get());
-        }
+
         AbstractPiwigoDirectResponseHandler handler = getHandler(prefs);
-        if(handler != null) {
+        if (handler != null) {
             this.tag = handler.getTag();
         }
+
+        ConnectionPreferences.ProfilePreferences profilePrefs = getProfilePreferences();
+
         handler.setMessageId(messageId);
-        handler.setCallDetails(context.get(), piwigoServerUrl, true);
+        handler.setCallDetails(context.get(), profilePrefs, true);
 
         beforeCall();
         updatePoolSize(handler);
 
         synchronized (Worker.class) {
-            if (PiwigoSessionDetails.getInstance() == null) {
+            if (PiwigoSessionDetails.getInstance(profilePrefs) == null) {
                 handler.getNewLogin();
             }
         }
@@ -147,7 +149,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                     } catch (InterruptedException e) {
                         // Either this has been cancelled or the wait timed out or the handler completed okay and notified us
                         if (isCancelled()) {
-                            if(BuildConfig.DEBUG) {
+                            if (BuildConfig.DEBUG) {
                                 Log.e(handler.getTag(), "Service call cancelled before handler could finish running");
                             }
                             handler.cancelCallAsap();
@@ -158,8 +160,8 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                 }
             }
         }
-        if(handler.isRunning()) {
-            if(BuildConfig.DEBUG) {
+        if (handler.isRunning()) {
+            if (BuildConfig.DEBUG) {
                 Log.e(handler.getTag(), "Timeout while waiting for service call handler to finish running");
             }
             handler.cancelCallAsap();

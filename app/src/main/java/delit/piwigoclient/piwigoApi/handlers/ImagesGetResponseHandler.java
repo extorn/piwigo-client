@@ -85,9 +85,9 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
     protected static class ResourceParser {
 
         private final Pattern p;
-        private Matcher m;
         private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         private final int screenWidth;
+        private Matcher m;
 
         public ResourceParser(Context context, String multimediaExtensionList) {
             WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);

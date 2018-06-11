@@ -108,8 +108,9 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{email});
         intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
         String serverVersion = "Unknown";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            serverVersion = PiwigoSessionDetails.getInstance().getPiwigoVersion();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+            serverVersion = sessionDetails.getPiwigoVersion();
         }
         intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: "+ appVersion +"\nType and model of Device Being Used:\n");
         getContext().startActivity(Intent.createChooser(intent, ""));
@@ -154,7 +155,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
     private void showUnlockDialog() {
 
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         String username;
         if(sessionDetails != null) {
             username = sessionDetails.getUsername();
@@ -263,8 +264,9 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     private void setMenuVisibilityToMatchSessionState(boolean isReadOnly) {
         Menu m = getMenu();
         if (m != null) {
-            boolean isAdminUser = PiwigoSessionDetails.isAdminUser();
-            boolean hasCommunityPlugin = PiwigoSessionDetails.isUseCommunityPlugin();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+            boolean isAdminUser = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
+            boolean hasCommunityPlugin = sessionDetails != null && sessionDetails.isUseCommunityPlugin();
 //            m.findItem(R.id.nav_gallery).setVisible(PiwigoSessionDetails.isLoggedInAndHaveSessionAndUserDetails());
             m.findItem(R.id.nav_upload).setVisible((isAdminUser || hasCommunityPlugin) && !isReadOnly);
             m.findItem(R.id.nav_groups).setVisible(isAdminUser && !isReadOnly);
@@ -272,7 +274,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
             m.findItem(R.id.nav_settings).setVisible(!isReadOnly);
             // only allow locking of the app if we've got an active login to PIWIGO.
-            m.findItem(R.id.nav_lock).setVisible(!isReadOnly && PiwigoSessionDetails.isFullyLoggedIn() && !PiwigoSessionDetails.isGuest());
+            m.findItem(R.id.nav_lock).setVisible(!isReadOnly && sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isGuest());
             m.findItem(R.id.nav_unlock).setVisible(isReadOnly);
         }
     }

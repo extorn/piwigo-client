@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.Enableable;
@@ -125,7 +126,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     }
 
     protected boolean isNotAuthorisedToAlterState() {
-        return (!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode();
+        return (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode();
     }
 
     public boolean isMultiSelectEnabled() {

@@ -29,18 +29,19 @@ public class GroupUpdateInfoResponseHandler<T extends ResourceItem> extends Abst
     @Override
     public RequestParams buildRequestParameters() {
         String sessionToken = "";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            sessionToken = PiwigoSessionDetails.getInstance().getSessionToken();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
         }
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("group_id", String.valueOf(newGroup.getId()));
-        if(!newGroup.getName().equals(originalGroup.getName())) {
+        if (!newGroup.getName().equals(originalGroup.getName())) {
             params.put("name", newGroup.getName());
         }
-        if(newGroup.isDefault() != originalGroup.isDefault()) {
+        if (newGroup.isDefault() != originalGroup.isDefault()) {
             params.put("is_default", String.valueOf(newGroup.isDefault()));
         }
         params.put("pwg_token", sessionToken);
@@ -52,7 +53,7 @@ public class GroupUpdateInfoResponseHandler<T extends ResourceItem> extends Abst
         JsonObject result = rsp.getAsJsonObject();
         JsonArray groupsObj = result.get("groups").getAsJsonArray();
         HashSet<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
-        if(groups.size() != 1) {
+        if (groups.size() != 1) {
             throw new JSONException("Expected one group to be returned, but there were " + groups.size());
         }
         PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse r = new PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());

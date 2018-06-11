@@ -46,6 +46,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -648,7 +649,7 @@ public abstract class UIHelper<T> {
                     }
                     preNotifiedCerts.addAll(event.getUntrustedCerts().keySet());
                     prefs.edit().putStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
-                    long messageId = new HttpConnectionCleanup(context).start();
+                    long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), context).start();
                     PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
                         @Override
                         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {

@@ -12,24 +12,24 @@ import delit.piwigoclient.piwigoApi.Worker;
  */
 
 public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicPiwigoResponseHandler {
+    private static final AtomicLong nextMessageId = new AtomicLong();
     private long messageId;
     private PiwigoResponseBufferingHandler.BaseResponse response;
-    private static final AtomicLong nextMessageId = new AtomicLong();
     private boolean publishResponses = true;
-
-    public static synchronized long getNextMessageId() {
-        long id;
-        id = nextMessageId.incrementAndGet();
-        if(id < 0) {
-            nextMessageId.set(0);
-            id = 0;
-        }
-        return id;
-    }
 
     public AbstractPiwigoDirectResponseHandler(String tag) {
         super(tag);
         messageId = getNextMessageId();
+    }
+
+    public static synchronized long getNextMessageId() {
+        long id;
+        id = nextMessageId.incrementAndGet();
+        if (id < 0) {
+            nextMessageId.set(0);
+            id = 0;
+        }
+        return id;
     }
 
     public long getMessageId() {
@@ -37,7 +37,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     }
 
     public void setMessageId(long messageId) {
-        if(this.messageId < 0 || this.messageId == messageId) {
+        if (this.messageId < 0 || this.messageId == messageId) {
             this.messageId = messageId;
         } else {
             throw new IllegalArgumentException("Message ID can only be set once for a handler");
@@ -57,7 +57,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
 
     protected void storeResponse(PiwigoResponseBufferingHandler.BaseResponse response) {
 
-        if(!getUseSynchronousMode() && publishResponses) {
+        if (!getUseSynchronousMode() && publishResponses) {
             PiwigoResponseBufferingHandler.getDefault().processResponse(response);
         } else {
             this.response = response;
@@ -78,10 +78,10 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     }
 
     public long invokeAsync(Context context) {
-        return new Worker( this, context).start(messageId);
+        return new Worker(this, context).start(messageId);
     }
 
     public long invokeAsyncAgain() {
-        return new Worker( this, this.getContext()).start(messageId);
+        return new Worker(this, this.getContext()).start(messageId);
     }
 }

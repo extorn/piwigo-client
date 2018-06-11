@@ -57,7 +57,8 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        if ((PiwigoSessionDetails.getInstance() != null && !PiwigoSessionDetails.getInstance().isSessionMayHaveExpired() && PiwigoSessionDetails.isLoggedIn()) || username == null || username.trim().isEmpty()) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if ((sessionDetails != null && !sessionDetails.isSessionMayHaveExpired() && sessionDetails.isLoggedIn()) || username == null || username.trim().isEmpty()) {
             onLogin();
             return null;
         } else {
@@ -73,14 +74,14 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     private void onLogin() {
         loginSuccess = true;
         PiwigoResponseBufferingHandler.PiwigoOnLoginResponse r = new PiwigoResponseBufferingHandler.PiwigoOnLoginResponse(getMessageId(), getPiwigoMethod());
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance();
-        if(sessionDetails == null || sessionDetails.isSessionMayHaveExpired() || !PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails == null || sessionDetails.isSessionMayHaveExpired() || !sessionDetails.isLoggedInWithSessionDetails()) {
             GetSessionStatusResponseHandler sessionLoadHandler = new GetSessionStatusResponseHandler();
             runAndWaitForHandlerToFinish(sessionLoadHandler);
-            if(PiwigoSessionDetails.isLoggedInWithSessionDetails()
+            if (PiwigoSessionDetails.isLoggedInWithSessionDetails(getConnectionPrefs()) // get new copy (old may be invalid)
                     && sessionLoadHandler.getResponse() instanceof PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse) {
 
-                PiwigoSessionDetails oldCredentials = ((PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse)sessionLoadHandler.getResponse()).getOldCredentials();
+                PiwigoSessionDetails oldCredentials = ((PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse) sessionLoadHandler.getResponse()).getOldCredentials();
 
                 r.setSessionRetrieved();
                 r.setOldCredentials(oldCredentials);
@@ -89,11 +90,11 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
                 reportNestedFailure(sessionLoadHandler);
             }
         }
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+        if (sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+            if (!sessionDetails.isFullyLoggedIn()) {
                 loadUserDetails();
             }
-            if(PiwigoSessionDetails.isFullyLoggedIn()) {
+            if (PiwigoSessionDetails.isFullyLoggedIn(getConnectionPrefs())) { // get new copy (old may be invalid)
                 r.setUserDetailsRetrieved();
             }
         }
@@ -101,7 +102,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     private void loadUserDetails() {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         UserGetInfoResponseHandler userInfoHandler = new UserGetInfoResponseHandler(sessionDetails.getUsername(), sessionDetails.getUserType());
         runAndWaitForHandlerToFinish(userInfoHandler);
         if (userInfoHandler.isSuccess()) {

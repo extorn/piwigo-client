@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
@@ -82,15 +83,15 @@ public class MyFragment extends Fragment {
     }
 
     protected boolean isSessionDetailsChanged() {
-        return !PiwigoSessionDetails.matchesSessionToken(piwigoSessionToken);
+        return !PiwigoSessionDetails.matchesSessionToken(ConnectionPreferences.getActiveProfile(), piwigoSessionToken);
     }
     protected boolean isServerConnectionChanged() {
-        return !PiwigoSessionDetails.matchesServerConnection(piwigoServerConnected);
+        return !PiwigoSessionDetails.matchesServerConnection(ConnectionPreferences.getActiveProfile(), piwigoServerConnected);
     }
 
     protected void updateActiveSessionDetails() {
-        piwigoSessionToken = PiwigoSessionDetails.getActiveSessionToken();
-        piwigoServerConnected = PiwigoSessionDetails.getActiveServerConnection();
+        piwigoSessionToken = PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile());
+        piwigoServerConnected = PiwigoSessionDetails.getActiveServerConnection(ConnectionPreferences.getActiveProfile());
     }
 
     @Override

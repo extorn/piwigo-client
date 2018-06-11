@@ -26,15 +26,16 @@ public class GroupPermissionsRemovedResponseHandler extends AbstractPiwigoWsResp
     @Override
     public RequestParams buildRequestParameters() {
         String sessionToken = "";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            sessionToken = PiwigoSessionDetails.getInstance().getSessionToken();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
         }
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("group_id", String.valueOf(groupId));
-        if(albumsNotAllowedAccessTo != null && albumsNotAllowedAccessTo.size() > 0) {
+        if (albumsNotAllowedAccessTo != null && albumsNotAllowedAccessTo.size() > 0) {
             for (Long albumId : albumsNotAllowedAccessTo) {
                 params.add("cat_id[]", String.valueOf(albumId));
             }

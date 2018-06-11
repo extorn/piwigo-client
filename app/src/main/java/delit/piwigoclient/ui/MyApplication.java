@@ -102,7 +102,7 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityStopped(Activity activity) {
-        new HttpConnectionCleanup(getApplicationContext()).start();
+        new HttpConnectionCleanup(null, getApplicationContext()).start();
     }
 
     @Override

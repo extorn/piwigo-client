@@ -28,8 +28,9 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
     @Override
     public RequestParams buildRequestParameters() {
         String sessionToken = "";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            sessionToken = PiwigoSessionDetails.getInstance().getSessionToken();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
         }
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
@@ -50,7 +51,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
     @Override
     protected void postCall(boolean success) {
         super.postCall(success);
-        if(success) {
+        if (success) {
             fileChunk.incrementUploadAttempts();
         }
     }
@@ -58,7 +59,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         ResourceItem uploadedResource = null;
-        if(rsp != null && !rsp.isJsonNull()) {
+        if (rsp != null && !rsp.isJsonNull()) {
             JsonObject result = rsp.getAsJsonObject();
             long imageId = result.get("image_id").getAsLong();
             String imageName = result.get("name").getAsString();

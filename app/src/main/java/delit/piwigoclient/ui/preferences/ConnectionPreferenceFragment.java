@@ -351,11 +351,12 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     }
 
     private boolean forkLogoutIfNeeded() {
-        if (PiwigoSessionDetails.isLoggedIn()) {
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), PiwigoSessionDetails.getInstance().getServerUrl()), new LogoutResponseHandler().invokeAsync(getContext()));
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if (sessionDetails != null && sessionDetails.isLoggedIn()) {
+            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler().invokeAsync(getContext()));
             return true;
-        } else if(HttpClientFactory.getInstance(getContext()).isInitialised()) {
-            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(getContext()).start());
+        } else if(HttpClientFactory.getInstance(getContext()).isInitialised(ConnectionPreferences.getActiveProfile())) {
+            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), getContext()).start());
             return true;
         }
         return false;
@@ -371,7 +372,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                 loginOnLogout = true;
             } else {
                 Context context = getContext();
-                HttpClientFactory.getInstance(context).clearCachedClients();
+                HttpClientFactory.getInstance(context).clearCachedClients(ConnectionPreferences.getActiveProfile());
                 getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(context).invokeAsync(context));
             }
         }
@@ -387,11 +388,11 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) {
                 PiwigoResponseBufferingHandler.PiwigoOnLoginResponse rsp = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) response;
-                if(PiwigoSessionDetails.isFullyLoggedIn() && rsp.isUserDetailsRetrieved()) {
+                if(PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) && rsp.isUserDetailsRetrieved()) {
                     onLogin(rsp.getOldCredentials());
                 }
             } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse) {
-                getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(getContext()).start());
+                getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), getContext()).start());
             } else if(response instanceof PiwigoResponseBufferingHandler.HttpClientsShutdownResponse) {
                 if(loginOnLogout) {
                     loginOnLogout = false;
@@ -400,7 +401,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse && ((PiwigoResponseBufferingHandler.BasePiwigoResponse)response).getPiwigoMethod().equals(LogoutResponseHandler.METHOD)) {
                 //TODO find a nicer way of this.
                 // logout failed. Lets just wipe the login state manually for now.
-                PiwigoSessionDetails.logout(getContext());
+                PiwigoSessionDetails.logout(ConnectionPreferences.getActiveProfile(), getContext());
                 if(loginOnLogout) {
                     loginOnLogout = false;
                     testLogin();
@@ -412,8 +413,9 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
 
     private void onLogin(PiwigoSessionDetails oldCredentials) {
-        String msg = getString(R.string.alert_message_success_connectionTest, PiwigoSessionDetails.getInstance().getUserType());
-        if(PiwigoSessionDetails.getInstance().getAvailableImageSizes().size() == 0) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        String msg = getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
+        if(sessionDetails.getAvailableImageSizes().size() == 0) {
             msg += '\n' + getString(R.string.alert_message_no_available_image_sizes);
         }
         getUiHelper().showOrQueueDialogMessage(R.string.alert_title_connectionTest, msg);
@@ -464,11 +466,12 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
 
         private boolean forkLogoutIfNeeded() {
-            if (PiwigoSessionDetails.isLoggedIn()) {
-                getUiHelper().addActiveServiceCall(String.format(getUiHelper().getContext().getString(R.string.logging_out_of_piwigo_pattern), PiwigoSessionDetails.getInstance().getServerUrl()), new LogoutResponseHandler().invokeAsync(getUiHelper().getContext()));
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+            if (sessionDetails != null && sessionDetails.isLoggedIn()) {
+                getUiHelper().addActiveServiceCall(String.format(getUiHelper().getContext().getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler().invokeAsync(getUiHelper().getContext()));
                 return true;
-            } else if(HttpClientFactory.getInstance(getUiHelper().getContext()).isInitialised()) {
-                getUiHelper().addActiveServiceCall(getUiHelper().getContext().getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(getUiHelper().getContext()).start());
+            } else if(HttpClientFactory.getInstance(getUiHelper().getContext()).isInitialised(ConnectionPreferences.getActiveProfile())) {
+                getUiHelper().addActiveServiceCall(getUiHelper().getContext().getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), getUiHelper().getContext()).start());
                 return true;
             }
             return false;

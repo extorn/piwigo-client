@@ -38,7 +38,7 @@ public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
 
         long[] groups;
         long[] users;
-        if(cats.size() == 0) {
+        if (cats.size() == 0) {
             // no privacy settings exist yet for this album.
             groups = new long[0];
             users = new long[0];

@@ -23,10 +23,7 @@ public class TagAddResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     @Override
     public RequestParams buildRequestParameters() {
-        String sessionToken = "";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            sessionToken = PiwigoSessionDetails.getInstance().getSessionToken();
-        }
+        String sessionToken = "";        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());        if(sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {            sessionToken = sessionDetails.getSessionToken();        }
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();

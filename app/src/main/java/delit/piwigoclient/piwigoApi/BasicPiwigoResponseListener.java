@@ -51,7 +51,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         this.uiHelper = uiHelper;
         this.parent = parent;
     }
-    
+
     public void withUiHelper(Fragment parent, UIHelper uiHelper) {
         this.uiHelper = uiHelper;
         this.parent = parent;
@@ -64,13 +64,13 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         handlerId = savedInstanceState.getLong(HANDLER_ID);
     }
-    
+
     protected void showOrQueueMessage(int title, String message) {
         uiHelper.showOrQueueDialogMessage(title, message);
     }
 
     private void showOrQueueRetryDialogMessage(final PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg) {
-        if(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
+        if (response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
             final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse = (PiwigoResponseBufferingHandler.RemoteErrorResponse) response;
             handleErrorRetryPossible(errorResponse, title, msg);
 
@@ -93,7 +93,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if(positiveAnswer) {
+                if (positiveAnswer) {
                     uiHelper.addActiveServiceCall(handler.getMessageId());
                     handler.invokeAsyncAgain();
                 } else {
@@ -103,9 +103,11 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         });
     }
 
-    public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {}
+    public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+    }
 
-    public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {}
+    public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
+    }
 
 
     @Override
@@ -123,7 +125,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             handlePiwigoServerErrorResponse((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) response);
         }
 
-        if(!(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse)) {
+        if (!(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse)) {
             // don't call user code if we may be re-trying. The outcome is not yet know.
             onAfterHandlePiwigoResponse(response);
         }
@@ -135,19 +137,19 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
 
     protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
 
-        if(msg.getStatusCode() < 0) {
+        if (msg.getStatusCode() < 0) {
             showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage());
-        } else if(msg.getStatusCode() == 0) {
+        } else if (msg.getStatusCode() == 0) {
             showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage());
         } else {
-            showOrQueueRetryDialogMessage(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode() ,msg.getErrorMessage()));
+            showOrQueueRetryDialogMessage(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()));
         }
     }
 
     protected void handlePiwigoUnexpectedReplyErrorResponse(PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse msg) {
         switch (msg.getRequestOutcome()) {
             case PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN:
-                showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, -1,msg.getRawResponse()));
+                showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, -1, msg.getRawResponse()));
                 break;
             case PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED:
                 showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_handling_response, uiHelper.getContext().getString(R.string.alert_error_handling_response_pattern, -1, msg.getRawResponse()));
@@ -161,17 +163,17 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     public boolean canHandlePiwigoResponseNow(PiwigoResponseBufferingHandler.Response response) {
         // If this fragment is not presently active, delay processing the response till it is.
         boolean retVal;
-        if(parent instanceof Fragment) {
+        if (parent instanceof Fragment) {
             // If this fragment is not presently active, delay processing the response till it is.
-            Activity activity = ((Fragment)parent).getActivity();
-            retVal = ((Fragment)parent).isAdded() && activity != null;
-        } else if(parent instanceof AppCompatActivity) {
-            retVal = !((AppCompatActivity)parent).isFinishing();
-        } else if(parent instanceof ViewGroup) {
-            retVal = ((ViewGroup)parent).isShown();
-        } else if(parent instanceof DialogPreference) {
+            Activity activity = ((Fragment) parent).getActivity();
+            retVal = ((Fragment) parent).isAdded() && activity != null;
+        } else if (parent instanceof AppCompatActivity) {
+            retVal = !((AppCompatActivity) parent).isFinishing();
+        } else if (parent instanceof ViewGroup) {
+            retVal = ((ViewGroup) parent).isShown();
+        } else if (parent instanceof DialogPreference) {
             retVal = ((DialogPreference) parent).getDialog() != null;
-        } else if(parent == null){
+        } else if (parent == null) {
             // this listener has become detached from the UI.
             retVal = false;
         } else {

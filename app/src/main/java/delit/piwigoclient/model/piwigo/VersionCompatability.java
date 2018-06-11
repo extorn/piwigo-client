@@ -2,6 +2,8 @@ package delit.piwigoclient.model.piwigo;
 
 import java.util.StringTokenizer;
 
+import delit.piwigoclient.business.ConnectionPreferences;
+
 /**
  * Created by gareth on 15/06/17.
  */
@@ -50,7 +52,7 @@ public enum VersionCompatability {
 
     private int[] getMinimumTestedVersion() {
 
-        if (PiwigoSessionDetails.isAdminUser()) {
+        if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
             return new int[]{2, 9, 1};
         } else {
             return new int[]{2, 9, 0};
@@ -63,12 +65,12 @@ public enum VersionCompatability {
     }
 
     public String getServerVersionString() {
-        return PiwigoSessionDetails.getInstance().getPiwigoVersion();
+        return PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getPiwigoVersion();
     }
 
     private int[] getServerVersion() {
         if (serverVersion == null) {
-            String serverVersionStr = PiwigoSessionDetails.getInstance().getPiwigoVersion();
+            String serverVersionStr = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getPiwigoVersion();
             StringTokenizer st = new StringTokenizer(serverVersionStr, ".");
             int[] version = new int[3];
             int i = 0;

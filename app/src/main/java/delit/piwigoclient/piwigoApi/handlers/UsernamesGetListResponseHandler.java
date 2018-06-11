@@ -53,12 +53,12 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
         params.put("page", page == PagedList.MISSING_ITEMS_PAGE ? "0" : String.valueOf(page));
         params.put("per_page", String.valueOf(pageSize));
         params.put("display", "username,status"); // username and user type
-        if(groupIds != null) {
+        if (groupIds != null) {
             for (Long groupId : groupIds) {
                 params.add("group_id[]", String.valueOf(groupId));
             }
         }
-        if(userIds != null) {
+        if (userIds != null) {
             for (Long userId : userIds) {
                 params.add("user_id[]", String.valueOf(userId));
             }
@@ -83,7 +83,7 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
             String userType = userObj.get("status").getAsString();
             usernames.add(new Username(id, username, userType));
         }
-        if(this.page == PagedList.MISSING_ITEMS_PAGE) {
+        if (this.page == PagedList.MISSING_ITEMS_PAGE) {
             page = this.page;
         }
         PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse r = new PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, usernames);

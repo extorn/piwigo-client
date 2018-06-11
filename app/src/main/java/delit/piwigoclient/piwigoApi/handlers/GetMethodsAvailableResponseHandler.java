@@ -31,7 +31,7 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoSessionDetails currentCredentials = PiwigoSessionDetails.getInstance();
+        PiwigoSessionDetails currentCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         currentCredentials.setMethodsAvailable(parseMethodsAvailable(rsp));
         PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse r = new PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse(getMessageId(), getPiwigoMethod());
         storeResponse(r);
@@ -42,7 +42,7 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
         JsonArray methodsArray = result.get("methods").getAsJsonArray();
         Set<String> methodsAvailable = new HashSet<>(methodsArray.size());
         Iterator<JsonElement> methodItem = methodsArray.iterator();
-        while(methodItem.hasNext()) {
+        while (methodItem.hasNext()) {
             methodsAvailable.add(methodItem.next().getAsString());
         }
         return methodsAvailable;

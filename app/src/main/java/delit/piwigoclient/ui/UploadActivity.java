@@ -116,8 +116,9 @@ public class UploadActivity extends MyActivity {
     private void addUploadingAsFieldsIfAppropriate() {
         TextView uploadingAsLabelField = findViewById(R.id.upload_username_label);
         TextView uploadingAsField = findViewById(R.id.upload_username);
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            uploadingAsField.setText(PiwigoSessionDetails.getInstance().getUsername());
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+            uploadingAsField.setText(sessionDetails.getUsername());
             uploadingAsField.setVisibility(View.VISIBLE);
             uploadingAsLabelField.setVisibility(View.VISIBLE);
         } else {
@@ -163,8 +164,9 @@ public class UploadActivity extends MyActivity {
     }
 
     private void showUploadFragment() {
-        boolean isAdminUser = PiwigoSessionDetails.isAdminUser();
-        boolean hasCommunityPlugin = PiwigoSessionDetails.isUseCommunityPlugin();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean isAdminUser = sessionDetails != null && sessionDetails.isAdminUser();
+        boolean hasCommunityPlugin = sessionDetails != null && sessionDetails.isUseCommunityPlugin();
 
         long initialGalleryId = getIntent().getLongExtra("galleryId", 0);
 
@@ -173,7 +175,7 @@ public class UploadActivity extends MyActivity {
             removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
         } else {
-            if(!PiwigoSessionDetails.isFullyLoggedIn()) {
+            if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
                 runLogin();
             }
         }
@@ -190,7 +192,7 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PiwigoLoginSuccessEvent event) {
-        boolean isAdminUser = PiwigoSessionDetails.isAdminUser();
+        boolean isAdminUser = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
         if(isAdminUser) {
             showUploadFragment();
         } else {
