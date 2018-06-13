@@ -33,6 +33,11 @@
         <attr name="allowItemEdit" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="MappedListPreference">
+        <attr name="entries" format="reference"/>
+        <attr name="entryValues" format="reference"/>
+    </declare-styleable>
+
     <declare-styleable name="ServerAlbumListPreference">
         <attr name="connectionProfileNameKey" format="string"/>
     </declare-styleable>

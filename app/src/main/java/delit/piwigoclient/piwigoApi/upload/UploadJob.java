@@ -28,7 +28,6 @@ public class UploadJob implements Serializable {
     private static final Integer DELETED = 6;
     private final long jobId;
     private final long responseHandlerId;
-    private final boolean useTempFolder;
     private final ArrayList<File> filesForUpload;
     private final HashMap<File, Integer> fileUploadStatus;
     private final HashMap<File, PartialUploadData> filePartialUploadProgress;
@@ -42,7 +41,7 @@ public class UploadJob implements Serializable {
     private volatile transient boolean submitted = false;
     private volatile transient boolean runningNow = false;
 
-    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel, boolean useTempFolder) {
+    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel) {
         this.jobId = jobId;
         this.connectionPrefs = connectionPrefs;
         this.responseHandlerId = responseHandlerId;
@@ -52,7 +51,6 @@ public class UploadJob implements Serializable {
         this.filesForUpload = new ArrayList<>(filesForUpload);
         this.fileUploadStatus = new HashMap<>(filesForUpload.size());
         this.filePartialUploadProgress = new HashMap<>(filesForUpload.size());
-        this.useTempFolder = useTempFolder;
     }
 
     public synchronized void markFileAsUploading(File fileForUpload) {
@@ -78,10 +76,6 @@ public class UploadJob implements Serializable {
     public synchronized boolean needsUpload(File fileForUpload) {
         Integer status = fileUploadStatus.get(fileForUpload);
         return status == null || UPLOADING.equals(status);
-    }
-
-    public boolean isUseTempFolder() {
-        return useTempFolder;
     }
 
 

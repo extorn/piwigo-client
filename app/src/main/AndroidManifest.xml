@@ -69,7 +69,10 @@
             android:windowSoftInputMode="stateHidden"/>
         <activity android:name="com.google.android.gms.ads.AdActivity"/>
         <service
-            android:name=".piwigoApi.upload.NewPiwigoUploadService"
+            android:name=".piwigoApi.upload.ForegroundPiwigoUploadService"
+            android:exported="false"/>
+        <service
+            android:name=".piwigoApi.upload.BackgroundPiwigoUploadService"
             android:exported="false"/>
         <provider
             android:name="android.support.v4.content.FileProvider"

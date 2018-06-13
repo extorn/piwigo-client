@@ -293,9 +293,9 @@
 
     <!-- prefs -->
 
-    <string name="preference_data_upload_automatic_upload_enable_key">preference_data_upload_automatic_upload_enable</string>
-    <string name="preference_data_upload_automatic_upload_enable_summary">Enable automatic background upload</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Automatic Upload</string>
+    <string name="preference_data_upload_automatic_enable_key">preference_data_upload_automatic_upload_enable</string>
+    <string name="preference_data_upload_automatic_enable_summary">Enable automatic background upload</string>
+    <string name="preference_data_upload_automatic_enable_title">Automatic Upload</string>
 
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">Only use Auto Upload on Wireless</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Over Wireless Only</string>
@@ -308,35 +308,35 @@
     <!-- boolean flag set that if false will stop the job running -->
     <string name="preference_data_upload_automatic_job_is_valid_key">preference_data_upload_automatic_job_is_valid</string>
 
-    <string name="preference_data_upload_automatic_enabled_key">preference_data_upload_automatic_server_enabled</string>
-    <string name="preference_data_upload_automatic_enabled_summary">Is this job listening in the background?</string>
-    <string name="preference_data_upload_automatic_enabled_title">Job Enabled</string>
+    <string name="preference_data_upload_automatic_job_enabled_key">preference_data_upload_automatic_server_enabled</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">Is this job listening in the background?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Job Enabled</string>
 
-    <string name="preference_data_upload_automatic_server_title">Upload to Server</string>
-    <string name="preference_data_upload_automatic_server_key">preference_data_upload_automatic_server</string>
-    <string name="preference_data_upload_automatic_server_summary">Profile: %1$s</string>
+    <string name="preference_data_upload_automatic_job_server_title">Upload to Server</string>
+    <string name="preference_data_upload_automatic_job_server_key">preference_data_upload_automatic_server</string>
+    <string name="preference_data_upload_automatic_job_server_summary">Profile: %1$s</string>
     
-    <string name="preference_data_upload_automatic_server_album_key">preference_data_upload_automatic_server_album</string>
-    <string name="preference_data_upload_automatic_server_album_title">Upload to Album</string>
-    <string name="preference_data_upload_automatic_server_album_summary">%1$s</string>
+    <string name="preference_data_upload_automatic_job_server_album_key">preference_data_upload_automatic_server_album</string>
+    <string name="preference_data_upload_automatic_job_server_album_title">Upload to Album</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
-    <string name="preference_data_upload_automatic_local_folder_title">Upload from folder</string>
-    <string name="preference_data_upload_automatic_local_folder_key">preference_data_upload_automatic_local_folder</string>
-    <string name="preference_data_upload_automatic_local_folder_summary">Upload %1$s</string>
+    <string name="preference_data_upload_automatic_job_local_folder_title">Upload from folder</string>
+    <string name="preference_data_upload_automatic_job_local_folder_key">preference_data_upload_automatic_local_folder</string>
+    <string name="preference_data_upload_automatic_job_local_folder_summary">Upload %1$s</string>
 
-    <string name="preference_data_upload_automatic_server_delete_uploaded_key">preference_data_upload_automatic_server_delete_uploaded</string>
-    <string name="preference_data_upload_automatic_server_delete_uploaded_summary">Delete successfully uploaded files</string>
-    <string name="preference_data_upload_automatic_server_delete_uploaded_title">Auto delete</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_key">preference_data_upload_automatic_server_delete_uploaded</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Delete successfully uploaded files</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Auto delete</string>
 
-    <integer name="preference_data_upload_automatic_max_upload_size_mb_default">20</integer>
-    <string name="preference_data_upload_automatic_max_upload_size_mb_key">preference_data_upload_automatic_max_upload_size</string>
-    <string name="preference_data_upload_automatic_max_upload_size_mb_title">Max Filesize uploaded</string>
-    <string name="preference_data_upload_automatic_max_upload_size_mb_summary">%1$d MB</string>
+    <integer name="preference_data_upload_automatic_job_max_upload_size_mb_default">20</integer>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_key">preference_data_upload_automatic_max_upload_size</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize uploaded</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
-    <string name="preference_data_upload_automatic_server_file_exts_uploaded_key">preference_data_upload_automatic_server_file_exts_uploaded</string>
-    <string name="preference_data_upload_automatic_server_file_exts_uploaded_default">jpg,png,raw</string>
-    <string name="preference_data_upload_automatic_server_file_exts_uploaded_title">File extensions</string>
-    <string name="preference_data_upload_automatic_server_file_exts_uploaded_summary">Upload files with ext %1$s</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_key">preference_data_upload_automatic_server_file_exts_uploaded</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">jpg,png,raw</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">File extensions</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Upload files with ext %1$s</string>
 
 </resources>

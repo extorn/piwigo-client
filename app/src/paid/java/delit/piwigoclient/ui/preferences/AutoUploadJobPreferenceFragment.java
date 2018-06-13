@@ -40,7 +40,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     public void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
         jobId = getArguments().getInt(JOB_ID_ARG);
-        getPreferenceManager().setSharedPreferencesName(String.format("autoUploadJob[%1$d]",jobId));
+        getPreferenceManager().setSharedPreferencesName(AutoUploadJobConfig.getSharedPreferencesName(jobId));
     }
 
 
@@ -53,19 +53,24 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         ConnectionPreferences.ProfilePreferences profilePrefs = null;
         // check server connection details
         if(allPreferencesValid) {
-            String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_server_key);
+            String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_key);
             profilePrefs = ConnectionPreferences.getPreferences(serverProfile);
             String serverName = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
             allPreferencesValid &= serverName != null;
         }
         // check local folder
         if(allPreferencesValid) {
-            String localFolder = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_local_folder_key);
+            String localFolder = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_local_folder_key);
             allPreferencesValid &= localFolder != null && new File(localFolder).exists();
         }
-        // check remote folder
+        // check remote privacy level
         if(allPreferencesValid) {
-            String remoteFolderDetails = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_server_album_key);
+            int privacyLevel = getPreferenceValueOrMinInt(R.string.preference_data_upload_automatic_job_privacy_level_key);
+            allPreferencesValid &= privacyLevel != Integer.MIN_VALUE;
+        }
+        // check remote folder (will trigger marking job as valid if successfully completes)
+        if(allPreferencesValid) {
+            String remoteFolderDetails = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_album_key);
             allPreferencesValid &= remoteFolderDetails != null;
             if(allPreferencesValid) {
                 long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
@@ -80,13 +85,13 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         boolean allPreferencesValid = albumNames != null && albumNames.size() == 1;
         SharedPreferences.Editor editor = getPrefs().edit();
 
-        editor.putBoolean(getString(R.string.preference_data_upload_automatic_job_is_valid_key), allPreferencesValid);
-
         if(allPreferencesValid) {
             // ensure the folder name is in-sync with the value on the server
             String remoteFolderDetails = ServerAlbumListPreference.ServerAlbumPreference.toValue(albumNames.get(0));
-            editor.putString(getString(R.string.preference_data_upload_automatic_server_album_key), remoteFolderDetails);
+            editor.putString(getString(R.string.preference_data_upload_automatic_job_server_album_key), remoteFolderDetails);
         }
+
+        editor.putBoolean(getString(R.string.preference_data_upload_automatic_job_is_valid_key), allPreferencesValid);
 
         editor.commit();
     }
@@ -99,7 +104,6 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     @Override
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
         return super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
-//        Preference p = findPreference(R.string.preference_data_upload_automatic_server_key);
     }
 
     @Override

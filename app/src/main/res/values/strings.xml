@@ -761,4 +761,7 @@ SOFTWARE.
     <string name="folder_default">Default</string>
     <string name="button_all">Check All</string>
     <string name="button_none">Check None</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Privacy Level</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Uploaded files visible to %1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_key">preference_data_upload_automatic_job_privacy_level</string>
 </resources>

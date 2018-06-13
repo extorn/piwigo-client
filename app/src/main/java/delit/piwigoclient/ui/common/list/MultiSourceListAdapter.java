@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.common.list;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
 import android.util.LongSparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,6 +94,10 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
     public abstract long getItemId(T item);
 
+    public int getPosition(T item) {
+        return availableItems.indexOf(item);
+    }
+
     @Override
     public boolean hasStableIds() {
         return true;
@@ -115,7 +120,7 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         View view = convertView; // re-use an existing view, if one is supplied
         if (view == null) {
             // otherwise create a pkg one
-            view = LayoutInflater.from(context).inflate(R.layout.layout_permission_list_item, parent, false);
+            view = buildNewItemView(parent);
         }
         // set view properties to reflect data for the given row
 
@@ -125,7 +130,14 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
         setViewContentForItemDisplay(view, item, levelInTreeOfItem);
 
-        final AppCompatCheckboxTriState imageView = view.findViewById(R.id.permission_status_icon);
+        final AppCompatCheckboxTriState imageView = getAppCompatCheckboxTriState(view);
+
+        if(getAdapterPrefs().isMultiSelectionEnabled()) {
+            imageView.setButtonDrawable(R.drawable.always_clear_checkbox);
+        } else {
+            imageView.setButtonDrawable(R.drawable.always_clear_radio);
+        }
+
         imageView.setEnabled(adapterPrefs.isEnabled());
         boolean alwaysChecked = indirectlySelectedItems != null && indirectlySelectedItems.contains(thisItemId);
         imageView.setAlwaysChecked(alwaysChecked);
@@ -137,6 +149,18 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
         // return the view, populated with data, for display
         return view;
+    }
+
+    protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
+        return view.findViewById(R.id.permission_status_icon);
+    }
+
+    protected View buildNewItemView(ViewGroup parent) {
+        return LayoutInflater.from(context).inflate(getItemViewLayoutRes(), parent, false);
+    }
+
+    protected @LayoutRes int getItemViewLayoutRes() {
+        return R.layout.layout_permission_list_item;
     }
 
     /**

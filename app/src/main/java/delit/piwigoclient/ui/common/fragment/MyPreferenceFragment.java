@@ -101,6 +101,23 @@ public class MyPreferenceFragment extends PreferenceFragment {
         return getPreferenceManager().getSharedPreferences().getString(getString(preferenceKey), null);
     }
 
+    protected int getPreferenceValueOrMinInt(@StringRes int preferenceKey) {
+
+        try {
+            return getPreferenceManager().getSharedPreferences().getInt(getString(preferenceKey), Integer.MIN_VALUE);
+        } catch(ClassCastException e) {
+            if(e.getMessage().equals("java.lang.String cannot be cast to java.lang.Integer")) {
+                String intStr = getPreferenceManager().getSharedPreferences().getString(getString(preferenceKey), null);
+                try {
+                    return Integer.valueOf(intStr);
+                } catch(NumberFormatException e2) {
+                    return Integer.MIN_VALUE;
+                }
+            }
+        }
+        return Integer.MIN_VALUE;
+    }
+
 
     @Override
     public void onResume() {

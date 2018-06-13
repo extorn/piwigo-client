@@ -9,7 +9,7 @@ import delit.piwigoclient.R;
 public class PreferencesFragment extends CommonPreferencesFragment {
 
     protected FragmentPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
-        return new CommonPreferencesPagerAdapter(childFragmentManager);
+        return new PaidPreferencesPagerAdapter(childFragmentManager);
     }
 
     protected class PaidPreferencesPagerAdapter extends CommonPreferencesPagerAdapter {

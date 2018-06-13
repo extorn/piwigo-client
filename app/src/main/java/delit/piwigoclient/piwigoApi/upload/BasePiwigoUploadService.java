@@ -56,36 +56,23 @@ import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponse
  * a service on a separate handler thread.
  * <p>
  */
-public class NewPiwigoUploadService extends IntentService {
+public abstract class BasePiwigoUploadService extends IntentService {
 
     public static final String INTENT_ARG_KEEP_DEVICE_AWAKE = "keepDeviceAwake";
-    public static final String INTENT_ARG_JOB_ID = "jobId";
-    private static final String TAG = "PiwigoUploadService";
-    private static final String ACTION_UPLOAD_FILES = "delit.piwigoclient.action.ACTION_UPLOAD_FILES";
+    private static final String TAG = "UploadService";
     private static final List<UploadJob> activeUploadJobs = Collections.synchronizedList(new ArrayList<UploadJob>(1));
     private static final SecureRandom random = new SecureRandom();
     private SharedPreferences prefs;
 
-    public NewPiwigoUploadService() {
-        super(TAG);
+    public BasePiwigoUploadService(String tag) {
+        super(tag);
     }
 
-    public static UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, ArrayList<File> filesForUpload, CategoryItemStub category, int uploadedFilePrivacyLevel, long responseHandlerId, boolean useTempFolder) {
+    public static UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, ArrayList<File> filesForUpload, CategoryItemStub category, int uploadedFilePrivacyLevel, long responseHandlerId) {
         long jobId = getNextMessageId();
-        UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, filesForUpload, category, uploadedFilePrivacyLevel, useTempFolder);
+        UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, filesForUpload, category, uploadedFilePrivacyLevel);
         activeUploadJobs.add(uploadJob);
         return uploadJob;
-    }
-
-    public static long startActionRunOrReRunUploadJob(Context context, UploadJob uploadJob, boolean keepDeviceAwake) {
-
-        Intent intent = new Intent(context, NewPiwigoUploadService.class);
-        intent.setAction(ACTION_UPLOAD_FILES);
-        intent.putExtra(INTENT_ARG_JOB_ID, uploadJob.getJobId());
-        intent.putExtra(INTENT_ARG_KEEP_DEVICE_AWAKE, keepDeviceAwake);
-        context.startService(intent);
-        uploadJob.setSubmitted(true);
-        return uploadJob.getJobId();
     }
 
     public static UploadJob getFirstActiveJob(Context context) {
@@ -169,7 +156,6 @@ public class NewPiwigoUploadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
 
         boolean keepDeviceAwake = intent.getBooleanExtra(INTENT_ARG_KEEP_DEVICE_AWAKE, false);
-
         PowerManager.WakeLock wl = null;
         if (keepDeviceAwake) {
             PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -179,12 +165,31 @@ public class NewPiwigoUploadService extends IntentService {
             }
         }
 
+        try {
+            doWork(intent);
+        } finally {
+            if (wl != null) {
+                wl.release();
+            }
+        }
+
+    }
+
+    protected abstract void doWork(Intent intent);
+
+    protected abstract void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response);
+
+    protected void runJob(long jobId) {
+        UploadJob thisUploadJob = getActiveJob(getApplicationContext(), jobId);
+        runJob(thisUploadJob);
+    }
+
+    protected void runJob(UploadJob thisUploadJob) {
+
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         int maxChunkUploadAutoRetries = prefs.getInt(getString(R.string.preference_data_upload_chunk_auto_retries_key), getResources().getInteger(R.integer.preference_data_upload_chunk_auto_retries_default));
 
-        long jobId = intent.getLongExtra(INTENT_ARG_JOB_ID, -1);
-        UploadJob thisUploadJob = getActiveJob(getApplicationContext(), jobId);
         if (thisUploadJob == null) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Upload job could not be located immediately after creating it - wierd!");
@@ -221,12 +226,14 @@ public class NewPiwigoUploadService extends IntentService {
             }
             if (!imageFindExistingHandler.isSuccess()) {
                 // notify the listener of the final error we received from the server
-                postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), imageFindExistingHandler.getResponse()));
+                postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), imageFindExistingHandler.getResponse()));
                 return;
             }
 
+            boolean useTempFolder = !PiwigoSessionDetails.isUseCommunityPlugin(thisUploadJob.getConnectionPrefs());
+
             // create a secure folder to upload to if required
-            if (thisUploadJob.isUseTempFolder() && !createTemporaryUploadAlbum(thisUploadJob)) {
+            if (useTempFolder && !createTemporaryUploadAlbum(thisUploadJob)) {
                 return;
             }
 
@@ -253,11 +260,8 @@ public class NewPiwigoUploadService extends IntentService {
                 saveStateToDisk(thisUploadJob);
             }
 
-            postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse(getNextMessageId(), thisUploadJob));
-            PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(jobId);
-            if (keepDeviceAwake) {
-                wl.release();
-            }
+            postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse(getNextMessageId(), thisUploadJob));
+            PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(thisUploadJob.getJobId());
         }
     }
 
@@ -559,11 +563,6 @@ public class NewPiwigoUploadService extends IntentService {
                 postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUpload, e));
             }
         }
-    }
-
-    private void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response) {
-        PiwigoResponseBufferingHandler.getDefault().preRegisterResponseHandlerForNewMessage(jobId, response.getMessageId());
-        PiwigoResponseBufferingHandler.getDefault().processResponse(response);
     }
 
     private boolean deleteUploadedResourceFromServer(UploadJob uploadJob, ResourceItem uploadedResource) {
