@@ -19,17 +19,7 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse response) {
-
-    }
-
-    @Override
     protected void onRequestedFileUploadCancelComplete(Context context, File cancelledFile) {
-
-    }
-
-    @Override
-    protected void onGetSubGalleryNames(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
 
     }
 
@@ -65,6 +55,10 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
 
     @Override
     protected void onUploadComplete(Context context, UploadJob job) {
-
+        // delete job regardless of outcome if the job wasn't cancelled.
+        if(!job.isCancelUploadAsap()) {
+            BasePiwigoUploadService.deleteStateFromDisk(context, job);
+            BasePiwigoUploadService.removeJob(job);
+        }
     }
 }

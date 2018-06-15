@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -75,66 +76,120 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return uploadJob;
     }
 
-    public static UploadJob getFirstActiveJob(Context context) {
+    public static UploadJob getFirstActiveForegroundJob(Context context) {
         if (activeUploadJobs.size() == 0) {
-            return loadStateFromDisk(context);
+            return loadForegroundJobStateFromDisk(context);
         }
-        return activeUploadJobs.get(0);
+        for(UploadJob job : activeUploadJobs) {
+            if(!job.isRunInBackground()) {
+                return job;
+            }
+        }
+        return loadForegroundJobStateFromDisk(context);
     }
 
     public static void removeJob(UploadJob job) {
         activeUploadJobs.remove(job);
     }
 
-    public static UploadJob getActiveJob(Context context, long jobId) {
+    public static UploadJob getActiveBackgroundJob(Context context) {
+        for (UploadJob uploadJob : activeUploadJobs) {
+            if (uploadJob.isRunInBackground()) {
+                return uploadJob;
+            }
+        }
+        activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
+        for (UploadJob uploadJob : activeUploadJobs) {
+            if (uploadJob.isRunInBackground()) {
+                return uploadJob;
+            }
+        }
+        return null;
+    }
+
+    public static UploadJob getActiveForegroundJob(Context context, long jobId) {
         for (UploadJob uploadJob : activeUploadJobs) {
             if (uploadJob.getJobId() == jobId) {
                 return uploadJob;
             }
         }
-        UploadJob job = loadStateFromDisk(context);
+        UploadJob job = loadForegroundJobStateFromDisk(context);
         if (job != null && job.getJobId() != jobId) {
             throw new RuntimeException("Job exists on disk, but it doesn't match that expected by the app");
         }
         return job;
     }
 
-    private static UploadJob loadStateFromDisk(Context c) {
+    private static List<UploadJob> loadBackgroundJobsStateFromDisk(Context c) {
+        File jobsFolder = new File(c.getApplicationContext().getExternalCacheDir(), "uploadJobs");
+        if(!jobsFolder.exists()) {
+            jobsFolder.mkdir();
+            return new ArrayList<UploadJob>();
+        }
+
+        List<UploadJob> jobs = new ArrayList<>();
+        File[] jobFiles = jobsFolder.listFiles();
+        for(int i = 0; i < jobFiles.length; i++) {
+            UploadJob job = loadJobFromFile(jobFiles[i]);
+            if(job != null) {
+                jobs.add(job);
+            } else {
+                jobFiles[i].delete();
+            }
+        }
+        if(activeUploadJobs != null) {
+            for (UploadJob activeJob : activeUploadJobs) {
+                UploadJob loadedJob = null;
+                for(Iterator<UploadJob> iter = jobs.iterator(); iter.hasNext(); loadedJob = iter.next()) {
+                    if(loadedJob.getJobId() == activeJob.getJobId()) {
+                        iter.remove();
+                    }
+                }
+            }
+        }
+        return jobs;
+    }
+
+    private static UploadJob loadForegroundJobStateFromDisk(Context c) {
 
         UploadJob loadedJobState = null;
 
         File sourceFile = new File(c.getApplicationContext().getExternalCacheDir(), "uploadJob.state");
         if (sourceFile.exists()) {
-
-            boolean deleteFileNow = false;
-            ObjectInputStream ois = null;
-            try {
-
-                ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(sourceFile)));
-                Object o = ois.readObject();
-                loadedJobState = (UploadJob) o;
-
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "Error reading job state from disk", e);
-            } catch (IOException e) {
-                Log.d(TAG, "Error reading job state from disk", e);
-            } catch (ClassNotFoundException e) {
-                Log.d(TAG, "Error reading job state from disk - Job has changed shape since this version.", e);
-                deleteFileNow = true;
-            } finally {
-                if (ois != null) {
-                    try {
-                        ois.close();
-                    } catch (IOException e) {
-                        Log.d(TAG, "Error closing stream when reading job from disk", e);
-                    }
-                }
-                if (deleteFileNow) {
-                    sourceFile.delete();
-                }
-            }
+            loadedJobState = loadJobFromFile(sourceFile);
         }
         return loadedJobState;
+    }
+
+    private static UploadJob loadJobFromFile(File sourceFile) {
+        boolean deleteFileNow = false;
+        ObjectInputStream ois = null;
+        try {
+
+            ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(sourceFile)));
+            Object o = ois.readObject();
+            return (UploadJob) o;
+
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "Error reading job state from disk", e);
+        } catch (IOException e) {
+            Log.d(TAG, "Error reading job state from disk", e);
+        } catch (ClassNotFoundException e) {
+            Log.d(TAG, "Error reading job state from disk - Job has changed shape since this version.", e);
+            deleteFileNow = true;
+        } finally {
+            if (ois != null) {
+                try {
+                    ois.close();
+                } catch (IOException e) {
+                    Log.d(TAG, "Error closing stream when reading job from disk", e);
+                }
+            }
+            if (deleteFileNow) {
+                sourceFile.delete();
+            }
+        }
+        return null;
     }
 
     public static void deleteStateFromDisk(Context c, UploadJob thisUploadJob) {
@@ -151,10 +206,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return worker.start(handler.getMessageId());
     }
 
-    @SuppressLint("WakelockTimeout")
-    @Override
-    protected void onHandleIntent(Intent intent) {
-
+    protected PowerManager.WakeLock getWakeLock(Intent intent) {
         boolean keepDeviceAwake = intent.getBooleanExtra(INTENT_ARG_KEEP_DEVICE_AWAKE, false);
         PowerManager.WakeLock wl = null;
         if (keepDeviceAwake) {
@@ -164,15 +216,27 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 wl.acquire();
             }
         }
+        return wl;
+    }
 
+    @SuppressLint("WakelockTimeout")
+    @Override
+    protected void onHandleIntent(Intent intent) {
+
+
+        PowerManager.WakeLock wl = getWakeLock(intent);
         try {
             doWork(intent);
         } finally {
-            if (wl != null) {
-                wl.release();
-            }
+            releaseWakeLock(wl);
         }
 
+    }
+
+    protected void releaseWakeLock(PowerManager.WakeLock wl) {
+        if (wl != null) {
+            wl.release();
+        }
     }
 
     protected abstract void doWork(Intent intent);
@@ -180,7 +244,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
     protected abstract void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response);
 
     protected void runJob(long jobId) {
-        UploadJob thisUploadJob = getActiveJob(getApplicationContext(), jobId);
+        UploadJob thisUploadJob = getActiveForegroundJob(getApplicationContext(), jobId);
         runJob(thisUploadJob);
     }
 
@@ -437,6 +501,10 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
         for (File fileForUpload : thisUploadJob.getFilesForUpload()) {
 
+            if(!fileForUpload.exists()) {
+                thisUploadJob.cancelFileUpload(fileForUpload);
+            }
+
             if (thisUploadJob.needsUpload(fileForUpload)) {
                 uploadFileData(thisUploadJob, fileForUpload, chunkBuffer, maxChunkUploadAutoRetries);
             }
@@ -515,7 +583,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
     private void uploadFileData(UploadJob thisUploadJob, File fileForUpload, byte[] chunkBuffer, int maxChunkUploadAutoRetries) {
         long jobId = thisUploadJob.getJobId();
 
-        if (thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
+        if (!thisUploadJob.isCancelUploadAsap() && thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
 
             postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoStartUploadFileResponse(getNextMessageId(), fileForUpload));
 
@@ -653,7 +721,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
             }
 
             do {
-                if (thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
+                if (!thisUploadJob.isCancelUploadAsap() && thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
 
                     bytesOfDataInChunk = bis.read(uploadChunkBuffer);
 

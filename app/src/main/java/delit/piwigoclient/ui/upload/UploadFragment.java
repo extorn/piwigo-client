@@ -433,7 +433,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         UploadJob activeJob = null;
         if(uploadJobId != null) {
-            activeJob = ForegroundPiwigoUploadService.getActiveJob(getContext(), uploadJobId);
+            activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
         }
 
         if(activeJob == null) {
@@ -533,7 +533,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
-            UploadJob activeJob = ForegroundPiwigoUploadService.getActiveJob(getContext(), uploadJobId);
+            UploadJob activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
             boolean keepDeviceAwake = false;
             if (event.areAllPermissionsGranted()) {
                 keepDeviceAwake = true;
@@ -722,7 +722,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                 FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
                 adapter.remove(cancelledFile);
             }
-            UploadJob uploadJob = ForegroundPiwigoUploadService.getActiveJob(context, uploadJobId);
+            UploadJob uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, uploadJobId);
             if(uploadJob.isFilePartiallyUploaded(cancelledFile)) {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_partial_upload_deleted));
             }
@@ -863,6 +863,17 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
 
         @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
+                onGetSubGalleryNames((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
+                onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) response);
+            } else {
+                super.onAfterHandlePiwigoResponse(response);
+            }
+        }
+
+        @Override
         protected void onAddUploadedFileToAlbumFailure(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse response) {
             PiwigoResponseBufferingHandler.Response error = response.getError();
             File fileForUpload = response.getFileForUpload();
@@ -893,12 +904,10 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             }
         }
 
-        @Override
         protected void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse response) {
             updateSpinnerWithNewAlbumsList(response.getAdminList().flattenTree());
         }
 
-        @Override
         protected void onGetSubGalleryNames(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
             updateSpinnerWithNewAlbumsList(response.getAlbumNames());
         }
@@ -922,9 +931,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     private UploadJob getActiveJob(Context context) {
         UploadJob uploadJob;
         if (uploadJobId == null) {
-            uploadJob = ForegroundPiwigoUploadService.getFirstActiveJob(context);
+            uploadJob = ForegroundPiwigoUploadService.getFirstActiveForegroundJob(context);
         } else {
-            uploadJob = ForegroundPiwigoUploadService.getActiveJob(context, uploadJobId);
+            uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, uploadJobId);
         }
         return uploadJob;
     }

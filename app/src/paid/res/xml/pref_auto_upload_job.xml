@@ -3,11 +3,12 @@
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_data_upload_automatic_title">
-        <!--<SwitchPreference
+
+        <SwitchPreference
             android:defaultValue="@bool/preference_data_upload_automatic_upload_enable_default"
             android:key="@string/preference_data_upload_automatic_upload_enable_key"
             android:summary="@string/preference_data_upload_automatic_upload_enable_summary"
-            android:title="@string/preference_data_upload_automatic_upload_enable_title" />-->
+            android:title="@string/preference_data_upload_automatic_upload_enable_title" />
         <SwitchPreference
             android:defaultValue="@bool/preference_data_upload_automatic_upload_wireless_only_default"
             android:key="@string/preference_data_upload_automatic_upload_wireless_only_key"
@@ -25,9 +26,8 @@
 
         <CheckBoxPreference
             android:key="@string/preference_data_upload_automatic_job_is_valid_key"
-            android:title="@string/preference_data_upload_automatic_job_valid_title"
-            android:enabled="false"
-            />
+            android:title="@string/preference_data_upload_automatic_job_is_valid_title"
+            android:enabled="false"/>
 
         <SwitchPreference
             android:defaultValue="@bool/preference_data_upload_automatic_enabled_default"

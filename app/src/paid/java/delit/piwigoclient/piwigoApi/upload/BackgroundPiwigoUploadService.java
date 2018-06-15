@@ -8,9 +8,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.PowerManager;
 import android.util.Log;
 
 import com.google.android.gms.common.util.IOUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -21,6 +24,8 @@ import java.util.List;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
+import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
 import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
 import delit.piwigoclient.util.CustomFileFilter;
@@ -38,29 +43,50 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
     private static volatile boolean exit = false;
     private NetworkStatusChangeListener networkStatusChangeListener;
     private static BackgroundPiwigoUploadService instance;
+    private static boolean starting;
+    private static UploadJob runningUploadJob = null;
 
     public BackgroundPiwigoUploadService() {
         super(TAG);
         instance = this;
+        starting = false;
     }
 
-    public static void startService(Context context, boolean keepDeviceAwake) {
-
+    public synchronized static void startService(Context context, boolean keepDeviceAwake) {
+        if(starting || instance != null) {
+            // don't start if already started or starting.
+            return;
+        }
         Intent intent = new Intent(context, BackgroundPiwigoUploadService.class);
         intent.setAction(ACTION_BACKGROUND_UPLOAD_FILES);
         intent.putExtra(INTENT_ARG_KEEP_DEVICE_AWAKE, keepDeviceAwake);
         ComponentName name = context.startService(intent);
     }
 
-    public static void killService() {
-        exit = true;
-        instance.notify();
+    public static boolean isStarted() {
+        return instance != null;
+    }
+
+    public synchronized static void killService() {
+        if(instance != null) {
+            exit = true;
+            instance.notify();
+            if(runningUploadJob != null) {
+                runningUploadJob.cancelUploadAsap();
+            }
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         instance = null;
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        // don't call the default (locks device from sleeping)
+        doWork(intent);
     }
 
     @Override
@@ -85,23 +111,39 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
                 }
 
                 if(canUpload) {
+                    // if there's an old incomplete job, try and finish that first.
+                    UploadJob unfinishedJob = getActiveBackgroundJob(context);
+                    runJob(unfinishedJob);
+
                     if (jobs.getUploadJobsCount(context) > 0) {
                         List<AutoUploadJobConfig> jobConfigList = jobs.getAutoUploadJobs(context);
-                        for (AutoUploadJobConfig jobConfig : jobConfigList) {
+                        PowerManager.WakeLock wl = getWakeLock(intent);
+                        try {
+                            for (AutoUploadJobConfig jobConfig : jobConfigList) {
 
-                            if (jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
-                                UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
-                                if (uploadJob != null) {
-                                    runJob(uploadJob);
+                                if (jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
+                                    UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
+                                    if (uploadJob != null) {
+                                            EventBus.getDefault().post(new BackgroundUploadStartedEvent(uploadJob));
+                                            runJob(uploadJob);
+                                        EventBus.getDefault().post(new BackgroundUploadStoppedEvent(uploadJob));
+                                    }
                                 }
                             }
+                        } finally {
+                            releaseWakeLock(wl);
                         }
                     }
                 }
-                try {
-                    wait(pollDurationMillis);
-                } catch (InterruptedException e) {
-                    Log.d(TAG, "Ignoring interrupt");
+                synchronized (this) {
+                    long endTime = System.currentTimeMillis() + pollDurationMillis;
+                    while (System.currentTimeMillis() < endTime && !exit) {
+                        try {
+                            wait(pollDurationMillis);
+                        } catch (InterruptedException e) {
+                            Log.d(TAG, "Ignoring interrupt");
+                        }
+                    }
                 }
             }
         } finally {
@@ -140,10 +182,23 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
             final android.net.NetworkInfo wifi = connMgr
                     .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-            if (wifi.isAvailable()) {
+            if (wifi.isAvailable() && wifi.isConnected()) {
                 // wake immediately.
-                service.notify();
+                service.wakeIfWaiting();
+            } else {
+                service.pauseAnyRunningUpload();
             }
+        }
+    }
+
+    private synchronized void wakeIfWaiting() {
+        notifyAll();
+    }
+
+    private void pauseAnyRunningUpload() {
+        UploadJob uploadJob = getActiveBackgroundJob(getApplicationContext());
+        if(uploadJob != null && !uploadJob.isFinished()) {
+            uploadJob.cancelUploadAsap();
         }
     }
 
@@ -181,6 +236,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
         CategoryItemStub category = jobConfig.getUploadToAlbum(context);
         UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(context), filesToUpload, category,
                 jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId());
+        uploadJob.setToRunInBackground();
         return uploadJob;
     }
 

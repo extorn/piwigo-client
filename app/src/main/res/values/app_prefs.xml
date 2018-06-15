@@ -293,9 +293,9 @@
 
     <!-- prefs -->
 
-    <string name="preference_data_upload_automatic_enable_key">preference_data_upload_automatic_upload_enable</string>
-    <string name="preference_data_upload_automatic_enable_summary">Enable automatic background upload</string>
-    <string name="preference_data_upload_automatic_enable_title">Automatic Upload</string>
+    <string name="preference_data_upload_automatic_upload_enable_key">preference_data_upload_automatic_upload_enable</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Enable background uploading</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Automatic Upload</string>
 
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">Only use Auto Upload on Wireless</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Over Wireless Only</string>
@@ -306,7 +306,9 @@
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
 
     <!-- boolean flag set that if false will stop the job running -->
+
     <string name="preference_data_upload_automatic_job_is_valid_key">preference_data_upload_automatic_job_is_valid</string>
+    <string name="preference_data_upload_automatic_job_is_valid_title">Job is Valid</string>
 
     <string name="preference_data_upload_automatic_job_enabled_key">preference_data_upload_automatic_server_enabled</string>
     <string name="preference_data_upload_automatic_job_enabled_summary">Is this job listening in the background?</string>
@@ -338,5 +340,9 @@
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">jpg,png,raw</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">File extensions</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Upload files with ext %1$s</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Privacy Level</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Uploaded files visible to %1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_key">preference_data_upload_automatic_job_privacy_level</string>
 
 </resources>

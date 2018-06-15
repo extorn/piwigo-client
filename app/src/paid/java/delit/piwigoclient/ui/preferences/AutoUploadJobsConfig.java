@@ -15,6 +15,10 @@ import delit.piwigoclient.R;
 public class AutoUploadJobsConfig {
     private SharedPreferences prefs;
 
+    public AutoUploadJobsConfig(SharedPreferences prefs) {
+        this.prefs = prefs;
+    }
+
     public AutoUploadJobsConfig(Context c) {
         prefs = PreferenceManager.getDefaultSharedPreferences(c);
     }
@@ -24,6 +28,10 @@ public class AutoUploadJobsConfig {
             throw new IllegalStateException("Job misconfigured");
         }
         return prefs.getBoolean(c.getString(prefKeyId), false);
+    }
+
+    private boolean getBooleanValue(Context c, @StringRes int prefKeyId, boolean defaultVal) {
+        return prefs.getBoolean(c.getString(prefKeyId), defaultVal);
     }
 
     private int getIntValue(Context c, @StringRes int prefKeyId) {
@@ -48,11 +56,11 @@ public class AutoUploadJobsConfig {
     }
 
     public boolean isBackgroundUploadEnabled(Context c) {
-        return getBooleanValue(c, R.string.preference_data_upload_automatic_enable_key);
+        return getBooleanValue(c, R.string.preference_data_upload_automatic_upload_enable_key, false);
     }
 
     public boolean isUploadOnWirelessOnly(Context c) {
-        return getBooleanValue(c, R.string.preference_data_upload_automatic_upload_wireless_only_key);
+        return getBooleanValue(c, R.string.preference_data_upload_automatic_upload_wireless_only_key, c.getResources().getBoolean(R.bool.preference_data_upload_automatic_upload_wireless_only_default));
     }
 
     public int getUploadJobsCount(Context c) {

@@ -33,10 +33,6 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
             onChunkUploadFailed(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileChunkFailedResponse) response);
         } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse) {
             onAddUploadedFileToAlbumFailure(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse) response);
-        } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-            onGetSubGalleryNames((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
-        } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
-            onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) response);
         } else if(response instanceof PiwigoResponseBufferingHandler.FileUploadCancelledResponse) {
             onRequestedFileUploadCancelComplete(context, ((PiwigoResponseBufferingHandler.FileUploadCancelledResponse)response).getCancelledFile());
         } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoStartUploadFileResponse) {
@@ -48,11 +44,7 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
 
     protected abstract void onErrorResponse(PiwigoResponseBufferingHandler.ErrorResponse response);
 
-    protected abstract void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse response);
-
     protected abstract void onRequestedFileUploadCancelComplete(Context context, File cancelledFile);
-
-    protected abstract void onGetSubGalleryNames(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response);
 
     protected abstract void onAddUploadedFileToAlbumFailure(Context context, PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse response);
 

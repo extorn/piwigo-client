@@ -22,6 +22,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.util.PreferenceUtils;
 
@@ -176,6 +177,12 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
                 boolean wifiOnlyEnabled = getBooleanPreferenceValue(key);
                 if(wifiOnlyEnabled) {
                     getUiHelper().runWithExtraPermissions(getActivity(), Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.ACCESS_NETWORK_STATE, getString(R.string.alert_network_monitor_permission_needed_for_wifi_upload));
+                }
+            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_enable_key))) {
+                if(getBooleanPreferenceValue(key)) {
+                    if(!BackgroundPiwigoUploadService.isStarted()) {
+                        BackgroundPiwigoUploadService.startService(getContext(), true);
+                    }
                 }
             } else {
                 invokePreferenceValuesValidation(false);

@@ -27,6 +27,7 @@ public class UploadJob implements Serializable {
     private static final Integer REQUIRES_DELETE = 5;
     private static final Integer DELETED = 6;
     private final long jobId;
+    private boolean runInBackground;
     private final long responseHandlerId;
     private final ArrayList<File> filesForUpload;
     private final HashMap<File, Integer> fileUploadStatus;
@@ -40,6 +41,7 @@ public class UploadJob implements Serializable {
     private long temporaryUploadAlbum = -1;
     private volatile transient boolean submitted = false;
     private volatile transient boolean runningNow = false;
+    private volatile transient boolean cancelUploadAsap;
 
     public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel) {
         this.jobId = jobId;
@@ -51,6 +53,18 @@ public class UploadJob implements Serializable {
         this.filesForUpload = new ArrayList<>(filesForUpload);
         this.fileUploadStatus = new HashMap<>(filesForUpload.size());
         this.filePartialUploadProgress = new HashMap<>(filesForUpload.size());
+    }
+
+    public void setToRunInBackground() {
+        this.runInBackground = true;
+    }
+
+    public boolean isRunInBackground() {
+        return runInBackground;
+    }
+
+    public void cancelUploadAsap() {
+        this.cancelUploadAsap = true;
     }
 
     public synchronized void markFileAsUploading(File fileForUpload) {
@@ -157,6 +171,10 @@ public class UploadJob implements Serializable {
 
     public int getPrivacyLevelWanted() {
         return privacyLevelWanted;
+    }
+
+    public boolean isCancelUploadAsap() {
+        return cancelUploadAsap;
     }
 
     public synchronized boolean isFileUploadStillWanted(File file) {
