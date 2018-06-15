@@ -764,4 +764,5 @@ SOFTWARE.
     <string name="preference_data_upload_automatic_job_privacy_level_title">Privacy Level</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Uploaded files visible to %1$s</string>
     <string name="preference_data_upload_automatic_job_privacy_level_key">preference_data_upload_automatic_job_privacy_level</string>
+    <string name="preference_data_upload_automatic_job_valid_title">Job is Valid</string>
 </resources>

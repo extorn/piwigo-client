@@ -61,8 +61,11 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
             CategoryItemStub album = new CategoryItemStub(name, id);
             if (parentId != null) {
                 CategoryItemStub parentAlbum = availableGalleriesMap.get(parentId);
-                album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
-            } else {
+                if(parentAlbum != null) {
+                    album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
+                }
+            }
+            if(album.getParentageChain() == null) {
                 if (category.has("uppercats")) {
                     String parentCatsCsv = category.get("uppercats").getAsString();
                     List<Long> parentage = toParentageChain(id, parentCatsCsv);

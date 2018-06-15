@@ -53,6 +53,10 @@ public class MyPreferenceFragment extends PreferenceFragment {
         return new BasicPiwigoResponseListener();
     }
 
+    protected void addActiveServiceCall(@StringRes int stringId, long messageId) {
+        uiHelper.addActiveServiceCall(stringId, messageId);
+    }
+
     protected void addActiveServiceCall(long messageId) {
         uiHelper.addActiveServiceCall(R.string.talking_to_server_please_wait, messageId);
     }

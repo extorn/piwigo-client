@@ -2,27 +2,10 @@ package delit.piwigoclient.ui.common.preference;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.os.Build;
-import android.preference.ListPreference;
 import android.support.annotation.ArrayRes;
-import android.support.annotation.IdRes;
 import android.support.annotation.RequiresApi;
-import android.support.v4.content.res.TypedArrayUtils;
 import android.util.AttributeSet;
-
-import com.google.android.gms.common.util.CollectionUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import delit.piwigoclient.util.ArrayUtils;
 
@@ -58,9 +41,9 @@ public class IntListPreference extends MappedListPreference<Integer> {
 
     @Override
     protected Integer getPersistedValue(Integer defaultValue) {
-//        return getPersistedInt(defaultValue);
+        int defaultInt = defaultValue != null ? defaultValue : Integer.MIN_VALUE;
         try {
-            return getPersistedInt(defaultValue);
+            return getPersistedInt(defaultInt);
         } catch(ClassCastException e) {
             // this will occur if swapping this pref type in for an old string type.
             if (e.getMessage().equals("java.lang.String cannot be cast to java.lang.Integer")) {
