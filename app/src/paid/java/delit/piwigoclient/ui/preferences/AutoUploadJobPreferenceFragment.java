@@ -1,7 +1,9 @@
 package delit.piwigoclient.ui.preferences;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
@@ -146,15 +148,6 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         setHasOptionsMenu(true);
 
         invokePreferenceValuesValidation(false);
-
-        Preference p = findPreference(R.string.preference_data_upload_automatic_job_server_key);
-        p.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newServerProfile) {
-
-                return true;
-            }
-        });
     }
 
     @Override
@@ -178,6 +171,11 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
                 long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
                 if(albumId >= 0) {
                     invokeRemoteFolderPreferenceValidation();
+                }
+            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_wireless_only_key))) {
+                boolean wifiOnlyEnabled = getBooleanPreferenceValue(key);
+                if(wifiOnlyEnabled) {
+                    getUiHelper().runWithExtraPermissions(getActivity(), Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.ACCESS_NETWORK_STATE, getString(R.string.alert_network_monitor_permission_needed_for_wifi_upload));
                 }
             } else {
                 invokePreferenceValuesValidation(false);
