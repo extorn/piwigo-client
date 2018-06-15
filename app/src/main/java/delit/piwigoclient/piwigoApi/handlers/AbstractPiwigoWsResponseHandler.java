@@ -2,6 +2,7 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.util.Log;
 
+import com.google.android.gms.common.util.ArrayUtils;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -84,8 +85,19 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
         String response = null;
         try {
-
-            PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(new ByteArrayInputStream(responseBody)), PiwigoJsonResponse.class);
+            int idx = -1;
+            for(int i = 0; i < responseBody.length; i++) {
+                if(responseBody[i] == '{') {
+                    idx = i;
+                    break;
+                }
+            }
+            int jsonStartsAt = idx;
+            ByteArrayInputStream jsonBis = new ByteArrayInputStream(responseBody);
+            if(jsonStartsAt > 0) {
+                jsonBis.skip(jsonStartsAt - 1);
+            }
+            PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(jsonBis), PiwigoJsonResponse.class);
             processJsonResponse(getMessageId(), piwigoMethod, piwigoResponse, responseBody);
 
         } catch (JsonSyntaxException e) {

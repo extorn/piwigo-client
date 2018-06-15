@@ -214,12 +214,14 @@ public class HttpClientFactory {
     }
 
     private PersistentProfileCookieStore getCookieStore(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
-        PersistentProfileCookieStore cookieStore = cookieStoreMap.get(connectionPrefs);
-        if (cookieStore == null) {
-            cookieStore = new PersistentProfileCookieStore(context.getApplicationContext(), connectionPrefs.getProfileId(prefs, context));
-            cookieStoreMap.put(connectionPrefs, cookieStore);
+        synchronized(connectionPrefs) {
+            PersistentProfileCookieStore cookieStore = cookieStoreMap.get(connectionPrefs);
+            if (cookieStore == null) {
+                cookieStore = new PersistentProfileCookieStore(context.getApplicationContext(), connectionPrefs.getProfileId(prefs, context));
+                cookieStoreMap.put(connectionPrefs, cookieStore);
+            }
+            return cookieStore;
         }
-        return cookieStore;
     }
 
     private int extractPort(String serverAddress) {
