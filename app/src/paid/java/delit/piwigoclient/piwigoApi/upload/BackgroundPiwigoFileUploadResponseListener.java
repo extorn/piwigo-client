@@ -5,6 +5,9 @@ import android.content.Context;
 import java.io.File;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
+import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
+import delit.piwigoclient.ui.preferences.AutoUploadJobsPreference;
 import delit.piwigoclient.ui.upload.PiwigoFileUploadResponseListener;
 
 public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUploadResponseListener {
@@ -55,10 +58,5 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
 
     @Override
     protected void onUploadComplete(Context context, UploadJob job) {
-        // delete job regardless of outcome if the job wasn't cancelled.
-        if(!job.isCancelUploadAsap()) {
-            BasePiwigoUploadService.deleteStateFromDisk(context, job);
-            BasePiwigoUploadService.removeJob(job);
-        }
     }
 }

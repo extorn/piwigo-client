@@ -183,6 +183,8 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
                     if(!BackgroundPiwigoUploadService.isStarted()) {
                         BackgroundPiwigoUploadService.startService(getContext(), true);
                     }
+                } else {
+                    BackgroundPiwigoUploadService.killService();
                 }
             } else {
                 invokePreferenceValuesValidation(false);

@@ -103,6 +103,10 @@ public class UploadJob implements Serializable {
         return getFilesWithStatus(PENDING_APPROVAL, CONFIGURED, DELETED, CANCELLED);
     }
 
+    public HashSet<File> getFilesSuccessfullyUploaded() {
+        return getFilesWithStatus(PENDING_APPROVAL, CONFIGURED);
+    }
+
     public HashSet<File> getFilesWithStatus(Integer... statuses) {
         HashSet<File> filesProcessedToEnd = new HashSet<>();
         for (Map.Entry<File, Integer> fileStatusEntry : fileUploadStatus.entrySet()) {

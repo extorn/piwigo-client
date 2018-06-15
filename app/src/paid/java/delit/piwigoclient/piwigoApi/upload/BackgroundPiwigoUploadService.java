@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
@@ -57,6 +58,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
             // don't start if already started or starting.
             return;
         }
+        exit = false;
+        starting = true;
         Intent intent = new Intent(context, BackgroundPiwigoUploadService.class);
         intent.setAction(ACTION_BACKGROUND_UPLOAD_FILES);
         intent.putExtra(INTENT_ARG_KEEP_DEVICE_AWAKE, keepDeviceAwake);
@@ -70,10 +73,10 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
     public synchronized static void killService() {
         if(instance != null) {
             exit = true;
-            instance.notify();
             if(runningUploadJob != null) {
                 runningUploadJob.cancelUploadAsap();
             }
+            instance.wakeIfWaiting();
         }
     }
 
@@ -114,24 +117,41 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
                     // if there's an old incomplete job, try and finish that first.
                     UploadJob unfinishedJob = getActiveBackgroundJob(context);
                     runJob(unfinishedJob);
+                    if(unfinishedJob != null && unfinishedJob.isCancelUploadAsap()) {
 
-                    if (jobs.getUploadJobsCount(context) > 0) {
-                        List<AutoUploadJobConfig> jobConfigList = jobs.getAutoUploadJobs(context);
-                        PowerManager.WakeLock wl = getWakeLock(intent);
-                        try {
-                            for (AutoUploadJobConfig jobConfig : jobConfigList) {
+                        if (jobs.getUploadJobsCount(context) > 0) {
+                            List<AutoUploadJobConfig> jobConfigList = jobs.getAutoUploadJobs(context);
+                            PowerManager.WakeLock wl = getWakeLock(intent);
+                            try {
+                                for (AutoUploadJobConfig jobConfig : jobConfigList) {
 
-                                if (jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
-                                    UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
-                                    if (uploadJob != null) {
+                                    if (jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
+                                        UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
+                                        if (uploadJob != null) {
                                             EventBus.getDefault().post(new BackgroundUploadStartedEvent(uploadJob));
                                             runJob(uploadJob);
-                                        EventBus.getDefault().post(new BackgroundUploadStoppedEvent(uploadJob));
+                                            EventBus.getDefault().post(new BackgroundUploadStoppedEvent(uploadJob));
+                                            if(jobConfig.isDeleteFilesAfterUpload(context)) {
+                                                for (File f : uploadJob.getFilesSuccessfullyUploaded()) {
+                                                    if (f.exists()) {
+                                                        f.delete();
+                                                    }
+                                                }
+                                            }
+                                            if(uploadJob.isCancelUploadAsap()) {
+                                                // exit for loop now and go back to sleep.
+                                                break;
+                                            } else {
+                                                BasePiwigoUploadService.deleteStateFromDisk(context, uploadJob);
+                                                BasePiwigoUploadService.removeJob(uploadJob);
+                                            }
+                                        }
+
                                     }
                                 }
+                            } finally {
+                                releaseWakeLock(wl);
                             }
-                        } finally {
-                            releaseWakeLock(wl);
                         }
                     }
                 }
@@ -179,10 +199,14 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
             final ConnectivityManager connMgr = (ConnectivityManager) context
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
 
-            final android.net.NetworkInfo wifi = connMgr
+            android.net.NetworkInfo network = connMgr
                     .getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            if(BuildConfig.DEBUG) {
+                // just allow testing in the emulator.
+                network = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            }
 
-            if (wifi.isAvailable() && wifi.isConnected()) {
+            if (network.isAvailable() && network.isConnected()) {
                 // wake immediately.
                 service.wakeIfWaiting();
             } else {
@@ -191,8 +215,10 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
         }
     }
 
-    private synchronized void wakeIfWaiting() {
-        notifyAll();
+    private void wakeIfWaiting() {
+        synchronized(this) {
+            notifyAll();
+        }
     }
 
     private void pauseAnyRunningUpload() {

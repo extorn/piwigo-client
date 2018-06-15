@@ -201,9 +201,9 @@ public abstract class BasePiwigoUploadService extends IntentService {
         }
     }
 
-    private long callPiwigoServer(AbstractPiwigoWsResponseHandler handler, UploadJob uploadJob) {
+    private void callPiwigoServer(AbstractPiwigoWsResponseHandler handler, UploadJob uploadJob) {
         CustomWorker worker = new CustomWorker(handler, uploadJob, getApplicationContext());
-        return worker.start(handler.getMessageId());
+        worker.run(handler.getMessageId());
     }
 
     protected PowerManager.WakeLock getWakeLock(Intent intent) {
@@ -827,6 +827,15 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 handler.setPublishResponses(false);
             }
             return handler;
+        }
+
+        /**
+         *
+         * @param messageId
+         * @return handler succeeded
+         */
+        public boolean run(long messageId) {
+            return doInBackground(messageId);
         }
     }
 
