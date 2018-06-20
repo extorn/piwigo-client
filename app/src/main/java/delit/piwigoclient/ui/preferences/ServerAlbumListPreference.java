@@ -26,9 +26,12 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -163,14 +166,30 @@ public class ServerAlbumListPreference extends DialogPreference {
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(connectionProfile);
 
-        AlbumGetSubAlbumNamesResponseHandler handler = new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true);
-        handler.withConnectionPreferences(connectionPrefs);
-        activeServiceCall = handler.invokeAsync(getContext());
+        activeServiceCall = invokeRetrieveSubCategoryNamesCall(connectionPrefs);
 
         CustomUIHelper uiHelper = new CustomUIHelper(this, getAppSharedPreferences(), getContext());
         serviceCallHandler.withUiHelper(this, uiHelper);
 
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(activeServiceCall, serviceCallHandler);
+    }
+
+    private long invokeRetrieveSubCategoryNamesCall(ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler().invokeAsync(getContext()));
+        } else if(sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
+            final boolean recursive = true;
+            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext()));
+        } else {
+            final boolean recursive = true;
+            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext()));
+        }
+    }
+
+    private long addActiveServiceCall(int progress_loading_albums, long messageId) {
+        //TODO display a progress indicator and allow for retry?
+        return messageId;
     }
 
     private class CustomUIHelper extends UIHelper {

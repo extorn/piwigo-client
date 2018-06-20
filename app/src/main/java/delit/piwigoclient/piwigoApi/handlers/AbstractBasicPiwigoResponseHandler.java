@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.ResponseHandlerInterface;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -18,6 +19,7 @@ import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -161,13 +163,11 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         this.responseBody = null;
         this.headers = null;
         this.statusCode = -1;
-        this.triedLoggingInAgain = false;
         this.httpClientFactory = null;
         this.isSuccess = false;
         this.cancelCallAsap = false;
         this.requestHandle = null;
     }
-
 
     @Override
     public final void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
@@ -192,7 +192,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 tryingAgain = true;
                 rerunCall();
             } else if (allowSessionRefreshAttempt
-                    && (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && error == null || error.getMessage().equalsIgnoreCase("Access denied"))) {
+                    && (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && (error == null || error.getMessage().equalsIgnoreCase("Access denied")))) {
 
                 boolean newLoginAcquired = false;
                 synchronized (AbstractBasicPiwigoResponseHandler.class) {
@@ -403,5 +403,12 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     public void setPerformingLogin() {
         isPerformingLogin = true;
+    }
+
+    /**
+     * Called before initial call and when manual retry invoked.
+     */
+    public void beforeCall() {
+        this.triedLoggingInAgain = false;
     }
 }

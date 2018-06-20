@@ -161,6 +161,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                 }
             }
         }
+        handler.beforeCall();
         handler.runCall();
 
         // this is the absolute timeout - in case something is seriously wrong.

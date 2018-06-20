@@ -7,10 +7,11 @@ import java.util.List;
 
 public class CategoryItemStub implements Serializable {
 
-    public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId());
+    public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId()).markNonUserSelectable();
     private final String name;
     private final long id;
     private ArrayList<Long> parentageChain;
+    private boolean isUserSelectable = true;
 
     public CategoryItemStub(String name,  long id) {
         this.name = name;
@@ -56,5 +57,14 @@ public class CategoryItemStub implements Serializable {
     @Override
     public int hashCode() {
         return (int) id;
+    }
+
+    public CategoryItemStub markNonUserSelectable() {
+        this.isUserSelectable = false;
+        return this;
+    }
+
+    public boolean isUserSelectable() {
+        return isUserSelectable;
     }
 }

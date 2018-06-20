@@ -50,6 +50,16 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
         this.parentAlbum = parentAlbum;
     }
 
+    @Override
+    public boolean areAllItemsEnabled() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled(int position) {
+        return super.isEnabled(position) && getItem(position).isUserSelectable();
+    }
+
     @NonNull
     @Override
     public View getView(int position, View view, @NonNull ViewGroup parent) {

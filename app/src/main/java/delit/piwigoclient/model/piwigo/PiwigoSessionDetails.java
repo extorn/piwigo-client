@@ -140,7 +140,7 @@ public class PiwigoSessionDetails {
     }
 
     public boolean isFullyLoggedIn() {
-        if(isAdminUser() || isUseCommunityPlugin()) {
+        if(isAdminUser() /*|| isUseCommunityPlugin()*/) {
             return isLoggedInAndHaveSessionAndUserDetails();
         } else {
             return isLoggedInWithFullSessionDetails();

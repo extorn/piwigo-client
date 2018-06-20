@@ -40,6 +40,7 @@ import delit.piwigoclient.piwigoApi.upload.UploadJob;
  */
 
 public class PiwigoResponseBufferingHandler {
+    private static final String TAG = "PiwigoResponseHandler";
     private static final AtomicLong nextHandlerId = new AtomicLong();
     private static volatile PiwigoResponseBufferingHandler defaultInstance;
     private final Handler callbackHandler;
@@ -205,6 +206,9 @@ public class PiwigoResponseBufferingHandler {
         if (handlerId != null) {
             handler = handlers.get(handlerId);
         } else {
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "No handler registered for message with id " +response.getMessageId());
+            }
             handler = null;
         }
         if (handler != null) {

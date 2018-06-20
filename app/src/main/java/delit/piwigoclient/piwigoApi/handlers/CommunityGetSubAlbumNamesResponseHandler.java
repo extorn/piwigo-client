@@ -9,11 +9,15 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.piwigoclient.util.ArrayUtils;
 
 public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -54,25 +58,55 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
                 name = category.get("name").getAsString();
             }
 
-            Long parentId = null;
 //            if (!"null".equals(category.get("id_uppercat").getAsString())) {
 //                parentId = category.get("id_uppercat").getAsLong();
 //            }
             String[] parentage = category.get("uppercats").getAsString().split(",");
-            if (parentage.length >= 2) {
-                parentId = Long.valueOf(parentage[parentage.length - 2]);
-            }
+            CategoryItemStub parentAlbum = getParentBuildingTreeIfNeeded(availableGalleriesMap, parentage);
             CategoryItemStub album = new CategoryItemStub(name, id);
-            if (parentId != null) {
-                CategoryItemStub parentAlbum = availableGalleriesMap.get(parentId);
-                album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
-            } else {
-                album.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
+            album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
+            int insertPosition = availableGalleries.size();
+            while(parentAlbum != null && !availableGalleries.contains(parentAlbum)) {
+                availableGalleries.add(insertPosition, parentAlbum);
+                if(parentAlbum.getParentId() == null) {
+                    break;
+                }
+                parentAlbum = availableGalleriesMap.get(parentAlbum.getParentId());
             }
             availableGalleries.add(album);
             availableGalleriesMap.put(album.getId(), album);
         }
+        availableGalleries.remove(CategoryItemStub.ROOT_GALLERY);
         PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse r = new PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
         storeResponse(r);
+    }
+
+    private CategoryItemStub getParentBuildingTreeIfNeeded(LongSparseArray<CategoryItemStub> albumsParsed, String[] parentageArr) {
+        if(parentageArr == null || parentageArr.length == 1) {
+            return CategoryItemStub.ROOT_GALLERY;
+        }
+        List<Long> treeNodes = ArrayUtils.toList(ArrayUtils.getLongArray(parentageArr));
+
+        List<CategoryItemStub> parentAlbums = new ArrayList<>(treeNodes.size());
+        treeNodes.remove(treeNodes.size() - 1);
+        for(int i = treeNodes.size(); i > 0; i--) {
+            Long parentId = treeNodes.remove(treeNodes.size() - 1);
+            if(albumsParsed.indexOfKey(parentId) < 0) {
+                CategoryItemStub album = new CategoryItemStub(getContext().getString(R.string.inaccessible_remote_folder),parentId);
+                album.markNonUserSelectable();
+                if(treeNodes.size() == 0) {
+                    album.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
+                } else {
+                    album.setParentageChain(new ArrayList<>(treeNodes));
+                }
+                parentAlbums.add(0, album);
+            }
+        }
+        parentAlbums.add(0, CategoryItemStub.ROOT_GALLERY);
+
+        for(CategoryItemStub parentAlbum : parentAlbums) {
+            albumsParsed.put(parentAlbum.getId(), parentAlbum);
+        }
+        return parentAlbums.get(parentAlbums.size() -1);
     }
 }

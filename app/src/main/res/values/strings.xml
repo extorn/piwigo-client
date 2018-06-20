@@ -762,5 +762,6 @@ SOFTWARE.
     <string name="button_all">Check All</string>
     <string name="button_none">Check None</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Network monitoring should be allowed for efficeint use of WIFI only uploading</string>
+    <string name="inaccessible_remote_folder">** private **</string>
 
 </resources>

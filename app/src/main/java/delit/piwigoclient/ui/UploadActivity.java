@@ -27,6 +27,8 @@ import java.util.Map;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
@@ -109,7 +111,7 @@ public class UploadActivity extends MyActivity {
         } else {
             setContentView(R.layout.activity_upload);
             addUploadingAsFieldsIfAppropriate();
-            showUploadFragment();
+            showUploadFragment(true);
         }
     }
 
@@ -163,21 +165,26 @@ public class UploadActivity extends MyActivity {
         }
     }
 
-    private void showUploadFragment() {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+    private boolean isCurrentUserAuthorisedToUpload(PiwigoSessionDetails sessionDetails) {
+
         boolean isAdminUser = sessionDetails != null && sessionDetails.isAdminUser();
         boolean hasCommunityPlugin = sessionDetails != null && sessionDetails.isUseCommunityPlugin();
+        return isAdminUser || hasCommunityPlugin;
+    }
 
+    private void showUploadFragment(boolean allowLogin) {
+
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         long initialGalleryId = getIntent().getLongExtra("galleryId", 0);
 
-        if(isAdminUser || hasCommunityPlugin) {
+        if(isCurrentUserAuthorisedToUpload(sessionDetails)) {
             Fragment f = UploadFragment.newInstance(initialGalleryId, fileSelectionEventId);
             removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
+        } else if(allowLogin && sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
+            runLogin();
         } else {
-            if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
-                runLogin();
-            }
+            createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
         }
     }
 
@@ -187,16 +194,6 @@ public class UploadActivity extends MyActivity {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
             getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getApplicationContext()));
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PiwigoLoginSuccessEvent event) {
-        boolean isAdminUser = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
-        if(isAdminUser) {
-            showUploadFragment();
-        } else {
-            createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
         }
     }
 
@@ -414,5 +411,21 @@ public class UploadActivity extends MyActivity {
         tx.replace(R.id.upload_details, f, f.getClass().getName()).commit();
 
         addUploadingAsFieldsIfAppropriate();
+    }
+
+    @Override
+    protected BasicPiwigoResponseListener buildPiwigoResponseListener() {
+        return super.buildPiwigoResponseListener();
+    }
+
+    class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+        @Override
+        public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
+            if(response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                showUploadFragment(false);
+            } else {
+                super.onAfterHandlePiwigoResponse(response);
+            }
+        }
     }
 }
