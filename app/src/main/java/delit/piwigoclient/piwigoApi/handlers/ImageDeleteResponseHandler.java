@@ -31,7 +31,7 @@ public class ImageDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
     public RequestParams buildRequestParameters() {
         String sessionToken = "";
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
             sessionToken = sessionDetails.getSessionToken();
         }
         //TODO this will give an unusual error if the user is not logged in.... better way?

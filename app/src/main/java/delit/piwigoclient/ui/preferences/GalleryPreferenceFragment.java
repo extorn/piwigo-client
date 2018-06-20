@@ -63,11 +63,11 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
             if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_thumbnail_size_key))) {
-                if (sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
+                if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_thumbnail_size_not_natively_supported_by_server));
                 }
             } else if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key))) {
-                if (sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
+                if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_slideshow_image_size_not_natively_supported_by_server));
                 }
             }

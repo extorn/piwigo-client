@@ -109,7 +109,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
         String serverVersion = "Unknown";
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if(sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+        if(sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
             serverVersion = sessionDetails.getPiwigoVersion();
         }
         intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: "+ appVersion +"\nType and model of Device Being Used:\n");
@@ -203,10 +203,10 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     class CustomPiwigoListener extends BasicPiwigoResponseListener {
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            // invoke the chained call before hiding the progress dialog to avoid flicker.
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) {
-                PiwigoResponseBufferingHandler.PiwigoOnLoginResponse rsp = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) response;
-                if(rsp.isSessionRetrieved() && rsp.isUserDetailsRetrieved()) {
+            // invokeAndWait the chained call before hiding the progress dialog to avoid flicker.
+            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
+                if(PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
                     onLogin(rsp.getOldCredentials());
                 }
             }
@@ -244,7 +244,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             EventBus.getDefault().post(new AppUnlockedEvent());
         } else {
             // attempt login to PIWIGO server using this password.
-            uiHelper.addActiveServiceCall(R.string.progress_checking_with_server, new LoginResponseHandler(event.getPassword(), getContext()).invokeAsync(getContext()));
+            uiHelper.addActiveServiceCall(R.string.progress_checking_with_server, new LoginResponseHandler(event.getPassword()).invokeAsync(getContext()));
         }
     }
 

@@ -37,9 +37,6 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.Worker;
-import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageFindExistingImagesResponseHandler;
@@ -201,11 +198,6 @@ public abstract class BasePiwigoUploadService extends IntentService {
         }
     }
 
-    private void callPiwigoServer(AbstractPiwigoWsResponseHandler handler, UploadJob uploadJob) {
-        CustomWorker worker = new CustomWorker(handler, uploadJob, getApplicationContext());
-        worker.run(handler.getMessageId());
-    }
-
     protected PowerManager.WakeLock getWakeLock(Intent intent) {
         boolean keepDeviceAwake = intent.getBooleanExtra(INTENT_ARG_KEEP_DEVICE_AWAKE, false);
         PowerManager.WakeLock wl = null;
@@ -283,7 +275,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
             while (!imageFindExistingHandler.isSuccess() && allowedAttempts > 0) {
                 allowedAttempts--;
                 // this is blocking
-                callPiwigoServer(imageFindExistingHandler, thisUploadJob);
+                imageFindExistingHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
                 if (imageFindExistingHandler.isSuccess()) {
                     processFindPreexistingImagesResponse(thisUploadJob, (PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse) imageFindExistingHandler.getResponse());
                 }
@@ -382,7 +374,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         while (!albumDelHandler.isSuccess() && allowedAttempts > 0) {
             allowedAttempts--;
             // this is blocking
-            callPiwigoServer(albumDelHandler, thisUploadJob);
+            albumDelHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
         }
         if (!albumDelHandler.isSuccess()) {
             // notify the listener of the final error we received from the server
@@ -405,7 +397,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
             while (!albumGenHandler.isSuccess() && allowedAttempts > 0) {
                 allowedAttempts--;
                 // this is blocking
-                callPiwigoServer(albumGenHandler, thisUploadJob);
+                albumGenHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
                 if (albumGenHandler.isSuccess()) {
                     uploadAlbumId = ((PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse) albumGenHandler.getResponse()).getNewAlbumId();
                 }
@@ -470,7 +462,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
             while (!success && allowedAttempts > 0) {
                 allowedAttempts--;
                 // this is blocking
-                callPiwigoServer(getImageInfoHandler, thisUploadJob);
+                getImageInfoHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
                 if (getImageInfoHandler.isSuccess()) {
                     success = true;
                     PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse rsp = (PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse) getImageInfoHandler.getResponse();
@@ -641,7 +633,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         while (!imageDeleteHandler.isSuccess() && allowedAttempts > 0) {
             allowedAttempts--;
             // start blocking webservice call
-            callPiwigoServer(imageDeleteHandler, uploadJob);
+            imageDeleteHandler.invokeAndWait(getApplicationContext(), uploadJob.getConnectionPrefs());
         }
         return imageDeleteHandler.isSuccess();
     }
@@ -653,7 +645,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         while (!imageFileCheckHandler.isSuccess() && allowedAttempts > 0) {
             allowedAttempts--;
             // start blocking webservice call
-            callPiwigoServer(imageFileCheckHandler, uploadJob);
+            imageFileCheckHandler.invokeAndWait(getApplicationContext(), uploadJob.getConnectionPrefs());
         }
         return imageFileCheckHandler.isSuccess() ? imageFileCheckHandler.isFileMatch() : null;
     }
@@ -667,7 +659,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         while (!imageInfoUpdateHandler.isSuccess() && allowedAttempts > 0) {
             allowedAttempts--;
             // start blocking webservice call
-            callPiwigoServer(imageInfoUpdateHandler, thisUploadJob);
+            imageInfoUpdateHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
         }
         return imageInfoUpdateHandler.getResponse();
     }
@@ -785,7 +777,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
         while (!imageChunkUploadHandler.isSuccess() && (currentUploadFileChunk.getUploadAttempts() - 1) < maxChunkUploadAutoRetries) {
             // blocking call to webservice
-            callPiwigoServer(imageChunkUploadHandler, thisUploadJob);
+            imageChunkUploadHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
         }
 
 
@@ -804,39 +796,6 @@ public abstract class BasePiwigoUploadService extends IntentService {
         }
 
         return new SerializablePair<>(imageChunkUploadHandler.isSuccess(), uploadedResource);
-    }
-
-    private class CustomWorker extends Worker {
-
-        private UploadJob uploadJob;
-
-        public CustomWorker(AbstractPiwigoDirectResponseHandler handler, UploadJob uploadJob, Context context) {
-            super(handler, context);
-            this.uploadJob = uploadJob;
-        }
-
-        @Override
-        protected ConnectionPreferences.ProfilePreferences getProfilePreferences() {
-            return uploadJob.getConnectionPrefs();
-        }
-
-        @Override
-        protected AbstractPiwigoDirectResponseHandler getHandler(SharedPreferences prefs) {
-            AbstractPiwigoDirectResponseHandler handler = super.getHandler(prefs);
-            if (handler != null) {
-                handler.setPublishResponses(false);
-            }
-            return handler;
-        }
-
-        /**
-         *
-         * @param messageId
-         * @return handler succeeded
-         */
-        public boolean run(long messageId) {
-            return doInBackground(messageId);
-        }
     }
 
 

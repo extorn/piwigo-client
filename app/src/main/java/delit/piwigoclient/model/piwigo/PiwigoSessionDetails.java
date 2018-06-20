@@ -99,13 +99,12 @@ public class PiwigoSessionDetails {
         return instance != null && instance.isLoggedIn();
     }
 
-    public boolean isLoggedInWithSessionDetails() {
-        return loginStatus >= 2 && isCommunityPluginStatusAvailable();
+    public boolean isLoggedInWithBasicSessionDetails() {
+        return loginStatus >= 2;
     }
 
-    public static boolean isLoggedInWithSessionDetails(ConnectionPreferences.ProfilePreferences connectionPrefs) {
-        PiwigoSessionDetails instance = getInstance(connectionPrefs);
-        return instance != null && instance.isLoggedInWithSessionDetails();
+    public boolean isLoggedInWithFullSessionDetails() {
+        return loginStatus >= 2 && isCommunityPluginStatusAvailable();
     }
 
     public synchronized static PiwigoSessionDetails getInstance(ConnectionPreferences.ProfilePreferences activeProfile) {
@@ -129,11 +128,6 @@ public class PiwigoSessionDetails {
         return "guest".equals(userType);
     }
 
-    public static boolean isGuest(ConnectionPreferences.ProfilePreferences connectionPrefs) {
-        PiwigoSessionDetails instance = getInstance(connectionPrefs);
-        return instance != null && instance.isGuest();
-    }
-
     public synchronized static void logout(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
         PiwigoSessionDetails instance = sessionDetailsMap.remove(connectionPrefs);
         if(instance != null) {
@@ -146,7 +140,11 @@ public class PiwigoSessionDetails {
     }
 
     public boolean isFullyLoggedIn() {
-        return (isLoggedInWithSessionDetails() && !isAdminUser()) || isLoggedInAndHaveSessionAndUserDetails();
+        if(isAdminUser() || isUseCommunityPlugin()) {
+            return isLoggedInAndHaveSessionAndUserDetails();
+        } else {
+            return isLoggedInWithFullSessionDetails();
+        }
     }
 
     public static boolean isFullyLoggedIn(ConnectionPreferences.ProfilePreferences connectionPrefs) {

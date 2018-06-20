@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.Worker;
 
@@ -16,6 +17,8 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     private long messageId;
     private PiwigoResponseBufferingHandler.BaseResponse response;
     private boolean publishResponses = true;
+    private Worker worker;
+    private boolean runAsync;
 
     public AbstractPiwigoDirectResponseHandler(String tag) {
         super(tag);
@@ -64,6 +67,10 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
         }
     }
 
+    public void setWorker(Worker worker) {
+        this.worker = worker;
+    }
+
     @Override
     public boolean isSuccess() {
         return super.isSuccess() && !isResponseError();
@@ -77,11 +84,58 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
         return response instanceof PiwigoResponseBufferingHandler.ErrorResponse;
     }
 
-    public long invokeAsync(Context context) {
-        return new Worker(this, context).start(messageId);
+    protected Worker buildWorker(Context context) {
+        return new Worker(this, context);
     }
 
-    public long invokeAsyncAgain() {
-        return new Worker(this, this.getContext()).start(messageId);
+    public void invokeAndWait(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        setPublishResponses(false);
+        runAsync = false;
+        Worker w = buildWorker(context);
+        setWorker(w);
+        w.setConnectionPreferences(connectionPrefs);
+        w.startAndWait(messageId);
+    }
+
+    public void run(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        runAsync = false;
+        setPublishResponses(false);
+        Worker w = buildWorker(context);
+        setWorker(w);
+        w.setConnectionPreferences(connectionPrefs);
+        w.run(messageId);
+    }
+
+    public long invokeAsync(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        runAsync = true;
+        Worker w = buildWorker(context);
+        setWorker(w);
+        w.setConnectionPreferences(connectionPrefs);
+        return w.start(messageId);
+    }
+
+    public long invokeAsync(Context context) {
+        runAsync = true;
+        Worker w = buildWorker(context);
+        setWorker(w);
+        return w.start(messageId);
+    }
+
+    public boolean invokeAgain(Context context) {
+        Worker w = buildWorker(context);
+        w.setConnectionPreferences(worker.getConnectionPreferences());
+        setWorker(w);
+        return w.run(messageId);
+    }
+
+    public long invokeAsyncAgain(Context context) {
+        Worker w = buildWorker(context);
+        w.setConnectionPreferences(worker.getConnectionPreferences());
+        setWorker(w);
+        return w.start(messageId);
+    }
+
+    public boolean isRunAsync() {
+        return runAsync;
     }
 }

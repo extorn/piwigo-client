@@ -33,36 +33,13 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        PiwigoSessionDetails currentCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (currentCredentials != null && !currentCredentials.isSessionMayHaveExpired()) {
-            onPiwigoSessionRetrieved(currentCredentials);
-            return null;
-        } else {
-            return super.runCall(client, handler);
-        }
-    }
-
-    @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         PiwigoSessionDetails oldCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         PiwigoSessionDetails newCredentials = parseSessionDetails(rsp);
         PiwigoSessionDetails.setInstance(getConnectionPrefs(), newCredentials);
 
         PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials);
-        onPiwigoSessionRetrieved(newCredentials);
         storeResponse(r);
-    }
-
-    private void onPiwigoSessionRetrieved(PiwigoSessionDetails newCredentials) {
-        if (newCredentials != null) {
-            //TODO forcing true will allow thumbnails to be made available (with extra call) for albums hidden to admin users.
-            CommunitySessionStatusResponseHandler communitySessionLoadHandler = new CommunitySessionStatusResponseHandler(false);
-            runAndWaitForHandlerToFinish(communitySessionLoadHandler);
-            if (!newCredentials.isLoggedInWithSessionDetails()) {
-                reportNestedFailure(communitySessionLoadHandler);
-            }
-        }
     }
 
     private PiwigoSessionDetails parseSessionDetails(JsonElement rsp) throws JSONException {

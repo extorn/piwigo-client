@@ -63,7 +63,7 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
     public void onClick(View v) {
         loginButton.setEnabled(false);
         String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
-        getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(getContext()).invokeAsync(getContext()));
+        getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getContext()));
     }
 
     @Override
@@ -74,9 +74,9 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) {
-                PiwigoResponseBufferingHandler.PiwigoOnLoginResponse rsp = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) response;
-                if(rsp.isSessionRetrieved() && rsp.isUserDetailsRetrieved()) {
+            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
+                if(PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
                     onLogin(rsp.getOldCredentials());
                 } else {
                     onLoginFailed();

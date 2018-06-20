@@ -373,7 +373,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             } else {
                 Context context = getContext();
                 HttpClientFactory.getInstance(context).clearCachedClients(ConnectionPreferences.getActiveProfile());
-                getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(context).invokeAsync(context));
+                getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(context));
             }
         }
     }
@@ -386,9 +386,9 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) {
-                PiwigoResponseBufferingHandler.PiwigoOnLoginResponse rsp = (PiwigoResponseBufferingHandler.PiwigoOnLoginResponse) response;
-                if(PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) && rsp.isUserDetailsRetrieved()) {
+            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
+                if(PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
                     onLogin(rsp.getOldCredentials());
                 }
             } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse) {
@@ -398,7 +398,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     loginOnLogout = false;
                     testLogin();
                 }
-            } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse && ((PiwigoResponseBufferingHandler.BasePiwigoResponse)response).getPiwigoMethod().equals(LogoutResponseHandler.METHOD)) {
+            } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse && LogoutResponseHandler.METHOD.equals(((PiwigoResponseBufferingHandler.BasePiwigoResponse)response).getPiwigoMethod())) {
                 //TODO find a nicer way of this.
                 // logout failed. Lets just wipe the login state manually for now.
                 PiwigoSessionDetails.logout(ConnectionPreferences.getActiveProfile(), getContext());
@@ -406,7 +406,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     loginOnLogout = false;
                     testLogin();
                 }
-
             }
         }
     }

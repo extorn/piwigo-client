@@ -117,7 +117,7 @@ public class UploadActivity extends MyActivity {
         TextView uploadingAsLabelField = findViewById(R.id.upload_username_label);
         TextView uploadingAsField = findViewById(R.id.upload_username);
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if(sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+        if(sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
             uploadingAsField.setText(sessionDetails.getUsername());
             uploadingAsField.setVisibility(View.VISIBLE);
             uploadingAsLabelField.setVisibility(View.VISIBLE);
@@ -186,7 +186,7 @@ public class UploadActivity extends MyActivity {
         if(serverUri == null || serverUri.trim().isEmpty()) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(getApplicationContext()).invokeAsync(getApplicationContext()));
+            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getApplicationContext()));
         }
     }
 

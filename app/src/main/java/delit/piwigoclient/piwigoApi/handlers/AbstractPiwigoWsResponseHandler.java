@@ -154,11 +154,6 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         }
     }
 
-    protected void runAndWaitForHandlerToFinish(AbstractPiwigoWsResponseHandler handler) {
-        handler.setPublishResponses(false);
-        super.runAndWaitForHandlerToFinish(handler);
-    }
-
     protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
         PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, rsp.getErr(), rsp.getMessage());
         storeResponse(r);
@@ -207,8 +202,9 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
 //        String thread = Thread.currentThread().getName();
         if (BuildConfig.DEBUG) {
-            Log.d(getTag(), "calling " + getPiwigoWsApiUri() + '&' + buildRequestParameters().toString());
+            Log.d(getTag(), "calling " + getPiwigoWsApiUri() + '&' + getRequestParameters().toString());
         }
+        Log.e(getTag(), "Invoking call to server ("+getRequestParameters()+") thread from thread " + Thread.currentThread().getName());
         return client.post(getPiwigoWsApiUri(), getRequestParameters(), handler);
     }
 

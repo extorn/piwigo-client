@@ -760,40 +760,6 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoOnLoginResponse extends BasePiwigoResponse {
-        private boolean sessionRetrieved;
-        private boolean userDetailsRetrieved;
-        private PiwigoSessionDetails oldCredentials;
-
-        public PiwigoOnLoginResponse(long messageId, String piwigoMethod) {
-            super(messageId, piwigoMethod, true);
-        }
-
-        public void setSessionRetrieved() {
-            sessionRetrieved = true;
-        }
-
-        public boolean isSessionRetrieved() {
-            return sessionRetrieved;
-        }
-
-        public void setUserDetailsRetrieved() {
-            userDetailsRetrieved = true;
-        }
-
-        public boolean isUserDetailsRetrieved() {
-            return userDetailsRetrieved;
-        }
-
-        public PiwigoSessionDetails getOldCredentials() {
-            return oldCredentials;
-        }
-
-        public void setOldCredentials(PiwigoSessionDetails oldCredentials) {
-            this.oldCredentials = oldCredentials;
-        }
-    }
-
     public static class PiwigoSetAlbumStatusResponse extends BasePiwigoResponse {
         public PiwigoSetAlbumStatusResponse(long messageId, String piwigoMethod) {
             super(messageId, piwigoMethod, true);

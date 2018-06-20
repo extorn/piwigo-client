@@ -201,7 +201,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             public void onClick(View v) {
                 if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
                     String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
-                    getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri),new LoginResponseHandler(getContext()).invokeAsync(getContext()));
+                    getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri),new LoginResponseHandler().invokeAsync(getContext()));
                 } else {
                     FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
                     ArrayList<String> allowedFileTypes = new ArrayList<>(sessionDetails.getAllowedFileTypes());

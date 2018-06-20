@@ -60,6 +60,7 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
         int errorCode = rsp.getErr();
         String errorMessage = rsp.getMessage();
         if (errorCode == 501 && "Method name is not valid".equals(errorMessage)) {
+            resetFailureAsASuccess();
             PiwigoSessionDetails.getInstance(getConnectionPrefs()).setUseCommunityPlugin(false);
             PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), null);
             storeResponse(r);

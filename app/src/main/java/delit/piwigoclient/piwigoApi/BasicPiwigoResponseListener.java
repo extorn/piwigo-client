@@ -93,9 +93,13 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (positiveAnswer) {
+                if (Boolean.TRUE.equals(positiveAnswer)) {
                     uiHelper.addActiveServiceCall(handler.getMessageId());
-                    handler.invokeAsyncAgain();
+                    if(handler.isRunAsync()) {
+                        handler.invokeAsyncAgain(dialog.getContext().getApplicationContext());
+                    } else {
+                        handler.invokeAgain(dialog.getContext().getApplicationContext());
+                    }
                 } else {
                     onAfterHandlePiwigoResponse(errorResponse);
                 }

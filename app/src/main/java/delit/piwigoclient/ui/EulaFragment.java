@@ -96,7 +96,7 @@ public class EulaFragment extends MyFragment {
         intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
         String serverVersion = "Unknown";
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if(sessionDetails != null && sessionDetails.isLoggedInWithSessionDetails()) {
+        if(sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
             serverVersion = sessionDetails.getPiwigoVersion();
         }
         intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: "+ appVersion +"\nType and model of Device Being Used:\n");

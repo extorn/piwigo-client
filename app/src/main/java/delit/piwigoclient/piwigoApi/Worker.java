@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -23,24 +24,36 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 
+import static android.os.AsyncTask.Status.FINISHED;
+
 public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
     /**
      * An {@link Executor} that can be used to execute tasks in parallel.
      */
-    public static final ThreadPoolExecutor HTTP_THREAD_POOL_EXECUTOR;
+    private static final ThreadPoolExecutor HTTP_THREAD_POOL_EXECUTOR;
+    private static final ThreadPoolExecutor HTTP_LOGIN_THREAD_POOL_EXECUTOR;
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
-    private static final int CORE_POOL_SIZE = Math.max(2, Math.min(CPU_COUNT - 1, 4));
-    private static final int MAXIMUM_POOL_SIZE = CPU_COUNT * 2 + 1;
+    private static final int CORE_POOL_SIZE = 6;
+    private static final int MAXIMUM_POOL_SIZE = Math.max(6,CPU_COUNT * 2 + 1);
     private static final int KEEP_ALIVE_SECONDS = 30;
     private static final BlockingQueue<Runnable> sPoolWorkQueue =
             new LinkedBlockingQueue<>(128);
+    private static final BlockingQueue<Runnable> loginPoolWorkQueue =
+            new LinkedBlockingQueue<>(20);
 
     private static final ThreadFactory sThreadFactory = new ThreadFactory() {
         private final AtomicInteger mCount = new AtomicInteger(1);
 
         public Thread newThread(@NonNull Runnable r) {
             return new Thread(r, "AsyncTask #" + mCount.getAndIncrement());
+        }
+    };
+    private static final ThreadFactory loginThreadFactory = new ThreadFactory() {
+        private final AtomicInteger mCount = new AtomicInteger(1);
+
+        public Thread newThread(@NonNull Runnable r) {
+            return new Thread(r, "AsyncLoginTask #" + mCount.getAndIncrement());
         }
     };
 
@@ -50,6 +63,13 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                 sPoolWorkQueue, sThreadFactory);
         threadPoolExecutor.allowCoreThreadTimeOut(true);
         HTTP_THREAD_POOL_EXECUTOR = threadPoolExecutor;
+
+        ThreadPoolExecutor loginThreadPoolExecutor = new ThreadPoolExecutor(
+                2, 3, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
+                loginPoolWorkQueue, loginThreadFactory);
+        threadPoolExecutor.allowCoreThreadTimeOut(false);
+
+        HTTP_LOGIN_THREAD_POOL_EXECUTOR = loginThreadPoolExecutor;
     }
 
     private final String DEFAULT_TAG = "PwgAccessSvcAsyncTask";
@@ -58,6 +78,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
 
     private AbstractPiwigoDirectResponseHandler handler;
+    private ConnectionPreferences.ProfilePreferences connectionPreferences;
 
     public Worker(AbstractPiwigoDirectResponseHandler handler, Context context) {
         this.context = new WeakReference<>(context);
@@ -76,9 +97,9 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         try {
             CachingAsyncHttpClient client = handler.getHttpClientFactory().getAsyncHttpClient(handler.getConnectionPrefs(), context.get());
             if (client != null) {
-                int newMaxPoolSize = client.getMaxConcurrentConnections();
-                HTTP_THREAD_POOL_EXECUTOR.setCorePoolSize(Math.min(newMaxPoolSize, Math.max(3, newMaxPoolSize / 2)));
-                HTTP_THREAD_POOL_EXECUTOR.setMaximumPoolSize(newMaxPoolSize);
+//                int newMaxPoolSize = client.getMaxConcurrentConnections();
+//                HTTP_THREAD_POOL_EXECUTOR.setCorePoolSize(Math.min(newMaxPoolSize, Math.max(3, newMaxPoolSize / 2)));
+//                HTTP_THREAD_POOL_EXECUTOR.setMaximumPoolSize(newMaxPoolSize);
             }
         } catch (RuntimeException e) {
             handler.sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
@@ -107,10 +128,14 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     }
 
     protected ConnectionPreferences.ProfilePreferences getProfilePreferences() {
-        return ConnectionPreferences.getActiveProfile();
+        return connectionPreferences != null ? connectionPreferences : ConnectionPreferences.getActiveProfile();
     }
 
     protected boolean executeCall(long messageId) {
+//        Thread.currentThread().setName(handler.getClass().getSimpleName());
+
+        Log.e(tag, "Running worker for handler "+handler.getClass().getSimpleName() +" on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
+
         SharedPreferences prefs = null;
         if (context != null) {
             prefs = PreferenceManager.getDefaultSharedPreferences(context.get());
@@ -129,9 +154,11 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         beforeCall();
         updatePoolSize(handler);
 
-        synchronized (Worker.class) {
-            if (PiwigoSessionDetails.getInstance(profilePrefs) == null) {
-                handler.getNewLogin();
+        if(!handler.isPerformingLogin()) {
+            synchronized (Worker.class) {
+                if (PiwigoSessionDetails.getInstance(profilePrefs) == null) {
+                    handler.getNewLogin();
+                }
             }
         }
         handler.runCall();
@@ -150,7 +177,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                         // Either this has been cancelled or the wait timed out or the handler completed okay and notified us
                         if (isCancelled()) {
                             if (BuildConfig.DEBUG) {
-                                Log.e(handler.getTag(), "Service call cancelled before handler could finish running");
+                                Log.e(handler.getTag(), "Service call cancelled before handler "+handler.getClass().getSimpleName()+" could finish running");
                             }
                             handler.cancelCallAsap();
                         }
@@ -162,12 +189,13 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         }
         if (handler.isRunning()) {
             if (BuildConfig.DEBUG) {
-                Log.e(handler.getTag(), "Timeout while waiting for service call handler to finish running");
+                Log.e(handler.getTag(), "Timeout while waiting for handler "+handler.getClass().getSimpleName()+" to finish running");
             }
             handler.cancelCallAsap();
         }
 
         afterCall(handler.isSuccess());
+
 
         return handler.isSuccess();
     }
@@ -177,8 +205,58 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     }
 
     public long start(long messageId) {
-        AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(HTTP_THREAD_POOL_EXECUTOR, messageId);
+        AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
         //TODO collect a list of tasks and kill them all if the app exits.
         return messageId;
+    }
+
+    /**
+     * Run synchronously in the same thread
+     * @param messageId
+     * @return true if succeeded
+     */
+    public boolean run(long messageId) {
+        return doInBackground(messageId);
+    }
+
+    /**
+     * Run synchronously in a different thread
+     * @param messageId
+     * @return true if succeeded
+     */
+    public boolean startAndWait(long messageId) {
+        AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
+        //TODO collect a list of tasks and kill them all if the app exits.
+        Boolean retVal = null;
+        while(!task.isCancelled() && !task.getStatus().equals(FINISHED)) {
+            try {
+                if(BuildConfig.DEBUG) {
+                    Log.e(tag, "Thread "+Thread.currentThread().getName()+" starting to wait for response from handler " + handler.getClass().getSimpleName());
+                }
+                retVal = task.get();
+            } catch (InterruptedException e) {
+                // ignore unless the worker is cancelled.
+                if(BuildConfig.DEBUG) {
+                    Log.e(tag, "Thread "+Thread.currentThread().getName()+" awakened from waiting for response from handler " + handler.getClass().getSimpleName());
+                }
+            } catch (ExecutionException e) {
+                if(BuildConfig.DEBUG) {
+                    Log.e(tag, "Thread "+Thread.currentThread().getName()+": Error retrieving result from handler " + handler.getClass().getSimpleName(), e);
+                }
+            }
+        }
+        return retVal;
+    }
+
+    public void setConnectionPreferences(ConnectionPreferences.ProfilePreferences connectionPreferences) {
+        this.connectionPreferences = connectionPreferences;
+    }
+
+    public Executor getExecutor() {
+        return handler != null && handler.isPerformingLogin() ? HTTP_LOGIN_THREAD_POOL_EXECUTOR : HTTP_THREAD_POOL_EXECUTOR;
+    }
+
+    public ConnectionPreferences.ProfilePreferences getConnectionPreferences() {
+        return connectionPreferences;
     }
 }
