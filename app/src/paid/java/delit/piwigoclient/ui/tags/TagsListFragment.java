@@ -153,7 +153,7 @@ public class TagsListFragment extends MyFragment {
             }
         });
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        recyclerView = view.findViewById(R.id.list);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
 
@@ -186,7 +186,7 @@ public class TagsListFragment extends MyFragment {
         if(isAppInReadOnlyMode() && addNewTagDialog != null && addNewTagDialog.isShowing()) {
             addNewTagDialog.cancel();
         }
-        addListItemButton.setVisibility(isAppInReadOnlyMode()?View.GONE:View.VISIBLE);
+        addListItemButton.setVisibility(!viewPrefs.isAllowItemAddition() || isAppInReadOnlyMode()?View.GONE:View.VISIBLE);
     }
 
     @Override

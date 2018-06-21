@@ -74,6 +74,7 @@ import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
+import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
@@ -957,6 +958,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             }
             albumsRequiringReload = null;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PiwigoLoginSuccessEvent event) {
+        displayItemDetailsControlsBasedOnSessionState();
+        setEditItemDetailsControlsStatus();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

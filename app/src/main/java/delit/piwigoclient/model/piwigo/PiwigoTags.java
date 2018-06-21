@@ -139,7 +139,7 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     }
 
     public boolean isPageLoadedOrBeingLoaded(int pageNum) {
-        return pagesLoaded == 0 || pagesBeingLoaded.containsValue(pageNum);
+        return pagesLoaded > 0 || pagesBeingLoaded.containsValue(pageNum);
     }
 
     public Integer getNextPageToReload() {

@@ -1953,6 +1953,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PiwigoLoginSuccessEvent event) {
+        displayControlsBasedOnSessionState();
         setEditItemDetailsControlsStatus();
     }
 
