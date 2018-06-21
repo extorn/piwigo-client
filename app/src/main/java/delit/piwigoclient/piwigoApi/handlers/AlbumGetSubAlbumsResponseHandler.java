@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -46,6 +47,18 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             params.put("recursive", String.valueOf(recursive));
         }
         return params;
+    }
+
+    @Override
+    public boolean getNewLogin() {
+        if(super.getNewLogin()) {
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
+                withConnectionPreferences(ConnectionPreferences.getActiveProfile().asGuest());
+                return super.getNewLogin();
+            }
+        }
+        return false;
     }
 
     @Override

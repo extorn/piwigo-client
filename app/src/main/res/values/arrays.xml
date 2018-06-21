@@ -163,8 +163,7 @@
         </item>
         <item>1.3.93</item>
         <item>"Changes:
-         - Update the app to allow local piwigo session for a given action within the app
-         - Paid App Only : Poll a device folder and automatically upload any content found to a specified Piwigo profile
+         - Paid App Only : Enable Poll a device folder and automatically upload any content found to a specified Piwigo profile
          - Paid App Only : (Maybe) : Support for user comments
          - Paid App Only : (Maybe) : Notify user of server updates that are available"
         </item>

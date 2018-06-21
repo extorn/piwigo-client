@@ -8,10 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
-import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
-import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
 
