@@ -5,13 +5,11 @@
         android:title="@string/preference_data_upload_automatic_title">
 
         <SwitchPreference
-            android:enabled="false"
             android:defaultValue="@bool/preference_data_upload_automatic_upload_enabled_default"
             android:key="@string/preference_data_upload_automatic_upload_enable_key"
             android:summary="@string/preference_data_upload_automatic_upload_enable_summary"
             android:title="@string/preference_data_upload_automatic_upload_enable_title" />
         <SwitchPreference
-            android:enabled="false"
             android:defaultValue="@bool/preference_data_upload_automatic_upload_wireless_only_default"
             android:key="@string/preference_data_upload_automatic_upload_wireless_only_key"
             android:summary="@string/preference_data_upload_automatic_upload_wireless_only_summary"
@@ -32,7 +30,6 @@
             android:enabled="false"/>
 
         <SwitchPreference
-            android:enabled="false"
             android:defaultValue="@bool/preference_data_upload_automatic_job_enabled_default"
             android:key="@string/preference_data_upload_automatic_job_enabled_key"
             android:summary="@string/preference_data_upload_automatic_job_enabled_summary"
