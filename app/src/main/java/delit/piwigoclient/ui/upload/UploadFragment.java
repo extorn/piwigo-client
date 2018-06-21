@@ -106,7 +106,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     public static UploadFragment newInstance(long currentGalleryId, int actionId) {
         UploadFragment fragment = new UploadFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_CURRENT_GALLERY_ID, currentGalleryId);
+        args.putLong(ARG_CURRENT_GALLERY_ID, currentGalleryId);
         args.putInt(ARG_SELECT_FILES_ACTION_ID, actionId);
         fragment.setArguments(args);
         return fragment;

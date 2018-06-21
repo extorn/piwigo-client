@@ -7,6 +7,7 @@ import android.support.annotation.StringRes;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.piwigoclient.R;
@@ -56,11 +57,69 @@ public class ConnectionPreferences {
         return new ProfilePreferences(profile);
     }
 
-    public static class ProfilePreferences implements Serializable {
+    public static class ProfilePreferences implements Serializable, Comparable<ProfilePreferences> {
         private final String prefix;
+        private boolean asGuest;
 
         private ProfilePreferences(String prefix) {
             this.prefix = prefix;
+        }
+
+        private ProfilePreferences(String prefix, boolean asGuest) {
+            this.prefix = prefix;
+            this.asGuest = asGuest;
+        }
+
+        public ProfilePreferences asGuest() {
+            return new ProfilePreferences(prefix, true);
+        }
+
+        @Override
+        public String toString() {
+            return prefix + " " + asGuest;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(!(obj instanceof ProfilePreferences)) {
+                return false;
+            }
+            ProfilePreferences other = (ProfilePreferences)obj;
+            boolean equals = (prefix == other.prefix) || (prefix != null && prefix.equals(other.prefix));
+            return equals && (asGuest == other.asGuest);
+        }
+
+        @Override
+        public int compareTo(@NonNull ProfilePreferences o) {
+            int retVal = 0;
+            if(prefix == null) {
+                if(o.prefix != null) {
+                    return 1;
+                }
+            } else {
+                retVal = prefix.compareTo(o.prefix);
+            }
+            if(retVal != 0) {
+                return retVal;
+            }
+            if(asGuest && !o.asGuest) {
+                return 1;
+            }
+            if(!asGuest && o.asGuest) {
+                return -1;
+            }
+            return 0;
+        }
+
+        @Override
+        public int hashCode() {
+            int hashcode = prefix != null ? prefix.hashCode() : 0;
+            hashcode += asGuest ? 13 : 17;
+            return hashcode;
+        }
+
+        public String getAbsoluteProfileKey(SharedPreferences prefs, Context context) {
+            return getProfileId(prefs, context) + ':' + asGuest;
         }
 
         public String getProfileId(SharedPreferences prefs, Context context) {
@@ -113,6 +172,9 @@ public class ConnectionPreferences {
         }
 
         public String getPiwigoUsername(SharedPreferences prefs, Context context) {
+            if(asGuest) {
+                return null;
+            }
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
             return prefUtil.readSecureStringPreference(prefs, getKey(context, R.string.preference_piwigo_server_username_key), null);
         }

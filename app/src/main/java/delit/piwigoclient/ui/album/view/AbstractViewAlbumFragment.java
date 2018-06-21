@@ -1001,8 +1001,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void loadAlbumSubCategories() {
         synchronized (loadingMessageIds) {
-
-            long loadingMessageId = new AlbumGetSubAlbumsResponseHandler(gallery, preferredThumbnailSize, false).invokeAsync(getContext());
+            ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getActiveProfile();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connPrefs);
+            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
+                connPrefs = ConnectionPreferences.getActiveProfile().asGuest();
+            }
+            long loadingMessageId = new AlbumGetSubAlbumsResponseHandler(gallery, preferredThumbnailSize, false).invokeAsync(getContext(), connPrefs);
             loadingMessageIds.put(loadingMessageId, "C");
             addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
         }

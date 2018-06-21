@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cz.msebera.android.httpclient.client.CookieStore;
 import cz.msebera.android.httpclient.cookie.Cookie;
+import delit.piwigoclient.business.ConnectionPreferences;
 
 public class PersistentProfileCookieStore implements CookieStore {
     private static final String LOG_TAG = "PersistentCookieStore";
@@ -35,8 +36,8 @@ public class PersistentProfileCookieStore implements CookieStore {
      *
      * @param context Context to attach cookie store to
      */
-    public PersistentProfileCookieStore(Context context, String profileName) {
-        String cookiePrefsName = COOKIE_PREFS + "_" + profileName;
+    public PersistentProfileCookieStore(Context context, String profileKey) {
+        String cookiePrefsName = COOKIE_PREFS + "_" + profileKey;
         cookiePrefs = context.getSharedPreferences(cookiePrefsName, 0);
         cookies = new ConcurrentHashMap<String, Cookie>();
 

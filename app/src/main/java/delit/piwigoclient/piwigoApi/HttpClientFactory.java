@@ -217,7 +217,7 @@ public class HttpClientFactory {
         synchronized(connectionPrefs) {
             PersistentProfileCookieStore cookieStore = cookieStoreMap.get(connectionPrefs);
             if (cookieStore == null) {
-                cookieStore = new PersistentProfileCookieStore(context.getApplicationContext(), connectionPrefs.getProfileId(prefs, context));
+                cookieStore = new PersistentProfileCookieStore(context.getApplicationContext(), connectionPrefs.getAbsoluteProfileKey(prefs, context));
                 cookieStoreMap.put(connectionPrefs, cookieStore);
             }
             return cookieStore;
