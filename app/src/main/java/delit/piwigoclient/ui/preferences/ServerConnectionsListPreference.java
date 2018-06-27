@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.common.util.Strings;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,7 +41,6 @@ public class ServerConnectionsListPreference extends DialogPreference {
 
     private boolean mValueSet;
     private ListView itemListView;
-    private CustomImageButton addListItemButton;
     private String mValue;
 
     public ServerConnectionsListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -82,17 +82,22 @@ public class ServerConnectionsListPreference extends DialogPreference {
     public CharSequence getSummary() {
         SharedPreferences prefs = getAppSharedPreferences();
 //        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(prefs, getContext());
-        ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(mValue);
-        ServerConnection activeConnection = new ServerConnection(mValue,
-                selectedPref.getPiwigoServerAddress(prefs, getContext()),
-                selectedPref.getPiwigoUsername(prefs, getContext()));
+        ServerConnection activeConnection;
+        if(mValue != null) {
+            ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(mValue);
+            activeConnection = new ServerConnection(mValue,
+                    selectedPref.getPiwigoServerAddress(prefs, getContext()),
+                    selectedPref.getPiwigoUsername(prefs, getContext()));
+        } else {
+            activeConnection = new ServerConnection(mValue, null,null);
+        }
         return activeConnection.getSummary(getContext());
     }
 
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        mValue = super.getPersistedString("");
+        mValue = super.getPersistedString(null);
         View view = buildListView();
         builder.setView(view);
     }
@@ -139,9 +144,10 @@ public class ServerConnectionsListPreference extends DialogPreference {
                         profilePrefs.getPiwigoUsername(prefs, getContext())));
             }
         } else {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             connections.add(new ServerConnection("",
-                    ConnectionPreferences.getPiwigoServerAddress(prefs, getContext()),
-                    ConnectionPreferences.getPiwigoUsername(prefs, getContext())));
+                    connectionPrefs.getPiwigoServerAddress(prefs, getContext()),
+                    connectionPrefs.getPiwigoUsername(prefs, getContext())));
         }
         return connections;
     }
@@ -293,7 +299,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
             if(serverName == null) {
                 return c.getString(R.string.server_connection_preference_summary_default);
             }
-            String user = username;
+            String user = Strings.emptyToNull(username);
             if(user == null) {
                 user = c.getString(R.string.server_connection_preference_user_guest);
             }

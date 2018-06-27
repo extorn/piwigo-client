@@ -29,6 +29,17 @@ public class IntListPreference extends MappedListPreference<Integer> {
     }
 
     @Override
+    protected Integer transform(Object obj) {
+        if(obj == null) {
+            return null;
+        }
+        if(obj instanceof Integer) {
+            return (Integer)obj;
+        }
+        return Integer.valueOf(obj.toString());
+    }
+
+    @Override
     protected Integer[] loadEntryValuesFromResourceId(Resources res, @ArrayRes int resourceId) {
         int[] basicVals = res.getIntArray(resourceId);
         return ArrayUtils.wrap(basicVals);

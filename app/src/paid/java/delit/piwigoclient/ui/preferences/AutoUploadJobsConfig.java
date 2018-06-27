@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.util.ArrayUtils;
+import delit.piwigoclient.util.CollectionUtils;
 
 public class AutoUploadJobsConfig {
     private SharedPreferences prefs;
@@ -43,16 +45,16 @@ public class AutoUploadJobsConfig {
 
     private @NonNull String getStringValue(Context c, @StringRes int prefKeyId) {
         String value = prefs.getString(c.getString(prefKeyId), null);
-        if(value == null) {
-            throw new IllegalStateException("Job misconfigured");
-        }
         return value;
     }
 
     private @NonNull List getCsvListValue(Context c, @StringRes int prefKeyId) {
         String value = getStringValue(c, prefKeyId);
-        String[] values = value.split(",");
-        return Arrays.asList(values);
+        if(value != null) {
+            String[] values = value.split(",");
+            return Arrays.asList(values);
+        }
+        return new ArrayList(0);
     }
 
     public boolean isBackgroundUploadEnabled(Context c) {
@@ -63,19 +65,16 @@ public class AutoUploadJobsConfig {
         return getBooleanValue(c, R.string.preference_data_upload_automatic_upload_wireless_only_key, c.getResources().getBoolean(R.bool.preference_data_upload_automatic_upload_wireless_only_default));
     }
 
-    public int getUploadJobsCount(Context c) {
-        try {
-            return getIntValue(c, R.string.preference_data_upload_automatic_upload_jobs_key);
-        } catch(IllegalStateException e) {
-            return 0;
-        }
+    public boolean hasUploadJobs(Context c) {
+        return getCsvListValue(c, R.string.preference_data_upload_automatic_upload_jobs_key).size() > 0;
     }
 
     public List<AutoUploadJobConfig> getAutoUploadJobs(Context c) {
-        int uploadJobCount = getUploadJobsCount(c);
-        List<AutoUploadJobConfig> jobs = new ArrayList<>(uploadJobCount);
-        for(int i = 0; i < uploadJobCount; i++) {
-            jobs.add(new AutoUploadJobConfig(c, i));
+        String jobIdsStr = getStringValue(c, R.string.preference_data_upload_automatic_upload_jobs_key);
+        ArrayList<Integer> uploadJobIds = CollectionUtils.integersFromCsvList(jobIdsStr);
+        List<AutoUploadJobConfig> jobs = new ArrayList<>(uploadJobIds.size());
+        for(int jobId : uploadJobIds) {
+            jobs.add(new AutoUploadJobConfig(c, jobId));
         }
         return jobs;
     }

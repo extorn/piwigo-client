@@ -51,14 +51,15 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
 
     @Override
     public boolean getNewLogin() {
-        if(super.getNewLogin()) {
+        boolean success = super.getNewLogin();
+        if(success) {
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
             if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
-                withConnectionPreferences(ConnectionPreferences.getActiveProfile().asGuest());
+                withConnectionPreferences(getConnectionPrefs().asGuest());
                 return super.getNewLogin();
             }
         }
-        return false;
+        return success;
     }
 
     @Override

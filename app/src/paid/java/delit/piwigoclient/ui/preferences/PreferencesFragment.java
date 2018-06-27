@@ -32,7 +32,7 @@ public class PreferencesFragment extends CommonPreferencesFragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 3:
-                    return AutoUploadJobPreferenceFragment.newInstance(0);
+                    return AutoUploadJobsPreferenceFragment.newInstance();
                 default:
                     return super.getItem(position);
             }

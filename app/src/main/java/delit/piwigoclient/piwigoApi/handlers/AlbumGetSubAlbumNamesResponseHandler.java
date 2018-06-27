@@ -77,7 +77,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
             availableGalleries.add(album);
             availableGalleriesMap.put(album.getId(), album);
         }
-        PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse r = new PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
+        PiwigoGetSubAlbumNamesResponse r = new PiwigoGetSubAlbumNamesResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
         storeResponse(r);
     }
 
@@ -90,5 +90,18 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
         }
         list.remove(thisAlbumId);
         return list;
+    }
+
+    public static class PiwigoGetSubAlbumNamesResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final ArrayList<CategoryItemStub> albumNames;
+
+        public PiwigoGetSubAlbumNamesResponse(long messageId, String piwigoMethod, ArrayList<CategoryItemStub> albumNames) {
+            super(messageId, piwigoMethod, true);
+            this.albumNames = albumNames;
+        }
+
+        public ArrayList<CategoryItemStub> getAlbumNames() {
+            return albumNames;
+        }
     }
 }

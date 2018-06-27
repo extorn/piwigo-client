@@ -270,14 +270,15 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             if(tagsModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
                 return;
             }
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
             //NOTE: Paging not supported by API yet - so don't bother doing any. Note that the PiwigoTags object has been hacked to this effect.
 //        int pageSize = prefs.getInt(getString(R.string.preference_tags_request_pagesize_key), getResources().getInteger(R.integer.preference_tags_request_pagesize_default));
             if(sessionDetails != null && sessionDetails.isLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
                 tagsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_tags, new GetMethodsAvailableResponseHandler().invokeAsync(getContext())), 0);
             }
             addActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
-            if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+            if(PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
                 tagsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext())), 0);
             }
         } finally {

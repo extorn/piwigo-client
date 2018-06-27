@@ -106,12 +106,14 @@ public class UploadActivity extends MyActivity {
             fileSelectionEventId = TrackableRequestEvent.getNextEventId();
         }
 
-        if(!hasAgreedToEula() || ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+
+        if(!hasAgreedToEula() || connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
             setContentView(R.layout.activity_upload);
             addUploadingAsFieldsIfAppropriate();
-            showUploadFragment(true);
+            showUploadFragment(true, connectionPrefs);
         }
     }
 
@@ -172,9 +174,9 @@ public class UploadActivity extends MyActivity {
         return isAdminUser || hasCommunityPlugin;
     }
 
-    private void showUploadFragment(boolean allowLogin) {
+    private void showUploadFragment(boolean allowLogin, ConnectionPreferences.ProfilePreferences connectionPrefs) {
 
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         long initialGalleryId = getIntent().getLongExtra("galleryId", 0);
 
         if(isCurrentUserAuthorisedToUpload(sessionDetails)) {
@@ -182,18 +184,18 @@ public class UploadActivity extends MyActivity {
             removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
         } else if(allowLogin && sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
-            runLogin();
+            runLogin(connectionPrefs);
         } else {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
         }
     }
 
-    private void runLogin() {
-        String serverUri = ConnectionPreferences.getPiwigoServerAddress(prefs, getApplicationContext());
+    private void runLogin(ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        String serverUri = connectionPrefs.getPiwigoServerAddress(prefs, getApplicationContext());
         if(serverUri == null || serverUri.trim().isEmpty()) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getApplicationContext()));
+            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getApplicationContext(), connectionPrefs));
         }
     }
 
@@ -422,7 +424,7 @@ public class UploadActivity extends MyActivity {
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             if(response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                showUploadFragment(false);
+                showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse)response).getNewSessionDetails().getConnectionPrefs());
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }

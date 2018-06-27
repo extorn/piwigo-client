@@ -132,6 +132,8 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
         final AppCompatCheckboxTriState imageView = getAppCompatCheckboxTriState(view);
 
+        imageView.setVisibility(showItemSelectedMarker(imageView)?View.VISIBLE:View.GONE);
+
         if(getAdapterPrefs().isMultiSelectionEnabled()) {
             imageView.setButtonDrawable(R.drawable.always_clear_checkbox);
         } else {
@@ -149,6 +151,10 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
         // return the view, populated with data, for display
         return view;
+    }
+
+    protected boolean showItemSelectedMarker(AppCompatCheckboxTriState imageView) {
+        return adapterPrefs.isAllowItemSelection();
     }
 
     protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
@@ -288,8 +294,10 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         parentList = listView;
         if(adapterPrefs.isMultiSelectionEnabled()) {
             listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        } else {
+        } else if(adapterPrefs.isAllowItemSelection()) {
             listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        } else {
+            listView.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
         }
         // this will also reset list view choices to no selection.
         listView.setAdapter(this);
@@ -316,4 +324,14 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
             }
         }
     }
+
+
+    public ArrayList<Long> getItemIds() {
+        ArrayList<Long> ids = new ArrayList<>(availableItems.size());
+        for(T item : availableItems) {
+            ids.add(getItemId(item));
+        }
+        return ids;
+    }
+
 }

@@ -1266,7 +1266,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         allowedUsersField.setEnabled(true); // Always enabled (but is read only when not editing)
         allowedGroupsField.setEnabled(true); // Always enabled (but is read only when not editing)
 
-        editButton.setVisibility(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode() && !editingItemDetails ? VISIBLE : GONE);
+        editButton.setVisibility(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) && !isAppInReadOnlyMode() && !editingItemDetails && gallery != CategoryItem.ROOT_ALBUM ? VISIBLE : GONE);
 
         saveButton.setVisibility(editingItemDetails ? VISIBLE : GONE);
         saveButton.setEnabled(editingItemDetails);

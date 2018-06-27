@@ -28,10 +28,13 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.piwigoApi.HttpClientFactory;
+import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -113,7 +116,12 @@ public class ServerAlbumListPreference extends DialogPreference {
         if(super.getSummary() == null) {
             return ServerAlbumPreference.getSelectedAlbumName(value);
         } else {
-            return String.format(super.getSummary().toString(), ServerAlbumPreference.getSelectedAlbumName(value));
+            String albumName = ServerAlbumPreference.getSelectedAlbumName(value);
+            if(albumName != null) {
+                return String.format(super.getSummary().toString(), albumName);
+            } else {
+                return getContext().getString(R.string.server_album_preference_summary_default);
+            }
         }
     }
 
@@ -155,8 +163,7 @@ public class ServerAlbumListPreference extends DialogPreference {
         return PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
     }
 
-    private void triggerAlbumsListLoad() {
-
+    private ConnectionPreferences.ProfilePreferences getConnectionProfile() {
         SharedPreferences prefs = getSharedPreferences();
 
         String connectionProfile = prefs.getString(connectionProfileNamePreferenceKey, null);
@@ -166,29 +173,43 @@ public class ServerAlbumListPreference extends DialogPreference {
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(connectionProfile);
 
-        activeServiceCall = invokeRetrieveSubCategoryNamesCall(connectionPrefs);
+        return connectionPrefs;
+    }
+
+    private void triggerAlbumsListLoad() {
+
+
+
+        activeServiceCall = invokeRetrieveSubCategoryNamesCall(getConnectionProfile());
 
         CustomUIHelper uiHelper = new CustomUIHelper(this, getAppSharedPreferences(), getContext());
         serviceCallHandler.withUiHelper(this, uiHelper);
-
-        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(activeServiceCall, serviceCallHandler);
     }
 
     private long invokeRetrieveSubCategoryNamesCall(ConnectionPreferences.ProfilePreferences connectionPrefs) {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler().invokeAsync(getContext()));
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        if(sessionDetails != null && sessionDetails.isFullyLoggedIn()) {
+            return retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+        } else {
+            return addActiveServiceCall(R.string.progress_loading_user_details, new LoginResponseHandler().invokeAsync(getContext(), connectionPrefs));
+        }
+    }
+
+    private long retrieveAppropriateAlbumList(ConnectionPreferences.ProfilePreferences connectionPrefs, PiwigoSessionDetails sessionDetails) {
+        if(PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
+            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler().invokeAsync(getContext(), connectionPrefs));
         } else if(sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
             final boolean recursive = true;
-            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext()));
+            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext(), connectionPrefs));
         } else {
             final boolean recursive = true;
-            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext()));
+            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext(), connectionPrefs));
         }
     }
 
     private long addActiveServiceCall(int progress_loading_albums, long messageId) {
         //TODO display a progress indicator and allow for retry?
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, serviceCallHandler);
         return messageId;
     }
 
@@ -207,8 +228,22 @@ public class ServerAlbumListPreference extends DialogPreference {
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                addAlbumsToUI(((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+            ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionProfile();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            if(response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+            } else if(response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
+                addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+            } else if(response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                PiwigoSessionDetails.getInstance(connectionPrefs);
+                // need to try again as this call will have been pointless.
+                if(sessionDetails != null && (sessionDetails.isUseCommunityPlugin() || sessionDetails.isAdminUser())) {
+                    retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+                } else {
+                    addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+                }
+            } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
+                addAlbumsToUI(true, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
             }
             super.onAfterHandlePiwigoResponse(response);
         }
@@ -218,7 +253,7 @@ public class ServerAlbumListPreference extends DialogPreference {
         return getSharedPreferences().getBoolean(getContext().getString(R.string.preference_app_read_only_mode_key), false);
     }
 
-    private void addAlbumsToUI(ArrayList<CategoryItemStub> albumNames) {
+    private void addAlbumsToUI(boolean isAdminList, ArrayList<CategoryItemStub> albumNames) {
 
         AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
         viewPrefs.selectable(false, false);
@@ -300,6 +335,7 @@ public class ServerAlbumListPreference extends DialogPreference {
 
         final SavedState myState = new SavedState(superState);
         myState.value = this.value;
+        myState.activeServiceCall = this.activeServiceCall;
         myState.connectionProfileNamePreferenceKey = connectionProfileNamePreferenceKey;
         return myState;
     }
@@ -315,6 +351,7 @@ public class ServerAlbumListPreference extends DialogPreference {
         SavedState myState = (SavedState) state;
         super.onRestoreInstanceState(myState.getSuperState());
         setValue(myState.value);
+        this.activeServiceCall = myState.activeServiceCall;
         this.connectionProfileNamePreferenceKey = myState.connectionProfileNamePreferenceKey;
     }
 
@@ -332,11 +369,13 @@ public class ServerAlbumListPreference extends DialogPreference {
                 };
 
         private String value;
-        public String connectionProfileNamePreferenceKey;
+        private long activeServiceCall;
+        private String connectionProfileNamePreferenceKey;
 
         public SavedState(Parcel source) {
             super(source);
             value = source.readString();
+            activeServiceCall = source.readLong();
             connectionProfileNamePreferenceKey = source.readString();
         }
 
@@ -348,6 +387,7 @@ public class ServerAlbumListPreference extends DialogPreference {
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeString(value);
+            dest.writeLong(activeServiceCall);
             dest.writeString(connectionProfileNamePreferenceKey);
         }
     }

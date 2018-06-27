@@ -154,45 +154,45 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         beforeCall();
         updatePoolSize(handler);
 
+        boolean haveValidSession = true;
         if(!handler.isPerformingLogin()) {
             synchronized (Worker.class) {
                 if (PiwigoSessionDetails.getInstance(profilePrefs) == null) {
-                    handler.getNewLogin();
+                    haveValidSession = handler.getNewLogin();
                 }
             }
         }
-        handler.beforeCall();
-        handler.runCall();
 
-        // this is the absolute timeout - in case something is seriously wrong.
-        long callTimeoutAtTime = System.currentTimeMillis() + 300000;
+        if(haveValidSession) {
+            handler.beforeCall();
+            handler.runCall();
 
-        synchronized (handler) {
-            boolean timedOut = false;
-            while (handler.isRunning() && !isCancelled() && !timedOut) {
-                long waitForMillis = callTimeoutAtTime - System.currentTimeMillis();
-                if (waitForMillis > 0) {
-                    try {
-                        handler.wait(waitForMillis);
-                    } catch (InterruptedException e) {
-                        // Either this has been cancelled or the wait timed out or the handler completed okay and notified us
-                        if (isCancelled()) {
-                            if (BuildConfig.DEBUG) {
-                                Log.e(handler.getTag(), "Service call cancelled before handler "+handler.getClass().getSimpleName()+" could finish running");
+            // this is the absolute timeout - in case something is seriously wrong.
+            long callTimeoutAtTime = System.currentTimeMillis() + 300000;
+
+            synchronized (handler) {
+                boolean timedOut = false;
+                while (handler.isRunning() && !isCancelled() && !timedOut) {
+                    long waitForMillis = callTimeoutAtTime - System.currentTimeMillis();
+                    if (waitForMillis > 0) {
+                        try {
+                            handler.wait(waitForMillis);
+                        } catch (InterruptedException e) {
+                            // Either this has been cancelled or the wait timed out or the handler completed okay and notified us
+                            if (isCancelled()) {
+                                if (BuildConfig.DEBUG) {
+                                    Log.e(handler.getTag(), "Service call cancelled before handler " + handler.getClass().getSimpleName() + " could finish running");
+                                }
+                                handler.cancelCallAsap();
                             }
-                            handler.cancelCallAsap();
                         }
+                    } else {
+                        timedOut = true;
                     }
-                } else {
-                    timedOut = true;
                 }
             }
-        }
-        if (handler.isRunning()) {
-            if (BuildConfig.DEBUG) {
-                Log.e(handler.getTag(), "Timeout while waiting for handler "+handler.getClass().getSimpleName()+" to finish running");
-            }
-            handler.cancelCallAsap();
+        } else {
+            handler.sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_unable_to_acquire_valid_session)));
         }
 
         afterCall(handler.isSuccess());

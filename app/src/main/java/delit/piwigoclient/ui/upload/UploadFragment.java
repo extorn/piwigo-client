@@ -200,7 +200,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             @Override
             public void onClick(View v) {
                 if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
-                    String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
+                    String serverUri = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
                     getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri),new LoginResponseHandler().invokeAsync(getContext()));
                 } else {
                     FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
@@ -346,8 +346,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     }
 
     private void invokeRetrieveSubCategoryNamesCall() {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        if(PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
             subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler().invokeAsync(getContext()));
         } else if(sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
             final boolean recursive = true;
@@ -864,8 +865,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubGalleryNames((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onGetSubGalleryNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
                 onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) response);
             } else {
@@ -908,7 +909,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             updateSpinnerWithNewAlbumsList(response.getAdminList().flattenTree());
         }
 
-        protected void onGetSubGalleryNames(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+        protected void onGetSubGalleryNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
             updateSpinnerWithNewAlbumsList(response.getAlbumNames());
         }
     }

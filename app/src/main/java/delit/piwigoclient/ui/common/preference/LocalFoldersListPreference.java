@@ -16,6 +16,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.util.ArrayList;
 
+import delit.piwigoclient.R;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 
@@ -42,8 +43,12 @@ public class LocalFoldersListPreference extends Preference {
         if(summaryPattern == null) {
             return null;
         }
-        String summaryPatternStr = summaryPattern.toString();
-        return String.format(summaryPatternStr, getValue());
+        String albumName = getValue();
+        if(albumName != null) {
+            return String.format(super.getSummary().toString(), albumName);
+        } else {
+            return getContext().getString(R.string.local_folder_preference_summary_default);
+        }
     }
 
     @Override

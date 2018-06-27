@@ -1,5 +1,15 @@
 package delit.piwigoclient.piwigoApi;
 
+import android.os.Build;
+
+import java.security.cert.CertPathValidatorException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.SSLHandshakeException;
+
+import delit.piwigoclient.util.X509Utils;
+
 /**
  * Created by gareth on 25/06/17.
  */
@@ -9,6 +19,33 @@ public class HttpUtils {
         String errorMessage = null;
         if (error != null) {
             errorMessage = error.getMessage();
+        }
+        Throwable cause;
+        if(error instanceof SSLHandshakeException) {
+            cause = error.getCause();
+            if(cause instanceof CertificateException) {
+                cause = cause.getCause();
+                if(cause instanceof CertPathValidatorException) {
+                    errorMessage = "";
+                    CertPathValidatorException certPathException = (CertPathValidatorException) cause;
+                    cause = certPathException.getCause();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        CertPathValidatorException.Reason r = certPathException.getReason();
+                        if(r == CertPathValidatorException.BasicReason.EXPIRED) {
+                            X509Certificate cert = X509Utils.findFirstExpiredCert(certPathException.getCertPath().getCertificates());
+                            String certName = cert.getSubjectX500Principal().getName();
+                            errorMessage = "\nCertificate : " + certName + "\n\n";
+                            // test expiry date
+                        } else if(r == CertPathValidatorException.BasicReason.NOT_YET_VALID) {
+                            // test expiry date
+                            X509Certificate cert = X509Utils.findFirstCertNotYetValid(certPathException.getCertPath().getCertificates());
+                            String certName = cert.getSubjectX500Principal().getName();
+                            errorMessage = "\nCertificate : " + certName + "\n\n";
+                        }
+                    }
+                    errorMessage += cause.getMessage();
+                }
+            }
         }
         String message;// When Http response code is '404'
         if (statusCode >= 400 && statusCode < 500) {

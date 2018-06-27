@@ -24,9 +24,15 @@ public class CustomImageDownloader implements Downloader {
 
     private final Context context;
     private final Map<Integer, Integer> errorDrawables = new HashMap<>();
+    private final ConnectionPreferences.ProfilePreferences connectionPrefs;
+
+    public CustomImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        this.context = context;
+        this.connectionPrefs = connectionPrefs;
+    }
 
     public CustomImageDownloader(Context context) {
-        this.context = context;
+        this(context, ConnectionPreferences.getActiveProfile());
     }
 
     public CustomImageDownloader addErrorDrawable(int statusCode, @DrawableRes int drawable) {
@@ -39,7 +45,7 @@ public class CustomImageDownloader implements Downloader {
 
         String uriToCall = uri.toString();
         ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(uriToCall);
-        handler.setCallDetails(context, ConnectionPreferences.getActiveProfile(), false);
+        handler.setCallDetails(context, connectionPrefs, false);
         handler.runCall();
 
         if(!handler.isSuccess()) {

@@ -155,13 +155,14 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
     private void showUnlockDialog() {
 
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         String username;
         if(sessionDetails != null) {
             username = sessionDetails.getUsername();
         } else {
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(getContext());
-            username = ConnectionPreferences.getPiwigoUsername(prefs, getContext());
+            username = connectionPrefs.getPiwigoUsername(prefs, getContext());
         }
         uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.password_entry_layout, R.string.button_cancel, R.string.button_unlock, new UIHelper.QuestionResultListener() {
             @Override
@@ -237,7 +238,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UnlockAppEvent event) {
-        String savedPassword = ConnectionPreferences.getPiwigoPasswordNotNull(prefs, getContext());
+        String savedPassword = ConnectionPreferences.getActiveProfile().getPiwigoPasswordNotNull(prefs, getContext());
         if (savedPassword.equals(event.getPassword())) {
             lockAppInReadOnlyMode(false);
             uiHelper.showOrQueueDialogMessage(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));

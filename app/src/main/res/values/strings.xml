@@ -748,6 +748,8 @@ SOFTWARE.
     <string name="slideshow_image_details_tags_title">Tags</string>
     <string name="button_search">Search</string>
     <string name="server_connection_preference_summary_default">Please select a value</string>
+    <string name="server_album_preference_summary_default">Please select a value</string>
+    <string name="local_folder_preference_summary_default">Please select a value</string>
     <string name="server_connection_preference_user_guest">guest</string>
     <string name="file_selection_heading">File Selection</string>
     <string name="tag_heading_pattern">Tag: %1$s</string>
@@ -763,5 +765,13 @@ SOFTWARE.
     <string name="button_none">Check None</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Network monitoring should be allowed for efficeint use of WIFI only uploading</string>
     <string name="inaccessible_remote_folder">** private **</string>
-
+    <string name="error_unable_to_acquire_valid_session">Unable to acquire valid session with server</string>
+    <string name="upload_job_is_enabled_label">Is Valid and Enabled?</string>
+    <string name="alert_auto_upload_service_stopped">Background upload service stopped</string>
+    <string name="alert_auto_upload_service_started">Background upload service started</string>
+    <string name="alert_auto_upload_service_job_started">Starting uploading job to server %1$s with %2$d files</string>
+    <string name="alert_auto_upload_service_job_finished_success">Finished running background upload job to server %1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Finished running background upload job to server %1$s. Some files failed to upload and will be retried later.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Finished running background upload job to server %1$s. No files could be uploaded. Job will be retried later.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Background upload service checking for tasks</string>
 </resources>

@@ -402,8 +402,8 @@ public class GroupFragment extends MyFragment {
                 onGroupDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) {
                 onGroupPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse) {
                 onGroupInfoUpdated((PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse)response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAddGroupResponse) {
@@ -573,7 +573,7 @@ public class GroupFragment extends MyFragment {
 
     }
 
-    private void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onGetSubGalleries(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         this.availableGalleries = response.getAlbumNames();
         if (currentAccessibleAlbumIds != null) {
             populateAlbumPermissionsList();

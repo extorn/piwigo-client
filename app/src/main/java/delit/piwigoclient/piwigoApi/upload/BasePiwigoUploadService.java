@@ -9,6 +9,8 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -45,6 +47,8 @@ import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.ImageCheckFilesResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.NewImageUploadFileChunkResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.UploadAlbumCreateResponseHandler;
+import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
+import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
 import delit.piwigoclient.util.SerializablePair;
 
 import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler.getNextMessageId;
@@ -190,7 +194,10 @@ public abstract class BasePiwigoUploadService extends IntentService {
     }
 
     public static void deleteStateFromDisk(Context c, UploadJob thisUploadJob) {
-        File f = new File(c.getExternalCacheDir(), "uploadJob.state");
+        deleteJobStateFile(getJobStateFile(c, thisUploadJob), thisUploadJob);
+    }
+
+    private static void deleteJobStateFile(File f, UploadJob thisUploadJob) {
         if (f.exists()) {
             if (!f.delete()) {
                 Log.d(TAG, "Error deleting job state from disk");
@@ -215,14 +222,22 @@ public abstract class BasePiwigoUploadService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-
         PowerManager.WakeLock wl = getWakeLock(intent);
         try {
+            doBeforeWork(intent);
             doWork(intent);
         } finally {
             releaseWakeLock(wl);
         }
 
+    }
+
+    protected void doBeforeWork(Intent intent) {
+        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    }
+
+    public SharedPreferences getPrefs() {
+        return prefs;
     }
 
     protected void releaseWakeLock(PowerManager.WakeLock wl) {
@@ -237,12 +252,15 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
     protected void runJob(long jobId) {
         UploadJob thisUploadJob = getActiveForegroundJob(getApplicationContext(), jobId);
-        runJob(thisUploadJob);
+        runJob(thisUploadJob, null);
     }
 
-    protected void runJob(UploadJob thisUploadJob) {
+    protected interface JobUploadListener {
+        void onJobReadyToUpload(Context c, UploadJob thisUploadJob);
+    }
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener) {
+        EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob));
 
         int maxChunkUploadAutoRetries = prefs.getInt(getString(R.string.preference_data_upload_chunk_auto_retries_key), getResources().getInteger(R.integer.preference_data_upload_chunk_auto_retries_default));
 
@@ -260,6 +278,10 @@ public abstract class BasePiwigoUploadService extends IntentService {
             saveStateToDisk(thisUploadJob);
 
             thisUploadJob.calculateChecksums();
+
+            if(thisUploadJob.isRunInBackground() && listener != null) {
+                listener.onJobReadyToUpload(getApplicationContext(), thisUploadJob);
+            }
 
             // is name or md5sum used for uniqueness on this server?
             boolean nameUnique = "name".equals(prefs.getString(getString(R.string.preference_gallery_unique_id_key), getResources().getString(R.string.preference_gallery_unique_id_default)));
@@ -314,15 +336,22 @@ public abstract class BasePiwigoUploadService extends IntentService {
             thisUploadJob.setRunning(false);
             if (!thisUploadJob.hasJobCompletedAllActionsSuccessfully()) {
                 saveStateToDisk(thisUploadJob);
+            } else {
+                deleteStateFromDisk(getApplicationContext(), thisUploadJob);
             }
 
             postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse(getNextMessageId(), thisUploadJob));
             PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(thisUploadJob.getJobId());
+
+            EventBus.getDefault().post(new BackgroundUploadStoppedEvent(thisUploadJob));
         }
     }
 
     public void saveStateToDisk(UploadJob thisUploadJob) {
-        File f = new File(getApplicationContext().getExternalCacheDir(), "tmp-uploadJob.state");
+        saveJobToFile(getJobStateFile(getApplicationContext(), thisUploadJob), thisUploadJob);
+    }
+
+    private void saveJobToFile(File f, UploadJob uploadJob) {
         boolean canContinue = true;
         if (f.exists()) {
             if (!f.delete()) {
@@ -336,7 +365,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         ObjectOutputStream oos = null;
         try {
             oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
-            oos.writeObject(thisUploadJob);
+            oos.writeObject(uploadJob);
             oos.flush();
         } catch (IOException e) {
             Log.d(TAG, "Error writing job to disk", e);
@@ -359,6 +388,15 @@ public abstract class BasePiwigoUploadService extends IntentService {
         }
         if (canWrite) {
             f.renameTo(destinationFile);
+        }
+    }
+
+    private static File getJobStateFile(Context c, UploadJob job) {
+        if(job.isRunInBackground()) {
+            File jobsFolder = new File(c.getExternalCacheDir(), "uploadJobs");
+            return new File(jobsFolder, job.getJobId() + ".state");
+        } else {
+            return new File(c.getExternalCacheDir(), "tmp-uploadJob.state");
         }
     }
 

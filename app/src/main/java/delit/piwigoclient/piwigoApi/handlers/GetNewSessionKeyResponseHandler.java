@@ -34,10 +34,10 @@ public class GetNewSessionKeyResponseHandler extends AbstractPiwigoWsResponseHan
     public RequestParams buildRequestParameters() {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String username = ConnectionPreferences.getPiwigoUsername(prefs, getContext());
+        String username = getConnectionPrefs().getPiwigoUsername(prefs, getContext());
         String pass = this.password;
         if(pass == null) {
-            pass = ConnectionPreferences.getPiwigoPassword(prefs, getContext());
+            pass = getConnectionPrefs().getPiwigoPassword(prefs, getContext());
         }
 
         RequestParams params = new RequestParams();

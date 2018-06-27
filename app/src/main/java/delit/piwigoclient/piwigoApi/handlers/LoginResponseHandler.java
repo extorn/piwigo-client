@@ -41,6 +41,11 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
+    public String getPiwigoMethod() {
+        return getNestedFailureMethod();
+    }
+
+    @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionPrefs();
@@ -50,23 +55,35 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         loginResponse.setOldCredentials(PiwigoSessionDetails.getInstance(connectionPrefs));
 
         boolean canContinue = true;
+
         if (isSessionKeyInvalid(PiwigoSessionDetails.getInstance(connectionPrefs), prefs, connectionPrefs)) {
             canContinue = getNewSessionKey(password);
         }
+
         if(canContinue) {
             haveValidSessionKey = true;
         }
+
         if(canContinue && isSessionDetailsOutOfDate(PiwigoSessionDetails.getInstance(connectionPrefs))) {
             canContinue = getNewSessionDetails(loginResponse);
         }
+
+        loginResponse.setNewSessionDetails(PiwigoSessionDetails.getInstance(connectionPrefs));
+
         if(canContinue && isCommunityPluginSessionStatusUnknown(PiwigoSessionDetails.getInstance(connectionPrefs))) {
             canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
         }
+
         if (canContinue && isNeedUserDetails(PiwigoSessionDetails.getInstance(connectionPrefs))) {
             canContinue = loadUserDetails();
         }
 
+        setError(getNestedFailure());
+
         storeResponse(loginResponse);
+
+        // this is needed because we aren't calling the onSuccess method.
+        resetFailureAsASuccess();
 
         return null;
     }
@@ -90,6 +107,9 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         GetNewSessionKeyResponseHandler newSessionKeyHandler = new GetNewSessionKeyResponseHandler(password, getContext());
         newSessionKeyHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         newSessionKeyHandler.run(getContext(), getConnectionPrefs());
+        if(!newSessionKeyHandler.isSuccess()) {
+            reportNestedFailure(newSessionKeyHandler);
+        }
         return newSessionKeyHandler.isSuccess();
     }
 
@@ -123,7 +143,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         sessionLoadHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         sessionLoadHandler.run(getContext(), getConnectionPrefs());
         if (PiwigoSessionDetails.getInstance(getConnectionPrefs()).isLoggedInWithBasicSessionDetails() // get new copy (old may be invalid)
-                && sessionLoadHandler.getResponse() instanceof PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse) {
+                && sessionLoadHandler.getResponse() instanceof GetSessionStatusResponseHandler.PiwigoSessionStatusRetrievedResponse) {
         } else {
             reportNestedFailure(sessionLoadHandler);
         }
@@ -154,6 +174,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     public static class PiwigoOnLoginResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
         private PiwigoSessionDetails oldCredentials;
+        private PiwigoSessionDetails sessionDetails;
 
         public PiwigoOnLoginResponse(long messageId, String piwigoMethod) {
             super(messageId, piwigoMethod, true);
@@ -165,6 +186,14 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
 
         public void setOldCredentials(PiwigoSessionDetails oldCredentials) {
             this.oldCredentials = oldCredentials;
+        }
+
+        public void setNewSessionDetails(PiwigoSessionDetails sessionDetails) {
+            this.sessionDetails = sessionDetails;
+        }
+
+        public PiwigoSessionDetails getNewSessionDetails() {
+            return sessionDetails;
         }
     }
 }

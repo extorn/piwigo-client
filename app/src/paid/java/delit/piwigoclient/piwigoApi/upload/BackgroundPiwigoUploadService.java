@@ -8,25 +8,28 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
-
-import com.google.android.gms.common.util.IOUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
-import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
-import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
+import delit.piwigoclient.ui.events.BackgroundUploadThreadCheckingForTasksEvent;
+import delit.piwigoclient.ui.events.BackgroundUploadThreadStartedEvent;
+import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
 import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
 import delit.piwigoclient.util.CustomFileFilter;
@@ -36,16 +39,17 @@ import delit.piwigoclient.util.CustomFileFilter;
  * a service on a separate handler thread.
  * <p>
  */
-public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
+public class BackgroundPiwigoUploadService extends BasePiwigoUploadService implements BasePiwigoUploadService.JobUploadListener {
 
     private static final String TAG = "BkgrdUploadService";
     private static final String ACTION_BACKGROUND_UPLOAD_FILES = "delit.piwigoclient.action.ACTION_BACKGROUND_UPLOAD_FILES";
     private CustomFileFilter fileFilter = new CustomFileFilter();
     private static volatile boolean exit = false;
-    private NetworkStatusChangeListener networkStatusChangeListener;
+    private BroadcastEventsListener networkStatusChangeListener;
     private static BackgroundPiwigoUploadService instance;
     private static boolean starting;
     private static UploadJob runningUploadJob = null;
+    private long pauseThreadUntilSysTime;
 
     public BackgroundPiwigoUploadService() {
         super(TAG);
@@ -70,6 +74,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
         return instance != null;
     }
 
+    public synchronized static void wakeServiceIfSleeping() {
+        if(instance != null) {
+            instance.wakeIfWaiting();
+        }
+    }
+
     public synchronized static void killService() {
         if(instance != null) {
             exit = true;
@@ -89,12 +99,15 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
     @Override
     protected void onHandleIntent(Intent intent) {
         // don't call the default (locks device from sleeping)
+        doBeforeWork(intent);
         doWork(intent);
     }
 
     @Override
     protected void doWork(Intent intent) {
         Context context = getApplicationContext();
+
+        EventBus.getDefault().post(new BackgroundUploadThreadStartedEvent());
 
         registerBroadcastReceiver(context);
 
@@ -106,6 +119,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
             BackgroundPiwigoFileUploadResponseListener jobListener = new BackgroundPiwigoFileUploadResponseListener(context);
             while (!exit) {
 
+                EventBus.getDefault().post(new BackgroundUploadThreadCheckingForTasksEvent());
+
                 boolean canUpload;
                 if (jobs.isUploadOnWirelessOnly(context)) {
                     canUpload = isConnectedToWireless(context);
@@ -116,10 +131,17 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
                 if(canUpload) {
                     // if there's an old incomplete job, try and finish that first.
                     UploadJob unfinishedJob = getActiveBackgroundJob(context);
-                    runJob(unfinishedJob);
-                    if(unfinishedJob != null && unfinishedJob.isCancelUploadAsap()) {
+                    if(unfinishedJob != null) {
+                        if(unfinishedJob.getConnectionPrefs().isValid(getPrefs(), getApplicationContext())) {
+                            runJob(unfinishedJob, this);
+                        } else {
+                            // no longer valid (connection doesn't exist any longer).
+                            deleteStateFromDisk(getApplicationContext(), unfinishedJob);
+                        }
+                    }
+                    if(unfinishedJob == null || !unfinishedJob.isCancelUploadAsap()) {
 
-                        if (jobs.getUploadJobsCount(context) > 0) {
+                        if (jobs.hasUploadJobs(context)) {
                             List<AutoUploadJobConfig> jobConfigList = jobs.getAutoUploadJobs(context);
                             PowerManager.WakeLock wl = getWakeLock(intent);
                             try {
@@ -128,16 +150,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
                                     if (jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
                                         UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
                                         if (uploadJob != null) {
-                                            EventBus.getDefault().post(new BackgroundUploadStartedEvent(uploadJob));
-                                            runJob(uploadJob);
-                                            EventBus.getDefault().post(new BackgroundUploadStoppedEvent(uploadJob));
-                                            if(jobConfig.isDeleteFilesAfterUpload(context)) {
-                                                for (File f : uploadJob.getFilesSuccessfullyUploaded()) {
-                                                    if (f.exists()) {
-                                                        f.delete();
-                                                    }
-                                                }
-                                            }
+                                            runJob(uploadJob, this);
+                                            runPostJobCleanup(jobConfig, uploadJob);
                                             if(uploadJob.isCancelUploadAsap()) {
                                                 // exit for loop now and go back to sleep.
                                                 break;
@@ -156,8 +170,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
                     }
                 }
                 synchronized (this) {
-                    long endTime = System.currentTimeMillis() + pollDurationMillis;
-                    while (System.currentTimeMillis() < endTime && !exit) {
+                    pauseThreadUntilSysTime = System.currentTimeMillis() + pollDurationMillis;
+                    while (System.currentTimeMillis() < pauseThreadUntilSysTime && !exit) {
                         try {
                             wait(pollDurationMillis);
                         } catch (InterruptedException e) {
@@ -168,7 +182,37 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
             }
         } finally {
             unregisterBroadcastReceiver(context);
+            EventBus.getDefault().post(new BackgroundUploadThreadTerminatedEvent());
         }
+    }
+
+    private void runPostJobCleanup(AutoUploadJobConfig jobConfig, UploadJob uploadJob) {
+        if(jobConfig.isDeleteFilesAfterUpload(getApplicationContext())) {
+            for (File f : uploadJob.getFilesSuccessfullyUploaded()) {
+                if (f.exists()) {
+                    if(!f.delete()) {
+                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            try {
+                                Files.delete(f.toPath());
+                            } catch (IOException e) {
+                                if(BuildConfig.DEBUG) {
+                                    Log.e(TAG, "Unable to delete uploaded file", e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // record all files uploaded to prevent repeated upload (do this always in case delete fails for a file!
+        HashSet<File> filesUploaded = uploadJob.getFilesSuccessfullyUploaded();
+        HashMap<File, String> uploadedFileChecksums = new HashMap<>(filesUploaded.size());
+        for(File f : filesUploaded) {
+            if(f.exists()) {
+                uploadedFileChecksums.put(f, uploadJob.getFileChecksum(f));
+            }
+        }
+        jobConfig.saveFilesPreviouslyUploaded(getApplicationContext(), new AutoUploadJobConfig.PriorUploads(jobConfig.getJobId(), uploadedFileChecksums));
     }
 
     private void unregisterBroadcastReceiver(Context context) {
@@ -179,23 +223,40 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
 
     private void registerBroadcastReceiver(Context context) {
 
-        networkStatusChangeListener = new NetworkStatusChangeListener(this);
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        context.registerReceiver(networkStatusChangeListener, intentFilter);
+        networkStatusChangeListener = new BroadcastEventsListener(this);
+        context.registerReceiver(networkStatusChangeListener, networkStatusChangeListener.getIntentFilter());
     }
 
-    private static class NetworkStatusChangeListener extends BroadcastReceiver {
+    @Override
+    public void onJobReadyToUpload(Context c, UploadJob thisUploadJob) {
+        thisUploadJob.getJobId();
+        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(c, thisUploadJob.getJobConfigId());
+        AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(c);
+        thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFilesToHashMap());
+    }
+
+    private static class BroadcastEventsListener extends BroadcastReceiver {
 
         private BackgroundPiwigoUploadService service;
 
-        public NetworkStatusChangeListener(BackgroundPiwigoUploadService service) {
+        public BroadcastEventsListener(BackgroundPiwigoUploadService service) {
             this.service = service;
         }
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals("android.intent.action.USER_PRESENT")) {
+                handleDeviceUnlocked(context);
+            } else if(intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE")) {
+                handleNetworkStatusChanged(context);
+            }
+        }
+
+        private void handleDeviceUnlocked(Context context) {
+            wakeServiceIfSleeping();
+        }
+
+        private void handleNetworkStatusChanged(Context context) {
             final ConnectivityManager connMgr = (ConnectivityManager) context
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -213,10 +274,18 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
                 service.pauseAnyRunningUpload();
             }
         }
+
+        public IntentFilter getIntentFilter() {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+            intentFilter.addAction("android.intent.action.USER_PRESENT");
+            return intentFilter;
+        }
     }
 
     private void wakeIfWaiting() {
         synchronized(this) {
+            pauseThreadUntilSysTime = System.currentTimeMillis();
             notifyAll();
         }
     }
@@ -244,6 +313,10 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isWiFi = activeNetwork != null && activeNetwork.isConnected() && activeNetwork.getType() == ConnectivityManager.TYPE_WIFI;
+//        if(BuildConfig.DEBUG) {
+//            // just allow testing in the emulator.
+//            isWiFi = activeNetwork != null && activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE;
+//        }
         return isWiFi;
     }
 
@@ -263,6 +336,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService {
         UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(context), filesToUpload, category,
                 jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId());
         uploadJob.setToRunInBackground();
+        uploadJob.setJobConfigId(jobConfig.getJobId());
         return uploadJob;
     }
 

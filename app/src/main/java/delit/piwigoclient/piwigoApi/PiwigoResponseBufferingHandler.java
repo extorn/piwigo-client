@@ -573,20 +573,6 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoSessionStatusRetrievedResponse extends BasePiwigoResponse {
-
-        private final PiwigoSessionDetails oldCredentials;
-
-        public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod, PiwigoSessionDetails oldCredentials) {
-            super(messageId, piwigoMethod, true);
-            this.oldCredentials = oldCredentials;
-        }
-
-        public PiwigoSessionDetails getOldCredentials() {
-            return oldCredentials;
-        }
-    }
-
     public static class PiwigoGetMethodsAvailableResponse extends BasePiwigoResponse {
 
         public PiwigoGetMethodsAvailableResponse(long messageId, String piwigoMethod) {
@@ -1010,19 +996,6 @@ public class PiwigoResponseBufferingHandler {
 
         public ArrayList<GalleryItem> getResources() {
             return resources;
-        }
-    }
-
-    public static class PiwigoGetSubAlbumNamesResponse extends BasePiwigoResponse {
-        private final ArrayList<CategoryItemStub> albumNames;
-
-        public PiwigoGetSubAlbumNamesResponse(long messageId, String piwigoMethod, ArrayList<CategoryItemStub> albumNames) {
-            super(messageId, piwigoMethod, true);
-            this.albumNames = albumNames;
-        }
-
-        public ArrayList<CategoryItemStub> getAlbumNames() {
-            return albumNames;
         }
     }
 

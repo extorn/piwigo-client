@@ -58,7 +58,7 @@ public class AdsManager {
     }
 
     public synchronized void updateShowAdvertsSetting(Context context) {
-        String serverAddress = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(getPrefs(context), context);
+        String serverAddress = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(getPrefs(context), context);
         showAds = !BuildConfig.PAID_VERSION;
         if(showAds) {
             // can we disable the ads another way?

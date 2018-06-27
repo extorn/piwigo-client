@@ -138,7 +138,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         if (savedInstanceState == null) {
             if (!hasAgreedToEula()) {
                 showEula();
-            } else if (ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
+            } else if (ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
                 showPreferences();
             } else {
                 showGallery(currentAlbum);
@@ -188,11 +188,13 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             Toolbar toolbar = findViewById(R.id.toolbar);
             toolbar.setVisibility(prefs.getBoolean(getString(R.string.preference_app_show_toolbar_key), true) ? View.VISIBLE : View.GONE);
 
-            if(!"".equals(ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+
+            if(!"".equals(connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
                 // Can and need to login to the server, so lets do that.
                 boolean haveBeenLoggedIn = null != getSupportFragmentManager().findFragmentByTag(LoginFragment.class.getName());
 
-                if(haveBeenLoggedIn && !PiwigoSessionDetails.isFullyLoggedIn((ConnectionPreferences.getActiveProfile()))) {
+                if(haveBeenLoggedIn && !PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
 
                     // clear the backstack - its for an old session (clear stack back to first session login).
                     for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
@@ -645,7 +647,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-        if (ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
+        if (ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
             showPreferences();
         } else {
             showGallery(CategoryItem.ROOT_ALBUM);

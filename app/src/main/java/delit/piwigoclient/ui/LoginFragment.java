@@ -62,7 +62,8 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         loginButton.setEnabled(false);
-        String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+        String serverUri = connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
         getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getContext()));
     }
 

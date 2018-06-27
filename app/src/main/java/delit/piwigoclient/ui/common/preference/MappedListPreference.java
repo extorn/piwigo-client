@@ -178,6 +178,13 @@ public abstract class MappedListPreference<T> extends DialogPreference {
         }
     }
 
+    protected abstract T transform(Object obj);
+
+    @Override
+    public void setDefaultValue(Object defaultValue) {
+        super.setDefaultValue(transform(defaultValue));
+    }
+
     /**
      * Sets the summary for this Preference with a CharSequence.
      * If the summary has a
@@ -300,7 +307,7 @@ public abstract class MappedListPreference<T> extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        setValue(restoreValue ? getPersistedValue(mValue) : (T) defaultValue);
+        setValue(restoreValue ? getPersistedValue(mValue) : transform(defaultValue));
     }
 
     @Override

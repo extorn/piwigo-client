@@ -9,13 +9,11 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 import delit.piwigoclient.util.ArrayUtils;
 
@@ -77,7 +75,7 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
             availableGalleriesMap.put(album.getId(), album);
         }
         availableGalleries.remove(CategoryItemStub.ROOT_GALLERY);
-        PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse r = new PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
+        PiwigoCommunityGetSubAlbumNamesResponse r = new PiwigoCommunityGetSubAlbumNamesResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
         storeResponse(r);
     }
 
@@ -102,11 +100,20 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
                 parentAlbums.add(0, album);
             }
         }
-        parentAlbums.add(0, CategoryItemStub.ROOT_GALLERY);
+        if(albumsParsed.size() == 0) {
+            parentAlbums.add(0, CategoryItemStub.ROOT_GALLERY);
+        }
 
         for(CategoryItemStub parentAlbum : parentAlbums) {
             albumsParsed.put(parentAlbum.getId(), parentAlbum);
         }
-        return parentAlbums.get(parentAlbums.size() -1);
+        return albumsParsed.get(Long.valueOf(parentageArr[parentageArr.length - 2]));
+    }
+
+    public static class PiwigoCommunityGetSubAlbumNamesResponse extends AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse {
+
+        public PiwigoCommunityGetSubAlbumNamesResponse(long messageId, String piwigoMethod, ArrayList<CategoryItemStub> albumNames) {
+            super(messageId, piwigoMethod, albumNames);
+        }
     }
 }

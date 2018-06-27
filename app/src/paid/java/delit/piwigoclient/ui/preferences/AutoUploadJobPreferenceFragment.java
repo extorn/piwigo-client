@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -25,18 +27,22 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandle
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.util.PreferenceUtils;
+import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 
 public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     private static final String JOB_ID_ARG = "jobId";
-    int jobId = -1;
+    private static final String ACTION_ID_ARG = "actionId";
     private PreferenceChangeListener prefChangeListener;
+    private int actionId = -1;
+    private int jobId = -1;
 
     public AutoUploadJobPreferenceFragment(){}
 
-    public static AutoUploadJobPreferenceFragment newInstance(int jobId) {
+    public static AutoUploadJobPreferenceFragment newInstance(int actionId, int jobId) {
         AutoUploadJobPreferenceFragment fragment = new AutoUploadJobPreferenceFragment();
         Bundle args = new Bundle();
+        args.putInt(ACTION_ID_ARG, actionId);
         args.putInt(JOB_ID_ARG, jobId);
         fragment.setArguments(args);
         return fragment;
@@ -46,6 +52,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     public void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
         jobId = getArguments().getInt(JOB_ID_ARG);
+        actionId = getArguments().getInt(ACTION_ID_ARG);
         getPreferenceManager().setSharedPreferencesName(AutoUploadJobConfig.getSharedPreferencesName(jobId));
     }
 
@@ -61,9 +68,12 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
         if(allPreferencesValid) {
             String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_key);
-            profilePrefs = ConnectionPreferences.getPreferences(serverProfile);
-            String serverName = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
-            allPreferencesValid &= serverName != null;
+            allPreferencesValid &= serverProfile != null;
+            if(allPreferencesValid) {
+                profilePrefs = ConnectionPreferences.getPreferences(serverProfile);
+                String serverName = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
+                allPreferencesValid &= serverName != null;
+            }
         }
         // check local folder
         if(allPreferencesValid) {
@@ -89,7 +99,8 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             SharedPreferences.Editor editor = getPrefs().edit();
             editor.putBoolean(getString(R.string.preference_data_upload_automatic_job_is_valid_key), allPreferencesValid);
             editor.commit();
-            PreferenceUtils.refreshDisplayedPreference(findPreference(R.string.preference_data_upload_automatic_job_is_valid_key));
+            Preference pref = findPreference(R.string.preference_data_upload_automatic_job_is_valid_key);
+            PreferenceUtils.refreshDisplayedPreference(pref);
         }
     }
 
@@ -145,7 +156,9 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        addPreferencesFromResource(R.xml.pref_auto_upload_job);
+        if(getPreferenceScreen() == null) {
+            addPreferencesFromResource(R.xml.pref_auto_upload_job);
+        }
         setHasOptionsMenu(true);
 
         invokePreferenceValuesValidation(false);
@@ -162,6 +175,12 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     public void onPause() {
         getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(prefChangeListener);
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().postSticky(new AutoUploadJobViewCompleteEvent(actionId, jobId));
+        super.onStop();
     }
 
     private class PreferenceChangeListener implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -223,8 +242,8 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             super.onAfterHandlePiwigoResponse(response);
-            if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                finishPreferenceValuesValidation(((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+            if(response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                finishPreferenceValuesValidation(((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
             }
         }
     }

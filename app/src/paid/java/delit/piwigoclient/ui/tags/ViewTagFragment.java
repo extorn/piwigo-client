@@ -212,8 +212,8 @@ public class ViewTagFragment extends MyFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
             // force a reload of the tag if the session has been destroyed.
             tagIsDirty = true;
@@ -225,7 +225,7 @@ public class ViewTagFragment extends MyFragment {
             tag = (Tag) savedInstanceState.getSerializable(ARG_TAG);
             // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
-            tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
+            tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
             tagIsDirty = tagIsDirty || savedInstanceState.getBoolean(STATE_TAG_DIRTY);
             SetUtils.setNotNull(loadingMessageIds,(HashMap<Long,String>)savedInstanceState.getSerializable(STATE_TAG_ACTIVE_LOAD_THREADS));
             SetUtils.setNotNull(itemsToLoad,(ArrayList<String>)savedInstanceState.getSerializable(STATE_TAG_LOADS_TO_RETRY));
@@ -472,11 +472,11 @@ public class ViewTagFragment extends MyFragment {
                     HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItems());
                     deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
                 } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
-
+                    ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
                     for (ResourceItem item : deleteActionData.getSelectedItems()) {
                         item.getTags().remove(tag);
-                        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                        if(sessionDetails != null && sessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+                        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+                        if(sessionDetails != null && sessionDetails.isAdminUser(connectionPrefs)) {
                             addActiveServiceCall(getString(R.string.progress_untag_resources_pattern, tag.getName()), new ImageUpdateInfoResponseHandler(item).invokeAsync(getContext()));
                         } else if(sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate()) {
                             addActiveServiceCall(getString(R.string.progress_untag_resources_pattern, tag.getName()), new PluginUserTagsUpdateResourceTagsListResponseHandler<>(item).invokeAsync(getContext()));

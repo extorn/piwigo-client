@@ -3,7 +3,6 @@ package delit.piwigoclient.piwigoApi.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
 
@@ -13,8 +12,6 @@ import java.util.StringTokenizer;
 
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -38,7 +35,7 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         PiwigoSessionDetails newCredentials = parseSessionDetails(rsp);
         PiwigoSessionDetails.setInstance(getConnectionPrefs(), newCredentials);
 
-        PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials);
+        PiwigoSessionStatusRetrievedResponse r = new PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials, newCredentials);
         storeResponse(r);
     }
 
@@ -88,4 +85,22 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         return sessionDetails;
     }
 
+    public static class PiwigoSessionStatusRetrievedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final PiwigoSessionDetails oldCredentials, newCredentials;
+
+        public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod, PiwigoSessionDetails oldCredentials, PiwigoSessionDetails newCredentials) {
+            super(messageId, piwigoMethod, true);
+            this.oldCredentials = oldCredentials;
+            this.newCredentials = newCredentials;
+        }
+
+        public PiwigoSessionDetails getOldCredentials() {
+            return oldCredentials;
+        }
+
+        public PiwigoSessionDetails getNewCredentials() {
+            return newCredentials;
+        }
+    }
 }

@@ -27,6 +27,7 @@ public class UploadJob implements Serializable {
     private static final Integer REQUIRES_DELETE = 5;
     private static final Integer DELETED = 6;
     private final long jobId;
+    private int jobConfigId = -1;
     private boolean runInBackground;
     private final long responseHandlerId;
     private final ArrayList<File> filesForUpload;
@@ -92,6 +93,13 @@ public class UploadJob implements Serializable {
         return status == null || UPLOADING.equals(status);
     }
 
+    public int getJobConfigId() {
+        return jobConfigId;
+    }
+
+    public void setJobConfigId(int jobConfigId) {
+        this.jobConfigId = jobConfigId;
+    }
 
     //
 //    public synchronized boolean isUploadOfFileInProgress(File fileForUpload) {
@@ -232,13 +240,17 @@ public class UploadJob implements Serializable {
 
     public synchronized void calculateChecksums() {
         ArrayList<File> filesNotFinished = getFilesNotYetUploaded();
+        boolean newJob = false;
         if (fileChecksums == null) {
             fileChecksums = new HashMap<>(filesForUpload.size());
-        } else {
-            fileChecksums.clear();
+            newJob = true;
         }
         for (File f : filesNotFinished) {
+            // recalculate checksums for all files not yet uploaded
             final String checksum = Md5SumUtils.calculateMD5(f);
+            if(!newJob) {
+                fileChecksums.remove(f);
+            }
             fileChecksums.put(f, checksum);
         }
     }
@@ -354,6 +366,27 @@ public class UploadJob implements Serializable {
             filenamesMap.put(f, f.getName());
         }
         return filenamesMap;
+    }
+
+    public void filterPreviouslyUploadedFiles(HashMap<File, String> fileUploadedHashMap) {
+        for(HashMap.Entry<File,String> fileUploadedEntry : fileUploadedHashMap.entrySet()) {
+            File potentialDuplicateUpload = fileUploadedEntry.getKey();
+            if(filesForUpload.contains(potentialDuplicateUpload)) {
+                // a file at this absolute path has been uploaded previously to this end point
+                String checksum = fileChecksums.get(potentialDuplicateUpload);
+                if(checksum != null) {
+                    if (checksum.equals(fileUploadedEntry.getValue())) {
+                        // the file is identical to that previously uploaded (checksum check)
+                        if (!fileUploadStatus.containsKey(potentialDuplicateUpload)) {
+                            // this is a fresh target for this job
+                            filesForUpload.remove(fileUploadedEntry.getKey());
+                            fileChecksums.remove(fileUploadedEntry.getKey());
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     protected static class PartialUploadData implements Serializable {

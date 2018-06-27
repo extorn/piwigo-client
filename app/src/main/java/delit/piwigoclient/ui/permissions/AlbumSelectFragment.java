@@ -148,15 +148,15 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                onSubGalleriesLoaded((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onSubGalleriesLoaded((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else {
                 onListItemLoadFailed();
             }
         }
     }
 
-    private void onSubGalleriesLoaded(final PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         getUiHelper().dismissProgressDialog();
 //        if (response.getItemsOnPage() == response.getPageSize()) {
 //            //TODO FEATURE: Support groups paging

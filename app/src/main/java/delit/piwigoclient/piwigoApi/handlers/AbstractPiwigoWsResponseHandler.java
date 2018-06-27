@@ -35,6 +35,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     private final String piwigoMethod;
     private RequestParams requestParams;
     private String nestedFailureMethod;
+    private Throwable nestedFailure;
     private Gson gson;
 
     protected AbstractPiwigoWsResponseHandler(String piwigoMethod, String tag) {
@@ -59,11 +60,16 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     @Override
     public void clearCallDetails() {
         nestedFailureMethod = null;
+        nestedFailure = null;
         super.clearCallDetails();
     }
 
     public String getNestedFailureMethod() {
         return nestedFailureMethod;
+    }
+
+    public Throwable getNestedFailure() {
+        return nestedFailure;
     }
 
     protected Gson buildGson() {
@@ -155,6 +161,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
+        setError(new Throwable(rsp.getMessage()));
         PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, rsp.getErr(), rsp.getMessage());
         storeResponse(r);
     }
@@ -162,6 +169,8 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     protected void reportNestedFailure(AbstractBasicPiwigoResponseHandler nestedHandler) {
         if (nestedHandler instanceof AbstractPiwigoWsResponseHandler) {
             nestedFailureMethod = ((AbstractPiwigoWsResponseHandler) nestedHandler).getPiwigoMethod();
+            nestedFailure = ((AbstractPiwigoWsResponseHandler) nestedHandler).getError();
+            setError(nestedHandler.getError());
         }
         super.reportNestedFailure(nestedHandler);
     }
@@ -207,5 +216,4 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         Log.e(getTag(), "Invoking call to server ("+getRequestParameters()+") thread from thread " + Thread.currentThread().getName());
         return client.post(getPiwigoWsApiUri(), getRequestParameters(), handler);
     }
-
 }

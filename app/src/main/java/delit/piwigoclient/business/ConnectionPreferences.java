@@ -292,71 +292,10 @@ public class ConnectionPreferences {
             editor.apply();
             editor.commit();
         }
-    }
 
-    public static String getPiwigoServerAddress(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getPiwigoServerAddress(prefs, context);
+        public boolean isValid(SharedPreferences prefs, Context context) {
+            return getConnectionProfileList(prefs, context).contains(prefix);
+        }
     }
-
-    public static String getTrimmedNonNullPiwigoServerAddress(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, context);
-    }
-
-    public static boolean getUseBasicAuthentication(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getUseBasicAuthentication(prefs, context);
-    }
-
-    public static String getBasicAuthenticationUsername(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getBasicAuthenticationUsername(prefs, context);
-    }
-
-    public static String getBasicAuthenticationPassword(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getBasicAuthenticationPassword(prefs, context);
-    }
-
-    public static boolean getUseClientCertificates(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getUseClientCertificates(prefs, context);
-    }
-
-    public static boolean getUsePinnedServerCertificates(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getUsePinnedServerCertificates(prefs, context);
-    }
-
-    public static Set<String> getUserPreNotifiedCerts(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getUserPreNotifiedCerts(prefs, context);
-    }
-
-    public static String getPiwigoUsername(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getPiwigoUsername(prefs, context);
-    }
-
-    public static String getPiwigoPassword(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getPiwigoPassword(prefs, context);
-    }
-
-    public static String getPiwigoPasswordNotNull(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getPiwigoPasswordNotNull(prefs, context);
-    }
-
-    public static String getCertificateHostnameVerificationLevel(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getCertificateHostnameVerificationLevel(prefs, context);
-    }
-
-    public static boolean getFollowHttpRedirects(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getFollowHttpRedirects(prefs, context);
-    }
-
-    public static int getMaxHttpRedirects(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getMaxHttpRedirects(prefs, context);
-    }
-
-    public static int getMaxServerConnectRetries(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getMaxServerConnectRetries(prefs, context);
-    }
-
-    public static int getServerConnectTimeout(SharedPreferences prefs, Context context) {
-        return getActiveProfile().getServerConnectTimeout(prefs, context);
-    }
-
 
 }

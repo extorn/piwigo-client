@@ -49,6 +49,7 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 public class CommonPreferencesFragment extends MyFragment {
 
     static final String LOG_TAG = "PreferencesFragment";
+    private View view;
 
     public CommonPreferencesFragment() {
         // Required empty public constructor
@@ -78,9 +79,12 @@ public class CommonPreferencesFragment extends MyFragment {
             getFragmentManager().popBackStack();
             return null;
         }
-        View v = inflater.inflate(R.layout.activity_preferences, container, false);
+        if(view != null) {
+            return view;
+        }
+        view = inflater.inflate(R.layout.activity_preferences, container, false);
 
-        AdView adView = v.findViewById(R.id.prefs_adView);
+        AdView adView = view.findViewById(R.id.prefs_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
@@ -91,7 +95,7 @@ public class CommonPreferencesFragment extends MyFragment {
         /*
       A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
      */
-        ViewPager mViewPager = v.findViewById(R.id.viewpager);
+        ViewPager mViewPager = view.findViewById(R.id.viewpager);
         mViewPager.setAdapter(buildPagerAdapter(getChildFragmentManager()));
 
         // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
@@ -100,9 +104,9 @@ public class CommonPreferencesFragment extends MyFragment {
       A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
       above, but is designed to give continuous feedback to the user when scrolling.
      */
-        SlidingTabLayout mSlidingTabLayout = v.findViewById(R.id.sliding_tabs);
+        SlidingTabLayout mSlidingTabLayout = view.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
-        return v;
+        return view;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

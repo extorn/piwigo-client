@@ -818,8 +818,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 } else {
                     onResourceTagsUpdated(((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
                 }
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubAlbumNames((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onGetSubAlbumNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse) {
                 onAlbumThumbnailUpdated((PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse) response);
             }
@@ -839,7 +839,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         EventBus.getDefault().post(new AlbumAlteredEvent(response.getAlbumParentIdAltered()));
     }
 
-    private void onGetSubAlbumNames(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onGetSubAlbumNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         final SelectAlbumDialog dialogFact = new SelectAlbumDialog(getActivity(), model.getParentId());
         AlertDialog dialog = dialogFact.buildDialog(response.getAlbumNames(), new DialogInterface.OnClickListener() {
             @Override

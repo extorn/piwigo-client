@@ -38,6 +38,7 @@ import delit.piwigoclient.util.DisplayUtils;
 public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Gallery Settings";
+    private View view;
 
     private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
         @Override
@@ -146,7 +147,10 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        View v = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
+        if(view != null) {
+            return view;
+        }
+        view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
         addPreferencesFromResource(R.xml.pref_page_gallery);
         setHasOptionsMenu(true);
 
@@ -217,7 +221,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
             }
         });
-        return v;
+        return view;
     }
 
     private void setVideoCacheButtonText(Preference videoCacheFlushButton) {

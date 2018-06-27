@@ -242,8 +242,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             this.statusCode = statusCode;
             this.headers = headers;
             this.responseBody = responseBody;
-            this.error = error;
-            onFailure(statusCode, headers, responseBody, error, triedLoggingInAgain);
+            if(this.error == null) {
+                this.error = error;
+            }
+            onFailure(statusCode, headers, responseBody, this.error, triedLoggingInAgain);
         }
     }
 
@@ -269,6 +271,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     public Throwable getError() {
         return error;
+    }
+
+    protected void setError(Throwable error) {
+        this.error = error;
     }
 
     private void rerunCall() {
@@ -323,8 +329,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         int loginStatus = PiwigoSessionDetails.NOT_LOGGED_IN;
         int newLoginStatus = PiwigoSessionDetails.NOT_LOGGED_IN;
         boolean exit = false;
+        LoginResponseHandler handler = new LoginResponseHandler();
         do {
-            LoginResponseHandler handler = new LoginResponseHandler();
             handler.invokeAndWait(context, getConnectionPrefs());
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
             if (handler.isLoginSuccess()) {
@@ -344,6 +350,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 } else if (sessionDetails != null && sessionDetails.isLoggedIn()) {
                     newLoginStatus = PiwigoSessionDetails.LOGGED_IN;
                 }
+            } else {
+                reportNestedFailure(handler);
             }
             if (newLoginStatus == loginStatus) {
                 // no progression - fail call.
@@ -353,7 +361,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             loginStatus = newLoginStatus;
         } while (!exit);
 
-        return false;
+        return handler.isSuccess();
     }
 
     public boolean isCancelCallAsap() {
