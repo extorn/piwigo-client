@@ -368,10 +368,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
 
+        updateViewPrefs();
+
         int imagesOnScreen = selectBestColumnCountForScreenSize();
         colsOnScreen = imagesOnScreen;
-
-        updateViewPrefs();
 
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(galleryModel == null) {
@@ -721,6 +721,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     protected void updateBasketDisplay(Basket basket) {
 
         if(viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
+            viewPrefs.withAllowMultiSelect(false);
             viewPrefs.setAllowItemSelection(false);
             viewAdapter.notifyDataSetChanged(); //TODO check this works (refresh the whole list, redrawing all with/without select box as appropriate)
         }
@@ -1968,6 +1969,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 }
             }
             if(viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
+                viewPrefs.withAllowMultiSelect(false);
                 viewPrefs.setAllowItemSelection(false);
                 viewAdapter.notifyDataSetChanged(); //TODO check this does what it should...
             }
@@ -1989,6 +1991,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 setEditItemDetailsControlsStatus();
             }
             if(viewAdapter.isMultiSelectionAllowed() && isPreventItemSelection()) {
+                viewPrefs.withAllowMultiSelect(false);
                 viewPrefs.setAllowItemSelection(false);
                 viewAdapter.notifyDataSetChanged(); //TODO check this does what it should...
             }

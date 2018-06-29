@@ -186,7 +186,9 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
-                getViewPrefs().setAllowItemSelection(!isPreventItemSelection());
+                //FIXME - this is not how to prevent item selection mode from being enabled! See all uses of preventItemSelection!!!! All wrong wrong wrong
+                boolean itemSelectionModeEnabled = !isPreventItemSelection();
+                getViewPrefs().withAllowMultiSelect(itemSelectionModeEnabled);
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }
