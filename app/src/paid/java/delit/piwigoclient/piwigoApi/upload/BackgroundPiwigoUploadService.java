@@ -132,7 +132,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                     // if there's an old incomplete job, try and finish that first.
                     UploadJob unfinishedJob = getActiveBackgroundJob(context);
                     if(unfinishedJob != null) {
-                        if(unfinishedJob.getConnectionPrefs().isValid(getPrefs(), getApplicationContext())) {
+                        if(!unfinishedJob.isFinished() && unfinishedJob.getConnectionPrefs().isValid(getPrefs(), getApplicationContext())) {
                             runJob(unfinishedJob, this);
                         } else {
                             // no longer valid (connection doesn't exist any longer).
