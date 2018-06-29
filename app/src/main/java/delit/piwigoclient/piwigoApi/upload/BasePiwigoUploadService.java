@@ -47,8 +47,6 @@ import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.ImageCheckFilesResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.NewImageUploadFileChunkResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.UploadAlbumCreateResponseHandler;
-import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
-import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
 import delit.piwigoclient.util.SerializablePair;
 
 import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler.getNextMessageId;
@@ -260,7 +258,6 @@ public abstract class BasePiwigoUploadService extends IntentService {
     }
 
     protected void runJob(UploadJob thisUploadJob, JobUploadListener listener) {
-        EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob));
 
         int maxChunkUploadAutoRetries = prefs.getInt(getString(R.string.preference_data_upload_chunk_auto_retries_key), getResources().getInteger(R.integer.preference_data_upload_chunk_auto_retries_default));
 
@@ -342,8 +339,6 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
             postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse(getNextMessageId(), thisUploadJob));
             PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(thisUploadJob.getJobId());
-
-            EventBus.getDefault().post(new BackgroundUploadStoppedEvent(thisUploadJob));
         }
     }
 

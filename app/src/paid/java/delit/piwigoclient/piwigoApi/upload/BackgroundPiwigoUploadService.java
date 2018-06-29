@@ -27,6 +27,8 @@ import java.util.Map;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
+import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadCheckingForTasksEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
@@ -183,6 +185,16 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         } finally {
             unregisterBroadcastReceiver(context);
             EventBus.getDefault().post(new BackgroundUploadThreadTerminatedEvent());
+        }
+    }
+
+    @Override
+    protected void runJob(UploadJob thisUploadJob, JobUploadListener listener) {
+        try {
+            EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob));
+            super.runJob(thisUploadJob, listener);
+        } finally {
+            EventBus.getDefault().post(new BackgroundUploadStoppedEvent(thisUploadJob));
         }
     }
 
