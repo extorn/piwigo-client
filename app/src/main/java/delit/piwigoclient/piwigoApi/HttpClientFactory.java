@@ -80,7 +80,10 @@ public class HttpClientFactory {
     }
 
     public void flushCookies(ConnectionPreferences.ProfilePreferences profile) {
-        cookieStoreMap.get(profile).clear();
+        PersistentProfileCookieStore cookieStore = cookieStoreMap.get(profile);
+        if(cookieStore != null) {
+            cookieStore.clear();
+        }
     }
 
     public synchronized void clearCachedClients(ConnectionPreferences.ProfilePreferences profile) {

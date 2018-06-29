@@ -51,6 +51,7 @@ public class AutoUploadJobsPreference extends DialogPreference {
 
     public AutoUploadJobsPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        loadListValues(getPersistedValue());
     }
 
     public View getView(View convertView, ViewGroup parent) {
@@ -103,7 +104,11 @@ public class AutoUploadJobsPreference extends DialogPreference {
 
     @Override
     public CharSequence getSummary() {
-        return getContext().getString(R.string.preference_data_upload_automatic_upload_jobs_summary, adapter.getCount());
+        int count = 0;
+        if(adapter != null) {
+            count = adapter.getCount();
+        }
+        return getContext().getString(R.string.preference_data_upload_automatic_upload_jobs_summary, count);
     }
 
     @Override
