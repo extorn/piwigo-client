@@ -168,10 +168,10 @@
         <item>1.3.93.2</item>
         <item>"Bugfix:
          - initially selected item not shown on folder selection
-         - crash when no connection profiles yet created
-         - crash processing admin list of album names
-         - crash closing dialog without selecting album
-         - crashes removing album
+         - reported crash - when no connection profiles yet created
+         - reported crash - crash processing admin list of album names
+         - reported crash - crash closing dialog without selecting album
+         - reported crashes - removing album
         </item>
         <item>1.3.93.1</item>
         <item>"Bugfix:
