@@ -1874,7 +1874,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             AlbumDeletedEvent event = new AlbumDeletedEvent(gallery);
             EventBus.getDefault().post(event);
         } else {
-            albumAdminList.removeAlbumById(response.getAlbumId());
+            if(albumAdminList != null) {
+                albumAdminList.removeAlbumById(response.getAlbumId());
+            }
             for(Long itemParent : gallery.getParentageChain()) {
                 EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
             }

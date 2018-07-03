@@ -72,13 +72,15 @@ public class PiwigoAlbumAdminList implements Serializable {
         }
     }
 
-    public void removeAlbumById(long albumId) {
-        CategoryItem item = null;
-        for(Iterator<CategoryItem> iter = rootAlbums.iterator(); iter.hasNext(); item = iter.next()) {
+    public boolean removeAlbumById(long albumId) {
+        CategoryItem item;
+        for(Iterator<CategoryItem> iter = rootAlbums.iterator(); iter.hasNext();) {
+            item = iter.next();
             if(item.getId() == albumId) {
                 iter.remove();
-                return;
+                return true;
             }
         }
+        return false;
     }
 }

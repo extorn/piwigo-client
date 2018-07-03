@@ -138,8 +138,9 @@ public abstract class BasePiwigoUploadService extends IntentService {
         }
         if(activeUploadJobs != null) {
             for (UploadJob activeJob : activeUploadJobs) {
-                UploadJob loadedJob = null;
-                for(Iterator<UploadJob> iter = jobs.iterator(); iter.hasNext(); loadedJob = iter.next()) {
+                UploadJob loadedJob;
+                for(Iterator<UploadJob> iter = jobs.iterator(); iter.hasNext();) {
+                    loadedJob = iter.next();
                     if(loadedJob.getJobId() == activeJob.getJobId()) {
                         iter.remove();
                     }

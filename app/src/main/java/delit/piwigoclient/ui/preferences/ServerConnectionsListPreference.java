@@ -136,7 +136,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
     private ArrayList<ServerConnection> loadServerConnections(SharedPreferences prefs) {
         Set<String> profiles = ConnectionPreferences.getConnectionProfileList(prefs, getContext());
         ArrayList<ServerConnection> connections = new ArrayList<>();
-        if(profiles != null) {
+        if(profiles.size() > 0) {
             for (String p : profiles) {
                 ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(p);
                 connections.add(new ServerConnection(p,

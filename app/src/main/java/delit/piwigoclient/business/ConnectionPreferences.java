@@ -24,7 +24,7 @@ public class ConnectionPreferences {
     }
 
     public static Set<String> getConnectionProfileList(SharedPreferences prefs, Context context) {
-        return prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), null);
+        return prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<String>(0));
     }
 
     public static void deletePreferences(SharedPreferences prefs, Context context, @NonNull String prefix) {

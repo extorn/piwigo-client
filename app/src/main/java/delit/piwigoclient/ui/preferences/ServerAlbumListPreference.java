@@ -243,7 +243,7 @@ public class ServerAlbumListPreference extends DialogPreference {
                     addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
                 }
             } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
-                addAlbumsToUI(true, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+                addAlbumsToUI(true, ((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
             }
             super.onAfterHandlePiwigoResponse(response);
         }
@@ -304,8 +304,9 @@ public class ServerAlbumListPreference extends DialogPreference {
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
-        if(positiveResult) {
-            CategoryItemStub selectedAlbum = (CategoryItemStub)itemListView.getAdapter().getItem(itemListView.getCheckedItemPosition());
+        int selectedItemPos = itemListView.getCheckedItemPosition();
+        if(positiveResult && selectedItemPos >= 0) {
+            CategoryItemStub selectedAlbum = (CategoryItemStub)itemListView.getAdapter().getItem(selectedItemPos);
             String selectedValue = ServerAlbumPreference.toValue(selectedAlbum);
             mValueSet = false; // force the value to be saved.
 
