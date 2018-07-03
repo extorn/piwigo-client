@@ -80,9 +80,7 @@ public class LicenceCheckingHelper {
                         activity.startActivity(marketIntent);
                     }
                 } else {
-//                    activity.finish();
-                    // Kill the app in a way that gets them to maybe report it so I can track the issue.
-                    throw new IllegalStateException("Unknown error occurred");
+                    activity.finish();
                 }
             }
         });
