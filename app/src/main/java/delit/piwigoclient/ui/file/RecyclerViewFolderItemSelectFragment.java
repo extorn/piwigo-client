@@ -146,6 +146,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             File activeFolder = (File) savedInstanceState.getSerializable(ACTIVE_FOLDER);
             viewAdapter.setActiveFolder(activeFolder);
         }
+        viewAdapter.setInitiallySelectedItems();
 
         // will restore previous selection from state if any
         setListAdapter(viewAdapter);

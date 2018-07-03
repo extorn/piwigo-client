@@ -42,22 +42,19 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         updateContent(folderViewPrefs.getInitialFolderAsFile());
     }
 
-    @Override
-    public void setInitiallySelectedItems(HashSet<Long> initialSelection) {
-        if(initialSelection != null) {
-            super.setInitiallySelectedItems(initialSelection);
-        } else {
-            List<String> initialSelectionItems = getAdapterPrefs().getInitialSelection();
-            if(initialSelectionItems != null) {
-                HashSet<Long> initialSelectionIds = new HashSet<>(initialSelectionItems.size());
-                for (String selectedItem : initialSelectionItems) {
-                    int pos = getItemPosition(new File(selectedItem));
-                    if (pos >= 0) {
-                        initialSelectionIds.add(getItemId(pos));
-                    }
+    public void setInitiallySelectedItems() {
+        List<String> initialSelectionItems = getAdapterPrefs().getInitialSelection();
+        if(initialSelectionItems != null) {
+            HashSet<Long> initialSelectionIds = new HashSet<>(initialSelectionItems.size());
+            for (String selectedItem : initialSelectionItems) {
+                int pos = getItemPosition(new File(selectedItem));
+                if (pos >= 0) {
+                    initialSelectionIds.add(getItemId(pos));
                 }
-                super.setInitiallySelectedItems(initialSelectionIds);
             }
+            // update the visible selection.
+            setInitiallySelectedItems(initialSelectionIds);
+            setSelectedItems(initialSelectionIds);
         }
     }
 

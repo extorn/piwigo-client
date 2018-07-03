@@ -129,6 +129,7 @@ public class LocalFoldersListPreference extends Preference {
         File selectedFile = event.getSelectedFiles().get(0);
         if(selectedFile.isDirectory()) {
             setValue(selectedFile.getAbsolutePath());
+            notifyChanged();
         }
     }
 
