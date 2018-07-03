@@ -1227,7 +1227,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void loadAlbumPermissions() {
-        addActiveServiceCall(R.string.progress_loading_album_permissions, new AlbumGetPermissionsResponseHandler(gallery).invokeAsync(getContext()));
+        if(!gallery.isRoot()) {
+            // never want to load permissions for the root album (it's not legal to call this service with category id 0).
+            addActiveServiceCall(R.string.progress_loading_album_permissions, new AlbumGetPermissionsResponseHandler(gallery).invokeAsync(getContext()));
+        }
     }
 
     private void fillGalleryEditFields() {
@@ -1876,6 +1879,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         } else {
             if(albumAdminList != null) {
                 albumAdminList.removeAlbumById(response.getAlbumId());
+                // update the sub categories list.
+                adminCategories = albumAdminList.getDirectChildrenOfAlbum(gallery.getParentageChain(), gallery.getId());
             }
             for(Long itemParent : gallery.getParentageChain()) {
                 EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));

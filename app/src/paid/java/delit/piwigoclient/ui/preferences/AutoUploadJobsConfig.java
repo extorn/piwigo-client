@@ -78,4 +78,13 @@ public class AutoUploadJobsConfig {
         }
         return jobs;
     }
+
+    public AutoUploadJobConfig getAutoUploadJobConfig(int jobConfigId, Context context) {
+        for(AutoUploadJobConfig cfg : getAutoUploadJobs(context)) {
+            if(cfg.getJobId() == jobConfigId) {
+                return cfg;
+            }
+        }
+        return null;
+    }
 }

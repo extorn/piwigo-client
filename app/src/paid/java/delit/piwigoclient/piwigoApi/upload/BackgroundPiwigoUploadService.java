@@ -131,17 +131,25 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 }
 
                 if(canUpload) {
-                    // if there's an old incomplete job, try and finish that first.
-                    UploadJob unfinishedJob = getActiveBackgroundJob(context);
-                    if(unfinishedJob != null) {
-                        if(!unfinishedJob.isFinished() && unfinishedJob.getConnectionPrefs().isValid(getPrefs(), getApplicationContext())) {
-                            runJob(unfinishedJob, this);
-                        } else {
-                            // no longer valid (connection doesn't exist any longer).
-                            deleteStateFromDisk(getApplicationContext(), unfinishedJob);
+                    UploadJob unfinishedJob;
+                    do {
+                        // if there's an old incomplete job, try and finish that first.
+                        unfinishedJob = getActiveBackgroundJob(context);
+                        if (unfinishedJob != null) {
+                            if (!unfinishedJob.isFinished() && unfinishedJob.getConnectionPrefs().isValid(getPrefs(), getApplicationContext())) {
+                                AutoUploadJobConfig jobConfig = jobs.getAutoUploadJobConfig(unfinishedJob.getJobConfigId(), context);
+                                runJob(unfinishedJob, this);
+                                if (jobConfig != null) {
+                                    runPostJobCleanup(jobConfig, unfinishedJob);
+                                }
+                            } else {
+                                // no longer valid (connection doesn't exist any longer).
+                                deleteStateFromDisk(getApplicationContext(), unfinishedJob);
+                            }
                         }
-                    }
-                    if(unfinishedJob == null || !unfinishedJob.isCancelUploadAsap()) {
+                    } while(unfinishedJob != null);
+
+                    if (unfinishedJob == null || !unfinishedJob.isCancelUploadAsap()) {
 
                         if (jobs.hasUploadJobs(context)) {
                             List<AutoUploadJobConfig> jobConfigList = jobs.getAutoUploadJobs(context);
@@ -152,14 +160,9 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                                     if (jobConfig.isJobEnabled(context) && jobConfig.isJobValid(context)) {
                                         UploadJob uploadJob = getUploadJob(context, jobConfig, jobListener);
                                         if (uploadJob != null) {
-                                            runJob(uploadJob, this);
-                                            runPostJobCleanup(jobConfig, uploadJob);
-                                            if(uploadJob.isCancelUploadAsap()) {
-                                                // exit for loop now and go back to sleep.
+                                            if (runJobWithCleanup(uploadJob, jobConfig, context)) {
+                                                // stop running jobs if we had a cancel request.
                                                 break;
-                                            } else {
-                                                BasePiwigoUploadService.deleteStateFromDisk(context, uploadJob);
-                                                BasePiwigoUploadService.removeJob(uploadJob);
                                             }
                                         }
 
@@ -170,6 +173,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                             }
                         }
                     }
+
                 }
                 synchronized (this) {
                     pauseThreadUntilSysTime = System.currentTimeMillis() + pollDurationMillis;
@@ -186,6 +190,23 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             unregisterBroadcastReceiver(context);
             EventBus.getDefault().post(new BackgroundUploadThreadTerminatedEvent());
         }
+    }
+
+    /**
+     * @param uploadJob
+     * @param jobConfig
+     * @param context
+     * @return true if cancelled early due to termination request.
+     */
+    private boolean runJobWithCleanup(UploadJob uploadJob, AutoUploadJobConfig jobConfig, Context context) {
+        runJob(uploadJob, this);
+        runPostJobCleanup(jobConfig, uploadJob);
+        if(!uploadJob.isCancelUploadAsap()) {
+            BasePiwigoUploadService.deleteStateFromDisk(context, uploadJob);
+            BasePiwigoUploadService.removeJob(uploadJob);
+            return false;
+        }
+        return true;
     }
 
     @Override

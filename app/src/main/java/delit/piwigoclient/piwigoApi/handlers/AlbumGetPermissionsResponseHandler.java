@@ -24,6 +24,7 @@ public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
+
         params.put("cat_id", String.valueOf(album.getId()));
         return params;
     }

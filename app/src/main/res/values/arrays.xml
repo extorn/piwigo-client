@@ -165,6 +165,14 @@
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.93.3</item>
+        <item>"Bugfix:
+         - stopped call to retrieve permissions for root album
+         - more resilience when displaying corrupted uploads
+         - corrections in background upload job processing logic
+         - update display correctly after admin user deletes album
+         - fixed toggle all selection on select files screen"
+        </item>
         <item>1.3.93.2</item>
         <item>"Bugfix:
          - initially selected item not shown on folder selection

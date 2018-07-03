@@ -187,7 +187,12 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
             }
             if(currentImageUrlDisplayed == null) {
                 //Oh no - image couldn't be found - use the default.
-                currentImageUrlDisplayed = model.getFullScreenImage().getUrl();
+                ResourceItem.ResourceFile fullscreenImage = model.getFullScreenImage();
+                if(fullscreenImage != null) {
+                    currentImageUrlDisplayed = model.getFullScreenImage().getUrl();
+                } else {
+                    currentImageUrlDisplayed = model.getFile("original").getUrl();
+                }
             }
         }
         loader.cancelImageLoadIfRunning();

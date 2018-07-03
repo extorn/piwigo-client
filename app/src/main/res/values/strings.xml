@@ -774,4 +774,5 @@ SOFTWARE.
     <string name="alert_auto_upload_service_job_finished_partial_success">Finished running background upload job to server %1$s. Some files failed to upload and will be retried later.</string>
     <string name="alert_auto_upload_service_job_finished_failure">Finished running background upload job to server %1$s. No files could be uploaded. Job will be retried later.</string>
     <string name="alert_auto_upload_service_checking_for_tasks">Background upload service checking for tasks</string>
+    <string name="alert_unable_to_show_image_image_missing">This image is missing. Unable to display.</string>
 </resources>
