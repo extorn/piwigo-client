@@ -23,6 +23,8 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
             onUploadComplete(context, ((PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse)response).getJob());
         } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse) {
             onPrepareUploadFailed(context, (PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse) response);
+        } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoCleanupPostUploadFailedResponse) {
+            onCleanupPostUploadFailed(context, (PiwigoResponseBufferingHandler.PiwigoCleanupPostUploadFailedResponse) response);
         } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) {
             onFileUploadProgressUpdate(context, (PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) response);
         } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse) {
@@ -57,6 +59,8 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
     protected abstract void onFileUploadProgressUpdate(Context context, PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response);
 
     protected abstract void onPrepareUploadFailed(Context context, PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse response);
+
+    protected abstract void onCleanupPostUploadFailed(Context context, PiwigoResponseBufferingHandler.PiwigoCleanupPostUploadFailedResponse response);
 
     protected abstract void onUploadComplete(Context context, UploadJob job);
 

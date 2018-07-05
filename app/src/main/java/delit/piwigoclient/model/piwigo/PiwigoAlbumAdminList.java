@@ -32,6 +32,18 @@ public class PiwigoAlbumAdminList implements Serializable {
         throw new IllegalStateException("Trying to locate an album, but either it is missing, or part of its ancestory is missing");
     }
 
+    public CategoryItem getAlbum(CategoryItem album) {
+        List<Long> fullAlbumPath = new ArrayList<>(album.getParentageChain());
+        fullAlbumPath.add(album.getId());
+        for(CategoryItem c : rootAlbums) {
+            CategoryItem item = c.locateChildAlbum(fullAlbumPath);
+            if(item != null) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     public void addItem(CategoryItem item) {
         if(item.getParentageChain().size() == 1) {
             rootAlbums.add(item);
@@ -72,9 +84,37 @@ public class PiwigoAlbumAdminList implements Serializable {
         }
     }
 
-    public boolean removeAlbumById(long albumId) {
+    protected CategoryItem findAlbumInSubTree(long albumId, CategoryItem subTree) {
+        CategoryItem item;
+        for(Iterator<CategoryItem> childrenIter = subTree.getChildAlbums().iterator(); childrenIter.hasNext();) {
+            item = childrenIter.next();
+            if(item.getId() == albumId) {
+                return item;
+            } else if(item.getChildAlbums().size() > 0) {
+                item = findAlbumInSubTree(albumId, item);
+                if(item != null) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected CategoryItem findAlbum(long albumId) {
         CategoryItem item;
         for(Iterator<CategoryItem> iter = rootAlbums.iterator(); iter.hasNext();) {
+            item = findAlbumInSubTree(albumId, iter.next());
+            if(item != null) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    public boolean removeAlbumAtPathById(CategoryItem path, long albumId) {
+        List<CategoryItem> children = getDirectChildrenOfAlbum(path.getParentageChain(), path.getId());
+        CategoryItem item;
+        for(Iterator<CategoryItem> iter = children.iterator(); iter.hasNext();) {
             item = iter.next();
             if(item.getId() == albumId) {
                 iter.remove();
@@ -82,5 +122,20 @@ public class PiwigoAlbumAdminList implements Serializable {
             }
         }
         return false;
+    }
+
+    public boolean removeAlbumById(long albumId) {
+        CategoryItem item = findAlbum(albumId);
+        if(item == null) {
+            return false;
+        }
+        rootAlbums.remove(item);
+        if(!item.isRoot()) {
+            CategoryItem parent = findAlbum(item.getParentId());
+            if(parent != null) {
+                parent.removeChildAlbum(item);
+            }
+        }
+        return true;
     }
 }

@@ -115,6 +115,8 @@
     <string name="logging_in_to_piwigo_pattern">Logging in to %1$s</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delete_upload_job_button_title">Delete Job</string>
+    <string name="alert_really_delete_upload_job">This will delete the job status from this device. You will need to manually cleanup the status on the server. Jobs will often complete successfully if you resume them later. Are you sure you wish to take this drastic step?</string>
     <string name="upload_files_button_title">Upload Files</string>
     <string name="loading_please_wait">Loading, Please wait</string>
     <string name="talking_to_server_please_wait">Talking to server, Please wait</string>
@@ -727,8 +729,8 @@ SOFTWARE.
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Error Uploading</string>
-    <string name="alert_message_error_uploading_end">An error occurred after successful uploading all files. Temporary folder may not have been deleted from the server. Ignore this error and fix it manually at some point?</string>
-    <string name="alert_message_error_uploading_start">An error occurred before uploading all files. Temporary folder may not have been successfully created for example. Cancel the upload?</string>
+    <string name="alert_message_error_uploading_end">An error occurred after successful uploading all files. You can retry the job later and it may well succeed, but you can delete this job from the device, but manually clean up any incomplete changes made to the server. Delete Job?</string>
+    <string name="alert_message_error_uploading_start">An error occurred before uploading all files. You can retry the job later and it may well succeed, but you can delete this job from the device, but manually clean up any incomplete changes made to the server. Delete Job?</string>
     <string name="release_history">Release History</string>
     <string name="planned_releases">Planned Releases</string>
     <string name="tags_heading">Tags</string>
@@ -769,6 +771,7 @@ SOFTWARE.
     <string name="upload_job_is_enabled_label">Is Valid and Enabled?</string>
     <string name="alert_auto_upload_service_stopped">Background upload service stopped</string>
     <string name="alert_auto_upload_service_started">Background upload service started</string>
+    <string name="alert_auto_upload_service_job_restarted">Started uploading a previously incomplete job to server %1$s with %2$d files</string>
     <string name="alert_auto_upload_service_job_started">Starting uploading job to server %1$s with %2$d files</string>
     <string name="alert_auto_upload_service_job_finished_success">Finished running background upload job to server %1$s.</string>
     <string name="alert_auto_upload_service_job_finished_partial_success">Finished running background upload job to server %1$s. Some files failed to upload and will be retried later.</string>

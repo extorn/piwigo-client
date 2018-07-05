@@ -4,8 +4,11 @@ import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
 public class BackgroundUploadStartedEvent {
     private UploadJob uploadJob;
-    public BackgroundUploadStartedEvent(UploadJob uploadJob) {
+    private boolean jobBeingRerun;
+
+    public BackgroundUploadStartedEvent(UploadJob uploadJob, boolean jobBeingRerun) {
         this.uploadJob = uploadJob;
+        this.jobBeingRerun = jobBeingRerun;
     }
 
     public UploadJob getUploadJob() {
@@ -14,5 +17,9 @@ public class BackgroundUploadStartedEvent {
 
     public boolean isEventValid() {
         return !uploadJob.isFinished();
+    }
+
+    public boolean isJobBeingRerun() {
+        return jobBeingRerun;
     }
 }

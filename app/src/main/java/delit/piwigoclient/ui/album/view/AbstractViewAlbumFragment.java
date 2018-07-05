@@ -969,9 +969,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 if(albumAdminList == null) {
                     loadAdminList = true;
                 } else {
-                    try {
-                        adminCategories = albumAdminList.getDirectChildrenOfAlbum(gallery.getParentageChain(), gallery.getId());
-                    } catch (IllegalStateException e) {
+                    CategoryItem adminCopyOfAlbum = albumAdminList.getAlbum(gallery);
+                    if(adminCopyOfAlbum != null) {
+                        adminCategories = adminCopyOfAlbum.getChildAlbums();
+                    } else {
                         // this admin list is outdated.
                         albumAdminList = null;
                         loadAdminList = true;
@@ -1878,9 +1879,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             EventBus.getDefault().post(event);
         } else {
             if(albumAdminList != null) {
-                albumAdminList.removeAlbumById(response.getAlbumId());
-                // update the sub categories list.
-                adminCategories = albumAdminList.getDirectChildrenOfAlbum(gallery.getParentageChain(), gallery.getId());
+                CategoryItem adminCopyOfCurrentGallery = albumAdminList.getAlbum(gallery);
+                if(adminCopyOfCurrentGallery != null) {
+                    boolean removedFromAdminList = adminCopyOfCurrentGallery.removeChildAlbum(response.getAlbumId());
+                    adminCategories = adminCopyOfCurrentGallery.getChildAlbums();
+                }
+                gallery.removeChildAlbum(response.getAlbumId()); // will return false if it was the admin copy (unlikely but do after to be sure).
             }
             for(Long itemParent : gallery.getParentageChain()) {
                 EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));

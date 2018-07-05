@@ -1,8 +1,15 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.util.Log;
+
+import com.google.android.gms.common.util.ListUtils;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+
+import delit.piwigoclient.BuildConfig;
 
 /**
  * An item representing a piece of content.
@@ -144,6 +151,12 @@ public class CategoryItem extends GalleryItem {
     }
 
     private CategoryItem locateChildAlbum(List<Long> parentageChain, int idx) {
+        if(parentageChain.size() <= idx) {
+            if(BuildConfig.DEBUG) {
+                Log.e("catItem", "Idx out of bounds for parentage chain : " + parentageChain.toArray() + " idx : " + idx);
+            }
+            return null;
+        }
         if(getId() != parentageChain.get(idx)) {
             return null;
         }
@@ -176,5 +189,29 @@ public class CategoryItem extends GalleryItem {
             totalPhotoCount = photoCount + subCategoryPhotoCount;
             subCategories = subCategoryCount;
         }
+    }
+
+    public void removeChildAlbum(CategoryItem item) {
+        childAlbums.remove(item);
+        updateTotalPhotoAndSubAlbumCount();
+    }
+
+    public boolean removeChildAlbum(long albumId) {
+        CategoryItem item;
+        boolean removed = false;
+        if(childAlbums != null) {
+            for (Iterator<CategoryItem> iter = childAlbums.iterator(); iter.hasNext(); ) {
+                item = iter.next();
+                if (item.getId() == albumId) {
+                    iter.remove();
+                    removed = true;
+                    break;
+                }
+            }
+        }
+        if(removed) {
+            updateTotalPhotoAndSubAlbumCount();
+        }
+        return removed;
     }
 }

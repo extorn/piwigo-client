@@ -389,6 +389,10 @@ public class UploadJob implements Serializable {
 
     }
 
+    public boolean hasBeenRunBefore() {
+        return filePartialUploadProgress.size() > 0;
+    }
+
     protected static class PartialUploadData implements Serializable {
         private final String uploadName;
         private long bytesUploaded;

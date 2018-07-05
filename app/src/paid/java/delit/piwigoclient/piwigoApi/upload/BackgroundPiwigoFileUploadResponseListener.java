@@ -57,6 +57,11 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
+    protected void onCleanupPostUploadFailed(Context context, PiwigoResponseBufferingHandler.PiwigoCleanupPostUploadFailedResponse response) {
+
+    }
+
+    @Override
     protected void onUploadComplete(Context context, UploadJob job) {
     }
 }

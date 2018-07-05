@@ -95,11 +95,14 @@ public class MainActivity extends AbstractMainActivity {
         getUiHelper().showToast(R.string.alert_auto_upload_service_started);
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(BackgroundUploadStartedEvent event) {
         String uploadingToServer = event.getUploadJob().getConnectionPrefs().getPiwigoServerAddress(prefs, getApplicationContext());
-        getUiHelper().showToast(getString(R.string.alert_auto_upload_service_job_started,uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
+        if(event.isJobBeingRerun()) {
+            getUiHelper().showToast(getString(R.string.alert_auto_upload_service_job_restarted, uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
+        } else {
+            getUiHelper().showToast(getString(R.string.alert_auto_upload_service_job_started, uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

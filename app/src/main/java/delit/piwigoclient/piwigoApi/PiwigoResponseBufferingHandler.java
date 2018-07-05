@@ -1237,6 +1237,23 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
+    public static class PiwigoCleanupPostUploadFailedResponse extends BaseResponse {
+        private final Response error;
+
+        public PiwigoCleanupPostUploadFailedResponse(long jobId, Response error) {
+            super(jobId, true);
+            this.error = error;
+        }
+
+        public Response getError() {
+            return error;
+        }
+
+        public long getJobId() {
+            return getMessageId();
+        }
+    }
+
     public static class PiwigoPrepareUploadFailedResponse extends BaseResponse {
 
         private final Response error;
