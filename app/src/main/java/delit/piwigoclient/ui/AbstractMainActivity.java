@@ -480,6 +480,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 break;
 
             case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
+                // ignore these. They occur too frequently for certain devices.
+                break;
             case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
             case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
 
@@ -546,7 +548,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void showLowMemoryWarningMessage(int messageId) {
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning_lowMemory, getString(messageId), R.string.button_close);
+        getUiHelper().showToast(getString(messageId));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

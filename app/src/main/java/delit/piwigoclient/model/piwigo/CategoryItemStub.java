@@ -13,10 +13,14 @@ public class CategoryItemStub implements Serializable {
     private ArrayList<Long> parentageChain;
     private boolean isUserSelectable = true;
 
-    public CategoryItemStub(String name,  long id) {
+    public CategoryItemStub(String name,  long id, ArrayList<Long> parentageChain) {
         this.name = name;
         this.id = id;
-        parentageChain = new ArrayList<>();
+        this.parentageChain = parentageChain;
+    }
+
+    public CategoryItemStub(String name,  long id) {
+        this(name, id, new ArrayList<Long>());
     }
 
     public Long getParentId() {
@@ -33,6 +37,9 @@ public class CategoryItemStub implements Serializable {
     }
 
     public List<Long> getParentageChain() {
+        if(parentageChain == null) {
+            return null;
+        }
         return Collections.unmodifiableList(parentageChain);
     }
 

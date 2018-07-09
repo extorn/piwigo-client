@@ -22,6 +22,7 @@ import com.google.android.gms.common.util.Strings;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -363,7 +364,11 @@ public class AutoUploadJobsPreference extends DialogPreference {
         }
 
         public String getUploadFromSummary(AutoUploadJobConfig item) {
-            return item.getLocalFolderToMonitor(getContext()).getAbsolutePath();
+            File localFolder = item.getLocalFolderToMonitor(getContext());
+            if(localFolder == null) {
+                return "???";
+            }
+            return localFolder.getAbsolutePath();
         }
 
         public String getUploadToSummary(AutoUploadJobConfig item) {

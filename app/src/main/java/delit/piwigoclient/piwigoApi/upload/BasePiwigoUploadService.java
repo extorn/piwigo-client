@@ -81,45 +81,55 @@ public abstract class BasePiwigoUploadService extends IntentService {
     public static UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, ArrayList<File> filesForUpload, CategoryItemStub category, int uploadedFilePrivacyLevel, long responseHandlerId) {
         long jobId = getNextMessageId();
         UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, filesForUpload, category, uploadedFilePrivacyLevel);
-        activeUploadJobs.add(uploadJob);
+        synchronized (activeUploadJobs) {
+            activeUploadJobs.add(uploadJob);
+        }
         return uploadJob;
     }
 
     public static UploadJob getFirstActiveForegroundJob(Context context) {
-        if (activeUploadJobs.size() == 0) {
-            return loadForegroundJobStateFromDisk(context);
-        }
-        for(UploadJob job : activeUploadJobs) {
-            if(!job.isRunInBackground()) {
-                return job;
+        synchronized (activeUploadJobs) {
+            if (activeUploadJobs.size() == 0) {
+                return loadForegroundJobStateFromDisk(context);
+            }
+            for (UploadJob job : activeUploadJobs) {
+                if (!job.isRunInBackground()) {
+                    return job;
+                }
             }
         }
         return loadForegroundJobStateFromDisk(context);
     }
 
     public static void removeJob(UploadJob job) {
-        activeUploadJobs.remove(job);
+        synchronized (activeUploadJobs) {
+            activeUploadJobs.remove(job);
+        }
     }
 
     public static UploadJob getActiveBackgroundJob(Context context) {
-        for (UploadJob uploadJob : activeUploadJobs) {
-            if (uploadJob.isRunInBackground()) {
-                return uploadJob;
+        synchronized (activeUploadJobs) {
+            for (UploadJob uploadJob : activeUploadJobs) {
+                if (uploadJob.isRunInBackground()) {
+                    return uploadJob;
+                }
             }
-        }
-        activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
-        for (UploadJob uploadJob : activeUploadJobs) {
-            if (uploadJob.isRunInBackground()) {
-                return uploadJob;
+            activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
+            for (UploadJob uploadJob : activeUploadJobs) {
+                if (uploadJob.isRunInBackground()) {
+                    return uploadJob;
+                }
             }
         }
         return null;
     }
 
     public static UploadJob getActiveForegroundJob(Context context, long jobId) {
-        for (UploadJob uploadJob : activeUploadJobs) {
-            if (uploadJob.getJobId() == jobId) {
-                return uploadJob;
+        synchronized (activeUploadJobs) {
+            for (UploadJob uploadJob : activeUploadJobs) {
+                if (uploadJob.getJobId() == jobId) {
+                    return uploadJob;
+                }
             }
         }
         UploadJob job = loadForegroundJobStateFromDisk(context);
@@ -146,13 +156,15 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 jobFiles[i].delete();
             }
         }
-        if(activeUploadJobs != null) {
-            for (UploadJob activeJob : activeUploadJobs) {
-                UploadJob loadedJob;
-                for(Iterator<UploadJob> iter = jobs.iterator(); iter.hasNext();) {
-                    loadedJob = iter.next();
-                    if(loadedJob.getJobId() == activeJob.getJobId()) {
-                        iter.remove();
+        synchronized (activeUploadJobs) {
+            if (activeUploadJobs != null) {
+                for (UploadJob activeJob : activeUploadJobs) {
+                    UploadJob loadedJob;
+                    for (Iterator<UploadJob> iter = jobs.iterator(); iter.hasNext(); ) {
+                        loadedJob = iter.next();
+                        if (loadedJob.getJobId() == activeJob.getJobId()) {
+                            iter.remove();
+                        }
                     }
                 }
             }
@@ -288,6 +300,15 @@ public abstract class BasePiwigoUploadService extends IntentService {
             }
 
             ArrayList<CategoryItemStub> availableAlbumsOnServer = retrieveListOfAlbumsOnServer(thisUploadJob, sessionDetails);
+            if(availableAlbumsOnServer == null) {
+                //try again. This is really important.
+                availableAlbumsOnServer = retrieveListOfAlbumsOnServer(thisUploadJob, sessionDetails);
+            }
+            if(availableAlbumsOnServer == null) {
+                // This is fatal really. It is necessary for a resilient upload. Stop the upload.
+                return;
+            }
+
             if(thisUploadJob.getTemporaryUploadAlbum() > 0) {
                 // check it still exists (ensure one is created again if not) - could have been deleted by a user manually.
                 boolean tempAlbumExists = false;
@@ -383,6 +404,8 @@ public abstract class BasePiwigoUploadService extends IntentService {
             if(handler.isSuccess()) {
                 PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse rsp = (PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) handler.getResponse();
                 return rsp.getAdminList().flattenTree();
+            } else {
+                postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
             }
         } else if(sessionDetails.isUseCommunityPlugin()) {
             final boolean recursive = true;
@@ -391,6 +414,8 @@ public abstract class BasePiwigoUploadService extends IntentService {
             if(handler.isSuccess()) {
                 CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse rsp = (CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) handler.getResponse();
                 return rsp.getAlbumNames();
+            } else {
+                postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
             }
         } else {
             final boolean recursive = true;
@@ -399,6 +424,8 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 invokeWithRetries(thisUploadJob, handler, 2);
                 AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse rsp = (AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) handler.getResponse();
                 return rsp.getAlbumNames();
+            } else {
+                postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
             }
         }
         return null;

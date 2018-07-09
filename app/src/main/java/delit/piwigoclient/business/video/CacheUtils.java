@@ -1,6 +1,7 @@
 package delit.piwigoclient.business.video;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +18,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.util.IOUtils;
 
 /**
  * Created by gareth on 01/07/17.
@@ -53,21 +56,10 @@ public class CacheUtils {
 //        }
     }
 
-    public static CachedContent loadCachedContent(File f) throws IOException {
-        CachedContent cachedContent;
-        try {
-            ObjectInputStream ois = null;
-            try {
-                ois = new ObjectInputStream(new FileInputStream(f));
-                cachedContent = (CachedContent) ois.readObject();
-                cachedContent.setPersistTo(f);
-            } finally {
-                if(ois != null) {
-                    ois.close();
-                }
-            }
-        } catch (ClassNotFoundException e) {
-            throw new IOException(e);
+    public static CachedContent loadCachedContent(File f) {
+        CachedContent cachedContent = IOUtils.readObjectFromFile(f);
+        if(cachedContent != null) {
+            cachedContent.setPersistTo(f);
         }
         return cachedContent;
     }
@@ -95,25 +87,25 @@ public class CacheUtils {
         }
     };
 
-    public static void manageVideoCache(Context c, long maxCacheSizeBytes) throws IOException {
+    public static void manageVideoCache(Context c, long maxCacheSizeBytesVar) throws IOException {
+        long maxCacheSizeBytes = Math.max(0, maxCacheSizeBytesVar);
         synchronized (CacheUtils.class) {
             File cacheDir = getVideoCacheFolder(c);
             List<CachedContent> cacheContent = new ArrayList<>();
             long totalCacheSize = 0;
-            for (File f : cacheDir.listFiles(metadataFileFilter)) {
+            for (File cacheMetadataFile : cacheDir.listFiles(metadataFileFilter)) {
                 boolean loaded = false;
                 int attempts = 0;
                 while (!loaded) {
                     try {
-                        try {
-                            CachedContent content = loadCachedContent(f);
+                        CachedContent content = loadCachedContent(cacheMetadataFile);
+                        if(content != null) {
                             cacheContent.add(content);
                             totalCacheSize += content.getTotalBytes();
-                        } catch(InvalidClassException e) {
-                            // the cache file structure has altered - this cannot be loaded so we must delete it.
-                            f.delete();
-                            File dataFile = getCacheDataFile(c, f.getName().replaceAll("\\.dat$", ""));
-                            dataFile.delete();
+                        } else {
+                            // need to delete the data file too
+                            File dataFile = getCacheDataFile(c, cacheMetadataFile.getName().replaceAll("\\.dat$", ""));
+                            boolean deleted = dataFile.delete();
                         }
                         loaded = true;
                     } catch (IOException e) {
@@ -133,7 +125,7 @@ public class CacheUtils {
 
             Collections.sort(cacheContent, cacheItemAgeComparator);
 
-            while (totalCacheSize > maxCacheSizeBytes) {
+            while (totalCacheSize > maxCacheSizeBytes && !cacheContent.isEmpty()) {
                 // delete oldest items until within wanted cache size again.
                 CachedContent cc = cacheContent.get(0);
                 totalCacheSize -= cc.getTotalBytes();
@@ -157,6 +149,9 @@ public class CacheUtils {
             if(!deleted) {
                 // something went wrong...
                 //TODO think of some thing to do in this instance...
+                if(BuildConfig.DEBUG) {
+                    Log.e("VideoCacheUtils","Error, Unable to delete cache item");
+                }
             }
         }
 

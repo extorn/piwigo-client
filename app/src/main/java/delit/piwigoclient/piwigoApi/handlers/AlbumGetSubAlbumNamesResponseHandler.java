@@ -58,7 +58,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
                     && !category.get("id_uppercat").isJsonNull()) {
                 parentId = category.get("id_uppercat").getAsLong();
             }
-            CategoryItemStub album = new CategoryItemStub(name, id);
+            CategoryItemStub album = new CategoryItemStub(name, id, null);
             if (parentId != null) {
                 CategoryItemStub parentAlbum = availableGalleriesMap.get(parentId);
                 if(parentAlbum != null) {

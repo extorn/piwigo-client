@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -18,6 +19,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,6 +43,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -840,8 +843,22 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void onGetSubAlbumNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
-        final SelectAlbumDialog dialogFact = new SelectAlbumDialog(getActivity(), model.getParentId());
-        AlertDialog dialog = dialogFact.buildDialog(response.getAlbumNames(), new DialogInterface.OnClickListener() {
+        Activity activity = getActivity();
+        ArrayList<CategoryItemStub> albumNames = response.getAlbumNames();
+        if(albumNames == null || albumNames.isEmpty()) {
+            // should never occur, but to be sure...
+            return;
+        }
+
+        Long defaultAlbumSelectionId = model.getParentId();
+        if(defaultAlbumSelectionId == null) {
+            if(BuildConfig.DEBUG) {
+                Log.e(getTag(), "ERROR: No parent id available for resource!");
+            }
+            defaultAlbumSelectionId = albumNames.get(0).getId();
+        }
+        final SelectAlbumDialog dialogFact = new SelectAlbumDialog(activity, defaultAlbumSelectionId);
+        AlertDialog dialog = dialogFact.buildDialog(albumNames, CategoryItem.ROOT_ALBUM, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 long selectedAlbumId = dialogFact.getSelectedAlbumId();

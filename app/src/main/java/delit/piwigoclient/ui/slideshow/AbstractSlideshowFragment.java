@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -198,12 +200,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
             return;
         }
 
-        int slideshowIndexToShow = ((GalleryItemAdapter) viewPager.getAdapter()).getSlideshowIndex(rawCurrentGalleryItemPosition);
-        viewPager.setCurrentItem(slideshowIndexToShow);
-//        if (slideshowIndexToShow == 0) {
-//            //force call of page change listener to ensure video is started properly.
-//            slideshowPageChangeListener.onPageSelected(0);
-//        }
+        try {
+            int slideshowIndexToShow = ((GalleryItemAdapter) viewPager.getAdapter()).getSlideshowIndex(rawCurrentGalleryItemPosition);
+            viewPager.setCurrentItem(slideshowIndexToShow);
+        } catch(IllegalStateException e) {
+            if(BuildConfig.DEBUG) {
+                Log.e(getTag(), "Slideshow item cannot be found. Waiting until items have loaded");
+            }
+        }
     }
 
     private void hideProgressIndicator() {
@@ -393,21 +397,11 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         }
 
         public int getSlideshowIndex(int rawCurrentGalleryItemPosition) {
-            int posToTry = Math.min(galleryResourceItems.size() - 1, rawCurrentGalleryItemPosition);
-            Integer val;
-            boolean found = false;
-            do {
-                val = galleryResourceItems.get(posToTry);
-                if (val != rawCurrentGalleryItemPosition) {
-                    posToTry--;
-                    if (posToTry < 0) {
-                        throw new RuntimeException("Item to show was not found in the gallery - weird!");
-                    }
-                } else {
-                    found = true;
-                }
-            } while (!found);
-            return posToTry;
+            int idx = galleryResourceItems.indexOf(rawCurrentGalleryItemPosition);
+            if(idx < 0) {
+                throw new IllegalStateException("Item to show was not found in the gallery - weird!");
+            }
+            return idx;
         }
 
         public void deleteGalleryItem(int fullGalleryIdx) {
