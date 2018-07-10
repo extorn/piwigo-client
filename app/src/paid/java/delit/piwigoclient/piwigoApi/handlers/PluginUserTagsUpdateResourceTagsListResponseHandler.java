@@ -58,9 +58,28 @@ public class PluginUserTagsUpdateResourceTagsListResponseHandler<T extends Resou
                 errorStr = sb.toString();
             }
         }
-        PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse r = new PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse(getMessageId(), getPiwigoMethod(), resource);
+        PiwigoUserTagsUpdateTagsListResponse r = new PiwigoUserTagsUpdateTagsListResponse(getMessageId(), getPiwigoMethod(), resource);
         r.setError(errorStr);
         storeResponse(r);
     }
 
+    public static class PiwigoUserTagsUpdateTagsListResponse extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
+        private String error;
+
+        public PiwigoUserTagsUpdateTagsListResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
+            super(messageId, piwigoMethod, piwigoResource);
+        }
+
+        public boolean hasError() {
+            return error != null;
+        }
+
+        public String getError() {
+            return error;
+        }
+
+        public void setError(String error) {
+            this.error = error;
+        }
+    }
 }

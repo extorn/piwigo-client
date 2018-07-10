@@ -43,6 +43,7 @@ public class UploadJob implements Serializable {
     private volatile transient boolean submitted = false;
     private volatile transient boolean runningNow = false;
     private volatile transient boolean cancelUploadAsap;
+    private transient File loadedFromFile;
 
     public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel) {
         this.jobId = jobId;
@@ -391,6 +392,14 @@ public class UploadJob implements Serializable {
 
     public boolean hasBeenRunBefore() {
         return filePartialUploadProgress.size() > 0;
+    }
+
+    public void setLoadedFromFile(File loadedFromFile) {
+        this.loadedFromFile = loadedFromFile;
+    }
+
+    public File getLoadedFromFile() {
+        return loadedFromFile;
     }
 
     protected static class PartialUploadData implements Serializable {

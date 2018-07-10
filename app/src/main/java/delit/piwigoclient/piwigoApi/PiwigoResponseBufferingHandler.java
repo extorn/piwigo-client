@@ -600,26 +600,6 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoUserTagsUpdateTagsListResponse extends PiwigoResourceItemResponse {
-        private String error;
-
-        public PiwigoUserTagsUpdateTagsListResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
-            super(messageId, piwigoMethod, piwigoResource);
-        }
-
-        public boolean hasError() {
-            return error != null;
-        }
-
-        public String getError() {
-            return error;
-        }
-
-        public void setError(String error) {
-            this.error = error;
-        }
-    }
-
     public static class PiwigoFavoriteStatusResponse extends PiwigoResourceItemResponse {
         public PiwigoFavoriteStatusResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
             super(messageId, piwigoMethod, piwigoResource);

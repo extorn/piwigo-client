@@ -57,7 +57,6 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
@@ -116,7 +115,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private EditText resourceNameView;
     private ImageButton saveButton;
     private ImageButton discardButton;
-    private ImageButton editButton;
+    protected ImageButton editButton;
     private ImageButton deleteButton;
     private ImageButton copyButton;
     private ImageButton moveButton;
@@ -128,7 +127,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private Long activeDownloadActionId;
     private CustomImageButton setAsAlbumThumbnail;
     private TextView linkedAlbumsField;
-    private TextView tagsField;
+    protected TextView tagsField;
     private HashSet<Long> updatedLinkedAlbumSet;
     private HashSet<Long> albumsRequiringReload;
     private long albumItemIdx;
@@ -346,6 +345,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return true;
     }
 
+    protected boolean isEditingItemDetails() {
+        return editingItemDetails;
+    }
+
     private void updateItemPositionText() {
         if (albumLoadedItemCount == 1 && albumItemIdx == albumLoadedItemCount && albumTotalItemCount == albumLoadedItemCount) {
             itemPositionTextView.setVisibility(GONE);
@@ -379,7 +382,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return null;
     }
 
-    private void setupImageDetailPopup(View v, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    protected void setupImageDetailPopup(View v, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         resourceNameView = v.findViewById(R.id.slideshow_image_details_name);
         resourceNameView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -425,12 +428,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 //        } else {
 //            tagsField.setVisibility(VISIBLE);
 //        }
-        tagsField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onShowTagsSelection();
-            }
-        });
 
         privacyLevelSpinner = v.findViewById(R.id.privacy_level);
 // Create an ArrayAdapter using the string array and a default spinner layout
@@ -508,26 +505,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         fillResourceEditFields();
     }
 
-    private void onShowTagsSelection() {
-        HashSet<Tag> currentSelection = getLatestTagListForResource();
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
-        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate());
-        allowTagEdit &= editingItemDetails;
-        boolean lockInitialSelection = allowTagEdit && !sessionDetails.isUseUserTagPluginForUpdate();
-        //disable tag deselection if user tags plugin is not present but allow editing if is admin user. (bug in PIWIGO API)
-        TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, allowTagEdit, lockInitialSelection, PiwigoUtils.toSetOfIds(currentSelection));
-        getUiHelper().setTrackingRequest(tagSelectEvent.getActionId());
-        EventBus.getDefault().post(tagSelectEvent);
-    }
-
-    protected HashSet<Tag> getLatestTagListForResource() {
-        if(model.getTags() != null) {
-            return new HashSet<>(model.getTags());
-        }
-        return new HashSet<>();
-    }
-
     protected abstract void onSaveModelChanges(T model);
 
     protected void updateModelFromFields() {
@@ -545,7 +522,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         fillResourceEditFields();
     }
 
-    private void setControlVisible(View v, boolean visible) {
+    protected void setControlVisible(View v, boolean visible) {
         v.setVisibility(visible?VISIBLE:GONE);
     }
 
@@ -592,7 +569,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         setEditItemDetailsControlsStatus();
     }
 
-    private void setEditItemDetailsControlsStatus() {
+    protected void setEditItemDetailsControlsStatus() {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
@@ -788,7 +765,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         updateItemPositionText();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    protected class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -815,12 +792,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) {
                 PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<T> r = ((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<T>) response);
                 onResourceInfoAltered((T)r.getPiwigoResource());
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) {
-                if(((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).hasError()) {
-                    showOrQueueMessage(R.string.alert_error, ((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).getError());
-                } else {
-                    onResourceTagsUpdated(((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
-                }
             } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
                 onGetSubAlbumNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse) {
@@ -831,11 +802,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 onGalleryItemActionFinished();
             }
         }
-    }
-
-    private void onResourceTagsUpdated(ResourceItem piwigoResource) {
-        model.setTags(piwigoResource.getTags());
-        populateResourceExtraFields();
     }
 
     private void onAlbumThumbnailUpdated(PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse response) {
@@ -922,7 +888,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         populateResourceExtraFields();
     }
 
-    private void populateResourceExtraFields() {
+    protected void populateResourceExtraFields() {
         onRatingAltered(model);
 
         ratingsBar.setRating(model.getYourRating());
@@ -932,37 +898,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         HashSet<Long> currentLinkedAlbumsSet = updatedLinkedAlbumSet != null ? updatedLinkedAlbumSet : model.getLinkedAlbums();
         linkedAlbumsField.setText((currentLinkedAlbumsSet == null ? '?' : currentLinkedAlbumsSet.size()) + " (" + getString(R.string.click_to_view) + ')');
 
-        if (model.getTags() == null) {
-            tagsField.setText(R.string.paid_feature_only);
-//            tagsField.setVisibility(GONE);
-        } else {
-//            tagsField.setVisibility(VISIBLE);
-            HashSet<Tag> currentTagsSet = getLatestTagListForResource();
-            if (currentTagsSet.size() == 0) {
-                String sb = "0 (" + getString(R.string.click_to_view) +
-                        ')';
-                tagsField.setText(sb);
-            } else {
-                StringBuilder sb = new StringBuilder();
-                Iterator<Tag> iter = currentTagsSet.iterator();
-                sb.append(iter.next().getName());
-                while (iter.hasNext()) {
-                    sb.append(", ");
-                    sb.append(iter.next().getName());
-                }
-                sb.append(" (");
-                sb.append(getString(R.string.click_to_view));
-                sb.append(')');
-                tagsField.setText(sb.toString());
-            }
-        }
+        tagsField.setText(R.string.paid_feature_only);
     }
 
     protected void onResourceInfoAltered(final T resourceItem) {
-        if (BuildConfig.PAID_VERSION && PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isUseUserTagPluginForUpdate() && getUiHelper().getActiveServiceCallCount() == 0) {
-            // tags have been updated already so we need to keep the existing ones.
-            resourceItem.setTags(model.getTags());
-        }
         model = resourceItem;
         if (editingItemDetails) {
             editingItemDetails = !editingItemDetails;

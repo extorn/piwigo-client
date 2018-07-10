@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,17 +13,24 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
+import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
+import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
+import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
 import delit.piwigoclient.util.SetUtils;
 
 
@@ -32,6 +40,78 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     private static final String STATE_CHANGED_TAGS_SET = "changedTagSet";
     private HashSet<Tag> updatedTagsSet;
     private HashSet<TagContentAlteredEvent> changedTagsEvents;
+
+    @Override
+    protected void setupImageDetailPopup(View v, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.setupImageDetailPopup(v,inflater, container, savedInstanceState);
+
+        tagsField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onShowTagsSelection();
+            }
+        });
+    }
+
+    private void onShowTagsSelection() {
+        HashSet<Tag> currentSelection = getLatestTagListForResource();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
+        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate());
+        allowTagEdit &= isEditingItemDetails();
+        boolean lockInitialSelection = allowTagEdit && !sessionDetails.isUseUserTagPluginForUpdate();
+        //disable tag deselection if user tags plugin is not present but allow editing if is admin user. (bug in PIWIGO API)
+        TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, allowTagEdit, lockInitialSelection, PiwigoUtils.toSetOfIds(currentSelection));
+        getUiHelper().setTrackingRequest(tagSelectEvent.getActionId());
+        EventBus.getDefault().post(tagSelectEvent);
+    }
+
+    @Override
+    protected void setEditItemDetailsControlsStatus() {
+
+        super.setEditItemDetailsControlsStatus();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
+        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser();
+
+        setControlVisible(editButton, (allowTagEdit || allowFullEdit) && !isEditingItemDetails());
+
+    }
+
+    private void onResourceTagsUpdated(ResourceItem piwigoResource) {
+        getModel().setTags(piwigoResource.getTags());
+        populateResourceExtraFields();
+    }
+
+
+    @Override
+    protected void populateResourceExtraFields() {
+
+        super.populateResourceExtraFields();
+
+        if (getModel().getTags() == null) {
+            tagsField.setText(R.string.paid_feature_only);
+        } else {
+            HashSet<Tag> currentTagsSet = getLatestTagListForResource();
+            if (currentTagsSet.size() == 0) {
+                String sb = "0 (" + getString(R.string.click_to_view) +
+                        ')';
+                tagsField.setText(sb);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                Iterator<Tag> iter = currentTagsSet.iterator();
+                sb.append(iter.next().getName());
+                while (iter.hasNext()) {
+                    sb.append(", ");
+                    sb.append(iter.next().getName());
+                }
+                sb.append(" (");
+                sb.append(getString(R.string.click_to_view));
+                sb.append(')');
+                tagsField.setText(sb.toString());
+            }
+        }
+    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -60,11 +140,13 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         super.onDiscardChanges();
     }
 
-    @Override
     protected HashSet<Tag> getLatestTagListForResource() {
         HashSet<Tag> currentSelection = updatedTagsSet;
         if (currentSelection == null) {
-            currentSelection = super.getLatestTagListForResource();
+            if(getModel().getTags() != null) {
+                return new HashSet<>(getModel().getTags());
+            }
+            return new HashSet<>();
         }
         return currentSelection;
     }
@@ -113,6 +195,10 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
     @Override
     protected void onResourceInfoAltered(final T resourceItem) {
+        if (BuildConfig.PAID_VERSION && PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isUseUserTagPluginForUpdate() && getUiHelper().getActiveServiceCallCount() == 0) {
+            // tags have been updated already so we need to keep the existing ones.
+            resourceItem.setTags(getModel().getTags());
+        }
         super.onResourceInfoAltered(resourceItem);
         if (changedTagsEvents != null) {
             // ensure all necessary tags are updated.
@@ -129,6 +215,35 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         super.updateModelFromFields();
         if (updatedTagsSet != null) {
             getModel().setTags(updatedTagsSet);
+        }
+    }
+
+    @Override
+    protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
+        return new PaidPiwigoResponseListener();
+    }
+
+    private class PaidPiwigoResponseListener extends CustomPiwigoResponseListener {
+
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
+        }
+
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            boolean finishedOperation = true;
+
+            if (response instanceof PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) {
+                if(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).hasError()) {
+                    showOrQueueMessage(R.string.alert_error, ((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).getError());
+                } else {
+                    onResourceTagsUpdated(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
+                }
+                onGalleryItemActionFinished();
+            } else {
+                super.onAfterHandlePiwigoResponse(response);
+            }
         }
     }
 }

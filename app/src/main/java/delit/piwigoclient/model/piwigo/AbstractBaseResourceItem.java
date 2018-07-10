@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * Created by gareth on 12/07/17.
  */
-public class ResourceItem extends GalleryItem {
+public abstract class AbstractBaseResourceItem extends GalleryItem {
     private float yourRating = 0;
     private float averageRating = 0;
     private int ratingsGiven = 0;
@@ -20,10 +20,9 @@ public class ResourceItem extends GalleryItem {
     private ArrayList<ResourceFile> availableFiles = new ArrayList<>();
     private ResourceFile fullSizeImage;
     private HashSet<Long> linkedAlbums;
-    private HashSet<Tag> tags;
     private String fileChecksum;
 
-    public ResourceItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
+    public AbstractBaseResourceItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, lastAltered, thumbnailUrl);
     }
 
@@ -42,10 +41,6 @@ public class ResourceItem extends GalleryItem {
             }
         }
         return null;
-    }
-
-    public void setTags(HashSet<Tag> tags) {
-        this.tags = tags;
     }
 
     public void setLinkedAlbums(HashSet<Long> linkedAlbums) {
@@ -111,10 +106,6 @@ public class ResourceItem extends GalleryItem {
         return filesystemSafeFilenameRoot + '_' + selectedItem.name + ext;
     }
 
-    public HashSet<Tag> getTags() {
-        return tags;
-    }
-
     public HashSet<Long> getLinkedAlbums() {
         return linkedAlbums;
     }
@@ -155,7 +146,7 @@ public class ResourceItem extends GalleryItem {
         this.fileChecksum = fileChecksum;
     }
 
-    public void copyFrom(ResourceItem other, boolean copyParentage) {
+    public void copyFrom(AbstractBaseResourceItem other, boolean copyParentage) {
         super.copyFrom(other, copyParentage);
         yourRating = other.yourRating;
         averageRating = other.averageRating;
@@ -164,7 +155,6 @@ public class ResourceItem extends GalleryItem {
         availableFiles = other.availableFiles;
         fullSizeImage = other.fullSizeImage;
         linkedAlbums = other.linkedAlbums;
-        tags = other.tags;
         fileChecksum = other.fileChecksum;
     }
 

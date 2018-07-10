@@ -73,9 +73,6 @@
         <service
             android:name=".piwigoApi.upload.ForegroundPiwigoUploadService"
             android:exported="false"/>
-        <service
-            android:name=".piwigoApi.upload.BackgroundPiwigoUploadService"
-            android:exported="false"/>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"

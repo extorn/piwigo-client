@@ -81,7 +81,7 @@ dependencies {
     implementation 'com.github.machinarius:preferencefragment:0.1.1'
     implementation 'com.github.hotchemi:android-rate:1.0.1'
     implementation 'com.loopj.android:android-async-http:1.4.9'
-    implementation 'com.google.android.exoplayer:exoplayer:r2.5.4'
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
     // vector graphics support
     implementation 'com.android.support:support-vector-drawable:27.1.1'
     // annotations support
@@ -109,10 +109,10 @@ dependencies {
 
     implementation 'com.android.support:transition:27.1.1'
 
-    implementation 'com.android.support.constraint:constraint-layout-solver:1.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout-solver:1.1.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
-    implementation 'com.google.android.gms:play-services-ads:15.0.0'
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
 
     testImplementation 'junit:junit:4.12'
 

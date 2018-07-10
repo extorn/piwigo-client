@@ -613,7 +613,7 @@ public class ViewTagFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onTagUpdateResponse(PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse rsp) {
+    private void onTagUpdateResponse(PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse rsp) {
         if(rsp.hasError()) {
             String errorMsg = getString(R.string.error_updating_tag_pattern, rsp.getPiwigoResource().getName(), rsp.getError());
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, errorMsg);
@@ -648,8 +648,8 @@ public class ViewTagFragment extends MyFragment {
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) {
                     ResourceItem r = ((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) response).getPiwigoResource();
                     onItemRemovedFromTag(r);
-                } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) {
-                    onTagUpdateResponse(((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response));
+                } else if (response instanceof PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) {
+                    onTagUpdateResponse(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response));
                 } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
                     viewPrefs.withAllowMultiSelect(getMultiSelectionAllowed());
                 } else {

@@ -61,6 +61,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     public static final String INTENT_ARG_JOB_ID = "jobId";
     private static final String TAG = "UserUploadService";
     private static final String ACTION_UPLOAD_FILES = "delit.piwigoclient.action.ACTION_UPLOAD_FILES";
+    private static final int FOREGROUND_UPLOAD_NOTIFICATION_ID = 3;
 
     public ForegroundPiwigoUploadService() { super(TAG);}
 
@@ -73,6 +74,16 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
         context.startService(intent);
         uploadJob.setSubmitted(true);
         return uploadJob.getJobId();
+    }
+
+    @Override
+    protected int getNotificationId() {
+        return FOREGROUND_UPLOAD_NOTIFICATION_ID;
+    }
+
+    @Override
+    protected String getNotificationTitle() {
+        return getString(R.string.notification_title_foreground_upload_service);
     }
 
     @Override

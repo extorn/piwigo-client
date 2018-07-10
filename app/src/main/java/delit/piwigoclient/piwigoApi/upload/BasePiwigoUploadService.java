@@ -2,12 +2,16 @@ package delit.piwigoclient.piwigoApi.upload;
 
 import android.annotation.SuppressLint;
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -151,6 +155,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         for(int i = 0; i < jobFiles.length; i++) {
             UploadJob job = IOUtils.readObjectFromFile(jobFiles[i]);
             if(job != null) {
+                job.setLoadedFromFile(jobFiles[i]);
                 jobs.add(job);
             } else {
                 jobFiles[i].delete();
@@ -184,7 +189,11 @@ public abstract class BasePiwigoUploadService extends IntentService {
     }
 
     public static void deleteStateFromDisk(Context c, UploadJob thisUploadJob) {
-        deleteJobStateFile(getJobStateFile(c, thisUploadJob.isRunInBackground(), thisUploadJob.getJobId()));
+        File stateFile = thisUploadJob.getLoadedFromFile();
+        if(stateFile == null) {
+            stateFile = getJobStateFile(c, thisUploadJob.isRunInBackground(), thisUploadJob.getJobId());
+        }
+        deleteJobStateFile(stateFile);
     }
 
     protected void runPostJobCleanup(UploadJob uploadJob, boolean deleteUploadedFiles) {
@@ -199,6 +208,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                             try {
                                 Files.delete(f.toPath());
                             } catch (IOException e) {
+
                                 if (BuildConfig.DEBUG) {
                                     Log.e(TAG, "Really unable to delete uploaded file : " + f.getAbsolutePath(), e);
                                 }
@@ -231,6 +241,19 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return wl;
     }
 
+    protected Notification.Builder getNotificationBuilder() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannelIfNeeded();
+            return new Notification.Builder(getBaseContext(), getDefaultNotificationChannelId());
+        } else {
+            return new Notification.Builder(getBaseContext());
+        }
+    }
+
+    abstract protected int getNotificationId();
+
+    abstract protected String getNotificationTitle();
+
     @SuppressLint("WakelockTimeout")
     @Override
     protected void onHandleIntent(Intent intent) {
@@ -241,11 +264,57 @@ public abstract class BasePiwigoUploadService extends IntentService {
             doWork(intent);
         } finally {
             releaseWakeLock(wl);
+            stopForeground(true);
         }
 
     }
 
+    //TODO add determinate progress...
+    protected void updateNotificationText(String text, int progress) {
+        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification.Builder notificationBuilder = buildNotification(text);
+        notificationBuilder.setProgress(100, progress, false);
+        notificationManager.notify(getNotificationId(), notificationBuilder.build());
+    }
+
+    protected void updateNotificationText(String text, boolean showIndeterminateProgress) {
+        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification.Builder notificationBuilder = buildNotification(text);
+        if(showIndeterminateProgress) {
+            notificationBuilder.setProgress(0, 0, true);
+        }
+        notificationManager.notify(getNotificationId(), notificationBuilder.build());
+    }
+
+    protected Notification.Builder buildNotification(String text) {
+        Notification.Builder notificationBuilder = getNotificationBuilder();
+        notificationBuilder.setContentTitle(getNotificationTitle())
+                .setContentText(text)
+                .setSmallIcon(R.drawable.ic_file_upload_black_24dp);
+//        .setTicker(getText(R.string.ticker_text))
+        return notificationBuilder;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createNotificationChannelIfNeeded() {
+        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
+        if(channel == null) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            String name = getBaseContext().getString(R.string.app_name);
+            channel = new NotificationChannel(getDefaultNotificationChannelId(), name, importance);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private String getDefaultNotificationChannelId() {
+        return getBaseContext().getString(R.string.app_name) + "_UploadService";
+    }
+
     protected void doBeforeWork(Intent intent) {
+        Notification.Builder notificationBuilder = buildNotification(getString(R.string.notification_message_upload_service));
+        notificationBuilder.setProgress(0, 0, true);
+        startForeground(getNotificationId(), notificationBuilder.build());
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     }
 
@@ -339,23 +408,25 @@ public abstract class BasePiwigoUploadService extends IntentService {
             } else {
                 uniqueIdsList = thisUploadJob.getFileChecksums().values();
             }
-            // remove any files that already exist on the server from the upload.
-            ImageFindExistingImagesResponseHandler imageFindExistingHandler = new ImageFindExistingImagesResponseHandler(uniqueIdsList, nameUnique);
-            invokeWithRetries(thisUploadJob, imageFindExistingHandler, 2);
-            if (imageFindExistingHandler.isSuccess()) {
-                processFindPreexistingImagesResponse(thisUploadJob, (PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse) imageFindExistingHandler.getResponse());
-            }
-            if (!imageFindExistingHandler.isSuccess()) {
-                // notify the listener of the final error we received from the server
-                postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), imageFindExistingHandler.getResponse()));
-                return;
-            }
+            if(!thisUploadJob.getFilesForUpload().isEmpty()) {
+                // remove any files that already exist on the server from the upload.
+                ImageFindExistingImagesResponseHandler imageFindExistingHandler = new ImageFindExistingImagesResponseHandler(uniqueIdsList, nameUnique);
+                invokeWithRetries(thisUploadJob, imageFindExistingHandler, 2);
+                if (imageFindExistingHandler.isSuccess()) {
+                    processFindPreexistingImagesResponse(thisUploadJob, (PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse) imageFindExistingHandler.getResponse());
+                }
+                if (!imageFindExistingHandler.isSuccess()) {
+                    // notify the listener of the final error we received from the server
+                    postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), imageFindExistingHandler.getResponse()));
+                    return;
+                }
 
-            boolean useTempFolder = !PiwigoSessionDetails.isUseCommunityPlugin(thisUploadJob.getConnectionPrefs());
+                boolean useTempFolder = !PiwigoSessionDetails.isUseCommunityPlugin(thisUploadJob.getConnectionPrefs());
 
-            // create a secure folder to upload to if required
-            if (useTempFolder && !createTemporaryUploadAlbum(thisUploadJob)) {
-                return;
+                // create a secure folder to upload to if required
+                if (useTempFolder && !createTemporaryUploadAlbum(thisUploadJob)) {
+                    return;
+                }
             }
 
             saveStateToDisk(thisUploadJob);
@@ -519,6 +590,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                     // mark this file as needing configuration (probably uploaded by ?someone else? or a different upload mechanism anyway)
                     thisUploadJob.markFileAsVerified(fileFoundOnServer);
                     filesExistingOnServerAlready.add(fileFoundOnServer);
+                    resourcesToRetrieve.put(fileFoundOnServer, serverResourceId);
                 }
             }
         }

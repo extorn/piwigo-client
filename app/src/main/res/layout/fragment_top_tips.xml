@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -13,6 +14,7 @@
 
     <ScrollView
         android:layout_below="@+id/toptips_heading"
+        android:layout_marginTop="20dp"
         android:layout_above="@+id/toptips_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_width="fill_parent"
@@ -25,71 +27,16 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
+            <delit.piwigoclient.ui.common.list.StaticListView
+                android:id="@+id/toptips_list"
+                android:clickable="false"
                 android:layout_height="wrap_content"
-                android:text="@string/top_tip_1"/>
-
-            <TextView
-                android:padding="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/top_tip_2"/>
-
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/top_tip_3"/>
-
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/top_tip_4"/>
-
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/top_tip_5"/>
-
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/top_tip_6"/>
-
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/top_tip_7"/>
-
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/top_tip_8"/>
-
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/top_tip_9"/>
-
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/top_tip_10"/>
-
-            <TextView
-                android:padding="10dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/top_tip_11"/>
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:divider="@null"
+                />
         </LinearLayout>
 
     </ScrollView>
