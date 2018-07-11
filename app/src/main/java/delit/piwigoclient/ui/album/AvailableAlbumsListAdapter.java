@@ -127,9 +127,15 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
 
     public static class AvailableAlbumsListAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
         private boolean showHierachy;
+        private boolean allowRootAlbumSelection;
 
         public AvailableAlbumsListAdapterPreferences withShowHierachy() {
             showHierachy = true;
+            return this;
+        }
+
+        public AvailableAlbumsListAdapterPreferences withRootAlbumSelectionAllowed() {
+            allowRootAlbumSelection = true;
             return this;
         }
 
@@ -152,6 +158,10 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
             showHierachy = b.getBoolean("showHierachy");
             super.loadFromBundle(b);
             return this;
+        }
+
+        public boolean isAllowRootAlbumSelection() {
+            return allowRootAlbumSelection;
         }
     }
 }

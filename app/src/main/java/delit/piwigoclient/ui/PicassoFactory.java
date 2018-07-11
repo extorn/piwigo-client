@@ -34,7 +34,7 @@ import delit.piwigoclient.business.PicassoLoader;
 public class PicassoFactory {
     private static final String TAG = "PicassoFactory";
     private static PicassoFactory instance;
-    private transient Picasso picasso;
+    private transient MyPicasso picasso;
     private transient PicassoErrorHandler errorHandler;
 
     public PicassoFactory() {
@@ -65,6 +65,14 @@ public class PicassoFactory {
         dldr.addErrorDrawable(HttpStatus.SC_UNAUTHORIZED, R.drawable.ic_image_locked_black_240dp);
         dldr.addErrorDrawable(HttpStatus.SC_NOT_FOUND, R.drawable.ic_broken_image_black_240dp);
         return dldr;
+    }
+
+    public int getCacheSizeBytes() {
+        if (picasso == null) {
+            return 0;
+        } else {
+            return picasso.getCacheSize();
+        }
     }
 
     class VideoRequestHandler extends RequestHandler {
@@ -176,14 +184,16 @@ public class PicassoFactory {
         }
     }
 
-    public void clearPicassoCache(Context context) {
+    public boolean clearPicassoCache(Context context) {
         synchronized(PicassoFactory.class) {
-            if (picasso != null) {
+            if (picasso != null && picasso.getCacheSize() > (1024 * 1024 * 5)) { // if over 5mb of cache used
                 getPicassoSingleton(context).cancelTag(PicassoLoader.PICASSO_REQUEST_TAG);
                 getPicassoSingleton(context).shutdown();
                 picasso = null;
                 initialise();
+                return true;
             }
         }
+        return false;
     }
 }

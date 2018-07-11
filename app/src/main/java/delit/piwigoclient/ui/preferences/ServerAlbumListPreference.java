@@ -260,6 +260,14 @@ public class ServerAlbumListPreference extends DialogPreference {
         viewPrefs.withShowHierachy();
         AvailableAlbumsListAdapter adapter = new AvailableAlbumsListAdapter(viewPrefs, CategoryItem.ROOT_ALBUM, getContext());
         adapter.addAll(albumNames);
+        if(!viewPrefs.isAllowRootAlbumSelection()) {
+            CategoryItemStub catItem = adapter.getItemById(CategoryItemStub.ROOT_GALLERY.getId());
+            if (catItem != null) {
+                int idx = adapter.getPosition(catItem.getId());
+                adapter.remove(catItem);
+                adapter.insert(catItem.markNonUserSelectable(), idx);
+            }
+        }
         itemListView.setAdapter(adapter);
         // clear checked items
         itemListView.clearChoices();

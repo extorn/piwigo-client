@@ -91,7 +91,7 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
             Long parentId = treeNodes.remove(treeNodes.size() - 1);
             if(albumsParsed.indexOfKey(parentId) < 0) {
                 CategoryItemStub album = new CategoryItemStub(getContext().getString(R.string.inaccessible_remote_folder),parentId);
-                album.markNonUserSelectable();
+                album = album.markNonUserSelectable();
                 if(treeNodes.size() == 0) {
                     album.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
                 } else {

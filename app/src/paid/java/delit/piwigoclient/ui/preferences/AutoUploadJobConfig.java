@@ -113,7 +113,7 @@ public class AutoUploadJobConfig {
     }
 
     public File getLocalFolderToMonitor(Context c) {
-        String localFolderName = getStringValue(c, R.string.preference_data_upload_automatic_job_local_folder_key);
+        String localFolderName = getStringValue(c, R.string.preference_data_upload_automatic_job_local_folder_key, null);
         if(localFolderName == null) {
             return null;
         }

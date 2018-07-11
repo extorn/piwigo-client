@@ -209,7 +209,8 @@
 
     <string name="preference_gallery_clearVideoCache_title">Clear Video Cache</string>
     <string name="preference_gallery_clearVideoCache_key" translatable="false">preference_gallery_clearVideoCache</string>
-    <string name="preference_gallery_clearVideoCache_summary">Deletes all videos cached to disk</string>
+    <string name="preference_gallery_clearVideoCache_summary">Deletes all  videos cached to disk</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">Deletes all %1$.2fMB of videos cached to disk</string>
 
     <string name="preference_app_read_only_mode_key">readOnlyMode</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_key">preference_gallery_recentlyAlteredAgeMillis</string>

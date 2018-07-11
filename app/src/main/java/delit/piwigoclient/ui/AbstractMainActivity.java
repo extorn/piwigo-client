@@ -464,6 +464,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     @Override
     public void onTrimMemory(int level) {
 
+        boolean cacheCleared;
         // Determine which lifecycle or system event was raised.
             switch (level) {
 
@@ -480,13 +481,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 break;
 
             case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
-                // ignore these. They occur too frequently for certain devices.
-                break;
             case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
             case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
 
-                PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
-                EventBus.getDefault().post(new MemoryTrimmedRunningAppEvent());
+                cacheCleared = PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
+                EventBus.getDefault().post(new MemoryTrimmedRunningAppEvent(level, cacheCleared));
 
                 /*
                    Release any memory that your app doesn't need to run.
@@ -503,8 +502,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
             case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
 
-                PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
-                EventBus.getDefault().post(new MemoryTrimmedEvent());
+                cacheCleared = PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
+                EventBus.getDefault().post(new MemoryTrimmedEvent(level, cacheCleared));
                 /*
                    Release as much memory as the process can.
 
@@ -518,8 +517,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
             default:
 
-                PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
-                EventBus.getDefault().post(new GenericLowMemoryEvent());
+                cacheCleared = PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
+                EventBus.getDefault().post(new GenericLowMemoryEvent(level, cacheCleared));
 
                 /*
                   Release any non-critical data structures.
@@ -534,21 +533,27 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GenericLowMemoryEvent event) {
-        showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message);
+        if(event.isPicassoCacheCleared()) {
+            showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message, event.getMemoryLevel());
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MemoryTrimmedRunningAppEvent event) {
-        showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message);
+        if(event.isPicassoCacheCleared()) {
+            showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message, event.getMemoryLevel());
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MemoryTrimmedEvent event) {
-        showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message);
+        if(event.isPicassoCacheCleared()) {
+            showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message, event.getMemoryLevel());
+        }
     }
 
-    private void showLowMemoryWarningMessage(int messageId) {
-        getUiHelper().showToast(getString(messageId));
+    private void showLowMemoryWarningMessage(int messageId, int memoryLevel) {
+        getUiHelper().showToast(getString(messageId, memoryLevel));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

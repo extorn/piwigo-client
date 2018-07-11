@@ -544,7 +544,7 @@ SOFTWARE.
     <string name="click_to_view">Click to view</string>
     <string name="click_to_view_pattern">%1$d - Click to view / edit</string>
     <string name="alert_warning_lowMemory">Low Memory</string>
-    <string name="alert_warning_lowMemory_message">The device is running low on memory. The in memory image cache has been cleared.</string>
+    <string name="alert_warning_lowMemory_message">The device is running low on memory (%1$d). The in memory image cache has been cleared.</string>
     <string name="files_for_upload_title">Files for Upload</string>
     <string name="alert_information">Information</string>
     <string name="alert_image_download_title">Download</string>

@@ -693,9 +693,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean autoSelectCommunityAlbum = sessionDetails != null && sessionDetails.isFullyLoggedIn() && sessionDetails.isUseCommunityPlugin();
 
-        if (currentGallery.getId() == 0) {
-            this.availableGalleries.add(CategoryItemStub.ROOT_GALLERY);
-        }
+        this.availableGalleries.add(CategoryItemStub.ROOT_GALLERY);
 
         if(uploadToAlbumId == null) {
             uploadToAlbumId = currentGallery.getId();
