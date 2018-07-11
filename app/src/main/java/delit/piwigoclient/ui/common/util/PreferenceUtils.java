@@ -3,10 +3,12 @@ package delit.piwigoclient.ui.common.util;
 import android.content.SharedPreferences;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.lang.reflect.Method;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.ui.common.MyActivity;
 
 /**
@@ -31,7 +33,11 @@ public class PreferenceUtils {
                 Method m = iterClass.getDeclaredMethod("onSetInitialValue", boolean.class, Object.class);
                 m.setAccessible(true);
                 m.invoke(preference, true, null);
-            } catch (Exception e) { }
+            } catch (Exception e) {
+                if(BuildConfig.DEBUG) {
+                    Log.e("PrefUtils", "Error Refreshing Pref", e);
+                }
+            }
             iterClass = iterClass.getSuperclass();
         }
     }

@@ -83,7 +83,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
 
     private List<Long> toParentageChain(long thisAlbumId, String parentCatsCsv) {
         String[] cats = parentCatsCsv.split(",");
-        ArrayList<Long> list = new ArrayList();
+        ArrayList<Long> list = new ArrayList<>();
         list.add(CategoryItem.ROOT_ALBUM.getId());
         for (String cat : cats) {
             list.add(Long.valueOf(cat));

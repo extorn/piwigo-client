@@ -2,30 +2,18 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import android.util.Log;
 
-import com.google.android.vending.licensing.util.Base64;
-import com.google.android.vending.licensing.util.Base64DecoderException;
-
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -90,7 +78,7 @@ public class AutoUploadJobConfig {
         return value;
     }
 
-    private @NonNull String getStringValue(Context c, @StringRes int prefKeyId, String defaultVal) {
+    private String getStringValue(Context c, @StringRes int prefKeyId, String defaultVal) {
         String value = jobPreferences.getString(c.getString(prefKeyId), defaultVal);
         return value;
     }
@@ -190,7 +178,9 @@ public class AutoUploadJobConfig {
                 return new PriorUploads(jobId);
             } else {
                 PriorUploads uploadedFiles = IOUtils.readObjectFromFile(f);
-                if(uploadedFiles.jobId != jobId) {
+                if(uploadedFiles == null) {
+                    return new PriorUploads(jobId);
+                } else if(uploadedFiles.jobId != jobId) {
                     throw new RuntimeException("Saved state for uploaded files corrupted");
                 }
                 return uploadedFiles;

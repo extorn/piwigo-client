@@ -84,7 +84,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
                 onDownloadProgress(progress);
             }
             byte[] buffer = new byte[buffersize];
-            int bytesRead = 0;
+            int bytesRead;
             long lastProgressUpdateAt = System.currentTimeMillis();
             do {
                 bytesRead = bis.read(buffer);

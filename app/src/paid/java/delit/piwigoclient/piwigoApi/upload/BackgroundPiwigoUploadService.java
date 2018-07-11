@@ -1,10 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.PowerManager;
 import android.util.Log;
 
@@ -300,9 +295,9 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals("android.intent.action.USER_PRESENT")) {
+            if("android.intent.action.USER_PRESENT".equals(intent.getAction())) {
                 handleDeviceUnlocked(context);
-            } else if(intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE")) {
+            } else if("android.net.conn.CONNECTIVITY_CHANGE".equals(intent.getAction())) {
                 handleNetworkStatusChanged(context);
             }
         }

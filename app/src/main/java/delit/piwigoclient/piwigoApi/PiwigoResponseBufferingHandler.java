@@ -22,12 +22,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.model.piwigo.Username;
@@ -83,9 +81,9 @@ public class PiwigoResponseBufferingHandler {
         //TODO this method leaves responses unhandled by handlers... both are retained. Memory leak. Re-examine the whole lifecycle of fragments that are handlers.
         List<Long> responsesMappingsToRemove = new ArrayList<>(10);
         List<Long> handlersToRemove = new ArrayList<>(10);
-        HashMap<Long, Response> responsesToHandle = new HashMap<>();
+        LongSparseArray<Response> responsesToHandle = new LongSparseArray<>();
         for (Map.Entry<Long, Long> handlerResponseEntry : handlerResponseMap.entrySet()) {
-            if (handlerResponseEntry.getValue() == handler.getHandlerId()) { // deliberate object referemce equality.
+            if (handlerResponseEntry.getValue() == handler.getHandlerId()) { // deliberate object reference equality.
                 long responseMessageId = handlerResponseEntry.getKey();
                 Response r = responses.remove(responseMessageId);
                 if (r != null) {
@@ -93,11 +91,11 @@ public class PiwigoResponseBufferingHandler {
                 }
             }
         }
-        for (Iterator<Response> iterator = responsesToHandle.values().iterator(); iterator.hasNext(); ) {
-            Response r = iterator.next();
-            if (iterator.hasNext() && r.isEndResponse()) {
+        for(int i = 0; i < responsesToHandle.size(); i++) {
+            Response r = responsesToHandle.valueAt(i);
+            if (i < responsesToHandle.size() && r.isEndResponse()) {
                 // skip this response till last
-                iterator.next();
+                r = responsesToHandle.valueAt(++i);
             }
             if (handler.canHandlePiwigoResponseNow(r)) {
                 handler.handlePiwigoResponse(r);
@@ -108,19 +106,26 @@ public class PiwigoResponseBufferingHandler {
                 // add it back to the queue.
                 responses.put(r.getMessageId(), r);
             }
-            iterator.remove();
+            responsesToHandle.remove(i);
+            i--;
         }
         if (responsesToHandle.size() > 0) {
             // we left the first item on the list as it is an end response which should be handled last for the handler after all other responses
-            Response r = responsesToHandle.values().iterator().next();
-            if (handler.canHandlePiwigoResponseNow(r)) {
-                handler.handlePiwigoResponse(r);
-                if (r.isEndResponse()) {
-                    responsesMappingsToRemove.add(r.getMessageId());
+            for(int i = 0; i < responsesToHandle.size(); i++) {
+                Response r = responsesToHandle.valueAt(i);
+                if(!r.isEndResponse()) {
+                    // only handle the end messages now as we've done the rest.
+                    continue;
                 }
-            } else {
-                // add it back to the queue.
-                responses.put(r.getMessageId(), r);
+                if (handler.canHandlePiwigoResponseNow(r)) {
+                    handler.handlePiwigoResponse(r);
+                    if (r.isEndResponse()) {
+                        responsesMappingsToRemove.add(r.getMessageId());
+                    }
+                } else {
+                    // add it back to the queue.
+                    responses.put(r.getMessageId(), r);
+                }
             }
         }
 
@@ -155,7 +160,7 @@ public class PiwigoResponseBufferingHandler {
     public synchronized void preRegisterResponseHandlerForNewMessage(long currentMessageId, long newMessageId) {
         Long handlerId = handlerResponseMap.get(currentMessageId);
         if (handlerId == null) {
-            // record the parentage for processing when a handler is re-addded.
+            // record the parentage for processing when a handler is re-added.
             parkChildMessageId(currentMessageId, newMessageId);
         } else {
             handlerResponseMap.put(newMessageId, handlerId);
@@ -280,7 +285,7 @@ public class PiwigoResponseBufferingHandler {
                 iterator.remove();
             }
         }
-        return new HashSet<Long>(messageIdsToCheck);
+        return new HashSet<>(messageIdsToCheck);
     }
 
     public interface PiwigoResponse extends Response {

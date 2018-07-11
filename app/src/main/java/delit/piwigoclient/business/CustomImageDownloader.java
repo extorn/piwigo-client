@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.DrawableRes;
+import android.util.SparseIntArray;
 
 import com.squareup.picasso.Downloader;
 
@@ -23,7 +24,7 @@ import delit.piwigoclient.ui.PicassoFactory;
 public class CustomImageDownloader implements Downloader {
 
     private final Context context;
-    private final Map<Integer, Integer> errorDrawables = new HashMap<>();
+    private final SparseIntArray errorDrawables = new SparseIntArray();
     private final ConnectionPreferences.ProfilePreferences connectionPrefs;
 
     public CustomImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {

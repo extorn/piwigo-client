@@ -24,7 +24,7 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 
@@ -173,7 +173,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             }
         });
 
-        SimpleExoPlayerView simpleExoPlayerView = new SimpleExoPlayerView(getContext());
+        PlayerView simpleExoPlayerView = new PlayerView(getContext());
 
         simpleExoPlayerView.setPlayer(buildPlayer(model));
 

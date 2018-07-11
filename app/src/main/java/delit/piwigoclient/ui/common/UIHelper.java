@@ -357,8 +357,8 @@ public abstract class UIHelper<T> {
         alertDialog.setMessage(nextMessage.getMessage());
 
         if (nextMessage.getLayoutId() != Integer.MIN_VALUE) {
-            LayoutInflater inflator = LayoutInflater.from(alertDialog.getContext());
-            final LinearLayout dialogView = (LinearLayout) inflator.inflate(nextMessage.getLayoutId(), null, false);
+            LayoutInflater inflater = LayoutInflater.from(alertDialog.getContext());
+            final LinearLayout dialogView = (LinearLayout) inflater.inflate(nextMessage.getLayoutId(), null, false);
             alertDialog.setView(dialogView);
         }
 

@@ -139,7 +139,7 @@ public class MyPicasso extends Picasso {
                 throw new IllegalArgumentException("RequestHandler must not be null.");
             }
             if (requestHandlers == null) {
-                requestHandlers = new ArrayList<RequestHandler>();
+                requestHandlers = new ArrayList<>();
             }
             if (requestHandlers.contains(requestHandler)) {
                 throw new IllegalStateException("RequestHandler already registered.");

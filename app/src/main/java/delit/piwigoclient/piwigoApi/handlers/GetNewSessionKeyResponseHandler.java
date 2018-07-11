@@ -5,19 +5,11 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.google.gson.JsonElement;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
-import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
-import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
 public class GetNewSessionKeyResponseHandler extends AbstractPiwigoWsResponseHandler {
 

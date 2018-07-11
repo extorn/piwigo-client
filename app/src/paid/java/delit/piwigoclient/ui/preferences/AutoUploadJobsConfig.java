@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.util.ArrayUtils;
 import delit.piwigoclient.util.CollectionUtils;
 
 public class AutoUploadJobsConfig {
@@ -43,7 +42,7 @@ public class AutoUploadJobsConfig {
         return prefs.getInt(c.getString(prefKeyId), -1);
     }
 
-    private @NonNull String getStringValue(Context c, @StringRes int prefKeyId) {
+    private String getStringValue(Context c, @StringRes int prefKeyId) {
         String value = prefs.getString(c.getString(prefKeyId), null);
         return value;
     }

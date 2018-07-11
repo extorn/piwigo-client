@@ -15,15 +15,11 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -43,7 +39,6 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.UploadFileChunk;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -147,7 +142,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         File jobsFolder = new File(c.getApplicationContext().getExternalCacheDir(), "uploadJobs");
         if(!jobsFolder.exists()) {
             jobsFolder.mkdir();
-            return new ArrayList<UploadJob>();
+            return new ArrayList<>();
         }
 
         List<UploadJob> jobs = new ArrayList<>();
@@ -576,7 +571,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 File fileFoundOnServer = fileCheckSumEntry.getKey();
                 Long serverResourceId = preexistingItemsMap.get(uploadedFileUid);
 
-                // theoretically we needen't retrieve the item again if we already have it (not null), but it may have been changed by other means...
+                // theoretically we needn't retrieve the item again if we already have it (not null), but it may have been changed by other means...
                 ResourceItem resourceItem = thisUploadJob.getUploadedFileResource(fileFoundOnServer);
 
                 if (thisUploadJob.isFileUploadComplete(fileFoundOnServer)) {
@@ -890,7 +885,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                         lastChunkUploadResult = uploadStreamChunk(thisUploadJob, currentUploadFileChunk, maxChunkUploadAutoRetries);
 
                         chunkId++;
-                        boolean chunkUploadedOk = lastChunkUploadResult.first;
+                        @SuppressWarnings("ConstantConditions") boolean chunkUploadedOk = lastChunkUploadResult.first;
                         if (chunkUploadedOk) {
                             fileBytesUploaded += bytesOfDataInChunk;
                             thisUploadJob.markFileAsPartiallyUploaded(fileForUpload, uploadToFilename, fileBytesUploaded, chunkId);

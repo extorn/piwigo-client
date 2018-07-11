@@ -45,7 +45,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -55,7 +54,6 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -83,7 +81,6 @@ import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
-import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
 import delit.piwigoclient.util.DisplayUtils;
 
 import static android.view.View.GONE;
@@ -673,7 +670,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
 //        } else {
-                // N.B.this only works with a very select few android apps - folder browsing seeminly isnt a standard thing in android.
+                // N.B.this only works with a very select few android apps - folder browsing seeminly isn't a standard thing in android.
 //            notificationIntent = pkg Intent(Intent.ACTION_VIEW);
 //            Uri selectedUri = Uri.fromFile(downloadedFile.getParentFile());
 //            notificationIntent.setDataAndType(selectedUri, "resource/folder");

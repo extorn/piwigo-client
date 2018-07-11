@@ -179,7 +179,7 @@ public class PicassoFactory {
                     Log.e(TAG, String.format("Error loading uri %1$s", uri), e);
                 }
             } else if(BuildConfig.DEBUG) {
-                Log.e(TAG, String.format("Error loading uri null"), e);
+                Log.e(TAG, "Error loading uri null", e);
             }
         }
     }

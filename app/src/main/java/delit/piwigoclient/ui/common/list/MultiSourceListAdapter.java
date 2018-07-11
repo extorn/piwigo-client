@@ -278,7 +278,7 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
             throw new IllegalStateException("initially selected items should never be null at this point");
         }
         parentList.clearChoices();
-        HashSet<Long> resourcesToSelect = selectedResourceIds != null ? new HashSet<>(selectedResourceIds) : new HashSet<Long>(initialSelectedResourceIds);
+        HashSet<Long> resourcesToSelect = selectedResourceIds != null ? new HashSet<>(selectedResourceIds) : new HashSet<>(initialSelectedResourceIds);
         for(Long resourceId : resourcesToSelect) {
             parentList.setItemChecked(getPosition(resourceId), true);
         }

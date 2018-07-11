@@ -2,8 +2,6 @@ package delit.piwigoclient.model.piwigo;
 
 import android.util.Log;
 
-import com.google.android.gms.common.util.ListUtils;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;

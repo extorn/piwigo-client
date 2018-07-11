@@ -160,7 +160,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     protected void rerunRetrievalForFailedPages() {
         usernamesModel.acquirePageLoadLock();
         try {
-            for(Integer reloadPageNum = null; reloadPageNum != null; reloadPageNum = usernamesModel.getNextPageToReload()) {
+            for(Integer reloadPageNum = usernamesModel.getNextPageToReload(); reloadPageNum != null; reloadPageNum = usernamesModel.getNextPageToReload()) {
                 loadUsernamesPage(reloadPageNum);
             }
 

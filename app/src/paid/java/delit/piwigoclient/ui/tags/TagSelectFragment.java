@@ -145,7 +145,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
     private void addNewTag() {
         final View v = LayoutInflater.from(getContext()).inflate(R.layout.create_tag ,null);
-        EditText tagNameEdit = (EditText)v.findViewById(R.id.tag_tagname);
+        EditText tagNameEdit = v.findViewById(R.id.tag_tagname);
 
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext()).setView(v)
@@ -222,11 +222,11 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String tagName = s.toString();
-                if(((AlertDialog) dialog).getButton(
+                if(dialog.getButton(
                         AlertDialog.BUTTON_NEUTRAL).isShown()) {
-                    ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(tagName.length() > 0);
+                    dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(tagName.length() > 0);
                 }
-                ((AlertDialog) dialog).getButton(
+                dialog.getButton(
                         AlertDialog.BUTTON_POSITIVE).setEnabled(tagName.length() > 0 && !tagsModel.containsTag(tagName));
             }
 
@@ -290,7 +290,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     protected void rerunRetrievalForFailedPages() {
         tagsModel.acquirePageLoadLock();
         try {
-            for(Integer reloadPageNum = null; reloadPageNum != null; reloadPageNum = tagsModel.getNextPageToReload()) {
+            for(Integer reloadPageNum = tagsModel.getNextPageToReload(); reloadPageNum != null; reloadPageNum = tagsModel.getNextPageToReload()) {
                 loadTagsPage(reloadPageNum);
             }
 
@@ -376,7 +376,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
                 getListAdapter().setItemSelected(selectedItemId);
             }
             // can't do an incremental refresh as we sort the data and it could cause interleaving.
-            getListAdapter().notifyDataSetChanged();;
+            getListAdapter().notifyDataSetChanged();
             if(tagsModel.hasNoFailedPageLoads()) {
                 onListItemLoadSuccess();
             }

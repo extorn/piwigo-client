@@ -271,7 +271,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                     @Override
                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                         UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
-                        if(positiveAnswer != null && positiveAnswer.booleanValue()) {
+                        if(positiveAnswer != null && positiveAnswer) {
                             ForegroundPiwigoUploadService.removeJob(job);
                             ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), job);
                             allowUserUploadConfiguration(null);

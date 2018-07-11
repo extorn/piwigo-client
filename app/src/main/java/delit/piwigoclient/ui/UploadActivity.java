@@ -34,7 +34,6 @@ import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
@@ -361,7 +360,7 @@ public class UploadActivity extends MyActivity {
         if(getUiHelper().completePermissionsWantedRequest(event)) {
             int fileSelectionEventIdToUse = fileSelectionEventId;
             if(startedWithPermissions) {
-                // already started up. Therefore the fileSelectionEventId is valid and linked to the faragment
+                // already started up. Therefore the fileSelectionEventId is valid and linked to the fragment
             } else {
                 startedWithPermissions = true;
                 fileSelectionEventIdToUse = Integer.MIN_VALUE;

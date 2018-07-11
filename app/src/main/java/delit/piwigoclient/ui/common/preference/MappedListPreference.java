@@ -69,7 +69,7 @@ public abstract class MappedListPreference<T> extends DialogPreference {
         this(context, null);
     }
 
-    private final void configurePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    private void configurePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.MappedListPreference, defStyleAttr, defStyleRes);
         mEntries = a.getTextArray(R.styleable.MappedListPreference_entries);

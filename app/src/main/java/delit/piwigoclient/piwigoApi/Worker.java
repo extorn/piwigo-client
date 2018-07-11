@@ -246,7 +246,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                 }
             }
         }
-        return retVal;
+        return retVal == null ? false : retVal;
     }
 
     public void setConnectionPreferences(ConnectionPreferences.ProfilePreferences connectionPreferences) {

@@ -27,10 +27,7 @@ public class CustomFileFilter implements FileFilter {
             if(!isFilenameMatch(pathname.getName())) {
                 return false;
             }
-            if(!isFilesizeMatch(pathname)) {
-                return false;
-            }
-            return true;
+            return isFilesizeMatch(pathname);
         }
 
         private boolean isFilesizeMatch(File pathname) {

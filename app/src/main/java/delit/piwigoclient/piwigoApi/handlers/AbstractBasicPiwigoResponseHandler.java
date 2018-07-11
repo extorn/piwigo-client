@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.ResponseHandlerInterface;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -19,7 +18,6 @@ import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -236,7 +234,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             }
         }
         if (!tryingAgain) {
-            if (BuildConfig.DEBUG && !"Method name is not valid".equals(error.getMessage())) {
+            if (BuildConfig.DEBUG && error != null && !"Method name is not valid".equals(error.getMessage())) {
                 Log.e(getTag(), "Tracking piwigo failure class: " + error.getClass() + " message: " + error.getMessage(), error);
             }
             this.statusCode = statusCode;

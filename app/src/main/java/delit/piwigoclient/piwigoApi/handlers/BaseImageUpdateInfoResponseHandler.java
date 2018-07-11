@@ -54,7 +54,7 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
 
     @Override
     protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
-        /**
+        /*
          * OK 200
          * <error><item>You are not allowed to delete tags</item></error>
          * <info>Tags updated</info>

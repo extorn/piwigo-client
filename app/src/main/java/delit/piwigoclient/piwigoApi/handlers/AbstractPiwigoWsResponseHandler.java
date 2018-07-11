@@ -2,7 +2,6 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.util.Log;
 
-import com.google.android.gms.common.util.ArrayUtils;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,7 +47,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         return piwigoMethod;
     }
 
-    private final RequestParams getRequestParameters() {
+    private RequestParams getRequestParameters() {
         if (requestParams == null) {
             requestParams = buildRequestParameters();
         }
@@ -156,7 +155,6 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
             PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
             storeResponse(r);
-            return;
         }
     }
 
@@ -169,7 +167,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     protected void reportNestedFailure(AbstractBasicPiwigoResponseHandler nestedHandler) {
         if (nestedHandler instanceof AbstractPiwigoWsResponseHandler) {
             nestedFailureMethod = ((AbstractPiwigoWsResponseHandler) nestedHandler).getPiwigoMethod();
-            nestedFailure = ((AbstractPiwigoWsResponseHandler) nestedHandler).getError();
+            nestedFailure = nestedHandler.getError();
             setError(nestedHandler.getError());
         }
         super.reportNestedFailure(nestedHandler);

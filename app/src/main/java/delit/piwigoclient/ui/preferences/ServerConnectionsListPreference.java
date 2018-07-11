@@ -13,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,7 +27,6 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.list.MultiSourceListAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.util.ObjectUtils;
@@ -89,7 +87,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
                     selectedPref.getPiwigoServerAddress(prefs, getContext()),
                     selectedPref.getPiwigoUsername(prefs, getContext()));
         } else {
-            activeConnection = new ServerConnection(mValue, null,null);
+            activeConnection = new ServerConnection(null, null,null);
         }
         return activeConnection.getSummary(getContext());
     }
@@ -167,7 +165,6 @@ public class ServerConnectionsListPreference extends DialogPreference {
             ((ServerConnectionProfilesListAdapter)itemListView.getAdapter()).selectAllItemIds();
             onClick(getDialog(), DialogInterface.BUTTON_POSITIVE);
             getDialog().dismiss();
-            return;
         }
     }
 

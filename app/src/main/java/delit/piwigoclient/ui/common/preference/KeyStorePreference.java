@@ -232,7 +232,7 @@ public abstract class KeyStorePreference extends DialogPreference {
             List<X509LoadOperation> loadOperations = keystoreLoadOperationResult.getRemainingLoadOperations();
             if(loadOperations.size() > 0) {
                 keystoreLoadOperationResult = null;
-                new AsyncX509LoaderTask().execute(loadOperations.toArray(new X509LoadOperation[loadOperations.size()]));
+                new AsyncX509LoaderTask(this).execute(loadOperations.toArray(new X509LoadOperation[loadOperations.size()]));
             }
             return;
         }
@@ -289,11 +289,16 @@ public abstract class KeyStorePreference extends DialogPreference {
         }
         keystoreLoadOperationResult = null;
         keystoreLoadInProgress = true;
-        new AsyncX509LoaderTask().execute(params);
+        new AsyncX509LoaderTask(this).execute(params);
     }
 
-    class AsyncX509LoaderTask extends AsyncTask<X509LoadOperation, Integer, LoadOperationResult> {
+    static class AsyncX509LoaderTask extends AsyncTask<X509LoadOperation, Integer, LoadOperationResult> {
 
+        private final KeyStorePreference sourcePref;
+
+        private AsyncX509LoaderTask(KeyStorePreference sourcePref) {
+            this.sourcePref = sourcePref;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -306,7 +311,7 @@ public abstract class KeyStorePreference extends DialogPreference {
             int currentFile = 0;
             for (X509LoadOperation loadOp : loadOps) {
                 String fileSuffix = loadOp.getFile().getName().replaceFirst(".*(\\.[^.]*)", "$1").toLowerCase();
-                if (allowedCertificateFileTypes.contains(fileSuffix)) {
+                if (sourcePref.allowedCertificateFileTypes.contains(fileSuffix)) {
                     try {
                         Collection<X509Certificate> certs = X509Utils.loadCertificatesFromFile(loadOp.getFile());
                         CertificateLoadOperationResult result = new CertificateLoadOperationResult(loadOp);
@@ -317,7 +322,7 @@ public abstract class KeyStorePreference extends DialogPreference {
                         result.setException(e);
                         loadOperationResult.getCertLoadResults().add(result);
                     }
-                } else if (allowedKeyFileTypes.contains(fileSuffix)) {
+                } else if (sourcePref.allowedKeyFileTypes.contains(fileSuffix)) {
                     KeystoreLoadOperationResult keystoreLoadOperationResult;
                     if(BKS_FILE_SUFFIX.equals(fileSuffix)) {
                         keystoreLoadOperationResult = X509Utils.loadCertificatesAndPrivateKeysFromKeystoreFile(KeystoreLoadOperation.from(loadOp), "bks");
@@ -335,31 +340,38 @@ public abstract class KeyStorePreference extends DialogPreference {
         @Override
         protected void onProgressUpdate(Integer... values) {
             for(Integer i : values) {
-                if(getDialog() != null && getDialog().isShowing()) {
-                    if(progressDialog == null || !progressDialog.isShowing()) {
-                        buildProgressDialog(getDialog().getContext());
-                    }
-                    progressDialog.setProgress(i);
-                    progressDialog.show();
-                }
+                sourcePref.onProgressUpdate(i);
             }
         }
 
         @Override
         protected void onPostExecute(LoadOperationResult loadOperationResult) {
-            keystoreLoadOperationResult = loadOperationResult;
-            if (!isCancelled()) {
-                KeyStoreContentsAdapter adapter = ((KeyStoreContentsAdapter) certificateList.getAdapter());
-                adapter.addData(loadOperationResult.removeSuccessfullyLoadedData());
-            }
-
-            if(progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-            showLoadErrors();
-            keystoreLoadInProgress = false;
+            sourcePref.onKeystoreLoadFinished(loadOperationResult, isCancelled());
         }
-    };
+    }
+
+    private void onKeystoreLoadFinished(LoadOperationResult loadOperationResult, boolean wasLoadCancelled) {
+        keystoreLoadOperationResult = loadOperationResult;
+        if (!wasLoadCancelled) {
+            KeyStoreContentsAdapter adapter = ((KeyStoreContentsAdapter) certificateList.getAdapter());
+            adapter.addData(loadOperationResult.removeSuccessfullyLoadedData());
+        }
+        if(progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+        showLoadErrors();
+        keystoreLoadInProgress = false;
+    }
+
+    private void onProgressUpdate(Integer i) {
+        if(getDialog() != null && getDialog().isShowing()) {
+            if(progressDialog == null || !progressDialog.isShowing()) {
+                buildProgressDialog(getDialog().getContext());
+            }
+            progressDialog.setProgress(i);
+            progressDialog.show();
+        }
+    }
 
     private void showLoadErrors() {
         List<SecurityOperationException> unrecoverableErrors = keystoreLoadOperationResult.getUnrecoverableErrors();

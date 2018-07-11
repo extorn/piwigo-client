@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -42,7 +41,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         if (thumbnailSize != null) {
             params.put("thumbnail_size", thumbnailSize);
         }
-        if (recursive == true || !PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs())) {
+        if (recursive || !PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs())) {
             // community plugin is very broken!
             params.put("recursive", String.valueOf(recursive));
         }
@@ -112,7 +111,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
                 thumbnail = category.get("tn_url").getAsString();
             }
 
-            Date dateLastAltered = null;
+            Date dateLastAltered;
             try {
                 if (null == dateLastAlteredStr) {
                     dateLastAltered = new Date(0);

@@ -6,7 +6,7 @@ package delit.piwigoclient.model.piwigo;
 
 public abstract class ResourceContainer<S extends Identifiable, T extends Identifiable> extends IdentifiablePagedList<T> implements Identifiable {
 
-    private final S containerDetails;
+    private S containerDetails;
 
     public ResourceContainer(S containerDetails, String itemType) {
         this(containerDetails, itemType, 10);
@@ -40,4 +40,7 @@ public abstract class ResourceContainer<S extends Identifiable, T extends Identi
         return containerDetails.getId();
     }
 
+    public void setContainerDetails(S item) {
+        containerDetails = item;
+    }
 }

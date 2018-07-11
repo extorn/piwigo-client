@@ -45,17 +45,11 @@ public class DisplayUtils {
                 .getSystemService(Context.WINDOW_SERVICE);
         Display getOrient = windowManager.getDefaultDisplay();
 
-        int orientation = Configuration.ORIENTATION_UNDEFINED;
+        int orientation = Configuration.ORIENTATION_LANDSCAPE;
         Point p = new Point();
         getOrient.getSize(p);
-        if(p.x == p.y){
-            orientation = Configuration.ORIENTATION_SQUARE;
-        } else{
-            if(p.x < p.y) {
-                orientation = Configuration.ORIENTATION_PORTRAIT;
-            }else {
-                orientation = Configuration.ORIENTATION_LANDSCAPE;
-            }
+        if(p.x < p.y) {
+            orientation = Configuration.ORIENTATION_PORTRAIT;
         }
         return orientation;
     }

@@ -7,7 +7,6 @@ import android.support.annotation.StringRes;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import delit.piwigoclient.R;

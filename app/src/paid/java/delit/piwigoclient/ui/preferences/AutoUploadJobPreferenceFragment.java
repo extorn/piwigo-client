@@ -63,7 +63,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     private void invokePreferenceValuesValidation(boolean isFinalValidationCheck) {
         SharedPreferences appPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         boolean allPreferencesValid = true;
-        ConnectionPreferences.ProfilePreferences profilePrefs = null;
+        ConnectionPreferences.ProfilePreferences profilePrefs;
         // check server connection details
 
         if(allPreferencesValid) {
