@@ -85,11 +85,11 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
             return;
         }
 
-        populateListWithItems();
+        rerunRetrievalForFailedPages();
     }
 
     @Override
-    protected void populateListWithItems() {
+    protected void rerunRetrievalForFailedPages() {
         if (availableAlbums == null) {
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         } else if(getListAdapter() == null) {
@@ -143,17 +143,17 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                onAlbumsLoaded((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onAlbumsLoaded((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else {
                 onListItemLoadFailed();
             }
         }
     }
 
-    private void onAlbumsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onAlbumsLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         getUiHelper().dismissProgressDialog();
         availableAlbums = response.getAlbumNames();
-        populateListWithItems();
+        rerunRetrievalForFailedPages();
     }
 }

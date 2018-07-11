@@ -113,10 +113,11 @@ public class CachingAsyncHttpClient implements Closeable {
     public static final int DEFAULT_RETRY_SLEEP_TIME_MILLIS = 1500;
     public static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;
     public static LogInterface log = new LogHandler();
-    private HttpClient httpClient;
     private final Map<Context, List<RequestHandle>> requestMap;
     private final Map<String, String> clientHeaderMap;
     private final SSLConnectionSocketFactory sslConnectionSocketFactory;
+    private final HashMap<AuthScope, Credentials> credentialsMap;
+    private HttpClient httpClient;
     private int retrySleep = DEFAULT_RETRY_SLEEP_TIME_MILLIS;
     private int maxRetries = DEFAULT_MAX_RETRIES;
     private int maxConnections = DEFAULT_MAX_CONNECTIONS;
@@ -130,7 +131,6 @@ public class CachingAsyncHttpClient implements Closeable {
     private CookieStore cookieStore;
     private BasicCredentialsProvider credentialsProvider;
     private boolean usePreemptiveAuth;
-    private final HashMap<AuthScope, Credentials> credentialsMap;
     private long maxCachedObjectSizeBytes = 8192;
     private int maxCacheEntries = 1000;
     private File cacheFolder;
@@ -139,51 +139,8 @@ public class CachingAsyncHttpClient implements Closeable {
     private int maxConcurrentConnections = DEFAULT_MAX_CONNECTIONS;
     private int maxRedirects;
 
-    protected HttpClientConnectionManager createConnectionManager() {
-
-        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", sslConnectionSocketFactory)
-                .build();
-
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        cm.setMaxTotal(maxConcurrentConnections);
-        cm.setDefaultMaxPerRoute(maxConcurrentConnections);
-        SocketConfig.Builder socketBuilder = cm.getDefaultSocketConfig() != null ? SocketConfig.copy(cm.getDefaultSocketConfig()) : SocketConfig.custom();
-        SocketConfig socketConfig = socketBuilder.setTcpNoDelay(true).setSoTimeout(responseTimeout).build();
-        cm.setDefaultSocketConfig(socketConfig);
-        ConnectionConfig.Builder connectionBuilder = cm.getDefaultConnectionConfig() != null ? ConnectionConfig.copy(cm.getDefaultConnectionConfig()) : ConnectionConfig.custom();
-        ConnectionConfig connConfig = connectionBuilder.setBufferSize(DEFAULT_SOCKET_BUFFER_SIZE).build();
-        cm.setDefaultConnectionConfig(connConfig);
-        return cm;
-    }
-
-    /**
-     * Catch all in case you forget to close it!
-     * @throws Throwable
-     */
-    @Override
-    protected void finalize() throws Throwable {
-        close();
-        super.finalize();
-    }
-
-    @Override
-    public void close() throws IOException {
-        if(httpClient != null && httpClient instanceof Closeable) {
-            ((Closeable)httpClient).close();
-        }
-    }
-
-    public void setCacheSettings(File cacheFolder, int maxCacheEntries, int maxCachedObjectSizeBytes) {
-        this.cacheFolder = cacheFolder;
-        this.maxCacheEntries = maxCacheEntries;
-        this.maxCachedObjectSizeBytes = maxCachedObjectSizeBytes;
-    }
-
     /**
      * Creates a new CachingAsyncHttpClient.
-     *
      */
     public CachingAsyncHttpClient(SSLConnectionSocketFactory sslConnectionSocketFactory) {
 
@@ -192,126 +149,6 @@ public class CachingAsyncHttpClient implements Closeable {
         clientHeaderMap = new HashMap<>();
         credentialsMap = new HashMap<>();
         this.sslConnectionSocketFactory = sslConnectionSocketFactory;
-    }
-
-    private synchronized HttpClient getHttpClient() {
-        if(httpClient == null) {
-            httpClient = buildHttpClient();
-        }
-        return httpClient;
-    }
-
-    public void setMaxConcurrentConnections(int maxConcurrentConnections) {
-        this.maxConcurrentConnections = maxConcurrentConnections;
-    }
-
-    public int getMaxConcurrentConnections() {
-        return maxConcurrentConnections;
-    }
-
-    protected HttpClient buildHttpClient() {
-        CacheConfig cacheConfig = CacheConfig.custom()
-                .setMaxCacheEntries(maxCacheEntries)
-                .setSharedCache(false)
-                .setMaxObjectSize(maxCachedObjectSizeBytes)
-                .build();
-        RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(connectTimeout)
-                .setSocketTimeout(responseTimeout)
-                .setConnectionRequestTimeout(connectTimeout)
-                .setRedirectsEnabled(enableRedirects)
-                .setMaxRedirects(maxRedirects)
-                .setRelativeRedirectsAllowed(enableRelativeRedirects)
-                .setCircularRedirectsAllowed(enableCircularRedirects)
-                .build();
-
-        this.retryHandler = new RetryHandler(maxRetries, retrySleep);
-// These are the defaults
-//        Registry<AuthSchemeProvider> authRegistry = RegistryBuilder.<AuthSchemeProvider>create()
-//                .register(AuthSchemes.BASIC, new BasicSchemeFactory())
-//                .register(AuthSchemes.DIGEST, new DigestSchemeFactory())
-//                .register(AuthSchemes.NTLM, new NTLMSchemeFactory()).build();
-
-        final HttpClientConnectionManager cm = createConnectionManager();
-        Utils.asserts(cm != null, "Custom implementation of HttpClientConnectionManager returned null");
-        CloseableHttpClient cachingClient = CachingHttpClients.custom()
-                .setCacheConfig(cacheConfig)
-                .setCacheDir(cacheFolder)
-//TODO custom cache control - offline access etc                .setHttpCacheInvalidator()
-//                .setDefaultAuthSchemeRegistry(authRegistry)
-                .setConnectionManager(cm)
-                .setSSLSocketFactory(sslConnectionSocketFactory)
-                .setDefaultRequestConfig(requestConfig)
-                .setUserAgent(userAgent)
-                .setDefaultCredentialsProvider(credentialsProvider)
-                .setRedirectStrategy(new MyRedirectStrategy(enableRedirects))
-                .setRetryHandler(retryHandler)
-                .addInterceptorFirst(new HttpRequestInterceptor() {
-                    @Override
-                    public void process(HttpRequest request, HttpContext context) {
-                        if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
-                            request.addHeader(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
-                        }
-                        for (String header : clientHeaderMap.keySet()) {
-                            if (request.containsHeader(header)) {
-                                Header overwritten = request.getFirstHeader(header);
-                                log.d(LOG_TAG,
-                                        String.format("Headers were overwritten! (%s | %s) overwrites (%s | %s)",
-                                                header, clientHeaderMap.get(header),
-                                                overwritten.getName(), overwritten.getValue())
-                                );
-
-                                //remove the overwritten header
-                                request.removeHeader(overwritten);
-                            }
-                            request.addHeader(header, clientHeaderMap.get(header));
-                        }
-                    }
-                })
-                // This seems to double unzip the response.
-                /*.addInterceptorFirst(new HttpResponseInterceptor() {
-                    @Override
-                    public void process(HttpResponse response, HttpContext context) {
-                        final HttpEntity entity = response.getEntity();
-                        if (entity == null) {
-                            return;
-                        }
-                        final Header encoding = entity.getContentEncoding();
-                        if (encoding != null) {
-                            for (HeaderElement element : encoding.getElements()) {
-                                if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
-                                    response.setEntity(new InflatingEntity(entity));
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                })*/.build();
-        return cachingClient;
-    }
-
-    protected HttpClientContext buildHttpClientContext() {
-        HttpClientContext httpContext = HttpClientContext.create();
-        httpContext.setCookieStore(cookieStore);
-        RequestConfig rc = httpContext.getRequestConfig();
-        RequestConfig.Builder rcBuilder = RequestConfig.copy(rc);
-        rc = rcBuilder.setConnectTimeout(connectTimeout)
-                .setSocketTimeout(responseTimeout)
-                .setConnectionRequestTimeout(connectTimeout)
-                .setRedirectsEnabled(enableRedirects)
-                .setRelativeRedirectsAllowed(enableRelativeRedirects)
-                .setCircularRedirectsAllowed(enableCircularRedirects).build();
-        httpContext.setRequestConfig(rc);
-        httpContext.setCredentialsProvider(credentialsProvider);
-        httpContext.setAuthCache(new BasicAuthCache());
-        if(usePreemptiveAuth) {
-            for(Map.Entry<AuthScope, Credentials> credentialsEntry : credentialsMap.entrySet()) {
-                AuthScope scope = credentialsEntry.getKey();
-                HttpHost host = new HttpHost(scope.getHost(), scope.getPort(), scope.getScheme());
-                httpContext.getAuthCache().put(host, new BasicScheme());
-            }
-        }
-        return httpContext;
     }
 
     public static void allowRetryExceptionClass(Class<?> cls) {
@@ -450,6 +287,169 @@ public class CachingAsyncHttpClient implements Closeable {
                 log.e(LOG_TAG, "wrappedEntity consume", t);
             }
         }
+    }
+
+    protected HttpClientConnectionManager createConnectionManager() {
+
+        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("https", sslConnectionSocketFactory)
+                .build();
+
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        cm.setMaxTotal(maxConcurrentConnections);
+        cm.setDefaultMaxPerRoute(maxConcurrentConnections);
+        SocketConfig.Builder socketBuilder = cm.getDefaultSocketConfig() != null ? SocketConfig.copy(cm.getDefaultSocketConfig()) : SocketConfig.custom();
+        SocketConfig socketConfig = socketBuilder.setTcpNoDelay(true).setSoTimeout(responseTimeout).build();
+        cm.setDefaultSocketConfig(socketConfig);
+        ConnectionConfig.Builder connectionBuilder = cm.getDefaultConnectionConfig() != null ? ConnectionConfig.copy(cm.getDefaultConnectionConfig()) : ConnectionConfig.custom();
+        ConnectionConfig connConfig = connectionBuilder.setBufferSize(DEFAULT_SOCKET_BUFFER_SIZE).build();
+        cm.setDefaultConnectionConfig(connConfig);
+        return cm;
+    }
+
+    /**
+     * Catch all in case you forget to close it!
+     *
+     * @throws Throwable
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        close();
+        super.finalize();
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (httpClient != null && httpClient instanceof Closeable) {
+            ((Closeable) httpClient).close();
+        }
+    }
+
+    public void setCacheSettings(File cacheFolder, int maxCacheEntries, int maxCachedObjectSizeBytes) {
+        this.cacheFolder = cacheFolder;
+        this.maxCacheEntries = maxCacheEntries;
+        this.maxCachedObjectSizeBytes = maxCachedObjectSizeBytes;
+    }
+
+    private synchronized HttpClient getHttpClient() {
+        if (httpClient == null) {
+            httpClient = buildHttpClient();
+        }
+        return httpClient;
+    }
+
+    public int getMaxConcurrentConnections() {
+        return maxConcurrentConnections;
+    }
+
+    public void setMaxConcurrentConnections(int maxConcurrentConnections) {
+        this.maxConcurrentConnections = maxConcurrentConnections;
+    }
+
+    protected HttpClient buildHttpClient() {
+        CacheConfig cacheConfig = CacheConfig.custom()
+                .setMaxCacheEntries(maxCacheEntries)
+                .setSharedCache(false)
+                .setMaxObjectSize(maxCachedObjectSizeBytes)
+                .build();
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(connectTimeout)
+                .setSocketTimeout(responseTimeout)
+                .setConnectionRequestTimeout(connectTimeout)
+                .setRedirectsEnabled(enableRedirects)
+                .setMaxRedirects(maxRedirects)
+                .setRelativeRedirectsAllowed(enableRelativeRedirects)
+                .setCircularRedirectsAllowed(enableCircularRedirects)
+                .build();
+
+        this.retryHandler = new RetryHandler(maxRetries, retrySleep);
+// These are the defaults
+//        Registry<AuthSchemeProvider> authRegistry = RegistryBuilder.<AuthSchemeProvider>create()
+//                .register(AuthSchemes.BASIC, new BasicSchemeFactory())
+//                .register(AuthSchemes.DIGEST, new DigestSchemeFactory())
+//                .register(AuthSchemes.NTLM, new NTLMSchemeFactory()).build();
+
+        final HttpClientConnectionManager cm = createConnectionManager();
+        Utils.asserts(cm != null, "Custom implementation of HttpClientConnectionManager returned null");
+        CloseableHttpClient cachingClient = CachingHttpClients.custom()
+                .setCacheConfig(cacheConfig)
+                .setCacheDir(cacheFolder)
+//TODO custom cache control - offline access etc                .setHttpCacheInvalidator()
+//                .setDefaultAuthSchemeRegistry(authRegistry)
+                .setConnectionManager(cm)
+                .setSSLSocketFactory(sslConnectionSocketFactory)
+                .setDefaultRequestConfig(requestConfig)
+                .setUserAgent(userAgent)
+                .setDefaultCredentialsProvider(credentialsProvider)
+                .setRedirectStrategy(new MyRedirectStrategy(enableRedirects))
+                .setRetryHandler(retryHandler)
+                .addInterceptorFirst(new HttpRequestInterceptor() {
+                    @Override
+                    public void process(HttpRequest request, HttpContext context) {
+                        if (!request.containsHeader(HEADER_ACCEPT_ENCODING)) {
+                            request.addHeader(HEADER_ACCEPT_ENCODING, ENCODING_GZIP);
+                        }
+                        for (String header : clientHeaderMap.keySet()) {
+                            if (request.containsHeader(header)) {
+                                Header overwritten = request.getFirstHeader(header);
+                                log.d(LOG_TAG,
+                                        String.format("Headers were overwritten! (%s | %s) overwrites (%s | %s)",
+                                                header, clientHeaderMap.get(header),
+                                                overwritten.getName(), overwritten.getValue())
+                                );
+
+                                //remove the overwritten header
+                                request.removeHeader(overwritten);
+                            }
+                            request.addHeader(header, clientHeaderMap.get(header));
+                        }
+                    }
+                })
+                // This seems to double unzip the response.
+                /*.addInterceptorFirst(new HttpResponseInterceptor() {
+                    @Override
+                    public void process(HttpResponse response, HttpContext context) {
+                        final HttpEntity entity = response.getEntity();
+                        if (entity == null) {
+                            return;
+                        }
+                        final Header encoding = entity.getContentEncoding();
+                        if (encoding != null) {
+                            for (HeaderElement element : encoding.getElements()) {
+                                if (element.getName().equalsIgnoreCase(ENCODING_GZIP)) {
+                                    response.setEntity(new InflatingEntity(entity));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                })*/.build();
+        return cachingClient;
+    }
+
+    protected HttpClientContext buildHttpClientContext() {
+        HttpClientContext httpContext = HttpClientContext.create();
+        httpContext.setCookieStore(cookieStore);
+        RequestConfig rc = httpContext.getRequestConfig();
+        RequestConfig.Builder rcBuilder = RequestConfig.copy(rc);
+        rc = rcBuilder.setConnectTimeout(connectTimeout)
+                .setSocketTimeout(responseTimeout)
+                .setConnectionRequestTimeout(connectTimeout)
+                .setRedirectsEnabled(enableRedirects)
+                .setRelativeRedirectsAllowed(enableRelativeRedirects)
+                .setCircularRedirectsAllowed(enableCircularRedirects).build();
+        httpContext.setRequestConfig(rc);
+        httpContext.setCredentialsProvider(credentialsProvider);
+        httpContext.setAuthCache(new BasicAuthCache());
+        if (usePreemptiveAuth) {
+            for (Map.Entry<AuthScope, Credentials> credentialsEntry : credentialsMap.entrySet()) {
+                AuthScope scope = credentialsEntry.getKey();
+                HttpHost host = new HttpHost(scope.getHost(), scope.getPort(), scope.getScheme());
+                httpContext.getAuthCache().put(host, new BasicScheme());
+            }
+        }
+        return httpContext;
     }
 
     /**
@@ -766,7 +766,7 @@ public class CachingAsyncHttpClient implements Closeable {
             log.d(LOG_TAG, "Provided credentials are null, not setting");
             return;
         }
-        if(credentialsProvider == null) {
+        if (credentialsProvider == null) {
             credentialsProvider = new BasicCredentialsProvider();
         }
         credentialsMap.put(authScope, credentials);
@@ -943,7 +943,7 @@ public class CachingAsyncHttpClient implements Closeable {
     public RequestHandle head(Context context, String url, Header[] headers, RequestParams params, ResponseHandlerInterface responseHandler) {
         HttpUriRequest request = new HttpHead(getUrlWithQueryString(isUrlEncodingEnabled, url, params));
         if (headers != null) request.setHeaders(headers);
-        
+
         return sendRequest(getHttpClient(), buildHttpClientContext(), request, null, responseHandler,
                 context);
     }
@@ -1422,8 +1422,8 @@ public class CachingAsyncHttpClient implements Closeable {
                 uriRequest.setHeader(HEADER_CONTENT_TYPE, contentType);
             }
         }
-        if(uriRequest instanceof HttpEntityEnclosingRequestBase) {
-            ((HttpEntityEnclosingRequestBase)uriRequest).setProtocolVersion(HttpVersion.HTTP_1_1);
+        if (uriRequest instanceof HttpEntityEnclosingRequestBase) {
+            ((HttpEntityEnclosingRequestBase) uriRequest).setProtocolVersion(HttpVersion.HTTP_1_1);
         }
 
         responseHandler.setRequestHeaders(uriRequest.getAllHeaders());

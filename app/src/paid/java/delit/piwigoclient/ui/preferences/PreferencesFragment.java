@@ -9,7 +9,7 @@ import delit.piwigoclient.R;
 public class PreferencesFragment extends CommonPreferencesFragment {
 
     protected FragmentPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
-        return new CommonPreferencesPagerAdapter(childFragmentManager);
+        return new PaidPreferencesPagerAdapter(childFragmentManager);
     }
 
     protected class PaidPreferencesPagerAdapter extends CommonPreferencesPagerAdapter {
@@ -32,7 +32,7 @@ public class PreferencesFragment extends CommonPreferencesFragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 3:
-                    return AutoUploadJobPreferenceFragment.newInstance(0);
+                    return AutoUploadJobsPreferenceFragment.newInstance();
                 default:
                     return super.getItem(position);
             }

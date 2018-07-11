@@ -25,36 +25,10 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
     private final String username;
     private final String userType;
 
-    public UserGetInfoResponseHandler(@NonNull String username,@NonNull String userType) {
+    public UserGetInfoResponseHandler(@NonNull String username, @NonNull String userType) {
         super("pwg.users.getList", TAG);
         this.username = username;
         this.userType = userType;
-    }
-
-    @Override
-    public RequestParams buildRequestParameters() {
-        RequestParams params = new RequestParams();
-        params.put("method", getPiwigoMethod());
-        params.put("username", username);
-        params.put("status", userType);
-        params.put("page", "0");
-        params.put("per_page", "5");
-        params.put("display", "username,email,status,level,groups,enabled_high,last_visit"); // useful information for the app
-        params.put("order", "last_visit");
-        return params;
-    }
-
-    @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        JsonObject result = rsp.getAsJsonObject();
-        JsonObject pagingObj = result.get("paging").getAsJsonObject();
-        int page = pagingObj.get("page").getAsInt();
-        int pageSize = pagingObj.get("per_page").getAsInt();
-        int itemsOnPage = pagingObj.get("count").getAsInt();
-        JsonArray usersObj = result.get("users").getAsJsonArray();
-        ArrayList<User> users = parseUsersFromJson(usersObj);
-        PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse r = new PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
-        storeResponse(r);
     }
 
     public static ArrayList<User> parseUsersFromJson(JsonArray usersObj) throws JSONException {
@@ -81,11 +55,11 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
             email = emailJsonElem.getAsString();
         }
         boolean highDefEnabled = false;
-        if(userObj.has("enabled_high")) {
+        if (userObj.has("enabled_high")) {
             highDefEnabled = userObj.get("enabled_high").getAsBoolean();
         }
         Date lastVisitDate = null;
-        if(userObj.has("last_visit") && !userObj.get("last_visit").isJsonNull()) {
+        if (userObj.has("last_visit") && !userObj.get("last_visit").isJsonNull()) {
             String lastVisitDateStr = userObj.get("last_visit").getAsString();
             if (lastVisitDateStr != null) {
                 try {
@@ -106,6 +80,32 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
         user.setGroups(groups);
 
         return user;
+    }
+
+    @Override
+    public RequestParams buildRequestParameters() {
+        RequestParams params = new RequestParams();
+        params.put("method", getPiwigoMethod());
+        params.put("username", username);
+        params.put("status", userType);
+        params.put("page", "0");
+        params.put("per_page", "5");
+        params.put("display", "username,email,status,level,groups,enabled_high,last_visit"); // useful information for the app
+        params.put("order", "last_visit");
+        return params;
+    }
+
+    @Override
+    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+        JsonObject result = rsp.getAsJsonObject();
+        JsonObject pagingObj = result.get("paging").getAsJsonObject();
+        int page = pagingObj.get("page").getAsInt();
+        int pageSize = pagingObj.get("per_page").getAsInt();
+        int itemsOnPage = pagingObj.get("count").getAsInt();
+        JsonArray usersObj = result.get("users").getAsJsonArray();
+        ArrayList<User> users = parseUsersFromJson(usersObj);
+        PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse r = new PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
+        storeResponse(r);
     }
 
 }

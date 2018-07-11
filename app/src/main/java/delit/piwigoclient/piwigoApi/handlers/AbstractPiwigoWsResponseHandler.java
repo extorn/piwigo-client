@@ -2,6 +2,7 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.util.Log;
 
+import com.google.android.gms.common.util.ArrayUtils;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,6 +35,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     private final String piwigoMethod;
     private RequestParams requestParams;
     private String nestedFailureMethod;
+    private Throwable nestedFailure;
     private Gson gson;
 
     protected AbstractPiwigoWsResponseHandler(String piwigoMethod, String tag) {
@@ -47,7 +49,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     private final RequestParams getRequestParameters() {
-        if(requestParams == null) {
+        if (requestParams == null) {
             requestParams = buildRequestParameters();
         }
         return requestParams;
@@ -58,11 +60,16 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     @Override
     public void clearCallDetails() {
         nestedFailureMethod = null;
+        nestedFailure = null;
         super.clearCallDetails();
     }
 
     public String getNestedFailureMethod() {
         return nestedFailureMethod;
+    }
+
+    public Throwable getNestedFailure() {
+        return nestedFailure;
     }
 
     protected Gson buildGson() {
@@ -74,7 +81,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     protected Gson getGson() {
-        if(gson == null) {
+        if (gson == null) {
             gson = buildGson();
         }
         return gson;
@@ -84,13 +91,24 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
         String response = null;
         try {
-
-            PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(new ByteArrayInputStream(responseBody)), PiwigoJsonResponse.class);
+            int idx = -1;
+            for(int i = 0; i < responseBody.length; i++) {
+                if(responseBody[i] == '{') {
+                    idx = i;
+                    break;
+                }
+            }
+            int jsonStartsAt = idx;
+            ByteArrayInputStream jsonBis = new ByteArrayInputStream(responseBody);
+            if(jsonStartsAt > 0) {
+                jsonBis.skip(jsonStartsAt - 1);
+            }
+            PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(jsonBis), PiwigoJsonResponse.class);
             processJsonResponse(getMessageId(), piwigoMethod, piwigoResponse, responseBody);
 
         } catch (JsonSyntaxException e) {
             boolean handled = handleLogLoginFailurePluginResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
-            if(!handled) {
+            if (!handled) {
                 PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
                 storeResponse(r);
             }
@@ -101,15 +119,15 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     private boolean handleLogLoginFailurePluginResponse(int statusCode, Header[] headers, byte[] responseBody, JsonSyntaxException e, boolean hasBrandNewSession) {
-        if(e.getMessage().equals("java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")) {
+        if (e.getMessage().equals("java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")) {
             int idx = 0;
-            for(int i = responseBody.length - 1; i > 0; i--) {
-                if('{' == responseBody[i]) {
+            for (int i = responseBody.length - 1; i > 0; i--) {
+                if ('{' == responseBody[i]) {
                     idx = i;
                     break;
                 }
             }
-            if(idx > 0) {
+            if (idx > 0) {
                 byte[] actualJson = Arrays.copyOfRange(responseBody, idx, responseBody.length);
                 onSuccess(statusCode, headers, actualJson, hasBrandNewSession);
                 // skip remaining method code.
@@ -142,52 +160,17 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         }
     }
 
-    protected void runAndWaitForHandlerToFinish(AbstractPiwigoWsResponseHandler handler) {
-        handler.setCallDetails(getContext(), getPiwigoServerUrl(), !getUseSynchronousMode());
-        handler.setPublishResponses(false);
-        handler.runCall();
-        if(handler.isRunning()) {
-            long callTimeoutAtTime = System.currentTimeMillis() + 300000;
-
-            synchronized (handler) {
-                boolean timedOut = false;
-                while (handler.isRunning() && !isCancelCallAsap() && !timedOut) {
-                    long waitForMillis = callTimeoutAtTime - System.currentTimeMillis();
-                    if (waitForMillis > 0) {
-                        try {
-                            handler.wait(waitForMillis);
-                        } catch (InterruptedException e) {
-                            // Either this wait has timed out or the handler has completed okay and notified us (ignore the error)
-                        }
-                    } else {
-                        timedOut = true;
-                        if (BuildConfig.DEBUG) {
-                            Log.e(handler.getTag(), "Service call cancelled before handler could finish running");
-                        }
-                        handler.cancelCallAsap();
-                    }
-                }
-                if(isCancelCallAsap()) {
-                    handler.cancelCallAsap();
-                }
-            }
-            if (handler.isRunning()) {
-                if (BuildConfig.DEBUG) {
-                    Log.e(handler.getTag(), "Timeout while waiting for service call handler to finish running");
-                }
-                handler.cancelCallAsap();
-            }
-        }
-    }
-
     protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
+        setError(new Throwable(rsp.getMessage()));
         PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, rsp.getErr(), rsp.getMessage());
         storeResponse(r);
     }
 
     protected void reportNestedFailure(AbstractBasicPiwigoResponseHandler nestedHandler) {
-        if(nestedHandler instanceof AbstractPiwigoWsResponseHandler) {
-            nestedFailureMethod = ((AbstractPiwigoWsResponseHandler)nestedHandler).getPiwigoMethod();
+        if (nestedHandler instanceof AbstractPiwigoWsResponseHandler) {
+            nestedFailureMethod = ((AbstractPiwigoWsResponseHandler) nestedHandler).getPiwigoMethod();
+            nestedFailure = ((AbstractPiwigoWsResponseHandler) nestedHandler).getError();
+            setError(nestedHandler.getError());
         }
         super.reportNestedFailure(nestedHandler);
     }
@@ -203,18 +186,18 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
         if (BuildConfig.DEBUG) {
             String errorBody = null;
-            if(responseBody != null) {
+            if (responseBody != null) {
                 errorBody = new String(responseBody);
             }
 
-            if(getNestedFailureMethod() != null) {
+            if (getNestedFailureMethod() != null) {
                 Log.e(getTag(), getNestedFailureMethod() + " onFailure: \n" + errorBody, error);
             } else {
                 Log.e(getTag(), piwigoMethod + " onFailure: \n" + getRequestParameters() + '\n' + errorBody, error);
             }
         }
         String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
-        if(getNestedFailureMethod() != null) {
+        if (getNestedFailureMethod() != null) {
             errorMsg = getNestedFailureMethod() + " : " + errorMsg;
         } else {
             errorMsg = getPiwigoMethod() + " : " + errorMsg;
@@ -227,10 +210,10 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
 //        String thread = Thread.currentThread().getName();
-        if(BuildConfig.DEBUG) {
-            Log.d(getTag(), "calling " + getPiwigoWsApiUri() + '&' + buildRequestParameters().toString());
+        if (BuildConfig.DEBUG) {
+            Log.d(getTag(), "calling " + getPiwigoWsApiUri() + '&' + getRequestParameters().toString());
         }
+        Log.e(getTag(), "Invoking call to server ("+getRequestParameters()+") thread from thread " + Thread.currentThread().getName());
         return client.post(getPiwigoWsApiUri(), getRequestParameters(), handler);
     }
-
 }

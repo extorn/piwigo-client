@@ -3,7 +3,6 @@ package delit.piwigoclient.piwigoApi.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
 
@@ -13,8 +12,6 @@ import java.util.StringTokenizer;
 
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
-import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -33,34 +30,13 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        if(PiwigoSessionDetails.getInstance() != null && !PiwigoSessionDetails.getInstance().isSessionMayHaveExpired()) {
-            onPiwigoSessionRetrieved();
-            return null;
-        } else {
-            return super.runCall(client, handler);
-        }
-    }
-
-    @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoSessionDetails oldCredentials = PiwigoSessionDetails.getInstance();
-        PiwigoSessionDetails.setInstance(parseSessionDetails(rsp));
+        PiwigoSessionDetails oldCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        PiwigoSessionDetails newCredentials = parseSessionDetails(rsp);
+        PiwigoSessionDetails.setInstance(getConnectionPrefs(), newCredentials);
 
-        PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials);
-        onPiwigoSessionRetrieved();
+        PiwigoSessionStatusRetrievedResponse r = new PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials, newCredentials);
         storeResponse(r);
-    }
-
-    private void onPiwigoSessionRetrieved() {
-        if(PiwigoSessionDetails.getInstance() != null) {
-            //TODO forcing true will allow thumbnails to be made available (with extra call) for albums hidden to admin users.
-            CommunitySessionStatusResponseHandler communitySessionLoadHandler = new CommunitySessionStatusResponseHandler(false);
-            runAndWaitForHandlerToFinish(communitySessionLoadHandler);
-            if(!PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-                reportNestedFailure(communitySessionLoadHandler);
-            }
-        }
     }
 
     private PiwigoSessionDetails parseSessionDetails(JsonElement rsp) throws JSONException {
@@ -71,7 +47,7 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         String piwigoVersion = result.get("version").getAsString();
         Set<String> availableSizes = new HashSet<>();
         JsonElement availableSizesJsonElem = result.get("available_sizes");
-        if(availableSizesJsonElem == null || availableSizesJsonElem.isJsonNull()) {
+        if (availableSizesJsonElem == null || availableSizesJsonElem.isJsonNull()) {
             // the sizes will be empty and thus warnings will be presented to the user.
         } else {
             JsonArray availableSizesArr = availableSizesJsonElem.getAsJsonArray();
@@ -87,12 +63,12 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         if (userStatus.equals("admin") || userStatus.equals("webmaster")) {
             JsonElement uploadChunkSizeElem = result.get("upload_form_chunk_size");
             long uploadChunkSizeKb = -1L;
-            if(uploadChunkSizeElem != null && !uploadChunkSizeElem.isJsonNull()) {
+            if (uploadChunkSizeElem != null && !uploadChunkSizeElem.isJsonNull()) {
                 uploadChunkSizeKb = uploadChunkSizeElem.getAsLong();
             }
             JsonElement fileTypesUploadAllowedJsonElem = result.get("upload_file_types");
             Set<String> uploadFileTypesSet;
-            if(fileTypesUploadAllowedJsonElem != null && !fileTypesUploadAllowedJsonElem.isJsonNull()) {
+            if (fileTypesUploadAllowedJsonElem != null && !fileTypesUploadAllowedJsonElem.isJsonNull()) {
                 String uploadFileTypes = fileTypesUploadAllowedJsonElem.getAsString();
                 StringTokenizer st = new StringTokenizer(uploadFileTypes, ",");
                 uploadFileTypesSet = new HashSet<>(st.countTokens());
@@ -102,11 +78,29 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
             } else {
                 uploadFileTypesSet = new HashSet<>(0);
             }
-            sessionDetails = new PiwigoSessionDetails(serverUrl, userGuid, user, userStatus, piwigoVersion, availableSizes, uploadFileTypesSet, uploadChunkSizeKb, token);
+            sessionDetails = new PiwigoSessionDetails(getConnectionPrefs(), serverUrl, userGuid, user, userStatus, piwigoVersion, availableSizes, uploadFileTypesSet, uploadChunkSizeKb, token);
         } else {
-            sessionDetails = new PiwigoSessionDetails(serverUrl, userGuid, user, userStatus, piwigoVersion, availableSizes, token);
+            sessionDetails = new PiwigoSessionDetails(getConnectionPrefs(), serverUrl, userGuid, user, userStatus, piwigoVersion, availableSizes, token);
         }
         return sessionDetails;
     }
 
+    public static class PiwigoSessionStatusRetrievedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final PiwigoSessionDetails oldCredentials, newCredentials;
+
+        public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod, PiwigoSessionDetails oldCredentials, PiwigoSessionDetails newCredentials) {
+            super(messageId, piwigoMethod, true);
+            this.oldCredentials = oldCredentials;
+            this.newCredentials = newCredentials;
+        }
+
+        public PiwigoSessionDetails getOldCredentials() {
+            return oldCredentials;
+        }
+
+        public PiwigoSessionDetails getNewCredentials() {
+            return newCredentials;
+        }
+    }
 }

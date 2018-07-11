@@ -9,7 +9,6 @@ import java.io.FileFilter;
 import java.util.ArrayList;
 
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 
 public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
 

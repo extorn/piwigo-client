@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 
@@ -17,6 +19,8 @@ import java.net.URI;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+
+import static android.view.View.VISIBLE;
 
 /**
  * Created by gareth on 12/07/17.
@@ -54,14 +58,14 @@ public class AdsManager {
     }
 
     public synchronized void updateShowAdvertsSetting(Context context) {
-        String serverAddress = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(getPrefs(context), context);
+        String serverAddress = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(getPrefs(context), context);
         showAds = !BuildConfig.PAID_VERSION;
         if(showAds) {
             // can we disable the ads another way?
             if (!serverAddress.equals("")) {
                 try {
                     String host = URI.create(serverAddress).getHost();
-                    showAds = !"sail2port.ddns.net".equals(host);
+                    showAds = BuildConfig.DEBUG || !"sail2port.ddns.net".equals(host);
                 } catch (IllegalArgumentException e) {
                     showAds = true;
                 }
@@ -124,6 +128,45 @@ public class AdsManager {
             return true;
         }
         return false;
+    }
+
+    public static class MyBannerAdListener extends AdListener {
+        private AdView advertView;
+        private int retries;
+
+        public MyBannerAdListener(AdView advertView) {
+            this.advertView = advertView;
+            advertView.setVisibility(VISIBLE);
+            advertView.setAdListener(this);
+            if(!advertView.isLoading()) {
+                loadAdvert();
+            }
+        }
+
+        private void loadAdvert() {
+            advertView.loadAd(new AdRequest.Builder().build());
+        }
+
+        public void onAdFailedToLoad(int var1) {
+            if(var1 == 3) {
+                retries++;
+            }
+            if(retries < 3) {
+                if(BuildConfig.DEBUG) {
+                    Log.d("BannerAd", "Advert failed to load, retrying");
+                }
+                loadAdvert();
+            } else {
+//                if(BuildConfig.DEBUG) {
+//                    Log.d("BannerAd", "Advert failed to load 3 times, hiding");
+//                }
+//                advertView.setVisibility(View.GONE);
+            }
+        }
+
+        public void onAdLoaded() {
+            retries = 0;
+        }
     }
 
     class MyAdListener extends AdListener {

@@ -10,26 +10,27 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.DialogPreference;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.common.util.Strings;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.list.MultiSourceListAdapter;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.util.ObjectUtils;
 
 /**
@@ -39,8 +40,7 @@ import delit.piwigoclient.util.ObjectUtils;
 public class ServerConnectionsListPreference extends DialogPreference {
 
     private boolean mValueSet;
-    private RecyclerView itemListView;
-    private CustomImageButton addListItemButton;
+    private ListView itemListView;
     private String mValue;
 
     public ServerConnectionsListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -81,29 +81,33 @@ public class ServerConnectionsListPreference extends DialogPreference {
     @Override
     public CharSequence getSummary() {
         SharedPreferences prefs = getAppSharedPreferences();
-        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(prefs, getContext());
-        ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(activeProfile);
-        ServerConnection activeConnection = new ServerConnection(activeProfile,
-                selectedPref.getPiwigoServerAddress(prefs, getContext()),
-                selectedPref.getPiwigoUsername(prefs, getContext()));
+//        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(prefs, getContext());
+        ServerConnection activeConnection;
+        if(mValue != null) {
+            ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(mValue);
+            activeConnection = new ServerConnection(mValue,
+                    selectedPref.getPiwigoServerAddress(prefs, getContext()),
+                    selectedPref.getPiwigoUsername(prefs, getContext()));
+        } else {
+            activeConnection = new ServerConnection(mValue, null,null);
+        }
         return activeConnection.getSummary(getContext());
     }
 
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        mValue = super.getPersistedString("");
+        mValue = super.getPersistedString(null);
         View view = buildListView();
         builder.setView(view);
     }
 
     private View buildListView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_recycler_list, null, false);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_list, null, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }
@@ -116,26 +120,11 @@ public class ServerConnectionsListPreference extends DialogPreference {
         heading.setVisibility(View.VISIBLE);
 
         itemListView = view.findViewById(R.id.list);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        itemListView.setLayoutManager(mLayoutManager);
-        ListAdapter adapter = new ListAdapter();
-        SharedPreferences prefs = getAppSharedPreferences();
-        adapter.setData(loadServerConnections(prefs));
-        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(prefs, getContext());
-        adapter.setSelection(adapter.getItemPosition(activeProfile));
-        itemListView.setAdapter(adapter);
 
-        addListItemButton = view.findViewById(R.id.list_action_add_item_button);
-        addListItemButton.setVisibility(View.VISIBLE);
-        addListItemButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onSelectItemsToAddToList();
-            }
-        });
-
-        Button saveChangesButton = view.findViewById(R.id.list_action_save_button);
-        saveChangesButton.setVisibility(View.GONE);
+        view.findViewById(R.id.list_action_cancel_button).setVisibility(View.GONE);
+        view.findViewById(R.id.list_action_toggle_all_button).setVisibility(View.GONE);
+        view.findViewById(R.id.list_action_add_item_button).setVisibility(View.GONE);
+        view.findViewById(R.id.list_action_save_button).setVisibility(View.GONE);
 
         return view;
     }
@@ -147,7 +136,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
     private ArrayList<ServerConnection> loadServerConnections(SharedPreferences prefs) {
         Set<String> profiles = ConnectionPreferences.getConnectionProfileList(prefs, getContext());
         ArrayList<ServerConnection> connections = new ArrayList<>();
-        if(profiles != null) {
+        if(profiles.size() > 0) {
             for (String p : profiles) {
                 ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(p);
                 connections.add(new ServerConnection(p,
@@ -155,9 +144,10 @@ public class ServerConnectionsListPreference extends DialogPreference {
                         profilePrefs.getPiwigoUsername(prefs, getContext())));
             }
         } else {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             connections.add(new ServerConnection("",
-                    ConnectionPreferences.getPiwigoServerAddress(prefs, getContext()),
-                    ConnectionPreferences.getPiwigoUsername(prefs, getContext())));
+                    connectionPrefs.getPiwigoServerAddress(prefs, getContext()),
+                    connectionPrefs.getPiwigoUsername(prefs, getContext())));
         }
         return connections;
     }
@@ -171,19 +161,42 @@ public class ServerConnectionsListPreference extends DialogPreference {
     @Override
     protected void showDialog(Bundle state) {
         super.showDialog(state);
-        if(itemListView.getAdapter().getItemCount() == 1) {
+        loadListValues();
+        if(itemListView.getAdapter().getCount() == 1) {
             // ensure the value gets set.
+            ((ServerConnectionProfilesListAdapter)itemListView.getAdapter()).selectAllItemIds();
             onClick(getDialog(), DialogInterface.BUTTON_POSITIVE);
             getDialog().dismiss();
             return;
         }
     }
 
+    private void loadListValues() {
+
+        ArrayList<ServerConnection> serverConnections = loadServerConnections(getAppSharedPreferences());
+//        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(getSharedPreferences(), getContext());
+        HashSet<Long> selectedIdx = new HashSet<>(1);
+        int idxToSelect = 0;
+        for(ServerConnection c : serverConnections) {
+            if(c.getProfileName().equals(mValue)) {
+                selectedIdx.add(Long.valueOf(idxToSelect));
+                break;
+            }
+            idxToSelect++;
+        }
+
+
+        BaseRecyclerViewAdapterPreferences viewPrefs = new BaseRecyclerViewAdapterPreferences();
+        viewPrefs.selectable(false, false);
+        ServerConnectionProfilesListAdapter adapter = new ServerConnectionProfilesListAdapter(getContext(), serverConnections, viewPrefs);
+        adapter.linkToListView(itemListView, selectedIdx, selectedIdx);
+    }
+
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if(positiveResult) {
             mValueSet = false; // force the value to be saved.
-            ServerConnection selectedItem = ((ListAdapter)itemListView.getAdapter()).getSelectedItem();
+            ServerConnection selectedItem = ((ServerConnectionProfilesListAdapter)itemListView.getAdapter()).getSelectedItems().iterator().next();
 
             if (callChangeListener(selectedItem==null?null: selectedItem.profileName)) {
                 setValue(selectedItem==null?null:selectedItem.profileName);
@@ -286,7 +299,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
             if(serverName == null) {
                 return c.getString(R.string.server_connection_preference_summary_default);
             }
-            String user = username;
+            String user = Strings.emptyToNull(username);
             if(user == null) {
                 user = c.getString(R.string.server_connection_preference_user_guest);
             }
@@ -294,101 +307,34 @@ public class ServerConnectionsListPreference extends DialogPreference {
         }
     }
 
-    private class ServerConnectionViewHolder extends RecyclerView.ViewHolder {
+    private class ServerConnectionProfilesListAdapter extends MultiSourceListAdapter<ServerConnection, BaseRecyclerViewAdapterPreferences> {
 
-        private final TextView detailView;
-        private final TextView nameView;
-
-        public ServerConnectionViewHolder(View itemView) {
-            super(itemView);
-            nameView = itemView.findViewById(R.id.name);
-            detailView = itemView.findViewById(R.id.details);
-        }
-
-        public void populateFromItem(ServerConnection connection, boolean isSelected) {
-            nameView.setText(connection.getProfileName());
-            nameView.setSelected(isSelected);
-            detailView.setText(connection.getUsername() + '@' + connection.getServerName());
-            detailView.setSelected(isSelected);
-        }
-
-        protected class ViewClickListener implements View.OnClickListener {
-            private final ServerConnectionViewHolder vh;
-
-            public ViewClickListener(ServerConnectionViewHolder vh) {
-                this.vh = vh;
-            }
-
-            @Override
-            public void onClick(View v) {
-                int adapterPos = getAdapterPosition();
-
-                getDialog().dismiss();
-            }
-        }
-    }
-
-    private class ListAdapter extends RecyclerView.Adapter<ServerConnectionViewHolder> {
-
-        private int selectedItemPosition;
-        private ArrayList<ServerConnection> data;
-
-        public ListAdapter() {
-        }
-
-        public ArrayList<ServerConnection> getBackingObjectStore() {
-            return data;
+        public ServerConnectionProfilesListAdapter(Context context, ArrayList<ServerConnection> availableItems, BaseRecyclerViewAdapterPreferences adapterPrefs) {
+            super(context, availableItems, adapterPrefs);
         }
 
         @Override
-        public int getItemCount() {
-            return data.size();
-        }
-
-        public void setData(ArrayList<ServerConnection> data) {
-            this.data = data;
-            notifyDataSetChanged();
-        }
-
-        public void setSelection(int selectedItemPosition) {
-            this.selectedItemPosition = selectedItemPosition;
-        }
-
-        @NonNull
-        @Override
-        public ServerConnectionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_list_item_layout, parent, false);
-            return new ServerConnectionViewHolder(view);
+        public long getItemId(ServerConnection item) {
+            return getPosition(item);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ServerConnectionViewHolder holder, int position) {
-            holder.populateFromItem(getItem(position), selectedItemPosition == position);
+        protected int getItemViewLayoutRes() {
+            return R.layout.simple_list_item_checkable_layout;
         }
 
-        public ServerConnection getItem(int position) {
-            return data.get(position);
-        }
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return getItem(position).getProfileName().hashCode();
-//        }
+        @Override
+        protected void setViewContentForItemDisplay(View itemView, ServerConnection item, int levelInTreeOfItem) {
+            TextView nameView = itemView.findViewById(R.id.name);
+            TextView detailView = itemView.findViewById(R.id.details);
 
-        public int getItemPosition(String activeProfile) {
-            for (int i = 0; i < data.size(); i++) {
-                if(data.get(0).getProfileName().equals(activeProfile)) {
-                    return i;
-                }
-            }
-            return -1;
+            nameView.setText(item.getProfileName());
+            detailView.setText(item.getUsername() + '@' + item.getServerName());
         }
 
-        public ServerConnection getSelectedItem() {
-            if(selectedItemPosition < 0) {
-                return null;
-            }
-            return data.get(selectedItemPosition);
+        @Override
+        protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
+            return view.findViewById(R.id.checked);
         }
     }
 

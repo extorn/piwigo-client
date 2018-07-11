@@ -13,7 +13,6 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.Group;
@@ -49,12 +49,12 @@ import delit.piwigoclient.piwigoApi.handlers.GroupRemoveMembersResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.util.ViewListUtils;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.ViewListUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.GroupDeletedEvent;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
@@ -166,7 +166,7 @@ public class GroupFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if((!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
+        if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -176,8 +176,7 @@ public class GroupFragment extends MyFragment {
 
         AdView adView = v.findViewById(R.id.group_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }
@@ -403,8 +402,8 @@ public class GroupFragment extends MyFragment {
                 onGroupDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) {
                 onGroupPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse) {
                 onGroupInfoUpdated((PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse)response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAddGroupResponse) {
@@ -574,7 +573,7 @@ public class GroupFragment extends MyFragment {
 
     }
 
-    private void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onGetSubGalleries(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         this.availableGalleries = response.getAlbumNames();
         if (currentAccessibleAlbumIds != null) {
             populateAlbumPermissionsList();

@@ -45,4 +45,9 @@ public class EditTextPreference extends android.preference.EditTextPreference {
         }
         return null;
     }
+
+    @Override
+    protected void onDialogClosed(boolean positiveResult) {
+        super.onDialogClosed(positiveResult);
+    }
 }

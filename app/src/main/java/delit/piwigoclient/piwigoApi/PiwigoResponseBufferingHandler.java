@@ -40,6 +40,8 @@ import delit.piwigoclient.piwigoApi.upload.UploadJob;
  */
 
 public class PiwigoResponseBufferingHandler {
+    private static final String TAG = "PiwigoResponseHandler";
+    private static final AtomicLong nextHandlerId = new AtomicLong();
     private static volatile PiwigoResponseBufferingHandler defaultInstance;
     private final Handler callbackHandler;
     private final ConcurrentMap<Long, Response> responses = new ConcurrentSkipListMap<>();
@@ -47,7 +49,6 @@ public class PiwigoResponseBufferingHandler {
     private final ConcurrentMap<Long, PiwigoResponseListener> handlers = new ConcurrentSkipListMap<>();
     //Note: this isn't a great idea - potentially, if there's a bug, some child msg ids could get left lying around forever as orphans.
     private final LongSparseArray<LinkedHashSet<Long>> parkedChildMsgIds = new LongSparseArray<>();
-    private static final AtomicLong nextHandlerId = new AtomicLong();
 
     public PiwigoResponseBufferingHandler() {
         callbackHandler = new Handler(Looper.getMainLooper());
@@ -55,7 +56,7 @@ public class PiwigoResponseBufferingHandler {
 
     public synchronized static long getNextHandlerId() {
         long id = nextHandlerId.incrementAndGet();
-        if(id < 0) {
+        if (id < 0) {
             id = 0;
             nextHandlerId.set(0);
         }
@@ -83,18 +84,18 @@ public class PiwigoResponseBufferingHandler {
         List<Long> responsesMappingsToRemove = new ArrayList<>(10);
         List<Long> handlersToRemove = new ArrayList<>(10);
         HashMap<Long, Response> responsesToHandle = new HashMap<>();
-        for(Map.Entry<Long,Long> handlerResponseEntry : handlerResponseMap.entrySet()) {
-            if(handlerResponseEntry.getValue() == handler.getHandlerId()) { // deliberate object referemce equality.
+        for (Map.Entry<Long, Long> handlerResponseEntry : handlerResponseMap.entrySet()) {
+            if (handlerResponseEntry.getValue() == handler.getHandlerId()) { // deliberate object referemce equality.
                 long responseMessageId = handlerResponseEntry.getKey();
                 Response r = responses.remove(responseMessageId);
-                if(r != null) {
+                if (r != null) {
                     responsesToHandle.put(handlerResponseEntry.getKey(), r);
                 }
             }
         }
         for (Iterator<Response> iterator = responsesToHandle.values().iterator(); iterator.hasNext(); ) {
-            Response r =  iterator.next();
-            if(iterator.hasNext() && r.isEndResponse()) {
+            Response r = iterator.next();
+            if (iterator.hasNext() && r.isEndResponse()) {
                 // skip this response till last
                 iterator.next();
             }
@@ -109,7 +110,7 @@ public class PiwigoResponseBufferingHandler {
             }
             iterator.remove();
         }
-        if(responsesToHandle.size() > 0) {
+        if (responsesToHandle.size() > 0) {
             // we left the first item on the list as it is an end response which should be handled last for the handler after all other responses
             Response r = responsesToHandle.values().iterator().next();
             if (handler.canHandlePiwigoResponseNow(r)) {
@@ -124,21 +125,21 @@ public class PiwigoResponseBufferingHandler {
         }
 
         // check which handlers are not listening for anything else
-        for(Long responseId : responsesMappingsToRemove) {
+        for (Long responseId : responsesMappingsToRemove) {
             Long thisHandlerId = handlerResponseMap.remove(responseId);
-            if(thisHandlerId != null && !handlerResponseMap.containsValue(thisHandlerId)) {
+            if (thisHandlerId != null && !handlerResponseMap.containsValue(thisHandlerId)) {
                 handlersToRemove.add(thisHandlerId);
             }
         }
         // remove all the dead handlers.
-        for(Long handlerId : handlersToRemove) {
+        for (Long handlerId : handlersToRemove) {
             handlers.remove(handlerId);
         }
     }
 
     private void parkChildMessageId(long currentMessageId, long newMessageId) {
         LinkedHashSet<Long> spawn = parkedChildMsgIds.get(currentMessageId);
-        if(spawn == null) {
+        if (spawn == null) {
             spawn = new LinkedHashSet<>();
             parkedChildMsgIds.put(currentMessageId, spawn);
         }
@@ -153,7 +154,7 @@ public class PiwigoResponseBufferingHandler {
 
     public synchronized void preRegisterResponseHandlerForNewMessage(long currentMessageId, long newMessageId) {
         Long handlerId = handlerResponseMap.get(currentMessageId);
-        if(handlerId == null) {
+        if (handlerId == null) {
             // record the parentage for processing when a handler is re-addded.
             parkChildMessageId(currentMessageId, newMessageId);
         } else {
@@ -165,8 +166,8 @@ public class PiwigoResponseBufferingHandler {
         PiwigoResponseListener oldHandler = handlers.put(h.getHandlerId(), h);
         handlerResponseMap.put(messageId, h.getHandlerId());
         LinkedHashSet<Long> childMsgIds = popParkedChildMessageIds(messageId);
-        if(childMsgIds != null) {
-            for(Long childMsgId : childMsgIds) {
+        if (childMsgIds != null) {
+            for (Long childMsgId : childMsgIds) {
                 handlerResponseMap.put(childMsgId, h.getHandlerId());
             }
         }
@@ -178,7 +179,7 @@ public class PiwigoResponseBufferingHandler {
             callbackHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if(h.canHandlePiwigoResponseNow(r)) {
+                    if (h.canHandlePiwigoResponseNow(r)) {
                         h.handlePiwigoResponse(r);
                     } else {
                         //Trying to replace the handler and the response back on the queue for later processing.
@@ -197,14 +198,17 @@ public class PiwigoResponseBufferingHandler {
     public synchronized void processResponse(final Response response) {
         final PiwigoResponseListener handler;
         final Long handlerId;
-        if(response.isEndResponse()) {
+        if (response.isEndResponse()) {
             handlerId = handlerResponseMap.remove(response.getMessageId());
         } else {
             handlerId = handlerResponseMap.get(response.getMessageId());
         }
-        if(handlerId != null) {
+        if (handlerId != null) {
             handler = handlers.get(handlerId);
         } else {
+            if(BuildConfig.DEBUG) {
+                Log.e(TAG, "No handler registered for message with id " +response.getMessageId());
+            }
             handler = null;
         }
         if (handler != null) {
@@ -222,10 +226,10 @@ public class PiwigoResponseBufferingHandler {
                             }
                             responses.put(response.getMessageId(), response);
                         }
-                    } catch(IllegalArgumentException e) {
+                    } catch (IllegalArgumentException e) {
                         //TODO this keeps happening in the wild - sink it and the response for now to prevent crash.
                         // the handler is attached, but to an unrecognised component type
-                        if(BuildConfig.DEBUG) {
+                        if (BuildConfig.DEBUG) {
                             Log.e("PiwigoResponseHandler", "Handler attached to unrecognised parent component type", e);
                         }
                     }
@@ -246,9 +250,9 @@ public class PiwigoResponseBufferingHandler {
             Map.Entry<Long, Response> item = iter.next();
             if (item.getValue().getExpiresAt() < currentTime) {
                 // still no handler for this...
-                if(!handlerResponseMap.containsKey(item.getKey())) {
+                if (!handlerResponseMap.containsKey(item.getKey())) {
                     iter.remove();
-                    if(BuildConfig.DEBUG) {
+                    if (BuildConfig.DEBUG) {
                         Log.d("handlers", "Message expired before delivery could be made");
                     }
                 }
@@ -258,7 +262,7 @@ public class PiwigoResponseBufferingHandler {
 
     public synchronized PiwigoResponseListener deRegisterResponseHandler(long messageId) {
         Long handlerId = handlerResponseMap.remove(messageId);
-        if(handlerId != null) {
+        if (handlerId != null) {
             return handlers.remove(handlerId);
         }
         return null;
@@ -271,8 +275,8 @@ public class PiwigoResponseBufferingHandler {
     public synchronized Set<Long> getUnknownMessageIds(Set<Long> messageIdsToCheck) {
         Iterator<Long> iterator = messageIdsToCheck.iterator();
         while (iterator.hasNext()) {
-            Long next =  iterator.next();
-            if(!handlerResponseMap.containsKey(next)) {
+            Long next = iterator.next();
+            if (!handlerResponseMap.containsKey(next)) {
                 iterator.remove();
             }
         }
@@ -293,23 +297,8 @@ public class PiwigoResponseBufferingHandler {
         void setExpiresAt(long expiresAt);
     }
 
-    public static class CustomErrorResponse extends BaseResponse implements ErrorResponse {
-
-        private final String errorMessage;
-
-        public CustomErrorResponse(long messageId, String errorMessage) {
-            super(messageId);
-            this.errorMessage = errorMessage;
-        }
-
-        public String getErrorMessage() {
-            return errorMessage;
-        }
-    }
-
     public interface PiwigoResponseListener {
         /**
-         *
          * @param response
          * @return true if this response was meant for this handler.
          */
@@ -318,20 +307,6 @@ public class PiwigoResponseBufferingHandler {
         boolean canHandlePiwigoResponseNow(Response response);
 
         long getHandlerId();
-    }
-
-    public static class PiwigoSuccessResponse extends BasePiwigoResponse {
-
-        private final JsonElement response;
-
-        public PiwigoSuccessResponse(long messageId, String piwigoMethod, JsonElement response) {
-            super(messageId, piwigoMethod);
-            this.response = response;
-        }
-
-        public JsonElement getResponse() {
-            return response;
-        }
     }
 
     /**
@@ -346,6 +321,34 @@ public class PiwigoResponseBufferingHandler {
     public interface RemoteErrorResponse<T extends AbstractPiwigoDirectResponseHandler> extends ErrorResponse {
 
         T getHttpResponseHandler();
+    }
+
+    public static class CustomErrorResponse extends BaseResponse implements ErrorResponse {
+
+        private final String errorMessage;
+
+        public CustomErrorResponse(long messageId, String errorMessage) {
+            super(messageId);
+            this.errorMessage = errorMessage;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+    }
+
+    public static class PiwigoSuccessResponse extends BasePiwigoResponse {
+
+        private final JsonElement response;
+
+        public PiwigoSuccessResponse(long messageId, String piwigoMethod, JsonElement response) {
+            super(messageId, piwigoMethod);
+            this.response = response;
+        }
+
+        public JsonElement getResponse() {
+            return response;
+        }
     }
 
     public static class PiwigoServerErrorResponse extends BasePiwigoResponse implements RemoteErrorResponse {
@@ -381,8 +384,8 @@ public class PiwigoResponseBufferingHandler {
         public static final short OUTCOME_UNKNOWN = 0;
 
         private final String rawResponse;
-        private short requestOutcome;
         private final AbstractPiwigoWsResponseHandler requestHandler;
+        private short requestOutcome;
 
         public PiwigoUnexpectedReplyErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, short requestOutcome, String rawResponse) {
             super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod());
@@ -460,7 +463,7 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class UrlErrorResponse extends BaseUrlResponse implements RemoteErrorResponse  {
+    public static class UrlErrorResponse extends BaseUrlResponse implements RemoteErrorResponse {
 
         private final AbstractPiwigoDirectResponseHandler requestHandler;
         private final int statusCode;
@@ -570,20 +573,6 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoSessionStatusRetrievedResponse extends BasePiwigoResponse {
-
-        private final PiwigoSessionDetails oldCredentials;
-
-        public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod, PiwigoSessionDetails oldCredentials) {
-            super(messageId, piwigoMethod, true);
-            this.oldCredentials = oldCredentials;
-        }
-
-        public PiwigoSessionDetails getOldCredentials() {
-            return oldCredentials;
-        }
-    }
-
     public static class PiwigoGetMethodsAvailableResponse extends BasePiwigoResponse {
 
         public PiwigoGetMethodsAvailableResponse(long messageId, String piwigoMethod) {
@@ -608,26 +597,6 @@ public class PiwigoResponseBufferingHandler {
 
         public T getPiwigoResource() {
             return piwigoResource;
-        }
-    }
-
-    public static class PiwigoUserTagsUpdateTagsListResponse extends PiwigoResourceItemResponse {
-        private String error;
-
-        public PiwigoUserTagsUpdateTagsListResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
-            super(messageId, piwigoMethod, piwigoResource);
-        }
-
-        public void setError(String error) {
-            this.error = error;
-        }
-
-        public boolean hasError() {
-            return error != null;
-        }
-
-        public String getError() {
-            return error;
         }
     }
 
@@ -758,40 +727,6 @@ public class PiwigoResponseBufferingHandler {
     public static class PiwigoOnLogoutResponse extends BasePiwigoResponse {
         public PiwigoOnLogoutResponse(long messageId, String piwigoMethod) {
             super(messageId, piwigoMethod, true);
-        }
-    }
-
-    public static class PiwigoOnLoginResponse extends BasePiwigoResponse {
-        private boolean sessionRetrieved;
-        private boolean userDetailsRetrieved;
-        private PiwigoSessionDetails oldCredentials;
-
-        public PiwigoOnLoginResponse(long messageId, String piwigoMethod) {
-            super(messageId, piwigoMethod, true);
-        }
-
-        public void setSessionRetrieved() {
-            sessionRetrieved = true;
-        }
-
-        public boolean isSessionRetrieved() {
-            return sessionRetrieved;
-        }
-
-        public void setUserDetailsRetrieved() {
-            userDetailsRetrieved = true;
-        }
-
-        public boolean isUserDetailsRetrieved() {
-            return userDetailsRetrieved;
-        }
-
-        public void setOldCredentials(PiwigoSessionDetails oldCredentials) {
-            this.oldCredentials = oldCredentials;
-        }
-
-        public PiwigoSessionDetails getOldCredentials() {
-            return oldCredentials;
         }
     }
 
@@ -1044,19 +979,6 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoGetSubAlbumNamesResponse extends BasePiwigoResponse {
-        private final ArrayList<CategoryItemStub> albumNames;
-
-        public PiwigoGetSubAlbumNamesResponse(long messageId, String piwigoMethod, ArrayList<CategoryItemStub> albumNames) {
-            super(messageId, piwigoMethod, true);
-            this.albumNames = albumNames;
-        }
-
-        public ArrayList<CategoryItemStub> getAlbumNames() {
-            return albumNames;
-        }
-    }
-
     public static class PiwigoUpdateAlbumInfoResponse extends BasePiwigoResponse {
         private final CategoryItem album;
 
@@ -1295,6 +1217,23 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
+    public static class PiwigoCleanupPostUploadFailedResponse extends BaseResponse {
+        private final Response error;
+
+        public PiwigoCleanupPostUploadFailedResponse(long jobId, Response error) {
+            super(jobId, true);
+            this.error = error;
+        }
+
+        public Response getError() {
+            return error;
+        }
+
+        public long getJobId() {
+            return getMessageId();
+        }
+    }
+
     public static class PiwigoPrepareUploadFailedResponse extends BaseResponse {
 
         private final Response error;
@@ -1337,7 +1276,7 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoUploadFileLocalErrorResponse extends BaseResponse implements ErrorResponse  {
+    public static class PiwigoUploadFileLocalErrorResponse extends BaseResponse implements ErrorResponse {
 
         private final Exception error;
         private final File fileForUpload;
@@ -1477,7 +1416,7 @@ public class PiwigoResponseBufferingHandler {
         }
 
         public long getGroupId() {
-            if(groupIds.size() != 1) {
+            if (groupIds.size() != 1) {
                 throw new IllegalStateException("Can only use this method when there is known to be a single group id");
             }
             return groupIds.iterator().next();
@@ -1495,6 +1434,7 @@ public class PiwigoResponseBufferingHandler {
     public static class FileUploadCancelledResponse extends BaseResponse {
 
         private final File cancelledFile;
+
         public FileUploadCancelledResponse(long messageId, File cancelledFile) {
             super(messageId, true);
             this.cancelledFile = cancelledFile;

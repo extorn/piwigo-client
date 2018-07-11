@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -17,18 +18,6 @@ import delit.piwigoclient.util.Md5SumUtils;
 public class UploadJob implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private final long jobId;
-    private final long responseHandlerId;
-    private final boolean useTempFolder;
-    private HashMap<File, String> fileChecksums;
-    private final ArrayList<File> filesForUpload;
-    private final HashMap<File, Integer> fileUploadStatus;
-    private final HashMap<File, PartialUploadData> filePartialUploadProgress;
-    private final ArrayList<Long> uploadToCategoryParentage;
-    private final long uploadToCategory;
-    private final int privacyLevelWanted;
-    private boolean finished;
     private static final Integer CANCELLED = -1;
     private static final Integer UPLOADING = 0;
     private static final Integer UPLOADED = 1;
@@ -37,12 +26,28 @@ public class UploadJob implements Serializable {
     private static final Integer PENDING_APPROVAL = 4;
     private static final Integer REQUIRES_DELETE = 5;
     private static final Integer DELETED = 6;
+    private final long jobId;
+    private int jobConfigId = -1;
+    private boolean runInBackground;
+    private final long responseHandlerId;
+    private final ArrayList<File> filesForUpload;
+    private final HashMap<File, Integer> fileUploadStatus;
+    private final HashMap<File, PartialUploadData> filePartialUploadProgress;
+    private final ArrayList<Long> uploadToCategoryParentage;
+    private final long uploadToCategory;
+    private final int privacyLevelWanted;
+    private ConnectionPreferences.ProfilePreferences connectionPrefs;
+    private HashMap<File, String> fileChecksums;
+    private boolean finished;
     private long temporaryUploadAlbum = -1;
     private volatile transient boolean submitted = false;
     private volatile transient boolean runningNow = false;
+    private volatile transient boolean cancelUploadAsap;
+    private transient File loadedFromFile;
 
-    public UploadJob(long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel, boolean useTempFolder) {
+    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel) {
         this.jobId = jobId;
+        this.connectionPrefs = connectionPrefs;
         this.responseHandlerId = responseHandlerId;
         this.uploadToCategory = destinationCategory.getId();
         this.uploadToCategoryParentage = new ArrayList<>(destinationCategory.getParentageChain());
@@ -50,7 +55,18 @@ public class UploadJob implements Serializable {
         this.filesForUpload = new ArrayList<>(filesForUpload);
         this.fileUploadStatus = new HashMap<>(filesForUpload.size());
         this.filePartialUploadProgress = new HashMap<>(filesForUpload.size());
-        this.useTempFolder = useTempFolder;
+    }
+
+    public void setToRunInBackground() {
+        this.runInBackground = true;
+    }
+
+    public boolean isRunInBackground() {
+        return runInBackground;
+    }
+
+    public void cancelUploadAsap() {
+        this.cancelUploadAsap = true;
     }
 
     public synchronized void markFileAsUploading(File fileForUpload) {
@@ -78,10 +94,13 @@ public class UploadJob implements Serializable {
         return status == null || UPLOADING.equals(status);
     }
 
-    public boolean isUseTempFolder() {
-        return useTempFolder;
+    public int getJobConfigId() {
+        return jobConfigId;
     }
 
+    public void setJobConfigId(int jobConfigId) {
+        this.jobConfigId = jobConfigId;
+    }
 
     //
 //    public synchronized boolean isUploadOfFileInProgress(File fileForUpload) {
@@ -93,12 +112,16 @@ public class UploadJob implements Serializable {
         return getFilesWithStatus(PENDING_APPROVAL, CONFIGURED, DELETED, CANCELLED);
     }
 
-    public HashSet<File> getFilesWithStatus(Integer ... statuses) {
+    public HashSet<File> getFilesSuccessfullyUploaded() {
+        return getFilesWithStatus(PENDING_APPROVAL, CONFIGURED);
+    }
+
+    public HashSet<File> getFilesWithStatus(Integer... statuses) {
         HashSet<File> filesProcessedToEnd = new HashSet<>();
-        for(Map.Entry<File,Integer> fileStatusEntry : fileUploadStatus.entrySet()) {
+        for (Map.Entry<File, Integer> fileStatusEntry : fileUploadStatus.entrySet()) {
             Integer status = fileStatusEntry.getValue();
-            for(Integer i : statuses) {
-                if(status.equals(i)) {
+            for (Integer i : statuses) {
+                if (status.equals(i)) {
                     filesProcessedToEnd.add(fileStatusEntry.getKey());
                 }
             }
@@ -142,7 +165,6 @@ public class UploadJob implements Serializable {
     }
 
     /**
-     *
      * @param f file to cancel upload of
      * @return true if was possible to immediately cancel, false if there might be a little delay.
      */
@@ -164,9 +186,17 @@ public class UploadJob implements Serializable {
         return privacyLevelWanted;
     }
 
+    public boolean isCancelUploadAsap() {
+        return cancelUploadAsap;
+    }
+
     public synchronized boolean isFileUploadStillWanted(File file) {
         Integer status = fileUploadStatus.get(file);
         return !CANCELLED.equals(status);
+    }
+
+    public ConnectionPreferences.ProfilePreferences getConnectionPrefs() {
+        return connectionPrefs;
     }
 
     public long getUploadToCategory() {
@@ -184,11 +214,11 @@ public class UploadJob implements Serializable {
 //        private static final Integer REQUIRES_DELETE = 5;
 //        private static final Integer DELETED = 6;
         Integer status = fileUploadStatus.get(f);
-        if(status == null) {
+        if (status == null) {
             status = Integer.MIN_VALUE;
         }
         int progress = 0;
-        if(UPLOADING.equals(status)) {
+        if (UPLOADING.equals(status)) {
 
             PartialUploadData progressData = filePartialUploadProgress.get(f);
             if (progressData == null) {
@@ -197,13 +227,13 @@ public class UploadJob implements Serializable {
                 progress = Math.round((float) (((double) progressData.getBytesUploaded()) / f.length() * 90));
             }
         }
-        if(status >= UPLOADED) {
+        if (status >= UPLOADED) {
             progress = 90;
         }
-        if(status >= VERIFIED) {
-            progress+=5;
+        if (status >= VERIFIED) {
+            progress += 5;
         }
-        if(status >= CONFIGURED) {
+        if (status >= CONFIGURED) {
             progress += 5;
         }
         return progress;
@@ -211,13 +241,17 @@ public class UploadJob implements Serializable {
 
     public synchronized void calculateChecksums() {
         ArrayList<File> filesNotFinished = getFilesNotYetUploaded();
-        if(fileChecksums == null) {
+        boolean newJob = false;
+        if (fileChecksums == null) {
             fileChecksums = new HashMap<>(filesForUpload.size());
-        } else {
-            fileChecksums.clear();
+            newJob = true;
         }
         for (File f : filesNotFinished) {
+            // recalculate checksums for all files not yet uploaded
             final String checksum = Md5SumUtils.calculateMD5(f);
+            if(!newJob) {
+                fileChecksums.remove(f);
+            }
             fileChecksums.put(f, checksum);
         }
     }
@@ -240,12 +274,12 @@ public class UploadJob implements Serializable {
 
     public synchronized void addFileUploaded(File fileForUpload, ResourceItem itemOnServer) {
         PartialUploadData uploadData = filePartialUploadProgress.get(fileForUpload);
-        if(uploadData == null) {
+        if (uploadData == null) {
             filePartialUploadProgress.put(fileForUpload, new PartialUploadData(itemOnServer));
         } else {
             uploadData.setUploadedItem(itemOnServer);
         }
-        if(itemOnServer == null && PiwigoSessionDetails.isUseCommunityPlugin()) {
+        if (itemOnServer == null && PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs())) {
             // to be expected if already uploaded but not yet approved.
             fileUploadStatus.put(fileForUpload, PENDING_APPROVAL);
         } else {
@@ -255,7 +289,7 @@ public class UploadJob implements Serializable {
 
     public synchronized ResourceItem getUploadedFileResource(File fileUploaded) {
         PartialUploadData partialUploadData = filePartialUploadProgress.get(fileUploaded);
-        if(partialUploadData == null) {
+        if (partialUploadData == null) {
             // this file has been uploaded before by a different job.
             return null;
         }
@@ -279,7 +313,7 @@ public class UploadJob implements Serializable {
     public void markFileAsPartiallyUploaded(File fileForUpload, String uploadName, long bytesUploaded, long countChunksUploadedOkay) {
         String fileChecksum = fileChecksums.get(fileForUpload);
         PartialUploadData data = filePartialUploadProgress.get(fileForUpload);
-        if(data == null) {
+        if (data == null) {
             filePartialUploadProgress.put(fileForUpload, new PartialUploadData(uploadName, fileChecksum, bytesUploaded, countChunksUploadedOkay));
         } else {
             data.setUploadStatus(fileChecksum, bytesUploaded, countChunksUploadedOkay);
@@ -311,10 +345,6 @@ public class UploadJob implements Serializable {
         this.temporaryUploadAlbum = temporaryUploadAlbum;
     }
 
-    public void setSubmitted(boolean submitted) {
-        this.submitted = submitted;
-    }
-
     public void setRunning(boolean isRunningNow) {
         runningNow = isRunningNow;
     }
@@ -327,18 +357,55 @@ public class UploadJob implements Serializable {
         return submitted;
     }
 
-    public Map<File,String> getFileToFilenamesMap() {
+    public void setSubmitted(boolean submitted) {
+        this.submitted = submitted;
+    }
+
+    public Map<File, String> getFileToFilenamesMap() {
         Map<File, String> filenamesMap = new HashMap<>(filesForUpload.size());
-        for(File f : filesForUpload) {
+        for (File f : filesForUpload) {
             filenamesMap.put(f, f.getName());
         }
         return filenamesMap;
     }
 
+    public void filterPreviouslyUploadedFiles(HashMap<File, String> fileUploadedHashMap) {
+        for(HashMap.Entry<File,String> fileUploadedEntry : fileUploadedHashMap.entrySet()) {
+            File potentialDuplicateUpload = fileUploadedEntry.getKey();
+            if(filesForUpload.contains(potentialDuplicateUpload)) {
+                // a file at this absolute path has been uploaded previously to this end point
+                String checksum = fileChecksums.get(potentialDuplicateUpload);
+                if(checksum != null) {
+                    if (checksum.equals(fileUploadedEntry.getValue())) {
+                        // the file is identical to that previously uploaded (checksum check)
+                        if (!fileUploadStatus.containsKey(potentialDuplicateUpload)) {
+                            // this is a fresh target for this job
+                            filesForUpload.remove(fileUploadedEntry.getKey());
+                            fileChecksums.remove(fileUploadedEntry.getKey());
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    public boolean hasBeenRunBefore() {
+        return filePartialUploadProgress.size() > 0;
+    }
+
+    public void setLoadedFromFile(File loadedFromFile) {
+        this.loadedFromFile = loadedFromFile;
+    }
+
+    public File getLoadedFromFile() {
+        return loadedFromFile;
+    }
+
     protected static class PartialUploadData implements Serializable {
+        private final String uploadName;
         private long bytesUploaded;
         private long countChunksUploaded;
-        private final String uploadName;
         private String fileChecksum;
         private ResourceItem uploadedItem;
 
@@ -354,12 +421,12 @@ public class UploadJob implements Serializable {
             this.countChunksUploaded = countChunksUploaded;
         }
 
-        public void setUploadedItem(ResourceItem uploadedItem) {
-            this.uploadedItem = uploadedItem;
-        }
-
         public ResourceItem getUploadedItem() {
             return uploadedItem;
+        }
+
+        public void setUploadedItem(ResourceItem uploadedItem) {
+            this.uploadedItem = uploadedItem;
         }
 
         public long getBytesUploaded() {

@@ -41,7 +41,7 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
             long id = category.get("id").getAsLong();
             JsonElement nameElem = category.get("name");
             String name = null;
-            if(nameElem != null && !nameElem.isJsonNull()) {
+            if (nameElem != null && !nameElem.isJsonNull()) {
                 name = category.get("name").getAsString();
             }
 
@@ -49,7 +49,7 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
 
             JsonElement commentElem = category.get("comment");
             String description = null;
-            if(commentElem != null && !commentElem.isJsonNull()) {
+            if (commentElem != null && !commentElem.isJsonNull()) {
                 description = commentElem.getAsString();
             }
 
@@ -61,11 +61,11 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
             ArrayList<Long> parentageChain = new ArrayList<>(parentage.length);
             // Add root category first (all are children of root)
             parentageChain.add(0L);
-            for(String parentId : parentage) {
+            for (String parentId : parentage) {
                 parentageChain.add(Long.valueOf(parentId));
             }
             // remove this album from parentage list
-            parentageChain.remove(parentageChain.size() -1);
+            parentageChain.remove(parentageChain.size() - 1);
             item.setParentageChain(parentageChain);
             adminList.addItem(item);
         }

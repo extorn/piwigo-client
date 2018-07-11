@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -60,8 +61,8 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     @Override
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
         AlbumItemRecyclerViewAdapterPreferences prefs = super.updateViewPrefs();
-
-        if(PiwigoSessionDetails.isFullyLoggedIn() && !PiwigoSessionDetails.getInstance().isMethodsAvailableListAvailable()) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
             addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
         }
         return prefs;
@@ -100,11 +101,12 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     private boolean isTagSelectionAllowed() {
-        if(!PiwigoSessionDetails.isFullyLoggedIn() || isAppInReadOnlyMode()) {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(sessionDetails == null || !sessionDetails.isFullyLoggedIn() || isAppInReadOnlyMode()) {
             return false;
         }
-        boolean allowAdminEdit = PiwigoSessionDetails.isAdminUser();
-        boolean allowUserEdit = PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
+        boolean allowAdminEdit = sessionDetails.isAdminUser();
+        boolean allowUserEdit = sessionDetails.isUseUserTagPluginForUpdate();
         return allowAdminEdit || allowUserEdit;
     }
 
@@ -157,7 +159,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                 // action is ready for the next step.
                 tagMembershipChangesAction.makeChangesToLocalResources();
                 for(ResourceItem item : tagMembershipChangesAction.resourcesReadyToProcess) {
-                    if(PiwigoSessionDetails.isAdminUser()) {
+                    if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
                         addActiveServiceCall(R.string.progress_resource_details_updating,new ImageUpdateInfoResponseHandler(item).invokeAsync(getContext()));
                     } else {
                         addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateTagsResponseHandler(item).invokeAsync(getContext()));
@@ -184,7 +186,9 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
-                getViewPrefs().setAllowItemSelection(!isPreventItemSelection());
+                //FIXME - this is not how to prevent item selection mode from being enabled! See all uses of preventItemSelection!!!! All wrong wrong wrong
+                boolean itemSelectionModeEnabled = !isPreventItemSelection();
+                getViewPrefs().withAllowMultiSelect(itemSelectionModeEnabled);
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }

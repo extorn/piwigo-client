@@ -38,7 +38,7 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
         if (!parentAlbum.isRoot()) {
             params.put("cat_id", String.valueOf(parentAlbum.getId()));
         }
-        if(thumbnailSize != null) {
+        if (thumbnailSize != null) {
             params.put("thumbnail_size", thumbnailSize);
         }
         params.put("recursive", String.valueOf(recursive));
@@ -59,7 +59,7 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
 
             JsonElement nameElem = category.get("name");
             String name = null;
-            if(nameElem != null && !nameElem.isJsonNull()) {
+            if (nameElem != null && !nameElem.isJsonNull()) {
                 name = category.get("name").getAsString();
             }
 
@@ -69,18 +69,18 @@ public class CommunityAlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwi
 
             JsonElement commentElem = category.get("comment");
             String description = null;
-            if(commentElem != null && !commentElem.isJsonNull()) {
+            if (commentElem != null && !commentElem.isJsonNull()) {
                 description = commentElem.getAsString();
             }
 
             boolean isPublic = "public".equals(category.get("status").getAsString());
             JsonElement maxDateLastJsonElem = category.get("max_date_last");
             String dateLastAlteredStr = null;
-            if(maxDateLastJsonElem != null && !maxDateLastJsonElem.isJsonNull()) {
+            if (maxDateLastJsonElem != null && !maxDateLastJsonElem.isJsonNull()) {
                 dateLastAlteredStr = maxDateLastJsonElem.getAsString();
             }
             Long representativePictureId = null;
-            if(category.has("representative_picture_id") && !category.get("representative_picture_id").isJsonNull()) {
+            if (category.has("representative_picture_id") && !category.get("representative_picture_id").isJsonNull()) {
                 representativePictureId = category.get("representative_picture_id").getAsLong();
             }
 

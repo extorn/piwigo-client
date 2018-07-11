@@ -26,8 +26,8 @@ import java.util.List;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
-import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 
 public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
@@ -146,6 +146,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             File activeFolder = (File) savedInstanceState.getSerializable(ACTIVE_FOLDER);
             viewAdapter.setActiveFolder(activeFolder);
         }
+        viewAdapter.setInitiallySelectedItems();
 
         // will restore previous selection from state if any
         setListAdapter(viewAdapter);
@@ -183,14 +184,19 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         @Override
         public int getSpanSize(int position) {
-            int itemType = viewAdapter.getItemViewType(position);
-            switch(itemType) {
-                case FolderItemRecyclerViewAdapter.VIEW_TYPE_FOLDER:
-                    return spanCount / 3;
-                case FolderItemRecyclerViewAdapter.VIEW_TYPE_FILE:
-                    return spanCount / 2;
-                default:
-                    return spanCount / 3;
+            try {
+                int itemType = viewAdapter.getItemViewType(position);
+                switch (itemType) {
+                    case FolderItemRecyclerViewAdapter.VIEW_TYPE_FOLDER:
+                        return spanCount / 3;
+                    case FolderItemRecyclerViewAdapter.VIEW_TYPE_FILE:
+                        return spanCount / 2;
+                    default:
+                        return spanCount / 3;
+                }
+            } catch(IndexOutOfBoundsException e) {
+                //TODO why does this occur? How?
+                return 1;
             }
         }
     }
@@ -224,7 +230,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     }
 
     @Override
-    protected void populateListWithItems() {
+    protected void rerunRetrievalForFailedPages() {
     }
 
     @Override

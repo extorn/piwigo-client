@@ -13,7 +13,6 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
@@ -219,8 +219,7 @@ public class CreateAlbumFragment extends MyFragment {
 
         AdView adView = view.findViewById(R.id.createGallery_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }
@@ -296,8 +295,9 @@ public class CreateAlbumFragment extends MyFragment {
     }
 
     private boolean isAllowedToCreateAlbum() {
-        boolean isAuthorisedNonAdminUser = PiwigoSessionDetails.isFullyLoggedIn() && PiwigoSessionDetails.isUseCommunityPlugin();
-        return !isAppInReadOnlyMode() && (isAuthorisedNonAdminUser || PiwigoSessionDetails.isAdminUser());
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean isAuthorisedNonAdminUser = sessionDetails != null && sessionDetails.isFullyLoggedIn() && sessionDetails.isUseCommunityPlugin();
+        return !isAppInReadOnlyMode() && (isAuthorisedNonAdminUser || sessionDetails != null && sessionDetails.isAdminUser());
     }
 
     private HashSet<Long> buildPreselectedUserIds(List<Username> selectedUsernames) {

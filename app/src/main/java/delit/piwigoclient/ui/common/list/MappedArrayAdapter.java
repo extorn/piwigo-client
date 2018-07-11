@@ -5,10 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.ArrayAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import delit.piwigoclient.util.ArrayUtils;
 
 
 public class MappedArrayAdapter<T, S> extends ArrayAdapter<T> {

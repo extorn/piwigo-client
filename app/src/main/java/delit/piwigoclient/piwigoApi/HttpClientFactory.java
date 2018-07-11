@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.PersistentCookieStore;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +16,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -36,6 +36,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.CachingSyncHttpClient;
+import delit.piwigoclient.piwigoApi.http.PersistentProfileCookieStore;
 import delit.piwigoclient.piwigoApi.http.UntrustedCaCertificateInterceptingTrustStrategy;
 import delit.piwigoclient.util.X509Utils;
 
@@ -46,136 +47,159 @@ import delit.piwigoclient.util.X509Utils;
 public class HttpClientFactory {
 
     private static final String TAG = "HttpClientFactory";
-    private static HttpClientFactory instance;
-    private final PersistentCookieStore cookieStore;
-
-    private final SharedPreferences prefs;
-    private CachingAsyncHttpClient asyncClient;
-    private CachingSyncHttpClient syncClient;
-    private CachingSyncHttpClient videoDownloadClient;
     private static final SecureRandom secureRandom = new SecureRandom();
+    private static HttpClientFactory instance;
+    private final HashMap<ConnectionPreferences.ProfilePreferences, PersistentProfileCookieStore> cookieStoreMap;
+    private final SharedPreferences prefs;
+    private final HashMap<ConnectionPreferences.ProfilePreferences, CachingAsyncHttpClient> asyncClientMap;
+    private final HashMap<ConnectionPreferences.ProfilePreferences, CachingSyncHttpClient> syncClientMap;
+    private final HashMap<ConnectionPreferences.ProfilePreferences, CachingSyncHttpClient> videoDownloadClientMap;
 
     public HttpClientFactory(Context c) {
-        cookieStore = new PersistentCookieStore(c.getApplicationContext());
+        cookieStoreMap = new HashMap<>(3);
         prefs = PreferenceManager.getDefaultSharedPreferences(c.getApplicationContext());
+        asyncClientMap = new HashMap<>(3);
+        syncClientMap = new HashMap<>(3);
+        videoDownloadClientMap = new HashMap<>(3);
     }
 
     public static HttpClientFactory getInstance(Context c) {
         synchronized (HttpClientFactory.class) {
-            if(instance == null) {
+            if (instance == null) {
                 instance = new HttpClientFactory(c);
             }
         }
         return instance;
     }
 
-    public void flushCookies() {
-        cookieStore.clear();
+    private static String[] split(final String s) {
+        if (TextUtils.isBlank(s)) {
+            return null;
+        }
+        return s.split(" *, *");
     }
 
-    public synchronized void clearCachedClients() {
+    public void flushCookies(ConnectionPreferences.ProfilePreferences profile) {
+        PersistentProfileCookieStore cookieStore = cookieStoreMap.get(profile);
+        if(cookieStore != null) {
+            cookieStore.clear();
+        }
+    }
+
+    public synchronized void clearCachedClients(ConnectionPreferences.ProfilePreferences profile) {
+        if (profile == null) {
+            // clear ALL.
+            HashSet<ConnectionPreferences.ProfilePreferences> keys = new HashSet<>();
+            keys.addAll(asyncClientMap.keySet());
+            keys.addAll(syncClientMap.keySet());
+            keys.addAll(videoDownloadClientMap.keySet());
+            for (ConnectionPreferences.ProfilePreferences aProfile : keys) {
+                clearCachedClients(aProfile);
+            }
+            return;
+        }
         try {
-            closeClient(asyncClient);
-        } catch(IOException e) {
-            if(BuildConfig.DEBUG) {
+            closeClient(asyncClientMap.remove(profile));
+        } catch (IOException e) {
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing asyncClient");
             }
         }
         try {
-            closeClient(syncClient);
-        } catch(IOException e) {
-            if(BuildConfig.DEBUG) {
+            closeClient(syncClientMap.remove(profile));
+        } catch (IOException e) {
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing syncClient");
             }
         }
         try {
-            closeClient(videoDownloadClient);
-        } catch(IOException e) {
-            if(BuildConfig.DEBUG) {
+            closeClient(videoDownloadClientMap.remove(profile));
+        } catch (IOException e) {
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing videoDownloadClient");
             }
         }
-        asyncClient = null;
-        syncClient = null;
-        videoDownloadClient = null;
-        //now force reinstantiation of the factory to ensure new properties are loaded.
-        instance = null;
+        flushCookies(profile);
     }
 
     private void closeClient(CachingAsyncHttpClient client) throws IOException {
-        if(client != null) {
+        if (client != null) {
             client.cancelAllRequests(true);
             client.close();
         }
     }
 
-    public CachingSyncHttpClient buildVideoDownloadSyncHttpClient(Context c) {
+    public CachingSyncHttpClient buildVideoDownloadSyncHttpClient(ConnectionPreferences.ProfilePreferences connectionPrefs, Context c) {
+        CachingSyncHttpClient videoDownloadClient = videoDownloadClientMap.get(connectionPrefs);
         if (videoDownloadClient == null) {
             boolean forceDisableCache = true;
             // we use a custom cache solution for video data
-            videoDownloadClient = buildSyncHttpClient(c, true);
+            videoDownloadClient = buildSyncHttpClient(connectionPrefs, c, true);
+            videoDownloadClientMap.put(connectionPrefs, videoDownloadClient);
         }
         return videoDownloadClient;
     }
 
-    public CachingSyncHttpClient buildSyncHttpClient(Context c, boolean forceDisableCache) {
-        return (CachingSyncHttpClient) buildHttpClient(c, false, forceDisableCache);
+    public CachingSyncHttpClient buildSyncHttpClient(ConnectionPreferences.ProfilePreferences connectionPrefs, Context c, boolean forceDisableCache) {
+        return (CachingSyncHttpClient) buildHttpClient(connectionPrefs, c, false, forceDisableCache);
     }
 
-    public synchronized CachingSyncHttpClient getSyncHttpClient(Context c) {
-
+    public synchronized CachingSyncHttpClient getSyncHttpClient(ConnectionPreferences.ProfilePreferences connectionPrefs, Context c) {
+        CachingSyncHttpClient syncClient = syncClientMap.get(connectionPrefs);
         if (syncClient == null) {
             boolean forceDisableCache = false;
-            syncClient = buildSyncHttpClient(c, false);
+            syncClient = buildSyncHttpClient(connectionPrefs, c, false);
+            syncClientMap.put(connectionPrefs, syncClient);
         }
         return syncClient;
     }
 
-    public synchronized CachingAsyncHttpClient getAsyncHttpClient(Context c) {
+    public synchronized CachingAsyncHttpClient getAsyncHttpClient(ConnectionPreferences.ProfilePreferences connectionPrefs, Context c) {
+        CachingAsyncHttpClient asyncClient = asyncClientMap.get(connectionPrefs);
         if (asyncClient == null) {
             boolean forceDisableCache = false;
-            asyncClient = buildHttpClient(c, true, false);
+            asyncClient = buildHttpClient(connectionPrefs, c, true, false);
+            asyncClientMap.put(connectionPrefs, asyncClient);
         }
         return asyncClient;
     }
 
-
-    protected CachingAsyncHttpClient buildHttpClient(Context c, boolean async, boolean forceDisableCache) {
+    protected CachingAsyncHttpClient buildHttpClient(ConnectionPreferences.ProfilePreferences connectionPrefs, Context c, boolean async, boolean forceDisableCache) {
 
         Context context = c.getApplicationContext();
 
         CachingAsyncHttpClient client;
 
-        String piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
+        String piwigoServerUrl = connectionPrefs.getPiwigoServerAddress(prefs, context);
 
-        if(piwigoServerUrl == null || piwigoServerUrl.trim().length() == 0) {
+        if (piwigoServerUrl == null || piwigoServerUrl.trim().length() == 0) {
             return null;
         }
 
-        SSLConnectionSocketFactory sslSocketFactory = buildHttpsSocketFactory(context);
+        SSLConnectionSocketFactory sslSocketFactory = buildHttpsSocketFactory(connectionPrefs, context);
 
-        if(async) {
+        if (async) {
             client = new CachingAsyncHttpClient(sslSocketFactory);
         } else {
             client = new CachingSyncHttpClient(sslSocketFactory);
         }
-        int connectTimeoutMillis = ConnectionPreferences.getServerConnectTimeout(prefs, context);
+        int connectTimeoutMillis = connectionPrefs.getServerConnectTimeout(prefs, context);
         client.setConnectTimeout(connectTimeoutMillis);
         client.setMaxConcurrentConnections(5);
-        int connectRetries = ConnectionPreferences.getMaxServerConnectRetries(prefs, context);
+        int connectRetries = connectionPrefs.getMaxServerConnectRetries(prefs, context);
         client.setMaxRetriesAndTimeout(connectRetries, AsyncHttpClient.DEFAULT_RETRY_SLEEP_TIME_MILLIS);
-        boolean allowRedirects = ConnectionPreferences.getFollowHttpRedirects(prefs, context);
-        int maxRedirects = ConnectionPreferences.getMaxHttpRedirects(prefs, context);
+        boolean allowRedirects = connectionPrefs.getFollowHttpRedirects(prefs, context);
+        int maxRedirects = connectionPrefs.getMaxHttpRedirects(prefs, context);
         client.setEnableRedirects(allowRedirects, maxRedirects);
-        client.setCookieStore(cookieStore);
+        client.setCookieStore(getCookieStore(connectionPrefs, context));
 
-        if(!forceDisableCache) {
+        if (!forceDisableCache) {
             String cacheLevel = prefs.getString(context.getString(R.string.preference_caching_level_key), context.getResources().getString(R.string.preference_caching_level_default));
-            if(cacheLevel.equals("disabled")) {
+            if (cacheLevel.equals("disabled")) {
                 client.setCacheSettings(null, 0, 0);
             } else {
                 File cacheFolder = null;
-                if(cacheLevel.equals("disk")) {
+                if (cacheLevel.equals("disk")) {
                     cacheFolder = CacheUtils.getBasicCacheFolder(context);
                 }
                 int maxCacheEntries = prefs.getInt(context.getString(R.string.preference_caching_max_cache_entries_key), context.getResources().getInteger(R.integer.preference_caching_max_cache_entries_default));
@@ -187,28 +211,39 @@ public class HttpClientFactory {
         }
 
 
-        configureBasicServerAuthentication(context, client);
+        configureBasicServerAuthentication(connectionPrefs, context, client);
 
         return client;
+    }
+
+    private PersistentProfileCookieStore getCookieStore(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
+        synchronized(connectionPrefs) {
+            PersistentProfileCookieStore cookieStore = cookieStoreMap.get(connectionPrefs);
+            if (cookieStore == null) {
+                cookieStore = new PersistentProfileCookieStore(context.getApplicationContext(), connectionPrefs.getAbsoluteProfileKey(prefs, context));
+                cookieStoreMap.put(connectionPrefs, cookieStore);
+            }
+            return cookieStore;
+        }
     }
 
     private int extractPort(String serverAddress) {
         Pattern p = Pattern.compile("http[s]?://[^:]*:(\\d*).*");
         Matcher m = p.matcher(serverAddress);
-        if(m.matches()) {
+        if (m.matches()) {
             String portStr = m.group(1);
             return Integer.parseInt(portStr);
         }
         return -1;
     }
 
-    protected void configureBasicServerAuthentication(Context context, CachingAsyncHttpClient client) {
-        if (ConnectionPreferences.getUseBasicAuthentication(prefs, context)) {
-            String piwigoServerUrl = ConnectionPreferences.getPiwigoServerAddress(prefs, context);
-            if(piwigoServerUrl != null) {
+    protected void configureBasicServerAuthentication(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context, CachingAsyncHttpClient client) {
+        if (connectionPrefs.getUseBasicAuthentication(prefs, context)) {
+            String piwigoServerUrl = connectionPrefs.getPiwigoServerAddress(prefs, context);
+            if (piwigoServerUrl != null) {
                 Uri serverUri = Uri.parse(piwigoServerUrl);
-                String username = ConnectionPreferences.getBasicAuthenticationUsername(prefs, context);
-                String password = ConnectionPreferences.getBasicAuthenticationPassword(prefs, context);
+                String username = connectionPrefs.getBasicAuthenticationUsername(prefs, context);
+                String password = connectionPrefs.getBasicAuthenticationPassword(prefs, context);
                 client.setBasicAuth(username, password, new AuthScope(serverUri.getHost(), serverUri.getPort(), null, "BASIC"));
                 client.setBasicAuth(username, password, new AuthScope(serverUri.getHost(), serverUri.getPort(), null, "DIGEST"));
                 client.setBasicAuth(username, password, new AuthScope(serverUri.getHost(), serverUri.getPort(), null, "KERBEROS"));
@@ -216,17 +251,9 @@ public class HttpClientFactory {
         }
     }
 
+    private SSLConnectionSocketFactory buildHttpsSocketFactory(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
 
-    private static String[] split(final String s) {
-        if (TextUtils.isBlank(s)) {
-            return null;
-        }
-        return s.split(" *, *");
-    }
-
-    private SSLConnectionSocketFactory buildHttpsSocketFactory(Context context) {
-
-        String hostnameVerificationLevelStr = ConnectionPreferences.getCertificateHostnameVerificationLevel(prefs, context);
+        String hostnameVerificationLevelStr = connectionPrefs.getCertificateHostnameVerificationLevel(prefs, context);
         int hostnameVerificationLevel = Integer.parseInt(hostnameVerificationLevelStr);
         X509HostnameVerifier hostnameVerifier;
         switch (hostnameVerificationLevel) {
@@ -245,19 +272,19 @@ public class HttpClientFactory {
         TrustStrategy trustStrategy = null;
 
         KeyStore trustedCAKeystore = null; // use the system keystore.
-        if(ConnectionPreferences.getUsePinnedServerCertificates(prefs, context)) {
+        if (connectionPrefs.getUsePinnedServerCertificates(prefs, context)) {
             trustedCAKeystore = X509Utils.loadTrustedCaKeystore(context);
-            Set<String> preNotifiedCerts = new HashSet<>(ConnectionPreferences.getUserPreNotifiedCerts(prefs, context));
+            Set<String> preNotifiedCerts = new HashSet<>(connectionPrefs.getUserPreNotifiedCerts(prefs, context));
             trustStrategy = new UntrustedCaCertificateInterceptingTrustStrategy(trustedCAKeystore, preNotifiedCerts);
         }
         KeyStore clientKeystore = null;
-        if(ConnectionPreferences.getUseClientCertificates(prefs, context)) {
+        if (connectionPrefs.getUseClientCertificates(prefs, context)) {
             clientKeystore = X509Utils.loadClientKeystore(context);
         }
         //TODO protect the key with a password?
         SSLContext sslContext = getCustomSSLContext(clientKeystore, new char[0], trustedCAKeystore, trustStrategy);
 
-        if(sslContext == null) {
+        if (sslContext == null) {
             try {
                 sslContext = SSLContext.getDefault();
             } catch (NoSuchAlgorithmException e) {
@@ -287,27 +314,26 @@ public class HttpClientFactory {
             return contextBuilder.build();
 
         } catch (NoSuchAlgorithmException e) {
-            if(BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }
         } catch (UnrecoverableKeyException e) {
-            if(BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }
         } catch (KeyStoreException e) {
-            if(BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }
         } catch (KeyManagementException e) {
-            if(BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }
         }
         return null;
     }
 
-
-    public boolean isInitialised() {
-        return asyncClient != null || syncClient != null || videoDownloadClient != null;
+    public boolean isInitialised(ConnectionPreferences.ProfilePreferences connectionProfile) {
+        return asyncClientMap.containsKey(connectionProfile) || syncClientMap.containsKey(connectionProfile) || videoDownloadClientMap.containsKey(connectionProfile);
     }
 }

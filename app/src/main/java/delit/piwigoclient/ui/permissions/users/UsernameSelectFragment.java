@@ -16,13 +16,14 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.HashSet;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.model.piwigo.PiwigoUsernames;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 
@@ -33,10 +34,8 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<UsernameRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String USER_NAMES_MODEL = "usernamesModel";
-    private static final String USER_NAMES_PAGE_BEING_LOADED = "usernamesPageBeingLoaded";
     private static final String STATE_INDIRECT_SELECTION = "indirectlySelectedUsernames";
     private PiwigoUsernames usernamesModel = new PiwigoUsernames();
-    private int pageToLoadNow = -1;
     private HashSet<Long> indirectSelection;
 
     public static UsernameSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
@@ -69,7 +68,6 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(USER_NAMES_MODEL, usernamesModel);
-        outState.putInt(USER_NAMES_PAGE_BEING_LOADED, pageToLoadNow);
         outState.putSerializable(STATE_INDIRECT_SELECTION, indirectSelection);
     }
 
@@ -93,6 +91,8 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(getContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusAdapter<Username>() {
         }, getViewPrefs());
 
+        viewAdapter.setInitiallySelectedItems(getInitialSelection());
+        viewAdapter.setSelectedItems(getInitialSelection());
         setListAdapter(viewAdapter);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());
@@ -116,8 +116,6 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
 
         if (savedInstanceState != null) {
             usernamesModel = (PiwigoUsernames) savedInstanceState.getSerializable(USER_NAMES_MODEL);
-            pageToLoadNow = savedInstanceState.getInt(USER_NAMES_PAGE_BEING_LOADED
-            );
         }
 
         return v;
@@ -144,15 +142,30 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     }
 
     private void loadUsernamesPage(int pageToLoad) {
-        this.pageToLoadNow = pageToLoad;
-        int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-        addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
+
+        usernamesModel.acquirePageLoadLock();
+        try {
+            if(usernamesModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+                return;
+            }
+
+            int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
+            usernamesModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+        } finally {
+            usernamesModel.releasePageLoadLock();
+        }
     }
 
     @Override
-    protected void populateListWithItems() {
-        if (pageToLoadNow > 0) {
-            loadUsernamesPage(pageToLoadNow);
+    protected void rerunRetrievalForFailedPages() {
+        usernamesModel.acquirePageLoadLock();
+        try {
+            for(Integer reloadPageNum = null; reloadPageNum != null; reloadPageNum = usernamesModel.getNextPageToReload()) {
+                loadUsernamesPage(reloadPageNum);
+            }
+
+        } finally {
+            usernamesModel.releasePageLoadLock();
         }
     }
 
@@ -161,10 +174,19 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         UsernameRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<Long> usernamesNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
         if(usernamesNeededToBeLoaded.size() > 0) {
-            //TODO what if there are more than the max page size?! Paging needed :-(
-            pageToLoadNow = Integer.MAX_VALUE; // flag that this is a special one off load.
-            addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(usernamesNeededToBeLoaded).invokeAsync(getContext()));
-            return;
+            usernamesModel.acquirePageLoadLock();
+            try {
+                if(usernamesModel.isPageLoadedOrBeingLoaded(PagedList.MISSING_ITEMS_PAGE)) {
+                    // already in progress... wait it out.
+                    return;
+                }
+                //TODO what if there are more than the max page size?! Paging needed :-(
+                // flag that this is a special one off load.
+                usernamesModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(usernamesNeededToBeLoaded).invokeAsync(getContext())), PagedList.MISSING_ITEMS_PAGE);
+                return;
+            } finally {
+                usernamesModel.releasePageLoadLock();
+            }
         }
         HashSet<Username> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new UsernameSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
@@ -185,38 +207,44 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) {
                 onUsernamesLoaded((PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) response);
             } else {
-                onListItemLoadFailed();
+                onUsernamesLoadFailed(response);
             }
         }
     }
 
+    protected void onUsernamesLoadFailed(PiwigoResponseBufferingHandler.Response response) {
+        usernamesModel.acquirePageLoadLock();
+        try {
+            usernamesModel.recordPageLoadFailed(response.getMessageId());
+            onListItemLoadFailed();
+        } finally {
+            usernamesModel.releasePageLoadLock();
+        }
+    }
 
     private void onUsernamesLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse response) {
-        synchronized (this) {
-            if(pageToLoadNow == Integer.MAX_VALUE) {
+        usernamesModel.acquirePageLoadLock();
+        try {
+            usernamesModel.recordPageLoadSucceeded(response.getMessageId());
+            if(response.getPage() == PagedList.MISSING_ITEMS_PAGE) {
                 // this is a special page of all missing items from those selected.
-                pageToLoadNow = -1;
                 int firstIdxAdded = usernamesModel.addItemPage(usernamesModel.getPagesLoaded(), response.getPageSize(), response.getUsernames());
-                HashSet<Long> selectedItemIds = getListAdapter().getSelectedItemIds();
-                for (Long selectedItemId : selectedItemIds) {
-                    getListAdapter().setItemSelected(selectedItemId);
-                }
                 getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getUsernames().size());
-                onListItemLoadSuccess();
+                if(usernamesModel.hasNoFailedPageLoads()) {
+                    onListItemLoadSuccess();
+                }
                 setAppropriateComponentState();
                 onSelectActionComplete(getListAdapter().getSelectedItemIds());
                 return;
             }
-
-            pageToLoadNow = -1;
             int firstIdxAdded = usernamesModel.addItemPage(response.getPage(), response.getPageSize(), response.getUsernames());
-            HashSet<Long> selectedItemIds = getListAdapter().getSelectedItemIds();
-            for (Long selectedItemId : selectedItemIds) {
-                getListAdapter().setItemSelected(selectedItemId);
-            }
             getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getUsernames().size());
-            onListItemLoadSuccess();
+            if(usernamesModel.hasNoFailedPageLoads()) {
+                onListItemLoadSuccess();
+            }
             setAppropriateComponentState();
+        } finally {
+            usernamesModel.releasePageLoadLock();
         }
     }
 }

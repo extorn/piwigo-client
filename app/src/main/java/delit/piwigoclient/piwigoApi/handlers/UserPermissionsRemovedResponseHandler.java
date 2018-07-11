@@ -26,15 +26,16 @@ public class UserPermissionsRemovedResponseHandler extends AbstractPiwigoWsRespo
     @Override
     public RequestParams buildRequestParameters() {
         String sessionToken = "";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            sessionToken = PiwigoSessionDetails.getInstance().getSessionToken();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
         }
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("user_id", String.valueOf(userId));
-        if(newAlbumsNotAllowedAccessTo != null && newAlbumsNotAllowedAccessTo.size() > 0) {
+        if (newAlbumsNotAllowedAccessTo != null && newAlbumsNotAllowedAccessTo.size() > 0) {
             for (Long albumId : newAlbumsNotAllowedAccessTo) {
                 params.add("cat_id[]", String.valueOf(albumId));
             }

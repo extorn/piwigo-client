@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -28,6 +27,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.concurrent.ConcurrentHashMap;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTags;
 import delit.piwigoclient.model.piwigo.Tag;
@@ -37,10 +37,10 @@ import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
+import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -117,8 +117,7 @@ public class TagsListFragment extends MyFragment {
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }
@@ -154,7 +153,7 @@ public class TagsListFragment extends MyFragment {
             }
         });
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        recyclerView = view.findViewById(R.id.list);
 
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
 
@@ -187,7 +186,7 @@ public class TagsListFragment extends MyFragment {
         if(isAppInReadOnlyMode() && addNewTagDialog != null && addNewTagDialog.isShowing()) {
             addNewTagDialog.cancel();
         }
-        addListItemButton.setVisibility(isAppInReadOnlyMode()?View.GONE:View.VISIBLE);
+        addListItemButton.setVisibility(!viewPrefs.isAllowItemAddition() || isAppInReadOnlyMode()?View.GONE:View.VISIBLE);
     }
 
     @Override
@@ -203,7 +202,7 @@ public class TagsListFragment extends MyFragment {
         this.pageToLoadNow = pageToLoad;
 //        int pageSize = prefs.getInt(getString(R.string.preference_tags_request_pagesize_key), getResources().getInteger(R.integer.preference_tags_request_pagesize_default));
         addActiveServiceCall(R.string.progress_loading_tags,new TagsGetListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
-        if(PiwigoSessionDetails.isAdminUser()) {
+        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
             addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
         }
     }

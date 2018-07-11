@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.Worker;
 
@@ -12,24 +13,26 @@ import delit.piwigoclient.piwigoApi.Worker;
  */
 
 public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicPiwigoResponseHandler {
+    private static final AtomicLong nextMessageId = new AtomicLong();
     private long messageId;
     private PiwigoResponseBufferingHandler.BaseResponse response;
-    private static final AtomicLong nextMessageId = new AtomicLong();
     private boolean publishResponses = true;
-
-    public static synchronized long getNextMessageId() {
-        long id;
-        id = nextMessageId.incrementAndGet();
-        if(id < 0) {
-            nextMessageId.set(0);
-            id = 0;
-        }
-        return id;
-    }
+    private Worker worker;
+    private boolean runAsync;
 
     public AbstractPiwigoDirectResponseHandler(String tag) {
         super(tag);
         messageId = getNextMessageId();
+    }
+
+    public static synchronized long getNextMessageId() {
+        long id;
+        id = nextMessageId.incrementAndGet();
+        if (id < 0) {
+            nextMessageId.set(0);
+            id = 0;
+        }
+        return id;
     }
 
     public long getMessageId() {
@@ -37,7 +40,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     }
 
     public void setMessageId(long messageId) {
-        if(this.messageId < 0 || this.messageId == messageId) {
+        if (this.messageId < 0 || this.messageId == messageId) {
             this.messageId = messageId;
         } else {
             throw new IllegalArgumentException("Message ID can only be set once for a handler");
@@ -57,11 +60,15 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
 
     protected void storeResponse(PiwigoResponseBufferingHandler.BaseResponse response) {
 
-        if(!getUseSynchronousMode() && publishResponses) {
+        if (!getUseSynchronousMode() && publishResponses) {
             PiwigoResponseBufferingHandler.getDefault().processResponse(response);
         } else {
             this.response = response;
         }
+    }
+
+    public void setWorker(Worker worker) {
+        this.worker = worker;
     }
 
     @Override
@@ -77,11 +84,58 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
         return response instanceof PiwigoResponseBufferingHandler.ErrorResponse;
     }
 
-    public long invokeAsync(Context context) {
-        return new Worker( this, context).start(messageId);
+    protected Worker buildWorker(Context context) {
+        return new Worker(this, context);
     }
 
-    public long invokeAsyncAgain() {
-        return new Worker( this, this.getContext()).start(messageId);
+    public void invokeAndWait(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        setPublishResponses(false);
+        runAsync = false;
+        Worker w = buildWorker(context);
+        setWorker(w);
+        w.setConnectionPreferences(connectionPrefs);
+        w.startAndWait(messageId);
+    }
+
+    public void run(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        runAsync = false;
+        setPublishResponses(false);
+        Worker w = buildWorker(context);
+        setWorker(w);
+        w.setConnectionPreferences(connectionPrefs);
+        w.run(messageId);
+    }
+
+    public long invokeAsync(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        runAsync = true;
+        Worker w = buildWorker(context);
+        setWorker(w);
+        w.setConnectionPreferences(connectionPrefs);
+        return w.start(messageId);
+    }
+
+    public long invokeAsync(Context context) {
+        runAsync = true;
+        Worker w = buildWorker(context);
+        setWorker(w);
+        return w.start(messageId);
+    }
+
+    public boolean invokeAgain(Context context) {
+        Worker w = buildWorker(context);
+        w.setConnectionPreferences(worker.getConnectionPreferences());
+        setWorker(w);
+        return w.run(messageId);
+    }
+
+    public long invokeAsyncAgain(Context context) {
+        Worker w = buildWorker(context);
+        w.setConnectionPreferences(worker.getConnectionPreferences());
+        setWorker(w);
+        return w.start(messageId);
+    }
+
+    public boolean isRunAsync() {
+        return runAsync;
     }
 }

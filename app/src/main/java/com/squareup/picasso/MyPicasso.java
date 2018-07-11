@@ -199,4 +199,8 @@ public class MyPicasso extends Picasso {
         }
     }
 
+    public int getCacheSize() {
+        return cache == null ? 0 : cache.size();
+    }
+
 }

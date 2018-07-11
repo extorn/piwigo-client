@@ -35,14 +35,14 @@ public class ImageCheckFilesResponseHandler<T extends ResourceItem> extends Abst
         JsonObject result = rsp.getAsJsonObject();
         String testResult = result.get("file").getAsString();
         Boolean same = null;
-        if("equals".equals(testResult)) {
+        if ("equals".equals(testResult)) {
             same = true;
-        } else if("differs".equals(testResult)) {
+        } else if ("differs".equals(testResult)) {
             same = false;
         }
         fileMatches = same;
 
-        if(!getUseSynchronousMode()) {
+        if (!getUseSynchronousMode()) {
             PiwigoResponseBufferingHandler.PiwigoResourceCheckRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceCheckRetrievedResponse<>(getMessageId(), getPiwigoMethod(), resourceItem, same);
             storeResponse(r);
         }

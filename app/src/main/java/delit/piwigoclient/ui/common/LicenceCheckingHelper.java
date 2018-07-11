@@ -1,6 +1,8 @@
 package delit.piwigoclient.ui.common;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
@@ -29,7 +31,7 @@ public class LicenceCheckingHelper {
 
     private static final String TAG = "LicenceCheckHelper";
 
-    private LicenseCheckerCallback mLicenseCheckerCallback;
+    private MyLicenseCheckerCallback mLicenseCheckerCallback;
     private LicenseChecker mChecker;
     // A handler on the UI thread.
     private Handler mHandler;
@@ -80,9 +82,7 @@ public class LicenceCheckingHelper {
                         activity.startActivity(marketIntent);
                     }
                 } else {
-//                    activity.finish();
-                    // Kill the app in a way that gets them to maybe report it so I can track the issue.
-                    throw new IllegalStateException("Unknown error occurred");
+                    activity.finish();
                 }
             }
         });
@@ -98,10 +98,22 @@ public class LicenceCheckingHelper {
     }
 
     private synchronized void doCheck() {
+
         long maxInterval = 1000 * 60 * 60 * 6;
         // check again a maximum of every 6 hours apart.
         if(lastChecked == null || lastChecked.getTime() > System.currentTimeMillis() || lastChecked.getTime() + maxInterval > System.currentTimeMillis()) {
             lastChecked = new Date();
+            if(mLicenseCheckerCallback.isOfflineAccessAllowed()) {
+                final ConnectivityManager connMgr = (ConnectivityManager) activity.getApplicationContext()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+                android.net.NetworkInfo activeNetworkInfo = connMgr.getActiveNetworkInfo();
+                if(!activeNetworkInfo.isAvailable()) {
+                    // allow access for the next 6 hours.
+                    mLicenseCheckerCallback.allow(-1);
+                    return;
+                }
+            }
+            // normally, test access is allowed.
             mChecker.checkAccess(mLicenseCheckerCallback);
         }
     }
@@ -125,7 +137,15 @@ public class LicenceCheckingHelper {
     }
 
     private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
+
+        private boolean offlineAccessAllowed = true;
+
+        public boolean isOfflineAccessAllowed() {
+            return offlineAccessAllowed;
+        }
+
         public void allow(int policyReason) {
+            offlineAccessAllowed = policyReason >= 0;
             if (activity.isFinishing()) {
                 // Don't update UI if Activity is finishing.
                 return;

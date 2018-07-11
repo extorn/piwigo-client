@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -28,6 +27,9 @@ import java.util.Map;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -86,8 +88,8 @@ public class UploadActivity extends MyActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putInt(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
         outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
     }
@@ -104,20 +106,23 @@ public class UploadActivity extends MyActivity {
             fileSelectionEventId = TrackableRequestEvent.getNextEventId();
         }
 
-        if(!hasAgreedToEula() || ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+
+        if(!hasAgreedToEula() || connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
             setContentView(R.layout.activity_upload);
             addUploadingAsFieldsIfAppropriate();
-            showUploadFragment();
+            showUploadFragment(true, connectionPrefs);
         }
     }
 
     private void addUploadingAsFieldsIfAppropriate() {
         TextView uploadingAsLabelField = findViewById(R.id.upload_username_label);
         TextView uploadingAsField = findViewById(R.id.upload_username);
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            uploadingAsField.setText(PiwigoSessionDetails.getInstance().getUsername());
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if(sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+            uploadingAsField.setText(sessionDetails.getUsername());
             uploadingAsField.setVisibility(View.VISIBLE);
             uploadingAsLabelField.setVisibility(View.VISIBLE);
         } else {
@@ -162,24 +167,36 @@ public class UploadActivity extends MyActivity {
         }
     }
 
-    private void showUploadFragment() {
-        boolean isAdminUser = PiwigoSessionDetails.isAdminUser();
-        boolean hasCommunityPlugin = PiwigoSessionDetails.isUseCommunityPlugin();
+    private boolean isCurrentUserAuthorisedToUpload(PiwigoSessionDetails sessionDetails) {
 
+        boolean isAdminUser = sessionDetails != null && sessionDetails.isAdminUser();
+        boolean hasCommunityPlugin = sessionDetails != null && sessionDetails.isUseCommunityPlugin();
+        return isAdminUser || hasCommunityPlugin;
+    }
+
+    private void showUploadFragment(boolean allowLogin, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         long initialGalleryId = getIntent().getLongExtra("galleryId", 0);
 
-        if(isAdminUser || hasCommunityPlugin) {
+        if(isCurrentUserAuthorisedToUpload(sessionDetails)) {
             Fragment f = UploadFragment.newInstance(initialGalleryId, fileSelectionEventId);
             removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
+        } else if(allowLogin && sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
+            runLogin(connectionPrefs);
         } else {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PiwigoLoginSuccessEvent event) {
-        showUploadFragment();
+    private void runLogin(ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        String serverUri = connectionPrefs.getPiwigoServerAddress(prefs, getApplicationContext());
+        if(serverUri == null || serverUri.trim().isEmpty()) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
+        } else {
+            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getApplicationContext(), connectionPrefs));
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -396,5 +413,21 @@ public class UploadActivity extends MyActivity {
         tx.replace(R.id.upload_details, f, f.getClass().getName()).commit();
 
         addUploadingAsFieldsIfAppropriate();
+    }
+
+    @Override
+    protected BasicPiwigoResponseListener buildPiwigoResponseListener() {
+        return super.buildPiwigoResponseListener();
+    }
+
+    class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+        @Override
+        public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
+            if(response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse)response).getNewSessionDetails().getConnectionPrefs());
+            } else {
+                super.onAfterHandlePiwigoResponse(response);
+            }
+        }
     }
 }

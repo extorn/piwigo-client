@@ -85,9 +85,9 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
     protected static class ResourceParser {
 
         private final Pattern p;
-        private Matcher m;
         private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         private final int screenWidth;
+        private Matcher m;
 
         public ResourceParser(Context context, String multimediaExtensionList) {
             WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -192,8 +192,6 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
                 ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", originalResourceUrl, originalResourceUrlWidth, originalResourceUrlHeight);
 
-
-                ResourceItem.ResourceFile thumbnailImg = null;
                 ResourceItem.ResourceFile fullScreenImage = null;
 
                 Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
@@ -202,20 +200,28 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                 PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateLastAltered, thumbnail);
 
                 long bestWidth = 0;
-                String bestImageSize = null;
 
                 while (imageSizeKeys.hasNext()) {
                     String imageSizeKey = imageSizeKeys.next();
                     JsonObject imageSizeObj = derivatives.get(imageSizeKey).getAsJsonObject();
-                    String url = imageSizeObj.get("url").getAsString();
-                    int thisWidth = imageSizeObj.get("width").getAsInt();
-                    int thisHeight = imageSizeObj.get("height").getAsInt();
+                    JsonElement jsonElem = imageSizeObj.get("url");
+                    if(jsonElem.isJsonNull()) {
+                        continue;
+                    }
+                    String url = jsonElem.getAsString();
+                    jsonElem = imageSizeObj.get("width");
+                    if(jsonElem.isJsonNull()) {
+                        continue;
+                    }
+                    int thisWidth = jsonElem.getAsInt();
+                    jsonElem = imageSizeObj.get("height");
+                    if(jsonElem.isJsonNull()) {
+                        continue;
+                    }
+                    int thisHeight = jsonElem.getAsInt();
                     ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(imageSizeKey, url, thisWidth, thisHeight);
                     picItem.addResourceFile(img);
 
-                    if (imageSizeKey.equals("thumb")) {
-                        thumbnailImg = img;
-                    }
                     if ((thisWidth < bestWidth && thisWidth > screenWidth)
                             || (thisWidth > bestWidth && bestWidth < screenWidth)) {
 

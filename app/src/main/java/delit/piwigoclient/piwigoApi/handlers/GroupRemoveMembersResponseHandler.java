@@ -25,7 +25,7 @@ public class GroupRemoveMembersResponseHandler<T extends ResourceItem> extends A
         super("pwg.groups.deleteUser", TAG);
         this.groupId = groupId;
         this.groupMemberIdsToRemove = groupMemberIdsToRemove;
-        if(groupMemberIdsToRemove == null || groupMemberIdsToRemove.size() == 0) {
+        if (groupMemberIdsToRemove == null || groupMemberIdsToRemove.size() == 0) {
             throw new IllegalArgumentException("Group must be having at least one member removed");
         }
     }
@@ -33,8 +33,9 @@ public class GroupRemoveMembersResponseHandler<T extends ResourceItem> extends A
     @Override
     public RequestParams buildRequestParameters() {
         String sessionToken = "";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            sessionToken = PiwigoSessionDetails.getInstance().getSessionToken();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
         }
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
@@ -53,13 +54,14 @@ public class GroupRemoveMembersResponseHandler<T extends ResourceItem> extends A
         JsonObject result = rsp.getAsJsonObject();
         JsonArray groupsObj = result.get("groups").getAsJsonArray();
         HashSet<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
-        if(groups.size() != 1) {
+        if (groups.size() != 1) {
             throw new JSONException("Expected one group to be returned, but there were " + groups.size());
         }
         //Ensure we remove the group from the current logged in user's session details (so we don't need to retrieve them again).
-        long currentUsersId = PiwigoSessionDetails.getInstance().getUserId();
-        if(groupMemberIdsToRemove.contains(currentUsersId)) {
-            HashSet<Long> currentUsersGroupMemberships = PiwigoSessionDetails.getInstance().getGroupMemberships();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        long currentUsersId = sessionDetails.getUserId();
+        if (groupMemberIdsToRemove.contains(currentUsersId)) {
+            HashSet<Long> currentUsersGroupMemberships = sessionDetails.getGroupMemberships();
             currentUsersGroupMemberships.remove(groupId);
         }
         PiwigoResponseBufferingHandler.PiwigoGroupRemoveMembersResponse r = new PiwigoResponseBufferingHandler.PiwigoGroupRemoveMembersResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());

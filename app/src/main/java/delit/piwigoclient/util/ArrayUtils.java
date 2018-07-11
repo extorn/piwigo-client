@@ -20,6 +20,17 @@ public class ArrayUtils {
         return retVal;
     }
 
+    public static Integer[] wrap(int[] values) {
+        if(values == null) {
+            return null;
+        }
+        Integer[] retVal = new Integer[values.length];
+        for(int i = 0; i < values.length; i++) {
+            retVal[i] = values[i];
+        }
+        return retVal;
+    }
+
     public static long[] getLongArray(int[] intArray) {
         long[] retVal = new long[intArray.length];
         for(int i = 0; i < intArray.length; i++) {

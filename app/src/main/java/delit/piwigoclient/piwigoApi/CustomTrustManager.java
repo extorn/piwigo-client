@@ -30,13 +30,13 @@ public class CustomTrustManager implements X509TrustManager {
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws
-    CertificateException {
+            CertificateException {
         chainedTrustManager.checkClientTrusted(chain, authType);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-        if(selfSignedCertificatesAllowed && chain.length == 0) {
+        if (selfSignedCertificatesAllowed && chain.length == 0) {
             testSelfSignedCertificate(chain[0]);
         } else {
             chainedTrustManager.checkServerTrusted(chain, authType);

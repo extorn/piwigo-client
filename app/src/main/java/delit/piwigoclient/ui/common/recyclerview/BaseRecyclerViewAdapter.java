@@ -177,7 +177,9 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
 
     @Override
     public void selectAllItemIds() {
-
+        for(int i = 0; i < getItemCount(); i++) {
+            selectedResourceIds.add(getItemId(i));
+        }
         notifyItemRangeChanged(0, getItemCount());
     }
 

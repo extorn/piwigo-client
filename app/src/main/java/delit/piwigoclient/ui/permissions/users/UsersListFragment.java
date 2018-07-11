@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,6 +23,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.concurrent.ConcurrentHashMap;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUsers;
 import delit.piwigoclient.model.piwigo.User;
@@ -32,10 +32,10 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.UserDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsersGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
-import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
-import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
+import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -106,7 +106,7 @@ public class UsersListFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if((!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode()) {
+        if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -122,8 +122,7 @@ public class UsersListFragment extends MyFragment {
 
         AdView adView = view.findViewById(R.id.list_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }
@@ -208,9 +207,11 @@ public class UsersListFragment extends MyFragment {
     }
 
     private void loadUsersPage(int pageToLoad) {
-        this.pageToLoadNow = pageToLoad;
-        int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-        addActiveServiceCall(R.string.progress_loading_users,new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
+        if(!usersModel.isPageLoaded(pageToLoad)) {
+            this.pageToLoadNow = pageToLoad;
+            int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
+            addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
+        }
     }
 
     private void addNewUser() {
@@ -223,7 +224,7 @@ public class UsersListFragment extends MyFragment {
     }
 
     private void onDeleteUser(final User thisItem) {
-        String currentUser = PiwigoSessionDetails.getInstance().getUsername();
+        String currentUser = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getUsername();
         if (currentUser.equals(thisItem.getUsername())) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_delete_yourself_pattern), currentUser));
         } else {

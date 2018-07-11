@@ -34,25 +34,26 @@ public abstract class AlbumAlterPermissionsResponseHandler extends AbstractPiwig
     @Override
     public RequestParams buildRequestParameters() {
         String sessionToken = "";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            sessionToken = PiwigoSessionDetails.getInstance().getSessionToken();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
         }
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("cat_id", galleryId.toString());
-        if(newAllowedUsers != null) {
+        if (newAllowedUsers != null) {
             for (Long id : newAllowedUsers) {
                 params.add("user_id", id.toString());
             }
         }
-        if(newAllowedGroups != null) {
+        if (newAllowedGroups != null) {
             for (Long id : newAllowedGroups) {
                 params.add("group_id", id.toString());
             }
         }
-        if(recursive) {
+        if (recursive) {
             params.put("recursive", "true");
         }
         params.put("pwg_token", sessionToken);

@@ -138,7 +138,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         if (savedInstanceState == null) {
             if (!hasAgreedToEula()) {
                 showEula();
-            } else if (ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
+            } else if (ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
                 showPreferences();
             } else {
                 showGallery(currentAlbum);
@@ -188,11 +188,13 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             Toolbar toolbar = findViewById(R.id.toolbar);
             toolbar.setVisibility(prefs.getBoolean(getString(R.string.preference_app_show_toolbar_key), true) ? View.VISIBLE : View.GONE);
 
-            if(!"".equals(ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+
+            if(!"".equals(connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
                 // Can and need to login to the server, so lets do that.
                 boolean haveBeenLoggedIn = null != getSupportFragmentManager().findFragmentByTag(LoginFragment.class.getName());
 
-                if(haveBeenLoggedIn && !PiwigoSessionDetails.isFullyLoggedIn()) {
+                if(haveBeenLoggedIn && !PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
 
                     // clear the backstack - its for an old session (clear stack back to first session login).
                     for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
@@ -462,6 +464,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     @Override
     public void onTrimMemory(int level) {
 
+        boolean cacheCleared;
         // Determine which lifecycle or system event was raised.
             switch (level) {
 
@@ -481,8 +484,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
             case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
 
-                PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
-                EventBus.getDefault().post(new MemoryTrimmedRunningAppEvent());
+                cacheCleared = PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
+                EventBus.getDefault().post(new MemoryTrimmedRunningAppEvent(level, cacheCleared));
 
                 /*
                    Release any memory that your app doesn't need to run.
@@ -499,8 +502,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
             case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
 
-                PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
-                EventBus.getDefault().post(new MemoryTrimmedEvent());
+                cacheCleared = PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
+                EventBus.getDefault().post(new MemoryTrimmedEvent(level, cacheCleared));
                 /*
                    Release as much memory as the process can.
 
@@ -514,8 +517,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
             default:
 
-                PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
-                EventBus.getDefault().post(new GenericLowMemoryEvent());
+                cacheCleared = PicassoFactory.getInstance().clearPicassoCache(getApplicationContext());
+                EventBus.getDefault().post(new GenericLowMemoryEvent(level, cacheCleared));
 
                 /*
                   Release any non-critical data structures.
@@ -530,21 +533,27 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GenericLowMemoryEvent event) {
-        showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message);
+        if(event.isPicassoCacheCleared()) {
+            showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message, event.getMemoryLevel());
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MemoryTrimmedRunningAppEvent event) {
-        showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message);
+        if(event.isPicassoCacheCleared()) {
+            showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message, event.getMemoryLevel());
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MemoryTrimmedEvent event) {
-        showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message);
+        if(event.isPicassoCacheCleared()) {
+            showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message, event.getMemoryLevel());
+        }
     }
 
-    private void showLowMemoryWarningMessage(int messageId) {
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning_lowMemory, getString(messageId), R.string.button_close);
+    private void showLowMemoryWarningMessage(int messageId, int memoryLevel) {
+        getUiHelper().showToast(getString(messageId, memoryLevel));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -645,7 +654,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-        if (ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
+        if (ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
             showPreferences();
         } else {
             showGallery(CategoryItem.ROOT_ALBUM);

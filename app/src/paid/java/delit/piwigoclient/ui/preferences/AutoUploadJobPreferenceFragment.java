@@ -1,14 +1,19 @@
 package delit.piwigoclient.ui.preferences;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,18 +24,25 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
+import delit.piwigoclient.ui.common.util.PreferenceUtils;
+import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 
 public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     private static final String JOB_ID_ARG = "jobId";
-    int jobId = -1;
+    private static final String ACTION_ID_ARG = "actionId";
+    private PreferenceChangeListener prefChangeListener;
+    private int actionId = -1;
+    private int jobId = -1;
 
     public AutoUploadJobPreferenceFragment(){}
 
-    public static AutoUploadJobPreferenceFragment newInstance(int jobId) {
+    public static AutoUploadJobPreferenceFragment newInstance(int actionId, int jobId) {
         AutoUploadJobPreferenceFragment fragment = new AutoUploadJobPreferenceFragment();
         Bundle args = new Bundle();
+        args.putInt(ACTION_ID_ARG, actionId);
         args.putInt(JOB_ID_ARG, jobId);
         fragment.setArguments(args);
         return fragment;
@@ -40,55 +52,95 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     public void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
         jobId = getArguments().getInt(JOB_ID_ARG);
-        getPreferenceManager().setSharedPreferencesName(String.format("autoUploadJob[%1$d]",jobId));
+        actionId = getArguments().getInt(ACTION_ID_ARG);
+        getPreferenceManager().setSharedPreferencesName(AutoUploadJobConfig.getSharedPreferencesName(jobId));
     }
 
 
     /**
      * disable this job as long as at least one preference is not valid
      */
-    private void invokePreferenceValuesValidation() {
+    private void invokePreferenceValuesValidation(boolean isFinalValidationCheck) {
         SharedPreferences appPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         boolean allPreferencesValid = true;
         ConnectionPreferences.ProfilePreferences profilePrefs = null;
         // check server connection details
+
         if(allPreferencesValid) {
-            String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_server_key);
-            profilePrefs = ConnectionPreferences.getPreferences(serverProfile);
-            String serverName = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
-            allPreferencesValid &= serverName != null;
+            String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_key);
+            allPreferencesValid &= serverProfile != null;
+            if(allPreferencesValid) {
+                profilePrefs = ConnectionPreferences.getPreferences(serverProfile);
+                String serverName = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
+                allPreferencesValid &= serverName != null;
+            }
         }
         // check local folder
         if(allPreferencesValid) {
-            String localFolder = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_local_folder_key);
+            String localFolder = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_local_folder_key);
             allPreferencesValid &= localFolder != null && new File(localFolder).exists();
         }
-        // check remote folder
+        // check remote privacy level
         if(allPreferencesValid) {
-            String remoteFolderDetails = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_server_album_key);
-            allPreferencesValid &= remoteFolderDetails != null;
-            if(allPreferencesValid) {
-                long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
-                AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
-                albumHandler.withConnectionPreferences(profilePrefs);
-                addActiveServiceCall(albumHandler.invokeAsync(getContext()));
-            }
+            int privacyLevel = getPreferenceValueOrMinInt(R.string.preference_data_upload_automatic_job_privacy_level_key);
+            allPreferencesValid &= privacyLevel != Integer.MIN_VALUE;
+        }
+
+        updateJobValidPreferenceIfNeeded(allPreferencesValid, isFinalValidationCheck);
+
+        // check remote folder (will trigger marking job as valid if successfully completes)
+        if(allPreferencesValid && !isFinalValidationCheck) {
+            invokeRemoteFolderPreferenceValidation();
+        }
+    }
+
+    private void updateJobValidPreferenceIfNeeded(boolean allPreferencesValid, boolean isFinalValidationCheck) {
+        if(isFinalValidationCheck || (!allPreferencesValid && getBooleanPreferenceValue(getString(R.string.preference_data_upload_automatic_job_is_valid_key)))) {
+            SharedPreferences.Editor editor = getPrefs().edit();
+            editor.putBoolean(getString(R.string.preference_data_upload_automatic_job_is_valid_key), allPreferencesValid);
+            editor.commit();
+            Preference pref = findPreference(R.string.preference_data_upload_automatic_job_is_valid_key);
+            PreferenceUtils.refreshDisplayedPreference(pref);
+        }
+    }
+
+    private void invokeRemoteFolderPreferenceValidation() {
+        String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_key);
+        ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(serverProfile);
+        String remoteFolderDetails = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_album_key);
+        if(remoteFolderDetails != null) {
+            long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
+            AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
+            albumHandler.withConnectionPreferences(profilePrefs);
+            addActiveServiceCall(R.string.progress_loading_albums,albumHandler.invokeAsync(getContext()));
+        } else {
+            updateJobValidPreferenceIfNeeded(false, false);
         }
     }
 
     private void finishPreferenceValuesValidation(ArrayList<CategoryItemStub> albumNames) {
-        boolean allPreferencesValid = albumNames != null && albumNames.size() == 1;
+        boolean remoteAlbumExists = albumNames != null && albumNames.size() >= 1;
+
         SharedPreferences.Editor editor = getPrefs().edit();
-
-        editor.putBoolean(getString(R.string.preference_data_upload_automatic_job_is_valid_key), allPreferencesValid);
-
-        if(allPreferencesValid) {
+        if(remoteAlbumExists) {
             // ensure the folder name is in-sync with the value on the server
             String remoteFolderDetails = ServerAlbumListPreference.ServerAlbumPreference.toValue(albumNames.get(0));
-            editor.putString(getString(R.string.preference_data_upload_automatic_server_album_key), remoteFolderDetails);
+            editor.putString(getString(R.string.preference_data_upload_automatic_job_server_album_key), remoteFolderDetails);
+        } else {
+            editor.putString(getString(R.string.preference_data_upload_automatic_job_server_album_key), null);
+        }
+        editor.commit();
+
+        // update the remote album preference (may have altered name)
+        PreferenceUtils.refreshDisplayedPreference(findPreference(R.string.preference_data_upload_automatic_job_server_album_key));
+
+        // update job validity status.
+        if(!remoteAlbumExists) {
+            updateJobValidPreferenceIfNeeded(remoteAlbumExists, true);
+        } else {
+            invokePreferenceValuesValidation(true);
         }
 
-        editor.commit();
     }
 
     @Override
@@ -99,16 +151,64 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     @Override
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
         return super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
-//        Preference p = findPreference(R.string.preference_data_upload_automatic_server_key);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        addPreferencesFromResource(R.xml.pref_auto_upload_job);
+        if(getPreferenceScreen() == null) {
+            addPreferencesFromResource(R.xml.pref_auto_upload_job);
+        }
         setHasOptionsMenu(true);
 
-        invokePreferenceValuesValidation();
+        invokePreferenceValuesValidation(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        prefChangeListener = new PreferenceChangeListener();
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(prefChangeListener);
+    }
+
+    @Override
+    public void onPause() {
+        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(prefChangeListener);
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().postSticky(new AutoUploadJobViewCompleteEvent(actionId, jobId));
+        super.onStop();
+    }
+
+    private class PreferenceChangeListener implements SharedPreferences.OnSharedPreferenceChangeListener {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if(key.equals(getString(R.string.preference_data_upload_automatic_job_server_album_key))) {
+                String remoteFolderDetails = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_album_key);
+                long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
+                if(albumId >= 0) {
+                    invokeRemoteFolderPreferenceValidation();
+                }
+            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_wireless_only_key))) {
+                boolean wifiOnlyEnabled = getBooleanPreferenceValue(key);
+                if(wifiOnlyEnabled) {
+                    getUiHelper().runWithExtraPermissions(getActivity(), Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.ACCESS_NETWORK_STATE, getString(R.string.alert_network_monitor_permission_needed_for_wifi_upload));
+                }
+            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_enable_key))) {
+                if(getBooleanPreferenceValue(key)) {
+                    if(!BackgroundPiwigoUploadService.isStarted()) {
+                        BackgroundPiwigoUploadService.startService(getContext(), true);
+                    }
+                } else {
+                    BackgroundPiwigoUploadService.killService();
+                }
+            } else {
+                invokePreferenceValuesValidation(false);
+            }
+        }
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
@@ -142,8 +242,8 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             super.onAfterHandlePiwigoResponse(response);
-            if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                finishPreferenceValuesValidation(((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+            if(response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                finishPreferenceValuesValidation(((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
             }
         }
     }

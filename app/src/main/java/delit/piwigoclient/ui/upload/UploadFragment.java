@@ -24,7 +24,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -49,14 +48,14 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandle
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
-import delit.piwigoclient.piwigoApi.upload.NewPiwigoUploadService;
+import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
-import delit.piwigoclient.ui.common.list.BiArrayAdapter;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.list.BiArrayAdapter;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
@@ -88,6 +87,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     private AvailableAlbumsListAdapter availableGalleries;
     private RecyclerView filesForUploadView;
     private Button uploadFilesNowButton;
+    private Button deleteUploadJobButton;
     private AppCompatSpinner selectedGallerySpinner;
     private Spinner privacyLevelSpinner;
     private CustomImageButton fileSelectButton;
@@ -107,7 +107,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     public static UploadFragment newInstance(long currentGalleryId, int actionId) {
         UploadFragment fragment = new UploadFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_CURRENT_GALLERY_ID, currentGalleryId);
+        args.putLong(ARG_CURRENT_GALLERY_ID, currentGalleryId);
         args.putInt(ARG_SELECT_FILES_ACTION_ID, actionId);
         fragment.setArguments(args);
         return fragment;
@@ -158,7 +158,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if ((!PiwigoSessionDetails.isAdminUser() && !PiwigoSessionDetails.getInstance().isUseCommunityPlugin()) || isAppInReadOnlyMode()) {
+        final PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+
+        if ((sessionDetails == null || (!sessionDetails.isAdminUser() && !sessionDetails.isUseCommunityPlugin())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -169,8 +171,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         AdView adView = view.findViewById(R.id.upload_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }
@@ -199,12 +200,12 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         fileSelectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!PiwigoSessionDetails.isFullyLoggedIn()) {
-                    String serverUri = ConnectionPreferences.getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
-                    getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri),new LoginResponseHandler(getContext()).invokeAsync(getContext()));
+                if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
+                    String serverUri = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
+                    getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri),new LoginResponseHandler().invokeAsync(getContext()));
                 } else {
                     FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
-                    ArrayList<String> allowedFileTypes = new ArrayList<>(PiwigoSessionDetails.getInstance().getAllowedFileTypes());
+                    ArrayList<String> allowedFileTypes = new ArrayList<>(sessionDetails.getAllowedFileTypes());
                     event.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
                     event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
                     getUiHelper().setTrackingRequest(event.getActionId());
@@ -235,7 +236,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         CharSequence[] privacyLevelsText = getResources().getTextArray(R.array.privacy_levels_groups_array);
         long[] privacyLevelsValues = ArrayUtils.getLongArray(getResources().getIntArray(R.array.privacy_levels_values_array));
         BiArrayAdapter<CharSequence> privacyLevelOptionsAdapter = new BiArrayAdapter(getContext(), android.R.layout.simple_spinner_item, 0, privacyLevelsText, privacyLevelsValues);
-//        if(!PiwigoSessionDetails.isAdminUser()) {
+//        if(!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
 //            // remove the "admin only" privacy option.
 //            privacyLevelOptionsAdapter.remove(privacyLevelOptionsAdapter.getItemById(8)); // Admin ID
 //        }
@@ -256,6 +257,31 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             }
         });
         privacyLevelSpinner.setSelection(0);
+
+        deleteUploadJobButton  = view.findViewById(R.id.delete_upload_job_button);
+        deleteUploadJobButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, getString(R.string.alert_really_delete_upload_job), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
+                    @Override
+                    public void onDismiss(AlertDialog dialog) {
+
+                    }
+
+                    @Override
+                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                        UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
+                        if(positiveAnswer != null && positiveAnswer.booleanValue()) {
+                            ForegroundPiwigoUploadService.removeJob(job);
+                            ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), job);
+                            allowUserUploadConfiguration(null);
+                        }
+                    }
+                });
+            }
+        });
+        updateJobDeletionButtonStatus();
+
 
         uploadFilesNowButton = view.findViewById(R.id.upload_files_button);
         uploadFilesNowButton.setOnClickListener(new View.OnClickListener() {
@@ -346,9 +372,11 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     }
 
     private void invokeRetrieveSubCategoryNamesCall() {
-        if(PiwigoSessionDetails.isAdminUser()) {
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        if(PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
             subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler().invokeAsync(getContext()));
-        } else if(PiwigoSessionDetails.getInstance().isUseCommunityPlugin()) {
+        } else if(sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
             final boolean recursive = true;
             subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext()));
         } else {
@@ -426,13 +454,14 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         FilesToUploadRecyclerViewAdapter adapter = (FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter();
         adapter.addAll(filesToBeUploaded);
         uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
+        updateJobDeletionButtonStatus();
     }
 
     private void uploadFiles() {
 
         UploadJob activeJob = null;
         if(uploadJobId != null) {
-            activeJob = NewPiwigoUploadService.getActiveJob(getContext(), uploadJobId);
+            activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
         }
 
         if(activeJob == null) {
@@ -500,10 +529,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             return null;
         }
 
-        boolean useTempFolder = !PiwigoSessionDetails.isUseCommunityPlugin();
-
         long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
-        return NewPiwigoUploadService.createUploadJob(getContext(), filesForUpload, uploadToCategory, (int) privacyLevelWanted, handlerId, useTempFolder);
+        return ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToCategory, (int) privacyLevelWanted, handlerId);
     }
 
     private void allowUserUploadConfiguration(UploadJob uploadJob) {
@@ -518,10 +545,24 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         boolean jobYetToFinishUploadingFiles = filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow));
         boolean jobYetToCompleteAfterUploadingFiles = !noJobIsYetConfigured && !filesStillToBeUploaded && !jobIsFinished && !jobIsRunningNow; // crashed job just loaded basically
         uploadFilesNowButton.setEnabled(jobYetToFinishUploadingFiles || jobYetToCompleteAfterUploadingFiles); // Allow restart of the job.
+        updateJobDeletionButtonStatus();
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         newGalleryButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         selectedGallerySpinner.setEnabled(availableGalleries.getCount() > 0 && (noJobIsYetConfigured || jobIsFinished));
         privacyLevelSpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
+    }
+
+    private void updateJobDeletionButtonStatus() {
+        if(uploadJobId != null) {
+            UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
+            if(job != null) {
+                deleteUploadJobButton.setEnabled(job.hasBeenRunBefore() && !job.isRunningNow() && !job.hasJobCompletedAllActionsSuccessfully());
+            } else {
+                deleteUploadJobButton.setEnabled(false);
+            }
+        } else {
+            deleteUploadJobButton.setEnabled(false);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -534,14 +575,14 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
-            UploadJob activeJob = NewPiwigoUploadService.getActiveJob(getContext(), uploadJobId);
+            UploadJob activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
             boolean keepDeviceAwake = false;
             if (event.areAllPermissionsGranted()) {
                 keepDeviceAwake = true;
             }
             //ensure the handler is actively listening before the job starts.
             getUiHelper().addBackgroundServiceCall(uploadJobId);
-            NewPiwigoUploadService.startActionRunOrReRunUploadJob(getContext(), activeJob, keepDeviceAwake);
+            ForegroundPiwigoUploadService.startActionRunOrReRunUploadJob(getContext(), activeJob, keepDeviceAwake);
             allowUserUploadConfiguration(activeJob);
         }
     }
@@ -634,33 +675,25 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                         if(Boolean.TRUE == positiveAnswer) {
                             adapter.clear();
                             uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
+                            updateJobDeletionButtonStatus();
                         }
                     }
                 });
             } else {
                 adapter.remove(itemToRemove);
                 uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
+                updateJobDeletionButtonStatus();
             }
         }
-    }
-
-    private void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse response) {
-        updateSpinnerWithNewAlbumsList(response.getAdminList().flattenTree());
-    }
-
-    private void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
-        updateSpinnerWithNewAlbumsList(response.getAlbumNames());
     }
 
     private void updateSpinnerWithNewAlbumsList(ArrayList<CategoryItemStub> albums) {
 
         this.availableGalleries.clear();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean autoSelectCommunityAlbum = sessionDetails != null && sessionDetails.isFullyLoggedIn() && sessionDetails.isUseCommunityPlugin();
 
-        boolean autoSelectCommunityAlbum = PiwigoSessionDetails.isFullyLoggedIn() && PiwigoSessionDetails.isUseCommunityPlugin();
-
-        if (currentGallery.getId() == 0) {
-            this.availableGalleries.add(CategoryItemStub.ROOT_GALLERY);
-        }
+        this.availableGalleries.add(CategoryItemStub.ROOT_GALLERY);
 
         if(uploadToAlbumId == null) {
             uploadToAlbumId = currentGallery.getId();
@@ -675,7 +708,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
         if(autoSelectCommunityAlbum) {
             for(CategoryItemStub album : albums) {
-                if(album.getName().equals(PiwigoSessionDetails.getInstance().getUsername())) {
+                if(album.getName().equals(sessionDetails.getUsername())) {
                     position = availableGalleries.getPosition(album);
                     selectedGallerySpinner.setSelection(position);
                     break;
@@ -690,15 +723,13 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
-        return new CustomPiwigoResponseListener(context);
+        return new ForegroundPiwigoFileUploadResponseListener(context);
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    private class ForegroundPiwigoFileUploadResponseListener extends PiwigoFileUploadResponseListener {
 
-        private final Context context;
-
-        CustomPiwigoResponseListener(Context context) {
-            this.context = context;
+        ForegroundPiwigoFileUploadResponseListener(Context context) {
+            super(context);
         }
 
         @Override
@@ -710,31 +741,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
 
         @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse) {
-                onUploadComplete(context, ((PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse)response).getJob());
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse) {
-                onPrepareUploadFailed(context, (PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) {
-                onFileUploadProgressUpdate(context, (PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse) {
-                onLocalFileError(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileFilesExistAlreadyResponse) {
-                onFilesSelectedForUploadAlreadyExistOnServer(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileFilesExistAlreadyResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileChunkFailedResponse) {
-                onChunkUploadFailed(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileChunkFailedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse) {
-                onAddUploadedFileToAlbumFailure(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
-                onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) response);
-            } else if(response instanceof PiwigoResponseBufferingHandler.FileUploadCancelledResponse) {
-                onRequestedFileUploadCancelComplete(context, ((PiwigoResponseBufferingHandler.FileUploadCancelledResponse)response).getCancelledFile());
-            } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoStartUploadFileResponse) {
-                // ignore for now.
-            } else if(response.getMessageId() == subCategoryNamesActionId) {
+        protected void onErrorResponse(PiwigoResponseBufferingHandler.ErrorResponse response) {
+            if(response.getMessageId() == subCategoryNamesActionId) {
                 // the retrieval of the album names failed. Need to allow retry and prevent use of the UI until then.
                 selectedGallerySpinner.setEnabled(false);
                 newGalleryButton.setEnabled(false);
@@ -749,85 +757,199 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             // now allow anything not pertaining to the only non upload action on the page at any time.
             return canHandle || (response.getMessageId() != subCategoryNamesActionId);
         }
-    }
 
-
-
-
-    private void onRequestedFileUploadCancelComplete(Context context, File cancelledFile) {
-        if(isAdded()) {
-            FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
-            adapter.remove(cancelledFile);
-        }
-        UploadJob uploadJob = NewPiwigoUploadService.getActiveJob(context, uploadJobId);
-        if(uploadJob.isFilePartiallyUploaded(cancelledFile)) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_partial_upload_deleted));
-        }
-    }
-
-    private void onUploadComplete(final Context context, final UploadJob job) {
-        if(isAdded()) {
-            if(job.hasJobCompletedAllActionsSuccessfully() && job.isFinished()) {
-                uploadJobId = null;
-                if (UploadFragment.this.isAdded()) {
-                    NewPiwigoUploadService.removeJob(job);
-                }
-                HashSet<File> filesPendingApproval = job.getFilesPendingApproval();
-                if(filesPendingApproval.size() > 0) {
-                    String msg = getString(R.string.alert_message_info_files_already_pending_approval_pattern, filesPendingApproval.size());
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, msg);
-                }
-            } else {
-                int errMsgResourceId = R.string.alert_message_error_uploading_start;
-                if(job.getFilesNotYetUploaded().size() == 0) {
-                    errMsgResourceId = R.string.alert_message_error_uploading_end;
-                }
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_error_upload, getContext().getString(errMsgResourceId), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-                    }
-
-                    @Override
-                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                        if(positiveAnswer) {
-                            NewPiwigoUploadService.removeJob(job);
-                            NewPiwigoUploadService.deleteStateFromDisk(context, job);
-                            allowUserUploadConfiguration(null);
-                        }
-                    }
-                });
+        @Override
+        protected void onRequestedFileUploadCancelComplete(Context context, File cancelledFile) {
+            if(isAdded()) {
+                FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
+                adapter.remove(cancelledFile);
             }
-            allowUserUploadConfiguration(job);
+            UploadJob uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, uploadJobId);
+            if(uploadJob.isFilePartiallyUploaded(cancelledFile)) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_partial_upload_deleted));
+            }
         }
-        notifyUserUploadJobComplete(context, job);
+
+        @Override
+        protected void onUploadComplete(final Context context, final UploadJob job) {
+            if(isAdded()) {
+                if(job.hasJobCompletedAllActionsSuccessfully() && job.isFinished()) {
+                    uploadJobId = null;
+                    if (UploadFragment.this.isAdded()) {
+                        ForegroundPiwigoUploadService.removeJob(job);
+                    }
+                    HashSet<File> filesPendingApproval = job.getFilesPendingApproval();
+                    if(filesPendingApproval.size() > 0) {
+                        String msg = getString(R.string.alert_message_info_files_already_pending_approval_pattern, filesPendingApproval.size());
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, msg);
+                    }
+                } else {
+                    int errMsgResourceId = R.string.alert_message_error_uploading_start;
+                    if(job.getFilesNotYetUploaded().size() == 0) {
+                        errMsgResourceId = R.string.alert_message_error_uploading_end;
+                    }
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_error_upload, getContext().getString(errMsgResourceId), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
+                        @Override
+                        public void onDismiss(AlertDialog dialog) {
+                        }
+
+                        @Override
+                        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                            if(positiveAnswer != null && positiveAnswer) {
+                                ForegroundPiwigoUploadService.removeJob(job);
+                                ForegroundPiwigoUploadService.deleteStateFromDisk(context, job);
+                                allowUserUploadConfiguration(null);
+                            }
+                        }
+                    });
+                }
+                allowUserUploadConfiguration(job);
+            }
+            notifyUserUploadJobComplete(context, job);
+        }
+
+        @Override
+        protected void onLocalFileError(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse response) {
+            String errorMessage;
+            if (response.getError() instanceof FileNotFoundException) {
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), response.getFileForUpload().getName());
+            } else {
+                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_read_error_message_pattern), response.getFileForUpload().getName());
+            }
+            notifyUser(context, R.string.alert_error, errorMessage);
+        }
+
+        @Override
+        protected void onPrepareUploadFailed(Context context, final PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse response) {
+
+            PiwigoResponseBufferingHandler.Response error = response.getError();
+            processError(context, error);
+        }
+
+        @Override
+        protected void onCleanupPostUploadFailed(Context context, PiwigoResponseBufferingHandler.PiwigoCleanupPostUploadFailedResponse response) {
+            PiwigoResponseBufferingHandler.Response error = response.getError();
+            processError(context, error);
+        }
+
+        @Override
+        protected void onFileUploadProgressUpdate(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
+            if(isAdded()) {
+                FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
+                adapter.updateProgressBar(response.getFileForUpload(), response.getProgress());
+            }
+            if(response.getProgress() == 100) {
+                onFileUploadComplete(context, response);
+            }
+        }
+
+        private void onFileUploadComplete(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
+
+            UploadJob uploadJob = getActiveJob(context);
+
+            for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
+            }
+            EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory()));
+
+            if(isAdded()) {
+
+                FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
+                adapter.remove(response.getFileForUpload());
+            }
+        }
+
+        @Override
+        protected void onFilesSelectedForUploadAlreadyExistOnServer(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileFilesExistAlreadyResponse response) {
+            if(isAdded()) {
+                UploadJob uploadJob = getActiveJob(context);
+
+                if(uploadJob != null) {
+                    FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
+                    for (File existingFile : response.getExistingFiles()) {
+                        int progress = uploadJob.getUploadProgress(existingFile);
+                        adapter.updateProgressBar(existingFile, progress);
+//                    adapter.remove(existingFile);
+                    }
+                }
+            }
+            String message = String.format(context.getString(R.string.alert_items_for_upload_already_exist_message_pattern), response.getExistingFiles().size());
+            notifyUser(context, R.string.alert_information, message);
+        }
+
+        @Override
+        protected void onChunkUploadFailed(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileChunkFailedResponse response) {
+            PiwigoResponseBufferingHandler.Response error = response.getError();
+            File fileForUpload = response.getFileForUpload();
+            String errorMessage = null;
+
+            if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
+                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) error);
+                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webserver_message_pattern), fileForUpload.getName(), err.getStatusCode(), err.getErrorMessage());
+            } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {
+                PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse err = (PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) error;
+                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webresponse_message_pattern), fileForUpload.getName(), err.getRawResponse());
+            } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) {
+                PiwigoResponseBufferingHandler.PiwigoServerErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) error);
+                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_piwigo_message_pattern), fileForUpload.getName(), err.getPiwigoErrorCode(), err.getPiwigoErrorMessage());
+            }
+            if (errorMessage != null) {
+                notifyUser(context, R.string.alert_error, errorMessage);
+            }
+        }
+
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onGetSubGalleryNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
+                onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) response);
+            } else {
+                super.onAfterHandlePiwigoResponse(response);
+            }
+        }
+
+        @Override
+        protected void onAddUploadedFileToAlbumFailure(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse response) {
+            PiwigoResponseBufferingHandler.Response error = response.getError();
+            File fileForUpload = response.getFileForUpload();
+            String errorMessage = null;
+
+            if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
+                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) error);
+                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webserver_message_pattern), fileForUpload.getName(), err.getStatusCode(), err.getErrorMessage());
+            } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {
+                PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse err = (PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) error;
+                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webresponse_message_pattern), fileForUpload.getName(), err.getRawResponse());
+            } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) {
+                PiwigoResponseBufferingHandler.PiwigoServerErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) error);
+                if ("file already exists".equals(err.getPiwigoErrorMessage())) {
+                    if(isAdded()) {
+                        FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
+                        adapter.remove(fileForUpload);
+                    }
+                    errorMessage = String.format(context.getString(R.string.alert_error_upload_file_already_on_server_message_pattern), fileForUpload.getName());
+                } else {
+                    errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_piwigo_message_pattern), fileForUpload.getName(), err.getPiwigoErrorCode(), err.getPiwigoErrorMessage());
+                }
+            } else  if(error instanceof PiwigoResponseBufferingHandler.CustomErrorResponse) {
+                errorMessage = ((PiwigoResponseBufferingHandler.CustomErrorResponse)error).getErrorMessage();
+            }
+            if(errorMessage != null) {
+                notifyUser(context, R.string.alert_error, errorMessage);
+            }
+        }
+
+        protected void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse response) {
+            updateSpinnerWithNewAlbumsList(response.getAdminList().flattenTree());
+        }
+
+        protected void onGetSubGalleryNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+            updateSpinnerWithNewAlbumsList(response.getAlbumNames());
+        }
     }
 
-    private void notifyUserUploadJobComplete(Context context, UploadJob job) {
-        String message;
-        int titleId = R.string.alert_success;
-
-        if (!job.hasJobCompletedAllActionsSuccessfully()) {
-            message = context.getString(R.string.alert_upload_partial_success);
-            titleId = R.string.alert_partial_success;
-        } else {
-            message = context.getString(R.string.alert_upload_success);
-        }
-        notifyUser(context, titleId, message);
-    }
-
-    private void onLocalFileError(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse response) {
-        String errorMessage;
-        if (response.getError() instanceof FileNotFoundException) {
-            errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), response.getFileForUpload().getName());
-        } else {
-            errorMessage = String.format(context.getString(R.string.alert_error_upload_file_read_error_message_pattern), response.getFileForUpload().getName());
-        }
-        notifyUser(context, R.string.alert_error, errorMessage);
-    }
-
-    private void onPrepareUploadFailed(Context context, final PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse response) {
-
-        PiwigoResponseBufferingHandler.Response error = response.getError();
+    private void processError(Context context, PiwigoResponseBufferingHandler.Response error) {
         String errorMessage = null;
         if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
             PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) error);
@@ -843,107 +965,28 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
     }
 
-    private void onFileUploadProgressUpdate(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
-        if(isAdded()) {
-            FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
-            adapter.updateProgressBar(response.getFileForUpload(), response.getProgress());
+
+    private void notifyUserUploadJobComplete(Context context, UploadJob job) {
+        String message;
+        int titleId = R.string.alert_success;
+
+        if (!job.hasJobCompletedAllActionsSuccessfully()) {
+            message = context.getString(R.string.alert_upload_partial_success);
+            titleId = R.string.alert_partial_success;
+        } else {
+            message = context.getString(R.string.alert_upload_success);
         }
-        if(response.getProgress() == 100) {
-            onFileUploadComplete(context, response);
-        }
+        notifyUser(context, titleId, message);
     }
 
     private UploadJob getActiveJob(Context context) {
         UploadJob uploadJob;
         if (uploadJobId == null) {
-            uploadJob = NewPiwigoUploadService.getFirstActiveJob(context);
+            uploadJob = ForegroundPiwigoUploadService.getFirstActiveForegroundJob(context);
         } else {
-            uploadJob = NewPiwigoUploadService.getActiveJob(context, uploadJobId);
+            uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, uploadJobId);
         }
         return uploadJob;
-    }
-
-    private void onFileUploadComplete(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
-
-        UploadJob uploadJob = getActiveJob(context);
-
-        for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
-        }
-        EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory()));
-
-        if(isAdded()) {
-
-            FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
-            adapter.remove(response.getFileForUpload());
-        }
-    }
-
-    private void onFilesSelectedForUploadAlreadyExistOnServer(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileFilesExistAlreadyResponse response) {
-        if(isAdded()) {
-            UploadJob uploadJob = getActiveJob(context);
-
-            if(uploadJob != null) {
-                FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
-                for (File existingFile : response.getExistingFiles()) {
-                    int progress = uploadJob.getUploadProgress(existingFile);
-                    adapter.updateProgressBar(existingFile, progress);
-//                    adapter.remove(existingFile);
-                }
-            }
-        }
-        String message = String.format(context.getString(R.string.alert_items_for_upload_already_exist_message_pattern), response.getExistingFiles().size());
-        notifyUser(context, R.string.alert_information, message);
-    }
-
-    private void onChunkUploadFailed(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileChunkFailedResponse response) {
-        PiwigoResponseBufferingHandler.Response error = response.getError();
-        File fileForUpload = response.getFileForUpload();
-        String errorMessage = null;
-
-        if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) error);
-            errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webserver_message_pattern), fileForUpload.getName(), err.getStatusCode(), err.getErrorMessage());
-        } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {
-            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse err = (PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) error;
-            errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webresponse_message_pattern), fileForUpload.getName(), err.getRawResponse());
-        } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) {
-            PiwigoResponseBufferingHandler.PiwigoServerErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) error);
-            errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_piwigo_message_pattern), fileForUpload.getName(), err.getPiwigoErrorCode(), err.getPiwigoErrorMessage());
-        }
-        if (errorMessage != null) {
-            notifyUser(context, R.string.alert_error, errorMessage);
-        }
-    }
-
-    private void onAddUploadedFileToAlbumFailure(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse response) {
-        PiwigoResponseBufferingHandler.Response error = response.getError();
-        File fileForUpload = response.getFileForUpload();
-        String errorMessage = null;
-
-        if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) error);
-            errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webserver_message_pattern), fileForUpload.getName(), err.getStatusCode(), err.getErrorMessage());
-        } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {
-            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse err = (PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) error;
-            errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webresponse_message_pattern), fileForUpload.getName(), err.getRawResponse());
-        } else if (error instanceof PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) {
-            PiwigoResponseBufferingHandler.PiwigoServerErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) error);
-            if ("file already exists".equals(err.getPiwigoErrorMessage())) {
-                if(isAdded()) {
-                    FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
-                    adapter.remove(fileForUpload);
-                }
-                errorMessage = String.format(context.getString(R.string.alert_error_upload_file_already_on_server_message_pattern), fileForUpload.getName());
-            } else {
-                errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_piwigo_message_pattern), fileForUpload.getName(), err.getPiwigoErrorCode(), err.getPiwigoErrorMessage());
-            }
-        } else  if(error instanceof PiwigoResponseBufferingHandler.CustomErrorResponse) {
-            errorMessage = ((PiwigoResponseBufferingHandler.CustomErrorResponse)error).getErrorMessage();
-        }
-        if(errorMessage != null) {
-            notifyUser(context, R.string.alert_error, errorMessage);
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

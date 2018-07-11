@@ -260,9 +260,9 @@
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/user_adView"
         android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        ads:adSize="BANNER"
+        ads:adSize="SMART_BANNER"
         ads:adUnitId="@string/ad_id_user_edit_banner">
     </com.google.android.gms.ads.AdView>
 

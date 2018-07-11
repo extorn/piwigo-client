@@ -31,9 +31,11 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
     private static final String TAG = "CookieImgDwnldr";
     private final Context context;
     private HttpURLConnection lastConn;
+    private ConnectionPreferences.ProfilePreferences connectionPrefs;
 
-    public CookieImageDownloader(Context context) {
+    public CookieImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         super(context);
+        this.connectionPrefs = connectionPrefs;
         this.context = context;
     }
 
@@ -90,8 +92,8 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
 
     private int followRedirectAndLoginToServer(URL url) throws IOException {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String username = ConnectionPreferences.getPiwigoUsername(prefs, context);
-        String password = ConnectionPreferences.getPiwigoPassword(prefs, context);
+        String username = connectionPrefs.getPiwigoUsername(prefs, context);
+        String password = connectionPrefs.getPiwigoPassword(prefs, context);
         String path = lastConn.getURL().getPath();
         String query = lastConn.getURL().getQuery();
 

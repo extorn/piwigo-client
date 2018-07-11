@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -18,6 +19,7 @@ import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,6 +43,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -48,12 +51,12 @@ import java.util.Locale;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
@@ -63,16 +66,17 @@ import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.ControllableBottomSheetBehavior;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
-import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.dialogs.SelectAlbumDialog;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
+import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
@@ -111,7 +115,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private EditText resourceNameView;
     private ImageButton saveButton;
     private ImageButton discardButton;
-    private ImageButton editButton;
+    protected ImageButton editButton;
     private ImageButton deleteButton;
     private ImageButton copyButton;
     private ImageButton moveButton;
@@ -123,7 +127,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private Long activeDownloadActionId;
     private CustomImageButton setAsAlbumThumbnail;
     private TextView linkedAlbumsField;
-    private TextView tagsField;
+    protected TextView tagsField;
     private HashSet<Long> updatedLinkedAlbumSet;
     private HashSet<Long> albumsRequiringReload;
     private long albumItemIdx;
@@ -341,6 +345,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return true;
     }
 
+    protected boolean isEditingItemDetails() {
+        return editingItemDetails;
+    }
+
     private void updateItemPositionText() {
         if (albumLoadedItemCount == 1 && albumItemIdx == albumLoadedItemCount && albumTotalItemCount == albumLoadedItemCount) {
             itemPositionTextView.setVisibility(GONE);
@@ -374,7 +382,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return null;
     }
 
-    private void setupImageDetailPopup(View v, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    protected void setupImageDetailPopup(View v, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         resourceNameView = v.findViewById(R.id.slideshow_image_details_name);
         resourceNameView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -406,7 +414,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                     currentSelection = new HashSet<>(model.getLinkedAlbums());
                 }
 
-                boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
+                boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
 
                 AlbumSelectionNeededEvent albumSelectEvent = new AlbumSelectionNeededEvent(true, allowFullEdit && editingItemDetails, currentSelection);
                 getUiHelper().setTrackingRequest(albumSelectEvent.getActionId());
@@ -420,12 +428,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 //        } else {
 //            tagsField.setVisibility(VISIBLE);
 //        }
-        tagsField.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onShowTagsSelection();
-            }
-        });
 
         privacyLevelSpinner = v.findViewById(R.id.privacy_level);
 // Create an ArrayAdapter using the string array and a default spinner layout
@@ -503,25 +505,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         fillResourceEditFields();
     }
 
-    private void onShowTagsSelection() {
-        HashSet<Tag> currentSelection = getLatestTagListForResource();
-        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
-        boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate());
-        allowTagEdit &= editingItemDetails;
-        boolean lockInitialSelection = allowTagEdit && !PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
-        //disable tag deselection if user tags plugin is not present but allow editing if is admin user. (bug in PIWIGO API)
-        TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, allowTagEdit, lockInitialSelection, PiwigoUtils.toSetOfIds(currentSelection));
-        getUiHelper().setTrackingRequest(tagSelectEvent.getActionId());
-        EventBus.getDefault().post(tagSelectEvent);
-    }
-
-    protected HashSet<Tag> getLatestTagListForResource() {
-        if(model.getTags() != null) {
-            return new HashSet<>(model.getTags());
-        }
-        return new HashSet<>();
-    }
-
     protected abstract void onSaveModelChanges(T model);
 
     protected void updateModelFromFields() {
@@ -539,14 +522,15 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         fillResourceEditFields();
     }
 
-    private void setControlVisible(View v, boolean visible) {
+    protected void setControlVisible(View v, boolean visible) {
         v.setVisibility(visible?VISIBLE:GONE);
     }
 
     public void displayItemDetailsControlsBasedOnSessionState() {
 
-        boolean allowTagEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
-        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isLoggedIn() && sessionDetails.isUseUserTagPluginForUpdate();
+        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser();
 
         setControlVisible(saveButton, allowFullEdit || allowTagEdit);
         setControlVisible(discardButton, allowFullEdit || allowTagEdit);
@@ -585,10 +569,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         setEditItemDetailsControlsStatus();
     }
 
-    private void setEditItemDetailsControlsStatus() {
+    protected void setEditItemDetailsControlsStatus() {
 
-        boolean allowTagEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate();
-        boolean allowFullEdit = !isAppInReadOnlyMode() && PiwigoSessionDetails.isAdminUser();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
+        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser();
 
         resourceNameView.setEnabled(allowFullEdit && editingItemDetails);
         resourceDescriptionView.setEnabled(allowFullEdit && editingItemDetails);
@@ -780,11 +765,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         updateItemPositionText();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+    protected class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken()));
+            EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
         }
 
         @Override
@@ -807,14 +792,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse) {
                 PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<T> r = ((PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<T>) response);
                 onResourceInfoAltered((T)r.getPiwigoResource());
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) {
-                if(((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).hasError()) {
-                    showOrQueueMessage(R.string.alert_error, ((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).getError());
-                } else {
-                    onResourceTagsUpdated(((PiwigoResponseBufferingHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
-                }
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubAlbumNames((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onGetSubAlbumNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse) {
                 onAlbumThumbnailUpdated((PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse) response);
             }
@@ -825,18 +804,27 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
-    private void onResourceTagsUpdated(ResourceItem piwigoResource) {
-        model.setTags(piwigoResource.getTags());
-        populateResourceExtraFields();
-    }
-
     private void onAlbumThumbnailUpdated(PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse response) {
         EventBus.getDefault().post(new AlbumAlteredEvent(response.getAlbumParentIdAltered()));
     }
 
-    private void onGetSubAlbumNames(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
-        final SelectAlbumDialog dialogFact = new SelectAlbumDialog(getActivity(), model.getParentId());
-        AlertDialog dialog = dialogFact.buildDialog(response.getAlbumNames(), new DialogInterface.OnClickListener() {
+    private void onGetSubAlbumNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+        Activity activity = getActivity();
+        ArrayList<CategoryItemStub> albumNames = response.getAlbumNames();
+        if(albumNames == null || albumNames.isEmpty()) {
+            // should never occur, but to be sure...
+            return;
+        }
+
+        Long defaultAlbumSelectionId = model.getParentId();
+        if(defaultAlbumSelectionId == null) {
+            if(BuildConfig.DEBUG) {
+                Log.e(getTag(), "ERROR: No parent id available for resource!");
+            }
+            defaultAlbumSelectionId = albumNames.get(0).getId();
+        }
+        final SelectAlbumDialog dialogFact = new SelectAlbumDialog(activity, defaultAlbumSelectionId);
+        AlertDialog dialog = dialogFact.buildDialog(albumNames, CategoryItem.ROOT_ALBUM, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 long selectedAlbumId = dialogFact.getSelectedAlbumId();
@@ -900,7 +888,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         populateResourceExtraFields();
     }
 
-    private void populateResourceExtraFields() {
+    protected void populateResourceExtraFields() {
         onRatingAltered(model);
 
         ratingsBar.setRating(model.getYourRating());
@@ -910,37 +898,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         HashSet<Long> currentLinkedAlbumsSet = updatedLinkedAlbumSet != null ? updatedLinkedAlbumSet : model.getLinkedAlbums();
         linkedAlbumsField.setText((currentLinkedAlbumsSet == null ? '?' : currentLinkedAlbumsSet.size()) + " (" + getString(R.string.click_to_view) + ')');
 
-        if (model.getTags() == null) {
-            tagsField.setText(R.string.paid_feature_only);
-//            tagsField.setVisibility(GONE);
-        } else {
-//            tagsField.setVisibility(VISIBLE);
-            HashSet<Tag> currentTagsSet = getLatestTagListForResource();
-            if (currentTagsSet.size() == 0) {
-                String sb = "0 (" + getString(R.string.click_to_view) +
-                        ')';
-                tagsField.setText(sb);
-            } else {
-                StringBuilder sb = new StringBuilder();
-                Iterator<Tag> iter = currentTagsSet.iterator();
-                sb.append(iter.next().getName());
-                while (iter.hasNext()) {
-                    sb.append(", ");
-                    sb.append(iter.next().getName());
-                }
-                sb.append(" (");
-                sb.append(getString(R.string.click_to_view));
-                sb.append(')');
-                tagsField.setText(sb.toString());
-            }
-        }
+        tagsField.setText(R.string.paid_feature_only);
     }
 
     protected void onResourceInfoAltered(final T resourceItem) {
-        if (BuildConfig.PAID_VERSION && PiwigoSessionDetails.getInstance().isUseUserTagPluginForUpdate() && getUiHelper().getActiveServiceCallCount() == 0) {
-            // tags have been updated already so we need to keep the existing ones.
-            resourceItem.setTags(model.getTags());
-        }
         model = resourceItem;
         if (editingItemDetails) {
             editingItemDetails = !editingItemDetails;
@@ -953,6 +914,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             }
             albumsRequiringReload = null;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PiwigoLoginSuccessEvent event) {
+        displayItemDetailsControlsBasedOnSessionState();
+        setEditItemDetailsControlsStatus();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

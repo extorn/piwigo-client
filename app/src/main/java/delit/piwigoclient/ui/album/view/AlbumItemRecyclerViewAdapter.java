@@ -1,11 +1,8 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageView;
@@ -15,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,11 +19,6 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
@@ -40,7 +31,6 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.ui.common.SquareLinearLayout;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
@@ -79,7 +69,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
     private View inflateAdvertView(ViewGroup parent, int viewType) {
         // if (viewType == GalleryItem.CATEGORY_ADVERT_TYPE || viewType == GalleryItem.RESOURCE_ADVERT_TYPE) {
         AdView adView = new AdView(getContext());
-        adView.setAdSize(AdSize.BANNER);
+        adView.setAdSize(AdSize.SMART_BANNER);
         adView.setAdUnitId(getContext().getString(R.string.ad_id_album_banner));
         return adView;
     }

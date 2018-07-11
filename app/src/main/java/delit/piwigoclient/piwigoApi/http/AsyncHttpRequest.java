@@ -18,6 +18,8 @@
 
 package delit.piwigoclient.piwigoApi.http;
 
+import android.util.Log;
+
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RangeFileAsyncHttpResponseHandler;
 import com.loopj.android.http.ResponseHandlerInterface;
@@ -87,6 +89,8 @@ public class AsyncHttpRequest implements Runnable {
 
     @Override
     public void run() {
+        Log.e("AsyncHttpRequest", "Running request "+request.toString()+" on thread " + Thread.currentThread().getName());
+
         if (isCancelled()) {
             return;
         }

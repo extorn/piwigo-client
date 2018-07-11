@@ -13,8 +13,8 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
 
-    private static final String TAG = "LogoutRspHdlr";
     public static final String METHOD = "pwg.session.logout";
+    private static final String TAG = "LogoutRspHdlr";
 
     public LogoutResponseHandler() {
         super(METHOD, TAG);
@@ -29,8 +29,9 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        if (!PiwigoSessionDetails.isLoggedIn()) {
-            onLogout();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails == null || !sessionDetails.isLoggedIn()) {
+            onLogout(sessionDetails);
             return null;
         } else {
             return super.runCall(client, handler);
@@ -39,11 +40,13 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        onLogout();
+        onLogout(PiwigoSessionDetails.getInstance(getConnectionPrefs()));
     }
 
-    private void onLogout() {
-        PiwigoSessionDetails.logout(getContext());
+    private void onLogout(PiwigoSessionDetails sessionDetails) {
+        if(sessionDetails != null) {
+            sessionDetails.logout(getConnectionPrefs(), getContext());
+        }
         PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse r = new PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse(getMessageId(), getPiwigoMethod());
         storeResponse(r);
     }

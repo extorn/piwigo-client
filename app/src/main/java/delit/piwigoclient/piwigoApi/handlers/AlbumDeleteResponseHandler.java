@@ -21,8 +21,9 @@ public class AlbumDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
     @Override
     public RequestParams buildRequestParameters() {
         String sessionToken = "";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            sessionToken = PiwigoSessionDetails.getInstance().getSessionToken();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
         }
         //TODO this will give an unusual error if the user is not logged in.... better way?
 

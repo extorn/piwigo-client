@@ -1,13 +1,5 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 /**
  * Created by gareth on 02/01/18.
  */

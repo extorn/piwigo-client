@@ -2,6 +2,7 @@ package delit.piwigoclient.piwigoApi;
 
 import android.content.Context;
 
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 
 /**
@@ -12,15 +13,17 @@ public class HttpConnectionCleanup extends Worker {
 
 
     private final long messageId;
+    private final ConnectionPreferences.ProfilePreferences connectionPrefs;
 
-    public HttpConnectionCleanup(Context context) {
+    public HttpConnectionCleanup(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
         super(null, context);
+        this.connectionPrefs = connectionPrefs;
         messageId = AbstractPiwigoDirectResponseHandler.getNextMessageId();
     }
 
     @Override
     protected boolean executeCall(long messageId) {
-        HttpClientFactory.getInstance(getContext()).clearCachedClients();
+        HttpClientFactory.getInstance(getContext()).clearCachedClients(connectionPrefs);
         PiwigoResponseBufferingHandler.getDefault().processResponse(new PiwigoResponseBufferingHandler.HttpClientsShutdownResponse(messageId));
         return true;
     }

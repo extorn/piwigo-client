@@ -19,6 +19,7 @@ import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 public class UploadPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Upload Settings";
+    private View view;
 
     // Not needed from API v23 and above
     public Context getContext() {
@@ -61,7 +62,10 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        View v = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
+        if(view != null) {
+            return view;
+        }
+        view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
         addPreferencesFromResource(R.xml.pref_page_upload);
         setHasOptionsMenu(true);
 
@@ -72,7 +76,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
         pref = (NumberPickerPreference) findPreference(R.string.preference_data_upload_preferredColumnsPortrait_key);
         defaultVal = getDefaultImagesColumnCount(Configuration.ORIENTATION_PORTRAIT);
         pref.updateDefaultValue(defaultVal);
-        return v;
+        return view;
     }
 
 }

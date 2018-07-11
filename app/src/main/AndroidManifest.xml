@@ -10,6 +10,8 @@
     <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
     <!-- Required permission to stop CPU sleeping while uploading -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- required for monitoring wifi etc -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
 
     <supports-screens android:resizeable="true"
@@ -69,7 +71,7 @@
             android:windowSoftInputMode="stateHidden"/>
         <activity android:name="com.google.android.gms.ads.AdActivity"/>
         <service
-            android:name=".piwigoApi.upload.NewPiwigoUploadService"
+            android:name=".piwigoApi.upload.ForegroundPiwigoUploadService"
             android:exported="false"/>
         <provider
             android:name="android.support.v4.content.FileProvider"

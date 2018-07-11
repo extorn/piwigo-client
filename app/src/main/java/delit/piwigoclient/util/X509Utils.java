@@ -28,6 +28,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -567,5 +568,27 @@ public class X509Utils {
         byte[] firstBytes = serialiseKeystore(first, storePass);
         byte[] secondBytes = serialiseKeystore(second, storePass);
         return Arrays.equals(firstBytes, secondBytes);
+    }
+
+    public static X509Certificate findFirstExpiredCert(List<? extends Certificate> certificates) {
+        Date now = new Date();
+        for (Certificate c : certificates) {
+            X509Certificate cert = (X509Certificate)c;
+            if(cert.getNotAfter().before(now)) {
+                return cert;
+            }
+        }
+        return null;
+    }
+
+    public static X509Certificate findFirstCertNotYetValid(List<? extends Certificate> certificates) {
+        Date now = new Date();
+        for (Certificate c : certificates) {
+            X509Certificate cert = (X509Certificate)c;
+            if(cert.getNotBefore().after(now)) {
+                return cert;
+            }
+        }
+        return null;
     }
 }

@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatDelegate;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
@@ -17,7 +16,7 @@ import delit.piwigoclient.util.ProjectUtils;
  * Created by gareth on 14/06/17.
  */
 
-public class MyApplication extends Application implements Application.ActivityLifecycleCallbacks {
+public abstract class AbstractMyApplication extends Application implements Application.ActivityLifecycleCallbacks {
 
     static {
         // required for vector graphics support on older devices
@@ -25,9 +24,6 @@ public class MyApplication extends Application implements Application.ActivityLi
     }
 
     private transient SharedPreferences prefs;
-
-    public MyApplication() {
-    }
 
     private void upgradeAnyPreferencesIfRequired() {
         SharedPreferences prefs = getPrefs();
@@ -62,7 +58,7 @@ public class MyApplication extends Application implements Application.ActivityLi
         }
     }
 
-    private SharedPreferences getPrefs() {
+    protected SharedPreferences getPrefs() {
         if(prefs == null) {
             prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         }
@@ -72,13 +68,16 @@ public class MyApplication extends Application implements Application.ActivityLi
 
 
     @Override
-    public void onCreate() {
+    public final void onCreate() {
         super.onCreate();
         PicassoFactory.initialise();
         upgradeAnyPreferencesIfRequired();
         AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
+        onAppCreate();
     }
+
+    protected abstract void onAppCreate();
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -102,7 +101,6 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onActivityStopped(Activity activity) {
-        new HttpConnectionCleanup(getApplicationContext()).start();
     }
 
     @Override

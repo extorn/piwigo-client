@@ -14,8 +14,8 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 public class UploadAlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "CreateGalleryRspHdlr";
-    private final long parentAlbumId;
     private static final SecureRandom random = new SecureRandom();
+    private final long parentAlbumId;
 
     public UploadAlbumCreateResponseHandler(long parentAlbumId) {
         super("pwg.categories.add", TAG);
@@ -27,7 +27,7 @@ public class UploadAlbumCreateResponseHandler extends AbstractPiwigoWsResponseHa
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("parent", parentAlbumId);
-        params.put("name", "uploads-"+Math.abs(random.nextInt()));
+        params.put("name", "uploads-" + Math.abs(random.nextInt()));
         params.put("comment", "PiwigoClient - uploads in progress");
         params.put("visible", "false");
         params.put("status", "private");

@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import delit.piwigoclient.R;
@@ -22,7 +24,7 @@ public class ConnectionPreferences {
     }
 
     public static Set<String> getConnectionProfileList(SharedPreferences prefs, Context context) {
-        return prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), null);
+        return prefs.getStringSet(context.getString(R.string.preference_piwigo_connection_profile_list_key), new HashSet<String>(0));
     }
 
     public static void deletePreferences(SharedPreferences prefs, Context context, @NonNull String prefix) {
@@ -44,7 +46,7 @@ public class ConnectionPreferences {
 
     private static ProfilePreferences activeProfile;
 
-    private static ProfilePreferences getActiveProfile(SharedPreferences prefs, Context context) {
+    public static ProfilePreferences getActiveProfile() {
         if(activeProfile == null) {
             activeProfile = new ProfilePreferences(null);
         }
@@ -55,13 +57,78 @@ public class ConnectionPreferences {
         return new ProfilePreferences(profile);
     }
 
-    public static class ProfilePreferences {
+    public static class ProfilePreferences implements Serializable, Comparable<ProfilePreferences> {
         private final String prefix;
+        private boolean asGuest;
 
         private ProfilePreferences(String prefix) {
             this.prefix = prefix;
         }
-        
+
+        private ProfilePreferences(String prefix, boolean asGuest) {
+            this.prefix = prefix;
+            this.asGuest = asGuest;
+        }
+
+        public ProfilePreferences asGuest() {
+            return new ProfilePreferences(prefix, true);
+        }
+
+        @Override
+        public String toString() {
+            return prefix + " " + asGuest;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(!(obj instanceof ProfilePreferences)) {
+                return false;
+            }
+            ProfilePreferences other = (ProfilePreferences)obj;
+            boolean equals = (prefix == other.prefix) || (prefix != null && prefix.equals(other.prefix));
+            return equals && (asGuest == other.asGuest);
+        }
+
+        @Override
+        public int compareTo(@NonNull ProfilePreferences o) {
+            int retVal = 0;
+            if(prefix == null) {
+                if(o.prefix != null) {
+                    return 1;
+                }
+            } else {
+                retVal = prefix.compareTo(o.prefix);
+            }
+            if(retVal != 0) {
+                return retVal;
+            }
+            if(asGuest && !o.asGuest) {
+                return 1;
+            }
+            if(!asGuest && o.asGuest) {
+                return -1;
+            }
+            return 0;
+        }
+
+        @Override
+        public int hashCode() {
+            int hashcode = prefix != null ? prefix.hashCode() : 0;
+            hashcode += asGuest ? 13 : 17;
+            return hashcode;
+        }
+
+        public String getAbsoluteProfileKey(SharedPreferences prefs, Context context) {
+            return getProfileId(prefs, context) + ':' + asGuest;
+        }
+
+        public String getProfileId(SharedPreferences prefs, Context context) {
+            if(prefix != null) {
+                return prefix;
+            } else {
+                return prefs.getString(context.getString(R.string.preference_piwigo_connection_profile_key), "");
+            }
+        }
         
         private String getKey(Context context, @StringRes int keyId) {
             if(this.prefix != null && this.prefix.length() > 0) {
@@ -105,6 +172,9 @@ public class ConnectionPreferences {
         }
 
         public String getPiwigoUsername(SharedPreferences prefs, Context context) {
+            if(asGuest) {
+                return null;
+            }
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
             return prefUtil.readSecureStringPreference(prefs, getKey(context, R.string.preference_piwigo_server_username_key), null);
         }
@@ -222,71 +292,10 @@ public class ConnectionPreferences {
             editor.apply();
             editor.commit();
         }
-    }
 
-    public static String getPiwigoServerAddress(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getPiwigoServerAddress(prefs, context);
+        public boolean isValid(SharedPreferences prefs, Context context) {
+            return getConnectionProfileList(prefs, context).contains(prefix);
+        }
     }
-
-    public static String getTrimmedNonNullPiwigoServerAddress(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getTrimmedNonNullPiwigoServerAddress(prefs, context);
-    }
-
-    public static boolean getUseBasicAuthentication(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getUseBasicAuthentication(prefs, context);
-    }
-
-    public static String getBasicAuthenticationUsername(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getBasicAuthenticationUsername(prefs, context);
-    }
-
-    public static String getBasicAuthenticationPassword(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getBasicAuthenticationPassword(prefs, context);
-    }
-
-    public static boolean getUseClientCertificates(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getUseClientCertificates(prefs, context);
-    }
-
-    public static boolean getUsePinnedServerCertificates(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getUsePinnedServerCertificates(prefs, context);
-    }
-
-    public static Set<String> getUserPreNotifiedCerts(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getUserPreNotifiedCerts(prefs, context);
-    }
-
-    public static String getPiwigoUsername(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getPiwigoUsername(prefs, context);
-    }
-
-    public static String getPiwigoPassword(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getPiwigoPassword(prefs, context);
-    }
-
-    public static String getPiwigoPasswordNotNull(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getPiwigoPasswordNotNull(prefs, context);
-    }
-
-    public static String getCertificateHostnameVerificationLevel(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getCertificateHostnameVerificationLevel(prefs, context);
-    }
-
-    public static boolean getFollowHttpRedirects(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getFollowHttpRedirects(prefs, context);
-    }
-
-    public static int getMaxHttpRedirects(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getMaxHttpRedirects(prefs, context);
-    }
-
-    public static int getMaxServerConnectRetries(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getMaxServerConnectRetries(prefs, context);
-    }
-
-    public static int getServerConnectTimeout(SharedPreferences prefs, Context context) {
-        return getActiveProfile(prefs, context).getServerConnectTimeout(prefs, context);
-    }
-
 
 }

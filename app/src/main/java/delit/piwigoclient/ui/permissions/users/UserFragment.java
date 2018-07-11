@@ -17,7 +17,6 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -35,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.Group;
@@ -53,12 +53,12 @@ import delit.piwigoclient.piwigoApi.handlers.UserPermissionsAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UserPermissionsRemovedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UserUpdateInfoResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.util.ViewListUtils;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.ViewListUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.UserDeletedEvent;
 import delit.piwigoclient.ui.events.UserUpdatedEvent;
@@ -252,7 +252,7 @@ public class UserFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if((!PiwigoSessionDetails.isAdminUser()) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
+        if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -262,8 +262,7 @@ public class UserFragment extends MyFragment {
 
         AdView adView = v.findViewById(R.id.user_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }
@@ -387,7 +386,7 @@ public class UserFragment extends MyFragment {
         } else {
             if (currentGroupMembership == null) {
                 if (user.getGroups().size() > 0) {
-                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups(), 0, 100).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()).invokeAsync(getContext()));
                 } else {
                     currentGroupMembership = new HashSet<>();
                 }
@@ -486,7 +485,7 @@ public class UserFragment extends MyFragment {
     }
 
     private void deleteUser(final User user) {
-        String currentUser = PiwigoSessionDetails.getInstance().getUsername();
+        String currentUser = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getUsername();
         if (currentUser.equals(user.getUsername())) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_delete_yourself_pattern), currentUser));
         } else {
@@ -676,8 +675,8 @@ public class UserFragment extends MyFragment {
                 onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse) {
                 onUserPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) {
                 onUserDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) {
@@ -716,7 +715,7 @@ public class UserFragment extends MyFragment {
         }
     }
 
-    private void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onGetSubGalleries(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         this.availableGalleries = response.getAlbumNames();
         if (currentIndirectAlbumPermissions != null) {
             populateAlbumPermissionsList(currentDirectAlbumPermissions, currentIndirectAlbumPermissions);

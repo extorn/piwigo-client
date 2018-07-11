@@ -143,32 +143,135 @@
         <item>180</item>
     </integer-array>
 
+    <string-array name="top_tips" translatable="true">
+        <item>Share files from a different app with this app to add them to the upload screen ready to go to your current server</item>
+        <item>Long click on an image (either thumbnail or slideshow item) that has failed to load in order to retrieve it again</item>
+        <item>Long click on an album to delete that album and all content</item>
+        <item>Long click on an album image to enable bulk selection of images for an action</item>
+        <item>When viewing any image in the slideshow, long click to rotate / change image size shown / allow further zooming</item>
+        <item>You can zoom into an image when viewing in a slideshow by drawing two fingers together or apart on the screen</item>
+        <item>If the image / album details drawer action button is not shown (or positioned incorrectly), try adjusting the offset in the preferences.</item>
+        <item>When logged in as an administrator, before handing your device to a friend to view your photos, engage the application lock feature to prevent inadvertent changes being made to your gallery</item>
+        <item>Once you have viewed an entire video, if local file caching is enabled, it is possible to save that video to your downloads folder</item>
+        <item>Long click delete button on a \'file for upload\' to delete all files to be uploaded (when job is not in progress)</item>
+    </string-array>
     <string-array name="planned_releases" translatable="true">
         <item>Release 1.3.x</item>
         <item>"Changes:
          - ? German, French, other translations for the app ?"
         </item>
-        <item>1.3.89</item>
+        <item>1.3.95</item>
         <item>"Changes:
          - User interface refinements
          - Support for favorites - depends on PIWIGO API enhancement
          - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"
         </item>
-        <item>1.3.88</item>
+        <item>1.3.94</item>
         <item>"Changes:
          - Possibly - allow linking the upload process to a compression routine for videos
+         - Possibly - The random photos idea implemented on the piwigo web UI
          - Rework of the way popup messages and progress indicators are shown so they always appear - investigate using Toast messages
          - Possibly - The ability to delete an album, but not its contents (creating orphans)
-         - Possibly - Orphan file management"
-        </item>
-        <item>1.3.87</item>
-        <item>"Changes:
-         - Paid App Only : Poll a device folder and automatically upload any content found to a specified Piwigo profile
+         - Possibly - Orphan file management
          - Paid App Only : (Maybe) : Support for user comments
          - Paid App Only : (Maybe) : Notify user of server updates that are available"
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.93.6</item>
+        <item>"Notes:
+         - The automatic deletion of uploaded files for background jobs doesn't work. The files will not be uploaded twice though unless the file content changes.
+         Changes:
+         - Tweaked handling of low memory events - if you get these often. Please email me the message number (e.g 1,2,3 etc) and frequency
+         Bugfix:
+         - Unable to select root album on upload screen - this is needed for creating new top level albums
+         - Automatic upload job configuration crashes app if local folder not selected"
+        </item>
+        <item>1.3.93.5</item>
+        <item>"Changes:
+         - Use foreground process to make it much less likely upload service will be killed
+         - Added notification to show basic background and foreground upload progress
+         - Updated media playing library
+         - new resource icon bolder
+         Bugfix:
+         - Bug in upload
+         - ensure upload pauses if should only occur on wifi and network disconnects"
+        </item>
+        <item>1.3.93.4</item>
+        <item>"Changes:
+         - Some devices report low memory unnecessarily resulting in constant user warnings. Low memory action is now shown as Toast message and should occur less frequently.
+         Bugfix:
+         - Updating album thumbnail broken
+         - Crashes after viewing videos
+         - Crashes during upload
+         - Crashes after deleting resource in slideshow
+         - Crash during background upload configuration"
+        </item>
+        <item>1.3.93.3</item>
+        <item>"Bugfix:
+         - stopped call to retrieve permissions for root album
+         - more resilience when displaying corrupted uploads
+         - corrections in background upload job processing logic
+         - update display correctly after admin user deletes album
+         - toggle all selection on select files screen
+         - increased resilience to possible upload failures"
+        </item>
+        <item>1.3.93.2</item>
+        <item>"Bugfix:
+         - initially selected item not shown on folder selection
+         - reported crash - when no connection profiles yet created
+         - reported crash - crash processing admin list of album names
+         - reported crash - crash closing dialog without selecting album
+         - reported crashes - removing album"
+        </item>
+        <item>1.3.93.1</item>
+        <item>"Bugfix:
+         - A crash on brand new install only
+        </item>
+        <item>1.3.93</item>
+        <item>"Changes:
+         - Paid App Only : Enable Poll a device folder and automatically upload any content found to a specified Piwigo profile (just basic functionality at present)
+         Bugfix:
+         - Click events not being correctly handled in album view screen"
+        </item>
+        <item>1.3.92.1</item>
+        <item>"Paid App only:
+         Bugfix:
+         - Fixed tags not loading
+         - Fixed control visibility not always accurate immediately after login"
+        </item>
+        <item>1.3.92</item>
+        <item>"Changes:
+         - Update the app to allow local piwigo session for a given action within the app
+         Bugfix:
+         - Better support for the community plugin
+            - Guest account used for album browsing
+            - Better upload support"
+        </item>
+        <item>1.3.91</item>
+        <item>"Bugfix:
+         - Bug where selected users and group memberships not displayed on re-entering select screen
+         - Fix crash selecting group and user memberships with large numbers of groups or users not yet fully loaded"
+        </item>
+        <item>1.3.90</item>
+        <item>"Bugfix:
+         - Album name text size incorrectly adjusts too large on newly opened album"
+        </item>
+        <item>1.3.89</item>
+        <item>"Bugfix:
+         - Login if upload opened and no user session available
+         - Bug causing crash in file selection screen
+         - Changed way state is written for Certificate preference to hopefully fix unreproducible crash"
+        </item>
+        <item>1.3.88</item>
+        <item>"Bugfix:
+         - Fixed a couple of bugs completely preventing use of app on earlier versions of android. Sorry about that. Thanks for reporting the crash.
+         - NOTE: Videos don't seem to play on pre LOLLIPOP android. I'll take a look at this for the next release.
+        </item>
+        <item>1.3.87</item>
+        <item>"Bugfix:
+         - Free App Only : fixed bug where advert space doubled up on file selection page
+        </item>
         <item>1.3.86</item>
         <item>"Changes:
          - Rewrite and consolidation of list rendering

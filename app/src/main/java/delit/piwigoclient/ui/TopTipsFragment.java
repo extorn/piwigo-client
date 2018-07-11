@@ -6,8 +6,9 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import delit.piwigoclient.R;
@@ -31,10 +32,14 @@ public class TopTipsFragment extends MyFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_top_tips, container, false);
 
+        ListView plannedReleases = view.findViewById(R.id.toptips_list);
+        String[] data = getResources().getStringArray(R.array.top_tips);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),R.layout.simple_list_item_layout_1, R.id.details, data);
+        plannedReleases.setAdapter(adapter);
+
         AdView adView = view.findViewById(R.id.toptips_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }

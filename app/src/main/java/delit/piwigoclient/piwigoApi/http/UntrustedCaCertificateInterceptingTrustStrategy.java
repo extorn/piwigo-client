@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import cz.msebera.android.httpclient.conn.ssl.TrustSelfSignedStrategy;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
@@ -23,19 +22,9 @@ import delit.piwigoclient.util.X509Utils;
 
 public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSignedStrategy implements Observer {
 
+    private static Observable observable = new Observable();
     private final Set<String> certThumbprints;
     private Set<String> preNotifiedCerts;
-    private static Observable observable = new Observable();
-
-    @Override
-    public void update(Observable o, Object arg) {
-        String thumbprint = (String)arg;
-        synchronized (preNotifiedCerts) {
-            if(!preNotifiedCerts.contains(thumbprint)) {
-                preNotifiedCerts.add(thumbprint);
-            }
-        }
-    }
 
     public UntrustedCaCertificateInterceptingTrustStrategy(KeyStore trustedCAKeystore, Set<String> preNotifiedCertsSet) {
         certThumbprints = X509Utils.listAliasesInStore(trustedCAKeystore);
@@ -43,6 +32,15 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
         observable.addObserver(this);
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        String thumbprint = (String) arg;
+        synchronized (preNotifiedCerts) {
+            if (!preNotifiedCerts.contains(thumbprint)) {
+                preNotifiedCerts.add(thumbprint);
+            }
+        }
+    }
 
     @Override
     public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
@@ -50,7 +48,7 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
             HashMap<String, X509Certificate> untrustedCerts = new HashMap<>();
 
             for (int i = 0; i < chain.length; i++) {
-                if(i == 0 && chain.length > 1) {
+                if (i == 0 && chain.length > 1) {
                     // ignore the first certificate unless it is self signed.
                     continue;
                 }
@@ -58,7 +56,7 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
                 if (!certThumbprints.contains(thumbprint)) {
                     // stop this certificate firing an event again.
                     synchronized (preNotifiedCerts) {
-                        if(!preNotifiedCerts.contains(thumbprint)) {
+                        if (!preNotifiedCerts.contains(thumbprint)) {
                             preNotifiedCerts.add(thumbprint);
                             untrustedCerts.put(thumbprint, chain[i]);
                             observable.notifyObservers(thumbprint);
@@ -66,7 +64,7 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
                     }
                 }
             }
-            if(untrustedCerts.size() > 0) {
+            if (untrustedCerts.size() > 0) {
                 EventBus.getDefault().post(new NewUnTrustedCaCertificateReceivedEvent(chain[0], untrustedCerts));
             }
         } catch (NoSuchAlgorithmException e) {

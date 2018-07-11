@@ -27,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -35,10 +34,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.SlidingTabLayout;
+import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 
 /**
@@ -49,6 +49,7 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 public class CommonPreferencesFragment extends MyFragment {
 
     static final String LOG_TAG = "PreferencesFragment";
+    private View view;
 
     public CommonPreferencesFragment() {
         // Required empty public constructor
@@ -73,17 +74,19 @@ public class CommonPreferencesFragment extends MyFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (PiwigoSessionDetails.isLoggedIn() && isAppInReadOnlyMode()) {
+        if (PiwigoSessionDetails.isLoggedIn(ConnectionPreferences.getActiveProfile()) && isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
         }
-        View v = inflater.inflate(R.layout.activity_preferences, container, false);
+        if(view != null) {
+            return view;
+        }
+        view = inflater.inflate(R.layout.activity_preferences, container, false);
 
-        AdView adView = v.findViewById(R.id.prefs_adView);
+        AdView adView = view.findViewById(R.id.prefs_adView);
         if(AdsManager.getInstance().shouldShowAdverts()) {
-            adView.loadAd(new AdRequest.Builder().build());
-            adView.setVisibility(View.VISIBLE);
+            new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
         }
@@ -92,7 +95,7 @@ public class CommonPreferencesFragment extends MyFragment {
         /*
       A {@link ViewPager} which will be used in conjunction with the {@link SlidingTabLayout} above.
      */
-        ViewPager mViewPager = v.findViewById(R.id.viewpager);
+        ViewPager mViewPager = view.findViewById(R.id.viewpager);
         mViewPager.setAdapter(buildPagerAdapter(getChildFragmentManager()));
 
         // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
@@ -101,9 +104,9 @@ public class CommonPreferencesFragment extends MyFragment {
       A custom {@link ViewPager} title strip which looks much like Tabs present in Android v4.0 and
       above, but is designed to give continuous feedback to the user when scrolling.
      */
-        SlidingTabLayout mSlidingTabLayout = v.findViewById(R.id.sliding_tabs);
+        SlidingTabLayout mSlidingTabLayout = view.findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setViewPager(mViewPager);
-        return v;
+        return view;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

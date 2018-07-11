@@ -1,36 +1,23 @@
 package delit.piwigoclient.ui.common.list;
 
 import android.content.Context;
-import android.util.Log;
+import android.support.annotation.LayoutRes;
 import android.util.LongSparseArray;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Checkable;
 import android.widget.CompoundButton;
-import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.common.util.ListUtils;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.Enableable;
+import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.SetUtils;
@@ -107,6 +94,10 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
     public abstract long getItemId(T item);
 
+    public int getPosition(T item) {
+        return availableItems.indexOf(item);
+    }
+
     @Override
     public boolean hasStableIds() {
         return true;
@@ -129,7 +120,7 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         View view = convertView; // re-use an existing view, if one is supplied
         if (view == null) {
             // otherwise create a pkg one
-            view = LayoutInflater.from(context).inflate(R.layout.layout_permission_list_item, parent, false);
+            view = buildNewItemView(parent);
         }
         // set view properties to reflect data for the given row
 
@@ -139,7 +130,16 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
         setViewContentForItemDisplay(view, item, levelInTreeOfItem);
 
-        final AppCompatCheckboxTriState imageView = view.findViewById(R.id.permission_status_icon);
+        final AppCompatCheckboxTriState imageView = getAppCompatCheckboxTriState(view);
+
+        imageView.setVisibility(showItemSelectedMarker(imageView)?View.VISIBLE:View.GONE);
+
+        if(getAdapterPrefs().isMultiSelectionEnabled()) {
+            imageView.setButtonDrawable(R.drawable.always_clear_checkbox);
+        } else {
+            imageView.setButtonDrawable(R.drawable.always_clear_radio);
+        }
+
         imageView.setEnabled(adapterPrefs.isEnabled());
         boolean alwaysChecked = indirectlySelectedItems != null && indirectlySelectedItems.contains(thisItemId);
         imageView.setAlwaysChecked(alwaysChecked);
@@ -151,6 +151,22 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
         // return the view, populated with data, for display
         return view;
+    }
+
+    protected boolean showItemSelectedMarker(AppCompatCheckboxTriState imageView) {
+        return adapterPrefs.isAllowItemSelection();
+    }
+
+    protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
+        return view.findViewById(R.id.permission_status_icon);
+    }
+
+    protected View buildNewItemView(ViewGroup parent) {
+        return LayoutInflater.from(context).inflate(getItemViewLayoutRes(), parent, false);
+    }
+
+    protected @LayoutRes int getItemViewLayoutRes() {
+        return R.layout.layout_permission_list_item;
     }
 
     /**
@@ -278,8 +294,10 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         parentList = listView;
         if(adapterPrefs.isMultiSelectionEnabled()) {
             listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        } else {
+        } else if(adapterPrefs.isAllowItemSelection()) {
             listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+        } else {
+            listView.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
         }
         // this will also reset list view choices to no selection.
         listView.setAdapter(this);
@@ -306,4 +324,14 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
             }
         }
     }
+
+
+    public ArrayList<Long> getItemIds() {
+        ArrayList<Long> ids = new ArrayList<>(availableItems.size());
+        for(T item : availableItems) {
+            ids.add(getItemId(item));
+        }
+        return ids;
+    }
+
 }

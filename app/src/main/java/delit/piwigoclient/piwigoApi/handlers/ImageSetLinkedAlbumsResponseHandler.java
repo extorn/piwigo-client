@@ -37,9 +37,9 @@ public class ImageSetLinkedAlbumsResponseHandler<T extends ResourceItem> extends
     private String getLinkedAlbumList(Set<Long> linkedAlbums) {
         StringBuilder sb = new StringBuilder();
         Iterator<Long> iter = linkedAlbums.iterator();
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             sb.append(iter.next());
-            if(iter.hasNext()) {
+            if (iter.hasNext()) {
                 sb.append(';');
             }
         }

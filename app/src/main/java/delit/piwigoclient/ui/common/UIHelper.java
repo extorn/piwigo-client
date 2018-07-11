@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,6 +48,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -131,6 +134,26 @@ public abstract class UIHelper<T> {
 
     public boolean isContextOutOfSync(Context context) {
         return this.context != context;
+    }
+
+    public void showToast(@StringRes int messageResId) {
+        Toast toast = Toast.makeText(getContext(), messageResId, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    public void showToast(String message) {
+        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    public void showLongToast(String message) {
+        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    public void showLongToast(@StringRes int messageResId) {
+        Toast toast = Toast.makeText(getContext(), messageResId, Toast.LENGTH_LONG);
+        toast.show();
     }
 
     private static class QueuedMessage implements Serializable {
@@ -648,7 +671,7 @@ public abstract class UIHelper<T> {
                     }
                     preNotifiedCerts.addAll(event.getUntrustedCerts().keySet());
                     prefs.edit().putStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
-                    long messageId = new HttpConnectionCleanup(context).start();
+                    long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), context).start();
                     PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
                         @Override
                         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {

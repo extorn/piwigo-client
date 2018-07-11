@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.PicassoFactory;
@@ -37,6 +38,7 @@ import delit.piwigoclient.util.DisplayUtils;
 public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Gallery Settings";
+    private View view;
 
     private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
         @Override
@@ -59,13 +61,14 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
             if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_thumbnail_size_key))) {
-                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(stringValue)) {
+                if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_thumbnail_size_not_natively_supported_by_server));
                 }
             } else if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key))) {
-                if (PiwigoSessionDetails.isLoggedInWithSessionDetails() && !PiwigoSessionDetails.getInstance().getAvailableImageSizes().contains(stringValue)) {
+                if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_slideshow_image_size_not_natively_supported_by_server));
                 }
             }
@@ -144,7 +147,10 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        View v = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
+        if(view != null) {
+            return view;
+        }
+        view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
         addPreferencesFromResource(R.xml.pref_page_gallery);
         setHasOptionsMenu(true);
 
@@ -189,6 +195,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         findPreference(R.string.preference_gallery_item_slideshow_image_size_key).setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
         Preference button = findPreference(R.string.preference_gallery_clearMemoryCache_key);
+        button.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -215,11 +222,11 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
             }
         });
-        return v;
+        return view;
     }
 
-    private void setVideoCacheButtonText(Preference videoCacheFlushButton) {
-        double cacheBytes = CacheUtils.getVideoCacheSize(getContext());
+    private String suffixCacheSize(String basicString, long cacheSizeBytes) {
+        double cacheBytes = cacheSizeBytes;
         long KB = 1024;
         long MB = KB * 1024;
         String spaceSuffix = " ";
@@ -232,7 +239,12 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
             double mb = (cacheBytes / MB);
             spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f MB)", mb);
         }
-        videoCacheFlushButton.setTitle(getString(R.string.preference_gallery_clearVideoCache_title) + spaceSuffix);
+        return basicString + spaceSuffix;
+    }
+
+    private void setVideoCacheButtonText(Preference videoCacheFlushButton) {
+        String newTitle = suffixCacheSize(getString(R.string.preference_gallery_clearVideoCache_title), CacheUtils.getVideoCacheSize(getContext()));
+        videoCacheFlushButton.setTitle(newTitle);
     }
 
     @Override

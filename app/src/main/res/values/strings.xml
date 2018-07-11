@@ -115,6 +115,8 @@
     <string name="logging_in_to_piwigo_pattern">Logging in to %1$s</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="delete_upload_job_button_title">Delete Job</string>
+    <string name="alert_really_delete_upload_job">This will delete the job status from this device. You will need to manually cleanup the status on the server. Jobs will often complete successfully if you resume them later. Are you sure you wish to take this drastic step?</string>
     <string name="upload_files_button_title">Upload Files</string>
     <string name="loading_please_wait">Loading, Please wait</string>
     <string name="talking_to_server_please_wait">Talking to server, Please wait</string>
@@ -542,7 +544,7 @@ SOFTWARE.
     <string name="click_to_view">Click to view</string>
     <string name="click_to_view_pattern">%1$d - Click to view / edit</string>
     <string name="alert_warning_lowMemory">Low Memory</string>
-    <string name="alert_warning_lowMemory_message">The device is running low on memory. The in memory image cache has been cleared.</string>
+    <string name="alert_warning_lowMemory_message">The device is running low on memory (%1$d). The in memory image cache has been cleared.</string>
     <string name="files_for_upload_title">Files for Upload</string>
     <string name="alert_information">Information</string>
     <string name="alert_image_download_title">Download</string>
@@ -640,17 +642,6 @@ SOFTWARE.
     <string name="alert_image_show_image_select_rotation">Rotate Image</string>
     <string name="top_tips_menu_title">Top Tips</string>
     <string name="top_tips_heading">Top Tips</string>
-    <string name="top_tip_1">Long click on an image (either thumbnail or slideshow item) that has failed to load in order to retrieve it again</string>
-    <string name="top_tip_2">Long click on an album to delete that album and all content</string>
-    <string name="top_tip_3">Long click on an album image to enable bulk selection of images for an action</string>
-    <string name="top_tip_4">When viewing any image in the slideshow, long click to rotate / change image size shown / allow further zooming</string>
-    <string name="top_tip_5">You can zoom into an image when viewing in a slideshow by drawing two fingers together or apart on the screen</string>
-    <string name="top_tip_6">If the image / album details drawer action button is not shown (or positioned incorrectly), try adjusting the offset in the preferences.</string>
-    <string name="top_tip_7">When logged in as an administrator, before handing your device to a friend to view your photos, engage the application lock feature to prevent inadvertent changes being made to your gallery</string>
-    <string name="top_tip_8">Once you have viewed an entire video, if local file caching is enabled, it is possible to save that video to your downloads folder</string>
-    <string name="top_tip_9">Long click delete button on a \'file for upload\' to delete all files to be uploaded (when job is not in progress)</string>
-    <string name="top_tip_10">As of 21/12/2017, the PIWIGO community plugin is NOT compatible with the piwigo privacy plugin (not an app fault)</string>
-    <string name="top_tip_11">As of 21/12/2017, The PIWIGO community plugin does not allow you to see any albums other than those you can upload to (using the web api)</string>
     <string name="alert_error_please_select_upload_album">Please select an album to upload to</string>
     <string name="preference_connections_category_advanced">Advanced Settings</string>
     <string name="alert_title_select_album">Select Album</string>
@@ -727,8 +718,8 @@ SOFTWARE.
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Error Uploading</string>
-    <string name="alert_message_error_uploading_end">An error occurred after successful uploading all files. Temporary folder may not have been deleted from the server. Ignore this error and fix it manually at some point?</string>
-    <string name="alert_message_error_uploading_start">An error occurred before uploading all files. Temporary folder may not have been successfully created for example. Cancel the upload?</string>
+    <string name="alert_message_error_uploading_end">An error occurred after successful uploading all files. You can retry the job later and it may well succeed, but you can delete this job from the device, but manually clean up any incomplete changes made to the server. Delete Job?</string>
+    <string name="alert_message_error_uploading_start">An error occurred before uploading all files. You can retry the job later and it may well succeed, but you can delete this job from the device, but manually clean up any incomplete changes made to the server. Delete Job?</string>
     <string name="release_history">Release History</string>
     <string name="planned_releases">Planned Releases</string>
     <string name="tags_heading">Tags</string>
@@ -748,6 +739,8 @@ SOFTWARE.
     <string name="slideshow_image_details_tags_title">Tags</string>
     <string name="button_search">Search</string>
     <string name="server_connection_preference_summary_default">Please select a value</string>
+    <string name="server_album_preference_summary_default">Please select a value</string>
+    <string name="local_folder_preference_summary_default">Please select a value</string>
     <string name="server_connection_preference_user_guest">guest</string>
     <string name="file_selection_heading">File Selection</string>
     <string name="tag_heading_pattern">Tag: %1$s</string>
@@ -761,4 +754,22 @@ SOFTWARE.
     <string name="folder_default">Default</string>
     <string name="button_all">Check All</string>
     <string name="button_none">Check None</string>
+    <string name="alert_network_monitor_permission_needed_for_wifi_upload">Network monitoring should be allowed for efficeint use of WIFI only uploading</string>
+    <string name="inaccessible_remote_folder">** private **</string>
+    <string name="error_unable_to_acquire_valid_session">Unable to acquire valid session with server</string>
+    <string name="upload_job_is_enabled_label">Is Valid and Enabled?</string>
+    <string name="alert_auto_upload_service_stopped">Background upload service stopped</string>
+    <string name="alert_auto_upload_service_started">Background upload service started</string>
+    <string name="alert_auto_upload_service_job_restarted">Started uploading a previously incomplete job to server %1$s with %2$d files</string>
+    <string name="alert_auto_upload_service_job_started">Starting uploading job to server %1$s with %2$d files</string>
+    <string name="alert_auto_upload_service_job_finished_success">Finished running background upload job to server %1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Finished running background upload job to server %1$s. Some files failed to upload and will be retried later.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Finished running background upload job to server %1$s. No files could be uploaded. Job will be retried later.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Background upload service checking for tasks</string>
+    <string name="alert_unable_to_show_image_image_missing">This image is missing. Unable to display.</string>
+    <string name="notification_title_foreground_upload_service">Piwigo Upload Service</string>
+    <string name="notification_title_background_upload_service">Background Piwigo Upload Service</string>
+    <string name="notification_message_upload_service">Running</string>
+    <string name="notification_text_bakcground_upload_running">Running upload job</string>
+    <string name="notification_text_bakcground_upload_sleeping">Sleeping. Next run at %1$tR</string>
 </resources>

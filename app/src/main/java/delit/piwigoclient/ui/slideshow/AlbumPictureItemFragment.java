@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -30,8 +31,8 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.PicassoFactory;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.DisplayUtils;
@@ -115,7 +116,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
                 } else {
                     imageView.setBackgroundColor(Color.DKGRAY);
                 }
-                EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken()));
+                EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
                 hideProgressIndicator();
             }
 
@@ -186,7 +187,12 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
             }
             if(currentImageUrlDisplayed == null) {
                 //Oh no - image couldn't be found - use the default.
-                currentImageUrlDisplayed = model.getFullScreenImage().getUrl();
+                ResourceItem.ResourceFile fullscreenImage = model.getFullScreenImage();
+                if(fullscreenImage != null) {
+                    currentImageUrlDisplayed = model.getFullScreenImage().getUrl();
+                } else {
+                    currentImageUrlDisplayed = model.getFile("original").getUrl();
+                }
             }
         }
         loader.cancelImageLoadIfRunning();

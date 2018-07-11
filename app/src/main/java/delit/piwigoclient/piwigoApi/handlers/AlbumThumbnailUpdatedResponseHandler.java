@@ -27,7 +27,7 @@ public class AlbumThumbnailUpdatedResponseHandler extends AbstractPiwigoWsRespon
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("category_id", String.valueOf(albumId));
-        if(resourceId != null) {
+        if (resourceId != null) {
             params.put("image_id", String.valueOf(resourceId));
         }
         return params;

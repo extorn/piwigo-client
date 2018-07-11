@@ -4,13 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,7 +14,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -114,11 +109,11 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         if(isServerConnectionChanged()) {
             return;
         }
-        populateListWithItems();
+        rerunRetrievalForFailedPages();
     }
 
     @Override
-    protected void populateListWithItems() {
+    protected void rerunRetrievalForFailedPages() {
         if (availableItems == null) {
             //TODO FEATURE: Support albums list paging (load page size from settings)
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
@@ -153,21 +148,21 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) {
-                onSubGalleriesLoaded((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse) response);
+            if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onSubGalleriesLoaded((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else {
                 onListItemLoadFailed();
             }
         }
     }
 
-    private void onSubGalleriesLoaded(final PiwigoResponseBufferingHandler.PiwigoGetSubAlbumNamesResponse response) {
+    private void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
         getUiHelper().dismissProgressDialog();
 //        if (response.getItemsOnPage() == response.getPageSize()) {
 //            //TODO FEATURE: Support groups paging
 //            getUiHelper().showOrQueueMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));
 //        }
         availableItems = response.getAlbumNames();
-        populateListWithItems();
+        rerunRetrievalForFailedPages();
     }
 }

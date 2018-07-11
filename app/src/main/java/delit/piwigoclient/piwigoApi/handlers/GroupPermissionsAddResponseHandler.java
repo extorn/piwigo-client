@@ -21,7 +21,7 @@ public class GroupPermissionsAddResponseHandler extends AbstractPiwigoWsResponse
         super("pwg.permissions.add", TAG);
         this.groupId = groupId;
         this.newAlbumsAllowedAccessTo = newAlbumsAllowedAccessTo;
-        if(newAlbumsAllowedAccessTo == null || newAlbumsAllowedAccessTo.size() == 0) {
+        if (newAlbumsAllowedAccessTo == null || newAlbumsAllowedAccessTo.size() == 0) {
             throw new IllegalArgumentException("Group must be being given access to at least one album");
         }
     }
@@ -29,8 +29,9 @@ public class GroupPermissionsAddResponseHandler extends AbstractPiwigoWsResponse
     @Override
     public RequestParams buildRequestParameters() {
         String sessionToken = "";
-        if(PiwigoSessionDetails.isLoggedInWithSessionDetails()) {
-            sessionToken = PiwigoSessionDetails.getInstance().getSessionToken();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
         }
         //TODO this will give an unusual error if the user is not logged in.... better way?
 

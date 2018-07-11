@@ -8,7 +8,6 @@ import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.Enableable;
-import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
 import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 

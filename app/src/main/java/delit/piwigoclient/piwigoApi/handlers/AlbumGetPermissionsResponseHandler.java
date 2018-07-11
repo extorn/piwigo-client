@@ -24,6 +24,7 @@ public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
+
         params.put("cat_id", String.valueOf(album.getId()));
         return params;
     }
@@ -38,7 +39,7 @@ public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
 
         long[] groups;
         long[] users;
-        if(cats.size() == 0) {
+        if (cats.size() == 0) {
             // no privacy settings exist yet for this album.
             groups = new long[0];
             users = new long[0];

@@ -40,7 +40,7 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
         loadedResourceItem.setPrivacyLevel(privacyLevel);
 
         JsonObject rates = resourceItemElem.get("rates").getAsJsonObject();
-        if(rates != null && !rates.isJsonNull()) {
+        if (rates != null && !rates.isJsonNull()) {
             JsonElement scoreJsonElem = rates.get("score");
             if (scoreJsonElem != null && !scoreJsonElem.isJsonNull()) {
                 float rating = scoreJsonElem.getAsFloat();
@@ -48,7 +48,7 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
             }
 
             JsonElement ratesElem = rates.get("count");
-            if(ratesElem != null && !ratesElem.isJsonNull()) {
+            if (ratesElem != null && !ratesElem.isJsonNull()) {
                 int usersRated = ratesElem.getAsInt();
                 loadedResourceItem.setRatingsGiven(usersRated);
             }
@@ -62,13 +62,13 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
 
         JsonElement checksumJsonElem = resourceItemElem.get("md5sum");
         String fileChecksum = null;
-        if(checksumJsonElem != null && !checksumJsonElem.isJsonNull()) {
+        if (checksumJsonElem != null && !checksumJsonElem.isJsonNull()) {
             fileChecksum = checksumJsonElem.getAsString();
         }
 
         loadedResourceItem.setFileChecksum(fileChecksum);
 
-        if(loadedResourceItem.getClass().isAssignableFrom(resourceItem.getClass())) {
+        if (loadedResourceItem.getClass().isAssignableFrom(resourceItem.getClass())) {
             // don't copy parentage since this isn't retrieved from the server but built locally.
             resourceItem.copyFrom(loadedResourceItem, false);
             loadedResourceItem = resourceItem;
@@ -83,7 +83,7 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
 
         ResourceItem loadedResourceItem = parseResourceItemFromJson(result);
 
-        PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<>(getMessageId(), getPiwigoMethod(), (T)loadedResourceItem);
+        PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse<>(getMessageId(), getPiwigoMethod(), (T) loadedResourceItem);
         storeResponse(r);
     }
 

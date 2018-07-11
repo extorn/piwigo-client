@@ -12,8 +12,9 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
  */
 
 public class ExoPlayerEventAdapter implements Player.EventListener {
+
     @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {
+    public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
 
     }
 
@@ -38,17 +39,27 @@ public class ExoPlayerEventAdapter implements Player.EventListener {
     }
 
     @Override
+    public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+    }
+
+    @Override
     public void onPlayerError(ExoPlaybackException error) {
 
     }
 
     @Override
-    public void onPositionDiscontinuity() {
+    public void onPositionDiscontinuity(int reason) {
 
     }
 
     @Override
     public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
+    }
+
+    @Override
+    public void onSeekProcessed() {
 
     }
 }
