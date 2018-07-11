@@ -1,0 +1,878 @@
+<resources>
+    <string-array name="preference_caching_level_values" translatable="false">
+        <item>disabled</item>
+        <item>memory</item>
+        <item>disk</item>
+    </string-array>
+    <string-array name="preference_caching_level_items">
+        <item>Caching deaktiviert</item>
+        <item>Cache in den Speicher</item>
+        <item>Cache auf Platte</item>
+    </string-array>
+    <string-array name="preference_gallery_item_slideshow_image_size_array">
+        <item>beste Passform</item>
+        <item>quadratisch</item>
+        <item>Daumen</item>
+        <item>2klein</item>
+        <item>xklein</item>
+        <item>klein</item>
+        <item>mittel</item>
+        <item>groß</item>
+        <item>xgroß</item>
+        <item>xxgroß</item>
+    </string-array>
+
+    <string-array name="preference_gallery_item_slideshow_image_size_array_values" translatable="false">
+        <item>best-fit</item>
+        <item>square</item>
+        <item>thumb</item>
+        <item>2small</item>
+        <item>xsmall</item>
+        <item>small</item>
+        <item>medium</item>
+        <item>large</item>
+        <item>xlarge</item>
+        <item>xxlarge</item>
+    </string-array>
+
+    <string-array name="preference_gallery_item_thumbnail_size_array">
+        <item>quadratisch</item>
+        <item>Daumen</item>
+        <item>2klein</item>
+        <item>xklein</item>
+    </string-array>
+
+    <string-array name="preference_gallery_item_thumbnail_size_array_values" translatable="false">
+        <item>square</item>
+        <item>thumb</item>
+        <item>2small</item>
+        <item>xsmall</item>
+    </string-array>
+    <string-array name="preference_gallery_sortOrder_entries">
+        <item>Ressourcen-ID</item>
+        <item>Ressource Dateiname</item>
+        <item>Name der Ressource</item>
+        <item>Anzahl der Treffer</item>
+        <item>Durchschnittliche Punktzahl</item>
+        <item>Erstellungsdatum</item>
+        <item>Datum verfügbar</item>
+        <item>zufällig</item>
+    </string-array>
+    <string-array name="preference_gallery_sortOrder_entryValues" translatable="false">
+        <item>id</item>
+        <item>file</item>
+        <item>name</item>
+        <item>hit</item>
+        <item>rating_score</item>
+        <item>date_creation</item>
+        <item>date_available</item>
+        <item>random</item>
+    </string-array>
+    <string-array name="server_ssl_certificate_hostname_verification_entries">
+        <item>Streng</item>
+        <item>Browser-kompatibel</item>
+        <item>Aus</item>
+    </string-array>
+    <string-array name="server_ssl_certificate_hostname_verification_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="user_types_array">
+        <item>webmaster</item>
+        <item>Verwaltung</item>
+        <item>normal</item>
+        <item>allgemein</item>
+        <item>Gast</item>
+    </string-array>
+
+    <string-array name="user_types_values_array" translatable="false">
+        <item>webmaster</item>
+        <item>admin</item>
+        <item>normal</item>
+        <item>generic</item>
+        <item>guest</item>
+    </string-array>
+
+    <string-array name="privacy_levels_groups_array">
+        <item>Admins</item>
+        <item>Admins, Familie</item>
+        <item>Admins, Familie, Freunde</item>
+        <item>Admins, Familie, Freunde, Kontakte</item>
+        <item>Alle</item>
+    </string-array>
+
+    <string-array name="privacy_levels_array" translatable="false">
+        <item>Admins</item>
+        <item>Family</item>
+        <item>Friends</item>
+        <item>Contacts</item>
+        <item>Everybody</item>
+    </string-array>
+
+    <integer-array name="privacy_levels_values_array" translatable="false">
+        <item>8</item>
+        <item>4</item>
+        <item>2</item>
+        <item>1</item>
+        <item>0</item>
+    </integer-array>
+
+    <string-array name="preference_gallery_unique_id_entries">
+        <item>md5sum</item>
+        <item>Name</item>
+    </string-array>
+
+    <string-array name="preference_gallery_unique_id_entryValues" translatable="false">
+        <item>md5sum</item>
+        <item>name</item>
+    </string-array>
+
+    <string-array name="rotation_array">
+        <item>Links 90 Grad</item>
+        <item>Keine</item>
+        <item>Rechts 90 Grad</item>
+        <item>Rechts 180 Grad</item>
+    </string-array>
+
+    <integer-array name="rotation_values_array" translatable="false">
+        <item>-90</item>
+        <item>0</item>
+        <item>90</item>
+        <item>180</item>
+    </integer-array>
+
+    <string-array name="top_tips" translatable="true">
+        <item>Teilen Sie Dateien aus einer anderen Anwendung mit dieser Anwendung, um sie zum Upload-Bildschirm hinzuzufügen, der bereit ist, auf Ihren aktuellen Server zu gehen.</item>
+        <item>Langer Klick auf ein Bild (entweder Thumbnail oder Diashow), das nicht geladen wurde, um es wiederherzustellen.</item>
+        <item>Langer Klick auf ein Album, um dieses Album und alle Inhalte zu löschen.</item>
+        <item>Langer Klick auf ein Albumbild, um eine Massenauswahl von Bildern für eine Aktion zu ermöglichen.</item>
+        <item>Wenn Sie ein beliebiges Bild in der Diashow ansehen, klicken Sie lange, um es zu drehen / die angezeigte Bildgröße zu ändern / weiteres Zoomen zu ermöglichen.</item>
+        <item>Sie können in ein Bild hineinzoomen, wenn Sie es in einer Diashow betrachten, indem Sie zwei Finger auf dem Bildschirm zusammen oder auseinander ziehen.</item>
+        <item>Wenn die Aktionstaste für Bild-/Albumdetails nicht angezeigt wird (oder falsch positioniert ist), versuchen Sie, den Offset in den Einstellungen anzupassen.</item>
+        <item>Wenn Sie als Administrator angemeldet sind und Ihr Gerät an einen Freund weitergeben, um Ihre Fotos anzusehen, aktivieren Sie die Anwendungssperre, um unbeabsichtigte Änderungen an Ihrer Galerie zu verhindern.</item>
+        <item>Wenn Sie ein ganzes Video angesehen haben und das lokale Datei-Caching aktiviert ist, ist es möglich, dieses Video in Ihrem Download-Ordner zu speichern.</item>
+        <item>Langer Klick auf die Löschen-Schaltfläche einer \'Datei zum Hochladen', um alle Dateien zu löschen, die hochgeladen werden sollen (wenn der Auftrag nicht ausgeführt wird).</item>
+    </string-array>
+    <string-array name="planned_releases" translatable="true">
+        <item>Veröffentlichung 1.3.x</item>
+        <item> "Änderungen:
+         - ? Deutsch, Französisch, andere Übersetzungen für die App ?"
+        </item>
+        <item>1.3.95</item>
+        <item> "Änderungen:
+         - Verfeinerung der Benutzeroberfläche
+         - Möglicherweise - Vereinfachen der App-Einstellungen
+         - Unterstützung für Favoriten - abhängig von der PIWIGO-API-Erweiterung
+         - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese Anwendung noch nicht tun kann"
+        </item>
+        <item>1.3.94</item>
+        <item> "Änderungen:
+         - Möglicherweise - den Upload-Prozess mit einer Komprimierungsroutine für Videos verknüpfen.
+         - Überarbeitung der Art und Weise, wie Popup-Meldungen und Fortschrittsanzeigen angezeigt werden, damit sie immer angezeigt werden - Untersuchung mit Hilfe von Toast-Meldungen
+         - Möglicherweise - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Erstellen von Waisenkindern).
+         - Möglicherweise - Verwaltung verwaister Dateien
+         - Paid App Only : Die Idee der Zufallsfotos auf der piwigo web UI umgesetzt
+         - Paid App Only : (Maybe) : Unterstützung für Benutzerkommentare
+         - Paid App Only : (Maybe) : Benutzer über verfügbare Server-Updates benachrichtigen"
+        </item>
+    </string-array>
+    <string-array name="release_history" translatable="true">
+        <item>1.3.93.7</item>
+        <item> "Änderungen:
+         - Reduzierter Speicherverbrauch bei der Navigation durch große Galerien"
+        </item>
+        <item>1.3.93.6</item>
+        <item> "Anmerkungen:
+         - Das automatische Löschen von hochgeladenen Dateien für Hintergrundjobs funktioniert nicht. Die Dateien werden jedoch nicht zweimal hochgeladen, es sei denn, der Dateiinhalt ändert sich.
+         Änderungen:
+         - Optimierte Behandlung von Ereignissen mit geringem Speicherbedarf - wenn Sie diese häufig erhalten. Bitte mailen Sie mir die Nachrichtennummer (z.B. 1,2,3 usw.) und die Häufigkeit.
+         Bugfix:
+         - Wurzelalbum kann auf dem Upload-Bildschirm nicht ausgewählt werden - dies wird für die Erstellung neuer Alben auf höchster Ebene benötigt.
+         - Automatische Upload-Job-Konfiguration stürzt ab, wenn der lokale Ordner nicht ausgewählt ist"
+        </item>
+        <item>1.3.93.5</item>
+        <item> "Änderungen:
+         - Verwenden Sie den Vordergrundprozess, um die Wahrscheinlichkeit zu verringern, dass der Upload-Dienst beendet wird.
+         - Benachrichtigung hinzugefügt, um den Fortschritt des Hochladens im Hintergrund und im Vordergrund anzuzeigen.
+         - Aktualisierte Medienwiedergabebibliothek
+         - neues Ressourcen-Icon fetter
+         Bugfix:
+         - Fehler im Upload
+         - stellen Sie sicher, dass der Upload pausiert, wenn er nur bei Wifi und Netzwerkunterbrechungen stattfindet"
+        </item>
+        <item>1.3.93.4</item>
+        <item> "Änderungen:
+         - Einige Geräte melden unnötig wenig Speicher, was zu ständigen Benutzerwarnungen führt. Niedriger Speicherbedarf wird jetzt als Toastmeldung angezeigt und sollte seltener auftreten.
+         Bugfix:
+         - Aktualisierung der Album-Miniaturansicht defekt
+         - Abstürze nach dem Betrachten von Videos
+         - Abstürze beim Upload
+         - Abstürze nach dem Löschen von Ressourcen in der Diashow
+         - Absturz bei Hintergrund-Upload-Konfiguration"
+        </item>
+        <item>1.3.93.3</item>
+        <item> "Bugfix:
+         - gestoppter Aufruf zum Abrufen von Berechtigungen für das Root-Album
+         - mehr Belastbarkeit bei der Anzeige beschädigter Uploads
+         - Korrekturen in der Hintergrund-Upload-Job-Verarbeitungslogik
+         - Aktualisierung der Anzeige nach dem Löschen des Albums durch den Admin-Benutzer
+         - alle Markierungen auf dem Bildschirm "Dateien auswählen" umschalten
+         - erhöhte Widerstandsfähigkeit gegen mögliche Upload-Fehler"
+        </item>
+        <item>1.3.93.2</item>
+        <item> "Bugfix:
+         - ursprünglich ausgewähltes Element wird bei der Ordnerauswahl nicht angezeigt
+         - Absturz gemeldet - wenn noch keine Verbindungsprofile erstellt wurden
+         - gemeldeter Absturz - Absturz bei der Admin-Liste der Albumnamen
+         - gemeldeter Absturz - Dialog zum Schließen des Absturzes ohne Auswahl des Albums
+         - berichtete Abstürze - Album entfernen"
+        </item>
+        <item>1.3.93.1</item>
+        <item> "Bugfix:
+         - Ein Absturz nur bei einer Neuinstallation
+        </item>
+        <item>1.3.93</item>
+        <item> "Änderungen:
+         - Nur kostenpflichtige Anwendung: Aktivieren Sie die Funktion "Abfrage eines Geräteordners" und laden Sie alle gefundenen Inhalte automatisch in ein bestimmtes Piwigo-Profil hoch (derzeit nur Basisfunktionalität).
+         Bugfix:
+         - Klicken Sie auf Ereignisse, die in der Albumansicht nicht korrekt behandelt werden"
+        </item>
+        <item>1.3.92.1</item>
+        <item> "Nur bezahlte App:
+         Bugfix:
+         - Feste Tags werden nicht geladen
+         - Die Sichtbarkeit der Steuerung wurde nicht immer sofort nach dem Login korrigiert"
+        </item>
+        <item>1.3.92</item>
+        <item> "Änderungen:
+         - Aktualisieren der Anwendung, um lokale Piwigo-Sitzung für eine bestimmte Aktion innerhalb der Anwendung zuzulassen.
+         Bugfix:
+         - Bessere Unterstützung für das Community-Plugin
+            - Gastkonto für das Durchsuchen von Alben
+            - Bessere Upload-Unterstützung
+        </item>
+        <item>1.3.91</item>
+        <item> "Bugfix:
+         - Fehler, bei dem ausgewählte Benutzer und Gruppenmitgliedschaften beim erneuten Betreten des Auswahlbildschirms nicht angezeigt werden.
+         - Korrigiert Absturz bei der Auswahl von Gruppen- und Benutzer-Mitgliedschaften mit einer großen Anzahl von Gruppen oder noch nicht vollständig geladenen Benutzern"
+        </item>
+        <item>1.3.90</item>
+        <item> "Bugfix:
+         - Die Textgröße des Albumnamens wird bei neu geöffnetem Album nicht korrekt angepasst"
+        </item>
+        <item>1.3.89</item>
+        <item> "Bugfix:
+         - Login wenn Upload geöffnet und keine Benutzersitzung verfügbar
+         - Fehler verursacht Absturz im Dateiauswahlbildschirm
+         - Geänderte Art und Weise, wie der Status für die Zertifikatspräferenz geschrieben wird, um hoffentlich einen nicht reproduzierbaren Absturz zu beheben"
+        </item>
+        <item>1.3.88</item>
+        <item> "Bugfix:
+         - Einige Fehler behoben, die die Verwendung von Apps in früheren Versionen von Android vollständig verhinderten. Das tut mir leid. Danke für die Meldung des Absturzes.
+         - HINWEIS: Videos scheinen nicht auf vor LOLLIPOP Android abgespielt zu werden. Ich werde mir das für die nächste Veröffentlichung ansehen.
+        </item>
+        <item>1.3.87</item>
+        <item> "Bugfix:
+         - Free App Only: Fehler behoben, bei dem sich der Werbeplatz auf der Dateiauswahlseite verdoppelt hat.
+        </item>
+        <item>1.3.86</item>
+        <item> "Änderungen:
+         - Rewrite und Konsolidierung der Listendarstellung
+         - Neuschreiben der Dateiauswahlaktivität
+         - Nur bezahlte App: Neuer Einstellungsbildschirm für kommenden automatischen Upload-Job (derzeit versteckt)
+         - Paid App Only : Mehr Funktionalität in der Tag-Verwaltung
+         Bugfix:
+         - Fehler beim Hochladen von Dateien (Community-Plugin)
+         - Andere Fehler, die die Stabilität der Anwendung beeinträchtigen
+         - Fehler im Selektionsalbum / Benutzerbildschirme"
+        </item>
+        <item>1.3.85</item>
+        <item> "Bugfix:
+         - Kleine Fehlerbehebungen"
+        </item>
+        <item>1.3.84</item>
+        <item> "Bugfix:
+         - Upload scheitert aufgrund eines Fehlers (Danke an Gerald für den Hinweis)
+         - Tags-Seiten können nicht im Zustand gespeichert werden (Absturz verursachen).
+        </item>
+        <item>1.3.83</item>
+        <item> "Bugfix:
+         - Auswahl des Upload-Albums nach der Navigation aus dem Root-Album stürzt die Anwendung ab.
+         - Fehler beim Einfädeln behoben"
+        </item>
+        <item>1.3.82</item>
+        <item> "Änderungen:
+         - Nur bezahlte App: Unterstützung für Tags (sowohl nativ als auch mit dem User-Tags-Plugin) hinzugefügt
+         - Code aufräumen
+         - Bibliotheksversions-Upgrade
+         Bugfix:
+         - Es wurde ein Problem behoben, bei dem das Bearbeiten aller Details eines Albums nicht möglich war."
+        </item>
+        <item>1.3.81</item>
+        <item> "Änderungen:
+         - Die Wiedergabe von Videos wird standardmäßig gestoppt, sobald die Diashow geöffnet wird.
+         - Abbrechen eines Bildladevorgangs, wenn das Bild nicht mehr in der Diashow aktiv ist (aktuelles +- 1 Bild).
+         Bugfix:
+         - Problem mit der Videowiedergabe in einer gemischten Diashow von Bildern und Videos behoben"
+        </item>
+        <item>1.3.80</item>
+        <item> "Bugfix:
+         - Deutlich bessere Speicherverwaltung in Diashow-Bildschirmen (Behebung der häufigsten Absturzursache)"
+        </item>
+        <item>1.3.79</item>
+        <item> "Änderungen:
+         - Laden von Albumseiten von Ressourcen bei Verwendung der Diashow, falls nicht bereits geladen
+         - Positionsindex des aktuellen Elements im Kontext der Diashow anzeigen (die Gesamtzahl kann sich ändern, wenn mehr Daten aufgrund von API-Beschränkungen geladen werden)"
+        </item>
+        <item>1.3.78</item>
+        <item> "Bugfix:
+         - Mögliche Rennbedingungen beim Start der App behoben
+         - In 1.3.76 wurde ein Fehler behoben, der zu Problemen beim Verschieben oder Löschen von Ressourcen führen konnte.
+         - Korrigierte Rennbedingungen im Diashow-Bildschirm
+         - Die Diashow-Statusspeicherung wurde verbessert."
+        </item>
+        <item>1.3.77</item>
+        <item> "Bugfix:
+            - Der Upload-Bildschirm ist jetzt wirklich wieder auf physischen Geräten verfügbar!"
+        </item>
+        <item>1.3.76</item>
+        <item> "Änderungen:
+            - Bereinigung des Bildschirmaufbaus der Release-Historie
+            Bugfix:
+            - Upload-Bildschirm ist wieder auf physischen Geräten verfügbar
+            - Vermeiden Sie die Anzeige veralteter Daten nach einem Benutzer- oder Serverwechsel während der Anzeige des Upload-Bildschirms.
+            - Vermeiden Sie die Anzeige veralteter Daten nach einem Benutzer- oder Serverwechsel während der Anzeige von Benutzern.
+            - Vermeiden Sie die Anzeige veralteter Daten nach einem Benutzer- oder Serverwechsel während der Anzeige von Gruppen"
+        </item>
+        <item>1.3.75</item>
+        <item> "Änderungen:
+            - Verbesserte Fehlerbehandlung bei Ablauf des http(s)-Sitzungs-Tokens
+            - Geänderte App-Konfiguration - der Hoffnungs-Upload-Bildschirm ist wieder auf physischen Geräten verfügbar.
+            Bugfix:
+            - NullPointer Fix
+            - Es wurde ein Fehler behoben, bei dem Alben, die noch mit einem nicht existierenden Bild verknüpft waren, nicht korrekt geladen wurden.
+            - Fehler behoben, bei dem der Upload-Bildschirm auf echten Geräten nicht angezeigt wird"
+        </item>
+        <item>1.3.74</item>
+        <item> "Bugfix:
+            - Löschen der Button-Aktion auf der Upload-Seite verursachte einen Absturz, wenn der Job nicht ausgeführt wurde.
+            - Kontrollkästchen werden nach einer Massenalbum-Aktion nicht wieder entfernt.
+            - Begrenzung der Aufzeichnung von Slideshow-Seiten auf 0 Seiten (Abstürze weiterhin möglich)
+            - Sichtbarkeit des UI-Zugriffs im Menü nach Änderung des Verbindungsprofils
+            - Vermeiden Sie die Anzeige veralteter Daten nach einem Benutzer- oder Serverwechsel während des Browsens in der Galerie.
+            - Korrekturen bei der Fehlerbehandlung von nicht 200 http-Antworten"
+        </item>
+        <item>1.3.73</item>
+        <item> "Bugfix:
+            - Begrenzung der Aufzeichnung von Slideshow-Seiten auf 5 Seiten, um Abstürze zu vermeiden"
+        </item>
+        <item>1.3.72</item>
+        <item> "Änderungen:
+            - Geänderte Farben (die sich wahrscheinlich noch eine Weile ändern werden)
+            - Abgerundete Ecken von Alben (Android-Version &gt;= Lollipop)
+            Bugfix:
+            - Mehr Wiederverwendung der geladenen Bilder und bessere Verwaltung der geladenen Bilder zur Reduzierung der Speicherauslastung"
+        </item>
+        <item>1.3.71</item>
+        <item> "Bugfix:
+            - Es wurden 3 Fehler behoben, die zu Abstürzen führten, die wahrscheinlich damit zusammenhängen, dass die Anwendung im Hintergrund platziert wurde.
+            - Stellen Sie sicher, dass, wenn ein Upload-Job aus irgendeinem Grund fehlschlägt, es möglich ist, diesen Job zu löschen, ohne die App neu zu installieren. Hinweis: Nicht getestet
+            - Dateien, die mit der App für den Upload geteilt werden, erscheinen nicht in der Upload-Liste"
+        </item>
+        <item>1.3.70</item>
+        <item> "Änderungen:
+            - Keystore Laden getestet - Passwortgeschützte Keystores können jetzt geladen werden (nur BKS und PKCS12 Format). Immerhin kein JKS, tut mir leid.
+            - Überprüfen und entfernen Sie alle Anrufe an Thread.sleep
+            - Verbesserung des Speicherverbrauchs für Personen, die die Freigabe mit der Funktion
+            Bugfix:
+            - Absturz bei der Erweiterung des Upload-Albums auf der Upload-Seite, bevor die Alben geladen wurden"
+        </item>
+        <item>1.3.69</item>
+        <item> "Anmerkungen:
+            - Notierte Personen versuchen, passwortgeschützte Schlüssel oder aus passwortgeschützten pkcs-Dateien zu laden.
+            - Programmabstürze (die Sie melden möchten) sind der einzige Weg, von dem ich weiß, dass es ein Problem gibt, es sei denn, Sie senden mir eine E-Mail.
+            Ich werde einen Fehlerbehandler hinzufügen, um die Benutzer daran zu erinnern. Es hört sich intuitiv an, aber es ist manchmal das Beste.
+            dass ich die App abstürzen lasse, weil die Benutzer mir fast immer nicht sagen, wenn etwas nicht funktioniert!
+            - Die meisten Abstürze werden dadurch verursacht, dass der Speicher knapp wird - bitte helfen Sie mir, dies zu diagnostizieren, wenn es Ihnen einfällt.
+            Bugfix:
+            - crash - Rennbedingung nach Datei-Upload abgeschlossen
+            - crash - Upload Job nicht in Upload Intent gefunden (sehr ungerade)
+            - Absturz - Abschaltung picasso kinder
+            Änderungen:
+            - Unterstützung für das Laden von passwortgeschützten pkcs-Dateien hinzugefügt (ungetestet)
+            - Unterstützung für das Laden mehrerer Zertifikate aus Zertifikatsdateien hinzugefügt (ungetestet)
+            - Erlaubt das Laden von Schlüsseln oder Zertifikaten aus JKS-Keystore-Dateien mit einem .jks-Dateinamenssuffix."
+        </item>
+        <item>1.3.68</item>
+        <item> "Bugfix:
+            - Die Ereignisverwaltung wurde so geändert, dass der Fehler korrigiert wurde, dass Dateien auf der Upload-Seite fehlen, wenn sie mit der App geteilt werden.
+        </item>
+        <item>1.3.67</item>
+        <item> "Bugfix:
+            - Fehler behoben, der einen Absturz beim Fortsetzen von Fragmenten ermöglichte, bei dem der Dialog sofort angezeigt wurde (z.B. Upload).
+            - Verhindern, dass Benutzer versuchen, ein neues Album zu erstellen, bevor das übergeordnete Album ausgewählt wird.
+            Versuchte Fehlerbehebung (wenn dies für Sie der Fall ist, senden Sie mir bitte eine E-Mail mit dem Hinweis, wie dies zu reproduzieren ist):
+            - Versuch, einen Fehler zu beheben, der zu einem Absturz führt, wenn die Schaltfläche "Zurück" an einer unbekannten Stelle in der Anwendung verwendet wird (eine Vermutung).
+            - Versuch, einen Fehler in der Diashow zu beheben, der zu einem Absturz führte (eine Vermutung)"
+        </item>
+        <item>1.3.66</item>
+        <item> "Änderungen:
+            - Aktualisiert auf die neuesten verfügbaren Bibliotheksversionen
+            Bugfix:
+            - Der Zugriff auf die Benutzer- und Gruppenseiten führte zu einem Absturz auf älteren Geräten (keine Vektorgrafik-Unterstützung)."
+        </item>
+        <item>1.3.65</item>
+        <item> "Änderungen:
+            - Zusätzliche Fehlerbehandlung beim An- und Abmelden auf der Seite mit den Verbindungseinstellungen hinzugefügt.
+            - Logout wird ausgelöst, wenn Sie das verwendete Verbindungsprofil ändern.
+            Bugfix:
+            - Die Ausfallsicherheit für Server, die keine verfügbaren Bildgrößen im Sitzungsstatus melden, wurde erhöht."
+            - Der Logout-Code wurde korrigiert, so dass die Anfrage an die richtige URL gesendet wird.
+        </item>
+        <item>1.3.64</item>
+        <item> "Änderungen:
+            - Unterstützung für mehrere zu konfigurierende Galerien hinzugefügt (Verbindungsprofile in den Einstellungen)
+            - Dies ermöglicht eine bessere Nutzung des Community-Plugins, da Sie sich als Gast einloggen können, um Ihre hochgeladenen Bilder zu sehen.
+        </item>
+        <item>1.3.63</item>
+        <item> "Bugfix:
+            - Fehler bei der Identifizierung von eindeutigen Dateien für den Upload (nur Dateinamenmodus)"
+        </item>
+        <item>1.3.62</item>
+        <item> "Änderungen:
+            - Unterstützung für Server, die den Dateinamen als eindeutigen Bezeichner für Ressourcen verwenden (neue Galerie-Einstellung) hinzugefügt
+            - Unterstützung für das Log_Failed_Logins Plugin wurde zugefügt, wenn der Debug-Text falsch konfiguriert wurde.
+            - Konfigurationseinstellung für die maximale Anzahl von Server-Umleitungen hinzugefügt
+            - Aktivierte Umleitungskonfiguration für die Video-Downloads
+            Bugfix:
+            - Unterstützung für Server hinzugefügt, die keine md5-Summen für Ressourcen zurückgeben
+            - Stellen Sie sicher, dass picasso loader immer zurückgesetzt wird, wenn Sie die Verbindungseinstellungen ändern.
+            - Problem beim Abrufen von vertrauenswürdigen Zertifikaten in den Einstellungen
+            - Reduzierte maximale Standard-Serverweiterleitung bei Aktivierung auf 5
+            - Obskurer Absturz im Bereich des Server Response Handlings
+            - Eine Seite mit doppelt geladenen Ressourcen stillschweigend ignorieren"
+        </item>
+        <item>1.3.61</item>
+        <item> "Bugfix:
+            - Verhinderte Anfragen, die zu einem SSL-Handshake-Fehler führten, werden automatisch erneut versucht.
+            - Gesicherte md5sum wird beim Abrufen von Ressourceninformationen als optional behandelt.
+            Warnung:
+            - Ich habe festgestellt, dass davon ausgegangen wird, dass der Server md5sums für Eindeutigkeitstests verwendet. Beachten Sie dies, wenn Sie die Upload-Funktion verwenden. Das ist bestehende Funktionalität, nichts Neues."
+        </item>
+        <item>1.3.60</item>
+        <item> "Bugfix:
+            - Neu hinzugefügte defensive Kodierung um Datenabrufserveraufrufe"
+        </item>
+        <item>1.3.59</item>
+        <item> "Bugfix:
+            - Crash-Fix am Ende des erfolgreichen Uploads, der das Löschen des temporären Upload-Albums verhinderte"
+        </item>
+        <item>1.3.58</item>
+        <item> "Änderungen:
+            - Unterstützung für das Paging von Benutzern und Gruppen hinzugefügt
+            - Die Farbe der Kontrollkästchen wurde geändert, um es deutlicher zu machen, wenn ihr Zustand geändert werden kann.
+            Bugfix:
+            - Es wurde ein Fehler behoben, bei dem die Anwendung abstürzte, weil die UI-Komponente vom Server-Antwort-Listener getrennt wurde.
+            - Fehler beim Abrufen von Ressourcendetails korrigiert, wenn Ressource keinen Namen hat
+            - Absturz beim Datei-Upload, wenn ein Fehler auftrat und der Upload-Bildschirm nicht angezeigt wurde"
+        </item>
+        <item>1.3.57</item>
+        <item> "Bugfix:
+            - Fehler in der Proguard-Datei behoben, der das Funktionieren der freigegebenen Version verhinderte."
+        </item>
+        <item>1.3.56</item>
+        <item> "Änderungen:
+            - Verbesserter Speicherverbrauch beim Parsen von Nachrichten zum und vom Server
+            - HINWEIS: Ich habe diese Änderung getestet, aber nicht umfassend. Wenn Sie Fehler bekommen, lassen Sie es mich wissen.
+            - Option hinzugefügt, um den Web-Response-Cache einfach beim Caching auf der Festplatte zu leeren.
+            Bugfix:
+            - Fehler in der Logik beim Erstellen eines neuen Albums behoben"
+        </item>
+        <item>1.3.55</item>
+        <item> "Bugfix:
+            - Das Teilen von Dateien mit der App zum Hochladen funktioniert nicht immer.
+            - Community-Plugin-Benutzer können Dateien auf dem Gerät mit piwigo-Upload freigeben.
+            - Upload-Fortschrittsfehler verursacht Absturz
+            - Fehler im Datei-Upload, die zum Absturz der App geführt haben"
+        </item>
+        <item>1.3.54</item>
+        <item> "Änderungen:
+            - Neue Eigenschaft'setting', um das Löschen aller zwischengespeicherten Videos (oder Stücke) zu ermöglichen.
+            Bugfix:
+            - Video wird nicht wiedergegeben, wenn die Zwischenspeicherung von Videos auf der Festplatte aktiviert ist"
+        </item>
+        <item>1.3.53</item>
+        <item> "Bugfix:
+            - Versuch, das Problem zu beheben, dass das Video auf Samsung S4 nicht abgespielt wird (nur die veröffentlichte Version der App)."
+        </item>
+        <item>1.3.52</item>
+        <item> "Änderungen:
+            - Unterstützung für das PIWIGO-Community-Plugin wurde hinzugefügt - N.B. Dieses Plugin ist NICHT kompatibel mit dem pwigio_privacy-Plugin.
+            - HINWEIS: Die Unterstützung der Community-Plugin-API scheint sehr schlecht zu sein, von dem, was ich bisher gesehen habe. Man bekommt eine ganz andere Erfahrung als auf der Website."
+        </item>
+        <item>1.3.51</item>
+        <item> "Änderungen:
+            - Unterstützung für Admin-Benutzer hinzugefügt, um Alben zu sehen, für die sie keine ausdrückliche Berechtigung haben.
+            - Unterstützung für Admin-Benutzer zum Hochladen in Alben, für die sie keine ausdrückliche Berechtigung haben.
+            - Die Mauerwerksansicht etwas aufgeräumt
+            Bugfix:
+            - Album-Thumbnails werden jetzt entsprechend der Größe der Bild-Thumbnails heruntergeladen.
+            - Benutzer- und Gruppenzugriffsberechtigungen des Albums wurden verletzt (benutzt das niemand?)"
+        </item>
+        <item>1.3.50</item>
+        <item> "Bugfix:
+            - Fehler in der Videobereichsanfrage verhinderte das Abspielen von Videos für einige Leute"
+        </item>
+        <item>1.3.49</item>
+        <item> "Bugfix:
+            - Bessere Lösung für die Vollbildanzeige, die einen Absturz verursacht"
+        </item>
+        <item>1.3.48</item>
+        <item> "Bugfix:
+            - Entdeckte Änderung in der Google-Bibliothek für Anzeigen verursacht Absturz, wenn Vollbildanzeige angezeigt wird. Herabgestufte App auf Android v26, bis sie aufgelöst wurde."
+        </item>
+        <item>1.3.47</item>
+        <item> "Änderungen:
+            - Benutzergesteuerte Wiederholungsversuche für jede fehlgeschlagene Serveranfrage zum Zeitpunkt des Ausfalls aktivieren
+            - Layout im Mauerwerkstil hinzugefügt (standardmäßig deaktiviert) - Benutzeranfrage
+            Bugfix:
+            - Mehr Abwehrcode zur Diashow hinzugefügt (Absturz gemeldet)"
+        </item>
+        <item>1.3.46</item>
+        <item> "Bugfix:
+            - Loggen Sie sich als normaler (nicht Admin oder Webmaster) Benutzer ein. Danke Olivier für den Hinweis!"
+        </item>
+        <item>1.3.45</item>
+        <item> "Änderungen:
+            - Aktualisiert auf die neuesten Bibliotheksversionen und kompiliert für die neueste Version von Android.
+            - Hochladen - vorhandene Dateien erkennen und einen Link zum Hochladen des Albums erstellen (und die Zugriffsberechtigungen für die für diesen Upload-Job ausgewählten Dateien ändern).
+            - Geänderte EULA zur kommerziellen Nutzung der App
+            Bugfix:
+            - Einige Absturzursachen behoben (Slideshow und Upload)
+            - Benachrichtigungen funktionieren nicht bei Oreo und höher."
+        </item>
+        <item>1.3.44</item>
+        <item> "Änderungen:
+            - Option "unlink from album" für das Löschen mehrerer Ressourcen hinzugefügt - erfordert eine Änderung von piwigo 2.9.2, um effizient zu sein (Ticket erhöht).
+            - Verbessern der Funktion zum Löschen von Alben mit langem Klick
+            - Warnung über http gehosteten piwigo-Server hinzugefügt
+            Bugfix:
+            - Aktualisieren Sie positiv betroffene Alben korrekt, nachdem Sie eine Ressource mit einer verknüpft haben.
+            - Upload-Button beim Drücken korrekt deaktivieren
+            - Speicherleck behoben
+            - Der Wortlaut des Löschens des Albums wurde korrigiert, um die Aktion widerzuspiegeln"
+        </item>
+        <item>1.3.43</item>
+        <item> "Bugfix:
+            - Gastbenutzer (des piwigo-Servers) wieder einloggen lassen
+            - Korrigiert den Freischalt-Dialog"
+        </item>
+        <item>1.3.42</item>
+        <item> "Bugfix:
+            - Absturz im Bereich des Video-Cache für Benutzer des mit älteren Versionen erstellten Video-Cache
+            - Leck in den Request-Handlern konnte dazu führen, dass sich die Warteschlange (3) füllte und die Anwendung für den 5-Minuten-Timeout gesperrt wurde, wenn die Anmeldedaten nicht korrekt waren.
+        </item>
+        <item>1.3.41</item>
+        <item> "Änderungen:
+            - Erstellen und Hochladen einer kostenpflichtigen, werbefreien Version unter Beibehaltung identischer Lizenzbedingungen. Wenn Sie die Anwendung kommerziell nutzen möchten, was die EULA verbietet, senden Sie mir bitte eine E-Mail.
+            - Einen aktiven E-Mail-Link zur EULA-Seite hinzugefügt.
+            - Option "Link kopieren" (in die Zwischenablage) im Download-Dialog hinzugefügt
+            - Die App funktioniert mit dem piwigo Server 2.9.2.
+            Bugfix:
+            - Namen von Alben werden jetzt immer angezeigt"
+        </item>
+        <item>1.3.40</item>
+        <item> "Bugfix:
+            Fehler behoben, der zum Absturz führte, wenn der Webservice-Aufruf vorzeitig beendet werden musste"
+        </item>
+        <item>1.3.39</item>
+        <item> "Bugfix:
+            Behebt einen Fehler, der in Eile zur Version 1.3.38 eingeführt wurde und dazu führte, dass die Anwendung unerwartet geschlossen wurde."
+        </item>
+        <item>1.3.38</item>
+        <item> "Änderungen:
+            - Neuer Dialog zur Erklärung der vertrauenswürdigen Zertifikatspeicherung
+            Bugfix:
+            - Die automatische Installation von vertrauenswürdigen Zertifikaten fand nicht immer statt.
+            - Änderungen am Shutdown-Code für den http-Client, um zu versuchen, den Cache zu entfernen, wurde die Fehlermeldung "Shutdown" angezeigt.
+        </item>
+        <item>1.3.37</item>
+        <item> "Änderungen:
+            - Vorschauen werden nun für Videodateien generiert (Upload-Bildschirm)
+            Bugfix:
+            - Upload-Button beim Start des Uploads korrekt deaktiviert
+            - DialogBox wird nun wieder korrekt auf der Anmeldeseite angezeigt"
+        </item>
+        <item>1.3.36</item>
+        <item> "Änderungen:
+            - Verbindungseinstellungen: Benutzer-Feedback für das Adressfeld des piwigo-Servers (falls ein gültiges Schema fehlt)
+            - Upload und Upload-Einstellungen: Prüfung auf sinnvolle Dateigrößen der für den Upload ausgewählten Dateien (Standardmäßige maximale Größe für den Upload ohne Warnung 20 MB)
+            - Album-Einstellungen: Die Standardseitengröße für Anfragen nach Albuminhalten wurde auf 20 Elemente pro Anfrage reduziert (von 100).
+            - Album-Einstellungen: Option hinzugefügt, um Bildnamen auszublenden
+            Bugfix:
+            - Benutzerwerte für verschlüsselte Felder in den Einstellungen korrekt anzeigen.
+            - Upload-Steuerelemente werden nach Beendigung des Auftrags bis zum erneuten Öffnen der Seite nicht wieder aktiviert.
+            - Album nicht automatisch aktualisieren bei Rückkehr von der Upload-Seite (wenn eine Datei in dieses Album hochgeladen wurde)"
+        </item>
+        <item>1.3.35</item>
+        <item> "Veränderungen:
+            - Das App-Icon wurde so geändert, dass es auf den material.io-Icons basiert, die in der gesamten App verwendet werden.
+            - Es wurde ein Verweis auf das material.io Icon auf der Über-Seite hinzugefügt."
+        </item>
+        <item>1.3.34</item>
+        <item> "Veränderungen:
+            - Code hinzugefügt, um die Freigabe der kostenpflichtigen Version ohne Werbung zu ermöglichen.
+            - Video-Mime-Typ zur Liste der unterstützten Typen für Upload-Aktivitäten hinzugefügt (wo Sie eine Datei mit dieser Anwendung teilen)
+            - Änderungen an der Art und Weise, wie Popup-Meldungen erzeugt werden, um später umfangreichere Änderungen vorzubereiten.
+            - Bestätigt, dass die Anwendung nun unterstützt werden sollte, * obwohl ich nicht getestet habe * Digest und Kerberos-Authentifizierung (jeder Realm)
+            - Verbesserte Sicherheit rund um gespeicherte Authentifizierungsinformationen
+            - Bessere Handhabung der Album-Berechtigungen in Bezug auf den aktuell angemeldeten Benutzer
+            - Stoppt das Einschlafen der CPU (und damit das Beenden des Hintergrund-Upload-Jobs).
+            Bugfix:
+            - Behoben (und getestet) Basic Authentication-Unterstützung (Hinweis: die Anmeldeinformationen werden für alle Realms auf Ihrem Server verwendet).
+            - Fehler beim Deaktivieren von benutzerdefinierten vertrauenswürdigen Serverzertifikaten behoben
+            - Die Auswahl vertrauenswürdiger Server- oder Client-Authentifizierungszertifikate in den Einstellungen funktionierte nicht.
+            - Feste (und getestete) Client-Zertifikat-Authentifizierung
+            - Album wird nach dem Einfügen von kopierten Ressourcen nicht automatisch aktualisiert.
+            - Fehler in der Behandlung von fehlgeschlagenen Restart-Jobs
+            - Fehler, bei denen einige Upload-Vorgaben nicht korrekt verwendet werden"
+        </item>
+        <item>1.3.33</item>
+        <item> "Änderungen:
+            - Erlaubt den Neustart von teilweise hochgeladenen Dateien, die zuvor fehlgeschlagen wären und einen manuellen Eingriff erforderten.
+            - Erstellen und verwenden Sie jetzt ein temporäres Album zum Hochladen - um sicherzustellen, dass Dateien nie für Personen sichtbar sind, für die sie nicht bestimmt sind.
+            - Erlaubt die Wiederherstellung des Upload-Jobs, wenn die Anwendung aus irgendeinem Grund während des Uploads abstürzt.
+            Bugfix:
+            - Massiv bessere Speicherverwaltung durch Änderung des Bildladecodes auf Kosten leicht unscharfer Thumbnails (Fix out of memory errors)
+            - Absturz in Alben mit leeren Albumabstandhaltern unter Umständen
+            - Absturzmöglichkeit in der Video-Cache-Verwaltung"
+        </item>
+        <item>1.3.32</item>
+        <item> "Bugfix:
+            - Fehler in der proguard-Datei nach Änderungen können dazu führen, dass App-Ereignisse nicht von anderen App-Komponenten empfangen werden"
+        </item>
+        <item>1.3.31</item>
+        <item> "Änderungen:
+            - Nach Benutzer-Feedback, reduzierte Vollbild-Anzeigenhäufigkeit sowohl beim Hochladen als auch beim Durchsuchen des Albums, um nicht mehr als einmal alle 24 Stunden anzuzeigen.
+            - Bannerwerbung auf allen Seiten hinzugefügt
+            Bugfix:
+            - Fehlender Klick-Hörer auf Album-Listenelement, wenn keine großen Album-Miniaturansichten verwendet werden.
+            - Schaltfläche "Wiederholen" wird manchmal nicht auf der Albumseite angezeigt.
+            - Benutzerseite startet nun nach oben gescrollt"
+        </item>
+        <item>1.3.30</item>
+        <item> "Änderungen:
+            - Unterstützung hinzugefügt, um das Standardbild auszuwählen, das in Diashows heruntergeladen wird (Standard: basierend auf der Bildschirmgröße des Geräts).
+            - Allgemeine Übersicht über die Art der Serveranrufe
+            - Unterstützung für die Steuerung des Caching von Antworten vom Server - auf der Festplatte oder im Speicher (zuvor deaktiviert)
+            - Unterstützung für benutzerdefinierte vertrauenswürdige Zertifikatsspeicher (für selbstsignierte Zertifikate und/oder nicht standardmäßige Stammzertifikate)
+            Bugfix:
+            - Alle Serveraufrufe sind jetzt resistent gegen Session-Timeout
+            - Klick-Handler für nicht korrekt geladene Thumbnails und Bilder
+            - Das Abspielen eines Videos verhinderte das Abspielen eines anderen bis zum Neustart der App.
+            - Viele kleine Nigger"
+        </item>
+        <item>1.3.29</item>
+        <item> "Änderungen:
+            - Erlaubt das Hochladen von Videos (Ändern der für das Hochladen verwendeten API)
+            Bugfix:
+            - Das Hochladen von Multichunk-Fotos wurde wieder korrigiert.
+            - App kann minimiert werden, ohne erneut abstürzen zu müssen.
+            - Absturz bei App LowMemory-Warnung behoben"
+        </item>
+        <item>1.3.28</item>
+        <item> "Änderungen:
+            - Erinnerung hinzugefügt, um die App zu bewerten. Erinnert Sie einmal pro Installation. Kann abgebrochen werden.
+            - Aufräumen des Upload- und Album-Bildschirms
+            - Überarbeitung der Berechtigungsauswahlbildschirme (Benutzer, Gruppe, Album).
+            - Option hinzugefügt, um ein Unteralbum zu erstellen, wenn der Inhalt des Albums angezeigt wird.
+            Bugfix:
+            - Die Berechtigungseinstellungen funktionierten nicht richtig.
+            - Eine Reihe von Absturzursachen behoben
+            - Einige Fehler behoben, bei denen der Bildschirminhalt möglicherweise den Serverinhalt nicht korrekt wiedergab.
+            - Mögliche Ursache für Speicherleck beim Datei-Upload behoben
+            - Bessere Speicherverwaltung
+        </item>
+        <item>1.3.27</item>
+        <item> "Änderungen:
+            - Das Standardlayout der Upload-Dateiliste wurde überarbeitet.
+            - Das Erscheinungsbild der Album-Ansicht wurde verbessert.
+            - Ändern der Anzeige von Alben erlauben (Einstellungen)
+            - Die Einstellungen ein wenig gemischt
+            - Optimierte Darstellung der Upload-Ansicht (konfigurierbar in den Einstellungen)
+            Bugfix:
+            - Regression - Alben ohne Thumbnail wurden nicht mehr unterstützt"
+        </item>
+        <item>1.3.26</item>
+        <item> "Bugfix:
+            - Release 1.3.25 war eine Katastrophe - sofortiger Absturz auf den meisten Handys. Entschuldigung!"
+        </item>
+        <item>1.3.25</item>
+        <item> "Änderungen:
+            - Link zur Albendatei in der Diashow funktioniert logischer
+            - Zusätzlicher Wiederholungsversuch zum Server, wenn die Verbindung fehlschlägt.
+            - Zusätzliche Galerie-Einstellungen zur Konfiguration des Themas
+            - Zusätzliche Galerie-Einstellung zum Konfigurieren von Alben, die pro Zeile sichtbar sind.
+            - Übersichtliches Layout von Album und Diashow
+            Bugfix:
+            - Namen der Bilder werden jetzt immer angezeigt"
+        </item>
+        <item>1.3.24</item>
+        <item> "Änderungen:
+            - Erlaubt das Verschieben und Kopieren von Dateien zwischen Alben
+            - Erlaubt das Verschieben und Löschen von Dateien in einem Album.
+            Hinweis: Eine Funktion von PIWIGO bedeutet, dass, wenn Sie das endgültige Bild aus einem Album verschieben, es das Miniaturbild dieses Albums bleibt.
+            BugFix:
+            - Weitere Ausnahmebehandlung im Server-Login-Code
+            - Absturz verhindern, wenn der Abruf der Albenliste auf dem Upload-Bildschirm fehlschlägt.
+            - Gesamtzahl der Fotos für Unteralben fehlerhaft
+            - Große zwischengespeicherte Videos können zum Absturz führen"
+        </item>
+        <item>1.3.23</item>
+        <item> "Bugfix:
+            - Verhindern Sie den Zugriff auf neue Löschfunktionen, wenn nicht Admin-Benutzer oder -Anwendung im Nur-Lese-Modus.
+            - Fehler in der App Lock-Funktionalität behoben (wird verwendet, wenn man als Admin eingeloggt ist)"
+        </item>
+        <item>1.3.22</item>
+        <item> "Änderungen:
+            - Kann die Album-Miniaturansicht ändern, sowohl für das aktuelle Album als auch für jedes andere in der Galerie.
+            - Kann Ressourcen in großen Mengen aus einem Album auswählen und löschen.
+            - Kann ein Album durch "langes Klicken" innerhalb des übergeordneten Albums löschen.
+            - Kann nun ein Album löschen, auch wenn es Bilder und/oder Unteralben enthält.
+            Bugfix:
+            - Status nicht korrekt in der Diashow gespeichert
+            - Status nicht gespeichert für Albumfragment erstellen (Absturz beim Fortsetzen)"
+        </item>
+        <item>1.3.21</item>
+        <item> "Änderungen:
+            - Das Öffnen des Root-Albums löscht die gesamte App-Historie bis zum ersten Mal, als ein Album angesehen wurde.
+            - Wenn Sie die Schaltfläche Zurück auf der Einstellungsseite verwenden, wird das Stammalbum geöffnet (Hinweis oben: Ändern).
+            Bugfix:
+            - Absturz auf der Upload-Seite
+            - Absturz durch zu große Seitenhistorie (wird jetzt beschnitten)
+            - Hoffentlich wurde der Absturz auf der View Album Seite behoben (nicht sicher, was es im Moment verursacht).
+            - Wenn Sie zum laufenden Upload zurückkehren, werden geänderte Benutzer-Marken in der Datei-Upload-Liste nicht auf den laufenden Job angewendet.
+        </item>
+        <item>1.3.20</item>
+        <item> "Bugfix:
+            - Paging von Albuminhalten (Absturz)
+            - Heruntergeladenen Artikel auf Android 7+ ansehen (Absturz)
+            - Absturz, wenn der Bildschirm kurz vor dem Aufruf des Servers geschlossen wird.
+            - Absturz nach dem Download von Bildern auf Android-Versionen unter 5 (Lollipop)
+            - Nicht automatisch ändernder Bildschirm nach der Anmeldung"
+        </item>
+        <item>1.3.19</item>
+        <item> "Verbesserung:
+            - Code hinzugefügt, um das erneute Laden eines Albums zu ermöglichen, wenn einige oder alle Inhalte nicht geladen werden können.
+            Bugfix:
+            - Fehler im Bereich des Datei-Upload-Prozesses (Interaktion mit bestehenden Alben)
+            - Die Schaltfläche "Zurück" funktionierte nicht richtig, besonders in den App-Einstellungen"
+        </item>
+        <item>1.3.18</item>
+        <item> "Bugfix:
+            - Absturz auf Android 5.0 im Upload-Bildschirm gemeldet
+            - Andere Fehler, die mit dem Upload verbunden sind"
+        </item>
+        <item>1.3.17</item>
+        <item> "Bugfix:
+            - Neue Album-Lade-Routinen stürzten bei einigen Alben ab"
+        </item>
+        <item>1.3.16</item>
+        <item> "Bugfix:
+            - Bildschirmüberlagerung bei der ersten Verwendung der Zurück-Taste.
+            Verbesserungen:
+            - Moll-Stimmung
+            - Standard für die Wiedergabe von Videos (Neuinstallationen)
+            - Neuer Top-Tipp
+        </item>
+        <item>1.3.15</item>
+        <item>Bugfix:
+            - Bildvorschau wird auf der Upload-Seite nicht angezeigt
+            - Absturz beim Versuch, Bilder mit der App zu teilen und sie ist noch nicht konfiguriert.
+            - seit 1.3.4 (gerade berichtet) - Bild-Download funktionierte nicht mehr
+            - Absturz beim Versuch, E-Mail-zu-Hyperlink zu verwenden, wenn Sie nicht am Server angemeldet sind.
+            - Absturz beim schnellen Durchlaufen von Diashows
+            - Client SSL-Zertifikate Unterstützung offensichtlich defekt (noch ungetestet)
+            Verbesserungen:
+            - Behandlung von ungültigen Servereinstellungen
+            - Umblättern von Albuminhalten
+            - Auswahl über das angezeigte Bild erlauben
+            - Größerer Bild-Zoom bei Bedarf möglich
+            - Top-Tipps Seite hinzugefügt.
+        </item>
+        <item>1.3.14</item>
+        <item> "Bugfix:
+            - Möglicher Absturz, wenn die Sitzung während der Anzeige eines Albums / einer Diashow ausfällt.
+            Extra-Debug - um zu versuchen, einen Absturz zu identifizieren, den jemand auf dem Datei-Upload-Bildschirm erlebt hat."
+        </item>
+        <item>1.3.13</item>
+        <item> "Bugfix:
+                - Für Benutzer, die keine Administratoren sind, werden die Albumberechtigungen falsch angezeigt und es wird versucht, sie zu laden - dies schlägt als nicht autorisiert fehl und zeigt eine irreführende Fehlermeldung im Album an.
+                - Für Nicht-Administratoren wird die Schaltfläche "Album bearbeiten" angezeigt.
+                - Nicht alle angezeigten Inhalte des übergeordneten Albums werden beim Hochladen in ein untergeordnetes Album automatisch aktualisiert"
+        </item>
+        <item>1.3.12</item>
+        <item>Bugfix - Absturz durch Speichern von ungültigen piwigo server resourceUrl in den Einstellungen
+        </item>
+        <item>1.3.11</item>
+        <item> "Grobe, aber theoretisch vollständige Unterstützung für die Client-Zertifikatsauthentifizierung hinzugefügt (UNTESTED - Bitte mailen Sie mir, wenn dies nicht funktioniert - ich werde die Fertigstellung priorisieren).
+            unterstützt den Import von Client-Zertifikaten aus .p12- und.cer-Dateien.
+            Bugfix - Regression - wo die Diashow-Position zurückgesetzt wird, wenn der Bildschirm gedreht wird.
+            Bugfix - Regression - Berechtigungen für Album-Elemente falsch angezeigt
+            Bugfix - Regression - bei der die Slideshow gelegentlich leere Positionen anzeigt, nachdem eine Reihe von Elementen aus ihr gelöscht wurden
+            Bugfix - Slideshow nicht synchron zum Galerieinhalt nach Rückkehr vom Upload (Warnung wird jetzt angezeigt)
+            Bugfix - Problem beim Löschen einer Diashow, bevor der Server Zeit hatte, die Ressourcendetails (Datenschutz und Bewertung) zurückzugeben.
+            Bugfix - Upload der Datei scheint nach dem Zufallsprinzip "fehlgeschlagen" zu sein, da sie bereits zum Server hinzugefügt wurde (HTTP 500-Antwort vom Server empfangen)"
+        </item>
+        <item>1.3.10</item>
+        <item>" - Bugfixes rund um die neue Funktionalität des Hochladens durch das Teilen von Bildern.
+            Bugfixes bei Problemen, die einen Absturz verursachen, wenn die App während des Uploads minimiert wird"
+        </item>
+        <item>1.3.9</item>
+        <item> - Ich hoffe, einen Fehler behoben zu haben, der verursacht wurde, wenn die Anwendung für längere Zeit verlassen wird und die Sitzung abgemeldet wird. Bitte melden Sie die Abstürze immer noch, wenn dies erneut auftritt.
+        </item>
+        <item>1.3.8</item>
+        <item>Fehlerbehebungen. (Hauptsächlich - erneutes Hochladen von Bildern)
+            - Eine Share-to-Aktion wurde hinzugefügt, damit Sie eine oder mehrere Dateien für den Upload mit anderen Anwendungen auswählen können.
+        </item>
+        <item>1.3.7</item>
+        <item>" - Unterstützung für das Hinzufügen/Bearbeiten von Gruppen und deren Berechtigungen hinzugefügt
+            - Einige Fehler im oder um den Slideshow-Bereich der App behoben
+            - Fehler behoben, der die Videowiedergabe auf nicht standardmäßigen http/https-Ports verhinderte.
+            - Weitere Leistungssteigerungen"
+        </item>
+        <item>1.3.6</item>
+        <item>" - Unterstützung für das Hinzufügen / Bearbeiten von Benutzern und deren Berechtigungen hinzugefügt
+            - Unterstützung für Server, die Schemata auf nicht standardmäßigen Ports ausführen (z.B. https auf Port 80, oder Server, der auf Port 81 läuft usw.).
+            - Unterstützung hinzugefügt, um ungültige SSL-Zertifikate zu akzeptieren, falls gewünscht (manchmal erforderlich bei Verwendung von öffentlichem WLAN, das https-Verkehr abfangen kann).
+            - Verhindern Sie den Zugriff auf zuvor besuchte Admin-Bildschirme, wenn die Anwendung gesperrt ist, indem Sie die Schaltfläche "Zurück" verwenden.
+        </item>
+        <item>1.3.5</item>
+        <item>" - Caching von Videos ist nicht erforderlich, um die Wiedergabe zu ermöglichen.
+            - Die Einstellungen werden nun korrekt angezeigt, wenn Sie mit der Zurück-Taste zu ihnen zurückkehren.
+            - Fehler bei der Verwendung des Zurück-Buttons im Allgemeinen behoben
+            - Umschaltbarer Offset der Bild-/Album-Detail-Schaltfläche auf dp (wenn Sie stattdessen px benötigen, sagen Sie mir bitte Bescheid)"
+        </item>
+        <item>1.3.4</item>
+        <item>" - Erstens, Entschuldigung, diese Version hat lange auf sich warten lassen, aber ich wollte sicher sein, dass ich nur Verbesserungen eingeführt hatte.
+            - Überarbeitung des PIWIGO-API-Zugriffs, um zu verhindern, dass Antworten "verloren gehen", wenn das Gerät z.B. während einer Anfrage an den Server gedreht wird.
+            - Mehrere Fehler behoben, die zum Absturz der Anwendung führten.
+            - Das Hochladen von Dateien wurde so geändert, dass das Hochladen im Hintergrund fortgesetzt werden kann.
+            - Lokales Caching von Videodateien (konfigurierbar) und die Möglichkeit, vollständig zwischengespeicherte Videos lokal zu speichern, falls aktiviert.
+            - Download-Option für nicht explizit auf dem Server erzeugte Bildgrößen entfernt
+            - Fehler in der Diashow beim Löschen von Dateien behoben
+            - Langer Klick auf Album-Thumbnails und Album-Ressourcen ruft das erneute Herunterladen dieser Ressource auf (Bei Videos werden alle lokal zwischengespeicherten Daten gelöscht).
+            - Einige Fehler im Bereich der Änderung von Benutzersitzungen ohne Neustart der App behoben
+            - Löschen des Backbutton-Verlaufs bei Änderung einer Benutzersitzung
+            - Es wurde eine Galerie-Eigenschaft hinzugefügt, die es dem Benutzer erlaubt, die Position der unteren Schublade des Bildes / der Videodetails zu korrigieren.
+            - Sie können in Benutzer und Gruppen bohren und Albumberechtigungen im Vollbildmodus anzeigen, um dies auf einem kleinen Bildschirm zu erleichtern.
+        </item>
+        <item>1.3.3</item>
+        <item> - Ein Fehler wurde behoben, der von einem Benutzer als Ursache für einen Programmabsturz gemeldet wurde (in Release 1.3.1).
+        </item>
+        <item>1.3.2</item>
+        <item>" - Behebt einen Fehler, der von einem Benutzer als Ursache für einen Programmabsturz gemeldet wurde (in Release 1.3.1).
+            - Es wurde die Möglichkeit zugefügt, Benutzer und Gruppen zu durchsuchen, ihre Berechtigungen in einer Galerie anzuzeigen und sie wie gewünscht zu löschen."</item>
+    </string-array>
+</resources>
