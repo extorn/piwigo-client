@@ -28,6 +28,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
+import com.wunderlist.slidinglayer.SlidingLayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -132,7 +133,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     AlbumItemRecyclerViewAdapter viewAdapter;
     private FloatingActionButton retryActionButton;
-    private ControllableBottomSheetBehavior<View> bottomSheetBehavior;
     private TextView galleryNameHeader;
     private TextView galleryDescriptionHeader;
     private ImageButton descriptionDropdownButton;
@@ -182,8 +182,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private RecyclerView galleryListView;
     private AlbumViewAdapterListener viewAdapterListener;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
-    private View bottomSheetActionButton;
-    private View bottomSheet;
+    private SlidingLayer bottomSheet;
 
 
     /**
@@ -444,10 +443,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         setGalleryHeadings();
 
-        bottomSheetActionButton = view.findViewById(R.id.gallery_actionButton_details);
-
-        bottomSheet = view.findViewById(R.id.gallery_bottom_sheet);
-
+        bottomSheet = (SlidingLayer) view.findViewById(R.id.slidingDetailBottomSheet);
         setupBottomSheet(bottomSheet);
 
 //        viewInOrientation = getResources().getConfiguration().orientation;
@@ -1018,27 +1014,44 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void updateInformationShowingStatus() {
-        if (informationShowing  ) {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        if (informationShowing) {
             if (currentGroups == null) {
                 // haven't yet loaded the existing permissions - do this now.
                 checkedListener.onCheckedChanged(galleryPrivacyStatusField, galleryPrivacyStatusField.isChecked());
             }
-        } else {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
     }
 
-    private void setupBottomSheet(final View bottomSheet) {
-
-        bottomSheetBehavior = ControllableBottomSheetBehavior.from(bottomSheet);
-
-        int bottomSheetOffsetDp = prefs.getInt(getString(R.string.preference_gallery_detail_sheet_offset_key), getResources().getInteger(R.integer.preference_gallery_detail_sheet_offset_default));
-        bottomSheetBehavior.setPeekHeight(DisplayUtils.dpToPx(getContext(), bottomSheetOffsetDp));
-
-        bottomSheetActionButton.setOnClickListener(new View.OnClickListener() {
+    private void setupBottomSheet(final SlidingLayer bottomSheet) {
+        bottomSheet.setOnInteractListener(new SlidingLayer.OnInteractListener() {
             @Override
-            public void onClick(View v) {
+            public void onOpen() {
+
+            }
+
+            @Override
+            public void onShowPreview() {
+
+            }
+
+            @Override
+            public void onClose() {
+
+            }
+
+            @Override
+            public void onOpened() {
+                informationShowing = !informationShowing;
+                updateInformationShowingStatus();
+            }
+
+            @Override
+            public void onPreviewShowed() {
+
+            }
+
+            @Override
+            public void onClosed() {
                 informationShowing = !informationShowing;
                 updateInformationShowingStatus();
             }
@@ -1046,7 +1059,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM;
         bottomSheet.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
-        bottomSheetActionButton.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
 
         int editFieldVisibility = VISIBLE;
         if (galleryModel.getContainerDetails().isRoot()) {
@@ -1154,7 +1166,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             public boolean onTouch(View v, MotionEvent event) {
 
                 if (galleryNameView.getLineCount() > galleryNameView.getMaxLines()) {
-                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
+//                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
                 }
                 return false;
             }
@@ -1164,7 +1176,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (galleryDescriptionView.getLineCount() > galleryDescriptionView.getMaxLines()) {
-                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
+//                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
                 }
                 return false;
             }
@@ -1264,7 +1276,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private void setEditItemDetailsControlsStatus() {
         boolean visibleBottomSheet = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile()) || galleryModel.getContainerDetails() != CategoryItem.ROOT_ALBUM;
         bottomSheet.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
-        bottomSheetActionButton.setVisibility(visibleBottomSheet?View.VISIBLE:View.GONE);
 
         addNewAlbumButton.setEnabled(!editingItemDetails);
 

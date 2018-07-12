@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.wunderlist.slidinglayer.SlidingLayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -103,7 +104,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private static final String STATE_INFORMATION_SHOWING = "informationShowing";
     private static final String ALLOW_DOWNLOAD = "allowDownload";
     private T model;
-    private ControllableBottomSheetBehavior<View> bottomSheetBehavior;
     private RatingBar averageRatingsBar;
     private ProgressBar progressIndicator;
     private RatingBar ratingsBar;
@@ -131,6 +131,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private long albumLoadedItemCount;
     private TextView itemPositionTextView;
     private long albumTotalItemCount;
+    private SlidingLayer bottomSheet;
 
     public void setAllowDownload(boolean allowDownload) {
         this.allowDownload = allowDownload;
@@ -289,28 +290,16 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 //                    PiwigoAccessService.startActionSetIsFavorite(model, isChecked, this);
 //                }
 //            });
-        FloatingActionButton actionButton = v.findViewById(R.id.slideshow_image_actionButton_details);
 
-        LinearLayout bottomSheetLayout = v.findViewById(R.id.slideshow_image_bottom_sheet);
-        bottomSheetBehavior = ControllableBottomSheetBehavior.from((View) bottomSheetLayout);
-
-        int bottomSheetOffsetDp = prefs.getInt(getString(R.string.preference_gallery_detail_sheet_offset_key), getResources().getInteger(R.integer.preference_gallery_detail_sheet_offset_default));
-        bottomSheetBehavior.setPeekHeight(DisplayUtils.dpToPx(getContext(), bottomSheetOffsetDp));
+        bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
+        LinearLayout bottomSheetContent = bottomSheet.findViewById(R.id.slideshow_image_bottom_sheet_content);
 
         setupImageDetailPopup(v, inflater, container, savedInstanceState);
 
         View itemDetail = createCustomItemDetail(inflater, itemContentLayout, savedInstanceState, model);
         if (itemDetail != null) {
-            bottomSheetLayout.addView(itemDetail, bottomSheetLayout.getChildCount());
+            bottomSheetContent.addView(itemDetail, bottomSheetContent.getChildCount());
         }
-
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                informationShowing = !informationShowing;
-                updateInformationShowingStatus();
-            }
-        });
 
         // show information panel if wanted.
         updateInformationShowingStatus();
@@ -357,9 +346,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private void updateInformationShowingStatus() {
         if (informationShowing) {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            bottomSheet.openLayer(false);
         } else {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            bottomSheet.closeLayer(false);
         }
     }
 
@@ -381,26 +370,26 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     protected void setupImageDetailPopup(View v, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         resourceNameView = v.findViewById(R.id.slideshow_image_details_name);
-        resourceNameView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                if (resourceNameView.getLineCount() > resourceNameView.getMaxLines()) {
-                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
-                }
-                return false;
-            }
-        });
+//        resourceNameView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//                if (resourceNameView.getLineCount() > resourceNameView.getMaxLines()) {
+//                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
+//                }
+//                return false;
+//            }
+//        });
         resourceDescriptionView = v.findViewById(R.id.slideshow_image_details_description);
-        resourceDescriptionView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (resourceDescriptionView.getLineCount() > resourceDescriptionView.getMaxLines()) {
-                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
-                }
-                return false;
-            }
-        });
+//        resourceDescriptionView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (resourceDescriptionView.getLineCount() > resourceDescriptionView.getMaxLines()) {
+//                    bottomSheetBehavior.setAllowUserDragging(event.getActionMasked() == MotionEvent.ACTION_UP);
+//                }
+//                return false;
+//            }
+//        });
 
         linkedAlbumsField = v.findViewById(R.id.slideshow_image_details_linked_albums);
         linkedAlbumsField.setOnClickListener(new View.OnClickListener() {

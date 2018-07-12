@@ -71,6 +71,7 @@ android {
 dependencies {
     implementation project(path: ':google-licencing-library')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.wunderlist:sliding-layer:1.2.5'
 
     // third party libraries
 //    compile 'com.squareup.okhttp:okhttp:1.6.0'

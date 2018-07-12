@@ -185,12 +185,6 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         defaultVal = getDefaultImagesColumnCount(Configuration.ORIENTATION_PORTRAIT);
         pref.updateDefaultValue(defaultVal);
 
-        pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_detail_sheet_offset_key);
-        int stdOffsetDp = getResources().getInteger(R.integer.preference_gallery_detail_sheet_offset_default);
-        stdOffsetDp += DisplayUtils.pxToDp(getContext(), DisplayUtils.getNavBarHeight(getContext()));
-        defaultVal = stdOffsetDp;
-        pref.updateDefaultValue(defaultVal);
-
         findPreference(R.string.preference_gallery_item_thumbnail_size_key).setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
         findPreference(R.string.preference_gallery_item_slideshow_image_size_key).setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 

@@ -150,15 +150,15 @@
     <string name="licences_menu_title">Licence</string>
     <string name="about_heading">About This App</string>
     <integer name="eula_version">3</integer>
-    <string name="eula" formatted="false">"End­User License Agreement ("Agreement")
+    <string name="eula" formatted="false">"End­User License Agreement (\"Agreement\")
 Last updated: 19 November 2017
 
-Please read this End­User License Agreement ("Agreement") carefully before clicking the "I Agree"
-button, downloading or using Piwigo Client ("Application").
+Please read this End­User License Agreement (\"Agreement\") carefully before clicking the \"I Agree\"
+button, downloading or using Piwigo Client (\"Application\").
 
-By clicking the "I Agree" button, downloading or using the Application, you are agreeing to be bound
+By clicking the \"I Agree\" button, downloading or using the Application, you are agreeing to be bound
 by the terms and conditions of this Agreement.
-If you do not agree to the terms of this Agreement, do not click on the "I Agree" button and do not
+If you do not agree to the terms of this Agreement, do not click on the \"I Agree\" button and do not
 download or use the Application.
 
 If you are considering using this app to access and or amend a server used for commercial purposes it is essential that you read and understand the limitations on liability.
@@ -192,7 +192,7 @@ e) create derivative works based on this application.
 
 Limited Warranty and Disclaimer
 
-The software is provided “as is” and the licensee uses it at his/her own risk. Gareth Deli makes no warranties to its use, to its performance or to its fitness for a particular purpose. It is always possible that software contains errors (bugs) and fails to work. Therefore Gareth Deli doesn't warrant that the software is completely error free, or that it works without interruption with all computers and configurations.
+The software is provided \“as is\” and the licensee uses it at his/her own risk. Gareth Deli makes no warranties to its use, to its performance or to its fitness for a particular purpose. It is always possible that software contains errors (bugs) and fails to work. Therefore Gareth Deli doesn't warrant that the software is completely error free, or that it works without interruption with all computers and configurations.
 
 It is solely in the licensee’s responsibility to check if the software fits his particular purpose or meets his functional and performance requirements. The licensee is also obliged to test how the software works on his devices and his configurations; test all use cases and check if data processed without errors and as desired before they use the software in production environments. This is of vital importance if using the software for commercial purposes.
 
@@ -248,6 +248,8 @@ If you have any questions about this Agreement, please contact us."
 
 It will be updated regularly to add more features.
 
+NOTE: Language translations are performed using www.Deepl.com or google translate websites. If you spot any obvious errors, please let me know so I can correct them.
+
 There are two versions, a free version (with advertisements) and a paid version (free of advertisements). You are free to choose which you prefer. You cannot 'upgrade' the free version at present, install the paid version, and delete the free version.
 Note: The versions will diverge over time. Most changes will be made to both free and paid versions.
 
@@ -278,7 +280,7 @@ Please do choose to report every crash that occurs. If you find the bug still oc
 Releases are on an ad-hoc basis at the moment. The frequency of releases is expected to reduce as the app matures. The release schedule and history is shown below. This may change and things may get delayed, but you can see what's on the list.
 "</string>
     <string name="licences_heading">Licences for resources used within this App</string>
-    <string name="licences_content"  formatted="false">"*** Touch Image View - com.ortiz.touch.
+    <string name="licences_content"  formatted="false" translatable="false">"*** Touch Image View - com.ortiz.touch.
 MIT License - Copyright © 2012 Michael Ortiz
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
@@ -331,6 +333,7 @@ SOFTWARE.
 *** EXO Player - Apache License 2.0
 *** EventBus - http://greenrobot.org - Apache License 2.0
 *** android-async-http - http://loopj.com/android-async-http/ - Apache License 2.0
+*** android-sliding-layer-lib - https://github.com/wunderlist/android-sliding-layer-lib - Apache License 2.0
 
 
  Apache License
@@ -512,7 +515,6 @@ SOFTWARE.
    END OF TERMS AND CONDITIONS
 "
     </string>
-    <string name="custom_bottom_sheet_behavior" translatable="false">delit.piwigoclient.ui.common.ControllableBottomSheetBehavior</string>
     <string name="slideshow_image_details_name_title">Resource Name</string>
     <string name="slideshow_image_details_description_title">Resource Description</string>
     <string name="unlock_menu_title">Unlock</string>

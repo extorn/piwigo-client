@@ -140,11 +140,6 @@
     <string name="preference_gallery_images_preferredColumnsLandscape_title">Landschaft: Spalten der anzuzeigenden Bilder</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_gallery_detail_sheet_offset_key" translatable="false">preference_gallery_detail_sheet_offset</string>
-    <string name="preference_gallery_detail_sheet_offset_title">Detail Blattwechsel - Offset (dp)</string>
-    <string name="preference_gallery_detail_sheet_offset_summary">%1$d</string>
-    <integer name="preference_gallery_detail_sheet_offset_default">20</integer>
-
     <string name="preference_gallery_use_dark_mode_key" translatable="false">preference_gallery_use_dark_mode</string>
     <string name="preference_gallery_use_dark_mode_title">Dunkles Thema verwenden</string>
     <string name="preference_gallery_use_dark_mode_summary">App-Thema auswählen</string>

@@ -175,15 +175,21 @@
          - Possibly - Orphan file management
          - Paid App Only : The random photos idea implemented on the piwigo web UI
          - Paid App Only : (Maybe) : Support for user comments
-         - Paid App Only : (Maybe) : Notify user of server updates that are available"
+         - Paid App Only : (Maybe) : Notify user of server updates that are available
+         - Update app store images to reflect removal of red 'show details' button"
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
         <item>1.3.93.8</item>
-        <item>"Bugfix:
+        <item>"Changes:
+            - Removed the red button for details (just swipe up from screen bottom now)
+            Bugfix:
             - Changing album item size in app preferences had no effect
             - Round album thumbnail image corners
             - layering error with album recent item marker
+            - Corrected error handling server responses introduced in 1.3.93.7
+            - Corrected the German translations
+            - Tidied up the internationalization ready for translations"
         </item>
         <item>1.3.93.7</item>
         <item>"Changes:
@@ -237,7 +243,7 @@
         </item>
         <item>1.3.93.1</item>
         <item>"Bugfix:
-         - A crash on brand new install only
+         - A crash on brand new install only"
         </item>
         <item>1.3.93</item>
         <item>"Changes:
@@ -277,7 +283,7 @@
         <item>1.3.88</item>
         <item>"Bugfix:
          - Fixed a couple of bugs completely preventing use of app on earlier versions of android. Sorry about that. Thanks for reporting the crash.
-         - NOTE: Videos don't seem to play on pre LOLLIPOP android. I'll take a look at this for the next release.
+         - NOTE: Videos don't seem to play on pre LOLLIPOP android. I'll take a look at this for the next release."
         </item>
         <item>1.3.87</item>
         <item>"Bugfix:
@@ -434,8 +440,8 @@
             - Added extra error handling around login and logout on the connection preferences page
             - Logout triggered if you change the connection profile in use
             Bugfix:
-            - Added resilience for servers that don't report available image sizes in session status."
-            - Fixed logout code so it sends the request to the correct url
+            - Added resilience for servers that don't report available image sizes in session status.
+            - Fixed logout code so it sends the request to the correct url"
         </item>
         <item>1.3.64</item>
         <item>"Changes:
@@ -561,7 +567,7 @@
         </item>
         <item>1.3.44</item>
         <item>"Changes:
-            - Added "unlink from album" option for the delete of multiple resources - Will require a change to piwigo 2.9.2 to be efficient (ticket raised).
+            - Added 'unlink from album' option for the delete of multiple resources - Will require a change to piwigo 2.9.2 to be efficient (ticket raised).
             - Improve the long click delete album functionality
             - Added warning about http hosted piwigo server
             Bugfix:
@@ -584,7 +590,7 @@
         <item>"Changes:
             - Build and upload a paid, advert free version, retained identical licence terms. If you wish to use the app commercially, which the EULA prohibits, please email me.
             - Added an active email link to the EULA page.
-            - Added "Copy link" (to clipboard) option on download dialog
+            - Added 'Copy link' (to clipboard) option on download dialog
             - Checked the app works with piwigo server 2.9.2
             Bugfix:
             - Names of albums now always shown"
@@ -745,7 +751,7 @@
         <item>"Changes:
             - Can change album thumbnail, both for current album and any other in the gallery
             - Can select and delete resources in bulk from an album
-            - Can delete an album by "long clicking" within the parent album
+            - Can delete an album by 'long clicking' within the parent album
             - Can now delete an album even if it contains images and or sub albums.
             Bugfix:
             - State not saved correctly on picture slideshow item
@@ -794,7 +800,7 @@
             - New top tip"
         </item>
         <item>1.3.15</item>
-        <item>Bugfix:
+        <item>"Bugfix:
             - Image preview not shown on upload page
             - Crash when attempting to share images with app and it is not yet configured
             - since 1.3.4 (just reported) - Image download did not work
@@ -830,14 +836,14 @@
             Bugfix - regression - where slideshow shows occasional blank positions after deleting a number of items from it
             Bugfix - slideshow not in sync with gallery contents after returning from an upload operation (warning now shown)
             Bugfix - issue if deleting a slideshow item before server has had time to return the resource details (privacy details and rating).
-            Bugfix - Upload of file seems to randomly "fail" stating it's already been added to the server (HTTP 500 response received from server)"
+            Bugfix - Upload of file seems to randomly 'fail' stating it's already been added to the server (HTTP 500 response received from server)"
         </item>
         <item>1.3.10</item>
         <item>" - Bug fixes surrounding the new functionality of uploading by sharing images.
             Bug fixes on issues that cause a crash if the app is minimised during Uploading"
         </item>
         <item>1.3.9</item>
-        <item> - Hope to have fixed a bug caused when the app is left for long periods and the session is logged out. Please report the crashes still if this occurs again.
+        <item>" - Hope to have fixed a bug caused when the app is left for long periods and the session is logged out. Please report the crashes still if this occurs again."
         </item>
         <item>1.3.8</item>
         <item>Bug fixes. (Mainly - Re-enabled Uploading of images)
@@ -863,7 +869,7 @@
         </item>
         <item>1.3.4</item>
         <item>" - Firstly, apologies, this release has been a long time coming but I wanted to be sure that I had only introduced improvements
-            - Reworked the PIWIGO API access to stop responses getting "lost" if the device is for example rotated while a request to the server is in progress
+            - Reworked the PIWIGO API access to stop responses getting 'lost' if the device is for example rotated while a request to the server is in progress
             - Removed several bugs that would cause the app to crash.
             - Changed file upload to allow uploading to continue in the background
             - Added local caching of video files (configurable) and the ability to save fully cached videos locally if enabled.
@@ -876,7 +882,7 @@
             - You can drill into users and groups and view album permissions in full screen to make this easier on a small screen"
         </item>
         <item>1.3.3</item>
-        <item> - Fixed a bug that was reported by a user as causing an application crash (in Release 1.3.1)
+        <item>" - Fixed a bug that was reported by a user as causing an application crash (in Release 1.3.1)"
         </item>
         <item>1.3.2</item>
         <item>" - Fixed a bug that was reported by a user as causing an application crash (in Release 1.3.1)

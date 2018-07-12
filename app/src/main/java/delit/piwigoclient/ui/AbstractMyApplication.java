@@ -31,12 +31,6 @@ public abstract class AbstractMyApplication extends Application implements Appli
         if(prefsVersion == -1) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
-
-            int currentValue = prefs.getInt(getString(R.string.preference_gallery_detail_sheet_offset_key), -1);
-            if(currentValue >= 0) {
-                currentValue = DisplayUtils.pxToDp(getApplicationContext(), currentValue);
-                editor.putInt(getString(R.string.preference_gallery_detail_sheet_offset_key), currentValue);
-            }
             editor.commit();
         } else if(prefsVersion <= 43) {
             SharedPreferences.Editor editor = prefs.edit();
@@ -44,6 +38,10 @@ public abstract class AbstractMyApplication extends Application implements Appli
             encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_password_key, null);
             encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_username_key, null);
             encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_password_key, null);
+            editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
+            editor.commit();
+        } else if(prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())){
+            SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             editor.commit();
         }
