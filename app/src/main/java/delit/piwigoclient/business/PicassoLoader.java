@@ -13,6 +13,7 @@ import java.io.File;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.PicassoFactory;
+import delit.piwigoclient.util.picasso.RoundedTransformation;
 
 /**
  * Created by gareth on 11/10/17.
@@ -35,6 +36,7 @@ public class PicassoLoader implements Callback {
     private String placeholderUri;
     private boolean placeholderLoaded;
     private @DrawableRes int errorResourceId = R.drawable.ic_error_black_240px;
+    private RoundedTransformation transformation;
 
     public PicassoLoader(ImageView loadInto) {
         this.loadInto = loadInto;
@@ -125,6 +127,9 @@ public class PicassoLoader implements Callback {
 
     protected RequestCreator buildLoader() {
         RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext())).error(errorResourceId);
+        if(transformation != null) {
+            rc.transform(transformation);
+        }
         if(placeholderLoaded) {
             rc.noPlaceholder();
         } else {
@@ -223,5 +228,9 @@ public class PicassoLoader implements Callback {
 
     public void setPlaceholderImageUri(String placeholderUri) {
         this.placeholderUri = placeholderUri;
+    }
+
+    public void withTransformation(RoundedTransformation transformation) {
+        this.transformation = transformation;
     }
 }

@@ -49,4 +49,10 @@ public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T
     public <Q extends BaseRecyclerViewAdapter<V,T,S>> Q getParentAdapter() {
         return (Q) parentAdapter;
     }
+
+    /**
+     * Called when the values are added to the view holder
+     */
+    public void onFillValues() {
+    }
 }

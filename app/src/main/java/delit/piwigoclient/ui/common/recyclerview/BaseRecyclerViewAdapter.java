@@ -15,6 +15,9 @@ import java.util.Iterator;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
+import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.album.view.AlbumItemViewHolder;
 import delit.piwigoclient.ui.common.Enableable;
 import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
 
@@ -276,6 +279,10 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
 
         <A extends BaseRecyclerViewAdapter> void onItemLongClick(A adapter, T item);
 
+    }
+
+    public ItemSelectionListener<? extends BaseRecyclerViewAdapter<V, T, S>> buildItemSelectionListener(S viewHolder) {
+        return new ItemSelectionListener<>(this, viewHolder);
     }
 
     protected class ItemSelectionListener<X extends BaseRecyclerViewAdapter<V,T,S>> implements CompoundButton.OnCheckedChangeListener {

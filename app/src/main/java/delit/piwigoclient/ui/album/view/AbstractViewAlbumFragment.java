@@ -298,10 +298,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
         }
 
+        String preferredThumbnailSize = prefs.getString(getString(R.string.preference_gallery_item_thumbnail_size_key),getString(R.string.preference_gallery_item_thumbnail_size_default));
+
         viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
         viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         viewPrefs.withDarkMode(useDarkMode);
         viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
+        viewPrefs.withPreferredThumbnailSize(preferredThumbnailSize);
         viewPrefs.withMasonryStyle(useMasonryStyle);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
@@ -370,6 +373,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         int imagesOnScreen = selectBestColumnCountForScreenSize();
         colsOnScreen = imagesOnScreen;
+        // reset albums per row to get it recalculated on next use
+        albumsPerRow = 0;
 
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         
@@ -963,13 +968,17 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 if(albumAdminList == null) {
                     loadAdminList = true;
                 } else {
-                    CategoryItem adminCopyOfAlbum = albumAdminList.getAlbum(galleryModel.getContainerDetails());
-                    if(adminCopyOfAlbum != null) {
-                        adminCategories = adminCopyOfAlbum.getChildAlbums();
+                    if(galleryModel.getContainerDetails().equals(CategoryItem.ROOT_ALBUM)) {
+                        adminCategories = albumAdminList.getAlbums();
                     } else {
-                        // this admin list is outdated.
-                        albumAdminList = null;
-                        loadAdminList = true;
+                        CategoryItem adminCopyOfAlbum = albumAdminList.getAlbum(galleryModel.getContainerDetails());
+                        if (adminCopyOfAlbum != null) {
+                            adminCategories = adminCopyOfAlbum.getChildAlbums();
+                        } else {
+                            // this admin list is outdated.
+                            albumAdminList = null;
+                            loadAdminList = true;
+                        }
                     }
                 }
                 if(loadAdminList) {
@@ -2105,7 +2114,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             RecyclerView.ViewHolder vh = galleryListView.findViewHolderForItemId(item.getId());
             if(vh != null) {
                 // item currently displaying.
-                viewAdapter.redrawItem((AlbumItemRecyclerViewAdapter.AlbumItemViewHolder) vh, item);
+                viewAdapter.redrawItem((AlbumItemViewHolder) vh, item);
             }
 
             return true;

@@ -137,4 +137,8 @@ public class PiwigoAlbumAdminList implements Serializable {
         }
         return true;
     }
+
+    public List<CategoryItem> getAlbums() {
+        return rootAlbums;
+    }
 }
