@@ -93,7 +93,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             @Override
             public void onClick(View v) {
                 if(!viewHolder.imageLoader.isImageLoaded()) {
-                    viewHolder.imageLoader.load();
+                    viewHolder.imageLoader.loadNoCache();
                 }
             }
         });

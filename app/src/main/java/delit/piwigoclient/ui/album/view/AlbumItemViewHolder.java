@@ -37,7 +37,11 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
 
         }
 
-        @Override
+    public AlbumItemRecyclerViewAdapter<S> getParentAdapter() {
+        return parentAdapter;
+    }
+
+    @Override
         public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
             setItem(newItem);
             getItemActionListener().onFillValues();
@@ -117,7 +121,6 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
                                 imgSize = target.getMeasuredWidth();
                             } else {
                                 // need that math.max to ensure that the image size remains positive
-                                //FIXME How can this ever be called before the ImageView object has a size?
                                 imgSize = Math.max(SCALING_QUALITY_VLOW,Math.min(desiredScalingQuality, target.getMeasuredWidth()));
                             }
                             ((ResizingPicassoLoader) imageLoader).setResizeTo(imgSize, imgSize);

@@ -52,6 +52,7 @@ import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Group;
+import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -176,7 +177,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private int colsOnScreen;
     private DeleteActionData deleteActionData;
     private long userGuid;
-    private String preferredThumbnailSize;
     private transient List<CategoryItem> adminCategories;
     private AppCompatImageView actionIndicatorImg;
     private RecyclerView galleryListView;
@@ -299,11 +299,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         String preferredThumbnailSize = prefs.getString(getString(R.string.preference_gallery_item_thumbnail_size_key),getString(R.string.preference_gallery_item_thumbnail_size_default));
 
+        String preferredAlbumThumbnailSize = prefs.getString(getString(R.string.preference_gallery_album_thumbnail_size_key),getString(R.string.preference_gallery_album_thumbnail_size_default));
+
         viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
         viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
         viewPrefs.withDarkMode(useDarkMode);
         viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
         viewPrefs.withPreferredThumbnailSize(preferredThumbnailSize);
+        viewPrefs.withPreferredAlbumThumbnailSize(preferredAlbumThumbnailSize);
         viewPrefs.withMasonryStyle(useMasonryStyle);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
@@ -368,12 +371,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
 
+        // reset albums per row to get it recalculated on next use
+        albumsPerRow = 0;
+
         updateViewPrefs();
 
         int imagesOnScreen = selectBestColumnCountForScreenSize();
         colsOnScreen = imagesOnScreen;
-        // reset albums per row to get it recalculated on next use
-        albumsPerRow = 0;
 
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         
@@ -398,8 +402,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 return;
             }
         }
-
-        preferredThumbnailSize = prefs.getString(getContext().getString(R.string.preference_gallery_item_thumbnail_size_key), getContext().getString(R.string.preference_gallery_item_thumbnail_size_default));
 
         if(viewPrefs.isUseDarkMode()) {
             view.setBackgroundColor(Color.BLACK);
@@ -780,6 +782,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         final HashSet<Long> itemsUpdated;
         final HashSet<ResourceItem> selectedItems;
         boolean resourceInfoAvailable;
+        private ArrayList<Long> trackedMessageIds = new ArrayList<>();
         private ResourceItem[] itemsWithoutLinkedAlbumData;
 
         public DeleteActionData(HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
@@ -852,6 +855,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         public boolean isEmpty() {
             return selectedItemIds.isEmpty();
         }
+
+        public void trackMessageId(long messageId) {
+            trackedMessageIds.add(messageId);
+        }
+
+        public boolean isTrackingMessageId(long messageId) {
+            return trackedMessageIds.remove(messageId);
+        }
     }
 
     private void onDeleteResources(final DeleteActionData deleteActionData) {
@@ -866,7 +877,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         } else {
             String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
-                addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext()));
+                long messageId = new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext());
+                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, messageId));
             }
             return;
         }
@@ -1007,7 +1019,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
                 connPrefs = ConnectionPreferences.getActiveProfile().asGuest();
             }
-            long loadingMessageId = new AlbumGetSubAlbumsResponseHandler(galleryModel.getContainerDetails(), preferredThumbnailSize, false).invokeAsync(getContext(), connPrefs);
+            long loadingMessageId = new AlbumGetSubAlbumsResponseHandler(galleryModel.getContainerDetails(), viewPrefs.getPreferredAlbumThumbnailSize(), false).invokeAsync(getContext(), connPrefs);
             loadingMessageIds.put(loadingMessageId, "C");
             addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
         }
@@ -1479,7 +1491,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     protected void onPiwigoUpdateResourceInfoResponse(PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse response) {
         if(!viewAdapterListener.handleAlbumThumbnailInfoLoaded(response.getMessageId(), response.getPiwigoResource())) {
-            if (deleteActionData != null && !deleteActionData.isEmpty()) {
+            if (deleteActionData != null && deleteActionData.isTrackingMessageId(response.getMessageId())) {
                 //currently mid delete of resources.
                 onResourceUnlinked(response);
             } else {
@@ -1506,7 +1518,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     protected void onResourceInfoRetrieved(PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse response) {
-        if(deleteActionData != null) {
+        if (deleteActionData != null && deleteActionData.isTrackingMessageId(response.getMessageId())) {
             this.deleteActionData.updateLinkedAlbums(response.getResource());
             this.deleteActionData.isResourceInfoAvailable();
             onDeleteResources(deleteActionData);
@@ -2105,14 +2117,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         @Override
         public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
-            // Do nothing since this will only occur if the image is missing from the server.
-//            return;
-
-//            PictureResourceItem resourceItem = new PictureResourceItem(mItem.getRepresentativePictureId(), null, null, null, null);
-//            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
-//            long messageId = PiwigoAccessService.startActionGetResourceInfo(resourceItem, multimediaExtensionList, getContext());
-//            albumThumbnailLoadActions.put(messageId, mItem);
-//            getUiHelper().addBackgroundServiceCall(messageId);
+            PictureResourceItem resourceItem = new PictureResourceItem(mItem.getRepresentativePictureId(), null, null, null, null);
+            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+            ImageGetInfoResponseHandler handler = new ImageGetInfoResponseHandler<>(resourceItem, multimediaExtensionList);
+            long messageId = handler.invokeAsync(getContext());
+            albumThumbnailLoadActions.put(messageId, mItem);
+            getUiHelper().addBackgroundServiceCall(messageId);
         }
 
         public boolean handleAlbumThumbnailInfoLoaded(long messageId, ResourceItem thumbnailResource) {

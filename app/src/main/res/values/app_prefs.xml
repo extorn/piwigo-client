@@ -229,10 +229,15 @@
     <string name="preference_album_request_pagesize_summary">%1$d items</string>
     <integer name="preference_album_request_pagesize_default">20</integer>
 
-    <string name="preference_gallery_item_thumbnail_size_title">GalleryItem thumbnail image</string>
+    <string name="preference_gallery_item_thumbnail_size_title">Album content thumbnail size</string>
     <string name="preference_gallery_item_thumbnail_size_key" translatable="false">gallery_item_thumbnail_size</string>
     <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
     <string name="preference_gallery_item_thumbnail_size_default" translatable="false">thumb</string>
+
+    <string name="preference_gallery_album_thumbnail_size_title">Album thumbnail size</string>
+    <string name="preference_gallery_album_thumbnail_size_key" translatable="false">gallery_album_thumbnail_size</string>
+    <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
+    <string name="preference_gallery_album_thumbnail_size_default" translatable="false">thumb</string>
 
     <string name="preference_gallery_item_slideshow_image_size_title">Slideshow default image size</string>
     <string name="preference_gallery_item_slideshow_image_size_key" translatable="false">preference_gallery_item_slideshow_image_size</string>

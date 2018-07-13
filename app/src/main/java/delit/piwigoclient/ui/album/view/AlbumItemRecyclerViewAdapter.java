@@ -221,7 +221,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
         public void onClick(View v) {
             if(v == getViewHolder().mImageView && !getViewHolder().imageLoader.isImageLoaded() && getViewHolder().imageLoader.isImageUnavailable() && manualRetries < maxManualRetries) {
                 manualRetries++;
-                getViewHolder().imageLoader.load();
+                getViewHolder().imageLoader.loadNoCache();
             } else {
                 if(getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
                     onCategoryClick();

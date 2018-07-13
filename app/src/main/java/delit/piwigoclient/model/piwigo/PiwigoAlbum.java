@@ -139,4 +139,16 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     public long getImgResourceCount() {
         return getContainerDetails().getPhotoCount();
     }
+
+    public CategoryItem getSubAlbumByRepresentativeImageId(long representativePictureId) {
+        for(GalleryItem item : this.getItems()) {
+            if(item instanceof CategoryItem) {
+                Long albumRepresentativePictureId = ((CategoryItem) item).getRepresentativePictureId();
+                if(albumRepresentativePictureId != null && representativePictureId == albumRepresentativePictureId) {
+                    return (CategoryItem) item;
+                }
+            }
+        }
+        return null;
+    }
 }

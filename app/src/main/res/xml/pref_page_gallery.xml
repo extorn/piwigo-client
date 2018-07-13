@@ -104,6 +104,13 @@
 
         <ListPreference
             android:entries="@array/preference_gallery_item_thumbnail_size_array"
+            android:defaultValue="@string/preference_gallery_album_thumbnail_size_default"
+            android:entryValues="@array/preference_gallery_item_thumbnail_size_array_values"
+            android:key="@string/preference_gallery_album_thumbnail_size_key"
+            android:title="@string/preference_gallery_album_thumbnail_size_title"
+            android:summary="@string/preference_gallery_album_thumbnail_size_summary"/>
+        <ListPreference
+            android:entries="@array/preference_gallery_item_thumbnail_size_array"
             android:defaultValue="@string/preference_gallery_item_thumbnail_size_default"
             android:entryValues="@array/preference_gallery_item_thumbnail_size_array_values"
             android:key="@string/preference_gallery_item_thumbnail_size_key"

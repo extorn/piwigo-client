@@ -130,7 +130,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
             @Override
             public void onClick(View v) {
                 if(loader != null && !loader.isImageLoaded()) {
-                    loader.load();
+                    loader.loadNoCache();
                 }
             }
         });

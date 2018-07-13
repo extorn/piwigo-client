@@ -13,7 +13,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"/>
 
-    <ImageView
+    <delit.piwigoclient.ui.common.RoundableImageView
         android:id="@+id/resource_thumbnail"
         android:layout_width="66dp"
         android:layout_height="66dp"

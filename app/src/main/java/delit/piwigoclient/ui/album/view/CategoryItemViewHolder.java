@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
@@ -13,7 +14,7 @@ import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
-import delit.piwigoclient.ui.common.RoundedImageView;
+import delit.piwigoclient.ui.common.RoundableImageView;
 
 import static android.view.View.GONE;
 
@@ -46,6 +47,8 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
             if(CategoryItem.BLANK.equals(newItem)) {
                 itemView.setVisibility(View.INVISIBLE);
                 return;
+            } else {
+                itemView.setVisibility(View.VISIBLE);
             }
 
             CategoryItem category = (CategoryItem) newItem;
@@ -85,34 +88,52 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
                 mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
             }
 
+            //String preferredThubnailSize = getParentAdapter().getAdapterPrefs().getPreferredAlbumThumbnailSize();
+            /*if(!"DEFAULT".equals(preferredThubnailSize) && category.getRepresentativePictureId() != null) {
+                // user requested a specific thumbnail
+                if(((CategoryItem) newItem).getPreferredThumbnailUrl() == null) {
+                    triggerLoadingSpecificThumbnail(category);
+                } else {
+                    configureLoadingPreferredThumbnail(category);
+                }
+            } else */
             if (newItem.getThumbnailUrl() != null) {
-
-                imageLoader.setUriToLoad(newItem.getThumbnailUrl());
-
-                if(!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
-                    if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-                        ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
-                    } else {
-                        ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
-                    }
-                }
-            } else if(category.getRepresentativePictureId() != null) {
-                imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
-                if(!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
-                    ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
-                }
-                if(parentAdapter.getMultiSelectStatusListener() != null) {
-                    //Now trigger a load of the real data.
-                    AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter listener = parentAdapter.getMultiSelectStatusListener();
-                    listener.notifyAlbumThumbnailInfoLoadNeeded((CategoryItem) newItem);
-                }
+                configureLoadingBasicThumbnail(category);
             } else {
-                imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
-                if(!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
-                    ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
-                }
+                configurePlaceholderThumbnail(category);
             }
         }
+
+    private void configurePlaceholderThumbnail(CategoryItem newItem) {
+        imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
+        if(!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+            ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
+        }
+    }
+
+    private void triggerLoadingSpecificThumbnail(CategoryItem newItem) {
+        imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
+        if(!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+            ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
+        }
+        if(parentAdapter.getMultiSelectStatusListener() != null) {
+            //Now trigger a load of the real data.
+            AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter listener = parentAdapter.getMultiSelectStatusListener();
+            listener.notifyAlbumThumbnailInfoLoadNeeded((CategoryItem) newItem); //see AbstractViewAlbumFragment for implementation
+        }
+    }
+
+    private void configureLoadingBasicThumbnail(CategoryItem newItem) {
+        imageLoader.setUriToLoad(newItem.getThumbnailUrl());
+
+        if(!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+            if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
+                ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
+            } else {
+                ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
+            }
+        }
+    }
 
 //    @Override
 //    protected ViewTreeObserver.OnPreDrawListener configureMasonryThumbnailLoader(AppCompatImageView target) {
@@ -122,13 +143,16 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
 
     @Override
     protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(AppCompatImageView target) {
+        RoundableImageView roundableImageView = (RoundableImageView) target;
         //TODO this radius isn't working very logically - most likely because the image is being scaled afterwards!
         if (parentAdapter.getAdapterPrefs().isShowLargeAlbumThumbnails()) {
-            target = new RoundedImageView(target, 2);
+            roundableImageView.setCornerRadius(2);
+            roundableImageView.setEnableRoundedCorners(true);
         } else {
-            target = new RoundedImageView(target, 8);
+            roundableImageView.setCornerRadius(8);
+            roundableImageView.setEnableRoundedCorners(true);
         }
-        return super.configureNonMasonryThumbnailLoader(target);
+        return super.configureNonMasonryThumbnailLoader(roundableImageView);
     }
 
     private void setItemBackground(int viewType, AlbumItemViewHolder viewHolder) {

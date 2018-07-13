@@ -14,6 +14,13 @@ import delit.piwigoclient.BuildConfig;
  */
 public class CategoryItem extends GalleryItem {
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
+    public static final CategoryItem ADVERT = new CategoryItem(Long.MIN_VALUE + 1, null, null, true, null, 0, 0, 0, null) {
+        @Override
+        public int getType() {
+            return GalleryItem.CATEGORY_ADVERT_TYPE;
+        }
+    };
+    public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
     private List<CategoryItem> childAlbums;
     private long photoCount;
     private long totalPhotoCount;
@@ -22,14 +29,6 @@ public class CategoryItem extends GalleryItem {
     private Long representativePictureId;
     private long[] users;
     private long[] groups;
-
-    public static final CategoryItem ADVERT = new CategoryItem(Long.MIN_VALUE + 1, null, null, true, null, 0, 0, 0, null) {
-        @Override
-        public int getType() {
-            return GalleryItem.CATEGORY_ADVERT_TYPE;
-        }
-    };
-    public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
 
     public CategoryItem(long id) {
         super(id, null, null, null, null);
@@ -62,12 +61,12 @@ public class CategoryItem extends GalleryItem {
         return childAlbums;
     }
 
-    public void setRepresentativePictureId(Long representativePictureId) {
-        this.representativePictureId = representativePictureId;
-    }
-
     public Long getRepresentativePictureId() {
         return representativePictureId;
+    }
+
+    public void setRepresentativePictureId(Long representativePictureId) {
+        this.representativePictureId = representativePictureId;
     }
 
     public boolean isPrivate() {
@@ -99,10 +98,6 @@ public class CategoryItem extends GalleryItem {
 
     public boolean isRoot() {
         return this.getId() == ROOT_ALBUM.getId() && getParentId() == null;
-    }
-
-    public void setSubCategories(int subCategories) {
-        this.subCategories = subCategories;
     }
 
     public CategoryItemStub toStub() {
@@ -142,6 +137,10 @@ public class CategoryItem extends GalleryItem {
 
     public long getSubCategories() {
         return subCategories;
+    }
+
+    public void setSubCategories(int subCategories) {
+        this.subCategories = subCategories;
     }
 
     public CategoryItem locateChildAlbum(List<Long> parentageChain) {

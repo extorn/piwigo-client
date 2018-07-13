@@ -6,6 +6,8 @@ import android.support.annotation.DrawableRes;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -97,6 +99,10 @@ public class PicassoLoader implements Callback {
     }
 
     public void load() {
+        load(false);
+    }
+
+    public void load(boolean forceServerRequest) {
         if(imageLoading) {
             return;
         }
@@ -107,7 +113,12 @@ public class PicassoLoader implements Callback {
             onSuccess();
         } else {
             PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
-            customiseLoader(buildLoader()).into(loadInto, this);
+            RequestCreator loader = customiseLoader(buildLoader());
+            if(forceServerRequest) {
+                loader.memoryPolicy(MemoryPolicy.NO_CACHE);
+                loader.networkPolicy(NetworkPolicy.NO_CACHE);
+            }
+            loader.into(loadInto, this);
         }
     }
 
@@ -232,5 +243,10 @@ public class PicassoLoader implements Callback {
 
     public void withTransformation(RoundedTransformation transformation) {
         this.transformation = transformation;
+    }
+
+    public void loadNoCache() {
+
+        load(true);
     }
 }
