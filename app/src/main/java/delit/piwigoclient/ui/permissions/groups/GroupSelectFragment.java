@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashSet;
 
@@ -24,7 +26,10 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.events.GroupUpdatedEvent;
+import delit.piwigoclient.ui.events.ViewGroupEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 
 /**
@@ -69,7 +74,16 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             getViewPrefs().readonly();
         }
 
-        GroupRecyclerViewAdapter viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter() {
+        GroupRecyclerViewAdapter viewAdapter = new GroupRecyclerViewAdapter(groupsModel, new GroupRecyclerViewAdapter.MultiSelectStatusAdapter<Group>() {
+            @Override
+            public void onItemLongClick(BaseRecyclerViewAdapter adapter, Group item) {
+                EventBus.getDefault().post(new ViewGroupEvent(item));
+            }
+
+            @Override
+            public <A extends BaseRecyclerViewAdapter> void onDisabledItemClick(A adapter, Group item) {
+                EventBus.getDefault().post(new ViewGroupEvent(item));
+            }
         }, getViewPrefs());
         if(!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();
@@ -230,5 +244,10 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         } finally {
             groupsModel.releasePageLoadLock();
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(GroupUpdatedEvent event) {
+        getListAdapter().replaceOrAddItem(event.getGroup());
     }
 }

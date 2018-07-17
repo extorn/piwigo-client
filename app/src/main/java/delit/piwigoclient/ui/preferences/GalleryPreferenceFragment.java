@@ -196,8 +196,9 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                PicassoFactory.getInstance().clearPicassoCache(getContext().getApplicationContext());
+                PicassoFactory.getInstance().clearPicassoCache(getContext().getApplicationContext(), true);
                 getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
+                preference.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
                 return true;
 
             }

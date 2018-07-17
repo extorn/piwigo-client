@@ -184,9 +184,9 @@ public class PicassoFactory {
         }
     }
 
-    public boolean clearPicassoCache(Context context) {
+    public boolean clearPicassoCache(Context context, boolean forceClear) {
         synchronized(PicassoFactory.class) {
-            if (picasso != null && picasso.getCacheSize() > (1024 * 1024 * 5)) { // if over 5mb of cache used
+            if (picasso != null && (forceClear || picasso.getCacheSize() > (1024 * 1024 * 5))) { // if over 5mb of cache used
                 getPicassoSingleton(context).cancelTag(PicassoLoader.PICASSO_REQUEST_TAG);
                 getPicassoSingleton(context).shutdown();
                 picasso = null;
@@ -195,5 +195,9 @@ public class PicassoFactory {
             }
         }
         return false;
+    }
+
+    public boolean clearPicassoCache(Context context) {
+        return clearPicassoCache(context, false);
     }
 }

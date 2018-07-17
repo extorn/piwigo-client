@@ -37,14 +37,14 @@ import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.DisplayUtils;
 
-public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResourceItem> {
+public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<PictureResourceItem> {
 
     private static final String STATE_CURRENT_IMAGE_URL = "currentImageUrl";
     private String currentImageUrlDisplayed;
     private PicassoLoader loader;
     private TouchImageView imageView;
 
-    public AlbumPictureItemFragment() {
+    public AbstractAlbumPictureItemFragment() {
     }
 
     @Override
@@ -57,12 +57,6 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
     public void onDetach() {
         super.onDetach();
         EventBus.getDefault().unregister(this);
-    }
-
-    public static AlbumPictureItemFragment newInstance(PictureResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount) {
-        AlbumPictureItemFragment fragment = new AlbumPictureItemFragment();
-        fragment.setArguments(buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount));
-        return fragment;
     }
 /*
 
@@ -230,7 +224,7 @@ public class AlbumPictureItemFragment extends SlideshowItemFragment<PictureResou
 
             } else {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
-                AlbumPictureItemFragment.this.onGalleryItemActionFinished();
+                AbstractAlbumPictureItemFragment.this.onGalleryItemActionFinished();
             }
         }
     }

@@ -521,8 +521,13 @@ public class UserFragment extends MyFragment {
             user.setGroups(newUser.getGroups());
             newUser = null;
 
-            if(newGroupMembership == null && user.getGroups().size() == 0) {
-                currentGroupMembership = new HashSet<>(0);
+            if(newGroupMembership == null) {
+                if(user.getGroups().size() == 0) {
+                    currentGroupMembership = new HashSet<>(0);
+                } else {
+                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()).invokeAsync(getContext()));
+                    currentGroupMembership = null;
+                }
             } else {
                 currentGroupMembership = newGroupMembership;
                 newGroupMembership = null;

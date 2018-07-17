@@ -119,6 +119,7 @@
     <string name="button_yes">Ja</string>
     <string name="button_no">Nein</string>
     <string name="alert_confirm_title">Bestätigen</string>
+    <string name="alert_question_title">Frage</string>
     <string name="alert_confirm_really_delete_from_server">Dadurch wird das Element dauerhaft vom Server gelöscht. Weitermachen?</string>
     <string name="alert_confirm_really_delete_items_from_server">Dadurch werden die Elemente dauerhaft vom Server gelöscht. Weitermachen?</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">Du hast darum gebeten, %1$d Ressourcen zu löschen, die mit anderen Alben geteilt werden. Möchten Sie diese aus allen Alben (und dem Server - dauerhaft) löschen oder einfach nur von diesem Album trennen?</string>
@@ -498,4 +499,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="notification_message_upload_service">Laufen</string>
     <string name="notification_text_bakcground_upload_running">Laufender Upload-Job</string>
     <string name="notification_text_bakcground_upload_sleeping">Schlafen. Nächster Lauf bei %1$tR</string>
+    <string name="slideshow_image_tab_basic_info">Basic Info</string>
+    <string name="slideshow_image_tab_exif_data">EXIF-Daten</string>
+    <string name="alert_bad_request_http_to_https">Schlechte Anfrage an Ressource über HTTP. Möchten Sie alle HTTP-URIs für dieses Verbindungsprofil auf HTTPS umschreiben? Kann später in den App-Voreinstellungen geändert werden.</string>
+    <string name="picture_resource_exif_data_unavailable">Piwigo API unterstützt nicht das Abrufen von EXIF-Daten</string>
+    <string name="picture_resource_exif_data_unavailable_no_plugins">Keine Plugins bekannt, die das Abrufen von EXIF-Daten über die ws-API unterstützen.</string>
 </resources>

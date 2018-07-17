@@ -107,6 +107,11 @@
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_advanced">
         <SwitchPreference
+            android:defaultValue="@bool/preference_server_connection_force_https_default"
+            android:key="@string/preference_server_connection_force_https_key"
+            android:summary="@string/preference_server_connection_force_https_summary"
+            android:title="@string/preference_server_connection_force_https_title" />
+        <SwitchPreference
             android:defaultValue="@bool/preference_server_connection_allow_redirects_default"
             android:key="@string/preference_server_connection_allow_redirects_key"
             android:summary="@string/preference_server_connection_allow_redirects_summary"

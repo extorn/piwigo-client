@@ -19,6 +19,7 @@ public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T
     @Override
     public void onClick(View v) {
         if (!parentAdapter.isEnabled()) {
+            parentAdapter.getMultiSelectStatusListener().onDisabledItemClick(parentAdapter, viewHolder.getItem());
             return;
         }
         //TODO Note - the way this works, click event is sunk if item selection is enabled... allow override?
@@ -31,8 +32,8 @@ public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T
             }
             //TODO Not sure why we'd call this?
             viewHolder.itemView.setPressed(false);
-        } else if (parentAdapter.isItemSelectionAllowed()) {
-           //If not currently in multiselect mode
+        } else if (!parentAdapter.isItemSelectionAllowed()) {
+           //If not currently in list item selection mode
            parentAdapter.getMultiSelectStatusListener().onItemClick(parentAdapter, viewHolder.getItem());
        }
     }

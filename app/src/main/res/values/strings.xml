@@ -141,6 +141,7 @@
     <string name="button_yes">Yes</string>
     <string name="button_no">No</string>
     <string name="alert_confirm_title">Confirm</string>
+    <string name="alert_question_title">Question</string>
     <string name="alert_confirm_really_delete_from_server">This will delete the item permanently from the server. Continue?</string>
     <string name="alert_confirm_really_delete_items_from_server">This will delete the items permanently from the server. Continue?</string>
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern">You\'ve requested to delete %1$d resources that are shared with other albums. Do you wish to delete these from all albums (and the server - permanently), or just unlink them from this album?</string>
@@ -758,4 +759,9 @@ SOFTWARE.
     <string name="notification_message_upload_service">Running</string>
     <string name="notification_text_bakcground_upload_running">Running upload job</string>
     <string name="notification_text_bakcground_upload_sleeping">Sleeping. Next run at %1$tR</string>
+    <string name="slideshow_image_tab_basic_info">Basic Info</string>
+    <string name="slideshow_image_tab_exif_data">EXIF data</string>
+    <string name="alert_bad_request_http_to_https">Bad request to resource using HTTP. Do you want to rewrite all HTTP URIs to HTTPS for this connection profile? Can be altered later in app prefs.</string>
+    <string name="picture_resource_exif_data_unavailable">Piwigo API does not support retrieving EXIF data</string>
+    <string name="picture_resource_exif_data_unavailable_no_plugins">No Plugins known to support retrieving EXIF data via ws API</string>
 </resources>

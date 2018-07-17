@@ -21,6 +21,11 @@
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>
     <integer name="preference_server_connection_max_redirects_default">5</integer>
 
+    <string name="preference_server_connection_force_https_key" translatable="false">preference_server_connection_force_https</string>
+    <string name="preference_server_connection_force_https_title">Rewrite Http URLs to Https</string>
+    <string name="preference_server_connection_force_https_summary">All http:// urls rewritten to https://</string>
+    <bool name="preference_server_connection_force_https_default">false</bool>
+
     <string name="preference_server_connection_allow_redirects_key" translatable="false">preference_server_connection_allow_redirects</string>
     <string name="preference_server_connection_allow_redirects_title">Allow server redirects</string>
     <string name="preference_server_connection_allow_redirects_summary">Follow http 3xx responses</string>

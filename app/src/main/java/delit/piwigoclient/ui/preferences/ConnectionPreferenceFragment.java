@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -141,6 +142,16 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             boolean isHttp = val.startsWith("http://");
 
             if (!initialising) {
+
+                SwitchPreference p = (SwitchPreference) findPreference(R.string.preference_server_connection_force_https_key);
+                if(isHttp) {
+                    p.setEnabled(false);
+                    getPrefs().edit().putBoolean(getString(R.string.preference_server_connection_force_https_key), false).commit();
+                }
+                if(isHttps) {
+                    p.setEnabled(true);
+                }
+
                 if(!(isHttp || isHttps)) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
                 } else if(isHttp) {

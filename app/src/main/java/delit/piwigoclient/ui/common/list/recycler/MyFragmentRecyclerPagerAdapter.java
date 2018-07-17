@@ -75,6 +75,10 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         this.maxFragmentsToSaveInState = maxFragmentsToSaveInState;
     }
 
+    public FragmentManager getFragmentManager() {
+        return mFragmentManager;
+    }
+
     @Override
     public void startUpdate(@NonNull ViewGroup container) {
         if (container.getId() == View.NO_ID) {

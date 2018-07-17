@@ -33,7 +33,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
 
     private static final String TAG = "GetImgToFileRspHdlr";
     private final File outputFile;
-    private final String resourceUrl;
+    private String resourceUrl;
 
     public ImageGetToFileHandler(String resourceUrl, File outputFile) {
         super(TAG);
@@ -154,6 +154,9 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
+        if(getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext()) && resourceUrl.startsWith("http://")) {
+            resourceUrl = resourceUrl.replaceFirst("://", "s://");
+        }
         return client.get(resourceUrl, handler);
     }
 

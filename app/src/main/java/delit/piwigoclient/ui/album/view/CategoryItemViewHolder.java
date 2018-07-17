@@ -163,7 +163,7 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
                     // needed for images that don't load correctly.
                     mImageView.setBackgroundColor(Color.WHITE);
                 } else {
-                    mImageView.setBackgroundColor(Color.WHITE);
+                    mImageView.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);
                     itemView.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);
                     if(parentAdapter.getAdapterPrefs().isShowLargeAlbumThumbnails()) {
                         mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);

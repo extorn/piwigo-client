@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
@@ -226,7 +227,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             }
         }
 
-        final View v = inflater.inflate(R.layout.fragment_slideshow_item, container, false);
+        final View v = inflater.inflate(getLayoutId(), container, false);
 
         boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
 
@@ -305,6 +306,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         updateInformationShowingStatus();
 
         return v;
+    }
+
+    protected @LayoutRes int getLayoutId() {
+        return R.layout.fragment_slideshow_item;
     }
 
     private void onUseAsAlbumThumbnailForParent() {

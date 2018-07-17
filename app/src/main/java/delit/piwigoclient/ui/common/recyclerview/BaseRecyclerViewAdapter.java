@@ -55,7 +55,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
 
     public abstract int getItemPosition(T item);
 
-    protected abstract void removeItemFromInternalStore(int idxRemoved);
+    protected abstract void removeItemFromInternalStore(int idxToRemove);
 
     protected abstract void replaceItemInInternalStore(int idxToReplace, T newItem);
 
@@ -80,6 +80,14 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     protected View inflateView(@NonNull ViewGroup parent, int viewType) {
         return LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
+    }
+
+    /**
+     * @param holder
+     * @return true if this holder has never been used before (or is totally clean)
+     */
+    protected boolean isDirtyItemViewHolder(S holder) {
+        return holder.getOldPosition() < 0 || holder.getItem() == null;
     }
 
     @NonNull
@@ -266,6 +274,11 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         public <A extends BaseRecyclerViewAdapter> void onItemLongClick(A adapter, T item) {
 
         }
+
+        @Override
+        public <A extends BaseRecyclerViewAdapter> void onDisabledItemClick(A adapter, T item) {
+
+        }
     }
 
     public interface MultiSelectStatusListener<T> {
@@ -279,6 +292,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
 
         <A extends BaseRecyclerViewAdapter> void onItemLongClick(A adapter, T item);
 
+        <A extends BaseRecyclerViewAdapter> void onDisabledItemClick(A adapter, T item);
     }
 
     public ItemSelectionListener<? extends BaseRecyclerViewAdapter<V, T, S>> buildItemSelectionListener(S viewHolder) {

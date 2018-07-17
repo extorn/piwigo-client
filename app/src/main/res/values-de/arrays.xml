@@ -100,6 +100,16 @@
         </item>
     </string-array>
     <string-array name="release_history">
+        <item>1.3.93.10</item>
+        <item>"Änderungen:
+            - Erlaubt das Erweitern einer Gruppe, um Mitglieder aus der Gruppenauswahl in den Albumberechtigungen zu sehen (langer Klick oder Klick bei deaktivierter Auswahl).
+            - Paid App Only : Recherche und Aufbereitung von EXIF-Daten
+            - Unterstützung für das gewaltsame Umschalten von http auf https, wenn der Server falsch konfiguriert ist.
+            Bugfix:
+            - Absturz in der Mauerwerksansicht verursacht in 1.3.93.9 (sorry, ich dachte das wurde getestet)
+            - Absturz nach dem Speichern des Benutzers bei sofortiger Anzeige der Benutzergruppenzugehörigkeit
+            - Das Hinzufügen von Berechtigungen für Benutzer und Gruppen würde nur die erste Gruppe oder den ersten Benutzer hinzufügen (alle anderen werden ignoriert) - nutzt niemand diese Funktion?"
+        </item>
         <item>1.3.93.9</item>
         <item>"Änderungen:
             - Unterstützung für die Verwendung einer benutzerdefinierten Bildgröße für Album-Thumbnails hinzugefügt

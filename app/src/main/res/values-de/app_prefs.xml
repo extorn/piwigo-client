@@ -16,6 +16,8 @@
 
     <!-- prefs -->
 
+    <string name="preference_server_connection_force_https_title">Http-URLs in Https umwandeln</string>
+    <string name="preference_server_connection_force_https_summary">Alle http:// URLs neu geschrieben auf https://</string>
 
     <string name="preference_server_connection_max_redirects_title">Max. Server-Weiterleitung</string>
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>

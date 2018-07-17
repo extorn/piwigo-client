@@ -387,6 +387,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         return connectionPrefs.getPiwigoServerAddress(sharedPrefs, context);
     }
 
+    protected SharedPreferences getSharedPrefs() {
+        return sharedPrefs;
+    }
+
     public String getPiwigoWsApiUri() {
         return getPiwigoServerUrl() + "/ws.php?format=json";
     }

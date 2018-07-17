@@ -200,6 +200,17 @@ public class ConnectionPreferences {
             return prefs.getBoolean(getKey(context, R.string.preference_server_connection_allow_redirects_key), defaultAllowRedirects);
         }
 
+        public boolean isForceHttps(SharedPreferences prefs, Context context) {
+            boolean forceHttpsUris = context.getResources().getBoolean(R.bool.preference_server_connection_force_https_default);
+            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_force_https_key), forceHttpsUris);
+        }
+
+        public void setForceHttps(SharedPreferences prefs, Context context, boolean newValue) {
+            SharedPreferences.Editor editor = prefs.edit();
+            writeBooleanPref(editor, context.getString(R.string.preference_server_connection_force_https_key), newValue);
+            editor.commit();
+        }
+
         public int getMaxHttpRedirects(SharedPreferences prefs, Context context) {
             int defaultMaxRedirects = context.getResources().getInteger(R.integer.preference_server_connection_max_redirects_default);
             return prefs.getInt(getKey(context, R.string.preference_server_connection_max_redirects_key), defaultMaxRedirects);

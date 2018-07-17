@@ -34,8 +34,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
 
+import cz.msebera.android.httpclient.client.utils.URIBuilder;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.business.video.CustomHttpDataSourceFactory;
 import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
@@ -339,9 +342,15 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     private void configurePlayer(boolean startPlayback) {
         if(resetPlayerDatasource) {
+            Uri videoUri = Uri.parse(getModel().getFullSizeFile().getUrl());
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-            ExtractorMediaSource videoSource = new ExtractorMediaSource(Uri.parse(getModel().getFullSizeFile().getUrl()),
-                    dataSourceFactory, extractorsFactory, null, null);
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            if(connectionPrefs.isForceHttps(prefs, getContext()) && videoUri.getScheme().equalsIgnoreCase("http")) {
+                videoUri = videoUri.buildUpon().scheme("https").build();
+            }
+            ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(dataSourceFactory);
+            factory.setExtractorsFactory(extractorsFactory);
+            ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
             if (player.getCurrentPosition() != seekToPosition && seekToPosition >= 0) {
                 player.seekTo(seekToPosition);
             }

@@ -224,14 +224,6 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return isDirtyItemViewHolder(holder) || !(getItemPosition(holder.getItem()) == getItemPosition(newItem));
     }
 
-    /**
-     * @param holder
-     * @return true if this holder has never been used before (or is totally clean)
-     */
-    private boolean isDirtyItemViewHolder(FolderItemViewHolder holder) {
-        return holder.getOldPosition() < 0 || holder.getItem() == null;
-    }
-
     @Override
     public HashSet<Long> getItemsSelectedButNotLoaded() {
         return new HashSet<>(0);

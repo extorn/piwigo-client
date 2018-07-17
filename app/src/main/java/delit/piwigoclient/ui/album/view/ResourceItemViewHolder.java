@@ -108,7 +108,10 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
                 } else {
                     itemView.setBackgroundColor(Color.WHITE);
                 }
-                mImageContainer.setBackgroundResource(R.color.black_overlay);
+                if(mImageContainer != null) {
+                    // this doesn't exist on a masonry view
+                    mImageContainer.setBackgroundResource(R.color.black_overlay);
+                }
             }
         }
 

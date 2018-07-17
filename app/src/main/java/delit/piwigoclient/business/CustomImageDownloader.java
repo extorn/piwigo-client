@@ -1,12 +1,19 @@
 package delit.piwigoclient.business;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
 import android.util.SparseIntArray;
+import android.widget.Toast;
 
 import com.squareup.picasso.Downloader;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,6 +23,7 @@ import java.util.Map;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 import delit.piwigoclient.ui.PicassoFactory;
+import delit.piwigoclient.ui.events.BadRequestUsingHttpToHttpsServerEvent;
 
 /**
  * Created by gareth on 18/05/17.
@@ -51,8 +59,19 @@ public class CustomImageDownloader implements Downloader {
 
         if(!handler.isSuccess()) {
             PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse)handler.getResponse();
+            final String toastMessage = errorResponse.getUrl() + '\n' + errorResponse.getErrorMessage() + '\n' + errorResponse.getErrorDetail();
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+            if(uri.getScheme().equalsIgnoreCase("http") && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
+                EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs));
+            }
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, toastMessage, Toast.LENGTH_LONG).show();
+                }
+            });
             Integer drawableId = errorDrawables.get(errorResponse.getStatusCode());
-            if(drawableId != null) {
+            if(drawableId != null && drawableId > 0) {
                 //return locked padlock image.
                 Bitmap icon = PicassoFactory.getInstance().getPicassoSingleton(context).load(drawableId).get();
                 return new Downloader.Response(icon, true);
