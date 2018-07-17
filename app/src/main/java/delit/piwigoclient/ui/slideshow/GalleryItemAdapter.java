@@ -81,7 +81,7 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
         int slideshowIdx = galleryResourceItems.get(position);
         GalleryItem galleryItem = gallery.getItemByIdx(slideshowIdx);
         if (galleryItem instanceof PictureResourceItem) {
-            return AbstractAlbumPictureItemFragment.class;
+            return AlbumPictureItemFragment.class;
         } else if (galleryItem instanceof VideoResourceItem) {
             return AlbumVideoItemFragment.class;
         }

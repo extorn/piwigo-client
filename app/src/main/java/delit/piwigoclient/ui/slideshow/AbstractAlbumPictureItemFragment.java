@@ -224,7 +224,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
             } else {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));
-                AbstractAlbumPictureItemFragment.this.onGalleryItemActionFinished();
+                onGalleryItemActionFinished();
             }
         }
     }
