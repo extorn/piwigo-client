@@ -7,7 +7,8 @@
     <RelativeLayout
         android:id="@+id/slideshow_item_content_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp">
 
         <ProgressBar
             android:id="@+id/slideshow_image_loadingIndicator"

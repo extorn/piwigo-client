@@ -98,15 +98,26 @@
          - Paid App Only : (Maybe) : Benutzer über verfügbare Server-Updates benachrichtigen
          - Aktualisieren Sie die Bilder im App Store, um die Entfernung der roten Schaltfläche 'Details anzeigen' zu reflektieren."
         </item>
-        <item>1.3.93.12</item>
+        <item>1.3.93.13</item>
         <item>"Bugfix:
-            - Die Videowiedergabe scheint nicht sehr gut zu sein, besonders wenn das Caching der Festplatte aktiviert ist.
+            - Sehr lange Verzögerung bei der Suche in einer nicht heruntergeladenen Videodatei
+            - Video wird nicht abgespielt, nachdem die gecachten Daten für das Video durch langes Drücken gelöscht wurden"
         </item>
     </string-array>
     <string-array name="release_history">
+        <item>1.3.93.12</item>
+        <item>"Änderungen:
+            - Modalbenachrichtigung beim Laden von Albuminhalten entfernt
+            - Lokal zwischengespeicherte Videoteile sichtbar anzeigen
+            Bugfix:
+            - Thumbnails werden beim Scrollen im Album nicht immer korrekt aktualisiert.
+            - Bei der Dateiauswahl wird fälschlicherweise zwischen Groß- und Kleinschreibung unterschieden.
+            - Videowiedergabe bei Verwendung von Disk-Caching wurde unterbrochen
+            - Video-Download-Button aktiviert, wenn er nicht verwendet werden kann."
+        </item>
         <item>1.3.93.11</item>
         <item>"Bugfix:
-            - Absturz-Slideshow eingeführt in 1.3.93.10. Entschuldigung! Danke für die Meldung!
+            - Absturz-Slideshow eingeführt in 1.3.93.10. Entschuldigung! Danke für die Meldung!"
         </item>
         <item>1.3.93.10</item>
         <item>"Änderungen:

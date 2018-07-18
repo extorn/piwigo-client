@@ -181,15 +181,26 @@
          - Paid App Only : Support for reading (maybe editing) EXIF and possibly other image metadata formats
          - Update app store images to reflect removal of red 'show details' button"
         </item>
-        <item>1.3.93.12</item>
+        <item>1.3.93.13</item>
         <item>"Bugfix:
-            - Video playback seems to not be very good, especially if disk caching is enabled.
+            - Very long delay when seeking in a non downloaded video file
+            - video doesn't play after force deleting cached data for video by long press"
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.93.12</item>
+        <item>"Changes:
+            - Removed modal notification for album content load
+            - Visibly show locally cached video parts
+            Bugfix:
+            - thumbnails not always refreshed correctly when scrolling in album
+            - File selection activity is incorrectly case sensitive
+            - Video playback when using disk caching was broken
+            - Video download button enabled when it cannot be used"
+        </item>
         <item>1.3.93.11</item>
         <item>"Bugfix:
-            - Crash browsing slideshow introduced in 1.3.93.10. Sorry! Thanks for reporting it!
+            - Crash browsing slideshow introduced in 1.3.93.10. Sorry! Thanks for reporting it!"
         </item>
         <item>1.3.93.10</item>
         <item>"Changes:

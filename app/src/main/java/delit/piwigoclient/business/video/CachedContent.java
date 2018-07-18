@@ -108,6 +108,10 @@ public class CachedContent implements Serializable {
         totalBytes = 0;
     }
 
+    public ArrayList<SerializableRange> getCachedRanges() {
+        return cachedRanges;
+    }
+
     public class SerializableRange implements Serializable, Comparable<SerializableRange> {
 
         private static final long serialVersionUID = -2497952683249597933L;
@@ -119,6 +123,14 @@ public class CachedContent implements Serializable {
             this.lower = lower;
             this.upper = upper;
             bytes = upper - lower;
+        }
+
+        public long getLower() {
+            return lower;
+        }
+
+        public long getUpper() {
+            return upper;
         }
 
         public long getBytes() {

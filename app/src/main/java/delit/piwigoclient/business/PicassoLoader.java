@@ -125,6 +125,7 @@ public class PicassoLoader implements Callback {
     public void cancelImageLoadIfRunning() {
         if(loadInto != null) {
             PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
+            imageLoading = false;
         }
     }
 

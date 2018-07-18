@@ -42,6 +42,13 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
     }
 
     @Override
+    public <T> void redisplayOldValues(Context context, T newItem, boolean allowItemDeletion) {
+        if(!imageLoader.isImageLoading() && !imageLoader.isImageLoaded()) {
+            imageLoader.load();
+        }
+    }
+
+    @Override
         public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
             setItem(newItem);
             getItemActionListener().onFillValues();

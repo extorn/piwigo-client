@@ -120,6 +120,8 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         if (isHolderOutOfSync(holder, newItem)) {
             // store the item in this recyclable holder.
             holder.fillValues(getContext(), newItem, prefs.isAllowItemDeletion());
+        } else {
+            holder.redisplayOldValues(getContext(), newItem, prefs.isAllowItemDeletion());
         }
     }
 

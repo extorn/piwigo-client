@@ -1,11 +1,13 @@
 package delit.piwigoclient.ui.file;
 
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
@@ -43,7 +45,12 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     }
 
     public FolderItemViewAdapterPreferences withVisibleContent(@Nullable ArrayList<String> visibleFileTypes, int fileSortOrder) {
-        this.visibleFileTypes = visibleFileTypes;
+        if(visibleFileTypes != null) {
+            this.visibleFileTypes = new ArrayList<>(visibleFileTypes);
+            for(int i = 0; i < visibleFileTypes.size(); i++) {
+                visibleFileTypes.set(i, visibleFileTypes.get(i).toLowerCase());
+            }
+        }
         this.showFolderContents = true;
         this.fileSortOrder = fileSortOrder;
         return this;
@@ -110,7 +117,7 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
                     return true;
                 }
                 for(String fileExt : visibleFileTypes) {
-                    if(pathname.getName().endsWith(fileExt)) {
+                    if(pathname.getName().toLowerCase().endsWith(fileExt)) {
                         return true;
                     }
                 }

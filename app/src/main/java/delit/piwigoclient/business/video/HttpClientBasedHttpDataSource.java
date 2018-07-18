@@ -39,7 +39,7 @@ import cz.msebera.android.httpclient.message.BasicHeader;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
-import delit.piwigoclient.piwigoApi.http.CachingSyncHttpClient;
+import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 
 /**
  * An {@link HttpDataSource} that uses Android's {@link HttpURLConnection}.
@@ -73,7 +73,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
     private final TransferListener<? super HttpClientBasedHttpDataSource> listener;
     private final boolean cachingEnabled;
     private boolean notifyCacheListenerImmediatelyIfCached;
-    private CachingSyncHttpClient client;
+    private CachingAsyncHttpClient client;
     private final Context context;
 
     private DataSpec dataSpec;
@@ -222,7 +222,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
 
             if(cacheListener != null && notifyCacheListenerImmediatelyIfCached && cacheFileContent.isComplete()) {
                 notifyCacheListenerImmediatelyIfCached = false;
-                cacheListener.onFullyCached(cacheFileContent.getCachedDataFile());
+                cacheListener.onFullyCached(cacheFileContent);
             }
 
             if(bytesAvailable > 0) {
@@ -233,6 +233,9 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
 
                 if(cacheFileContent.isComplete()) {
                     return bytesAvailable;
+                } else {
+                    // we don't yet know complete file length
+                    return -1;
                 }
             }
         }
@@ -241,6 +244,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         this.dataSpec = dataSpec;
         this.bytesRead = 0;
         this.bytesSkipped = 0;
+
         try {
             makeConnection(dataSpec);
         } catch (IOException e) {
@@ -325,10 +329,14 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
                     // cache is corrupt - delete meta data file
                     cacheFileMetadataFile.delete();
                 } else {
-                    localCacheFile = new RandomAccessFile(cacheDataFile, "rw");
-                    cacheFileContent = CacheUtils.loadCachedContent(cacheFileMetadataFile);
+                    if(cacheFileContent == null || !cacheFileContent.getCachedDataFile().equals(cacheDataFile)) {
+                        cacheFileContent = CacheUtils.loadCachedContent(cacheFileMetadataFile);
+                        cacheListener.onCacheLoaded(cacheFileContent, dataSpec.position);
+                    }
+                    // get the available cached range (if any)
                     cachedRange = cacheFileContent.getRangeContaining(dataSpec.position);
-
+                    // always get a new reference to the data (we need to close this on close sadly to avoid risk of file pointer left open).
+                    localCacheFile = new RandomAccessFile(cacheDataFile, "rw");
                     if (cachedRange != null) {
                         return cachedRange.available(dataSpec.position);
                     } else {
@@ -518,11 +526,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         if (!TextUtils.isEmpty(contentLengthHeader)) {
             try {
                 contentLength = Long.parseLong(contentLengthHeader);
-
-                if(cachingEnabled) {
-                    cacheFileContent.setTotalBytes(contentLength);
-                }
-
             } catch (NumberFormatException e) {
                 if(BuildConfig.DEBUG) {
                     Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
@@ -649,12 +652,14 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
             bytesRead += read;
             return read;
         } else {
+            boolean readFromCacheFile = false;
             long maxReadLen = readLength;
             // read these bytes from the cache if they are present
             if(cachedRange != null) {
                 long cachedBytes = cachedRange.available(dataSpec.position + bytesRead);
                 if (cachedBytes > 0) {
                     //read from local cache
+                    readFromCacheFile = true;
                     localCacheFile.seek(dataSpec.position + bytesRead);
                     maxReadLen = Math.min(readLength, cachedBytes);
                     int read = localCacheFile.read(buffer, offset, (int) maxReadLen);
@@ -681,14 +686,18 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
                 }
                 return C.RESULT_END_OF_INPUT;
             }
-            if(cachingEnabled) {
+            if(cachingEnabled && read > 0) {
                 localCacheFile.seek(dataSpec.position + bytesRead);
                 localCacheFile.write(buffer, offset, read);
                 cacheFileContent.addRange(dataSpec.position, dataSpec.position + bytesRead + read);
-                if (cacheFileContent.isComplete() && cacheListener != null) {
-                    cacheListener.onFullyCached(cacheFileContent.getCachedDataFile());
-                    // discard what was just read and force use of local cache
-                    return C.RESULT_END_OF_INPUT;
+                if(cacheListener != null) {
+                    if(cacheFileContent.isComplete()) {
+                        cacheListener.onFullyCached(cacheFileContent);
+                        // discard what was just read and force use of local cache
+                        return C.RESULT_END_OF_INPUT;
+                    } else {
+                        cacheListener.onRangeAdded(cacheFileContent, dataSpec.position, dataSpec.position + bytesRead + read);
+                    }
                 }
             }
             bytesRead += read;
@@ -760,7 +769,9 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
     }
 
     public interface CacheListener {
-        void onFullyCached(File cacheContent);
+        void onFullyCached(CachedContent cacheContent);
+        void onRangeAdded(CachedContent cacheFileContent, long lowerBound, long upperBound);
+        void onCacheLoaded(CachedContent cacheFileContent, long position);
     }
 }
 

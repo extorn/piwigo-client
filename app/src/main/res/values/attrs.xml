@@ -9,6 +9,11 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="CustomExoPlayerTimeBar">
+        <attr name="locally_cached_color" format="color"/>
+        <attr name="unplayed_color" format="color"/>
+    </declare-styleable>
+
     <declare-styleable name="SecureEditTextPreference">
     </declare-styleable>
 

@@ -37,4 +37,6 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
     public CustomClickListener getItemActionListener() {
         return itemActionListener;
     }
+
+    public <T> void redisplayOldValues(Context context, T newItem, boolean allowItemDeletion) {}
 }

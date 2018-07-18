@@ -34,12 +34,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 
-import cz.msebera.android.httpclient.client.utils.URIBuilder;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
+import delit.piwigoclient.business.video.CachedContent;
+import delit.piwigoclient.business.video.CustomExoPlayerTimeBar;
 import delit.piwigoclient.business.video.CustomHttpDataSourceFactory;
 import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
 import delit.piwigoclient.business.video.HttpClientBasedHttpDataSource;
@@ -78,7 +78,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private boolean startVideoWhenPermissionsGranted;
 
     public AlbumVideoItemFragment() {
-            setAllowDownload(false);
     }
 
     public static Bundle buildArgs(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
@@ -139,6 +138,14 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         super.onCreate(savedInstanceState);
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        setAllowDownload(false);
+        return view;
+    }
+
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
@@ -176,35 +183,19 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             }
         });
 
-        PlayerView simpleExoPlayerView = new PlayerView(getContext());
+        LayoutInflater layoutInflater = getLayoutInflater();
+        PlayerView simpleExoPlayerView = (PlayerView) layoutInflater.inflate(R.layout.exo_player_viewer_custom, container, false);
 
-        simpleExoPlayerView.setPlayer(buildPlayer(model));
+        CustomExoPlayerTimeBar timebar = simpleExoPlayerView.findViewById(R.id.exo_progress);
 
-        simpleExoPlayerView.setOnTouchListener(new CustomClickTouchListener(simpleExoPlayerView) {
-            @Override
-            public void onLongClick() {
-                if(!isUseCache()) {
-                    return;
-                }
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
+        simpleExoPlayerView.setPlayer(buildPlayer(model, timebar));
 
-                    }
-
-                    @Override
-                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                        if(Boolean.TRUE == positiveAnswer) {
-                            clearCacheAndRestartVideo();
-                        }
-                    }
-                });
-            }
-        });
+        CustomExoPlayerTouchListener customTouchListener = new CustomExoPlayerTouchListener(simpleExoPlayerView);
+        simpleExoPlayerView.setOnTouchListener(customTouchListener);
         return simpleExoPlayerView;
     }
 
-    private SimpleExoPlayer buildPlayer(VideoResourceItem model) {
+    private SimpleExoPlayer buildPlayer(VideoResourceItem model, CustomExoPlayerTimeBar timebar) {
 
         resetPlayerDatasource = true;
         DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
@@ -215,25 +206,14 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 // Produces DataSource instances through which media data is loaded.
         String userAgent = Util.getUserAgent(getContext(), getActivity().getApplicationContext().getPackageName());
         //DataSource.Factory dataSourceFactory = pkg AsyncHttpClientDataSourceFactory(getContext(), userAgent, bandwidthMeter);
-        dataSourceFactory = new CustomHttpDataSourceFactory(getContext(), userAgent, bandwidthMeter, new HttpClientBasedHttpDataSource.CacheListener() {
-
-            @Override
-            public void onFullyCached(final File cacheContent) {
-                getView().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setAllowDownload(true);
-                        displayItemDetailsControlsBasedOnSessionState();
-                        cachedVideoFile = cacheContent;
-                    }
-                });
-            }
-        });
+        CustomCacheListener cacheListener = new CustomCacheListener(timebar);
+        dataSourceFactory = new CustomHttpDataSourceFactory(getContext(), userAgent, bandwidthMeter, cacheListener);
 
         // 2. Create the player
         loadControl = new PausableLoadControl();
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
+
         return player;
     }
 
@@ -255,23 +235,15 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         player.stop();
         resetPlayerDatasource = true;
         seekToPosition = 0;
-        player.addListener(new ExoPlayerEventAdapter() {
-            @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                if(playbackState == Player.STATE_READY) {
-                    player.removeListener(this);
-                    try {
-                        CacheUtils.deleteCachedContent(getContext(), getModel().getFullSizeFile().getUrl());
-                        // now update stored state and UI display
-                        setAllowDownload(false);
-                        displayItemDetailsControlsBasedOnSessionState();
-                    } catch (IOException e) {
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_clear_cached_content));
-                    }
-                    configureDatasourceAndPlayerRequestingPermissions(continuePlayback);
-                }
-            }
-        });
+        try {
+            CacheUtils.deleteCachedContent(getContext(), getModel().getFullSizeFile().getUrl());
+            // now update stored state and UI display
+            setAllowDownload(false);
+            displayItemDetailsControlsBasedOnSessionState();
+        } catch (IOException e) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_clear_cached_content));
+        }
+        configureDatasourceAndPlayerRequestingPermissions(continuePlayback);
     }
 
     @Override
@@ -297,7 +269,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                         File toFile = new File(downloadsFolder, cachedVideoFile.getName());
                         IOUtils.copy(cachedVideoFile, toFile);
                         onGetResource(new PiwigoResponseBufferingHandler.UrlToFileSuccessResponse(0, getModel().getFullSizeFile().getUrl(), toFile));
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_image_download_title, getString(R.string.alert_image_download_complete_message));
+                        getUiHelper().showToast(getString(R.string.alert_image_download_complete_message));
                     } catch (IOException e) {
                         getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern), e.getMessage()));
                     }
@@ -402,6 +374,74 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             } catch (IOException e) {
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_tidying_video_cache));
             }
+        }
+    }
+
+    private class CustomCacheListener implements HttpClientBasedHttpDataSource.CacheListener {
+
+        private final CustomExoPlayerTimeBar timebar;
+
+        public CustomCacheListener(CustomExoPlayerTimeBar timebar) {
+            this.timebar = timebar;
+        }
+
+        @Override
+        public void onFullyCached(final CachedContent cacheContent) {
+            getView().post(new Runnable() {
+                @Override
+                public void run() {
+                    timebar.updateCachedContent(cacheContent, cacheContent.getTotalBytes());
+                    setAllowDownload(true);
+                    displayItemDetailsControlsBasedOnSessionState();
+                    cachedVideoFile = cacheContent.getCachedDataFile();
+                }
+            });
+        }
+
+        @Override
+        public void onRangeAdded(final CachedContent cacheFileContent, long fromVideoPosition, long toVideoPosition) {
+            getView().post(new Runnable() {
+                @Override
+                public void run() {
+                    timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
+                }
+            });
+        }
+
+        @Override
+        public void onCacheLoaded(final CachedContent cacheFileContent, long position) {
+            getView().post(new Runnable() {
+                @Override
+                public void run() {
+                    timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
+                }
+            });
+        }
+    }
+
+    private class CustomExoPlayerTouchListener extends CustomClickTouchListener {
+        public CustomExoPlayerTouchListener(View linkedView) {
+            super(linkedView);
+        }
+
+        @Override
+        public void onLongClick() {
+            if(!isUseCache()) {
+                return;
+            }
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
+                @Override
+                public void onDismiss(AlertDialog dialog) {
+
+                }
+
+                @Override
+                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                    if(Boolean.TRUE == positiveAnswer) {
+                        clearCacheAndRestartVideo();
+                    }
+                }
+            });
         }
     }
 }

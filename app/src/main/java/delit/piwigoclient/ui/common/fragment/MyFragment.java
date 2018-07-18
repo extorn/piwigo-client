@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,8 +34,18 @@ public class MyFragment extends Fragment {
     private String piwigoSessionToken;
     private String piwigoServerConnected;
 
-    protected long addActiveServiceCall(int titleStringId, long messageId) {
+    protected long addActiveServiceCall(@StringRes int titleStringId, long messageId) {
         return addActiveServiceCall(getString(titleStringId), messageId);
+    }
+
+    protected long addNonBlockingActiveServiceCall(@StringRes int titleStringId, long messageId) {
+        uiHelper.addNonBlockingActiveServiceCall(getString(titleStringId), messageId);
+        return messageId;
+    }
+
+    protected long addNonBlockingActiveServiceCall(String title, long messageId) {
+        uiHelper.addNonBlockingActiveServiceCall(title, messageId);
+        return messageId;
     }
 
     protected long addActiveServiceCall(String title, long messageId) {

@@ -628,7 +628,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private void loadAdminListOfAlbums() {
         long loadingMessageId = new AlbumGetSubAlbumsAdminResponseHandler().invokeAsync(getContext());
         loadingMessageIds.put(loadingMessageId, "AL");
-        addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
+        addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
     }
 
     private void onBulkActionDeleteButtonPressed() {
@@ -1009,7 +1009,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             int pageSize = prefs.getInt(getString(R.string.preference_album_request_pagesize_key), getResources().getInteger(R.integer.preference_album_request_pagesize_default));
             long loadingMessageId = new ImagesGetResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
             loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
-            addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
+            addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
         }
     }
 
@@ -1022,7 +1022,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
             long loadingMessageId = new AlbumGetSubAlbumsResponseHandler(galleryModel.getContainerDetails(), viewPrefs.getPreferredAlbumThumbnailSize(), false).invokeAsync(getContext(), connPrefs);
             loadingMessageIds.put(loadingMessageId, "C");
-            addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
+            addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
         }
     }
 

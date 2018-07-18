@@ -11,4 +11,6 @@
     <color name="background_dark">#ff000000</color>
     <color name="bright_foreground_light">@color/background_dark</color>
     <color name="bright_foreground_dark_inverse">@color/bright_foreground_light</color>
+    <color name="video_locally_cached">#CC90AAD4</color>
+    <color name="video_unplayed">#FF555555</color>
 </resources>

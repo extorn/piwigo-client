@@ -58,7 +58,9 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
         }
 
         private void fillResourceItemThumbnailValue(GalleryItem newItem) {
-
+            if(imageLoader.isImageLoading()) {
+                imageLoader.cancelImageLoadIfRunning();
+            }
             ResourceItem resItem = (ResourceItem) newItem;
             ResourceItem.ResourceFile rf = resItem.getFile(parentAdapter.getAdapterPrefs().getPreferredThumbnailSize());
             if (rf != null) {
@@ -67,11 +69,6 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
                 if (newItem.getThumbnailUrl() != null) {
                     // this is really bizarre - but show something for now.
                     imageLoader.setUriToLoad(newItem.getThumbnailUrl());
-                } else {
-                    imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
-                    if(!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
-                        ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
-                    }
                 }
             }
             if(!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
@@ -102,7 +99,11 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
             if (parentAdapter.getAdapterPrefs().isUseDarkMode()) {
                 if (parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
                     // needed for the background behind the title text
-                    itemView.setBackgroundResource(R.color.black_overlay);
+                    if(parentAdapter.getAdapterPrefs().isShowResourceNames()) {
+                        itemView.setBackgroundResource(R.color.white);
+                    } else {
+                        itemView.setBackgroundResource(R.color.black_overlay);
+                    }
                     // needed for images that don't load correctly.
                     mImageView.setBackgroundColor(Color.WHITE);
                 } else {

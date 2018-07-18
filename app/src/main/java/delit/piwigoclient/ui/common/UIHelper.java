@@ -281,6 +281,12 @@ public abstract class UIHelper<T> {
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
+    public void addNonBlockingActiveServiceCall(String titleString, long messageId) {
+        activeServiceCalls.add(messageId);
+        showLongToast(titleString);
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+    }
+
     public void addActiveServiceCall(String titleString, long messageId) {
         activeServiceCalls.add(messageId);
         if (progressDialog != null && !progressDialog.isShowing()) {

@@ -101,7 +101,7 @@ public class LicenceCheckingHelper {
 
         long maxInterval = 1000 * 60 * 60 * 6;
         // check again a maximum of every 6 hours apart.
-        if(lastChecked == null || lastChecked.getTime() > System.currentTimeMillis() || lastChecked.getTime() + maxInterval > System.currentTimeMillis()) {
+        if(lastChecked == null || lastChecked.getTime() > System.currentTimeMillis() || lastChecked.getTime() + maxInterval < System.currentTimeMillis()) {
             lastChecked = new Date();
             if(mLicenseCheckerCallback.isOfflineAccessAllowed()) {
                 final ConnectivityManager connMgr = (ConnectivityManager) activity.getApplicationContext()
