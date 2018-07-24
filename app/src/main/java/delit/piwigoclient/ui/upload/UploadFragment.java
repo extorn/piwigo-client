@@ -16,6 +16,7 @@ import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -163,6 +164,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         if ((sessionDetails == null || (!sessionDetails.isAdminUser() && !sessionDetails.isUseCommunityPlugin())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
+            Log.e(TAG, "Unable to view upload fragment - removing from activity");
             return null;
         }
 

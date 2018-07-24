@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -416,13 +417,14 @@ public class UploadActivity extends MyActivity {
 
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener() {
-        return super.buildPiwigoResponseListener();
+        return new CustomPiwigoResponseListener();
     }
 
     class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             if(response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                Log.e("UploadActivity", "Retrieved user login success response. Showing upload fragment");
                 showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse)response).getNewSessionDetails().getConnectionPrefs());
             } else {
                 super.onAfterHandlePiwigoResponse(response);
