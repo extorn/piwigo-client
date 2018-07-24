@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -40,10 +39,9 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.business.video.CachedContent;
 import delit.piwigoclient.business.video.CustomExoPlayerTimeBar;
-import delit.piwigoclient.business.video.CustomHttpDataSourceFactory;
-import delit.piwigoclient.business.video.ExoPlayerEventAdapter;
-import delit.piwigoclient.business.video.HttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.PausableLoadControl;
+import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
+import delit.piwigoclient.business.video.RemoteFileCachingDataSourceFactory;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.PicassoFactory;
@@ -63,7 +61,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private static final int PERMISSIONS_FOR_DOWNLOAD = 1;
     private static final int PERMISSIONS_FOR_CACHE = 2;
     private SimpleExoPlayer player;
-    private CustomHttpDataSourceFactory dataSourceFactory;
+    private RemoteFileCachingDataSourceFactory dataSourceFactory;
     private PausableLoadControl loadControl;
     private long seekToPosition;
     private CustomImageButton directDownloadButton;
@@ -76,6 +74,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     // No need to store this as it's used once and forgotten.
     private transient boolean startImmediately;
     private boolean startVideoWhenPermissionsGranted;
+    private boolean pageIsShowing;
 
     public AlbumVideoItemFragment() {
     }
@@ -101,8 +100,10 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     @Override
     public void onResume() {
-        configureDatasourceAndPlayerRequestingPermissions(startImmediately || (startOnResume && continuePlayback));
-        startImmediately = false;
+        if(pageIsShowing) {
+            configureDatasourceAndPlayerRequestingPermissions(startImmediately || (startOnResume && continuePlayback));
+            startImmediately = false;
+        }
         super.onResume();
     }
 
@@ -171,7 +172,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Nullable
     @Override
     public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState, final VideoResourceItem model) {
-
+        pageIsShowing = false;
         hideProgressIndicator();
 
         directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
@@ -207,10 +208,12 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         String userAgent = Util.getUserAgent(getContext(), getActivity().getApplicationContext().getPackageName());
         //DataSource.Factory dataSourceFactory = pkg AsyncHttpClientDataSourceFactory(getContext(), userAgent, bandwidthMeter);
         CustomCacheListener cacheListener = new CustomCacheListener(timebar);
-        dataSourceFactory = new CustomHttpDataSourceFactory(getContext(), userAgent, bandwidthMeter, cacheListener);
+        dataSourceFactory = new RemoteFileCachingDataSourceFactory(getContext(), bandwidthMeter, cacheListener, userAgent);
+        PausableLoadControl.Listener loadControlPauseListener = dataSourceFactory.getLoadControlPauseListener();
 
         // 2. Create the player
         loadControl = new PausableLoadControl();
+        loadControl.setListener(loadControlPauseListener);
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
 
@@ -220,13 +223,18 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     public void onPageDeselected() {
         super.onPageDeselected();
+        pageIsShowing = false;
         stopVideoDownloadAndPlay();
     }
 
     @Override
     public void onPageSelected() {
         super.onPageSelected();
-        startVideoDownloadAndPlay();
+        pageIsShowing = true;
+        if(isAdded()) {
+            configureDatasourceAndPlayerRequestingPermissions(startImmediately || (startOnResume && continuePlayback));
+            startImmediately = false;
+        }
     }
 
     private void clearCacheAndRestartVideo() {
@@ -328,11 +336,11 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             }
             loadControl.resumeBuffering();
             player.prepare(videoSource, false, false);
-            player.setPlayWhenReady(startPlayback);
+            player.setPlayWhenReady(startPlayback && pageIsShowing);
             resetPlayerDatasource = false;
         } else {
             loadControl.resumeBuffering();
-            player.setPlayWhenReady(startPlayback);
+            player.setPlayWhenReady(startPlayback && pageIsShowing);
         }
     }
 
@@ -377,7 +385,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    private class CustomCacheListener implements HttpClientBasedHttpDataSource.CacheListener {
+    private class CustomCacheListener implements RemoteAsyncFileCachingDataSource.CacheListener {
 
         private final CustomExoPlayerTimeBar timebar;
 

@@ -724,10 +724,8 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
             int progressBarHeight = progressBar.height();
             int barTop = progressBar.centerY() - progressBarHeight / 2;
             int barBottom = barTop + progressBarHeight;
-            if (duration <= 0) {
-                canvas.drawRect(progressBar.left, barTop, progressBar.right, barBottom, unplayedPaint);
-                return;
-            }
+            canvas.drawRect(progressBar.left, barTop, progressBar.right, barBottom, unplayedPaint);
+
             int bufferedLeft = bufferedBar.left;
             int bufferedRight = bufferedBar.right;
             int progressLeft = Math.max(Math.max(progressBar.left, bufferedRight), scrubberBar.right);
@@ -749,6 +747,11 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
             if (scrubberBar.width() > 0) {
 //                canvas.drawRect(scrubberBar.left, barTop, scrubberBar.right, barBottom, playedPaint);
             }
+
+            if (duration <= 0) {
+                return;
+            }
+
             int adMarkerOffset = adMarkerWidth / 2;
             for (int i = 0; i < adGroupCount; i++) {
                 long adGroupTimeMs = Util.constrainValue(adGroupTimesMs[i], 0, duration);

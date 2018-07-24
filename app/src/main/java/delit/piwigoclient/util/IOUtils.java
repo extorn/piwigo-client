@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.nio.channels.FileChannel;
 
@@ -41,6 +42,9 @@ public class IOUtils {
 
         } catch (FileNotFoundException e) {
             Log.e("IOUtils", "Error reading object from disk", e);
+        } catch (ObjectStreamException e) {
+            Log.e("IOUtils", "Error reading object from disk", e);
+            deleteFileNow = true;
         } catch (IOException e) {
             Log.e("IOUtils", "Error reading object from disk", e);
         } catch (ClassNotFoundException e) {

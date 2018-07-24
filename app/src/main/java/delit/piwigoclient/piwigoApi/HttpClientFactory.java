@@ -53,7 +53,8 @@ public class HttpClientFactory {
     private final SharedPreferences prefs;
     private final HashMap<ConnectionPreferences.ProfilePreferences, CachingAsyncHttpClient> asyncClientMap;
     private final HashMap<ConnectionPreferences.ProfilePreferences, CachingSyncHttpClient> syncClientMap;
-    private final HashMap<ConnectionPreferences.ProfilePreferences, CachingSyncHttpClient> videoDownloadClientMap;
+    private final HashMap<ConnectionPreferences.ProfilePreferences, CachingAsyncHttpClient> videoDownloadClientMap;
+    private final HashMap<ConnectionPreferences.ProfilePreferences, CachingSyncHttpClient> videoDownloadSyncClientMap;
 
     public HttpClientFactory(Context c) {
         cookieStoreMap = new HashMap<>(3);
@@ -61,6 +62,7 @@ public class HttpClientFactory {
         asyncClientMap = new HashMap<>(3);
         syncClientMap = new HashMap<>(3);
         videoDownloadClientMap = new HashMap<>(3);
+        videoDownloadSyncClientMap = new HashMap<>(3);
     }
 
     public static HttpClientFactory getInstance(Context c) {
@@ -93,6 +95,7 @@ public class HttpClientFactory {
             keys.addAll(asyncClientMap.keySet());
             keys.addAll(syncClientMap.keySet());
             keys.addAll(videoDownloadClientMap.keySet());
+            keys.addAll(videoDownloadSyncClientMap.keySet());
             for (ConnectionPreferences.ProfilePreferences aProfile : keys) {
                 clearCachedClients(aProfile);
             }
@@ -119,7 +122,15 @@ public class HttpClientFactory {
                 Log.e(TAG, "Error closing videoDownloadClient");
             }
         }
+        try {
+            closeClient(videoDownloadSyncClientMap.remove(profile));
+        } catch (IOException e) {
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Error closing sync videoDownloadClient");
+            }
+        }
         flushCookies(profile);
+
     }
 
     private void closeClient(CachingAsyncHttpClient client) throws IOException {
@@ -129,12 +140,11 @@ public class HttpClientFactory {
         }
     }
 
-    public CachingSyncHttpClient buildVideoDownloadSyncHttpClient(ConnectionPreferences.ProfilePreferences connectionPrefs, Context c) {
-        CachingSyncHttpClient videoDownloadClient = videoDownloadClientMap.get(connectionPrefs);
+    public CachingAsyncHttpClient getVideoDownloadASyncHttpClient(ConnectionPreferences.ProfilePreferences connectionPrefs, Context c) {
+        CachingAsyncHttpClient videoDownloadClient = videoDownloadClientMap.get(connectionPrefs);
         if (videoDownloadClient == null) {
-            boolean forceDisableCache = true;
             // we use a custom cache solution for video data
-            videoDownloadClient = buildSyncHttpClient(connectionPrefs, c, true);
+            videoDownloadClient = buildHttpClient(connectionPrefs, c, true, true);
             videoDownloadClientMap.put(connectionPrefs, videoDownloadClient);
         }
         return videoDownloadClient;
@@ -144,10 +154,18 @@ public class HttpClientFactory {
         return (CachingSyncHttpClient) buildHttpClient(connectionPrefs, c, false, forceDisableCache);
     }
 
+    public synchronized CachingSyncHttpClient getVideoDownloadSyncHttpClient(ConnectionPreferences.ProfilePreferences connectionPrefs, Context c) {
+        CachingSyncHttpClient syncClient = videoDownloadSyncClientMap.get(connectionPrefs);
+        if (syncClient == null) {
+            syncClient = buildSyncHttpClient(connectionPrefs, c, true);
+            videoDownloadSyncClientMap.put(connectionPrefs, syncClient);
+        }
+        return syncClient;
+    }
+
     public synchronized CachingSyncHttpClient getSyncHttpClient(ConnectionPreferences.ProfilePreferences connectionPrefs, Context c) {
         CachingSyncHttpClient syncClient = syncClientMap.get(connectionPrefs);
         if (syncClient == null) {
-            boolean forceDisableCache = false;
             syncClient = buildSyncHttpClient(connectionPrefs, c, false);
             syncClientMap.put(connectionPrefs, syncClient);
         }
@@ -157,7 +175,6 @@ public class HttpClientFactory {
     public synchronized CachingAsyncHttpClient getAsyncHttpClient(ConnectionPreferences.ProfilePreferences connectionPrefs, Context c) {
         CachingAsyncHttpClient asyncClient = asyncClientMap.get(connectionPrefs);
         if (asyncClient == null) {
-            boolean forceDisableCache = false;
             asyncClient = buildHttpClient(connectionPrefs, c, true, false);
             asyncClientMap.put(connectionPrefs, asyncClient);
         }
@@ -334,6 +351,6 @@ public class HttpClientFactory {
     }
 
     public boolean isInitialised(ConnectionPreferences.ProfilePreferences connectionProfile) {
-        return asyncClientMap.containsKey(connectionProfile) || syncClientMap.containsKey(connectionProfile) || videoDownloadClientMap.containsKey(connectionProfile);
+        return asyncClientMap.containsKey(connectionProfile) || syncClientMap.containsKey(connectionProfile) || videoDownloadClientMap.containsKey(connectionProfile) || videoDownloadSyncClientMap.containsKey(connectionProfile);
     }
 }

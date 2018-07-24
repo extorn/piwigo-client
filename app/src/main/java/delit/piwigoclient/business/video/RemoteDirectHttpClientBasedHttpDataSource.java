@@ -16,13 +16,9 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.DataAsyncHttpResponseHandler;
 
 import java.io.EOFException;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
-import java.io.InvalidClassException;
-import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -46,10 +42,10 @@ import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
  * <p>
  * By default this implementation will not follow cross-protocol redirects (i.e. redirects from
  * HTTP to HTTPS or vice versa). Cross-protocol redirects can be enabled by using the
- * {@link #HttpClientBasedHttpDataSource(Context, String, Predicate, TransferListener, int, int, boolean,
- * RequestProperties, boolean, boolean)} constructor and passing {@code true} as the second last argument.
+ * {@link #RemoteDirectHttpClientBasedHttpDataSource(Context, String, Predicate, TransferListener, int, int,
+ * RequestProperties)} constructor and passing {@code true} as the second last argument.
  */
-public class HttpClientBasedHttpDataSource implements HttpDataSource {
+public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource {
 
     /**
      * The default connection timeout, in milliseconds.
@@ -70,9 +66,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
     private final String userAgent;
     private final Predicate<String> contentTypePredicate;
     private final RequestProperties requestProperties;
-    private final TransferListener<? super HttpClientBasedHttpDataSource> listener;
-    private final boolean cachingEnabled;
-    private boolean notifyCacheListenerImmediatelyIfCached;
+    private final TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener;
     private CachingAsyncHttpClient client;
     private final Context context;
 
@@ -86,11 +80,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
     private long bytesSkipped;
     private long bytesRead;
     private HttpResponse httpResponse;
-    private String connectedToFile;
-    private RandomAccessFile localCacheFile;
-    private CachedContent cacheFileContent;
-    private CacheListener cacheListener;
-    private CachedContent.SerializableRange cachedRange;
     private int maxRedirects;
     private boolean enableRedirects;
 
@@ -101,7 +90,7 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
      *                             predicate then a {@link HttpDataSource.InvalidContentTypeException} is thrown from
      *                             {@link #open(DataSpec)}.
      */
-    public HttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate) {
+    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate) {
         this(context, userAgent, contentTypePredicate, null);
     }
 
@@ -112,8 +101,8 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
      *                             {@link #open(DataSpec)}.
      * @param listener             An optional listener.
      */
-    public HttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate,
-                                         TransferListener<? super HttpClientBasedHttpDataSource> listener) {
+    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate,
+                                                     TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener) {
         this(context, userAgent, contentTypePredicate, listener, DEFAULT_CONNECT_TIMEOUT_MILLIS,
                 DEFAULT_READ_TIMEOUT_MILLIS);
     }
@@ -129,11 +118,11 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
      * @param readTimeoutMillis    The read timeout, in milliseconds. A timeout of zero is interpreted
      *                             as an infinite timeout.
      */
-    public HttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate,
-                                         TransferListener<? super HttpClientBasedHttpDataSource> listener, int connectTimeoutMillis,
-                                         int readTimeoutMillis) {
-        this(context, userAgent, contentTypePredicate, listener, connectTimeoutMillis, readTimeoutMillis, false,
-                null, false, false);
+    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate,
+                                                     TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener, int connectTimeoutMillis,
+                                                     int readTimeoutMillis) {
+        this(context, userAgent, contentTypePredicate, listener, connectTimeoutMillis, readTimeoutMillis,
+                null);
     }
 
     /**
@@ -147,15 +136,13 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
      *                                    the default value.
      * @param readTimeoutMillis           The read timeout, in milliseconds. A timeout of zero is interpreted
      *                                    as an infinite timeout. Pass {@link #DEFAULT_READ_TIMEOUT_MILLIS} to use the default value.
-     * @param allowCrossProtocolRedirects Whether cross-protocol redirects (i.e. redirects from HTTP
-     *                                    to HTTPS and vice versa) are enabled.
      * @param defaultRequestProperties    The default request properties to be sent to the server as
      *                                    HTTP headers or {@code null} if not required.
      */
-    public HttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate,
-                                         TransferListener<? super HttpClientBasedHttpDataSource> listener, int connectTimeoutMillis,
-                                         int readTimeoutMillis, boolean allowCrossProtocolRedirects,
-                                         RequestProperties defaultRequestProperties, boolean cachingEnabled, boolean notifyCacheListenerImmediatelyIfCached) {
+    public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate,
+                                                     TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener, int connectTimeoutMillis,
+                                                     int readTimeoutMillis,
+                                                     RequestProperties defaultRequestProperties) {
         this.userAgent = Assertions.checkNotEmpty(userAgent);
         this.contentTypePredicate = contentTypePredicate;
         this.listener = listener;
@@ -163,18 +150,12 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         this.connectTimeoutMillis = connectTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
         this.context = context;
-        this.cachingEnabled = cachingEnabled;
-        this.notifyCacheListenerImmediatelyIfCached = notifyCacheListenerImmediatelyIfCached;
         startClient();
     }
 
     private void startClient() {
-        if(client == null) { client = HttpClientFactory.getInstance(context).buildVideoDownloadSyncHttpClient(ConnectionPreferences.getPreferences(null), context);
+        if(client == null) { client = HttpClientFactory.getInstance(context).getVideoDownloadSyncHttpClient(ConnectionPreferences.getPreferences(null), context);
         }
-    }
-
-    public void setCacheListener(CacheListener cacheListener) {
-        this.cacheListener = cacheListener;
     }
 
     @Override
@@ -216,29 +197,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
 
     @Override
     public long open(DataSpec dataSpec) throws HttpDataSourceException {
-
-        if(cachingEnabled) {
-            long bytesAvailable = loadCache(dataSpec);
-
-            if(cacheListener != null && notifyCacheListenerImmediatelyIfCached && cacheFileContent.isComplete()) {
-                notifyCacheListenerImmediatelyIfCached = false;
-                cacheListener.onFullyCached(cacheFileContent);
-            }
-
-            if(bytesAvailable > 0) {
-
-                this.dataSpec = dataSpec;
-                this.bytesRead = 0;
-                this.bytesSkipped = 0;
-
-                if(cacheFileContent.isComplete()) {
-                    return bytesAvailable;
-                } else {
-                    // we don't yet know complete file length
-                    return -1;
-                }
-            }
-        }
 
         startClient(); //TODO pointless as occurs when object is created.
         this.dataSpec = dataSpec;
@@ -318,55 +276,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         return bytesToRead;
     }
 
-    private long loadCache(DataSpec dataSpec) throws HttpDataSourceException {
-        try {
-            connectedToFile = CacheUtils.getVideoFilename(dataSpec.uri.toString());
-            File cacheFileMetadataFile = CacheUtils.getCacheMetadataFile(context, connectedToFile);
-            File cacheDataFile = CacheUtils.getCacheDataFile(context, connectedToFile);
-
-            if(cacheFileMetadataFile.exists()) {
-                if(!cacheDataFile.exists()) {
-                    // cache is corrupt - delete meta data file
-                    cacheFileMetadataFile.delete();
-                } else {
-                    if(cacheFileContent == null || !cacheFileContent.getCachedDataFile().equals(cacheDataFile)) {
-                        cacheFileContent = CacheUtils.loadCachedContent(cacheFileMetadataFile);
-                        cacheListener.onCacheLoaded(cacheFileContent, dataSpec.position);
-                    }
-                    // get the available cached range (if any)
-                    cachedRange = cacheFileContent.getRangeContaining(dataSpec.position);
-                    // always get a new reference to the data (we need to close this on close sadly to avoid risk of file pointer left open).
-                    localCacheFile = new RandomAccessFile(cacheDataFile, "rw");
-                    if (cachedRange != null) {
-                        return cachedRange.available(dataSpec.position);
-                    } else {
-                        return 0;
-                    }
-                }
-            }
-
-            localCacheFile = new RandomAccessFile(cacheDataFile, "rw");
-            cacheFileContent = new CachedContent();
-            cacheFileContent.setCacheDataFilename(connectedToFile);
-            cacheFileContent.setPersistTo(cacheFileMetadataFile);
-
-        } catch (FileNotFoundException e) {
-            throw new HttpDataSourceException("Error loading cache", e, dataSpec, HttpDataSourceException.TYPE_OPEN);
-        } catch(InvalidClassException e) {
-            // The cache file structure has changed and is no longer compatible. :-(
-            // delete any old cache file and start over.
-            try {
-                CacheUtils.deleteCachedContent(context, connectedToFile);
-            } catch (IOException e1) {
-                throw new HttpDataSourceException("Error loading cache", e, dataSpec, HttpDataSourceException.TYPE_OPEN);
-            }
-        } catch (IOException e) {
-            throw new HttpDataSourceException("Error loading cache", e, dataSpec, HttpDataSourceException.TYPE_OPEN);
-        }
-
-        return 0;
-    }
-
     @Override
     public int read(byte[] buffer, int offset, int readLength) throws HttpDataSourceException {
         try {
@@ -379,19 +288,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
 
     @Override
     public void close() throws HttpDataSourceException {
-
-        if(cachingEnabled && localCacheFile != null) {
-            try {
-                localCacheFile.close();
-            } catch (IOException e) {
-                throw new HttpDataSourceException("Closing local cache file", e, dataSpec, HttpDataSourceException.TYPE_CLOSE);
-            }
-            try {
-                CacheUtils.saveCachedContent(cacheFileContent);
-            } catch(IOException e) {
-                throw new HttpDataSourceException("Writing local cache metadata file", e, dataSpec, HttpDataSourceException.TYPE_CLOSE);
-            }
-        }
 
         // Do I need to hard close this resource?
 //        try {
@@ -466,13 +362,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
         long position = dataSpec.position;
         long length = dataSpec.length;
         boolean allowGzip = dataSpec.isFlagSet(DataSpec.FLAG_ALLOW_GZIP);
-
-        if(cacheFileContent != null) {
-            CachedContent.SerializableRange range = cacheFileContent.getRangeContaining(position);
-            if(range != null) {
-                position += range.available(position);
-            }
-        }
 
         makeConnection(url, postBody, position, length, allowGzip);
     }
@@ -560,10 +449,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
                         }
                         contentLength = Math.max(contentLength, contentLengthFromRange);
                     }
-
-                    if(cachingEnabled) {
-                        cacheFileContent.setTotalBytes(totalFileContentBytes);
-                    }
                 } catch (NumberFormatException e) {
                     if(BuildConfig.DEBUG) {
                         Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
@@ -632,81 +517,33 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
             return 0;
         }
 
-        if(inputStream == null) {
-            // check what can be read from the local cache and return if the answer is nothing
-            long maxReadLen = Math.min(readLength, cachedRange.available(dataSpec.position + bytesRead));
-            if(maxReadLen == 0) {
+        boolean readFromCacheFile = false;
+        long maxReadLen = readLength;
+        // read these bytes from the cache if they are present
+
+        if (bytesToRead != C.LENGTH_UNSET) {
+            long bytesRemaining = bytesToRead - bytesRead;
+            if (bytesRemaining == 0) {
                 return C.RESULT_END_OF_INPUT;
             }
-            //read from local cache
-            localCacheFile.seek(dataSpec.position + bytesRead);
-            int read = localCacheFile.read(buffer, offset, (int)maxReadLen);
-            if (read == -1) {
-                // uh oh! the cache file didn't contain what it should - something is wrong.
-                if (bytesToRead != C.LENGTH_UNSET) {
-                    cacheFileContent.clear();
-                }
-                // returning 0 will prompt a new connection to be created (uncached this time).
-                return 0;
-            }
-            bytesRead += read;
-            return read;
-        } else {
-            boolean readFromCacheFile = false;
-            long maxReadLen = readLength;
-            // read these bytes from the cache if they are present
-            if(cachedRange != null) {
-                long cachedBytes = cachedRange.available(dataSpec.position + bytesRead);
-                if (cachedBytes > 0) {
-                    //read from local cache
-                    readFromCacheFile = true;
-                    localCacheFile.seek(dataSpec.position + bytesRead);
-                    maxReadLen = Math.min(readLength, cachedBytes);
-                    int read = localCacheFile.read(buffer, offset, (int) maxReadLen);
-                    bytesRead += read;
-                    if (read == maxReadLen) {
-                        return read;
-                    }
-                    maxReadLen -= read;
-                }
-            }
-            if (bytesToRead != C.LENGTH_UNSET) {
-                long bytesRemaining = bytesToRead - bytesRead;
-                if (bytesRemaining == 0) {
-                    return C.RESULT_END_OF_INPUT;
-                }
-                maxReadLen = (int) Math.min(maxReadLen, bytesRemaining);
-            }
-
-            int read = inputStream.read(buffer, offset, (int)maxReadLen);
-            if (read == -1) {
-                if (bytesToRead != C.LENGTH_UNSET) {
-                    // End of stream reached having not read sufficient data.
-                    throw new EOFException();
-                }
-                return C.RESULT_END_OF_INPUT;
-            }
-            if(cachingEnabled && read > 0) {
-                localCacheFile.seek(dataSpec.position + bytesRead);
-                localCacheFile.write(buffer, offset, read);
-                cacheFileContent.addRange(dataSpec.position, dataSpec.position + bytesRead + read);
-                if(cacheListener != null) {
-                    if(cacheFileContent.isComplete()) {
-                        cacheListener.onFullyCached(cacheFileContent);
-                        // discard what was just read and force use of local cache
-                        return C.RESULT_END_OF_INPUT;
-                    } else {
-                        cacheListener.onRangeAdded(cacheFileContent, dataSpec.position, dataSpec.position + bytesRead + read);
-                    }
-                }
-            }
-            bytesRead += read;
-            if (listener != null) {
-                listener.onBytesTransferred(this, read);
-            }
-
-            return read;
+            maxReadLen = (int) Math.min(maxReadLen, bytesRemaining);
         }
+
+        int read = inputStream.read(buffer, offset, (int)maxReadLen);
+        if (read == -1) {
+            if (bytesToRead != C.LENGTH_UNSET) {
+                // End of stream reached having not read sufficient data.
+                throw new EOFException();
+            }
+            return C.RESULT_END_OF_INPUT;
+        }
+
+        bytesRead += read;
+        if (listener != null) {
+            listener.onBytesTransferred(this, read);
+        }
+
+        return read;
     }
 
     /**
@@ -766,12 +603,6 @@ public class HttpClientBasedHttpDataSource implements HttpDataSource {
             // do nothing
         }
 
-    }
-
-    public interface CacheListener {
-        void onFullyCached(CachedContent cacheContent);
-        void onRangeAdded(CachedContent cacheFileContent, long lowerBound, long upperBound);
-        void onCacheLoaded(CachedContent cacheFileContent, long position);
     }
 }
 

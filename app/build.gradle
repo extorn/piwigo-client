@@ -16,7 +16,7 @@ android {
 
     compileSdkVersion 27
 
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.1'
     defaultConfig {
         applicationId "delit.piwigoclient"
         minSdkVersion 17
@@ -55,15 +55,33 @@ android {
             buildConfigField "boolean", "PAID_VERSION", "false"
             // Assigns this product flavor to the "tier" flavor dimension. Specifying
             // this property is optional if you are using only one dimension.
-
             dimension "tier"
         }
         paid {
-            applicationId "delit.piwigoclient.paid" //.phone when debugging on phone so separate install.
+            applicationId "delit.piwigoclient.paid"
+            //.phone when debugging on phone so separate install.
             buildConfigField "boolean", "PAID_VERSION", "true"
             // Assigns this product flavor to the "tier" flavor dimension. Specifying
             // this property is optional if you are using only one dimension.
             dimension "tier"
+        }
+        paidphone {
+            applicationId "delit.piwigoclient.paid.phone"
+            //.phone when debugging on phone so separate install.
+            buildConfigField "boolean", "PAID_VERSION", "true"
+            // Assigns this product flavor to the "tier" flavor dimension. Specifying
+            // this property is optional if you are using only one dimension.
+            dimension "tier"
+        }
+    }
+    sourceSets {
+        paidphone {
+            java.srcDirs = sourceSets.paid.java.srcDirs
+            res.srcDirs = sourceSets.paid.res.srcDirs
+            resources.srcDirs = sourceSets.paid.resources.srcDirs
+            aidl.srcDirs = sourceSets.paid.aidl.srcDirs
+            renderscript.srcDirs = sourceSets.paid.renderscript.srcDirs
+            assets.srcDirs = sourceSets.paid.assets.srcDirs
         }
     }
 }
@@ -72,10 +90,9 @@ dependencies {
     implementation project(path: ':google-licencing-library')
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.wunderlist:sliding-layer:1.2.5'
-
     // third party libraries
-//    compile 'com.squareup.okhttp:okhttp:1.6.0'
-//    compile 'com.squareup.okhttp:okhttp-urlconnection:1.6.0'
+    //    compile 'com.squareup.okhttp:okhttp:1.6.0'
+    //    compile 'com.squareup.okhttp:okhttp-urlconnection:1.6.0'
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'org.greenrobot:eventbus:3.1.1'
@@ -107,14 +124,9 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     // v14 stuff
     implementation 'com.android.support:preference-v14:27.1.1'
-
     implementation 'com.android.support:transition:27.1.1'
-
     implementation 'com.android.support.constraint:constraint-layout-solver:1.1.2'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-
     implementation 'com.google.android.gms:play-services-ads:15.0.1'
-
     testImplementation 'junit:junit:4.12'
-
 }
