@@ -151,8 +151,12 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         // will restore previous selection from state if any
         setListAdapter(viewAdapter);
 
-        GridLayoutManager layoutMan = new GridLayoutManager(getContext(),6);
-        layoutMan.setSpanSizeLookup(new SpanSizeLookup(viewAdapter, 6));
+        int colsOnScreen = Math.max(getViewPrefs().getColumnsOfFiles(), getViewPrefs().getColumnsOfFolders());
+        if(getViewPrefs().getColumnsOfFiles() % getViewPrefs().getColumnsOfFolders() > 0) {
+            colsOnScreen = getViewPrefs().getColumnsOfFiles() * getViewPrefs().getColumnsOfFolders();
+        }
+        GridLayoutManager layoutMan = new GridLayoutManager(getContext(),colsOnScreen);
+        layoutMan.setSpanSizeLookup(new SpanSizeLookup(viewAdapter, colsOnScreen));
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(viewAdapter);
 
@@ -188,11 +192,11 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                 int itemType = viewAdapter.getItemViewType(position);
                 switch (itemType) {
                     case FolderItemRecyclerViewAdapter.VIEW_TYPE_FOLDER:
-                        return spanCount / 3;
+                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFolders();
                     case FolderItemRecyclerViewAdapter.VIEW_TYPE_FILE:
-                        return spanCount / 2;
+                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFiles();
                     default:
-                        return spanCount / 3;
+                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFiles();
                 }
             } catch(IndexOutOfBoundsException e) {
                 //TODO why does this occur? How?

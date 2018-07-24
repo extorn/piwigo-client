@@ -162,13 +162,16 @@ public class EditableListPreference extends DialogPreference {
             if (changed) {
                 notifyChanged();
                 if(listener != null) {
-                    listener.onItemSelectionChanged(oldValue, value, entries.contains(oldValue));
+                    listener.onItemSelectionChanged(this, oldValue, value, entries.contains(oldValue));
                 }
             }
         }
         if(currentValueSet) {
             // this is happening because we selected an item.
             persistEntries(entries);
+        }
+        if(getDialog() != null && getDialog().isShowing()) {
+            getDialog().dismiss();
         }
     }
 
@@ -346,11 +349,18 @@ public class EditableListPreference extends DialogPreference {
     private void showEditBox(final boolean editingExistingValue, final String initialValue) {
         // popup with text entry field.
         AlertDialog.Builder b = new AlertDialog.Builder(getContext());
-        b.setMessage(R.string.title_adding_item);
+        if(editingExistingValue) {
+            b.setMessage(R.string.title_editing_item);
+        } else {
+            b.setMessage(R.string.title_adding_item);
+        }
         // Set up the input
         final EditText input = new EditText(getContext());
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
+        if(initialValue != null) {
+            input.setText(initialValue);
+        }
         b.setView(input);
         // Set up the buttons
         b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
@@ -393,7 +403,7 @@ public class EditableListPreference extends DialogPreference {
             RecyclerView.Adapter<RecyclerView.ViewHolder> adapter = buildNewRecyclerViewAdapter(getContext(), entriesList, entriesList, currentValue);
             listRecyclerView.setAdapter(adapter);
             if(listener != null) {
-                listener.onItemAltered(oldValue, newValue);
+                listener.onItemAltered(this, oldValue, newValue);
             }
         }
     }
@@ -609,11 +619,11 @@ public class EditableListPreference extends DialogPreference {
         }
 
         @Override
-        public void onItemSelectionChanged(String oldSelection, String newSelection, boolean oldSelectionExists) {
+        public void onItemSelectionChanged(EditableListPreference preference, String oldSelection, String newSelection, boolean oldSelectionExists) {
         }
 
         @Override
-        public void onItemAltered(String oldValue, String newValue) {
+        public void onItemAltered(EditableListPreference preference, String oldValue, String newValue) {
         }
     }
 
@@ -621,7 +631,7 @@ public class EditableListPreference extends DialogPreference {
         void onItemAdded(String newItem);
         void onItemRemoved(String newItem);
         void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists);
-        void onItemSelectionChanged(String oldSelection, String newSelection, boolean oldSelectionExists);
-        void onItemAltered(String oldValue, String newValue);
+        void onItemSelectionChanged(EditableListPreference preference, String oldSelection, String newSelection, boolean oldSelectionExists);
+        void onItemAltered(EditableListPreference preference, String oldValue, String newValue);
     }
 }

@@ -35,6 +35,9 @@ public abstract class MyActivity extends AppCompatActivity {
     private UIHelper uiHelper;
     private LicenceCheckingHelper licencingHelper;
 
+    public SharedPreferences getSharedPrefs() {
+        return prefs;
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

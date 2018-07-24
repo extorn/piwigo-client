@@ -26,7 +26,7 @@
 
     <string name="app_name" translatable="false">PiwigoClient</string>
     <string name="app_name_and_version_pattern" translatable="false">PiwigoClient v%1$s</string>
-    <string name="app_paid_name_and_version_pattern" translatable="false">PiwigoClient v%1$s (paid)</string>
+    <string name="app_paid_name_and_version_pattern" translatable="false">!PiwigoClient v%1$s (paid)</string>
 
     <string name="alert_title_permissions_needed">Extra Permissions Required</string>
     <string name="alert_write_permission_needed_for_download">Permission is needed to write to the filesystem in order to download files</string>
@@ -697,6 +697,7 @@ SOFTWARE.
     <string name="alert_http_scheme_specified">Your server is using http. This is not a good idea because the username and password are transmitted to the server in plain text. I strongly recommend you change your server to use https.</string>
     <string name="gallery_admin_albums_list_load_failed_text">Failed to load the full administrative list of albums</string>
     <string name="title_adding_item">Adding Item</string>
+    <string name="title_editing_item">Editing Item</string>
     <string name="alert_error_item_not_unique">Sorry, that item already exists.</string>
     <string name="alert_warning_no_server_url_specified">No server uri specified. Please add the location of your server and retry.</string>
     <string name="error_heading_unloadable_certificate_files">The following certificate files could not be loaded:</string>

@@ -141,6 +141,8 @@ public class CommonPreferencesFragment extends MyFragment {
                     return getString(R.string.preference_page_gallery);
                 case 2:
                     return getString(R.string.preference_page_upload);
+                case 3:
+                    return getString(R.string.preference_page_other);
                 default:
                     throw new RuntimeException("PagerAdapter count doesn't match positions available");
             }
@@ -155,6 +157,8 @@ public class CommonPreferencesFragment extends MyFragment {
                     return new GalleryPreferenceFragment();
                 case 2:
                     return new UploadPreferenceFragment();
+                case 3:
+                    return new OtherPreferenceFragment();
                 default:
                     throw new RuntimeException("PagerAdapter count doesn't match positions available");
             }
@@ -162,7 +166,7 @@ public class CommonPreferencesFragment extends MyFragment {
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
     }

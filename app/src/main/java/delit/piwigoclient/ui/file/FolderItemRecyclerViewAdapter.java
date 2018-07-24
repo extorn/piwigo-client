@@ -243,6 +243,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         public void fillValues(Context context, File newItem, boolean allowItemDeletion) {
             setItem(newItem);
+            getTxtTitle().setVisibility(View.VISIBLE);
             getTxtTitle().setText(newItem.getName());
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
@@ -269,7 +270,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         public void fillValues(Context context, File newItem, boolean allowItemDeletion) {
             setItem(newItem);
-            getTxtTitle().setText(newItem.getName());
+            if(getAdapterPrefs().isShowFilenames()) {
+                getTxtTitle().setVisibility(View.VISIBLE);
+                getTxtTitle().setText(newItem.getName());
+            } else {
+                getTxtTitle().setVisibility(View.GONE);
+            }
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }

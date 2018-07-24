@@ -42,6 +42,7 @@ import delit.piwigoclient.ui.common.preference.EditableListPreference;
 import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.util.ObjectUtils;
 import delit.piwigoclient.util.SetUtils;
 import delit.piwigoclient.util.X509Utils;
 
@@ -210,13 +211,14 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         connectionProfilePref.setListener(new EditableListPreference.EditableListPreferenceChangeAdapter() {
 
             @Override
-            public void onItemSelectionChanged(String oldSelection, String newSelection, boolean oldSelectionExists) {
+            public void onItemSelectionChanged(EditableListPreference preference, String oldSelection, String newSelection, boolean oldSelectionExists) {
                 if(oldSelection != null) {
                     // clone the current working copy of prefs to the previous active selection
-                    ConnectionPreferences.clonePreferences(getPrefs(), getContext(), null, oldSelection);
-//                    if(!oldSelectionExists) {
-//                        ConnectionPreferences.deletePreferences(prefs, getContext(), oldSelection);
-//                    }
+                    if(oldSelectionExists) {
+                        ConnectionPreferences.clonePreferences(getPrefs(), getContext(), null, oldSelection);
+                    } else {
+                        ConnectionPreferences.deletePreferences(getPrefs(), getContext(), oldSelection);
+                    }
                     // copy those profile values to the working app copy of prefs
                     ConnectionPreferences.clonePreferences(getPrefs(), getContext(), newSelection, null);
 
@@ -231,9 +233,18 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             }
 
             @Override
-            public void onItemAltered(String oldValue, String newValue) {
+            public void onItemAltered(EditableListPreference preference, String oldValue, String newValue) {
+                String selectedProfileId = ConnectionPreferences.getActiveProfile().getProfileId(getPrefs(), getContext());
+                boolean changingSelectedValue = false;
+                if(ObjectUtils.areEqual(selectedProfileId, oldValue)) {
+                    changingSelectedValue = true;
+                    ConnectionPreferences.clonePreferences(getPrefs(), getContext(), null, oldValue);
+                }
                 ConnectionPreferences.clonePreferences(getPrefs(), getContext(), oldValue, newValue);
                 ConnectionPreferences.deletePreferences(getPrefs(), getContext(), oldValue);
+                if(changingSelectedValue) {
+                    preference.setValue(newValue);
+                }
             }
 
             @Override

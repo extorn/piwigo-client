@@ -290,6 +290,33 @@
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
 
+    <!-- other page -->
+
+    <string name="preference_page_other">Other</string>
+    <string name="preference_other_category_file_selector">File Selector</string>
+
+    <!-- prefs -->
+
+    <bool name="preference_data_file_selector_showFilenames_default">true</bool>
+    <string name="preference_data_file_selector_showFilenames_key">preference_data_file_selector_showFilenames</string>
+    <string name="preference_data_file_selector_showFilenames_title">Show file names</string>
+    <string name="preference_data_file_selector_showFilenames_summary">Filenames shown for each file</string>
+
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_key">preference_data_file_selector_preferredFileColumnsLandscape</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Landscape: Columns of Files to show</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
+
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_key">preference_data_file_selector_preferredFileColumnsPortrait</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portrait: Columns of Files to show</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
+
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_key">preference_data_file_selector_preferredFolderColumnsLandscape</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Landscape: Columns of Folders to show</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
+
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_key">preference_data_file_selector_preferredFolderColumnsPortrait</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Portrait: Columns of Folders to show</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
     <!-- Automatic Upload Jobs page -->
 

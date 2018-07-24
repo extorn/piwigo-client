@@ -1,13 +1,11 @@
 package delit.piwigoclient.ui.file;
 
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.nio.file.Files;
 import java.util.ArrayList;
 
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
@@ -26,6 +24,9 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     private ArrayList<String> visibleFileTypes;
     private int fileSortOrder = ALPHABETICAL;
     private ArrayList<String> initialSelection;
+    private int columnsOfFolders = 3;
+    private int columnsOfFiles = 2;
+    private boolean showFilenames = true;
 
     protected FolderItemViewAdapterPreferences(){}
 
@@ -40,8 +41,23 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return this;
     }
 
+    public FolderItemViewAdapterPreferences withColumnsOfFiles(int columnsOfFiles) {
+        this.columnsOfFiles = columnsOfFiles;
+        return this;
+    }
+
+    public FolderItemViewAdapterPreferences withColumnsOfFolders(int columnsOfFolders) {
+        this.columnsOfFolders = columnsOfFolders;
+        return this;
+    }
+
     public FolderItemViewAdapterPreferences withVisibleContent(int fileSortOrder) {
         return withVisibleContent(null, fileSortOrder);
+    }
+
+    public FolderItemViewAdapterPreferences withShowFilenames(boolean showFilenames) {
+        this.showFilenames = showFilenames;
+        return this;
     }
 
     public FolderItemViewAdapterPreferences withVisibleContent(@Nullable ArrayList<String> visibleFileTypes, int fileSortOrder) {
@@ -63,6 +79,9 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         b.putBoolean("multiSelectAllowed", multiSelectAllowed);
         b.putBoolean("showFolderContents", showFolderContents);
         b.putInt("fileSortOrder", fileSortOrder);
+        b.putInt("columnsOfFolders", columnsOfFolders);
+        b.putInt("columnsOfFiles", columnsOfFiles);
+        b.putBoolean("showFilenames", showFilenames);
         b.putStringArrayList("visibleFileTypes", visibleFileTypes);
         b.putString("initialFolder", initialFolder);
         b.putStringArrayList("initialSelection", initialSelection);
@@ -78,6 +97,9 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         multiSelectAllowed = b.getBoolean("multiSelectAllowed");
         showFolderContents = b.getBoolean("showFolderContents");
         fileSortOrder = b.getInt("fileSortOrder");
+        columnsOfFolders = b.getInt("columnsOfFolders");
+        columnsOfFiles = b.getInt("columnsOfFiles");
+        showFilenames = b.getBoolean("showFilenames");
         visibleFileTypes = b.getStringArrayList("visibleFileTypes");
         initialFolder = b.getString("initialFolder");
         initialSelection = b.getStringArrayList("initialSelection");
@@ -132,5 +154,17 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
 
     public ArrayList<String> getInitialSelection() {
         return initialSelection;
+    }
+
+    public int getColumnsOfFiles() {
+        return columnsOfFiles;
+    }
+
+    public int getColumnsOfFolders() {
+        return columnsOfFolders;
+    }
+
+    public boolean isShowFilenames() {
+        return showFilenames;
     }
 }

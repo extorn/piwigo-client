@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.File;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.StopActivityEvent;
@@ -138,6 +139,9 @@ public class FileSelectActivity extends MyActivity {
         // basic settings
         prefs.selectable(event.isMultiSelectAllowed(), false);
         prefs.setInitialSelection(event.getInitialSelection());
+        prefs.withShowFilenames(OtherPreferences.isShowFilenames(getSharedPrefs(), getApplicationContext()));
+        prefs.withColumnsOfFiles(OtherPreferences.getFileSelectorColumnsOfFiles(getSharedPrefs(),getApplicationContext()));
+        prefs.withColumnsOfFolders(OtherPreferences.getFileSelectorColumnsOfFolders(getSharedPrefs(),getApplicationContext()));
 
 
         removeFragmentsFromHistory(RecyclerViewFolderItemSelectFragment.class, true);
