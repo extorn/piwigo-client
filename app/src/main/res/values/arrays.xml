@@ -175,6 +175,8 @@
          - Rework of the way popup messages and progress indicators are shown - investigate using more Toast messages
          - Possibly - The ability to delete an album, but not its contents (creating orphans)
          - Possibly - Orphan file management
+         - Possibly: Allow user to zoom out in slideshow (view smaller than fullscreen)
+         - Possibly: Investigate adding support for coloured tag plugin
          - Paid App Only : The random photos idea implemented on the piwigo web UI
          - Paid App Only : (Maybe) : Support for user comments
          - Paid App Only : (Maybe) : Notify user of server updates that are available
@@ -183,7 +185,9 @@
         </item>
         <item>1.3.93.14</item>
         <item>"Changes:
-            - Use title from EXIF data if available when uploading images"
+            - Use title from EXIF data if available when uploading images
+            - Maybe: Remember the previously opened photo or album when the user opens the app.
+            - Maybe: Remember the previous location within album after return from slideshow"
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">

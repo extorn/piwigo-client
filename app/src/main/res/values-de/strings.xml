@@ -7,6 +7,7 @@
     <string name="unlicensed_dialog_body">Diese Anwendung ist nicht lizenziert. Bitte kaufen Sie es im Android Market.</string>
     <string name="unlicensed_dialog_title">Anwendung nicht lizenziert</string>
     <string name="application_error">Anwendungsfehler: %1$d</string>
+
     <string name="alert_title_permissions_needed">Zusätzliche Berechtigungen erforderlich</string>
     <string name="alert_write_permission_needed_for_download">Berechtigung ist erforderlich, um auf das Dateisystem zu schreiben, um Dateien herunterzuladen.</string>
 
@@ -437,6 +438,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_http_scheme_specified">Ihr Server verwendet http. Dies ist keine gute Idee, da Benutzername und Passwort im Klartext an den Server übertragen werden. Ich empfehle Ihnen dringend, Ihren Server auf https umzustellen.</string>
     <string name="gallery_admin_albums_list_load_failed_text">Die vollständige administrative Liste der Alben konnte nicht geladen werden.</string>
     <string name="title_adding_item">Artikel hinzufügen</string>
+    <string name="title_editing_item">Artikel bearbeiten</string>
     <string name="alert_error_item_not_unique">Sorry, dieser Artikel existiert bereits.</string>
     <string name="alert_warning_no_server_url_specified">Keine Server-URI angegeben. Bitte geben Sie den Standort Ihres Servers an und versuchen Sie es erneut.</string>
     <string name="error_heading_unloadable_certificate_files">Die folgenden Zertifikatsdateien konnten nicht geladen werden:</string>

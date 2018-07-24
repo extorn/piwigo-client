@@ -21,22 +21,19 @@
 
     <string name="preference_server_connection_max_redirects_title">Max. Server-Weiterleitung</string>
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>
-    <integer name="preference_server_connection_max_redirects_default">5</integer>
 
 
     <string name="preference_server_connection_allow_redirects_title">Server-Umleitungen zulassen</string>
     <string name="preference_server_connection_allow_redirects_summary">Folgen Sie http 3xx Antworten</string>
-    <bool name="preference_server_connection_allow_redirects_default">false</bool>
+
 
 
     <string name="preference_server_socketTimeout_millisecs_title">Verbindungs-Timeout (Millisekunden)</string>
     <string name="preference_server_socketTimeout_millisecs_summary">%1$d Millisekunden</string>
-    <integer name="preference_server_socketTimeout_millisecs_default">10000</integer>
 
 
     <string name="preference_server_connection_retries_title">Verbindungsversuche vor dem Ausfall</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
-    <integer name="preference_server_connection_retries_default">3</integer>
 
 
     <string name="preference_server_basic_auth_username_title">Basic Authentication Benutzername</string>
@@ -47,10 +44,8 @@
 
     <string name="preference_server_use_basic_auth_title">Basic Authentication verwenden</string>
     <string name="preference_server_use_basic_auth_summary">Aktivieren, wenn Server Basic Authentication erfordert</string>
-    <bool name="preference_server_use_basic_auth_default">false</bool>
 
 
-    <bool name="preference_server_use_client_certs_default">false</bool>
     <string name="preference_server_use_client_certs_title">Client-Zertifikat-Authentifizierung verwenden</string>
     <string name="preference_server_use_client_certs_summary">Aktivieren, wenn der Server eine zertifikatsbasierte Client-Authentifizierung erfordert.</string>
 
@@ -96,18 +91,15 @@
 
     <string name="preference_caching_max_cache_entries_title">Maximale Anzahl Cache-EinträgeListe</string>
     <string name="preference_caching_max_cache_entries_summary">%1$d</string>
-    <integer name="preference_caching_max_cache_entries_default">1000</integer>
 
 
     <string name="preference_caching_max_cache_entry_size_title">Maximale Cache-Eintragsgröße (KB)</string>
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
-    <integer name="preference_caching_max_cache_entry_size_default">1024</integer>
 
     <string name="preference_connections_category_trusted_server_ca">Vertrauenswürdige Server-Zertifikat-CAs</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Verwenden Sie eine benutzerdefinierte Liste vertrauenswürdiger CA-Zertifikate, um Server-SSL-Zertifikate zu validieren.</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Benutzerdefinierte vertrauenswürdige Zertifizierungsstellen verwenden</string>
 
-    <bool name="preference_server_use_custom_trusted_ca_certs_default">false</bool>
 
 
     <string name="preference_select_trusted_certificate_title">Vertrauenswürdige CA-Zertifikate auswählen</string>
@@ -126,7 +118,6 @@
 
     <string name="preference_app_show_toolbar_title">App Toolbar anzeigen</string>
     <string name="preference_app_show_toolbar_summary">Symbolleiste oben in der Anwendung anzeigen</string>
-    <bool name="preference_app_show_toolbar_default">true</bool>
 
 
 
@@ -136,7 +127,6 @@
 
     <string name="preference_gallery_show_image_name_title">Bildnamen im Album anzeigen</string>
     <string name="preference_gallery_show_image_name_summary">Zeigt den Namen des Bildes unter jedem Bild an.</string>
-    <bool name="preference_gallery_show_image_name_default">true</bool>
 
 
     <string name="preference_gallery_images_preferredColumnsLandscape_title">Landschaft: Spalten der anzuzeigenden Bilder</string>
@@ -145,12 +135,10 @@
 
     <string name="preference_gallery_use_dark_mode_title">Dunkles Thema verwenden</string>
     <string name="preference_gallery_use_dark_mode_summary">App-Thema auswählen</string>
-    <bool name="preference_gallery_use_dark_mode_default">true</bool>
 
 
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">Zeige gezoomtes Album Thumbnail</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Album-Thumbnails sind in der Mitte abgeschnitten</string>
-    <bool name="preference_gallery_show_album_thumbnail_zoomed_default">false</bool>
 
 
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">Porträt: Spalten von Alben zum Anzeigen</string>
@@ -163,17 +151,14 @@
 
     <string name="preference_gallery_show_large_thumbnail_title">Alben mit großer Miniaturansicht anzeigen</string>
     <string name="preference_gallery_show_large_thumbnail_summary">Bild-Miniaturansichten füllen die Spalte</string>
-    <bool name="preference_gallery_show_large_thumbnail_default">false</bool>
 
 
     <string name="preference_gallery_include_videos_in_slideshow_title">Videos in Diashow anzeigen</string>
     <string name="preference_gallery_include_videos_in_slideshow_summary">Sollen Videos beim Durchsuchen einer Galerie im Diashow-Modus angezeigt werden?</string>
-    <bool name="preference_gallery_include_videos_in_slideshow_default">false</bool>
 
 
     <string name="preference_gallery_enable_video_playback_title">Videowiedergabe zulassen</string>
     <string name="preference_gallery_enable_video_playback_summary">Aktivieren Sie diese Option, wenn Sie Videos bei Bedarf herunterladen und abspielen möchten.</string>
-    <bool name="preference_gallery_enable_video_playback_default">true</bool>
 
 
     <string name="preference_piwigo_playable_media_extensions_title">Unterstützte Multimedia-Erweiterungen (CSV-Liste)</string>
@@ -183,12 +168,10 @@
 
     <string name="preference_video_cache_enabled_title">Cache-Videos in Datei anzeigen</string>
     <string name="preference_video_cache_enabled_summary">Wenn aktiviert, werden alle gestreamten Videos für die spätere Wiedergabe zwischengespeichert.</string>
-    <bool name="preference_video_cache_enabled_default">false</bool>
 
 
     <string name="preference_video_cache_maxsize_mb_title">Maximale Video-Cache-Größe (MB)</string>
     <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
-    <integer name="preference_video_cache_maxsize_mb_default">512</integer>
 
 
     <string name="preference_gallery_sortOrder_title">Albumsortierung</string>
@@ -213,23 +196,18 @@
 
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Max. Alter der letzten Artikel (Tage)</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d Tage</string>
-    <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
-    <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
 
 
     <string name="preference_groups_request_pagesize_title">Gruppen Serveranfrage Seitengröße</string>
     <string name="preference_groups_request_pagesize_summary">%1$d Artikel</string>
-    <integer name="preference_groups_request_pagesize_default">20</integer>
 
 
     <string name="preference_users_request_pagesize_title">Benutzer Serveranfrage Seitengröße</string>
     <string name="preference_users_request_pagesize_summary">%1$d Artikel</string>
-    <integer name="preference_users_request_pagesize_default">20</integer>
 
 
     <string name="preference_album_request_pagesize_title">Album Server Anfrage Seitengröße</string>
     <string name="preference_album_request_pagesize_summary">%1$d Artikel</string>
-    <integer name="preference_album_request_pagesize_default">20</integer>
 
     <string name="preference_gallery_item_thumbnail_size_title">Thumbnail-Größe des Albuminhalts</string>
 
@@ -249,8 +227,6 @@
     <string name="preference_gallery_masonry_view_title">Mauerwerksstil verwenden (experimentell)</string>
     <string name="preference_gallery_masonry_view_summary">Bestens passender Albuminhalt in einem Tapisserie-Effekt</string>
 
-    <bool name="preference_gallery_masonry_view_default">false</bool>
-
     <!-- Data Upload page -->
 
     <string name="preference_page_upload">Hochladen</string>
@@ -262,17 +238,13 @@
 
     <string name="preference_data_upload_chunkSizeKb_title">Max Upload Chunk Größe (KB)</string>
     <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
-    <integer name="preference_data_upload_chunkSizeKb_default">512</integer>
 
 
     <string name="preference_data_upload_chunk_auto_retries_title">Max automatische Datei Chunk-Upload-Versuche</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
-    <integer name="preference_data_upload_chunk_auto_retries_default">1</integer>
-
 
     <string name="preference_data_upload_large_thumbnail_title">Dateien mit großer Miniaturansicht anzeigen</string>
     <string name="preference_data_upload_large_thumbnail_summary">Bildvorschaubilder füllen die Spalte</string>
-    <bool name="preference_data_upload_large_thumbnail_default">true</bool>
 
 
     <string name="preference_data_upload_preferredColumnsPortrait_title">Porträt: Spalten der anzuzeigenden Bilder</string>
@@ -285,8 +257,28 @@
 
     <string name="preference_data_upload_max_filesize_mb_title">Max Dateigröße zum Hochladen ohne Warnung (in MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
-    <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
 
+    <!-- other page -->
+
+    <string name="preference_page_other">Andere</string>
+    <string name="preference_other_category_file_selector">Dateiauswahl</string>
+
+    <!-- prefs -->
+
+    <string name="preference_data_file_selector_showFilenames_title">Dateinamen anzeigen</string>
+    <string name="preference_data_file_selector_showFilenames_summary">Dateinamen, die für jede Datei angezeigt werden</string>
+
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Landschaft: Spalten der anzuzeigenden Dateien</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
+
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Porträt: Spalten der anzuzeigenden Dateien</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
+
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Landschaft: Spalten von Ordnern, die angezeigt werden sollen</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
+
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Porträt: Spalten von Ordnern, die angezeigt werden sollen</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
     <!-- Automatic Upload Jobs page -->
 
@@ -334,7 +326,6 @@
     <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Erfolgreich hochgeladene Dateien löschen</string>
     <string name="preference_data_upload_automatic_job_delete_uploaded_title">Automatisches Löschen</string>
 
-    <integer name="preference_data_upload_automatic_job_max_upload_size_mb_default">20</integer>
 
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Dateigröße hochgeladen</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
