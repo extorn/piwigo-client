@@ -27,13 +27,15 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
     private int readTimeoutMillis = DEFAULT_READ_TIMEOUT_MILLIS;
     private boolean cachingEnabled;
     private CustomDatasourceLoadControlPauseListener loadControlPauseListener;
+    private RemoteDirectHttpClientBasedHttpDataSource.DownloadListener directDownloadListener;
 
 
-    public RemoteFileCachingDataSourceFactory(Context context, TransferListener<? super DataSource> transferListener, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, String userAgent) {
+    public RemoteFileCachingDataSourceFactory(Context context, TransferListener<? super DataSource> transferListener, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, RemoteDirectHttpClientBasedHttpDataSource.DownloadListener directDownloadListener, String userAgent) {
         this.transferListener = transferListener;
         this.context = context;
         this.userAgent = userAgent;
         this.cacheListener = cacheListener;
+        this.directDownloadListener = directDownloadListener;
         loadControlPauseListener = new CustomDatasourceLoadControlPauseListener();
     }
 
@@ -52,6 +54,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
                 readTimeoutMillis, defaultRequestProperties);
         ds.setEnableRedirects(redirectsAllowed);
         ds.setMaxRedirects(maxRedirects);
+        ds.setDownloadListener(directDownloadListener);
         loadControlPauseListener.setDataSource(ds);
         return ds;
     }

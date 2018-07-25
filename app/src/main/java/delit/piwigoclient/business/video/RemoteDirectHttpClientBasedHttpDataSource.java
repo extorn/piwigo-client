@@ -69,6 +69,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private final TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener;
     private CachingAsyncHttpClient client;
     private final Context context;
+    private DownloadListener downloadListener;
 
     private DataSpec dataSpec;
     private InputStream inputStream;
@@ -82,6 +83,8 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private HttpResponse httpResponse;
     private int maxRedirects;
     private boolean enableRedirects;
+    private long lastSentNotification;
+    private long downloadedBytesSinceLastReport;
 
 
     /**
@@ -151,6 +154,10 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         this.readTimeoutMillis = readTimeoutMillis;
         this.context = context;
         startClient();
+    }
+
+    public void setDownloadListener(DownloadListener downloadListener) {
+        this.downloadListener = downloadListener;
     }
 
     private void startClient() {
@@ -487,10 +494,24 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             if (read == -1) {
                 throw new EOFException();
             }
+            downloadedBytesSinceLastReport += read;
             bytesSkipped += read;
             if (listener != null) {
                 listener.onBytesTransferred(this, read);
             }
+            if(downloadListener != null) {
+                long now = System.currentTimeMillis();
+                if(now - lastSentNotification > 1000) {
+                    // max one update every 1000 millis.
+                    lastSentNotification = now;
+                    downloadListener.onDownload(bytesRead, bytesToRead, downloadedBytesSinceLastReport);
+                    downloadedBytesSinceLastReport = 0;
+                }
+            }
+        }
+        if(downloadListener != null && downloadedBytesSinceLastReport > 0) {
+            downloadListener.onDownload(bytesRead, bytesToRead, downloadedBytesSinceLastReport);
+            downloadedBytesSinceLastReport = 0;
         }
 
         // Release the shared skip buffer.
@@ -541,6 +562,16 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         bytesRead += read;
         if (listener != null) {
             listener.onBytesTransferred(this, read);
+        }
+        if(downloadListener != null) {
+            downloadedBytesSinceLastReport += read;
+            long now = System.currentTimeMillis();
+            if(now - lastSentNotification > 1000) {
+                // max one update every 1000 millis.
+                lastSentNotification = now;
+                downloadListener.onDownload(bytesRead, bytesToRead, downloadedBytesSinceLastReport);
+                downloadedBytesSinceLastReport = 0;
+            }
         }
 
         return read;
@@ -603,6 +634,10 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             // do nothing
         }
 
+    }
+
+    public interface DownloadListener {
+        void onDownload(long bytesCachedInThisRange, long totalBytes, long bytesDownloaded);
     }
 }
 

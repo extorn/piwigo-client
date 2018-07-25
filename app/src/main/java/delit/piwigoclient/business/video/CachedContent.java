@@ -14,7 +14,8 @@ import java.util.Date;
 
 public class CachedContent implements Serializable {
 
-    private static final long serialVersionUID = -5756180868306113659L;
+    private String originalUri;
+    private static final long serialVersionUID = -2786159844161672410L;
     private String cacheDataFilename;
     private Date lastAccessed;
     private final ArrayList<SerializableRange> cachedRanges = new ArrayList<>();
@@ -23,6 +24,14 @@ public class CachedContent implements Serializable {
 
     public void setCacheDataFilename(String cacheDataFilename) {
         this.cacheDataFilename = cacheDataFilename;
+    }
+
+    public void setOriginalUri(String originalUri) {
+        this.originalUri = originalUri;
+    }
+
+    public String getOriginalUri() {
+        return originalUri;
     }
 
     public CachedContent() {
@@ -86,6 +95,14 @@ public class CachedContent implements Serializable {
 
     public long getTotalBytes() {
         return totalBytes;
+    }
+
+    public long getCachedBytes() {
+        long total = 0;
+        for(SerializableRange range : cachedRanges) {
+            total += range.getBytes();
+        }
+        return total;
     }
 
     public void setPersistTo(File persistTo) {

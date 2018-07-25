@@ -9,11 +9,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.nio.channels.FileChannel;
+import java.util.Locale;
 
 /**
  * Created by gareth on 01/07/17.
@@ -42,6 +44,9 @@ public class IOUtils {
 
         } catch (FileNotFoundException e) {
             Log.e("IOUtils", "Error reading object from disk", e);
+        } catch(InvalidClassException e) {
+            Log.e("IOUtils", "Error reading object from disk (class blueprint has altered since saved)", e);
+            deleteFileNow = true;
         } catch (ObjectStreamException e) {
             Log.e("IOUtils", "Error reading object from disk", e);
             deleteFileNow = true;
@@ -106,5 +111,21 @@ public class IOUtils {
         if (canWrite) {
             tmpFile.renameTo(destinationFile);
         }
+    }
+
+    public static String toNormalizedText(double cacheBytes) {
+        long KB = 1024;
+        long MB = KB * 1024;
+        String text = " ";
+        if(cacheBytes < KB) {
+            text += String.format(Locale.getDefault(), "%1$.0f Bytes", cacheBytes);
+        } else if(cacheBytes < MB) {
+            double kb = (cacheBytes / KB);
+            text += String.format(Locale.getDefault(), "%1$.1f KB", kb);
+        } else {
+            double mb = (cacheBytes / MB);
+            text += String.format(Locale.getDefault(), "%1$.1f MB", mb);
+        }
+        return text;
     }
 }

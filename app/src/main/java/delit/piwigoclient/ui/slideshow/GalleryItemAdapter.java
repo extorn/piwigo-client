@@ -162,9 +162,11 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
         int pageToShow = Math.max(0, getContainer().getCurrentItem());
         if(pageToShow < galleryResourceItems.size()) {
             Fragment selectedPage = (Fragment)instantiateItem(getContainer(), pageToShow);
-            if(selectedPage.isAdded()) {
-                if (selectedPage instanceof AlbumVideoItemFragment) {
-                    ((AlbumVideoItemFragment) selectedPage).onManualResume();
+            if (selectedPage instanceof AlbumVideoItemFragment) {
+                AlbumVideoItemFragment vidFrag = (AlbumVideoItemFragment)selectedPage;
+                vidFrag.onPageSelected();
+                if(vidFrag.isAdded()) {
+                    vidFrag.onManualResume();
                 }
             }
         } else {

@@ -7,11 +7,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -25,6 +27,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.util.UriUtil;
 import com.google.android.exoplayer2.util.Util;
 
 import org.greenrobot.eventbus.EventBus;
@@ -33,6 +36,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -41,6 +46,7 @@ import delit.piwigoclient.business.video.CachedContent;
 import delit.piwigoclient.business.video.CustomExoPlayerTimeBar;
 import delit.piwigoclient.business.video.PausableLoadControl;
 import delit.piwigoclient.business.video.RemoteAsyncFileCachingDataSource;
+import delit.piwigoclient.business.video.RemoteDirectHttpClientBasedHttpDataSource;
 import delit.piwigoclient.business.video.RemoteFileCachingDataSourceFactory;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -58,6 +64,8 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private static final String STATE_START_ON_RESUME = "startOnResume";
     private static final String STATE_CONTINUE_PLAYBACK = "continuePlayback";
     private static final String STATE_START_VIDEO_ON_PERMISSIONS_GRANTED = "startVideoWhenPermissionsGranted";
+    private static final String CACHED_VIDEO_ORIGINAL_FILENAME = "originalVideoFilename";
+    private static final String PAGE_IS_SHOWING ="pageIsShowing";
     private static final int PERMISSIONS_FOR_DOWNLOAD = 1;
     private static final int PERMISSIONS_FOR_CACHE = 2;
     private SimpleExoPlayer player;
@@ -75,6 +83,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private transient boolean startImmediately;
     private boolean startVideoWhenPermissionsGranted;
     private boolean pageIsShowing;
+    private String originalVideoFilename;
+    private TextView downloadedByteCountView;
+    private TextView cachedByteCountView;
 
     public AlbumVideoItemFragment() {
     }
@@ -128,6 +139,8 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         if (player != null) {
             outState.putLong(CURRENT_VIDEO_PLAYBACK_POSITION, player.getCurrentPosition());
             outState.putString(CACHED_VIDEO_FILENAME, cachedVideoFile != null ? cachedVideoFile.getAbsolutePath() : null);
+            outState.putString(CACHED_VIDEO_ORIGINAL_FILENAME, originalVideoFilename);
+            outState.putBoolean(PAGE_IS_SHOWING, pageIsShowing);
         }
     }
 
@@ -163,8 +176,10 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             } else {
                 cachedVideoFile = new File(cachedVideoFilename);
             }
+            originalVideoFilename = savedInstanceState.getString(CACHED_VIDEO_ORIGINAL_FILENAME);
             startOnResume = savedInstanceState.getBoolean(STATE_START_ON_RESUME);
             continuePlayback = savedInstanceState.getBoolean(STATE_CONTINUE_PLAYBACK);
+            pageIsShowing = savedInstanceState.getBoolean(PAGE_IS_SHOWING);
         }
         displayItemDetailsControlsBasedOnSessionState();
     }
@@ -172,7 +187,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Nullable
     @Override
     public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState, final VideoResourceItem model) {
-        pageIsShowing = false;
         hideProgressIndicator();
 
         directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
@@ -188,6 +202,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         PlayerView simpleExoPlayerView = (PlayerView) layoutInflater.inflate(R.layout.exo_player_viewer_custom, container, false);
 
         CustomExoPlayerTimeBar timebar = simpleExoPlayerView.findViewById(R.id.exo_progress);
+        downloadedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_downloaded);
+        cachedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_cached_summary);
+
 
         simpleExoPlayerView.setPlayer(buildPlayer(model, timebar));
 
@@ -208,7 +225,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         String userAgent = Util.getUserAgent(getContext(), getActivity().getApplicationContext().getPackageName());
         //DataSource.Factory dataSourceFactory = pkg AsyncHttpClientDataSourceFactory(getContext(), userAgent, bandwidthMeter);
         CustomCacheListener cacheListener = new CustomCacheListener(timebar);
-        dataSourceFactory = new RemoteFileCachingDataSourceFactory(getContext(), bandwidthMeter, cacheListener, userAgent);
+        dataSourceFactory = new RemoteFileCachingDataSourceFactory(getContext(), bandwidthMeter, cacheListener, cacheListener, userAgent);
         PausableLoadControl.Listener loadControlPauseListener = dataSourceFactory.getLoadControlPauseListener();
 
         // 2. Create the player
@@ -274,7 +291,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 if (event.areAllPermissionsGranted()) {
                     try {
                         File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-                        File toFile = new File(downloadsFolder, cachedVideoFile.getName());
+                        File toFile = new File(downloadsFolder, originalVideoFilename.replaceAll(".*/","").replaceAll("(\\.[^.]*$)", "_" + getModel().getId()+"$1"));
                         IOUtils.copy(cachedVideoFile, toFile);
                         onGetResource(new PiwigoResponseBufferingHandler.UrlToFileSuccessResponse(0, getModel().getFullSizeFile().getUrl(), toFile));
                         getUiHelper().showToast(getString(R.string.alert_image_download_complete_message));
@@ -306,6 +323,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     }
 
     private void configureDatasourceAndPlayerRequestingPermissions(final boolean startPlayback) {
+        if(dataSourceFactory != null && dataSourceFactory.isCachingEnabled() != isUseCache()) {
+            resetPlayerDatasource = true;
+        }
 
         dataSourceFactory.setCachingEnabled(isUseCache());
         dataSourceFactory.setRedirectsAllowed(prefs.getBoolean(getString(R.string.preference_server_connection_allow_redirects_key), getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default)));
@@ -385,45 +405,82 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    private class CustomCacheListener implements RemoteAsyncFileCachingDataSource.CacheListener {
+    private class CustomCacheListener implements RemoteAsyncFileCachingDataSource.CacheListener,RemoteDirectHttpClientBasedHttpDataSource.DownloadListener {
 
         private final CustomExoPlayerTimeBar timebar;
+        private long bytesDownloaded;
 
         public CustomCacheListener(CustomExoPlayerTimeBar timebar) {
             this.timebar = timebar;
         }
 
         @Override
-        public void onFullyCached(final CachedContent cacheContent) {
-            getView().post(new Runnable() {
-                @Override
-                public void run() {
-                    timebar.updateCachedContent(cacheContent, cacheContent.getTotalBytes());
-                    setAllowDownload(true);
-                    displayItemDetailsControlsBasedOnSessionState();
-                    cachedVideoFile = cacheContent.getCachedDataFile();
-                }
-            });
+        public void onFullyCached(final CachedContent cacheFileContent) {
+            timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
+            setAllowDownload(true);
+            cachedVideoFile = cacheFileContent.getCachedDataFile();
+            originalVideoFilename = cacheFileContent.getOriginalUri().replace(".*/", "").replace("\\?.*", "");
+
+            if(isVisible()) {
+                getView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayItemDetailsControlsBasedOnSessionState();
+                        cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                        timebar.invalidate();
+                    }
+                });
+            }
         }
 
         @Override
-        public void onRangeAdded(final CachedContent cacheFileContent, long fromVideoPosition, long toVideoPosition) {
-            getView().post(new Runnable() {
-                @Override
-                public void run() {
-                    timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
-                }
-            });
+        public void onRangeAdded(final CachedContent cacheFileContent, long fromVideoPosition, long toVideoPosition, long bytesAddedToRange) {
+            bytesDownloaded += bytesAddedToRange;
+
+            if(timebar.getParent() != null) {
+                timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
+            }
+            if(isVisible()) {
+                getView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
+                        cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                        timebar.invalidate();
+                    }
+                });
+            }
         }
 
         @Override
         public void onCacheLoaded(final CachedContent cacheFileContent, long position) {
-            getView().post(new Runnable() {
-                @Override
-                public void run() {
-                    timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
-                }
-            });
+            if(timebar.getParent() != null) {
+                timebar.updateCachedContent(cacheFileContent, cacheFileContent.getTotalBytes());
+            }
+            if(isVisible()) {
+                getView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
+                        cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                        timebar.invalidate();
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onDownload(final long bytesCachedInThisRange, final long totalBytes, final long bytesAddedToCache) {
+            if(isVisible()) {
+                getView().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        bytesDownloaded += bytesAddedToCache;
+                        downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
+                        cachedByteCountView.setText(IOUtils.toNormalizedText(bytesCachedInThisRange) + " / " + IOUtils.toNormalizedText(totalBytes));
+                    }
+                });
+            }
         }
     }
 

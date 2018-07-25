@@ -414,6 +414,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 } else if (allowVideoPlayback) {
                     newFragment = new AlbumVideoItemFragment();
                     newFragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) selectedItem, 1, 1, 1, true));
+                    ((AlbumVideoItemFragment)newFragment).onPageSelected();
                 }
             } else if (selectedItem instanceof PictureResourceItem) {
                 newFragment = new SlideshowFragment();

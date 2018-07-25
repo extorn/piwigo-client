@@ -29,6 +29,7 @@ import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 import delit.piwigoclient.ui.events.ThemeAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.util.IOUtils;
 
 /**
  * Created by gareth on 12/05/17.
@@ -47,6 +48,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
                 getUiHelper().runWithExtraPermissions(GalleryPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
             } else {
                 getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
+                getUiHelper().showToast(R.string.video_caching_disabled_not_recommended);
             }
             return true;
         }
@@ -224,20 +226,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
     }
 
     private String suffixCacheSize(String basicString, long cacheSizeBytes) {
-        double cacheBytes = cacheSizeBytes;
-        long KB = 1024;
-        long MB = KB * 1024;
-        String spaceSuffix = " ";
-        if(cacheBytes < KB) {
-            spaceSuffix += String.format(Locale.getDefault(), "(%1$.0f Bytes)", cacheBytes);
-        } else if(cacheBytes < MB) {
-            double kb = (cacheBytes / KB);
-            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f KB)", kb);
-        } else {
-            double mb = (cacheBytes / MB);
-            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f MB)", mb);
-        }
-        return basicString + spaceSuffix;
+        return basicString + '(' + IOUtils.toNormalizedText(cacheSizeBytes) + ')';
     }
 
     private void setVideoCacheButtonText(Preference videoCacheFlushButton) {

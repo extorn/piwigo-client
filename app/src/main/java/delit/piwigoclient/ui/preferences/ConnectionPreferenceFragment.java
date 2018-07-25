@@ -42,6 +42,8 @@ import delit.piwigoclient.ui.common.preference.EditableListPreference;
 import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.util.DisplayUtils;
+import delit.piwigoclient.util.IOUtils;
 import delit.piwigoclient.util.ObjectUtils;
 import delit.piwigoclient.util.SetUtils;
 import delit.piwigoclient.util.X509Utils;
@@ -326,18 +328,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
     private void setResponseCacheButtonText(Preference responseCacheFlushButton) {
         double cacheBytes = CacheUtils.getResponseCacheSize(getContext());
-        long KB = 1024;
-        long MB = KB * 1024;
-        String spaceSuffix = " ";
-        if(cacheBytes < KB) {
-            spaceSuffix += String.format(Locale.getDefault(), "(%1$.0f Bytes)", cacheBytes);
-        } else if(cacheBytes < MB) {
-            double kb = (cacheBytes / KB);
-            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f KB)", kb);
-        } else {
-            double mb = (cacheBytes / MB);
-            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f MB)", mb);
-        }
+        String spaceSuffix = "(" + IOUtils.toNormalizedText(cacheBytes) + ")";
         responseCacheFlushButton.setTitle(getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
     }
 

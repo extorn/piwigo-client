@@ -2,7 +2,6 @@ package delit.piwigoclient.business.video;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.util.Log;
 
 import com.google.android.exoplayer2.C;
@@ -10,7 +9,6 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.TransferListener;
-import com.google.android.gms.common.util.Base64Utils;
 import com.loopj.android.http.ResponseHandlerInterface;
 
 import java.io.EOFException;
@@ -20,7 +18,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,10 +39,9 @@ import static com.google.android.exoplayer2.upstream.HttpDataSource.HttpDataSour
 public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
 
     private static final String TAG = "RemFileCacheDS";
-    private Context context;
     private final TransferListener<? super DataSource> listener;
     private final Map<String, String> defaultRequestProperties;
-
+    private Context context;
     private DataSpec dataSpec;
     private CachedContent cacheMetaData;
     private RandomAccessFile localCachedDataFile;
@@ -91,23 +87,28 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     private CachedContent loadCacheMetaData(Uri remoteFileLocation) throws HttpDataSourceException {
         try {
             //TODO this is rubbish - it will cause clashes as is not UUID!
-            String uriUUID = Base64Utils.encodeUrlSafe(remoteFileLocation.toString().getBytes());
-            File cacheFileMetadataFile = CacheUtils.getCacheMetadataFile(context, uriUUID);
-            File cacheDataFile = CacheUtils.getCacheDataFile(context, uriUUID);
+            String filenameStem = CacheUtils.getVideoCacheFilenameStemFromVideoUri(remoteFileLocation.toString());
+            File cacheFileMetadataFile = CacheUtils.getCacheMetadataFile(context, filenameStem);
+            File cacheDataFile = CacheUtils.getCacheDataFile(context, filenameStem);
 
-            if(cacheFileMetadataFile.exists()) {
-                if(!cacheDataFile.exists()) {
+            if (cacheFileMetadataFile.exists()) {
+                if (!cacheDataFile.exists()) {
                     // cache is corrupt - delete meta data file
                     cacheFileMetadataFile.delete();
                 } else {
-                    if(cacheMetaData == null || !cacheMetaData.getCachedDataFile().equals(cacheDataFile)) {
+                    if (cacheMetaData == null || !cacheMetaData.getCachedDataFile().equals(cacheDataFile)) {
                         cacheMetaData = CacheUtils.loadCachedContent(cacheFileMetadataFile);
                     }
-                    return cacheMetaData;
+                    if (cacheMetaData != null) {
+                        return cacheMetaData;
+                    } else {
+                        cacheDataFile.delete();
+                    }
                 }
             }
             cacheMetaData = new CachedContent();
-            cacheMetaData.setCacheDataFilename(uriUUID);
+            cacheMetaData.setOriginalUri(remoteFileLocation.toString());
+            cacheMetaData.setCacheDataFilename(cacheDataFile.getName());
             cacheMetaData.setPersistTo(cacheFileMetadataFile);
             return cacheMetaData;
         } catch (IOException e) {
@@ -116,20 +117,21 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     }
 
     private void cancelAnyExistingOpenConnectionToServerAndWaitUntilDone() {
-        if(activeRequestHandle != null) {
+        if (activeRequestHandle != null && !activeRequestHandle.isFinished()) {
             activeRequestHandle.cancel(true);
+            activeRequestHandle = null;
         }
     }
 
     private void openConnectionToServerInBackgroundAndContinueLoading(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) throws FileNotFoundException {
-        if(retrieveMaxBytes == 0) {
+        if (retrieveMaxBytes == 0) {
             return;
         }
         CachingAsyncHttpClient client = HttpClientFactory.getInstance(context).getVideoDownloadASyncHttpClient(ConnectionPreferences.getPreferences(null), context);
         RequestParams requestParams = new RequestParams(defaultRequestProperties);
 
         List<Header> headers = new ArrayList<>();
-        if(firstByteToRetrieve == 0 && retrieveMaxBytes == C.LENGTH_UNSET) {
+        if (firstByteToRetrieve == 0 && retrieveMaxBytes == C.LENGTH_UNSET) {
             // pass the request through without range header
             if (BuildConfig.DEBUG) {
                 Log.d(TAG, "DOWNLOAD BYTES " + "bytes=" + firstByteToRetrieve + "-" + 10240 + " of " + cacheMetaData.getTotalBytes());
@@ -156,7 +158,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         client.setEnableRedirects(enableRedirects, maxRedirects);
         Header[] headersArray = headers.toArray(new Header[headers.size()]);
 
-        for(Header h : headersArray) {
+        for (Header h : headersArray) {
             Log.d(TAG, h.getValue());
         }
 
@@ -164,7 +166,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     }
 
     private ResponseHandlerInterface getResponseHandler(CachedContent cacheMetaData) throws FileNotFoundException {
-        if(httpResponseHandler == null) {
+        if (httpResponseHandler == null) {
             httpResponseHandler = new RandomAccessFileAsyncHttpResponseHandler(cacheMetaData, cacheListener, true);
         }
         httpResponseHandler.setDestinationFile(localCachedDataFile);
@@ -172,7 +174,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     }
 
     private long openConnectionToServerAndBlockUntilContentLengthKnown(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) throws FileNotFoundException {
-        if(retrieveMaxBytes == 0) {
+        if (retrieveMaxBytes == 0) {
             return 0;
         }
         openConnectionToServerInBackgroundAndContinueLoading(uri, allowGzip, firstByteToRetrieve, retrieveMaxBytes);
@@ -195,17 +197,17 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     private long getBytesToRetrieveFromServer(long position, CachedContent.SerializableRange cachedRangeDetail) {
         ArrayList<CachedContent.SerializableRange> ranges = cacheMetaData.getCachedRanges();
         long retVal = -1;
-        if(cachedRangeDetail != null) {
+        if (cachedRangeDetail != null) {
             int rangeIdx = ranges.indexOf(cachedRangeDetail);
             if (rangeIdx < ranges.size() - 1) {
                 CachedContent.SerializableRange nextRange = ranges.get(rangeIdx + 1);
                 retVal = nextRange.getLower() - cachedRangeDetail.getUpper();
-            } else if(cacheMetaData.getTotalBytes() > 0) {
+            } else if (cacheMetaData.getTotalBytes() > 0) {
                 retVal = cacheMetaData.getTotalBytes() - (cachedRangeDetail.getUpper() + 1);
             } else {
                 retVal = -1;
             }
-        } else if(cacheMetaData.getCachedRanges().isEmpty()) {
+        } else if (cacheMetaData.getCachedRanges().isEmpty()) {
             retVal = -1;
         } else {
             CachedContent.SerializableRange lastRange = null;
@@ -236,10 +238,10 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         if (listener != null) {
             listener.onTransferStart(this, dataSpec);
         }
-        if(cacheMetaData == null) {
+        if (cacheMetaData == null) {
             cacheMetaData = loadCacheMetaData(dataSpec.uri);
             cacheListener.onCacheLoaded(cacheMetaData, dataSpec.position);
-            if(cacheMetaData.isComplete()) {
+            if (cacheMetaData.isComplete()) {
                 cacheListener.onFullyCached(cacheMetaData);
             }
         }
@@ -247,10 +249,10 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         try {
             bytesAvailableToRead = invokeNewCallToServer(dataSpec.position);
 
-        } catch(FileNotFoundException e) {
-            throw new HttpDataSourceException("cache data file doesn't exist ("+cacheMetaData.getCachedDataFile().getAbsolutePath()+")", e, dataSpec, TYPE_OPEN);
+        } catch (FileNotFoundException e) {
+            throw new HttpDataSourceException("cache data file doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
         } catch (IOException e) {
-            throw new HttpDataSourceException("error reading from cache data file ("+cacheMetaData.getCachedDataFile().getAbsolutePath()+")", e, dataSpec, TYPE_OPEN);
+            throw new HttpDataSourceException("error reading from cache data file (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
         }
         try {
             // open the file.
@@ -264,9 +266,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             throw new HttpDataSourceException(e, dataSpec, TYPE_OPEN);
         }
         readFromFilePosition = dataSpec.position;
-        if(dataSpec.length >= 0) {
+        if (dataSpec.length >= 0) {
             if (BuildConfig.DEBUG) {
-                Log.d(TAG, String.format("STREAM READY: %1$d-%2$d (%3$d) (%4$d)", dataSpec.position, dataSpec.position + dataSpec.length - 1, dataSpec.length, bytesAvailableToRead));
+                Log.d(TAG, String.format("STREAM READY: %1$d-%2$d (%3$d) (%4$d)", dataSpec.position, Math.max(0, dataSpec.position + dataSpec.length - 1), dataSpec.length, bytesAvailableToRead));
             }
         } else {
             if (BuildConfig.DEBUG) {
@@ -279,7 +281,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     private long invokeNewCallToServer(long position) throws IOException {
         boolean allowGzip = dataSpec.isFlagSet(DataSpec.FLAG_ALLOW_GZIP);
 
-        if(localCachedDataFile == null) {
+        if (localCachedDataFile == null) {
             initialiseRandomAccessCacheFile();
         }
 
@@ -300,13 +302,13 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                         bytesAvailableToRead = cacheMetaData.getTotalBytes() - position;
                     } else {
                         long retrieveMaxBytes = getBytesToRetrieveFromServer(position, cachedRangeDetail);
-                        bytesAvailableToRead = openConnectionToServerAndBlockUntilContentLengthKnown(dataSpec.uri, allowGzip,cachedRangeDetail.getUpper() + 1, retrieveMaxBytes);
+                        bytesAvailableToRead = openConnectionToServerAndBlockUntilContentLengthKnown(dataSpec.uri, allowGzip, cachedRangeDetail.getUpper() + 1, retrieveMaxBytes);
                     }
                 } else {
                     if (cachedRangeDetail.getBytesFrom(position) < dataSpec.length - (dataSpec.position - position)) {
                         cancelAnyExistingOpenConnectionToServerAndWaitUntilDone();
                         long retrieveMaxBytes = getBytesToRetrieveFromServer(position, cachedRangeDetail);
-                        openConnectionToServerInBackgroundAndContinueLoading(dataSpec.uri, allowGzip,cachedRangeDetail.getUpper() + 1, retrieveMaxBytes);
+                        openConnectionToServerInBackgroundAndContinueLoading(dataSpec.uri, allowGzip, cachedRangeDetail.getUpper() + 1, retrieveMaxBytes);
                         bytesAvailableToRead = cacheMetaData.getTotalBytes() - position;
                     }
                     bytesAvailableToRead = dataSpec.length - (dataSpec.position - position);
@@ -318,8 +320,16 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         return bytesAvailableToRead;
     }
 
+    private void ensureCacheFileExistsAndCacheMetadataInSync() throws IOException {
+        if (!cacheMetaData.getCachedDataFile().exists()) {
+            loadCacheMetaData(dataSpec.uri);
+            initialiseRandomAccessCacheFile();
+            cancelAnyExistingOpenConnectionToServerAndWaitUntilDone();
+        }
+    }
+
     private void initialiseRandomAccessCacheFile() throws IOException {
-        if(!cacheMetaData.getCachedDataFile().exists()) {
+        if (!cacheMetaData.getCachedDataFile().exists()) {
             cacheMetaData.getCachedDataFile().createNewFile();
         }
         localCachedDataFile = new RandomAccessFile(cacheMetaData.getCachedDataFile(), "rw");
@@ -340,17 +350,17 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             long maxAvailableToReadNow = 0;
             synchronized (cacheMetaData) {
                 CachedContent.SerializableRange activeRange = cacheMetaData.getRangeContaining(currentPosition);
-                if(activeRange != null) {
+                if (activeRange != null) {
                     maxAvailableToReadNow = activeRange.getBytesFrom(currentPosition);
                 } else {
                     if (BuildConfig.DEBUG) {
-                        if(activeRequestHandle == null || activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) {
-                            if(!this.httpResponseHandler.isLoadSucceeded()) {
+                        if (activeRequestHandle == null || activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) {
+                            if (!this.httpResponseHandler.isLoadSucceeded()) {
                                 try {
                                     Log.e(TAG, "Need to invoke a server call - No data Range available covering position " + currentPosition);
                                     invokeNewCallToServer(currentPosition);
-                                } catch(IOException e) {
-                                    throw new HttpDataSourceException("cache data file that was in use suddenly doesn't exist ("+cacheMetaData.getCachedDataFile().getAbsolutePath()+")", e, dataSpec, TYPE_OPEN);
+                                } catch (IOException e) {
+                                    throw new HttpDataSourceException("cache data file that was in use suddenly doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
                                 }
                             }
                         }
@@ -358,7 +368,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 }
 
                 while (maxAvailableToReadNow == 0 && activeRequestHandle != null) {
-                    if(!activeRequestHandle.isFinished() && !activeRequestHandle.isCancelled()) {
+                    if (!activeRequestHandle.isFinished() && !activeRequestHandle.isCancelled()) {
                         try {
                             cacheMetaData.wait();
                         } catch (InterruptedException e) {
@@ -367,26 +377,28 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                             }
                         }
                     }
-                    if(activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) {
-                        if(!this.httpResponseHandler.isLoadSucceeded()) {
+                    if (activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) {
+                        activeRequestHandle = null;
+                        if (!this.httpResponseHandler.isLoadSucceeded()) {
                             try {
                                 invokeNewCallToServer(currentPosition);
-                            } catch(IOException e) {
-                                throw new HttpDataSourceException("cache data file that was in use suddenly doesn't exist ("+cacheMetaData.getCachedDataFile().getAbsolutePath()+")", e, dataSpec, TYPE_OPEN);
+                            } catch (IOException e) {
+                                throw new HttpDataSourceException("cache data file that was in use suddenly doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
                             }
                         }
+
                     }
-                    if(activeRange == null) {
+                    if (activeRange == null) {
                         activeRange = cacheMetaData.getRangeContaining(currentPosition);
                     }
-                    if(activeRange != null) {
-                        if(currentPosition == cacheMetaData.getTotalBytes() -1) {
+                    if (activeRange != null) {
+                        if (currentPosition == cacheMetaData.getTotalBytes() - 1) {
                             maxAvailableToReadNow = -1;
                         } else {
                             maxAvailableToReadNow = activeRange.getBytesFrom(currentPosition);
                         }
                     } else {
-                        if(BuildConfig.DEBUG) {
+                        if (BuildConfig.DEBUG) {
                             Log.d(TAG, "Waiting for data Range to become available covering position " + currentPosition);
                         }
                     }
@@ -396,37 +408,31 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             int bytesRead = 0;
             try {
                 int bytesToReadNow = (int) Math.min(maxAvailableToReadNow, readLength);
-                if(bytesToReadNow > 0) {
+                if (bytesToReadNow > 0) {
                     ByteBuffer buff = ByteBuffer.wrap(buffer, bufferOffset, bytesToReadNow);
                     FileChannel cachedDataReadChannel = localCachedDataFile.getChannel();
-                    boolean channelOpen = cachedDataReadChannel.isOpen();
-                    if (!channelOpen) {
-                        if (BuildConfig.DEBUG) {
-                            Log.e(TAG, "Expected open channel but was closed");
-                        }
-                    }
-                    FileLock lock = null;
                     try {
                         if (!cachedDataReadChannel.isOpen()) {
-                            lock = cachedDataReadChannel.lock(readFromFilePosition, bytesToReadNow, true);
+                            if (BuildConfig.DEBUG) {
+                                Log.e(TAG, "Expected open channel but was closed");
+                            }
+                            ensureCacheFileExistsAndCacheMetadataInSync();
+                            // we return 0 here because that will force a new request that will retrieve the file again.
+                            return 0;
                         }
                         bytesRead = cachedDataReadChannel.read(buff, readFromFilePosition);
                     } catch (Throwable th) {
                         if (BuildConfig.DEBUG) {
                             Log.e(TAG, "Error locking channel that is probably closed", th);
                         }
-                    } finally {
-                        if (lock != null) {
-                            lock.release();
-                        }
                     }
-                    readFromFilePosition += bytesRead;
 //                    Log.d(TAG, String.format("NEXT READ POS: %1$d READ(%2$d)", readFromFilePosition, bytesRead));
                     buff.flip();
                 }
                 if (bytesRead > 0) {
+                    readFromFilePosition += bytesRead;
                     bytesAvailableToRead -= bytesRead;
-                        if (listener != null) {
+                    if (listener != null) {
                         listener.onBytesTransferred(this, bytesRead);
                     }
                 } else {
@@ -436,7 +442,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 }
             } catch (IOException e) {
                 throw new HttpDataSourceException(e, dataSpec, TYPE_READ);
-            } catch(Throwable th) {
+            } catch (Throwable th) {
                 throw new HttpDataSourceException("Something weird went wrong", new IOException(th), dataSpec, TYPE_READ);
             }
 
@@ -475,9 +481,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         if (BuildConfig.DEBUG) {
             Log.d(TAG, "Closing local cache file");
         }
-        if(activeRequestHandle != null) {
-            activeRequestHandle.cancel(true);
-        }
+        cancelAnyExistingOpenConnectionToServerAndWaitUntilDone();
         boolean closingFile = false;
         try {
             if (localCachedDataFile != null) {
@@ -498,22 +502,19 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     }
 
     public void pauseBackgroundLoad() {
-        if(activeRequestHandle != null && !(activeRequestHandle.isFinished() || activeRequestHandle.isCancelled())) {
-            activeRequestHandle.cancel(true);
-            activeRequestHandle = null;
-        }
+        cancelAnyExistingOpenConnectionToServerAndWaitUntilDone();
     }
 
-    public  void resumeBackgroundLoad() {
-        if((activeRequestHandle == null || activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) && dataSpec != null) {
+    public void resumeBackgroundLoad() {
+        if ((activeRequestHandle == null || activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) && dataSpec != null) {
             long currentPosition = dataSpec.position;
-            if(cacheMetaData.getTotalBytes() >= 0) {
+            if (cacheMetaData.getTotalBytes() >= 0) {
                 currentPosition = cacheMetaData.getTotalBytes() - bytesAvailableToRead;
             }
             try {
                 invokeNewCallToServer(currentPosition);
-            } catch(IOException e) {
-                if(BuildConfig.DEBUG) {
+            } catch (IOException e) {
+                if (BuildConfig.DEBUG) {
                     Log.e(TAG, "cache data file that was in use suddenly doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e);
                 }
             }
@@ -522,7 +523,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
 
     public interface CacheListener {
         void onFullyCached(CachedContent cacheContent);
-        void onRangeAdded(CachedContent cacheFileContent, long lowerBound, long upperBound);
+
+        void onRangeAdded(CachedContent cacheFileContent, long lowerBound, long upperBound, long bytesAddedToRange);
+
         void onCacheLoaded(CachedContent cacheFileContent, long position);
     }
 }

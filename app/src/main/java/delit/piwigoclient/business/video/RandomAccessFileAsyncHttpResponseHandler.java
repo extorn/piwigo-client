@@ -36,6 +36,7 @@ import java.nio.channels.FileChannel;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cz.msebera.android.httpclient.ConnectionClosedException;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
@@ -125,11 +126,14 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
             long newRangeLowerBound;
             long newRangeUpperBound;
             int percentDone = 0;
+            long lastSentNotification = 0;
+            long downloadedBytesSinceLastReport = 0;
             // do not send messages if request has been cancelled
             while ((l = instream.read(tmp)) != -1 && !Thread.currentThread().isInterrupted()) {
                 newRangeLowerBound = firstContentByte + count;
                 newRangeUpperBound = newRangeLowerBound + l - 1;
                 count += l;
+                downloadedBytesSinceLastReport += l;
                 buffer.position(l);
                 buffer.flip();
                 synchronized (destinationChannel) {
@@ -149,7 +153,13 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     }
                     //TODO enable this line when download is working okay.
                     CacheUtils.saveCachedContent(cacheMetaData);
-                    cacheListener.onRangeAdded(cacheMetaData, existingRange.getLower(), existingRange.getUpper());
+                    long now = System.currentTimeMillis();
+                    if(now - lastSentNotification > 1000) {
+                        // max one update every 1000 millis.
+                        lastSentNotification = now;
+                        cacheListener.onRangeAdded(cacheMetaData, existingRange.getLower(), existingRange.getUpper(), downloadedBytesSinceLastReport);
+                        downloadedBytesSinceLastReport = 0;
+                    }
                     cacheMetaData.notifyAll();
                 }
 //                        destinationFile.write(tmp, 0, l);
@@ -160,8 +170,15 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     sendProgressMessage(count, contentLength);
                 }
             }
+            if(downloadedBytesSinceLastReport > 0) {
+                cacheListener.onRangeAdded(cacheMetaData, existingRange.getLower(), existingRange.getUpper(), downloadedBytesSinceLastReport);
+            }
         } catch(SocketException e) {
             Log.d(TAG,"Sinking Socket exception");
+        } catch(ConnectionClosedException e) {
+            if(BuildConfig.DEBUG) {
+                Log.d(TAG,"Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
+            }
         } catch(IOException e) {
             if(BuildConfig.DEBUG) {
                 Log.e(TAG,"Unrecoverable error reading data from http response", e);

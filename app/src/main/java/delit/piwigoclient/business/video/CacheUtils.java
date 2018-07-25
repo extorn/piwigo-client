@@ -3,6 +3,8 @@ package delit.piwigoclient.business.video;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.android.gms.common.util.Base64Utils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
@@ -43,7 +45,11 @@ public class CacheUtils {
 
     public static void clearVideoCache(Context c) throws IOException {
         File cacheDir = getVideoCacheFolder(c);
-        deleteQuietly(cacheDir);
+        if(deleteQuietly(cacheDir)) {
+            cacheDir.mkdir();
+        } else {
+            Log.e("CacheUtils", "Error deleting video cache. Delete failed");
+        }
 //        for(File f : cacheDir.listFiles()) {
 //            if(f.isDirectory()) {
 //                deleteDir(f);
@@ -157,6 +163,10 @@ public class CacheUtils {
     public static void saveCachedContent(CachedContent cacheFileContent) throws IOException {
         ObjectOutputStream oos = null;
         try {
+            if(!cacheFileContent.getPersistTo().exists()) {
+                cacheFileContent.getPersistTo().getParentFile().mkdirs();
+                cacheFileContent.getPersistTo().createNewFile();
+            }
             oos = new ObjectOutputStream(new FileOutputStream(cacheFileContent.getPersistTo()));
             oos.writeObject(cacheFileContent);
             oos.flush();
@@ -168,12 +178,12 @@ public class CacheUtils {
     }
 
     public static void deleteCachedContent(Context ctx, String uri) throws IOException {
-        String filename = getVideoFilename(uri);
-        File metadataFile = getCacheMetadataFile(ctx, filename);
+        String filenameStem = getVideoCacheFilenameStemFromVideoUri(uri);
+        File metadataFile = getCacheMetadataFile(ctx, filenameStem);
         if(metadataFile.exists()) {
             boolean deleted = metadataFile.delete();
             if (deleted) {
-                File dataFile = getCacheDataFile(ctx, filename);
+                File dataFile = getCacheDataFile(ctx, filenameStem);
                 if(dataFile.exists()) {
                     deleted = dataFile.delete();
                 }
@@ -185,8 +195,9 @@ public class CacheUtils {
         }
     }
 
-    public static String getVideoFilename(String uri) {
-        return uri.replaceAll("^.*/", "");
+    public static String getVideoCacheFilenameStemFromVideoUri(String uri) {
+        return Base64Utils.encodeUrlSafe(uri.toString().getBytes());
+//        return uri.replaceAll("^.*/", "");
     }
 
     public static File getCacheMetadataFile(Context context, String connectedToFile) throws IOException {

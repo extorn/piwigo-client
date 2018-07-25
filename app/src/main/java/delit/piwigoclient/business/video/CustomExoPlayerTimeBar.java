@@ -864,6 +864,5 @@ public class CustomExoPlayerTimeBar extends View implements TimeBar {
     public void updateCachedContent(CachedContent cacheFileContent, long clipDurationBytes) {
         this.locallyCachedRanges = cacheFileContent.getCachedRanges();
         this.durationBytes = clipDurationBytes;
-        update();
     }
 }
