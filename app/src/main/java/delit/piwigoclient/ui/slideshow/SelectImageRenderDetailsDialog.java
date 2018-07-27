@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
+import android.widget.Switch;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ class SelectImageRenderDetailsDialog {
     private final Context context;
     private int[] rotationValues;
     private Spinner imageRotation;
-    private NumberPicker maxZoomPicker;
+    private Switch maxZoomPicker;
     private DownloadItemsListAdapter adapter;
     private ListView fileSelectList;
 
@@ -54,11 +54,7 @@ class SelectImageRenderDetailsDialog {
                 break;
             }
         }
-        maxZoomPicker = view.findViewById(R.id.maxZoomValueField);
-        maxZoomPicker.setMaxValue(100);
-        maxZoomPicker.setMinValue(3);
-        maxZoomPicker.setValue((int)Math.rint(currentMaxZoom));
-        maxZoomPicker.setWrapSelectorWheel(true);
+        maxZoomPicker = view.findViewById(R.id.allowFreeZoom);
         fileSelectList = view.findViewById(R.id.fileSelectList);
         fileSelectList.setAdapter(adapter);
         AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
@@ -114,7 +110,7 @@ class SelectImageRenderDetailsDialog {
         builder1.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onSelection(getSelectedFile().getUrl(), getRotateDegrees(), getMaxZoom());
+                listener.onSelection(getSelectedFile().getUrl(), getRotateDegrees(), maxZoomPicker.isChecked()?100:3);
             }
         });
         builder1.setCancelable(true);
@@ -123,10 +119,6 @@ class SelectImageRenderDetailsDialog {
 
     private float getRotateDegrees() {
          return rotationValues[imageRotation.getSelectedItemPosition()];
-    }
-
-    private float getMaxZoom() {
-        return (float)maxZoomPicker.getValue();
     }
 
     private ResourceItem.ResourceFile getSelectedFile() {

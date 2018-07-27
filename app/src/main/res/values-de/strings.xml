@@ -364,7 +364,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="progress_adding_group">Gruppe hinzufügen</string>
     <string name="upload_unacceptable_files_prefix">Nicht akzeptierte Dateien</string>
     <string name="alert_error_unable_to_access_local_filesystem">Ohne Zugriff auf das lokale Dateisystem kann diese Aktion nicht ausgeführt werden. Entschuldigung.</string>
-    <string name="alert_error_admin_user_required">Nur Admin-Benutzer können hochladen. Entschuldigung.</string>
+    <string name="alert_error_admin_user_required">Nur Admin-Benutzer können hochladen, wenn das Community-Plugin nicht installiert ist. Entschuldigung.</string>
     <string name="upload_username_title">Hochladen als</string>
     <string name="certificates_heading">Zertifikate</string>
     <string name="preference_connections_category_client_certificate_auth">Client-Zertifikat-Authentifizierung</string>
@@ -372,7 +372,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_slideshow_out_of_sync_with_tag">Diese Slideshow spiegelt den aktuellen Tag-Inhalt nicht mehr exakt wider.</string>
     <string name="alert_error_app_not_yet_configured">App noch nicht konfiguriert und mit einem PIWIGO-Server verbunden. Bitte öffnen Sie die Anwendung manuell und konfigurieren Sie sie, bevor Sie versuchen, Elemente mit ihr zu teilen.</string>
     <string name="error_server_configuration_invalid">Unzulässige piwigo-Server-Details, bitte überprüfen Sie die Konfiguration der App-Verbindung.</string>
-    <string name="alert_image_show_image_select_max_zoom">Maximaler Zoomfaktor</string>
+    <string name="alert_image_show_image_select_max_zoom">Bis zu 100-facher Zoom möglich</string>
     <string name="alert_image_show_image_select_rotation">Bild drehen</string>
     <string name="top_tips_menu_title">Top-Tipps</string>
     <string name="top_tips_heading">Top-Tipps</string>

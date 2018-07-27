@@ -622,7 +622,7 @@ SOFTWARE.
     <string name="progress_adding_group">Adding Group</string>
     <string name="upload_unacceptable_files_prefix">Unaccepted Files</string>
     <string name="alert_error_unable_to_access_local_filesystem">Without access to the local filesystem, this action cannot proceed. Sorry.</string>
-    <string name="alert_error_admin_user_required">Only admin users can upload. Sorry.</string>
+    <string name="alert_error_admin_user_required">Only admin users can upload unless the community plugin is installed. Sorry.</string>
     <string name="upload_username_title">Upload as</string>
     <string name="certificates_heading">Certificates</string>
     <string name="preference_connections_category_client_certificate_auth">Client Certificate Authentication</string>
@@ -630,7 +630,7 @@ SOFTWARE.
     <string name="alert_slideshow_out_of_sync_with_tag">This slideshow no longer accurately reflects the current tag contents</string>
     <string name="alert_error_app_not_yet_configured">App not yet configured and connected to a PIWIGO server. Please open the app manually and configure it before attempting to share items with it.</string>
     <string name="error_server_configuration_invalid">Unacceptable piwigo server details, please check app connection configuration</string>
-    <string name="alert_image_show_image_select_max_zoom">Max Zoom Factor</string>
+    <string name="alert_image_show_image_select_max_zoom">Allow up to 100x zoom</string>
     <string name="alert_image_show_image_select_rotation">Rotate Image</string>
     <string name="top_tips_menu_title">Top Tips</string>
     <string name="top_tips_heading">Top Tips</string>
