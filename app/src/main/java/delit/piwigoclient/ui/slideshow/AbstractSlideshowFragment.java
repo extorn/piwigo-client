@@ -260,11 +260,17 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemDeletedEvent event) {
-        int fullGalleryIdx = gallery.getItemIdx(event.item);
-        ((GalleryItemAdapter) viewPager.getAdapter()).deleteGalleryItem(fullGalleryIdx);
-        if(viewPager.getAdapter().getCount() == 0) {
-            EventBus.getDefault().post(new SlideshowEmptyEvent());
-        }
+//        int fullGalleryIdx = gallery.getItemIdx(event.item);
+//        viewPager.setCurrentItem(PagerAdapter.POSITION_NONE);
+//        ((GalleryItemAdapter) viewPager.getAdapter()).deleteGalleryItem(fullGalleryIdx);
+//        if(viewPager.getAdapter().getCount() == 0) {
+//            EventBus.getDefault().post(new SlideshowEmptyEvent());
+//        } else {
+//            int displayedIdx = viewPager.getCurrentItem();
+//            viewPager.setCurrentItem(Math.min(viewPager.getAdapter().getCount() - 1, displayedIdx));
+//        }
+        // force the slideshow to end.
+        EventBus.getDefault().post(new SlideshowEmptyEvent());
     }
 
     @Subscribe
