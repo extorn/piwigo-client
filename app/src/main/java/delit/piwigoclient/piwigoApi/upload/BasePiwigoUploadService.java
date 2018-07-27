@@ -793,7 +793,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
     private void setUploadedImageDetailsFromExifData(File fileForUpload, ResourceItem uploadedResource) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            SimpleDateFormat dateTimeOriginalFormat = new SimpleDateFormat("yyyy:MM:dd (HH:mm:ss)");
+            SimpleDateFormat dateTimeOriginalFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(fileForUpload);

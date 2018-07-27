@@ -215,9 +215,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
         if (useDarkMode) {
             view.setBackgroundColor(Color.BLACK);
+            itemPositionTextView.setBackgroundColor(getResources().getColor(R.color.black_overlay));
             itemPositionTextView.setTextColor(Color.WHITE);
         } else {
             view.setBackgroundColor(Color.WHITE);
+            itemPositionTextView.setBackgroundColor(getResources().getColor(R.color.white_overlay));
             itemPositionTextView.setTextColor(Color.BLACK);
         }
         setAsAlbumThumbnail.setOnClickListener(new View.OnClickListener() {

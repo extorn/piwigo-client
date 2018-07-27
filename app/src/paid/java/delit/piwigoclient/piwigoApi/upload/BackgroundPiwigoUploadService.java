@@ -321,7 +321,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 network = connMgr.getActiveNetworkInfo();
             }
 
-            if (network.isAvailable() && network.isConnected()) {
+            if (network != null && network.isAvailable() && network.isConnected()) {
                 // wake immediately.
                 service.wakeIfWaiting();
             } else {
