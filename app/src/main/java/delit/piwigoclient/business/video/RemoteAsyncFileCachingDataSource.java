@@ -378,7 +378,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                             }
                         }
                     }
-                    if (activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) {
+                    if (activeRequestHandle != null && (activeRequestHandle.isFinished() || activeRequestHandle.isCancelled())) {
                         activeRequestHandle = null;
                         if (!this.httpResponseHandler.isLoadSucceeded()) {
                             try {
@@ -387,7 +387,6 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                                 throw new HttpDataSourceException("cache data file that was in use suddenly doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
                             }
                         }
-
                     }
                     if (activeRange == null) {
                         activeRange = cacheMetaData.getRangeContaining(currentPosition);

@@ -144,20 +144,26 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
                 m.reset(originalResourceUrl);
             }
 
-            String dateLastAlteredStr = image.get("date_available").getAsString();
             Date dateLastAltered = null;
-            try {
-                dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
-            } catch (ParseException e) {
-                throw new JSONException("Unable to parse date " + dateLastAlteredStr);
+            JsonElement dateLastAlteredElem = image.get("date_available");
+            if(!dateLastAlteredElem.isJsonNull()) {
+                String dateLastAlteredStr = dateLastAlteredElem.getAsString();
+                try {
+                    dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
+                } catch (ParseException e) {
+                    throw new JSONException("Unable to parse date " + dateLastAlteredStr);
+                }
             }
 
-            String dateCreatedStr = image.get("date_creation").getAsString();
-            Date dateCreated;
-            try {
-                dateCreated = piwigoDateFormat.parse(dateCreatedStr);
-            } catch (ParseException e) {
-                throw new JSONException("Unable to parse date " + dateCreatedStr);
+            Date dateCreated = null;
+            JsonElement dateCreationElem = image.get("date_creation");
+            if(!dateCreationElem.isJsonNull()) {
+                String dateCreatedStr = dateCreationElem.getAsString();
+                try {
+                    dateCreated = piwigoDateFormat.parse(dateCreatedStr);
+                } catch (ParseException e) {
+                    throw new JSONException("Unable to parse date " + dateCreatedStr);
+                }
             }
 
             int originalResourceUrlWidth = 0;
