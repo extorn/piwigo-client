@@ -175,6 +175,7 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
             notifyDataSetChanged();
         }
     }
+
 //
 //    public void onResume() {
 //        int pageToShow = Math.max(0, getContainer().getCurrentItem());
@@ -192,8 +193,10 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
 
     @Override
     public void notifyDataSetChanged() {
-        int lastLoadedIdx = galleryResourceItems.get(galleryResourceItems.size() - 1);
-        addResourcesToIndex(1 + lastLoadedIdx, -1);
+        if(galleryResourceItems.size() > 0) {
+            int lastLoadedIdx = galleryResourceItems.get(galleryResourceItems.size() - 1);
+            addResourcesToIndex(1 + lastLoadedIdx, -1);
+        }
         EventBus.getDefault().post(new SlideshowSizeUpdateEvent(galleryResourceItems.size(), getTotalSlideshowItems()));
         super.notifyDataSetChanged();
     }
