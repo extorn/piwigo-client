@@ -424,8 +424,12 @@ public class UploadActivity extends MyActivity {
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             if(response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                Log.e("UploadActivity", "Retrieved user login success response. Showing upload fragment");
-                showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse)response).getNewSessionDetails().getConnectionPrefs());
+                if(((LoginResponseHandler.PiwigoOnLoginResponse)response).getNewSessionDetails() != null) {
+                    Log.e("UploadActivity", "Retrieved user login success response. Showing upload fragment");
+                    showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails().getConnectionPrefs());
+                } else {
+                    createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
+                }
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }
