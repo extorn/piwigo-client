@@ -76,12 +76,11 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
      * @param inflater
      * @param container
      * @param savedInstanceState
-     * @param model
      * @return
      */
     @Nullable
     @Override
-    public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState, final PictureResourceItem model) {
+    public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         imageView = new TouchImageView(getContext());
         imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
@@ -128,6 +127,13 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 }
             }
         });
+
+        return imageView;
+    }
+
+    @Override
+    protected void configureItemContent(@Nullable View itemContent, final PictureResourceItem model, @Nullable Bundle savedInstanceState) {
+        super.configureItemContent(itemContent, model, savedInstanceState);
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
 
 
@@ -151,7 +157,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 return true;
             }
         });
-        return imageView;
     }
 
     @Override

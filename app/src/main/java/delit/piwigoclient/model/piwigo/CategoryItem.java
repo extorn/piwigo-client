@@ -22,7 +22,7 @@ public class CategoryItem extends GalleryItem {
     };
     public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
     private List<CategoryItem> childAlbums;
-    private long photoCount;
+    private int photoCount;
     private long totalPhotoCount;
     private long subCategories;
     private boolean isPrivate;
@@ -34,7 +34,7 @@ public class CategoryItem extends GalleryItem {
         super(id, null, null, null, null);
     }
 
-    public CategoryItem(long id, String name, String description, boolean isPrivate, Date lastAltered, long photoCount, long totalPhotoCount, long subCategories, String thumbnailUrl) {
+    public CategoryItem(long id, String name, String description, boolean isPrivate, Date lastAltered, int photoCount, long totalPhotoCount, long subCategories, String thumbnailUrl) {
         super(id, name, description, lastAltered, thumbnailUrl);
         this.photoCount = photoCount;
         this.isPrivate = isPrivate;
@@ -131,7 +131,7 @@ public class CategoryItem extends GalleryItem {
         totalPhotoCount--;
     }
 
-    public long getPhotoCount() {
+    public int getPhotoCount() {
         return photoCount;
     }
 

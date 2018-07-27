@@ -136,7 +136,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     @Override
-    public long getImgResourceCount() {
+    public int getImgResourceCount() {
         return getContainerDetails().getPhotoCount();
     }
 

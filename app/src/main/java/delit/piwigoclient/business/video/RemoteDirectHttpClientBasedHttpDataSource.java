@@ -85,6 +85,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private boolean enableRedirects;
     private long lastSentNotification;
     private long downloadedBytesSinceLastReport;
+    private final boolean logEnabled = false;
 
 
     /**
@@ -423,7 +424,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             try {
                 contentLength = Long.parseLong(contentLengthHeader);
             } catch (NumberFormatException e) {
-                if(BuildConfig.DEBUG) {
+                if(logEnabled && BuildConfig.DEBUG) {
                     Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
                 }
             }
@@ -450,14 +451,14 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
                         // assume the one with the larger value is correct. We have seen cases where carrier
                         // change one of them to reduce the size of a request, but it is unlikely anybody would
                         // increase it.
-                        if(BuildConfig.DEBUG) {
+                        if(logEnabled && BuildConfig.DEBUG) {
                             Log.w(TAG, "Inconsistent headers [" + contentLengthHeader + "] [" + contentRangeHeader
                                     + "]");
                         }
                         contentLength = Math.max(contentLength, contentLengthFromRange);
                     }
                 } catch (NumberFormatException e) {
-                    if(BuildConfig.DEBUG) {
+                    if(logEnabled && BuildConfig.DEBUG) {
                         Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
                     }
                 }

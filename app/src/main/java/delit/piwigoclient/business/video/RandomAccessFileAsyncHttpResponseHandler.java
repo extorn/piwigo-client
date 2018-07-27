@@ -56,6 +56,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
     private CachedContent cacheMetaData;
     private boolean loadSucceeded;
     private boolean canParseResponseData;
+    private final boolean logEnabled = false;
 
     public RandomAccessFileAsyncHttpResponseHandler(CachedContent cacheMetaData, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, boolean usePoolThread) throws FileNotFoundException {
         super(cacheMetaData.getCachedDataFile(), false, false, usePoolThread);
@@ -176,16 +177,16 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         } catch(SocketException e) {
             Log.d(TAG,"Sinking Socket exception");
         } catch(ConnectionClosedException e) {
-            if(BuildConfig.DEBUG) {
+            if (logEnabled && BuildConfig.DEBUG) {
                 Log.d(TAG,"Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
             }
         } catch(IOException e) {
-            if(BuildConfig.DEBUG) {
+            if (logEnabled && BuildConfig.DEBUG) {
                 Log.e(TAG,"Unrecoverable error reading data from http response", e);
             }
             throw e;
         } catch(Throwable e) {
-            if(BuildConfig.DEBUG) {
+            if (logEnabled && BuildConfig.DEBUG) {
                 Log.e(TAG,"Unrecoverable error reading data from http response", e);
             }
             throw e;
@@ -208,7 +209,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 firstContentByte = 0;
                 lastContentByte = totalFileContentBytes - 1;
             } catch (NumberFormatException e) {
-                if(BuildConfig.DEBUG) {
+                if (logEnabled && BuildConfig.DEBUG) {
                     Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
                 }
             }
@@ -239,7 +240,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                         // assume the one with the larger value is correct. We have seen cases where carrier
                         // change one of them to reduce the size of a request, but it is unlikely anybody would
                         // increase it.
-                        if(BuildConfig.DEBUG) {
+                        if (logEnabled && BuildConfig.DEBUG) {
                             Log.w(TAG, "Inconsistent headers [" + contentLengthHeader + "] [" + contentRangeHeader
                                     + "]");
                         }
@@ -248,7 +249,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     Log.d(TAG, "total file bytes " + totalFileContentBytes);
                     cacheMetaData.setTotalBytes(totalFileContentBytes);
                 } catch (NumberFormatException e) {
-                    if(BuildConfig.DEBUG) {
+                    if (logEnabled && BuildConfig.DEBUG) {
                         Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
                     }
                 }

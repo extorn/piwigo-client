@@ -19,7 +19,7 @@ import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferen
 
 public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
 
-    public static AlbumPictureItemFragment newInstance(PictureResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount) {
+    public static AlbumPictureItemFragment newInstance(PictureResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         AlbumPictureItemFragment fragment = new AlbumPictureItemFragment();
         fragment.setArguments(buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount));
         return fragment;
@@ -32,8 +32,8 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
     }
 
     @Override
-    protected void setupImageDetailPopup(View v, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.setupImageDetailPopup(v, inflater, container, savedInstanceState);
+    protected void setupImageDetailPopup(View v, Bundle savedInstanceState) {
+        super.setupImageDetailPopup(v, savedInstanceState);
         TabHost tabPanels = v.findViewById(R.id.slideshow_image_tab_panels);
         tabPanels.setup();
         TabHost.TabSpec basicInfoTab = tabPanels.newTabSpec("BasicInfoTab");

@@ -80,7 +80,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
                 name = nameElem.getAsString();
             }
 
-            long photos = category.get("nb_images").getAsLong();
+            int photos = category.get("nb_images").getAsInt();
             long totalPhotos = category.get("total_nb_images").getAsLong();
             long subCategories = category.get("nb_categories").getAsLong();
 

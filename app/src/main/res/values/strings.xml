@@ -766,4 +766,5 @@ SOFTWARE.
     <string name="picture_resource_exif_data_unavailable">Piwigo API does not support retrieving EXIF data</string>
     <string name="picture_resource_exif_data_unavailable_no_plugins">No Plugins known to support retrieving EXIF data via ws API</string>
     <string name="video_caching_disabled_not_recommended">Disabling the video cache will seriously impact performance</string>
+    <string name="video_caching_disabled_warning">Warning. The video cache is disabled. Downloading on demand.</string>
 </resources>

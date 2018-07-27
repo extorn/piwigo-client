@@ -29,7 +29,7 @@ public abstract class ResourceContainer<S extends Identifiable, T extends Identi
         return getItemCount();
     }
 
-    public abstract long getImgResourceCount();
+    public abstract int getImgResourceCount();
 
     public S getContainerDetails() {
         return containerDetails;

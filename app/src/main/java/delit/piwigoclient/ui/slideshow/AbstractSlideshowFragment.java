@@ -83,6 +83,11 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -178,6 +183,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
             }
         };
+        viewPager.clearOnPageChangeListeners();
         viewPager.addOnPageChangeListener(slideshowPageChangeListener);
 
     }
@@ -267,14 +273,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_album));
         }
     }
-
+/*
     @Override
     public void onResume() {
         super.onResume();
         if(viewPager != null && viewPager.getAdapter() != null) {
             ((GalleryItemAdapter) viewPager.getAdapter()).onResume();
         }
-    }
+    }*/
 
     private void loadMoreGalleryResources() {
         int pageToLoad = gallery.getPagesLoaded();

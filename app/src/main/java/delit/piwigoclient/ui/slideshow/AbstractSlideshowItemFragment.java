@@ -70,6 +70,7 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
+import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.dialogs.SelectAlbumDialog;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
@@ -92,7 +93,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 14/04/18.
  */
 
-public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> extends MyFragment {
+public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> extends MyFragment implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
 
     private static final String ARG_GALLERY_ITEM = "galleryItem";
     private static final String ARG_ALBUM_ITEM_IDX = "albumItemIndex";
@@ -128,11 +129,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     protected TextView tagsField;
     private HashSet<Long> updatedLinkedAlbumSet;
     private HashSet<Long> albumsRequiringReload;
-    private long albumItemIdx;
-    private long albumLoadedItemCount;
+    private int albumItemIdx;
+    private int albumLoadedItemCount;
     private TextView itemPositionTextView;
     private long albumTotalItemCount;
     private SlidingLayer bottomSheet;
+    private View itemContent;
 
     public void setAllowDownload(boolean allowDownload) {
         this.allowDownload = allowDownload;
@@ -152,11 +154,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         albumTotalItemCount = -1;
     }
 
-    public static <S extends ResourceItem> Bundle buildArgs(S model, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount) {
+    public static <S extends ResourceItem> Bundle buildArgs(S model, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
         b.putSerializable(ARG_GALLERY_ITEM, model);
-        b.putLong(ARG_ALBUM_ITEM_IDX, albumResourceItemIdx);
-        b.putLong(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumResourceItemCount);
+        b.putInt(ARG_ALBUM_ITEM_IDX, albumResourceItemIdx);
+        b.putInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumResourceItemCount);
         b.putLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, totalResourceItemCount);
         return b;
     }
@@ -175,8 +177,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         outState.putBoolean(ALLOW_DOWNLOAD, isAllowDownload());
         outState.putSerializable(STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
         outState.putSerializable(STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
-        outState.putLong(ARG_ALBUM_ITEM_IDX, albumItemIdx);
-        outState.putLong(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
+        outState.putInt(ARG_ALBUM_ITEM_IDX, albumItemIdx);
+        outState.putInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
         outState.putLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, albumTotalItemCount);
     }
 
@@ -187,7 +189,67 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            intialiseFields();
+            model = (T) getArguments().getSerializable(ARG_GALLERY_ITEM);
+            albumItemIdx = getArguments().getInt(ARG_ALBUM_ITEM_IDX);
+            albumLoadedItemCount = getArguments().getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
+            albumTotalItemCount = getArguments().getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
+            setArguments(null);
+        }
+        if (savedInstanceState != null) {
+            //restore saved state
+            editingItemDetails = savedInstanceState.getBoolean(STATE_EDITING_ITEM_DETAILS);
+            informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
+            allowDownload = savedInstanceState.getBoolean(ALLOW_DOWNLOAD);
+            updatedLinkedAlbumSet = (HashSet<Long>) savedInstanceState.getSerializable(STATE_UPDATED_LINKED_ALBUM_SET);
+            albumsRequiringReload = (HashSet<Long>) savedInstanceState.getSerializable(STATE_ALBUMS_REQUIRING_UPDATE);
+            if (getArguments() == null) {
+                model = (T) savedInstanceState.getSerializable(ARG_GALLERY_ITEM);
+                albumItemIdx = savedInstanceState.getInt(ARG_ALBUM_ITEM_IDX);
+                albumLoadedItemCount = savedInstanceState.getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
+                albumTotalItemCount = savedInstanceState.getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
+            }
+        }
+
+        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
+        if (useDarkMode) {
+            view.setBackgroundColor(Color.BLACK);
+            itemPositionTextView.setTextColor(Color.WHITE);
+        } else {
+            view.setBackgroundColor(Color.WHITE);
+            itemPositionTextView.setTextColor(Color.BLACK);
+        }
+        setAsAlbumThumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(model.getParentId() != null) {
+                    onUseAsAlbumThumbnailForParent();
+                } else {
+                    onUseAsAlbumThumbnailSelectAlbum();
+                }
+            }
+        });
+        ratingsBar.setRating(model.getYourRating());
+        ratingsBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                if (fromUser) {
+                    onAlterRating(model, rating);
+                }
+            }
+        });
+
+        updateItemPositionText();
+        onRatingAltered(model);
+        setupImageDetailPopup(view, savedInstanceState);
+        // show information panel if wanted.
+        updateInformationShowingStatus();
+
+        configureItemContent(itemContent, model, savedInstanceState);
+
         super.onViewCreated(view, savedInstanceState);
+
         if (savedInstanceState == null) {
             // call this quietly in the background to avoid it ruining the slideshow experience.
             String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
@@ -203,49 +265,16 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = getView();
+        if(v != null) {
+            return v;
+        }
         super.onCreateView(inflater, container, savedInstanceState);
-        if (getArguments() != null) {
-            intialiseFields();
-            model = (T) getArguments().getSerializable(ARG_GALLERY_ITEM);
-            albumItemIdx = getArguments().getLong(ARG_ALBUM_ITEM_IDX);
-            albumLoadedItemCount = getArguments().getLong(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
-            albumTotalItemCount = getArguments().getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
-            setArguments(null);
-        }
-        if (savedInstanceState != null) {
-            //restore saved state
-            editingItemDetails = savedInstanceState.getBoolean(STATE_EDITING_ITEM_DETAILS);
-            informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
-            allowDownload = savedInstanceState.getBoolean(ALLOW_DOWNLOAD);
-            updatedLinkedAlbumSet = (HashSet<Long>) savedInstanceState.getSerializable(STATE_UPDATED_LINKED_ALBUM_SET);
-            albumsRequiringReload = (HashSet<Long>) savedInstanceState.getSerializable(STATE_ALBUMS_REQUIRING_UPDATE);
-            if (getArguments() == null) {
-                model = (T) savedInstanceState.getSerializable(ARG_GALLERY_ITEM);
-                albumItemIdx = savedInstanceState.getLong(ARG_ALBUM_ITEM_IDX);
-                albumLoadedItemCount = savedInstanceState.getLong(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
-                albumTotalItemCount = savedInstanceState.getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
-            }
-        }
 
-        final View v = inflater.inflate(getLayoutId(), container, false);
-
-        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
+        v = inflater.inflate(getLayoutId(), container, false);
 
         itemPositionTextView = v.findViewById(R.id.slideshow_resource_item_x_of_y_text);
-
-        if (useDarkMode) {
-            v.setBackgroundColor(Color.BLACK);
-            itemPositionTextView.setTextColor(Color.WHITE);
-        } else {
-            v.setBackgroundColor(Color.WHITE);
-            itemPositionTextView.setTextColor(Color.BLACK);
-        }
-
-        updateItemPositionText();
-
-        RelativeLayout itemContentLayout = v.findViewById(R.id.slideshow_item_content_layout);
         progressIndicator = v.findViewById(R.id.slideshow_image_loadingIndicator);
-
         setAsAlbumThumbnail = v.findViewById(R.id.slideshow_resource_action_use_for_album_thumbnail);
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_wallpaper_black_24dp).into(setAsAlbumThumbnail);
         setAsAlbumThumbnail.setOnLongClickListener(new View.OnLongClickListener() {
@@ -254,56 +283,30 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 return onUseAsAlbumThumbnailSelectAlbum();
             }
         });
-        setAsAlbumThumbnail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(model.getParentId() != null) {
-                    onUseAsAlbumThumbnailForParent();
-                } else {
-                    onUseAsAlbumThumbnailSelectAlbum();
-                }
-            }
-        });
 
-        View itemContent = createItemContent(inflater, itemContentLayout, savedInstanceState, model);
+        averageRatingsBar = v.findViewById(R.id.slideshow_image_average_ratingBar);
+        ratingsBar = v.findViewById(R.id.slideshow_image_ratingBar);
+
+        RelativeLayout itemContentLayout = v.findViewById(R.id.slideshow_item_content_layout);
+        itemContent = createItemContent(inflater, itemContentLayout, savedInstanceState);
         if (itemContent != null) {
             // insert first to allow all others to be overlaid.
             int children = itemContentLayout.getChildCount();
             itemContentLayout.addView(itemContent, 0);
         }
-
-        averageRatingsBar = v.findViewById(R.id.slideshow_image_average_ratingBar);
-        ratingsBar = v.findViewById(R.id.slideshow_image_ratingBar);
-        ratingsBar.setRating(model.getYourRating());
-        ratingsBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                if (fromUser) {
-                    onAlterRating(model, rating);
-                }
-            }
-        });
-        onRatingAltered(model);
-//            CheckBox favoriteButton = (CheckBox)v.findViewById(R.id.slideshow_image_favorite);
+        //            CheckBox favoriteButton = (CheckBox)v.findViewById(R.id.slideshow_image_favorite);
 //            favoriteButton.setOnCheckedChangeListener(pkg CompoundButton.OnCheckedChangeListener() {
 //                @Override
 //                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 //                    PiwigoAccessService.startActionSetIsFavorite(model, isChecked, this);
 //                }
 //            });
-
         bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
         LinearLayout bottomSheetContent = bottomSheet.findViewById(R.id.slideshow_image_bottom_sheet_content);
-
-        setupImageDetailPopup(v, inflater, container, savedInstanceState);
-
         View itemDetail = createCustomItemDetail(inflater, itemContentLayout, savedInstanceState, model);
         if (itemDetail != null) {
             bottomSheetContent.addView(itemDetail, bottomSheetContent.getChildCount());
         }
-
-        // show information panel if wanted.
-        updateInformationShowingStatus();
 
         return v;
     }
@@ -365,15 +368,18 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         progressIndicator.setVisibility(VISIBLE);
     }
 
-    protected View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState, T model) {
+    protected View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         return null;
+    }
+
+    protected void configureItemContent(@Nullable View itemContentView, final T model, @Nullable Bundle savedInstanceState) {
     }
 
     protected View createCustomItemDetail(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState, T model) {
         return null;
     }
 
-    protected void setupImageDetailPopup(View v, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    protected void setupImageDetailPopup(View v, Bundle savedInstanceState) {
         resourceNameView = v.findViewById(R.id.slideshow_image_details_name);
 //        resourceNameView.setOnTouchListener(new View.OnTouchListener() {
 //            @Override
@@ -749,7 +755,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         uiHelper.deregisterFromActiveServiceCalls();
     }
 
-    public void updateSlideshowPositionDetails(int position, int albumLoadedItemCount, long albumTotalItemCount) {
+    public void updateSlideshowPositionDetails(int position, int albumLoadedItemCount, int albumTotalItemCount) {
         this.albumItemIdx = position;
         this.albumLoadedItemCount = albumLoadedItemCount;
         this.albumTotalItemCount = albumTotalItemCount;
@@ -924,6 +930,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             }
             updateItemPositionText();
         }
+    }
+
+    @Override
+    public int getPagerIndex() {
+        return albumItemIdx;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

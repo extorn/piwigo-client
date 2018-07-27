@@ -7,9 +7,9 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -24,10 +25,8 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.util.UriUtil;
 import com.google.android.exoplayer2.util.Util;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,9 +35,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
@@ -59,45 +57,53 @@ import delit.piwigoclient.util.IOUtils;
 
 public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceItem> {
 
-    private static final String CURRENT_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
-    private static final String CACHED_VIDEO_FILENAME = "cachedVideoFileName";
-    private static final String STATE_START_ON_RESUME = "startOnResume";
-    private static final String STATE_CONTINUE_PLAYBACK = "continuePlayback";
-    private static final String STATE_START_VIDEO_ON_PERMISSIONS_GRANTED = "startVideoWhenPermissionsGranted";
-    private static final String CACHED_VIDEO_ORIGINAL_FILENAME = "originalVideoFilename";
-    private static final String PAGE_IS_SHOWING ="pageIsShowing";
+    private static final String TAG = "VideoItemFragment";
+
+    private static final String STATE_CACHED_VIDEO_FILENAME = "cachedVideoFileName";
+    private static final String STATE_VIDEO_PLAY_AUTOMATICALLY = "videoPlayAutomatically";
+    private static final String STATE_VIDEO_IS_PLAYING = "videoIsPlayingWhenVisible";
+    private static final String STATE_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
+    private static final String STATE_PERMISSION_TO_CACHE_GRANTED = "permissionToCacheToDisk";
+    private static final String STATE_CACHED_VIDEO_ORIGINAL_FILENAME = "originalVideoFilename";
+    private static final String STATE_PAGE_IS_SHOWING ="pageIsShowing";
+
     private static final int PERMISSIONS_FOR_DOWNLOAD = 1;
     private static final int PERMISSIONS_FOR_CACHE = 2;
+
     private SimpleExoPlayer player;
     private RemoteFileCachingDataSourceFactory dataSourceFactory;
     private PausableLoadControl loadControl;
-    private long seekToPosition;
     private CustomImageButton directDownloadButton;
-    private boolean resetPlayerDatasource;
-    private File cachedVideoFile;
-    private boolean permissionToCache = true;
-    private boolean startOnResume;
-    private boolean continuePlayback = true;
 
-    // No need to store this as it's used once and forgotten.
-    private transient boolean startImmediately;
-    private boolean startVideoWhenPermissionsGranted;
+    private File cachedVideoFile; // Used when downloading (copying) video to user accessible area
+    private String originalVideoFilename; // Used for generating downloaded filename
+    private boolean permissionToCache;
+
+    private long videoPlaybackPosition;
+    private boolean videoIsPlayingWhenVisible;
+    private boolean playVideoAutomatically;
+
     private boolean pageIsShowing;
-    private String originalVideoFilename;
+
     private TextView downloadedByteCountView;
     private TextView cachedByteCountView;
+    private PlayerView simpleExoPlayerView;
+    private CustomCacheListener cacheListener;
+    private DefaultTrackSelector trackSelector;
 
     public AlbumVideoItemFragment() {
     }
 
-    public static Bundle buildArgs(VideoResourceItem galleryItem, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
+    public static Bundle buildArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
         Bundle args = SlideshowItemFragment.buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
-        args.putBoolean(STATE_START_ON_RESUME, startPlaybackOnFragmentDisplay);
+        args.putBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY, startPlaybackOnFragmentDisplay);
         return args;
     }
 
+
     @Override
     public void onDestroyView() {
+        logStatus("destroy view");
         cleanupVideoResources();
         manageCache();
         super.onDestroyView();
@@ -105,15 +111,16 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     @Override
     public void onPause() {
+        logStatus("onPause");
         stopVideoDownloadAndPlay();
         super.onPause();
     }
 
     @Override
     public void onResume() {
+        logStatus("onResume");
         if(pageIsShowing) {
-            configureDatasourceAndPlayerRequestingPermissions(startImmediately || (startOnResume && continuePlayback));
-            startImmediately = false;
+            configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
         }
         super.onResume();
     }
@@ -130,115 +137,124 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         EventBus.getDefault().unregister(this);
     }
 
+    private void logStatus(String msg) {
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, String.format("%1$s - %2$b : %3$s", getModel() != null ? getModel().getId() : "UNKNOWN", pageIsShowing, msg));
+        }
+    }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        logStatus("saving state");
         super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_START_ON_RESUME, startOnResume);
-        outState.putBoolean(STATE_CONTINUE_PLAYBACK, continuePlayback);
-        outState.putBoolean(STATE_START_VIDEO_ON_PERMISSIONS_GRANTED, startVideoWhenPermissionsGranted);
-        if (player != null) {
-            outState.putLong(CURRENT_VIDEO_PLAYBACK_POSITION, player.getCurrentPosition());
-            outState.putString(CACHED_VIDEO_FILENAME, cachedVideoFile != null ? cachedVideoFile.getAbsolutePath() : null);
-            outState.putString(CACHED_VIDEO_ORIGINAL_FILENAME, originalVideoFilename);
-            outState.putBoolean(PAGE_IS_SHOWING, pageIsShowing);
-        }
+        outState.putBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY, playVideoAutomatically);
+        outState.putBoolean(STATE_VIDEO_IS_PLAYING, videoIsPlayingWhenVisible);
+        outState.putBoolean(STATE_PERMISSION_TO_CACHE_GRANTED, permissionToCache);
+        outState.putString(STATE_CACHED_VIDEO_FILENAME, cachedVideoFile != null ? cachedVideoFile.getAbsolutePath() : null);
+        outState.putString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME, originalVideoFilename);
+        outState.putBoolean(STATE_PAGE_IS_SHOWING, pageIsShowing);
+        outState.putLong(STATE_VIDEO_PLAYBACK_POSITION, videoPlaybackPosition);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            startVideoWhenPermissionsGranted = savedInstanceState.getBoolean(STATE_START_VIDEO_ON_PERMISSIONS_GRANTED);
-        }
+        logStatus("creating all the essentials");
+        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        TrackSelection.Factory videoTrackSelectionFactory =
+                new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        trackSelector =
+                new DefaultTrackSelector(videoTrackSelectionFactory);
+
+        String userAgent = Util.getUserAgent(getContext(), getActivity().getApplicationContext().getPackageName());
+        cacheListener = new CustomCacheListener();
+        dataSourceFactory = new RemoteFileCachingDataSourceFactory(getContext(), bandwidthMeter, cacheListener, cacheListener, userAgent);
+        PausableLoadControl.Listener loadControlPauseListener = dataSourceFactory.getLoadControlPauseListener();
+
+        loadControl = new PausableLoadControl();
+        loadControl.setListener(loadControlPauseListener);
         super.onCreate(savedInstanceState);
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        setAllowDownload(false);
-        return view;
+    public void onStart() {
+        super.onStart();
     }
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+        super.onViewCreated(view, savedInstanceState);
+        setAllowDownload(false);
+
         if(getArguments() != null) {
-            // if true, playback will start immediately. Otherwise user will have to push play.
-            continuePlayback = getArguments().getBoolean(STATE_CONTINUE_PLAYBACK);
+            logStatus("loading arguments");
+            playVideoAutomatically = getArguments().getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
+            videoIsPlayingWhenVisible = playVideoAutomatically;
         }
         if (savedInstanceState != null) {
-            startVideoWhenPermissionsGranted = savedInstanceState.getBoolean(STATE_START_VIDEO_ON_PERMISSIONS_GRANTED);
-            seekToPosition = savedInstanceState.getLong(CURRENT_VIDEO_PLAYBACK_POSITION);
-            String cachedVideoFilename = savedInstanceState.getString(CACHED_VIDEO_FILENAME);
+            logStatus("loading saved state");
+            playVideoAutomatically = savedInstanceState.getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
+            videoIsPlayingWhenVisible = savedInstanceState.getBoolean(STATE_VIDEO_IS_PLAYING);
+            permissionToCache = savedInstanceState.getBoolean(STATE_PERMISSION_TO_CACHE_GRANTED);
+            videoPlaybackPosition = savedInstanceState.getLong(STATE_VIDEO_PLAYBACK_POSITION);
+            String cachedVideoFilename = savedInstanceState.getString(STATE_CACHED_VIDEO_FILENAME);
             if(cachedVideoFilename == null) {
                 cachedVideoFile = null;
             } else {
                 cachedVideoFile = new File(cachedVideoFilename);
             }
-            originalVideoFilename = savedInstanceState.getString(CACHED_VIDEO_ORIGINAL_FILENAME);
-            startOnResume = savedInstanceState.getBoolean(STATE_START_ON_RESUME);
-            continuePlayback = savedInstanceState.getBoolean(STATE_CONTINUE_PLAYBACK);
-            pageIsShowing = savedInstanceState.getBoolean(PAGE_IS_SHOWING);
+            originalVideoFilename = savedInstanceState.getString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME);
+            pageIsShowing = savedInstanceState.getBoolean(STATE_PAGE_IS_SHOWING);
         }
+        logStatus("view state restored");
         displayItemDetailsControlsBasedOnSessionState();
     }
 
     @Nullable
     @Override
-    public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState, final VideoResourceItem model) {
+    public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         hideProgressIndicator();
-
+        logStatus("Creating item content");
         directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
-        directDownloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDownloadItem(getModel());
-            }
-        });
 
-        LayoutInflater layoutInflater = getLayoutInflater();
-        PlayerView simpleExoPlayerView = (PlayerView) layoutInflater.inflate(R.layout.exo_player_viewer_custom, container, false);
+        simpleExoPlayerView = (PlayerView) inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
 
-        CustomExoPlayerTimeBar timebar = simpleExoPlayerView.findViewById(R.id.exo_progress);
+
         downloadedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_downloaded);
         cachedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_cached_summary);
 
 
-        simpleExoPlayerView.setPlayer(buildPlayer(model, timebar));
-
         CustomExoPlayerTouchListener customTouchListener = new CustomExoPlayerTouchListener(simpleExoPlayerView);
         simpleExoPlayerView.setOnTouchListener(customTouchListener);
+        logStatus("finished created item content");
         return simpleExoPlayerView;
     }
 
-    private SimpleExoPlayer buildPlayer(VideoResourceItem model, CustomExoPlayerTimeBar timebar) {
+    @Override
+    protected void configureItemContent(@Nullable View itemContentView, final VideoResourceItem model, @Nullable Bundle savedInstanceState) {
+        super.configureItemContent(itemContentView, model, savedInstanceState);
+        directDownloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDownloadItem(model);
+            }
+        });
 
-        resetPlayerDatasource = true;
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector =
-                new DefaultTrackSelector(videoTrackSelectionFactory);
-// Produces DataSource instances through which media data is loaded.
-        String userAgent = Util.getUserAgent(getContext(), getActivity().getApplicationContext().getPackageName());
-        //DataSource.Factory dataSourceFactory = pkg AsyncHttpClientDataSourceFactory(getContext(), userAgent, bandwidthMeter);
-        CustomCacheListener cacheListener = new CustomCacheListener(timebar);
-        dataSourceFactory = new RemoteFileCachingDataSourceFactory(getContext(), bandwidthMeter, cacheListener, cacheListener, userAgent);
-        PausableLoadControl.Listener loadControlPauseListener = dataSourceFactory.getLoadControlPauseListener();
-
-        // 2. Create the player
-        loadControl = new PausableLoadControl();
-        loadControl.setListener(loadControlPauseListener);
+        CustomExoPlayerTimeBar timebar = itemContentView.findViewById(R.id.exo_progress);
+        cacheListener.setTimebar(timebar);
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
 
-        return player;
+        ((PlayerView)itemContentView).setPlayer(player);
     }
 
     @Override
     public void onPageDeselected() {
+        if(!pageIsShowing) {
+            return;
+        }
+        logStatus("transitioning to page not showing");
         super.onPageDeselected();
         pageIsShowing = false;
         stopVideoDownloadAndPlay();
@@ -246,20 +262,21 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     @Override
     public void onPageSelected() {
+        if(pageIsShowing) {
+            return;
+        }
         super.onPageSelected();
         pageIsShowing = true;
+        logStatus("page selected");
         if(isAdded()) {
-            configureDatasourceAndPlayerRequestingPermissions(startImmediately || (startOnResume && continuePlayback));
-            startImmediately = false;
+            configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
         }
     }
 
     private void clearCacheAndRestartVideo() {
-        continuePlayback = player.getPlayWhenReady();
         stopVideoDownloadAndPlay();
-        player.stop();
-        resetPlayerDatasource = true;
-        seekToPosition = 0;
+        player.stop(); // this is terminal.
+        videoPlaybackPosition = 0; // ensure it starts at the beginning again
         try {
             CacheUtils.deleteCachedContent(getContext(), getModel().getFullSizeFile().getUrl());
             // now update stored state and UI display
@@ -268,7 +285,8 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         } catch (IOException e) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_clear_cached_content));
         }
-        configureDatasourceAndPlayerRequestingPermissions(continuePlayback);
+        logStatus("Cache cleared - configure a new datasource and player - start playback? : " + videoIsPlayingWhenVisible);
+        configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
     }
 
     @Override
@@ -303,14 +321,25 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 }
             } else if(getUiHelper().getPermissionsNeededReason() == PERMISSIONS_FOR_CACHE) {
                 if (event.areAllPermissionsGranted()) {
-                    configurePlayer(startVideoWhenPermissionsGranted);
+                    permissionToCache = true;
+                    logStatus("All permissions granted - configure player now!");
                 } else {
+                    logStatus("Not all permissions granted - tweak datasource factory settings and configure player now!");
                     permissionToCache = false;
-                    dataSourceFactory.setCachingEnabled(false);
-                    dataSourceFactory.setRedirectsAllowed(prefs.getBoolean(getString(R.string.preference_server_connection_allow_redirects_key), getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default)));
-                    dataSourceFactory.setMaxRedirects(prefs.getInt(getString(R.string.preference_server_connection_max_redirects_key), getResources().getInteger(R.integer.preference_server_connection_max_redirects_default)));
-                    configurePlayer(startVideoWhenPermissionsGranted);
+                    if(pageIsShowing) {
+                        getUiHelper().showToast(R.string.video_caching_disabled_warning);
+                    }
                 }
+                boolean factorySettingsAltered = dataSourceFactory.setCachingEnabled(isUseCache());
+                if(factorySettingsAltered) {
+                    logStatus("Need to create a new datasource");
+                    player.setPlayWhenReady(false);
+                    loadControl.pauseBuffering();
+                    player.stop();
+                }
+                dataSourceFactory.setRedirectsAllowed(prefs.getBoolean(getString(R.string.preference_server_connection_allow_redirects_key), getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default)));
+                dataSourceFactory.setMaxRedirects(prefs.getInt(getString(R.string.preference_server_connection_max_redirects_key), getResources().getInteger(R.integer.preference_server_connection_max_redirects_default)));
+                configurePlayer(videoIsPlayingWhenVisible);
             } else {
                 throw new IllegalStateException("Permission required for what reason?");
             }
@@ -319,29 +348,40 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     private boolean isUseCache() {
         // assume have permission until proven otherwise.
-        return permissionToCache && prefs.getBoolean(getString(R.string.preference_video_cache_enabled_key), getResources().getBoolean(R.bool.preference_video_cache_enabled_default));
+        return prefs.getBoolean(getString(R.string.preference_video_cache_enabled_key), getResources().getBoolean(R.bool.preference_video_cache_enabled_default));
     }
 
     private void configureDatasourceAndPlayerRequestingPermissions(final boolean startPlayback) {
-        if(dataSourceFactory != null && dataSourceFactory.isCachingEnabled() != isUseCache()) {
-            resetPlayerDatasource = true;
-        }
 
-        dataSourceFactory.setCachingEnabled(isUseCache());
-        dataSourceFactory.setRedirectsAllowed(prefs.getBoolean(getString(R.string.preference_server_connection_allow_redirects_key), getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default)));
-        dataSourceFactory.setMaxRedirects(prefs.getInt(getString(R.string.preference_server_connection_max_redirects_key), getResources().getInteger(R.integer.preference_server_connection_max_redirects_default)));
+        logStatus("configuring datasource factory with current cache enabled etc setttings");
+
+        boolean factorySettingsAltered = dataSourceFactory.setRedirectsAllowed(prefs.getBoolean(getString(R.string.preference_server_connection_allow_redirects_key), getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default)));
+        factorySettingsAltered |= dataSourceFactory.setMaxRedirects(prefs.getInt(getString(R.string.preference_server_connection_max_redirects_key), getResources().getInteger(R.integer.preference_server_connection_max_redirects_default)));
+        factorySettingsAltered |= dataSourceFactory.setCachingEnabled(isUseCache());
+        if(factorySettingsAltered) {
+            logStatus("Need to create a new datasource");
+            stopVideoDownloadAndPlay();
+            player.stop();
+        }
+        videoIsPlayingWhenVisible = startPlayback;
 
         if(dataSourceFactory.isCachingEnabled()) {
-            startVideoWhenPermissionsGranted = startPlayback;
+            logStatus("configuring datasource and player - caching enabled - check permissions first");
             getUiHelper().setPermissionsNeededReason(PERMISSIONS_FOR_CACHE);
             getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
         } else {
-            configurePlayer(startPlayback);
+            logStatus("configuring datasource and player - no caching enabled - do now!");
+            configurePlayer(videoIsPlayingWhenVisible);
+            if(pageIsShowing) {
+                getUiHelper().showToast(R.string.video_caching_disabled_warning);
+            }
         }
     }
 
-    private void configurePlayer(boolean startPlayback) {
-        if(resetPlayerDatasource) {
+    private void configurePlayer(boolean startPlaybackImmediatelyIfVisibleToUser) {
+
+        if(player.getPlaybackState() == Player.STATE_IDLE) {
+            logStatus("configuring the player with a brand new datasource from factory");
             Uri videoUri = Uri.parse(getModel().getFullSizeFile().getUrl());
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
@@ -351,37 +391,27 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(dataSourceFactory);
             factory.setExtractorsFactory(extractorsFactory);
             ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
-            if (player.getCurrentPosition() != seekToPosition && seekToPosition >= 0) {
-                player.seekTo(seekToPosition);
+            if (player.getCurrentPosition() != videoPlaybackPosition && videoPlaybackPosition >= 0) {
+                logStatus("moving playback position to last position ("+player.getCurrentPosition()+")");
+                player.seekTo(videoPlaybackPosition);
             }
+            logStatus("resuming buffering - in case paused");
             loadControl.resumeBuffering();
             player.prepare(videoSource, false, false);
-            player.setPlayWhenReady(startPlayback && pageIsShowing);
-            resetPlayerDatasource = false;
         } else {
+            logStatus("configuring player with old datasource - resuming buffering if paused");
             loadControl.resumeBuffering();
-            player.setPlayWhenReady(startPlayback && pageIsShowing);
         }
-    }
-
-    public void onManualResume() {
-        startImmediately = continuePlayback;
-    }
-
-    private void startVideoDownloadAndPlay() {
-        if(isAdded()) {
-            configureDatasourceAndPlayerRequestingPermissions(continuePlayback);
-        } else {
-            startImmediately = true;
-        }
+        player.setPlayWhenReady(startPlaybackImmediatelyIfVisibleToUser && pageIsShowing);
     }
 
     private void stopVideoDownloadAndPlay() {
         if (player != null) {
-            continuePlayback = player.getPlayWhenReady();
-            seekToPosition = player.getCurrentPosition();
+            videoIsPlayingWhenVisible = player.getPlayWhenReady();
+            videoPlaybackPosition = player.getCurrentPosition();
             player.setPlayWhenReady(false);
             loadControl.pauseBuffering();
+            logStatus("video playback stopped and data load paused");
         }
     }
 
@@ -390,13 +420,14 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             player.stop();
             player.release();
             player = null;
-            dataSourceFactory = null;
+            logStatus("player and data source factory cleaned up (need to clean up datasource manually?)");
         }
     }
 
     private void manageCache() {
         if(isUseCache()) {
             long maxCacheSizeBytes = 1024 * 1024 * prefs.getInt(getString(R.string.preference_video_cache_maxsize_mb_key), getResources().getInteger(R.integer.preference_video_cache_maxsize_mb_default));
+            logStatus("managing the disk cache - max size = " + IOUtils.toNormalizedText(maxCacheSizeBytes));
             try {
                 CacheUtils.manageVideoCache(getContext(), maxCacheSizeBytes);
             } catch (IOException e) {
@@ -407,10 +438,13 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     private class CustomCacheListener implements RemoteAsyncFileCachingDataSource.CacheListener,RemoteDirectHttpClientBasedHttpDataSource.DownloadListener {
 
-        private final CustomExoPlayerTimeBar timebar;
+        private CustomExoPlayerTimeBar timebar;
         private long bytesDownloaded;
 
-        public CustomCacheListener(CustomExoPlayerTimeBar timebar) {
+        public CustomCacheListener() {
+        }
+
+        public void setTimebar(CustomExoPlayerTimeBar timebar) {
             this.timebar = timebar;
         }
 
@@ -425,9 +459,11 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 getView().post(new Runnable() {
                     @Override
                     public void run() {
-                        displayItemDetailsControlsBasedOnSessionState();
-                        cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
-                        timebar.invalidate();
+                        if(getContext() != null) {
+                            displayItemDetailsControlsBasedOnSessionState();
+                            cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                            timebar.invalidate();
+                        }
                     }
                 });
             }
@@ -444,9 +480,11 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 getView().post(new Runnable() {
                     @Override
                     public void run() {
-                        downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                        cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
-                        timebar.invalidate();
+                        if(getContext() != null) {
+                            downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
+                            cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                            timebar.invalidate();
+                        }
                     }
                 });
             }
@@ -461,9 +499,11 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 getView().post(new Runnable() {
                     @Override
                     public void run() {
-                        downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                        cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
-                        timebar.invalidate();
+                        if(getContext() != null) {
+                            downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
+                            cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                            timebar.invalidate();
+                        }
                     }
                 });
             }
@@ -475,9 +515,11 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 getView().post(new Runnable() {
                     @Override
                     public void run() {
-                        bytesDownloaded += bytesAddedToCache;
-                        downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                        cachedByteCountView.setText(IOUtils.toNormalizedText(bytesCachedInThisRange) + " / " + IOUtils.toNormalizedText(totalBytes));
+                        if(getContext() != null) {
+                            bytesDownloaded += bytesAddedToCache;
+                            downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
+                            cachedByteCountView.setText(IOUtils.toNormalizedText(bytesCachedInThisRange) + " / " + IOUtils.toNormalizedText(totalBytes));
+                        }
                     }
                 });
             }
@@ -492,7 +534,10 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         @Override
         public void onLongClick() {
             if(!isUseCache()) {
-                return;
+                stopVideoDownloadAndPlay();
+                player.stop(); // this is terminal.
+                videoPlaybackPosition = 0; // ensure it starts at the beginning again
+                configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
             }
             getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
                 @Override

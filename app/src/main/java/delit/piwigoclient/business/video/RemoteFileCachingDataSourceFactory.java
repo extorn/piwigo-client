@@ -69,12 +69,23 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
         return ds;
     }
 
-    public void setRedirectsAllowed(boolean redirectsAllowed) {
+    public boolean setRedirectsAllowed(boolean redirectsAllowed) {
+        boolean changed = false;
+        if(this.redirectsAllowed != redirectsAllowed) {
+            changed = true;
+        }
         this.redirectsAllowed = redirectsAllowed;
+        return changed;
     }
 
-    public void setMaxRedirects(int maxRedirects) {
+    public boolean setMaxRedirects(int maxRedirects) {
+        boolean changed = false;
+        if(this.maxRedirects != maxRedirects) {
+            changed = true;
+        }
         this.maxRedirects = maxRedirects;
+        return changed;
+
     }
 
     public void setConnectTimeoutMillis(int connectTimeoutMillis) {
@@ -85,8 +96,14 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
         this.readTimeoutMillis = readTimeoutMillis;
     }
 
-    public void setCachingEnabled(boolean cachingEnabled) {
+    public boolean setCachingEnabled(boolean cachingEnabled) {
+        boolean changed = false;
+        if(this.cachingEnabled != cachingEnabled) {
+            changed = true;
+        }
         this.cachingEnabled = cachingEnabled;
+        return changed;
+
     }
 
     public boolean isCachingEnabled() {

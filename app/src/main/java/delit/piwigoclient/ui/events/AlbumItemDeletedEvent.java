@@ -9,20 +9,20 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 public class AlbumItemDeletedEvent {
 
     public final GalleryItem item;
-    private final long albumResourceItemIdx;
-    private final long albumResourceItemCount;
+    private final int albumResourceItemIdx;
+    private final int albumResourceItemCount;
 
-    public AlbumItemDeletedEvent(final GalleryItem item, long albumItemIdx, long albumItemCount) {
+    public AlbumItemDeletedEvent(final GalleryItem item, int albumItemIdx, int albumItemCount) {
         this.item = item;
         this.albumResourceItemIdx = albumItemIdx;
         this.albumResourceItemCount = albumItemCount;
     }
 
-    public long getAlbumResourceItemCount() {
+    public int getAlbumResourceItemCount() {
         return albumResourceItemCount;
     }
 
-    public long getAlbumResourceItemIdx() {
+    public int getAlbumResourceItemIdx() {
         return albumResourceItemIdx;
     }
 }

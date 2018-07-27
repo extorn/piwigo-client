@@ -42,8 +42,8 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     private HashSet<TagContentAlteredEvent> changedTagsEvents;
 
     @Override
-    protected void setupImageDetailPopup(View v, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.setupImageDetailPopup(v,inflater, container, savedInstanceState);
+    protected void setupImageDetailPopup(View v, Bundle savedInstanceState) {
+        super.setupImageDetailPopup(v, savedInstanceState);
 
         tagsField.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,15 +159,14 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         super.onImageDeleted();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             //restore saved state
             updatedTagsSet = (HashSet<Tag>) savedInstanceState.getSerializable(STATE_UPDATED_TAGS_SET);
             changedTagsEvents = (HashSet<TagContentAlteredEvent>) savedInstanceState.getSerializable(STATE_CHANGED_TAGS_SET);
         }
-        return super.onCreateView(inflater, container, savedInstanceState);
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

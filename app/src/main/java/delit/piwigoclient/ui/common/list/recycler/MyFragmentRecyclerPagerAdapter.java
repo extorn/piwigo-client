@@ -32,8 +32,11 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+
+import delit.piwigoclient.ui.slideshow.AbstractSlideshowItemFragment;
 
 /**
  * Implementation of {@link PagerAdapter} that
@@ -140,6 +143,14 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
         Class<? extends Fragment> fragmentTypeNeeded = getFragmentType(position);
 
+        if(activeFragments.size() == 0) {
+            List<Fragment> fragments = mFragmentManager.getFragments();
+            // if fragments is not empty then the page was very probably rotated
+            for(Fragment f : fragments) {
+                activeFragments.put(((PagerItemFragment)f).getPagerIndex(), f);
+            }
+        }
+
         // check if fragment is already active. If so, do nothing
         Fragment f = activeFragments.get(position);
         if(f != null) {
@@ -170,7 +181,6 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         f.setUserVisibleHint(false);
 
         activeFragments.put(position, f);
-
         mCurTransaction.add(container.getId(), f);
 
         return f;
@@ -325,18 +335,12 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     }
 
     public void destroy() {
-        if (mCurTransaction == null) {
-            mCurTransaction = mFragmentManager.beginTransaction();
-        }
-
-        for(Fragment cachedFragment : activeFragments.values()) {
-            if(cachedFragment.isAdded()) {
-                mCurTransaction.remove(cachedFragment);
-            }
-        }
-        mCurTransaction.commitAllowingStateLoss();
         activeFragments.clear();
         // flush any cached state.
         pageState.clear();
+    }
+
+    public interface PagerItemFragment {
+        int getPagerIndex();
     }
 }

@@ -55,6 +55,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     private boolean enableRedirects;
     private int maxRedirects;
     private long readFromFilePosition;
+    private final boolean logEnabled = false;
 
     /**
      * @param listener An optional listener.
@@ -133,7 +134,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         List<Header> headers = new ArrayList<>();
         if (firstByteToRetrieve == 0 && retrieveMaxBytes == C.LENGTH_UNSET) {
             // pass the request through without range header
-            if (BuildConfig.DEBUG) {
+            if (logEnabled && BuildConfig.DEBUG) {
                 Log.d(TAG, "DOWNLOAD BYTES " + "bytes=" + firstByteToRetrieve + "-" + 10240 + " of " + cacheMetaData.getTotalBytes());
             }
             headers.add(new BasicHeader("Range", "bytes=" + firstByteToRetrieve + "-" + 10240)); // 100kb (for the headers
@@ -143,7 +144,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             if (retrieveMaxBytes != C.LENGTH_UNSET) {
                 rangeRequest += lastByteToRetrieve;
             }
-            if (BuildConfig.DEBUG) {
+            if (logEnabled && BuildConfig.DEBUG) {
                 Log.d(TAG, "DOWNLOAD BYTES " + rangeRequest + " of " + cacheMetaData.getTotalBytes());
             }
             headers.add(new BasicHeader("Range", rangeRequest));
@@ -183,7 +184,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 try {
                     cacheMetaData.wait();
                 } catch (InterruptedException e) {
-                    if (BuildConfig.DEBUG) {
+                    if (logEnabled && BuildConfig.DEBUG) {
                         Log.d(TAG, "Awoken from slumber - do we have any more data yet?");
                     }
                 }
@@ -228,7 +229,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
 
     @Override
     public long open(DataSpec dataSpec) throws HttpDataSourceException {
-        if (BuildConfig.DEBUG) {
+        if (logEnabled && BuildConfig.DEBUG) {
             if (dataSpec.length >= 0) {
                 Log.d(TAG, String.format("OPEN STREAM: %1$d-%2$d (%3$d)", dataSpec.position, dataSpec.position + dataSpec.length - 1, dataSpec.length));
             } else {
@@ -267,11 +268,11 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         }
         readFromFilePosition = dataSpec.position;
         if (dataSpec.length >= 0) {
-            if (BuildConfig.DEBUG) {
+            if (logEnabled && BuildConfig.DEBUG) {
                 Log.d(TAG, String.format("STREAM READY: %1$d-%2$d (%3$d) (%4$d)", dataSpec.position, Math.max(0, dataSpec.position + dataSpec.length - 1), dataSpec.length, bytesAvailableToRead));
             }
         } else {
-            if (BuildConfig.DEBUG) {
+            if (logEnabled && BuildConfig.DEBUG) {
                 Log.d(TAG, String.format("STREAM READY: %1$d (%2$d) (%3$d)", dataSpec.position, dataSpec.length, bytesAvailableToRead));
             }
         }
@@ -337,7 +338,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
 
     @Override
     public int read(byte[] buffer, int bufferOffset, int readLength) throws HttpDataSourceException {
-        if (BuildConfig.DEBUG) {
+        if (logEnabled && BuildConfig.DEBUG) {
             Log.d(TAG, String.format("READING STREAM: %1$d-%2$d (%3$d) (_%4$d_)", readFromFilePosition, readFromFilePosition + readLength - 1, readLength, bytesAvailableToRead));
         }
         if (readLength == 0) {
@@ -353,7 +354,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 if (activeRange != null) {
                     maxAvailableToReadNow = activeRange.getBytesFrom(currentPosition);
                 } else {
-                    if (BuildConfig.DEBUG) {
+                    if (logEnabled && BuildConfig.DEBUG) {
                         if (activeRequestHandle == null || activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) {
                             if (!this.httpResponseHandler.isLoadSucceeded()) {
                                 try {
@@ -372,7 +373,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                         try {
                             cacheMetaData.wait();
                         } catch (InterruptedException e) {
-                            if (BuildConfig.DEBUG) {
+                            if (logEnabled && BuildConfig.DEBUG) {
                                 Log.d(TAG, "Awoken from slumber - do we have any more data yet?");
                             }
                         }
@@ -398,7 +399,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                             maxAvailableToReadNow = activeRange.getBytesFrom(currentPosition);
                         }
                     } else {
-                        if (BuildConfig.DEBUG) {
+                        if (logEnabled && BuildConfig.DEBUG) {
                             Log.d(TAG, "Waiting for data Range to become available covering position " + currentPosition);
                         }
                     }
@@ -413,7 +414,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                     FileChannel cachedDataReadChannel = localCachedDataFile.getChannel();
                     try {
                         if (!cachedDataReadChannel.isOpen()) {
-                            if (BuildConfig.DEBUG) {
+                            if (logEnabled && BuildConfig.DEBUG) {
                                 Log.e(TAG, "Expected open channel but was closed");
                             }
                             ensureCacheFileExistsAndCacheMetadataInSync();
@@ -422,7 +423,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                         }
                         bytesRead = cachedDataReadChannel.read(buff, readFromFilePosition);
                     } catch (Throwable th) {
-                        if (BuildConfig.DEBUG) {
+                        if (logEnabled && BuildConfig.DEBUG) {
                             Log.e(TAG, "Error locking channel that is probably closed", th);
                         }
                     }
@@ -478,7 +479,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
 
     @Override
     public void close() throws HttpDataSourceException {
-        if (BuildConfig.DEBUG) {
+        if (logEnabled && BuildConfig.DEBUG) {
             Log.d(TAG, "Closing local cache file");
         }
         cancelAnyExistingOpenConnectionToServerAndWaitUntilDone();
@@ -514,7 +515,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
             try {
                 invokeNewCallToServer(currentPosition);
             } catch (IOException e) {
-                if (BuildConfig.DEBUG) {
+                if (logEnabled && BuildConfig.DEBUG) {
                     Log.e(TAG, "cache data file that was in use suddenly doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e);
                 }
             }

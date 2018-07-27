@@ -14,7 +14,7 @@ public class PiwigoTag extends ResourceContainer<Tag, GalleryItem> implements Se
     }
 
     @Override
-    public long getImgResourceCount() {
+    public int getImgResourceCount() {
         return getContainerDetails().getUsageCount();
     }
 }
