@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.ExifInterface;
 import android.os.Build;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -22,9 +23,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -600,7 +604,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
         for (Map.Entry<File, Long> entry : resourcesToRetrieve.entrySet()) {
 
-            ImageGetInfoResponseHandler getImageInfoHandler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null), multimediaExtensionList);
+            ImageGetInfoResponseHandler getImageInfoHandler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null, null), multimediaExtensionList);
             int allowedAttempts = 2;
             boolean success = false;
             while (!success && allowedAttempts > 0) {
@@ -764,6 +768,11 @@ public abstract class BasePiwigoUploadService extends IntentService {
                         uploadedResource.setPrivacyLevel(thisUploadJob.getPrivacyLevelWanted());
                         uploadedResource.setFileChecksum(thisUploadJob.getFileChecksum(fileForUpload));
 
+                        Date lastModDate = new Date(fileForUpload.lastModified());
+                        uploadedResource.setCreationDate(lastModDate);
+
+                        setUploadedImageDetailsFromExifData(fileForUpload, uploadedResource);
+
                         thisUploadJob.addFileUploaded(fileForUpload, uploadedResource);
 
                     } else if (!thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
@@ -778,6 +787,48 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUpload, e));
             } catch (final IOException e) {
                 postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUpload, e));
+            }
+        }
+    }
+
+    private void setUploadedImageDetailsFromExifData(File fileForUpload, ResourceItem uploadedResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            SimpleDateFormat dateTimeOriginalFormat = new SimpleDateFormat("yyyy:MM:dd (HH:mm:ss)");
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(fileForUpload);
+                ExifInterface exifInterface = new ExifInterface(fis);
+                String description = exifInterface.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION);
+                if(description != null) {
+                    uploadedResource.setName(description);
+                }
+                String creationDateStr = exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL);
+                try {
+                    Date creationDate = dateTimeOriginalFormat.parse(creationDateStr);
+                    uploadedResource.setCreationDate(creationDate);
+                } catch (ParseException e) {
+                    // ignore for now
+                    if(BuildConfig.DEBUG) {
+                        Log.e(TAG, "Error parsing EXIF data : date time original", e);
+                    }
+                }
+
+            } catch(Throwable th) {
+                // ignore for now
+                if(BuildConfig.DEBUG) {
+                    Log.e(TAG, "Error parsing EXIF data : sinking", th);
+                }
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        // ignore for now
+                        if(BuildConfig.DEBUG) {
+                            Log.e(TAG, "Error closing inputstream for uploaded image", e);
+                        }
+                    }
+                }
             }
         }
     }

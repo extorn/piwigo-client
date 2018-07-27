@@ -45,19 +45,21 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             // community plugin is very broken!
             params.put("recursive", String.valueOf(recursive));
         }
+        boolean communityPluginInstalled = PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs());
+        params.put("faked_by_community", String.valueOf(!communityPluginInstalled));
         return params;
     }
 
     @Override
     public boolean getNewLogin() {
         boolean success = super.getNewLogin();
-        if(success) {
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
-                withConnectionPreferences(getConnectionPrefs().asGuest());
-                return super.getNewLogin();
-            }
-        }
+//        if(success) {
+//            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+//            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
+//                withConnectionPreferences(getConnectionPrefs().asGuest());
+//                return super.getNewLogin();
+//            }
+//        }
         return success;
     }
 

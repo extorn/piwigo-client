@@ -13,6 +13,7 @@ import java.util.List;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
@@ -36,6 +37,8 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
             params.put("cat_id", String.valueOf(parentAlbumId));
         }
         params.put("recursive", String.valueOf(recursive));
+        boolean communityPluginInstalled = PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs());
+        params.put("faked_by_community", String.valueOf(!communityPluginInstalled));
         return params;
     }
 

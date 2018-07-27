@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  */
 public class ResourceItem extends AbstractBaseResourceItem {
 
-    public ResourceItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
-        super(id, name, description, lastAltered, thumbnailUrl);
+    public ResourceItem(long id, String name, String description, Date created, Date lastAltered, String thumbnailUrl) {
+        super(id, name, description, created, lastAltered, thumbnailUrl);
     }
 }

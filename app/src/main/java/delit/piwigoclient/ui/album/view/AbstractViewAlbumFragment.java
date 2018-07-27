@@ -1017,9 +1017,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         synchronized (loadingMessageIds) {
             ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getActiveProfile();
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connPrefs);
-            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
-                connPrefs = ConnectionPreferences.getActiveProfile().asGuest();
-            }
+//            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
+//                connPrefs = ConnectionPreferences.getActiveProfile().asGuest();
+//            }
             long loadingMessageId = new AlbumGetSubAlbumsResponseHandler(galleryModel.getContainerDetails(), viewPrefs.getPreferredAlbumThumbnailSize(), false).invokeAsync(getContext(), connPrefs);
             loadingMessageIds.put(loadingMessageId, "C");
             addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
@@ -2135,7 +2135,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         @Override
         public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
-            PictureResourceItem resourceItem = new PictureResourceItem(mItem.getRepresentativePictureId(), null, null, null, null);
+            PictureResourceItem resourceItem = new PictureResourceItem(mItem.getRepresentativePictureId(), null, null, null, null, null);
             String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
             ImageGetInfoResponseHandler handler = new ImageGetInfoResponseHandler<>(resourceItem, multimediaExtensionList);
             long messageId = handler.invokeAsync(getContext());

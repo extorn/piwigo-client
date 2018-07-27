@@ -21,9 +21,11 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     private ResourceFile fullSizeImage;
     private HashSet<Long> linkedAlbums;
     private String fileChecksum;
+    private Date creationDate;
 
-    public AbstractBaseResourceItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
+    public AbstractBaseResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, lastAltered, thumbnailUrl);
+        this.creationDate = creationDate;
     }
 
     public String getFileChecksum() {
@@ -68,6 +70,14 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     public String getFileExtension() {
         int idx = fullSizeImage.url.lastIndexOf('.');
         return fullSizeImage.url.substring(idx + 1);
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     @Override

@@ -37,6 +37,7 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
         params.put("single_value_mode", "replace");
         params.put("categories", getLinkedAlbumList(piwigoResource.getLinkedAlbums()));
         params.put("multiple_value_mode", "replace");
+        params.put("date_creation", piwigoResource.getCreationDate());
         return params;
     }
 

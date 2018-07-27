@@ -152,6 +152,14 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
                 throw new JSONException("Unable to parse date " + dateLastAlteredStr);
             }
 
+            String dateCreatedStr = image.get("date_creation").getAsString();
+            Date dateCreated;
+            try {
+                dateCreated = piwigoDateFormat.parse(dateCreatedStr);
+            } catch (ParseException e) {
+                throw new JSONException("Unable to parse date " + dateCreatedStr);
+            }
+
             int originalResourceUrlWidth = 0;
             if (image.has("width") && !image.get("width").isJsonNull()) {
                 originalResourceUrlWidth = image.get("width").getAsInt();
@@ -170,7 +178,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
                 if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
                 }
-                item = new VideoResourceItem(id, name, null, dateLastAltered, thumbnail);
+                item = new VideoResourceItem(id, name, null, dateCreated, dateLastAltered, thumbnail);
                 ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", originalResourceUrl, originalResourceUrlWidth, originalResourceUrlHeight);
                 item.addResourceFile(originalImage);
                 item.setFullSizeImage(originalImage);
@@ -184,7 +192,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
                 Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
                 thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
 
-                PictureResourceItem picItem = new PictureResourceItem(id, name, null, dateLastAltered, thumbnail);
+                PictureResourceItem picItem = new PictureResourceItem(id, name, null, dateCreated, dateLastAltered, thumbnail);
 
                 long bestWidth = 0;
 
