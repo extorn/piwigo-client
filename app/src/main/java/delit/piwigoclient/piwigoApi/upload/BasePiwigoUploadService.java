@@ -768,8 +768,11 @@ public abstract class BasePiwigoUploadService extends IntentService {
                         uploadedResource.setPrivacyLevel(thisUploadJob.getPrivacyLevelWanted());
                         uploadedResource.setFileChecksum(thisUploadJob.getFileChecksum(fileForUpload));
 
-                        Date lastModDate = new Date(fileForUpload.lastModified());
-                        uploadedResource.setCreationDate(lastModDate);
+                        long lastModifiedTime = fileForUpload.lastModified();
+                        if(lastModifiedTime > 0) {
+                            Date lastModDate = new Date(lastModifiedTime);
+                            uploadedResource.setCreationDate(lastModDate);
+                        }
 
                         setUploadedImageDetailsFromExifData(fileForUpload, uploadedResource);
 

@@ -36,8 +36,10 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
         params.put("level", String.valueOf(piwigoResource.getPrivacyLevel()));
         params.put("single_value_mode", "replace");
         params.put("categories", getLinkedAlbumList(piwigoResource.getLinkedAlbums()));
+        if(piwigoResource.getCreationDate() != null) {
+            params.put("date_creation", piwigoResource.getCreationDate());
+        }
         params.put("multiple_value_mode", "replace");
-        params.put("date_creation", piwigoResource.getCreationDate());
         return params;
     }
 

@@ -108,7 +108,7 @@
         </item>
     </string-array>
     <string-array name="release_history">
-        <item>1.3.93.14.2</item>
+        <item>1.3.93.14.3</item>
         <item>"Änderungen:
             - Datei-Upload - EXIF-Daten verwenden, falls vorhanden - DateTimeOriginal = Erstellungsdatum, ImageDescription = Bildname
             Bugfix:
