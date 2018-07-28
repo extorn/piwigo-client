@@ -18,7 +18,7 @@ public class HttpUtils {
     public static String getHttpErrorMessage(int statusCode, Throwable error) {
         String errorMessage = null;
         if (error != null) {
-            errorMessage = error.getMessage();
+            errorMessage = error.getMessage() != null ? error.getMessage() : "Undefined error";
         }
         Throwable cause;
         if(error instanceof SSLHandshakeException) {

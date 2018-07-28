@@ -405,6 +405,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="error_request_timed_out">Anruf zum Server abgebrochen, da es zu lange gedauert hat.</string>
     <string name="alert_information_video_caching_disabled">Caching von Videos auf Festplatte deaktiviert</string>
     <string name="error_building_http_engine">HTTP-Engine kann nicht gebaut werden</string>
+    <string name="error_unexpected_error_calling_server">Unerwarteter Fehler beim Aufruf des Servers oder beim Parsen der Antwort</string>
     <string name="error_insufficient_permissions_for_cache_folder">Schreibzugriff auf den Cache-Ordner ist erforderlich. App-Einstellungen prüfen.</string>
     <string name="alert_title_error_talking_to_server">Fehler im Gespräch mit dem Server</string>
     <string name="alert_title_error_connecting_to_server">Fehler bei der Verbindung zum Server</string>

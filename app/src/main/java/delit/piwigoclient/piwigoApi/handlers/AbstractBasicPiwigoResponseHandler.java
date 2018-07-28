@@ -301,7 +301,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             if (client == null) {
                 sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
             } else {
-                sendFailureMessage(-1, null, null, e);
+                sendFailureMessage(-1, null, null, new RuntimeException(getContext().getString(R.string.error_unexpected_error_calling_server), e));
             }
         } finally {
             if (requestHandle == null) {
