@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 
 import org.json.JSONException;
 
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -37,7 +38,8 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
         params.put("single_value_mode", "replace");
         params.put("categories", getLinkedAlbumList(piwigoResource.getLinkedAlbums()));
         if(piwigoResource.getCreationDate() != null) {
-            params.put("date_creation", piwigoResource.getCreationDate());
+            SimpleDateFormat dateTimeOriginalFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+            params.put("date_creation", dateTimeOriginalFormat.format(piwigoResource.getCreationDate()));
         }
         params.put("multiple_value_mode", "replace");
         return params;
