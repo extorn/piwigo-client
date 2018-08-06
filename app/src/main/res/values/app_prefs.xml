@@ -121,8 +121,11 @@
     <!-- Gallery Page -->
 
     <string name="preference_page_gallery">Gallery</string>
-    <string name="preference_gallery_category_multimedia">Multimedia</string>
     <string name="preference_gallery_category_general">General</string>
+    <string name="preference_gallery_category_advanced">Advanced</string>
+    <string name="preference_gallery_category_slideshow">Slideshow</string>
+    <string name="preference_gallery_category_resources">Resources</string>
+    <string name="preference_gallery_category_albums">Albums</string>
 
     <!-- prefs -->
 
@@ -166,7 +169,7 @@
     <string name="preference_gallery_show_large_thumbnail_key" translatable="false">preference_gallery_show_large_thumbnail</string>
     <string name="preference_gallery_show_large_thumbnail_title">Display albums with large thumbnail</string>
     <string name="preference_gallery_show_large_thumbnail_summary">Image thumbnails fill the column</string>
-    <bool name="preference_gallery_show_large_thumbnail_default">false</bool>
+    <bool name="preference_gallery_show_large_thumbnail_default">true</bool>
 
     <string name="preference_gallery_include_videos_in_slideshow_key" translatable="false">preference_gallery_include_videos_in_slideshow</string>
     <string name="preference_gallery_include_videos_in_slideshow_title">Show videos in Slideshow</string>
@@ -234,7 +237,7 @@
     <string name="preference_album_request_pagesize_summary">%1$d items</string>
     <integer name="preference_album_request_pagesize_default">20</integer>
 
-    <string name="preference_gallery_item_thumbnail_size_title">Album content thumbnail size</string>
+    <string name="preference_gallery_item_thumbnail_size_title">Resource thumbnail size</string>
     <string name="preference_gallery_item_thumbnail_size_key" translatable="false">gallery_item_thumbnail_size</string>
     <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
     <string name="preference_gallery_item_thumbnail_size_default" translatable="false">thumb</string>

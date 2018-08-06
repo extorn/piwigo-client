@@ -46,6 +46,7 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
 
             if(CategoryItem.BLANK.equals(newItem)) {
                 itemView.setVisibility(View.INVISIBLE);
+                imageLoader.resetAll();
                 return;
             } else {
                 itemView.setVisibility(View.VISIBLE);
@@ -54,8 +55,9 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
             CategoryItem category = (CategoryItem) newItem;
 
             if (category.getPhotoCount() > 0) {
-                mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_photos_summary_text_pattern, category.getPhotoCount()));
                 mPhotoCountView.setVisibility(View.VISIBLE);
+                mPhotoCountView.setText(itemView.getResources().getString(R.string.gallery_photos_summary_text_pattern, category.getPhotoCount()));
+                mPhotoCountView.setSingleLine();
             } else {
                 mPhotoCountView.setVisibility(View.GONE);
             }
@@ -146,11 +148,15 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
         RoundableImageView roundableImageView = (RoundableImageView) target;
         //TODO this radius isn't working very logically - most likely because the image is being scaled afterwards!
         if (parentAdapter.getAdapterPrefs().isShowLargeAlbumThumbnails()) {
-            roundableImageView.setCornerRadius(2);
-            roundableImageView.setEnableRoundedCorners(true);
+            if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed() || "square".equals(parentAdapter.getAdapterPrefs().getPreferredAlbumThumbnailSize())) {
+                roundableImageView.setCornerRadius(14);
+                roundableImageView.setEnableRoundedCorners(true);
+            }
         } else {
-            roundableImageView.setCornerRadius(8);
-            roundableImageView.setEnableRoundedCorners(true);
+            if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed() || "square".equals(parentAdapter.getAdapterPrefs().getPreferredAlbumThumbnailSize())) {
+                roundableImageView.setCornerRadius(24);
+                roundableImageView.setEnableRoundedCorners(true);
+            }
         }
         return super.configureNonMasonryThumbnailLoader(roundableImageView);
     }
@@ -163,10 +169,28 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
                     // needed for images that don't load correctly.
                     mImageView.setBackgroundColor(Color.WHITE);
                 } else {
-                    mImageView.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);
                     itemView.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);
                     if(parentAdapter.getAdapterPrefs().isShowLargeAlbumThumbnails()) {
-                        mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);
+                        mImageView.setBackgroundResource(R.drawable.curved_corners_layout_bg_dark);
+                        mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_black);
+                    } else {
+                        mItemContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_black);
+                        mNameView.setBackgroundResource(R.color.white);
+                        mPhotoCountView.setBackgroundResource(R.color.white);
+                        mSubCategoriesView.setBackgroundResource(R.color.white);
+                    }
+                }
+            } else {
+                if (parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+
+                } else {
+                    if(parentAdapter.getAdapterPrefs().isShowLargeAlbumThumbnails()) {
+                        mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);
+                    } else {
+                        mImageView.setBackgroundColor(Color.WHITE);
+                        mNameView.setBackgroundResource(R.color.white);
+                        mPhotoCountView.setBackgroundResource(R.color.white);
+                        mSubCategoriesView.setBackgroundResource(R.color.white);
                     }
                 }
             }

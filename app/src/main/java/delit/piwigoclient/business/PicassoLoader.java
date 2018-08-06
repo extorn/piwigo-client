@@ -125,8 +125,8 @@ public class PicassoLoader implements Callback {
     public void cancelImageLoadIfRunning() {
         if(loadInto != null) {
             PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
-            imageLoading = false;
         }
+        imageLoading = false;
     }
 
     private Context getContext() {
@@ -206,8 +206,6 @@ public class PicassoLoader implements Callback {
 
     public void resetAll() {
         resetImageToLoad();
-        imageLoaded = false;
-        rotation = 0;
         maxRetries = DEFAULT_AUTO_RETRIES;
         resetLoadState();
     }
@@ -220,6 +218,7 @@ public class PicassoLoader implements Callback {
         retries = 0;
         imageLoaded = false;
         imageUnavailable = false;
+        cancelImageLoadIfRunning();
     }
 
     protected int getResourceToLoad() {

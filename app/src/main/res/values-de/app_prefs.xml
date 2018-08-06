@@ -110,8 +110,11 @@
     <!-- Gallery Page -->
 
     <string name="preference_page_gallery">Galerie</string>
-    <string name="preference_gallery_category_multimedia">Multimedia</string>
     <string name="preference_gallery_category_general">Allgemein</string>
+    <string name="preference_gallery_category_advanced">Fortgeschritten</string>
+    <string name="preference_gallery_category_slideshow">Diashow</string>
+    <string name="preference_gallery_category_resources">Ressourcen</string>
+    <string name="preference_gallery_category_albums">Alben</string>
 
     <!-- prefs -->
 
@@ -209,7 +212,7 @@
     <string name="preference_album_request_pagesize_title">Album Server Anfrage Seitengröße</string>
     <string name="preference_album_request_pagesize_summary">%1$d Artikel</string>
 
-    <string name="preference_gallery_item_thumbnail_size_title">Thumbnail-Größe des Albuminhalts</string>
+    <string name="preference_gallery_item_thumbnail_size_title">Thumbnail-Größe des Ressourcen</string>
 
     <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
 

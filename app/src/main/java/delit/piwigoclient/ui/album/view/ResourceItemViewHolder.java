@@ -106,12 +106,19 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
                     }
                     // needed for images that don't load correctly.
                     mImageView.setBackgroundColor(Color.WHITE);
+                    // this doesn't exist on a masonry view
+                    mImageContainer.setBackgroundResource(R.color.black);
                 } else {
                     itemView.setBackgroundColor(Color.WHITE);
+                    mImageContainer.setBackgroundResource(R.color.black);
                 }
-                if(mImageContainer != null) {
-                    // this doesn't exist on a masonry view
-                    mImageContainer.setBackgroundResource(R.color.black_overlay);
+            } else {
+                if (parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+
+                } else {
+                    mImageView.setBackgroundColor(Color.WHITE);
+                    mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);
+                    mNameView.setBackgroundResource(R.color.white);
                 }
             }
         }
