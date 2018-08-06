@@ -23,13 +23,13 @@
 
     <string name="preference_server_connection_force_https_key" translatable="false">preference_server_connection_force_https</string>
     <string name="preference_server_connection_force_https_title">Rewrite Http URLs to Https</string>
-    <string name="preference_server_connection_force_https_summary">All http:// urls rewritten to https://</string>
+    <string name="preference_server_connection_force_https_summary">All http:// urls rewritten to https:// for https server</string>
     <bool name="preference_server_connection_force_https_default">false</bool>
 
     <string name="preference_server_connection_allow_redirects_key" translatable="false">preference_server_connection_allow_redirects</string>
     <string name="preference_server_connection_allow_redirects_title">Allow server redirects</string>
     <string name="preference_server_connection_allow_redirects_summary">Follow http 3xx responses</string>
-    <bool name="preference_server_connection_allow_redirects_default">false</bool>
+    <bool name="preference_server_connection_allow_redirects_default">true</bool>
 
     <string name="preference_server_socketTimeout_millisecs_key" translatable="false">preference_server_socketTimeout_millisecs</string>
     <string name="preference_server_socketTimeout_millisecs_title">Connection timeout (milliseconds)</string>

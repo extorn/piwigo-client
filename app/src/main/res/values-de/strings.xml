@@ -505,6 +505,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="slideshow_image_tab_basic_info">Basic Info</string>
     <string name="slideshow_image_tab_exif_data">EXIF-Daten</string>
     <string name="alert_bad_request_http_to_https">Schlechte Anfrage an Ressource über HTTP. Möchten Sie alle HTTP-URIs für dieses Verbindungsprofil auf HTTPS umschreiben? Kann später in den App-Voreinstellungen geändert werden.</string>
+    <string name="alert_bad_request_follow_redirects">Der Server hat eine 302-Redirect-Antwort zurückgegeben. Möchten Sie diese für diesen Server zulassen?</string>
     <string name="picture_resource_exif_data_unavailable">Piwigo API unterstützt nicht das Abrufen von EXIF-Daten</string>
     <string name="picture_resource_exif_data_unavailable_no_plugins">Keine Plugins bekannt, die das Abrufen von EXIF-Daten über die ws-API unterstützen.</string>
     <string name="video_caching_disabled_not_recommended">Das Deaktivieren des Video-Caches hat gravierende Auswirkungen auf die Performance.</string>

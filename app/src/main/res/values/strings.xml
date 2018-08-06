@@ -764,6 +764,7 @@ SOFTWARE.
     <string name="slideshow_image_tab_basic_info">Basic Info</string>
     <string name="slideshow_image_tab_exif_data">EXIF data</string>
     <string name="alert_bad_request_http_to_https">Bad request to resource using HTTP. Do you want to rewrite all HTTP URIs to HTTPS for this connection profile? Can be altered later in app prefs.</string>
+    <string name="alert_bad_request_follow_redirects">Server returned a 302 redirect response. Do you want to allow following these for this server?</string>
     <string name="picture_resource_exif_data_unavailable">Piwigo API does not support retrieving EXIF data</string>
     <string name="picture_resource_exif_data_unavailable_no_plugins">No Plugins known to support retrieving EXIF data via ws API</string>
     <string name="video_caching_disabled_not_recommended">Disabling the video cache will seriously impact performance</string>

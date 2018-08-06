@@ -20,9 +20,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import cz.msebera.android.httpclient.HttpStatus;
+import cz.msebera.android.httpclient.client.HttpClient;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 import delit.piwigoclient.ui.PicassoFactory;
+import delit.piwigoclient.ui.events.BadRequestUsesRedirectionServerEvent;
 import delit.piwigoclient.ui.events.BadRequestUsingHttpToHttpsServerEvent;
 
 /**
@@ -63,6 +66,9 @@ public class CustomImageDownloader implements Downloader {
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
             if(uri.getScheme().equalsIgnoreCase("http") && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
                 EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs));
+            }
+            if(errorResponse.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
+                EventBus.getDefault().post(new BadRequestUsesRedirectionServerEvent(connectionPrefs));
             }
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
