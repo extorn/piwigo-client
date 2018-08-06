@@ -107,7 +107,7 @@ public class LicenceCheckingHelper {
                 final ConnectivityManager connMgr = (ConnectivityManager) activity.getApplicationContext()
                         .getSystemService(Context.CONNECTIVITY_SERVICE);
                 android.net.NetworkInfo activeNetworkInfo = connMgr.getActiveNetworkInfo();
-                if(!activeNetworkInfo.isAvailable()) {
+                if(activeNetworkInfo == null || !activeNetworkInfo.isAvailable()) {
                     // allow access for the next 6 hours.
                     mLicenseCheckerCallback.allow(-1);
                     return;

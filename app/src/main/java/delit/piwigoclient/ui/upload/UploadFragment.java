@@ -341,6 +341,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
         filesForUploadView.setAdapter(filesForUploadAdapter);
 
+        
+
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesForUploadAdapter);
 
         return view;
@@ -849,13 +851,15 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
 
             UploadJob uploadJob = getActiveJob(context);
 
-            for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
-                EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
+            if(uploadJob != null) {
+                for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
+                    EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
+                }
+                EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory()));
             }
-            EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory()));
 
             if(isAdded()) {
-
+                // somehow upload job can be null... hopefully this copes with that scenario.
                 FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
                 adapter.remove(response.getFileForUpload());
             }

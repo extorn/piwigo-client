@@ -115,6 +115,9 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     public void clear() {
         items.clear();
         pagesLoaded.clear();
+        fullyLoaded = false;
+        pagesBeingLoaded.clear();
+        pagesFailedToLoad.clear();
     }
 
     /**

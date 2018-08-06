@@ -650,7 +650,7 @@ SOFTWARE.
     <string name="alert_information_own_user_readded_to_permissions_list">Your changes would have prevented you accessing this album. Your username has been added to the list of those with explicit permission.</string>
     <string name="alert_information_add_album_permissions_recursively_pattern">Adding permissions to %1$d child albums too.</string>
     <string name="alert_error_please_provide_an_album_name">A name for this album must be provided. Please add one and then try again.</string>
-    <string name="error_upload_server_response_invalid">Server didn\'t respond correctly following file upload</string>
+    <string name="error_upload_file_chunk_upload_failed_after_retries">Upload of section of file failed after %1$d attempts. Please restart this upload once complete to retry.</string>
     <string name="error_upload_file_ext_missing_pattern">Cannot upload file %1$s as it is missing a file extension, for example .jpg</string>
     <string name="error_upload_file_verification_failed">Verification of file on server failed for upload of %1$s</string>
     <string name="alert_message_remove_file_server_state_incorrect">This file has been partially uploaded and you must remember to click the upload button after this to remove the corrupt file from the server. Continue?</string>

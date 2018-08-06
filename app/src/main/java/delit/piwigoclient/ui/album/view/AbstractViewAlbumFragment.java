@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -46,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
@@ -980,7 +983,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     if(galleryModel.getContainerDetails().equals(CategoryItem.ROOT_ALBUM)) {
                         adminCategories = albumAdminList.getAlbums();
                     } else {
-                        CategoryItem adminCopyOfAlbum = albumAdminList.getAlbum(galleryModel.getContainerDetails());
+                        CategoryItem adminCopyOfAlbum = null;
+                        try {
+                            albumAdminList.getAlbum(galleryModel.getContainerDetails());
+                        } catch(IllegalStateException e) {
+                            if(BuildConfig.DEBUG) {
+                                Log.d(getTag(), String.format("current container details (%1$s) not in admin list", galleryModel.getContainerDetails()));
+                            }
+                        }
                         if (adminCopyOfAlbum != null) {
                             adminCategories = adminCopyOfAlbum.getChildAlbums();
                         } else {
@@ -999,17 +1009,21 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void loadAlbumResourcesPage(int pageToLoad) {
         synchronized (loadingMessageIds) {
-            Set<String> activeCalls = new HashSet<>(loadingMessageIds.values());
-            if (activeCalls.contains(String.valueOf(pageToLoad))) {
-                // already loading this page, ignore the request.
-                return;
+            galleryModel.acquirePageLoadLock();
+            try {
+                if (galleryModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+                    return;
+                }
+
+                String sortOrder = prefs.getString(getString(R.string.preference_gallery_sortOrder_key), getString(R.string.preference_gallery_sortOrder_default));
+                String multimediaExtensionList = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+                int pageSize = prefs.getInt(getString(R.string.preference_album_request_pagesize_key), getResources().getInteger(R.integer.preference_album_request_pagesize_default));
+                long loadingMessageId = new ImagesGetResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+                galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
+                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
+            } finally {
+                galleryModel.releasePageLoadLock();
             }
-            String sortOrder = prefs.getString(getString(R.string.preference_gallery_sortOrder_key), getString(R.string.preference_gallery_sortOrder_default));
-            String multimediaExtensionList = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
-            int pageSize = prefs.getInt(getString(R.string.preference_album_request_pagesize_key), getResources().getInteger(R.integer.preference_album_request_pagesize_default));
-            long loadingMessageId = new ImagesGetResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
-            loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
-            addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
         }
     }
 

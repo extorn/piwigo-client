@@ -782,7 +782,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                         //This block gets entered when the upload is cancelled for a file
                     } else {
                         // notify the listener of the final error we received from the server
-                        String errorMsg = getString(R.string.error_upload_server_response_invalid);
+                        String errorMsg = getString(R.string.error_upload_file_chunk_upload_failed_after_retries, maxChunkUploadAutoRetries);
                         notifyListenersOfCustomErrorUploadingFile(thisUploadJob, fileForUpload, errorMsg);
                     }
                 }
