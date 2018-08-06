@@ -57,6 +57,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
     private boolean loadSucceeded;
     private boolean canParseResponseData;
     private final boolean logEnabled = false;
+    private boolean isIdle;
 
     public RandomAccessFileAsyncHttpResponseHandler(CachedContent cacheMetaData, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, boolean usePoolThread) throws FileNotFoundException {
         super(cacheMetaData.getCachedDataFile(), false, false, usePoolThread);
@@ -89,6 +90,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
 
     @Override
     protected byte[] getResponseData(HttpEntity entity) throws IOException {
+        isIdle = false;
         if (entity != null) {
             InputStream instream = entity.getContent();
             long contentLength = entity.getContentLength();
@@ -109,6 +111,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 }
             }
         }
+        isIdle = true;
         return null;
     }
 
@@ -262,5 +265,9 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
     public void setDestinationFile(RandomAccessFile destinationFile) {
         this.destinationFile = destinationFile;
         this.loadSucceeded = false;
+    }
+
+    public boolean isIdle() {
+        return isIdle;
     }
 }

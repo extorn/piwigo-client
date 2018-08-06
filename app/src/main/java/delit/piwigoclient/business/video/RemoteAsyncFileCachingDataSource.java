@@ -135,9 +135,9 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         if (firstByteToRetrieve == 0 && retrieveMaxBytes == C.LENGTH_UNSET) {
             // pass the request through without range header
             if (logEnabled && BuildConfig.DEBUG) {
-                Log.d(TAG, "DOWNLOAD BYTES " + "bytes=" + firstByteToRetrieve + "-" + 10240 + " of " + cacheMetaData.getTotalBytes());
+                Log.d(TAG, "DOWNLOAD BYTES " + "bytes=" + firstByteToRetrieve + "-" + 102400 + " of " + cacheMetaData.getTotalBytes());
             }
-            headers.add(new BasicHeader("Range", "bytes=" + firstByteToRetrieve + "-" + 10240)); // 100kb (for the headers
+            headers.add(new BasicHeader("Range", "bytes=" + firstByteToRetrieve + "-" + 102400)); // 100kb (for the headers
         } else {
             long lastByteToRetrieve = (firstByteToRetrieve + retrieveMaxBytes - 1);
             String rangeRequest = "bytes=" + firstByteToRetrieve + "-";
@@ -356,7 +356,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 } else {
                     if (logEnabled && BuildConfig.DEBUG) {
                         if (activeRequestHandle == null || activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) {
-                            if (!this.httpResponseHandler.isLoadSucceeded()) {
+                            if (!this.httpResponseHandler.isLoadSucceeded() || this.httpResponseHandler.isIdle()) {
                                 try {
                                     Log.e(TAG, "Need to invoke a server call - No data Range available covering position " + currentPosition);
                                     invokeNewCallToServer(currentPosition);
