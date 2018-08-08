@@ -73,7 +73,7 @@ public class LicenceCheckingHelper {
 
             @Override
             public void onResult(android.app.AlertDialog dialog, Boolean positiveAnswer) {
-                if(Boolean.TRUE == positiveAnswer) {
+                if (Boolean.TRUE == positiveAnswer) {
                     if (showRetryButton) {
                         doCheck();
                     } else {
@@ -101,13 +101,13 @@ public class LicenceCheckingHelper {
 
         long maxInterval = 1000 * 60 * 60 * 6;
         // check again a maximum of every 6 hours apart.
-        if(lastChecked == null || lastChecked.getTime() > System.currentTimeMillis() || lastChecked.getTime() + maxInterval < System.currentTimeMillis()) {
+        if (lastChecked == null || lastChecked.getTime() > System.currentTimeMillis() || lastChecked.getTime() + maxInterval < System.currentTimeMillis()) {
             lastChecked = new Date();
-            if(mLicenseCheckerCallback.isOfflineAccessAllowed()) {
+            if (mLicenseCheckerCallback.isOfflineAccessAllowed()) {
                 final ConnectivityManager connMgr = (ConnectivityManager) activity.getApplicationContext()
                         .getSystemService(Context.CONNECTIVITY_SERVICE);
                 android.net.NetworkInfo activeNetworkInfo = connMgr.getActiveNetworkInfo();
-                if(activeNetworkInfo == null || !activeNetworkInfo.isAvailable()) {
+                if (activeNetworkInfo == null || !activeNetworkInfo.isAvailable()) {
                     // allow access for the next 6 hours.
                     mLicenseCheckerCallback.allow(-1);
                     return;
@@ -134,6 +134,10 @@ public class LicenceCheckingHelper {
                 showDialog(showRetry);
             }
         });
+    }
+
+    protected void onDestroy() {
+        mChecker.onDestroy();
     }
 
     private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
@@ -163,7 +167,7 @@ public class LicenceCheckingHelper {
             }
             activity.getUiHelper().dismissProgressDialog();
             AdsManager.getInstance().setAppLicensed(false);
-            if(policyReason == Policy.NOT_LICENSED) {
+            if (policyReason == Policy.NOT_LICENSED) {
                 PreferenceUtils.wipeAppPreferences(activity);
             }
 
@@ -191,9 +195,5 @@ public class LicenceCheckingHelper {
             String result = String.format(activity.getString(R.string.application_error), errorCode);
             displayResult(result);
         }
-    }
-
-    protected void onDestroy() {
-        mChecker.onDestroy();
     }
 }

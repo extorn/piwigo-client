@@ -44,7 +44,7 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     private void onLogout(PiwigoSessionDetails sessionDetails) {
-        if(sessionDetails != null) {
+        if (sessionDetails != null) {
             sessionDetails.logout(getConnectionPrefs(), getContext());
         }
         PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse r = new PiwigoResponseBufferingHandler.PiwigoOnLogoutResponse(getMessageId(), getPiwigoMethod());

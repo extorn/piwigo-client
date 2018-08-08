@@ -37,7 +37,7 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
         params.put("level", String.valueOf(piwigoResource.getPrivacyLevel()));
         params.put("single_value_mode", "replace");
         params.put("categories", getLinkedAlbumList(piwigoResource.getLinkedAlbums()));
-        if(piwigoResource.getCreationDate() != null) {
+        if (piwigoResource.getCreationDate() != null) {
             SimpleDateFormat dateTimeOriginalFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
             params.put("date_creation", dateTimeOriginalFormat.format(piwigoResource.getCreationDate()));
         }

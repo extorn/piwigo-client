@@ -3,6 +3,8 @@ package delit.piwigoclient.util;
 import android.content.Context;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -49,8 +51,9 @@ import delit.piwigoclient.util.security.SecurityOperationException;
 
 public class X509Utils {
     private static final String TAG = "X509Utils";
-    private static final char[] clientKeystorePass = new char[]{'!','P','1','r','4','t','3','5','!'};
-    private static final char[] trustStorePass = new char[]{'!','P','1','r','4','t','3','5','!'};
+    private static final char[] clientKeystorePass = new char[]{'!', 'P', '1', 'r', '4', 't', '3', '5', '!'};
+    private static final char[] trustStorePass = new char[]{'!', 'P', '1', 'r', '4', 't', '3', '5', '!'};
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
 
     public static char[] getClientKeystorePass() {
         return clientKeystorePass;
@@ -75,7 +78,7 @@ public class X509Utils {
     public static void saveKeystore(Context context, KeyStore keystore, char[] keystorePassword, String keystoreFilename) {
 
         File appDataDir = context.getApplicationContext().getFilesDir();
-        if(!appDataDir.exists()) {
+        if (!appDataDir.exists()) {
             appDataDir.mkdir();
         }
         BufferedOutputStream bos = null;
@@ -83,31 +86,37 @@ public class X509Utils {
             bos = new BufferedOutputStream(new FileOutputStream(new File(appDataDir, keystoreFilename)));
             keystore.store(bos, keystorePassword);
         } catch (FileNotFoundException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
             }
         } catch (CertificateException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
             }
         } catch (NoSuchAlgorithmException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
             }
         } catch (KeyStoreException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
             }
         } catch (IOException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
             }
         } finally {
-            if(bos != null) {
+            if (bos != null) {
                 try {
                     bos.close();
                 } catch (IOException e) {
-                    if(BuildConfig.DEBUG) {
+                    Crashlytics.logException(e);
+                    if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error closing keystore after save : " + keystoreFilename, e);
                     }
                 }
@@ -120,15 +129,18 @@ public class X509Utils {
         try {
             ks.load(null, null);
         } catch (IOException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error creating blank keystore ", e);
             }
         } catch (NoSuchAlgorithmException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error creating blank keystore ", e);
             }
         } catch (CertificateException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error creating blank keystore ", e);
             }
         }
@@ -137,10 +149,10 @@ public class X509Utils {
 
     public static KeyStore buildPopulatedKeystore(Map<Key, X509Certificate[]> keystoreContent) throws KeyStoreException {
         KeyStore keystore = X509Utils.buildEmptyKeystore();
-        if(keystoreContent != null) {
+        if (keystoreContent != null) {
             int i = 0;
-            for (Map.Entry<Key,X509Certificate[]> entry : keystoreContent.entrySet()) {
-                if(entry.getKey() instanceof PublicKey) {
+            for (Map.Entry<Key, X509Certificate[]> entry : keystoreContent.entrySet()) {
+                if (entry.getKey() instanceof PublicKey) {
                     keystore.setCertificateEntry(String.valueOf(i++), entry.getValue()[0]);
                 } else {
                     keystore.setKeyEntry(String.valueOf(i++), entry.getKey(), new char[0], entry.getValue());
@@ -160,10 +172,9 @@ public class X509Utils {
         return digestHex.toLowerCase();
     }
 
-    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
@@ -173,7 +184,7 @@ public class X509Utils {
 
     public static KeyStore buildPopulatedKeystore(Collection<X509Certificate> certs) throws KeyStoreException {
         KeyStore keystore = X509Utils.buildEmptyKeystore();
-        if(certs != null) {
+        if (certs != null) {
             int i = 0;
             for (X509Certificate cert : certs) {
                 keystore.setCertificateEntry(String.valueOf(i++), cert);
@@ -184,7 +195,7 @@ public class X509Utils {
 
     public static KeyStore loadKeystore(Context context, String keystoreFilename, char[] keystorePassword) {
         File appDataDir = context.getApplicationContext().getFilesDir();
-        if(!appDataDir.exists()) {
+        if (!appDataDir.exists()) {
             appDataDir.mkdir();
         }
         File keystoreFile = new File(appDataDir, keystoreFilename);
@@ -193,41 +204,49 @@ public class X509Utils {
             keystore = KeyStore.getInstance(KeyStore.getDefaultType());
             keystore.load(null, null);
         } catch (KeyStoreException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error generating blank keystore : " + keystoreFilename, e);
             }
         } catch (CertificateException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error generating blank keystore : " + keystoreFilename, e);
             }
         } catch (NoSuchAlgorithmException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error generating blank keystore : " + keystoreFilename, e);
             }
         } catch (IOException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error generating blank keystore : " + keystoreFilename, e);
             }
         }
-        if(keystore != null && keystoreFile.exists()) {
+        if (keystore != null && keystoreFile.exists()) {
             BufferedInputStream keystoreInput = null;
             try {
                 keystoreInput = new BufferedInputStream(new FileInputStream(keystoreFile));
                 keystore.load(keystoreInput, keystorePassword);
             } catch (CertificateException e) {
-                if(BuildConfig.DEBUG) {
+                Crashlytics.logException(e);
+                if (BuildConfig.DEBUG) {
                     Log.e(TAG, "Error loading keystore : " + keystoreFilename, e);
                 }
             } catch (NoSuchAlgorithmException e) {
-                if(BuildConfig.DEBUG) {
+                Crashlytics.logException(e);
+                if (BuildConfig.DEBUG) {
                     Log.e(TAG, "Error loading keystore : " + keystoreFilename, e);
                 }
             } catch (FileNotFoundException e) {
-                if(BuildConfig.DEBUG) {
+                Crashlytics.logException(e);
+                if (BuildConfig.DEBUG) {
                     Log.e(TAG, "Error loading keystore : " + keystoreFilename, e);
                 }
             } catch (IOException e) {
-                if(BuildConfig.DEBUG) {
+                Crashlytics.logException(e);
+                if (BuildConfig.DEBUG) {
                     Log.e(TAG, "Error loading keystore : " + keystoreFilename, e);
                 }
             } finally {
@@ -235,7 +254,8 @@ public class X509Utils {
                     try {
                         keystoreInput.close();
                     } catch (IOException e) {
-                        if(BuildConfig.DEBUG) {
+                        Crashlytics.logException(e);
+                        if (BuildConfig.DEBUG) {
                             Log.e(TAG, "Error closing keystore after load : " + keystoreFilename, e);
                         }
                     }
@@ -258,7 +278,7 @@ public class X509Utils {
             hexString.append(appendString);
         }
         String thumbprint = hexString.toString();
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Log.d(TAG, "Cer: " + thumbprint);
         }
         return thumbprint;
@@ -273,7 +293,8 @@ public class X509Utils {
                 certs.add((X509Certificate) keystore.getCertificate(alias));
             }
         } catch (KeyStoreException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error extracting certificates from store", e);
             }
         }
@@ -288,7 +309,8 @@ public class X509Utils {
                 aliases.add(aliasesEnum.nextElement());
             }
         } catch (KeyStoreException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error listing aliases", e);
             }
         }
@@ -302,11 +324,13 @@ public class X509Utils {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
             return (Collection<X509Certificate>) cf.generateCertificates(bis);
         } catch (FileNotFoundException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading certificate file stream", e);
             }
             throw new CertificateLoadException(f, "Error reading certificate file stream", e);
         } catch (CertificateException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading certificate file stream", e);
             }
@@ -316,6 +340,7 @@ public class X509Utils {
                 try {
                     bis.close();
                 } catch (IOException e) {
+                    Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error closing certificate file stream", e);
                     }
@@ -339,30 +364,35 @@ public class X509Utils {
             KeyStore keystore = KeyStore.getInstance(keystoreType);
             keystore.load(new FileInputStream(loadOperation.getFile()), loadOperation.getKeystorePass());
             loadCertificatesAndPrivateKeysFromKeystore(keystore, loadOperation.getAliasesToLoad(), loadOperation.getAliasPassMapp(), result);
-            for(SecurityOperationException ex : result.getExceptionList()) {
+            for (SecurityOperationException ex : result.getExceptionList()) {
                 ex.setFile(loadOperation.getFile());
             }
         } catch (FileNotFoundException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
             result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (IOException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
             result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (CertificateException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
             result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (NoSuchAlgorithmException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
             result.addException(new KeyStoreOperationException(loadOperation.getFile(), "Error reading " + keystoreType + " file stream", e));
         } catch (KeyStoreException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystoreType + " file stream", e);
             }
@@ -372,9 +402,8 @@ public class X509Utils {
     }
 
     /**
-     *
-     * @param keystore to load from
-     * @param aliasesToLoad null to load all
+     * @param keystore         to load from
+     * @param aliasesToLoad    null to load all
      * @param aliasPasswordMap passwords for any keys protected
      * @param result
      * @return
@@ -391,31 +420,34 @@ public class X509Utils {
             while (aliasesEnum.hasMoreElements()) {
                 try {
                     alias = (String) aliasesEnum.nextElement();
-                    if(aliasesToLoad != null && !aliasesToLoad.contains(alias)) {
+                    if (aliasesToLoad != null && !aliasesToLoad.contains(alias)) {
                         //skip this alias
                         continue;
                     }
                     Certificate[] certChain = keystore.getCertificateChain(alias);
                     keyPass = aliasPasswordMap.get(alias);
-                    if(keyPass == null) {
+                    if (keyPass == null) {
                         keyPass = blankKey;
                     }
                     Key key = keystore.getKey(alias, keyPass);
-                    if(key == null) {
+                    if (key == null) {
                         key = certChain[0].getPublicKey();
                     }
                     certs.put(key, certChain);
                 } catch (UnrecoverableKeyException e) {
+                    Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
                     }
                     result.addException(new KeyStoreContentException(alias, "Error reading " + keystore.getType() + " file stream", e));
                 } catch (NoSuchAlgorithmException e) {
+                    Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
                     }
                     result.addException(new KeyStoreContentException(alias, "Error reading " + keystore.getType() + " file stream", e));
                 } catch (KeyStoreException e) {
+                    Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
                     }
@@ -423,6 +455,7 @@ public class X509Utils {
                 }
             }
         } catch (KeyStoreException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error reading " + keystore.getType() + " file stream", e);
             }
@@ -443,21 +476,25 @@ public class X509Utils {
             ks.load(new ByteArrayInputStream(ksBytes), ksPass);
             return ks;
         } catch (CertificateException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error deserialising keystore", e);
             }
             throw new RuntimeException("Error deserialising keystore", e);
         } catch (NoSuchAlgorithmException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error deserialising keystore", e);
             }
             throw new RuntimeException("Error deserialising keystore", e);
         } catch (KeyStoreException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error deserialising keystore", e);
             }
             throw new RuntimeException("Error deserialising keystore", e);
         } catch (IOException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error deserialising keystore", e);
             }
@@ -471,21 +508,25 @@ public class X509Utils {
             ks.store(baos, keystorePass);
             return baos.toByteArray();
         } catch (CertificateException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error serialising keystore", e);
             }
             throw new RuntimeException("Error serialising keystore", e);
         } catch (NoSuchAlgorithmException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error serialising keystore", e);
             }
             throw new RuntimeException("Error serialising keystore", e);
         } catch (KeyStoreException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error serialising keystore", e);
             }
             throw new RuntimeException("Error serialising keystore", e);
         } catch (IOException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error serialising keystore", e);
             }
@@ -498,11 +539,12 @@ public class X509Utils {
         try {
             aliasesList = new ArrayList<>(keyStore.size());
             Enumeration<String> aliases = keyStore.aliases();
-            while(aliases.hasMoreElements()) {
+            while (aliases.hasMoreElements()) {
                 aliasesList.add(aliases.nextElement());
             }
             return aliasesList;
         } catch (KeyStoreException e) {
+            Crashlytics.logException(e);
             throw new RuntimeException("Error compiling alias list", e);
         }
     }
@@ -511,11 +553,11 @@ public class X509Utils {
         char[] blankKey = new char[0];
         try {
             List<String> keystoreAliases = extractAliasesFromKeystore(keyStore);
-            for(Map.Entry<Key, Certificate[]> newVal : keystoreContent.entrySet()) {
+            for (Map.Entry<Key, Certificate[]> newVal : keystoreContent.entrySet()) {
                 String thumbprint = X509Utils.getCertificateThumbprint(newVal.getValue()[0]);
 
-                if(newVal.getKey() instanceof PrivateKey) {
-                    if(keystoreAliases.contains(thumbprint)) {
+                if (newVal.getKey() instanceof PrivateKey) {
+                    if (keystoreAliases.contains(thumbprint)) {
                         // remove the current entry because we're adding a key essentially.
                         keyStore.deleteEntry(thumbprint);
                     }
@@ -525,10 +567,11 @@ public class X509Utils {
                     try {
                         keyStore.setCertificateEntry(thumbprint, newVal.getValue()[0]);
                     } catch (KeyStoreException e) {
+                        Crashlytics.logException(e);
                         if (BuildConfig.DEBUG) {
                             Log.e(TAG, "Error inserting data into keystore", e);
                         }
-                        if(!keystoreAliases.contains(thumbprint)) {
+                        if (!keystoreAliases.contains(thumbprint)) {
                             throw new RuntimeException("Error inserting data into keystore", e);
                         } else {
                             // If the alias exists then because the alias is the thumbprint, the entry must be a private key entry so ignore the error
@@ -538,11 +581,13 @@ public class X509Utils {
                 keystoreAliases.add(thumbprint);
             }
         } catch (KeyStoreException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error inserting data into keystore", e);
             }
             throw new RuntimeException("Error inserting data into keystore", e);
         } catch (NoSuchAlgorithmException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error inserting data into keystore", e);
             }
@@ -561,7 +606,7 @@ public class X509Utils {
     public static boolean areEqual(KeyStore first, KeyStore second) {
         Set<String> firstAliases = listAliasesInStore(first);
         Set<String> secondAliases = listAliasesInStore(second);
-        if(!SetUtils.equals(firstAliases, secondAliases)) {
+        if (!SetUtils.equals(firstAliases, secondAliases)) {
             return false;
         }
         char[] storePass = new char[0];
@@ -573,8 +618,8 @@ public class X509Utils {
     public static X509Certificate findFirstExpiredCert(List<? extends Certificate> certificates) {
         Date now = new Date();
         for (Certificate c : certificates) {
-            X509Certificate cert = (X509Certificate)c;
-            if(cert.getNotAfter().before(now)) {
+            X509Certificate cert = (X509Certificate) c;
+            if (cert.getNotAfter().before(now)) {
                 return cert;
             }
         }
@@ -584,8 +629,8 @@ public class X509Utils {
     public static X509Certificate findFirstCertNotYetValid(List<? extends Certificate> certificates) {
         Date now = new Date();
         for (Certificate c : certificates) {
-            X509Certificate cert = (X509Certificate)c;
-            if(cert.getNotBefore().after(now)) {
+            X509Certificate cert = (X509Certificate) c;
+            if (cert.getNotBefore().after(now)) {
                 return cert;
             }
         }

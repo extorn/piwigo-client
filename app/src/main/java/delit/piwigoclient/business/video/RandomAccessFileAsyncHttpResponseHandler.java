@@ -21,6 +21,7 @@ package delit.piwigoclient.business.video;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.C;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
@@ -46,17 +47,17 @@ import delit.piwigoclient.BuildConfig;
 public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpResponseHandler {
 
     private static final String TAG = "RndAccFileRspHdlr";
-    private RandomAccessFile destinationFile;
     private static final Pattern CONTENT_RANGE_HEADER =
             Pattern.compile("^bytes (\\d+)-(\\d+)/(\\d+)$");
     private final RemoteAsyncFileCachingDataSource.CacheListener cacheListener;
+    private final boolean logEnabled = false;
+    private RandomAccessFile destinationFile;
     private long totalFileContentBytes;
     private long lastContentByte;
     private long firstContentByte;
     private CachedContent cacheMetaData;
     private boolean loadSucceeded;
     private boolean canParseResponseData;
-    private final boolean logEnabled = false;
     private boolean isIdle;
 
     public RandomAccessFileAsyncHttpResponseHandler(CachedContent cacheMetaData, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, boolean usePoolThread) throws FileNotFoundException {
@@ -99,12 +100,12 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     if (canParseResponseData) {
                         storeResponseDataToRandomAccessFile(contentLength, instream);
                     }
-                }  finally {
+                } finally {
                     synchronized (cacheMetaData) {
                         cacheMetaData.consolidateRanges();
                         CacheUtils.saveCachedContent(cacheMetaData);
                     }
-                    if(cacheMetaData.isComplete()) {
+                    if (cacheMetaData.isComplete()) {
                         cacheListener.onFullyCached(cacheMetaData);
                     }
                     AsyncHttpClient.silentCloseInputStream(instream);
@@ -150,7 +151,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 destinationChannel.write(buffer, newRangeLowerBound);
                 buffer.clear();
                 synchronized (cacheMetaData) {
-                    if(existingRange != null) {
+                    if (existingRange != null) {
                         existingRange.pushUpperBoundTo(newRangeUpperBound);
                     } else {
                         existingRange = cacheMetaData.addRange(newRangeLowerBound, newRangeUpperBound);
@@ -158,7 +159,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     //TODO enable this line when download is working okay.
                     CacheUtils.saveCachedContent(cacheMetaData);
                     long now = System.currentTimeMillis();
-                    if(now - lastSentNotification > 1000) {
+                    if (now - lastSentNotification > 1000) {
                         // max one update every 1000 millis.
                         lastSentNotification = now;
                         cacheListener.onRangeAdded(cacheMetaData, existingRange.getLower(), existingRange.getUpper(), downloadedBytesSinceLastReport);
@@ -168,29 +169,32 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 }
 //                        destinationFile.write(tmp, 0, l);
                 int thisPercentDone = (int) (contentLength / onePercent);
-                if(thisPercentDone > percentDone)
-                {
+                if (thisPercentDone > percentDone) {
                     percentDone = thisPercentDone;
                     sendProgressMessage(count, contentLength);
                 }
             }
-            if(downloadedBytesSinceLastReport > 0) {
+            if (downloadedBytesSinceLastReport > 0) {
                 cacheListener.onRangeAdded(cacheMetaData, existingRange.getLower(), existingRange.getUpper(), downloadedBytesSinceLastReport);
             }
-        } catch(SocketException e) {
-            Log.d(TAG,"Sinking Socket exception");
-        } catch(ConnectionClosedException e) {
+        } catch (SocketException e) {
+            Crashlytics.logException(e);
+            Log.d(TAG, "Sinking Socket exception");
+        } catch (ConnectionClosedException e) {
+            Crashlytics.logException(e);
             if (logEnabled && BuildConfig.DEBUG) {
-                Log.d(TAG,"Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
+                Log.d(TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
+            Crashlytics.logException(e);
             if (logEnabled && BuildConfig.DEBUG) {
-                Log.e(TAG,"Unrecoverable error reading data from http response", e);
+                Log.e(TAG, "Unrecoverable error reading data from http response", e);
             }
             throw e;
-        } catch(Throwable e) {
+        } catch (Throwable e) {
+            Crashlytics.logException(e);
             if (logEnabled && BuildConfig.DEBUG) {
-                Log.e(TAG,"Unrecoverable error reading data from http response", e);
+                Log.e(TAG, "Unrecoverable error reading data from http response", e);
             }
             throw e;
         }
@@ -212,6 +216,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 firstContentByte = 0;
                 lastContentByte = totalFileContentBytes - 1;
             } catch (NumberFormatException e) {
+                Crashlytics.logException(e);
                 if (logEnabled && BuildConfig.DEBUG) {
                     Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
                 }
@@ -227,7 +232,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
 
                     lastContentByte = Long.parseLong(matcher.group(2));
 
-                    firstContentByte  = Long.parseLong(matcher.group(1));
+                    firstContentByte = Long.parseLong(matcher.group(1));
 
                     Log.d(TAG, String.format("RETRIEVED BYTES %1$d-%2$d of %3$d", firstContentByte, lastContentByte, totalFileContentBytes));
 
@@ -252,6 +257,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                     Log.d(TAG, "total file bytes " + totalFileContentBytes);
                     cacheMetaData.setTotalBytes(totalFileContentBytes);
                 } catch (NumberFormatException e) {
+                    Crashlytics.logException(e);
                     if (logEnabled && BuildConfig.DEBUG) {
                         Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
                     }

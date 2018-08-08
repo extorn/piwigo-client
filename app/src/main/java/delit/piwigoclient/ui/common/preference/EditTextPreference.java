@@ -33,7 +33,7 @@ public class EditTextPreference extends android.preference.EditTextPreference {
     @Override
     public CharSequence getSummary() {
         CharSequence entry = getText();
-        if(entry != null) {
+        if (entry != null) {
             TransformationMethod transformationMethod = getEditText().getTransformationMethod();
             if (transformationMethod != null) {
                 entry = transformationMethod.getTransformation(entry, null);

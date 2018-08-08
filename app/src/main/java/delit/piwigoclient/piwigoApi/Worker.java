@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.lang.ref.WeakReference;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -35,7 +37,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private static final ThreadPoolExecutor HTTP_LOGIN_THREAD_POOL_EXECUTOR;
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int CORE_POOL_SIZE = 6;
-    private static final int MAXIMUM_POOL_SIZE = Math.max(6,CPU_COUNT * 2 + 1);
+    private static final int MAXIMUM_POOL_SIZE = Math.max(6, CPU_COUNT * 2 + 1);
     private static final int KEEP_ALIVE_SECONDS = 30;
     private static final BlockingQueue<Runnable> sPoolWorkQueue =
             new LinkedBlockingQueue<>(128);
@@ -102,6 +104,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 //                HTTP_THREAD_POOL_EXECUTOR.setMaximumPoolSize(newMaxPoolSize);
             }
         } catch (RuntimeException e) {
+            Crashlytics.logException(e);
             handler.sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
         }
 
@@ -120,6 +123,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             long messageId = params[0];
             return executeCall(messageId);
         } catch (RuntimeException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(tag, "ASync code crashed unexpectedly", e);
             }
@@ -134,7 +138,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     protected boolean executeCall(long messageId) {
 //        Thread.currentThread().setName(handler.getClass().getSimpleName());
 
-        Log.e(tag, "Running worker for handler "+handler.getClass().getSimpleName() +" on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
+        Log.e(tag, "Running worker for handler " + handler.getClass().getSimpleName() + " on thread " + Thread.currentThread().getName() + " (will be paused v soon)");
 
         SharedPreferences prefs = null;
         if (context != null) {
@@ -155,7 +159,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         updatePoolSize(handler);
 
         boolean haveValidSession = true;
-        if(!handler.isPerformingLogin()) {
+        if (!handler.isPerformingLogin()) {
             synchronized (Worker.class) {
                 if (PiwigoSessionDetails.getInstance(profilePrefs) == null) {
                     haveValidSession = handler.getNewLogin();
@@ -163,7 +167,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             }
         }
 
-        if(haveValidSession) {
+        if (haveValidSession) {
             handler.beforeCall();
             handler.runCall();
 
@@ -213,6 +217,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
     /**
      * Run synchronously in the same thread
+     *
      * @param messageId
      * @return true if succeeded
      */
@@ -222,6 +227,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
     /**
      * Run synchronously in a different thread
+     *
      * @param messageId
      * @return true if succeeded
      */
@@ -229,28 +235,24 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
         //TODO collect a list of tasks and kill them all if the app exits.
         Boolean retVal = null;
-        while(!task.isCancelled() && !task.getStatus().equals(FINISHED)) {
+        while (!task.isCancelled() && !task.getStatus().equals(FINISHED)) {
             try {
-                if(BuildConfig.DEBUG) {
-                    Log.e(tag, "Thread "+Thread.currentThread().getName()+" starting to wait for response from handler " + handler.getClass().getSimpleName());
+                if (BuildConfig.DEBUG) {
+                    Log.e(tag, "Thread " + Thread.currentThread().getName() + " starting to wait for response from handler " + handler.getClass().getSimpleName());
                 }
                 retVal = task.get();
             } catch (InterruptedException e) {
                 // ignore unless the worker is cancelled.
-                if(BuildConfig.DEBUG) {
-                    Log.e(tag, "Thread "+Thread.currentThread().getName()+" awakened from waiting for response from handler " + handler.getClass().getSimpleName());
+                if (BuildConfig.DEBUG) {
+                    Log.e(tag, "Thread " + Thread.currentThread().getName() + " awakened from waiting for response from handler " + handler.getClass().getSimpleName());
                 }
             } catch (ExecutionException e) {
-                if(BuildConfig.DEBUG) {
-                    Log.e(tag, "Thread "+Thread.currentThread().getName()+": Error retrieving result from handler " + handler.getClass().getSimpleName(), e);
+                if (BuildConfig.DEBUG) {
+                    Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Error retrieving result from handler " + handler.getClass().getSimpleName(), e);
                 }
             }
         }
         return retVal == null ? false : retVal;
-    }
-
-    public void setConnectionPreferences(ConnectionPreferences.ProfilePreferences connectionPreferences) {
-        this.connectionPreferences = connectionPreferences;
     }
 
     public Executor getExecutor() {
@@ -259,5 +261,9 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
     public ConnectionPreferences.ProfilePreferences getConnectionPreferences() {
         return connectionPreferences;
+    }
+
+    public void setConnectionPreferences(ConnectionPreferences.ProfilePreferences connectionPreferences) {
+        this.connectionPreferences = connectionPreferences;
     }
 }

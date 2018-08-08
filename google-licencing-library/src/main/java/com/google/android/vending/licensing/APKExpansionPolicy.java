@@ -21,6 +21,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
@@ -211,6 +213,7 @@ public class APKExpansionPolicy implements Policy {
         try {
             lValidityTimestamp = Long.parseLong(validityTimestamp);
         } catch (NumberFormatException e) {
+            Crashlytics.logException(e);
             // No response or not parseable, expire in one minute.
             Log.w(TAG, "License validity timestamp (VT) missing, caching for a minute");
             lValidityTimestamp = System.currentTimeMillis() + MILLIS_PER_MINUTE;
@@ -237,6 +240,7 @@ public class APKExpansionPolicy implements Policy {
         try {
             lRetryUntil = Long.parseLong(retryUntil);
         } catch (NumberFormatException e) {
+Crashlytics.logException(e);
             // No response or not parseable, expire immediately
             Log.w(TAG, "License retry timestamp (GT) missing, grace period disabled");
             retryUntil = "0";
@@ -263,6 +267,7 @@ public class APKExpansionPolicy implements Policy {
         try {
             lMaxRetries = Long.parseLong(maxRetries);
         } catch (NumberFormatException e) {
+            Crashlytics.logException(e);
             // No response or not parseable, expire immediately
             Log.w(TAG, "Licence retry count (GR) missing, grace period disabled");
             maxRetries = "0";
@@ -388,6 +393,7 @@ public class APKExpansionPolicy implements Policy {
                 results.put(name, item.getValue());
             }
         } catch (URISyntaxException e) {
+Crashlytics.logException(e);
             Log.w(TAG, "Invalid syntax error while decoding extras data from server.");
         }
         return results;

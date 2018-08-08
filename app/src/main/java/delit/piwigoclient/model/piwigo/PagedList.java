@@ -20,11 +20,11 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     public static int MISSING_ITEMS_PAGE = -1;
     private final String itemType;
     private final SortedSet<Integer> pagesLoaded = new TreeSet<>();
-    private boolean fullyLoaded;
     private final ArrayList<T> items;
-    private transient ReentrantLock pageLoadLock = new ReentrantLock();
     private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
     private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
+    private boolean fullyLoaded;
+    private transient ReentrantLock pageLoadLock = new ReentrantLock();
 
     public PagedList(String itemType) {
         this(itemType, 10);
@@ -61,7 +61,7 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
 
     public Integer getNextPageToReload() {
         Integer retVal = null;
-        if(!pagesFailedToLoad.isEmpty()) {
+        if (!pagesFailedToLoad.isEmpty()) {
             Iterator<Integer> iter = pagesFailedToLoad.iterator();
             retVal = iter.next();
             iter.remove();
@@ -75,7 +75,7 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
 
     public void recordPageLoadFailed(long loaderId) {
         Integer pageNum = pagesBeingLoaded.remove(loaderId);
-        if(pageNum != null) {
+        if (pageNum != null) {
             pagesFailedToLoad.add(pageNum);
         }
     }
@@ -83,12 +83,12 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     private int earlierLoadedPages(int page) {
         Iterator<Integer> iter = pagesLoaded.iterator();
         int earlierPages = 0;
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             int curPage = iter.next();
-            if(curPage < page) {
+            if (curPage < page) {
                 earlierPages++;
-            } else if(curPage == page) {
-                throw new IllegalStateException("Attempting to add page already loaded (" + curPage+")");
+            } else if (curPage == page) {
+                throw new IllegalStateException("Attempting to add page already loaded (" + curPage + ")");
             }
         }
         return earlierPages;
@@ -101,12 +101,12 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     public int addItemPage(int page, int pageSize, Collection<T> newItems) {
 
         int firstInsertPos = 0;
-        if(newItems.size() > 0) {
+        if (newItems.size() > 0) {
             firstInsertPos = Math.min(getPageInsertPosition(page, pageSize), items.size());
             items.addAll(firstInsertPos, newItems);
         }
         pagesLoaded.add(page);
-        if(newItems.size() < pageSize) {
+        if (newItems.size() < pageSize) {
             fullyLoaded = true;
         }
         return firstInsertPos;
@@ -122,6 +122,7 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
 
     /**
      * Should return the total number of items expected to be present in items once all pages are loaded.
+     *
      * @return
      */
     public long getMaxResourceCount() {
@@ -156,7 +157,7 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     @Override
     public T getItemById(long selectedItemId) {
         for (T item : items) {
-            if(getItemId(item) == selectedItemId) {
+            if (getItemId(item) == selectedItemId) {
                 return item;
             }
         }
@@ -166,6 +167,7 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     /**
      * Add an item to the end of the list.
      * Note that this won't affect the paging calculations as they are done on the fly.
+     *
      * @param item
      */
     @Override
@@ -188,12 +190,12 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     }
 
     public boolean addMissingItems(List<? extends T> newItems) {
-        if(newItems == null) {
+        if (newItems == null) {
             return false;
         }
         boolean changed = false;
-        for(T c : newItems) {
-            if(!items.contains(c)) {
+        for (T c : newItems) {
+            if (!items.contains(c)) {
                 addItem(c);
                 changed = true;
             }

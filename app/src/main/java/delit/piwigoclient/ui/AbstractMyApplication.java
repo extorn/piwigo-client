@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatDelegate;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
-import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
 
 /**
@@ -28,11 +27,11 @@ public abstract class AbstractMyApplication extends Application implements Appli
     private void upgradeAnyPreferencesIfRequired() {
         SharedPreferences prefs = getPrefs();
         int prefsVersion = prefs.getInt(getString(R.string.preference_app_prefs_version_key), -1);
-        if(prefsVersion == -1) {
+        if (prefsVersion == -1) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             editor.commit();
-        } else if(prefsVersion <= 43) {
+        } else if (prefsVersion <= 43) {
             SharedPreferences.Editor editor = prefs.edit();
             encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_username_key, null);
             encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_password_key, null);
@@ -40,7 +39,7 @@ public abstract class AbstractMyApplication extends Application implements Appli
             encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_password_key, null);
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             editor.commit();
-        } else if(prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())){
+        } else if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             editor.commit();
@@ -50,19 +49,18 @@ public abstract class AbstractMyApplication extends Application implements Appli
     private void encryptAndSaveValue(SharedPreferences prefs, SharedPreferences.Editor editor, int keyId, String defaultVal) {
         String key = getString(keyId);
         String currentVal = prefs.getString(key, defaultVal);
-        if(currentVal != null && !currentVal.equals(defaultVal)) {
+        if (currentVal != null && !currentVal.equals(defaultVal)) {
             String encryptedVal = SecurePrefsUtil.getInstance(getApplicationContext()).encryptValue(key, currentVal);
             editor.putString(key, encryptedVal);
         }
     }
 
     protected SharedPreferences getPrefs() {
-        if(prefs == null) {
+        if (prefs == null) {
             prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         }
         return prefs;
     }
-
 
 
     @Override

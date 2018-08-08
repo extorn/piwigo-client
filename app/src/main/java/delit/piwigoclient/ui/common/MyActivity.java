@@ -31,9 +31,10 @@ public abstract class MyActivity extends AppCompatActivity {
     private static final String STATE_TRACKED_ACTION_TO_INTENTS_MAP = "trackedActionIntentsMap";
     protected SharedPreferences prefs;
 
-    private HashMap<Long,Integer> trackedActionIntentsMap = new HashMap<>(3);
+    private HashMap<Long, Integer> trackedActionIntentsMap = new HashMap<>(3);
     private UIHelper uiHelper;
     private LicenceCheckingHelper licencingHelper;
+//    private FirebaseAnalytics mFirebaseAnalytics;
 
     public SharedPreferences getSharedPrefs() {
         return prefs;
@@ -41,8 +42,11 @@ public abstract class MyActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        // Obtain the FirebaseAnalytics instance.
+//        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if(uiHelper == null) {
+        if (uiHelper == null) {
             uiHelper = new AppCompatActivityUIHelper(this, prefs);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
             listener.withUiHelper(this, uiHelper);
@@ -54,7 +58,7 @@ public abstract class MyActivity extends AppCompatActivity {
             trackedActionIntentsMap = (HashMap<Long, Integer>) savedInstanceState.getSerializable(STATE_TRACKED_ACTION_TO_INTENTS_MAP);
         }
 
-        if(BuildConfig.PAID_VERSION && !BuildConfig.DEBUG) {
+        if (BuildConfig.PAID_VERSION && !BuildConfig.DEBUG) {
             licencingHelper = new LicenceCheckingHelper();
             licencingHelper.onCreate(this);
         }
@@ -70,7 +74,7 @@ public abstract class MyActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if(!EventBus.getDefault().isRegistered(this)) {
+        if (!EventBus.getDefault().isRegistered(this)) {
             throw new RuntimeException("Activity must register with event bus to ensure handling of UserNotUniqueWarningEvent");
         }
         uiHelper.handleAnyQueuedPiwigoMessages();
@@ -101,7 +105,7 @@ public abstract class MyActivity extends AppCompatActivity {
 
     protected int getTrackedIntentType(long trackedAction) {
         Integer intentType = trackedActionIntentsMap.remove(trackedAction);
-        if(intentType == null) {
+        if (intentType == null) {
             return -1;
         } else {
             return intentType;
@@ -123,15 +127,15 @@ public abstract class MyActivity extends AppCompatActivity {
         boolean found = false;
         int i = 0;
         int popToStateId = -1;
-        while(!found && getSupportFragmentManager().getBackStackEntryCount() > i) {
+        while (!found && getSupportFragmentManager().getBackStackEntryCount() > i) {
             FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(i);
-            if(fragmentClass.getName().equals(entry.getName())) {
+            if (fragmentClass.getName().equals(entry.getName())) {
                 found = true;
                 popToStateId = entry.getId();
-                if(i > 0) {
+                if (i > 0) {
                     // if the previous item was a login action - force that off the stack too.
                     entry = getSupportFragmentManager().getBackStackEntryAt(i - 1);
-                    if(LoginFragment.class.getName().equals(entry.getName())) {
+                    if (LoginFragment.class.getName().equals(entry.getName())) {
                         i--;
                     }
                     popToStateId = entry.getId();
@@ -140,13 +144,13 @@ public abstract class MyActivity extends AppCompatActivity {
                 i++;
             }
         }
-        if(found) {
+        if (found) {
             getSupportFragmentManager().popBackStack(popToStateId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
     }
 
     protected void checkLicenceIfNeeded() {
-        if(licencingHelper != null) {
+        if (licencingHelper != null) {
             licencingHelper.doSilentCheck();
         }
     }
@@ -154,7 +158,7 @@ public abstract class MyActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(licencingHelper != null) {
+        if (licencingHelper != null) {
             licencingHelper.onDestroy();
         }
     }
@@ -176,6 +180,6 @@ public abstract class MyActivity extends AppCompatActivity {
 //    }
 
     public MyApplication getMyApplication() {
-        return (MyApplication)getApplication();
+        return (MyApplication) getApplication();
     }
 }

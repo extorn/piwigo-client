@@ -7,16 +7,12 @@ import java.util.HashSet;
  */
 
 public class PermissionsWantedRequestEvent extends TrackableRequestEvent {
-    private String justification;
     private final HashSet<String> permissionsWanted = new HashSet<>();
+    private String justification;
     private HashSet<String> permissionsNeeded;
 
     public void addPermissionNeeded(String permissionNeeded) {
         permissionsWanted.add(permissionNeeded);
-    }
-
-    public void setJustification(String justification) {
-        this.justification = justification;
     }
 
     public HashSet<String> getPermissionsWanted() {
@@ -27,12 +23,16 @@ public class PermissionsWantedRequestEvent extends TrackableRequestEvent {
         return justification;
     }
 
-    public void setPermissionsNeeded(HashSet<String> permissionsNeeded) {
-        this.permissionsNeeded = permissionsNeeded;
+    public void setJustification(String justification) {
+        this.justification = justification;
     }
 
     public String[] getPermissionsNeeded() {
         return permissionsNeeded.toArray(new String[permissionsNeeded.size()]);
+    }
+
+    public void setPermissionsNeeded(HashSet<String> permissionsNeeded) {
+        this.permissionsNeeded = permissionsNeeded;
     }
 
     public void setActionId(int actionId) {

@@ -79,13 +79,13 @@ public class CommonPreferencesFragment extends MyFragment {
             getFragmentManager().popBackStack();
             return null;
         }
-        if(view != null) {
+        if (view != null) {
             return view;
         }
         view = inflater.inflate(R.layout.activity_preferences, container, false);
 
         AdView adView = view.findViewById(R.id.prefs_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -111,7 +111,7 @@ public class CommonPreferencesFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAppLockedEvent(AppLockedEvent event) {
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
     }

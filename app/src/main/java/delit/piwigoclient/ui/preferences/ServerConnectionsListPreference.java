@@ -48,7 +48,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
     public ServerConnectionsListPreference(Context context, AttributeSet attrs) {
         this(context, attrs, android.R.attr.dialogPreferenceStyle);
     }
-    
+
     /**
      * Returns the value of the key.
      *
@@ -81,13 +81,13 @@ public class ServerConnectionsListPreference extends DialogPreference {
         SharedPreferences prefs = getAppSharedPreferences();
 //        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(prefs, getContext());
         ServerConnection activeConnection;
-        if(mValue != null) {
+        if (mValue != null) {
             ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(mValue);
             activeConnection = new ServerConnection(mValue,
                     selectedPref.getPiwigoServerAddress(prefs, getContext()),
                     selectedPref.getPiwigoUsername(prefs, getContext()));
         } else {
-            activeConnection = new ServerConnection(null, null,null);
+            activeConnection = new ServerConnection(null, null, null);
         }
         return activeConnection.getSummary(getContext());
     }
@@ -104,7 +104,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_list, null, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -134,7 +134,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
     private ArrayList<ServerConnection> loadServerConnections(SharedPreferences prefs) {
         Set<String> profiles = ConnectionPreferences.getConnectionProfileList(prefs, getContext());
         ArrayList<ServerConnection> connections = new ArrayList<>();
-        if(profiles.size() > 0) {
+        if (profiles.size() > 0) {
             for (String p : profiles) {
                 ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(p);
                 connections.add(new ServerConnection(p,
@@ -160,9 +160,9 @@ public class ServerConnectionsListPreference extends DialogPreference {
     protected void showDialog(Bundle state) {
         super.showDialog(state);
         loadListValues();
-        if(itemListView.getAdapter().getCount() == 1) {
+        if (itemListView.getAdapter().getCount() == 1) {
             // ensure the value gets set.
-            ((ServerConnectionProfilesListAdapter)itemListView.getAdapter()).selectAllItemIds();
+            ((ServerConnectionProfilesListAdapter) itemListView.getAdapter()).selectAllItemIds();
             onClick(getDialog(), DialogInterface.BUTTON_POSITIVE);
             getDialog().dismiss();
         }
@@ -174,8 +174,8 @@ public class ServerConnectionsListPreference extends DialogPreference {
 //        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(getSharedPreferences(), getContext());
         HashSet<Long> selectedIdx = new HashSet<>(1);
         int idxToSelect = 0;
-        for(ServerConnection c : serverConnections) {
-            if(c.getProfileName().equals(mValue)) {
+        for (ServerConnection c : serverConnections) {
+            if (c.getProfileName().equals(mValue)) {
                 selectedIdx.add(Long.valueOf(idxToSelect));
                 break;
             }
@@ -191,12 +191,12 @@ public class ServerConnectionsListPreference extends DialogPreference {
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
-        if(positiveResult) {
+        if (positiveResult) {
             mValueSet = false; // force the value to be saved.
-            ServerConnection selectedItem = ((ServerConnectionProfilesListAdapter)itemListView.getAdapter()).getSelectedItems().iterator().next();
+            ServerConnection selectedItem = ((ServerConnectionProfilesListAdapter) itemListView.getAdapter()).getSelectedItems().iterator().next();
 
-            if (callChangeListener(selectedItem==null?null: selectedItem.profileName)) {
-                setValue(selectedItem==null?null:selectedItem.profileName);
+            if (callChangeListener(selectedItem == null ? null : selectedItem.profileName)) {
+                setValue(selectedItem == null ? null : selectedItem.profileName);
             }
         }
     }
@@ -280,11 +280,11 @@ public class ServerConnectionsListPreference extends DialogPreference {
             this.username = piwigoUsername;
         }
 
-        public String  getServerName() {
+        public String getServerName() {
             return serverName;
         }
 
-        public String  getUsername() {
+        public String getUsername() {
             return username;
         }
 
@@ -293,11 +293,11 @@ public class ServerConnectionsListPreference extends DialogPreference {
         }
 
         public String getSummary(Context c) {
-            if(serverName == null) {
+            if (serverName == null) {
                 return c.getString(R.string.server_connection_preference_summary_default);
             }
             String user = Strings.emptyToNull(username);
-            if(user == null) {
+            if (user == null) {
                 user = c.getString(R.string.server_connection_preference_user_guest);
             }
             return user + '@' + serverName;

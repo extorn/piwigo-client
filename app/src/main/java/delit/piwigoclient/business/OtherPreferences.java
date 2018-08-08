@@ -14,7 +14,7 @@ public class OtherPreferences {
     }
 
     public static int getFileSelectorColumnsOfFiles(SharedPreferences prefs, Context context) {
-        if(context.getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+        if (context.getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
             return prefs.getInt(context.getString(R.string.preference_data_file_selector_preferredFileColumnsPortrait_key), 3);
         } else {
             return prefs.getInt(context.getString(R.string.preference_data_file_selector_preferredFileColumnsLandscape_key), 5);
@@ -22,7 +22,7 @@ public class OtherPreferences {
     }
 
     public static int getFileSelectorColumnsOfFolders(SharedPreferences prefs, Context context) {
-        if(context.getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+        if (context.getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
             return prefs.getInt(context.getString(R.string.preference_data_file_selector_preferredFolderColumnsPortrait_key), 3);
         } else {
             return prefs.getInt(context.getString(R.string.preference_data_file_selector_preferredFolderColumnsLandscape_key), 4);

@@ -9,10 +9,11 @@ import java.util.HashSet;
 
 public class PiwigoUtils {
 
-    private PiwigoUtils() {}
+    private PiwigoUtils() {
+    }
 
     public static <T extends Identifiable> HashSet<Long> toSetOfIds(Collection<T> identifiables) {
-        if(identifiables == null) {
+        if (identifiables == null) {
             return null;
         }
         HashSet<Long> ids = new HashSet<>(identifiables.size());

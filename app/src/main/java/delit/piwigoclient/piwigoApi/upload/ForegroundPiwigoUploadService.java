@@ -19,7 +19,9 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     private static final String ACTION_UPLOAD_FILES = "delit.piwigoclient.action.ACTION_UPLOAD_FILES";
     private static final int FOREGROUND_UPLOAD_NOTIFICATION_ID = 3;
 
-    public ForegroundPiwigoUploadService() { super(TAG);}
+    public ForegroundPiwigoUploadService() {
+        super(TAG);
+    }
 
     public static long startActionRunOrReRunUploadJob(Context context, UploadJob uploadJob, boolean keepDeviceAwake) {
 
@@ -53,7 +55,6 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
         PiwigoResponseBufferingHandler.getDefault().preRegisterResponseHandlerForNewMessage(jobId, response.getMessageId());
         PiwigoResponseBufferingHandler.getDefault().processResponse(response);
     }
-
 
 
 }

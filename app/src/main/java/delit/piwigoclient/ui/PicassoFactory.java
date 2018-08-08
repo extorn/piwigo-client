@@ -75,26 +75,56 @@ public class PicassoFactory {
         }
     }
 
+    public synchronized void registerListener(Context context, Uri uri, Picasso.Listener listener) {
+        if (errorHandler == null) {
+            getPicassoSingleton(context);
+        }
+        errorHandler.addListener(uri, listener);
+    }
+
+    public synchronized void deregisterListener(Context context, Uri uri) {
+        if (errorHandler == null) {
+            getPicassoSingleton(context);
+        }
+        errorHandler.removeListener(uri);
+    }
+
+    public boolean clearPicassoCache(Context context, boolean forceClear) {
+        synchronized (PicassoFactory.class) {
+            if (picasso != null && (forceClear || picasso.getCacheSize() > (1024 * 1024 * 5))) { // if over 5mb of cache used
+                getPicassoSingleton(context).cancelTag(PicassoLoader.PICASSO_REQUEST_TAG);
+                getPicassoSingleton(context).shutdown();
+                picasso = null;
+                initialise();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean clearPicassoCache(Context context) {
+        return clearPicassoCache(context, false);
+    }
+
     class VideoRequestHandler extends RequestHandler {
 
-        public final String SCHEME_VIDEO="video";
+        public final String SCHEME_VIDEO = "video";
+
         @Override
-        public boolean canHandleRequest(Request data)
-        {
+        public boolean canHandleRequest(Request data) {
             MimeTypeMap map = MimeTypeMap.getSingleton();
             String ext = MimeTypeMap.getFileExtensionFromUrl(data.uri.getPath());
             String mimeType = map.getMimeTypeFromExtension(ext);
             String scheme = data.uri.getScheme();
             boolean mimeTypeMatches = false;
-            if(mimeType != null) {
-                mimeTypeMatches = mimeType.startsWith(SCHEME_VIDEO+'/');
+            if (mimeType != null) {
+                mimeTypeMatches = mimeType.startsWith(SCHEME_VIDEO + '/');
             }
             return mimeTypeMatches || (SCHEME_VIDEO.equals(scheme));
         }
 
         @Override
-        public Result load(Request data, int networkPolicy) throws IOException
-        {
+        public Result load(Request data, int networkPolicy) throws IOException {
             Bitmap bm = ThumbnailUtils.createVideoThumbnail(data.uri.getPath(), MediaStore.Images.Thumbnails.MINI_KIND);
             return new Result(bm, Picasso.LoadedFrom.DISK);
         }
@@ -117,18 +147,17 @@ public class PicassoFactory {
         }
 
 
-
-        public Bitmap drawableToBitmap (Drawable drawable) {
+        public Bitmap drawableToBitmap(Drawable drawable) {
             Bitmap bitmap;
 
             if (drawable instanceof BitmapDrawable) {
                 BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-                if(bitmapDrawable.getBitmap() != null) {
+                if (bitmapDrawable.getBitmap() != null) {
                     return bitmapDrawable.getBitmap();
                 }
             }
 
-            if(drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
                 bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
             } else {
                 bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
@@ -141,20 +170,6 @@ public class PicassoFactory {
         }
 
 
-    }
-
-    public synchronized void registerListener(Context context, Uri uri, Picasso.Listener listener) {
-        if(errorHandler == null) {
-            getPicassoSingleton(context);
-        }
-        errorHandler.addListener(uri, listener);
-    }
-
-    public synchronized void deregisterListener(Context context, Uri uri) {
-        if(errorHandler == null) {
-            getPicassoSingleton(context);
-        }
-        errorHandler.removeListener(uri);
     }
 
     private class PicassoErrorHandler implements Picasso.Listener {
@@ -171,33 +186,16 @@ public class PicassoFactory {
 
         @Override
         public void onImageLoadFailed(Picasso picasso, Uri uri, Exception e) {
-            if(uri != null) {
+            if (uri != null) {
                 Picasso.Listener listener = listeners.get(uri);
                 if (listener != null) {
                     listener.onImageLoadFailed(picasso, uri, e);
-                } else if(BuildConfig.DEBUG) {
+                } else if (BuildConfig.DEBUG) {
                     Log.e(TAG, String.format("Error loading uri %1$s", uri), e);
                 }
-            } else if(BuildConfig.DEBUG) {
+            } else if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error loading uri null", e);
             }
         }
-    }
-
-    public boolean clearPicassoCache(Context context, boolean forceClear) {
-        synchronized(PicassoFactory.class) {
-            if (picasso != null && (forceClear || picasso.getCacheSize() > (1024 * 1024 * 5))) { // if over 5mb of cache used
-                getPicassoSingleton(context).cancelTag(PicassoLoader.PICASSO_REQUEST_TAG);
-                getPicassoSingleton(context).shutdown();
-                picasso = null;
-                initialise();
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean clearPicassoCache(Context context) {
-        return clearPicassoCache(context, false);
     }
 }

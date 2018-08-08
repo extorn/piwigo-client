@@ -73,6 +73,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
     /**
      * TODO break this code into two pieces - part to make the view and part that populates it (so we can reuse more of the view) DITTO video fragment.
+     *
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -104,7 +105,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
             @Override
             protected void onImageLoad(boolean success) {
-                if(success) {
+                if (success) {
                     imageView.resetZoom();
                 } else {
                     imageView.setBackgroundColor(Color.DKGRAY);
@@ -122,7 +123,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(loader != null && !loader.isImageLoaded()) {
+                if (loader != null && !loader.isImageLoaded()) {
                     loader.loadNoCache();
                 }
             }
@@ -146,7 +147,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                         currentImageUrlDisplayed = selectedUrl;
                         loader.setUriToLoad(currentImageUrlDisplayed);
                         //TODO work out how to do auto rotation!
-                        if(0 != Float.compare(rotateDegrees, 0f)) {
+                        if (0 != Float.compare(rotateDegrees, 0f)) {
                             loader.setRotation(rotateDegrees);
                         }
                         loader.load();
@@ -163,12 +164,12 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             currentImageUrlDisplayed = savedInstanceState.getString(STATE_CURRENT_IMAGE_URL);
         }
 
         // reset the screen state if we're entering for the first time
-        if(currentImageUrlDisplayed == null) {
+        if (currentImageUrlDisplayed == null) {
             // currently only the loader needs resetting.
             loader.resetAll();
         }
@@ -176,18 +177,18 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         // Load the content into the screen.
 
         PictureResourceItem model = getModel();
-        if(currentImageUrlDisplayed == null) {
+        if (currentImageUrlDisplayed == null) {
             String preferredImageSize = prefs.getString(getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key), getContext().getString(R.string.preference_gallery_item_slideshow_image_size_default));
-            for(ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
-                if(rf.getName().equals(preferredImageSize)) {
+            for (ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
+                if (rf.getName().equals(preferredImageSize)) {
                     currentImageUrlDisplayed = rf.getUrl();
                     break;
                 }
             }
-            if(currentImageUrlDisplayed == null) {
+            if (currentImageUrlDisplayed == null) {
                 //Oh no - image couldn't be found - use the default.
                 ResourceItem.ResourceFile fullscreenImage = model.getFullScreenImage();
-                if(fullscreenImage != null) {
+                if (fullscreenImage != null) {
                     currentImageUrlDisplayed = model.getFullScreenImage().getUrl();
                 } else {
                     currentImageUrlDisplayed = model.getFile("original").getUrl();
@@ -210,7 +211,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PermissionsWantedResponse event) {
 
-        if(getUiHelper().completePermissionsWantedRequest(event)) {
+        if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (event.areAllPermissionsGranted()) {
                 //Granted
                 DownloadSelectionDialog dialogFactory = new DownloadSelectionDialog(getContext());

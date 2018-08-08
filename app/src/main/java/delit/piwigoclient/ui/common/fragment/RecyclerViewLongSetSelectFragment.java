@@ -41,7 +41,7 @@ public abstract class RecyclerViewLongSetSelectFragment<X extends Enableable & S
         HashSet<Long> ids = getListAdapter().getSelectedItemIds();
         long[] result = new long[ids.size()];
         int i = 0;
-        for(Long id : ids) {
+        for (Long id : ids) {
             result[i++] = id;
         }
         return result;

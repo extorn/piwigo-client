@@ -38,5 +38,6 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
         return itemActionListener;
     }
 
-    public <T> void redisplayOldValues(Context context, T newItem, boolean allowItemDeletion) {}
+    public <T> void redisplayOldValues(Context context, T newItem, boolean allowItemDeletion) {
+    }
 }

@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -121,6 +122,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
                     dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
                 }
             } catch (ParseException e) {
+                Crashlytics.logException(e);
                 throw new JSONException("Unable to parse date " + dateLastAlteredStr);
             }
 

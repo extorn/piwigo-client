@@ -95,7 +95,7 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
         int totalSlideshowItems = getTotalSlideshowItems();
 
         if (galleryItem instanceof PictureResourceItem) {
-            fragment.setArguments(SlideshowItemFragment.buildArgs((PictureResourceItem)galleryItem, position, galleryResourceItems.size(), totalSlideshowItems));
+            fragment.setArguments(SlideshowItemFragment.buildArgs((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems));
         } else if (galleryItem instanceof VideoResourceItem) {
             fragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, false));
         }
@@ -127,9 +127,9 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         SlideshowItemFragment fragment = (SlideshowItemFragment) super.instantiateItem(container, position);
-        if(fragment != null && position == ((ViewPager)container).getCurrentItem()) {
+        if (fragment != null && position == ((ViewPager) container).getCurrentItem()) {
             fragment.onPageSelected();
-            if(lastPosition >= 0) {
+            if (lastPosition >= 0) {
                 onPageDeselected(lastPosition);
             }
             lastPosition = position;
@@ -139,25 +139,25 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
 
     public void onPageSelected(int position) {
         Fragment managedFragment = getActiveFragment(position);
-        if(managedFragment != null) {
+        if (managedFragment != null) {
             // if this slideshow item still exists (not been deleted by user)
-            SlideshowItemFragment selectedPage = (SlideshowItemFragment)managedFragment;
+            SlideshowItemFragment selectedPage = (SlideshowItemFragment) managedFragment;
             selectedPage.onPageSelected();
         }
     }
 
     public void onPageDeselected(int position) {
         Fragment managedFragment = getActiveFragment(position);
-        if(managedFragment != null) {
+        if (managedFragment != null) {
             // if this slideshow item still exists (not been deleted by user)
-            SlideshowItemFragment selectedPage = (SlideshowItemFragment)managedFragment;
+            SlideshowItemFragment selectedPage = (SlideshowItemFragment) managedFragment;
             selectedPage.onPageDeselected();
         }
     }
 
     public int getSlideshowIndex(int rawCurrentGalleryItemPosition) {
         int idx = galleryResourceItems.indexOf(rawCurrentGalleryItemPosition);
-        if(idx < 0) {
+        if (idx < 0) {
             throw new IllegalStateException("Item to show was not found in the gallery - weird!");
         }
         return idx;
@@ -165,12 +165,12 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
 
     public void deleteGalleryItem(int fullGalleryIdx) {
         int positionToDelete = galleryResourceItems.indexOf(fullGalleryIdx);
-        if(positionToDelete >= 0) {
+        if (positionToDelete >= 0) {
             // remove the item from the resource index and the backing gallery model
             gallery.remove(galleryResourceItems.remove(positionToDelete));
             // now recalcualate the positions of the remaining slideshow items in the main album
-            for(int i = positionToDelete ; i < galleryResourceItems.size(); i++) {
-                galleryResourceItems.set(i, galleryResourceItems.get(i)-1);
+            for (int i = positionToDelete; i < galleryResourceItems.size(); i++) {
+                galleryResourceItems.set(i, galleryResourceItems.get(i) - 1);
             }
             notifyDataSetChanged();
         }
@@ -193,7 +193,7 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
 
     @Override
     public void notifyDataSetChanged() {
-        if(galleryResourceItems.size() > 0) {
+        if (galleryResourceItems.size() > 0) {
             int lastLoadedIdx = galleryResourceItems.get(galleryResourceItems.size() - 1);
             addResourcesToIndex(1 + lastLoadedIdx, -1);
         }
@@ -205,11 +205,11 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
         this.shouldShowVideos = shouldShowVideos;
     }
 
-    public void setContainer(S container) {
-        this.container = container;
-    }
-
     public S getContainer() {
         return container;
+    }
+
+    public void setContainer(S container) {
+        this.container = container;
     }
 }

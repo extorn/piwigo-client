@@ -44,10 +44,11 @@ public class CategoryItem extends GalleryItem {
 
     /**
      * Used for the admin list of albums
+     *
      * @param childAlbum
      */
     public void addChildAlbum(CategoryItem childAlbum) {
-        if(childAlbums == null) {
+        if (childAlbums == null) {
             childAlbums = new ArrayList<>();
         }
         childAlbums.add(childAlbum);
@@ -55,6 +56,7 @@ public class CategoryItem extends GalleryItem {
 
     /**
      * Used for the admin list of albums
+     *
      * @return
      */
     public List<CategoryItem> getChildAlbums() {
@@ -144,23 +146,23 @@ public class CategoryItem extends GalleryItem {
     }
 
     public CategoryItem locateChildAlbum(List<Long> parentageChain) {
-        return locateChildAlbum(parentageChain,1);
+        return locateChildAlbum(parentageChain, 1);
     }
 
     private CategoryItem locateChildAlbum(List<Long> parentageChain, int idx) {
-        if(parentageChain.size() <= idx) {
-            if(BuildConfig.DEBUG) {
+        if (parentageChain.size() <= idx) {
+            if (BuildConfig.DEBUG) {
                 Log.e("catItem", "Idx out of bounds for parentage chain : " + parentageChain.toArray() + " idx : " + idx);
             }
             return null;
         }
-        if(getId() != parentageChain.get(idx)) {
+        if (getId() != parentageChain.get(idx)) {
             return null;
         }
-        if(parentageChain.size() == getParentageChain().size() + 1) {
+        if (parentageChain.size() == getParentageChain().size() + 1) {
             return this;
         }
-        if(childAlbums != null) {
+        if (childAlbums != null) {
             for (CategoryItem c : childAlbums) {
                 CategoryItem item = c.locateChildAlbum(parentageChain, idx + 1);
                 if (item != null) {
@@ -172,7 +174,7 @@ public class CategoryItem extends GalleryItem {
     }
 
     public void updateTotalPhotoAndSubAlbumCount() {
-        if(childAlbums == null) {
+        if (childAlbums == null) {
             subCategories = 0;
             totalPhotoCount = photoCount;
         } else {
@@ -196,7 +198,7 @@ public class CategoryItem extends GalleryItem {
     public boolean removeChildAlbum(long albumId) {
         CategoryItem item;
         boolean removed = false;
-        if(childAlbums != null) {
+        if (childAlbums != null) {
             for (Iterator<CategoryItem> iter = childAlbums.iterator(); iter.hasNext(); ) {
                 item = iter.next();
                 if (item.getId() == albumId) {
@@ -206,7 +208,7 @@ public class CategoryItem extends GalleryItem {
                 }
             }
         }
-        if(removed) {
+        if (removed) {
             updateTotalPhotoAndSubAlbumCount();
         }
         return removed;

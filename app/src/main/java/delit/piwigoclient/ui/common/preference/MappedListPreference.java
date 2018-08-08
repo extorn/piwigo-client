@@ -36,20 +36,6 @@ public abstract class MappedListPreference<T> extends DialogPreference {
     private int mClickedDialogEntryIndex;
     private boolean mValueSet;
 
-    protected T[] loadEntryValues(TypedArray a, int typedArrayIdx) {
-        return loadEntryValuesFromResourceId(a.getResources(), a.getResourceId(typedArrayIdx, -1));
-    }
-
-    protected abstract T[] loadEntryValuesFromResourceId(Resources res, int resourceId);
-
-    protected abstract void persistValue(T value);
-
-    protected abstract T getPersistedValue(T defaultValue);
-
-    protected abstract String valueAsString(T value);
-
-    protected abstract T valueFromString(String valueAsString);
-
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public MappedListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -68,6 +54,20 @@ public abstract class MappedListPreference<T> extends DialogPreference {
     public MappedListPreference(Context context) {
         this(context, null);
     }
+
+    protected T[] loadEntryValues(TypedArray a, int typedArrayIdx) {
+        return loadEntryValuesFromResourceId(a.getResources(), a.getResourceId(typedArrayIdx, -1));
+    }
+
+    protected abstract T[] loadEntryValuesFromResourceId(Resources res, int resourceId);
+
+    protected abstract void persistValue(T value);
+
+    protected abstract T getPersistedValue(T defaultValue);
+
+    protected abstract String valueAsString(T value);
+
+    protected abstract T valueFromString(String valueAsString);
 
     private void configurePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         TypedArray a = context.obtainStyledAttributes(
@@ -97,20 +97,20 @@ public abstract class MappedListPreference<T> extends DialogPreference {
     }
 
     /**
-     * @see #setEntries(CharSequence[])
-     * @param entriesResId The entries array as a resource.
-     */
-    public void setEntries(@ArrayRes int entriesResId) {
-        setEntries(getContext().getResources().getTextArray(entriesResId));
-    }
-
-    /**
      * The list of entries to be shown in the list in subsequent dialogs.
      *
      * @return The list as an array.
      */
     public CharSequence[] getEntries() {
         return mEntries;
+    }
+
+    /**
+     * @param entriesResId The entries array as a resource.
+     * @see #setEntries(CharSequence[])
+     */
+    public void setEntries(@ArrayRes int entriesResId) {
+        setEntries(getContext().getResources().getTextArray(entriesResId));
     }
 
     /**
@@ -125,14 +125,6 @@ public abstract class MappedListPreference<T> extends DialogPreference {
     }
 
     /**
-     * @see #setEntryValues(T[])
-     * @param entryValuesResId The entry values array as a resource.
-     */
-    public void setEntryValues(@ArrayRes int entryValuesResId) {
-        setEntryValues(loadEntryValuesFromResourceId(getContext().getResources(), entryValuesResId));
-    }
-
-    /**
      * Returns the array of values to be saved for the preference.
      *
      * @return The array of values.
@@ -142,22 +134,11 @@ public abstract class MappedListPreference<T> extends DialogPreference {
     }
 
     /**
-     * Sets the value of the key. This should be one of the entries in
-     * {@link #getEntryValues()}.
-     *
-     * @param value The value to set for the key.
+     * @param entryValuesResId The entry values array as a resource.
+     * @see #setEntryValues(T[])
      */
-    public void setValue(T value) {
-        // Always persist/notify the first time.
-        final boolean changed = !ObjectUtils.areEqual(mValue, value);
-        if (changed || !mValueSet) {
-            mValue = value;
-            mValueSet = true;
-            persistValue(value);
-            if (changed) {
-                notifyChanged();
-            }
-        }
+    public void setEntryValues(@ArrayRes int entryValuesResId) {
+        setEntryValues(loadEntryValuesFromResourceId(getContext().getResources(), entryValuesResId));
     }
 
     /**
@@ -176,13 +157,6 @@ public abstract class MappedListPreference<T> extends DialogPreference {
         } else {
             return String.format(mSummary, entry == null ? "" : entry);
         }
-    }
-
-    protected abstract T transform(Object obj);
-
-    @Override
-    public void setDefaultValue(Object defaultValue) {
-        super.setDefaultValue(transform(defaultValue));
     }
 
     /**
@@ -204,15 +178,11 @@ public abstract class MappedListPreference<T> extends DialogPreference {
         }
     }
 
-    /**
-     * Sets the value to the given index from the entry values.
-     *
-     * @param index The index of the value to set.
-     */
-    public void setValueIndex(int index) {
-        if (mEntryValues != null) {
-            setValue(mEntryValues[index]);
-        }
+    protected abstract T transform(Object obj);
+
+    @Override
+    public void setDefaultValue(Object defaultValue) {
+        super.setDefaultValue(transform(defaultValue));
     }
 
     /**
@@ -223,6 +193,25 @@ public abstract class MappedListPreference<T> extends DialogPreference {
      */
     public T getValue() {
         return mValue;
+    }
+
+    /**
+     * Sets the value of the key. This should be one of the entries in
+     * {@link #getEntryValues()}.
+     *
+     * @param value The value to set for the key.
+     */
+    public void setValue(T value) {
+        // Always persist/notify the first time.
+        final boolean changed = !ObjectUtils.areEqual(mValue, value);
+        if (changed || !mValueSet) {
+            mValue = value;
+            mValueSet = true;
+            persistValue(value);
+            if (changed) {
+                notifyChanged();
+            }
+        }
     }
 
     /**
@@ -256,6 +245,17 @@ public abstract class MappedListPreference<T> extends DialogPreference {
         return findIndexOfValue(mValue);
     }
 
+    /**
+     * Sets the value to the given index from the entry values.
+     *
+     * @param index The index of the value to set.
+     */
+    public void setValueIndex(int index) {
+        if (mEntryValues != null) {
+            setValue(mEntryValues[index]);
+        }
+    }
+
     @Override
     protected void onPrepareDialogBuilder(Builder builder) {
         super.onPrepareDialogBuilder(builder);
@@ -278,7 +278,7 @@ public abstract class MappedListPreference<T> extends DialogPreference {
                         MappedListPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
                         dialog.dismiss();
                     }
-        });
+                });
 
         /*
          * The typical interaction for list-based dialogs is to have
@@ -337,6 +337,16 @@ public abstract class MappedListPreference<T> extends DialogPreference {
     }
 
     private static class SavedState extends BaseSavedState {
+        public static final Parcelable.Creator<SavedState> CREATOR =
+                new Parcelable.Creator<SavedState>() {
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
+
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
         private String value;
 
         public SavedState(Parcel source) {
@@ -344,26 +354,15 @@ public abstract class MappedListPreference<T> extends DialogPreference {
             value = source.readString();
         }
 
+        public SavedState(Parcelable superState) {
+            super(superState);
+        }
+
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeString(value);
         }
-
-        public SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        public static final Parcelable.Creator<SavedState> CREATOR =
-                new Parcelable.Creator<SavedState>() {
-            public SavedState createFromParcel(Parcel in) {
-                return new SavedState(in);
-            }
-
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
     }
 
 }

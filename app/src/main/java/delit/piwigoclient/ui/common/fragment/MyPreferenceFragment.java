@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 import delit.piwigoclient.R;
@@ -35,7 +36,7 @@ public class MyPreferenceFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
-        if(uiHelper == null) {
+        if (uiHelper == null) {
             uiHelper = new FragmentUIHelper(this, getPrefs(), c);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener(c);
             listener.withUiHelper(this, uiHelper);
@@ -109,12 +110,16 @@ public class MyPreferenceFragment extends PreferenceFragment {
 
         try {
             return getPreferenceManager().getSharedPreferences().getInt(getString(preferenceKey), Integer.MIN_VALUE);
-        } catch(ClassCastException e) {
-            if(e.getMessage().equals("java.lang.String cannot be cast to java.lang.Integer")) {
+        } catch (ClassCastException e) {
+            Crashlytics.logException(e);
+            Crashlytics.logException(e);
+            if (e.getMessage().equals("java.lang.String cannot be cast to java.lang.Integer")) {
                 String intStr = getPreferenceManager().getSharedPreferences().getString(getString(preferenceKey), null);
                 try {
                     return Integer.valueOf(intStr);
-                } catch(NumberFormatException e2) {
+                } catch (NumberFormatException e2) {
+                    Crashlytics.logException(e);
+                    Crashlytics.logException(e2);
                     return Integer.MIN_VALUE;
                 }
             }

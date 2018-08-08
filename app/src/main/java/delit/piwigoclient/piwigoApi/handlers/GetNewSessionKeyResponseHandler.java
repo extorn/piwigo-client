@@ -28,7 +28,7 @@ public class GetNewSessionKeyResponseHandler extends AbstractPiwigoWsResponseHan
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         String username = getConnectionPrefs().getPiwigoUsername(prefs, getContext());
         String pass = this.password;
-        if(pass == null) {
+        if (pass == null) {
             pass = getConnectionPrefs().getPiwigoPassword(prefs, getContext());
         }
 

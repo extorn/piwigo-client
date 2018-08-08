@@ -64,9 +64,9 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
             CategoryItemStub album = new CategoryItemStub(name, id);
             album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
             int insertPosition = availableGalleries.size();
-            while(parentAlbum != null && !availableGalleries.contains(parentAlbum)) {
+            while (parentAlbum != null && !availableGalleries.contains(parentAlbum)) {
                 availableGalleries.add(insertPosition, parentAlbum);
-                if(parentAlbum.getParentId() == null) {
+                if (parentAlbum.getParentId() == null) {
                     break;
                 }
                 parentAlbum = availableGalleriesMap.get(parentAlbum.getParentId());
@@ -80,19 +80,19 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
     }
 
     private CategoryItemStub getParentBuildingTreeIfNeeded(LongSparseArray<CategoryItemStub> albumsParsed, String[] parentageArr) {
-        if(parentageArr == null || parentageArr.length == 1) {
+        if (parentageArr == null || parentageArr.length == 1) {
             return CategoryItemStub.ROOT_GALLERY;
         }
         List<Long> treeNodes = ArrayUtils.toList(ArrayUtils.getLongArray(parentageArr));
 
         List<CategoryItemStub> parentAlbums = new ArrayList<>(treeNodes.size());
         treeNodes.remove(treeNodes.size() - 1);
-        for(int i = treeNodes.size(); i > 0; i--) {
+        for (int i = treeNodes.size(); i > 0; i--) {
             Long parentId = treeNodes.remove(treeNodes.size() - 1);
-            if(albumsParsed.indexOfKey(parentId) < 0) {
-                CategoryItemStub album = new CategoryItemStub(getContext().getString(R.string.inaccessible_remote_folder),parentId);
+            if (albumsParsed.indexOfKey(parentId) < 0) {
+                CategoryItemStub album = new CategoryItemStub(getContext().getString(R.string.inaccessible_remote_folder), parentId);
                 album = album.markNonUserSelectable();
-                if(treeNodes.size() == 0) {
+                if (treeNodes.size() == 0) {
                     album.setParentageChain(CategoryItem.ROOT_ALBUM.getParentageChain(), CategoryItem.ROOT_ALBUM.getId());
                 } else {
                     album.setParentageChain(new ArrayList<>(treeNodes));
@@ -100,11 +100,11 @@ public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRe
                 parentAlbums.add(0, album);
             }
         }
-        if(albumsParsed.size() == 0) {
+        if (albumsParsed.size() == 0) {
             parentAlbums.add(0, CategoryItemStub.ROOT_GALLERY);
         }
 
-        for(CategoryItemStub parentAlbum : parentAlbums) {
+        for (CategoryItemStub parentAlbum : parentAlbums) {
             albumsParsed.put(parentAlbum.getId(), parentAlbum);
         }
         return albumsParsed.get(Long.valueOf(parentageArr[parentageArr.length - 2]));

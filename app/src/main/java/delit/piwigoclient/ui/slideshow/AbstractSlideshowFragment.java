@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -50,16 +51,17 @@ import static android.view.View.VISIBLE;
 
 public abstract class AbstractSlideshowFragment<T extends Identifiable> extends MyFragment {
 
-//    private static final String TAG = "SlideshowFragment";
+    //    private static final String TAG = "SlideshowFragment";
     private static final String STATE_GALLERY = "gallery";
     private static final String STATE_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
     private static final String STATE_ACTIVE_LOAD_THREADS = "activeLoadThreads";
+    private final HashSet<Integer> pagesBeingLoaded = new HashSet<>();
     private CustomViewPager viewPager;
     private ResourceContainer<T, GalleryItem> gallery;
     private int rawCurrentGalleryItemPosition;
     private View progressIndicator;
-    private final HashSet<Integer> pagesBeingLoaded = new HashSet<>();
-    private GalleryItemAdapter<T,CustomViewPager> galleryItemAdapter;
+    private GalleryItemAdapter<T, CustomViewPager> galleryItemAdapter;
+    private AdView adView;
 
     public static Bundle buildArgs(ResourceContainer gallery, GalleryItem currentGalleryItem) {
         Bundle args = new Bundle();
@@ -93,7 +95,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if(isServerConnectionChanged()) {
+        if (isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -104,10 +106,11 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         progressIndicator = view.findViewById(R.id.slideshow_page_loadingIndicator);
         hideProgressIndicator();
 
-        AdView adView = view.findViewById(R.id.slideshow_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()
+        adView = view.findViewById(R.id.slideshow_adView);
+        if (AdsManager.getInstance().shouldShowAdverts()
                 && getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
             adView.loadAd(new AdRequest.Builder().build());
+            adView.setAdListener(new AdsManager.MyBannerAdListener(adView));
             adView.setVisibility(VISIBLE);
         } else {
             adView.setVisibility(GONE);
@@ -121,7 +124,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         super.onViewCreated(view, savedInstanceState);
         Bundle configurationBundle = savedInstanceState;
-        if(configurationBundle == null) {
+        if (configurationBundle == null) {
             configurationBundle = getArguments();
         }
         if (configurationBundle != null) {
@@ -131,7 +134,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
             SetUtils.setNotNull(pagesBeingLoaded, (HashSet<Integer>) configurationBundle.getSerializable(STATE_ACTIVE_LOAD_THREADS));
         }
 
-        if(viewPager != null && isSessionDetailsChanged()) {
+        if (viewPager != null && isSessionDetailsChanged()) {
             // If the page has been initialised already (not first visit), and the session token has changed, force reload.
             getFragmentManager().popBackStack();
             return;
@@ -140,7 +143,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         viewPager = view.findViewById(R.id.slideshow_viewpager);
         boolean shouldShowVideos = prefs.getBoolean(getString(R.string.preference_gallery_include_videos_in_slideshow_key), getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
         shouldShowVideos &= prefs.getBoolean(getString(R.string.preference_gallery_enable_video_playback_key), getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
-        if(galleryItemAdapter == null) {
+        if (galleryItemAdapter == null) {
             galleryItemAdapter = new GalleryItemAdapter(gallery, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(1);
         } else {
@@ -163,11 +166,15 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
             @Override
             public void onPageSelected(int position) {
-                if(!gallery.isFullyLoaded()) {
-                    if((viewPager.getAdapter()).getCount() - position < 10) {
+                if (!gallery.isFullyLoaded()) {
+                    if ((viewPager.getAdapter()).getCount() - position < 10) {
                         //if within 10 items of the end of those items currently loaded, load some more.
                         loadMoreGalleryResources();
                     }
+                }
+
+                if (adView != null && adView.getVisibility() == View.VISIBLE) {
+                    ((AdsManager.MyBannerAdListener) adView.getAdListener()).replaceAd();
                 }
 
                 rawCurrentGalleryItemPosition = ((GalleryItemAdapter) viewPager.getAdapter()).getRawGalleryItemPosition(position);
@@ -193,15 +200,17 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         super.onViewStateRestored(savedInstanceState);
 
-        if(viewPager == null || viewPager.getAdapter() == null) {
+        if (viewPager == null || viewPager.getAdapter() == null) {
             return;
         }
 
         try {
             int slideshowIndexToShow = ((GalleryItemAdapter) viewPager.getAdapter()).getSlideshowIndex(rawCurrentGalleryItemPosition);
             viewPager.setCurrentItem(slideshowIndexToShow);
-        } catch(IllegalStateException e) {
-            if(BuildConfig.DEBUG) {
+        } catch (IllegalStateException e) {
+            Crashlytics.logException(e);
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(getTag(), "Slideshow item cannot be found. Waiting until items have loaded");
             }
         }
@@ -224,10 +233,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
      */
     @Override
     public void onDestroy() {
-        if(viewPager != null) {
+        if (viewPager != null) {
             // clean up any existing adapter.
-            GalleryItemAdapter adapter = (GalleryItemAdapter)viewPager.getAdapter();
-            if(adapter != null) {
+            GalleryItemAdapter adapter = (GalleryItemAdapter) viewPager.getAdapter();
+            if (adapter != null) {
                 adapter.destroy();
             }
             viewPager.setAdapter(null);
@@ -242,7 +251,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemActionStartedEvent event) {
-        if(event.getItem().getParentId().equals(gallery.getId())) {
+        if (event.getItem().getParentId().equals(gallery.getId())) {
             getUiHelper().setTrackingRequest(event.getActionId());
             viewPager.setEnabled(false);
         }
@@ -252,7 +261,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     public void onEvent(AlbumItemActionFinishedEvent event) {
         //TODO this is rubbish, store a reference to the parent in the resource items so we can test if this screen is relevant.
         // parentId will be null if the parent is a Tag not an Album (viewing contents of a Tag).
-        if((event.getItem().getParentId() == null || event.getItem().getParentId().equals(gallery.getId()))
+        if ((event.getItem().getParentId() == null || event.getItem().getParentId().equals(gallery.getId()))
                 && getUiHelper().isTrackingRequest(event.getActionId())) {
             viewPager.setEnabled(true);
         }
@@ -275,7 +284,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
     @Subscribe
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        if(gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.id) {
+        if (gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.id) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_album));
         }
     }
@@ -321,7 +330,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         @Override
         public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if(isVisible()) {
+            if (isVisible()) {
                 updateActiveSessionDetails();
             }
             super.onBeforeHandlePiwigoResponse(response);

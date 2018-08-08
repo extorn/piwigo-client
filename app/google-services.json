@@ -1,0 +1,74 @@
+{
+  "project_info": {
+    "project_number": "189126489517",
+    "firebase_url": "https://api-8938561204297001672-604498.firebaseio.com",
+    "project_id": "api-8938561204297001672-604498",
+    "storage_bucket": "api-8938561204297001672-604498.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189126489517:android:063c15da5457b248",
+        "android_client_info": {
+          "package_name": "delit.piwigoclient"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "189126489517-171sjltpjh36odfd1uqfroa64d0i3cac.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8StJ37U9ciOiL5Tj1vRf3GfdWfZlxerY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-1408465472557768~4878187139"
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189126489517:android:7abb5361e3bb1714",
+        "android_client_info": {
+          "package_name": "delit.piwigoclient.paid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "189126489517-171sjltpjh36odfd1uqfroa64d0i3cac.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8StJ37U9ciOiL5Tj1vRf3GfdWfZlxerY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

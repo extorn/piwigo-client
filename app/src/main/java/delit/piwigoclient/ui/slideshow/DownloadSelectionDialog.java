@@ -28,10 +28,6 @@ class DownloadSelectionDialog {
         this.context = context;
     }
 
-    public interface DownloadSelectionListener extends Serializable {
-        void onSelection(ResourceItem.ResourceFile selectedItem);
-    }
-
     public AlertDialog buildDialog(final String resourceName, ArrayList<ResourceItem.ResourceFile> availableFiles, final DownloadSelectionListener listener) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setTitle(R.string.alert_image_download_title);
@@ -46,14 +42,16 @@ class DownloadSelectionDialog {
 //                builder1.setSingleChoiceItems(adapter, adapter.getCount() - 1, null);
         builder1.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {}});
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
         builder1.setNeutralButton(R.string.button_copy_link, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 int pos = fileSelectList.getCheckedItemPosition();
                 ResourceItem.ResourceFile selectedItem = adapter.getItem(pos);
                 Uri uri = Uri.parse(selectedItem.getUrl());
-                ClipboardManager mgr = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
                 mgr.setPrimaryClip(clipData);
             }
@@ -69,5 +67,9 @@ class DownloadSelectionDialog {
         });
         builder1.setCancelable(true);
         return builder1.create();
+    }
+
+    public interface DownloadSelectionListener extends Serializable {
+        void onSelection(ResourceItem.ResourceFile selectedItem);
     }
 }

@@ -35,7 +35,7 @@ public class MappedArrayAdapter<T, S> extends ArrayAdapter<T> {
 
     public T getItemByValue(S value) {
         int idx = objectValues.indexOf(value);
-        if(idx < 0) {
+        if (idx < 0) {
             return null;
         }
         return getItem(idx);
@@ -48,7 +48,7 @@ public class MappedArrayAdapter<T, S> extends ArrayAdapter<T> {
     @Override
     public void remove(@Nullable T object) {
         int positionToRemove = getPosition(object);
-        if(positionToRemove >= 0) {
+        if (positionToRemove >= 0) {
             objectValues.remove(positionToRemove);
         }
         super.remove(object);

@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -28,26 +30,27 @@ import static android.view.View.VISIBLE;
 
 public class AdsManager {
 
+    private static final String TAG = "AdMan";
+    private static AdsManager instance;
     private transient InterstitialAd selectFileToUploadAd;
     private transient InterstitialAd albumBrowsingAd;
     private long lastShowedAdvert;
     private boolean showAds = true;
     private boolean appLicensed = false;
     private transient SharedPreferences prefs;
-    private static AdsManager instance;
 
     private AdsManager() {
     }
 
     public synchronized static AdsManager getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new AdsManager();
         }
         return instance;
     }
 
     private SharedPreferences getPrefs(Context context) {
-        if(prefs == null) {
+        if (prefs == null) {
             prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         }
         return prefs;
@@ -60,13 +63,14 @@ public class AdsManager {
     public synchronized void updateShowAdvertsSetting(Context context) {
         String serverAddress = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(getPrefs(context), context);
         showAds = !BuildConfig.PAID_VERSION;
-        if(showAds) {
+        if (showAds) {
             // can we disable the ads another way?
             if (!serverAddress.equals("")) {
                 try {
                     String host = URI.create(serverAddress).getHost();
                     showAds = BuildConfig.DEBUG || !"sail2port.ddns.net".equals(host);
                 } catch (IllegalArgumentException e) {
+                    Crashlytics.logException(e);
                     showAds = true;
                 }
             } else {
@@ -85,11 +89,11 @@ public class AdsManager {
             albumBrowsingAd.setAdUnitId(context.getString(R.string.ad_id_album_interstitial));
             albumBrowsingAd.loadAd(new AdRequest.Builder().build());
             albumBrowsingAd.setAdListener(new MyAdListener(context, albumBrowsingAd));
-        } else if(showAds) {
-            if(!selectFileToUploadAd.isLoading() && ! selectFileToUploadAd.isLoaded()) {
+        } else if (showAds) {
+            if (!selectFileToUploadAd.isLoading() && !selectFileToUploadAd.isLoaded()) {
                 selectFileToUploadAd.loadAd(new AdRequest.Builder().build());
             }
-            if(!albumBrowsingAd.isLoading() && ! albumBrowsingAd.isLoaded()) {
+            if (!albumBrowsingAd.isLoading() && !albumBrowsingAd.isLoaded()) {
                 albumBrowsingAd.loadAd(new AdRequest.Builder().build());
             }
         }
@@ -102,10 +106,10 @@ public class AdsManager {
     private synchronized boolean acceptableToShowAdvert(InterstitialAd ad, long minDelayBetweenAds) {
         long currentTime = System.currentTimeMillis();
         if (showAds && ad != null) {
-            if(ad.isLoaded() && currentTime - lastShowedAdvert > minDelayBetweenAds) {
+            if (ad.isLoaded() && currentTime - lastShowedAdvert > minDelayBetweenAds) {
                 lastShowedAdvert = currentTime;
                 return true;
-            } else if(!ad.isLoaded() && !ad.isLoading()){
+            } else if (!ad.isLoaded() && !ad.isLoading()) {
                 ad.loadAd(new AdRequest.Builder().build());
             }
         }
@@ -131,14 +135,22 @@ public class AdsManager {
     }
 
     public static class MyBannerAdListener extends AdListener {
+        public static final long DEFAULT_MIN_ADVERT_DISPLAY_TIME_MILLIS = 5000;
+        private final long minimumAdVisibleTimeMillis;
         private AdView advertView;
         private int retries;
+        private long adLastLoadedAt;
 
         public MyBannerAdListener(AdView advertView) {
+            this(advertView, DEFAULT_MIN_ADVERT_DISPLAY_TIME_MILLIS);
+        }
+
+        public MyBannerAdListener(AdView advertView, long minimumAdVisibleTimeMillis) {
             this.advertView = advertView;
+            this.minimumAdVisibleTimeMillis = minimumAdVisibleTimeMillis;
             advertView.setVisibility(VISIBLE);
             advertView.setAdListener(this);
-            if(!advertView.isLoading()) {
+            if (!advertView.isLoading()) {
                 loadAdvert();
             }
         }
@@ -148,15 +160,16 @@ public class AdsManager {
         }
 
         public void onAdFailedToLoad(int var1) {
-            if(var1 == 3) {
+            if (var1 == 3) {
                 retries++;
             }
-            if(retries < 3) {
-                if(BuildConfig.DEBUG) {
+            if (retries < 3) {
+                if (BuildConfig.DEBUG) {
                     Log.d("BannerAd", "Advert failed to load, retrying");
                 }
                 loadAdvert();
             } else {
+                Crashlytics.log(Log.DEBUG, TAG, "Gave up trying to load advert after 3 attempts");
 //                if(BuildConfig.DEBUG) {
 //                    Log.d("BannerAd", "Advert failed to load 3 times, hiding");
 //                }
@@ -166,6 +179,21 @@ public class AdsManager {
 
         public void onAdLoaded() {
             retries = 0;
+            adLastLoadedAt = System.currentTimeMillis();
+        }
+
+        @Override
+        public void onAdClosed() {
+            super.onAdClosed();
+//            loadAdvert();
+        }
+
+        public void replaceAd() {
+            boolean adExpired = System.currentTimeMillis() - adLastLoadedAt > minimumAdVisibleTimeMillis;
+            if (!advertView.isLoading() && advertView.getVisibility() == View.VISIBLE && adExpired) {
+                retries = 0;
+                loadAdvert();
+            }
         }
     }
 
@@ -180,10 +208,11 @@ public class AdsManager {
             this.ad = ad;
             this.context = context;
         }
+
         @Override
         public void onAdClosed() {
-            if(onCloseIntent != null) {
-                Activity activity = (Activity)context;
+            if (onCloseIntent != null) {
+                Activity activity = (Activity) context;
                 activity.startActivityForResult(onCloseIntent, onCloseActionId);
                 onCloseIntent = null;
                 onCloseActionId = -1;

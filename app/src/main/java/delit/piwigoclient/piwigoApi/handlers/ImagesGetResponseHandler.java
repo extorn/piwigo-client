@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -152,22 +153,24 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
             Date dateLastAltered = null;
             JsonElement dateLastAlteredElem = image.get("date_available");
-            if(!dateLastAlteredElem.isJsonNull()) {
+            if (!dateLastAlteredElem.isJsonNull()) {
                 String dateLastAlteredStr = dateLastAlteredElem.getAsString();
                 try {
                     dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
                 } catch (ParseException e) {
+                    Crashlytics.logException(e);
                     throw new JSONException("Unable to parse date " + dateLastAlteredStr);
                 }
             }
 
             Date dateCreated = null;
             JsonElement dateCreationElem = image.get("date_creation");
-            if(!dateCreationElem.isJsonNull()) {
+            if (!dateCreationElem.isJsonNull()) {
                 String dateCreatedStr = dateCreationElem.getAsString();
                 try {
                     dateCreated = piwigoDateFormat.parse(dateCreatedStr);
                 } catch (ParseException e) {
+                    Crashlytics.logException(e);
                     throw new JSONException("Unable to parse date " + dateCreatedStr);
                 }
             }
@@ -220,17 +223,17 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                     String imageSizeKey = imageSizeKeys.next();
                     JsonObject imageSizeObj = derivatives.get(imageSizeKey).getAsJsonObject();
                     JsonElement jsonElem = imageSizeObj.get("url");
-                    if(jsonElem.isJsonNull()) {
+                    if (jsonElem.isJsonNull()) {
                         continue;
                     }
                     String url = jsonElem.getAsString();
                     jsonElem = imageSizeObj.get("width");
-                    if(jsonElem.isJsonNull()) {
+                    if (jsonElem.isJsonNull()) {
                         continue;
                     }
                     int thisWidth = jsonElem.getAsInt();
                     jsonElem = imageSizeObj.get("height");
-                    if(jsonElem.isJsonNull()) {
+                    if (jsonElem.isJsonNull()) {
                         continue;
                     }
                     int thisHeight = jsonElem.getAsInt();

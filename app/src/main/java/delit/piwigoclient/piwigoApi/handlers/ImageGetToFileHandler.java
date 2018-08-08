@@ -154,7 +154,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        if(getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext()) && resourceUrl.startsWith("http://")) {
+        if (getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext()) && resourceUrl.startsWith("http://")) {
             resourceUrl = resourceUrl.replaceFirst("://", "s://");
         }
         return client.get(resourceUrl, handler);

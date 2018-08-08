@@ -2,6 +2,8 @@ package delit.piwigoclient.util;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -45,25 +47,30 @@ public class IOUtils {
             return (T) o;
 
         } catch (FileNotFoundException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e("IOUtils", "Error reading object from disk", e);
             }
-        } catch(InvalidClassException e) {
-            if(BuildConfig.DEBUG) {
+        } catch (InvalidClassException e) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e("IOUtils", "Error reading object from disk (class blueprint has altered since saved)", e);
             }
             deleteFileNow = true;
         } catch (ObjectStreamException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e("IOUtils", "Error reading object from disk", e);
             }
             deleteFileNow = true;
         } catch (IOException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e("IOUtils", "Error reading object from disk", e);
             }
         } catch (ClassNotFoundException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e("IOUtils", "Error reading object from disk", e);
             }
             deleteFileNow = true;
@@ -72,7 +79,8 @@ public class IOUtils {
                 try {
                     ois.close();
                 } catch (IOException e) {
-                    if(BuildConfig.DEBUG) {
+                    Crashlytics.logException(e);
+                    if (BuildConfig.DEBUG) {
                         Log.d("IOUtils", "Error closing stream when reading object from disk", e);
                     }
                 }
@@ -86,13 +94,13 @@ public class IOUtils {
 
     public static void saveObjectToFile(File destinationFile, Serializable o) {
         boolean canContinue = true;
-        if(destinationFile.isDirectory()) {
+        if (destinationFile.isDirectory()) {
             throw new RuntimeException("Not designed to work with a folder as a destination!");
         }
-        File tmpFile = new File(destinationFile.getParentFile(), destinationFile.getName()+".tmp");
+        File tmpFile = new File(destinationFile.getParentFile(), destinationFile.getName() + ".tmp");
         if (tmpFile.exists()) {
             if (!tmpFile.delete()) {
-                if(BuildConfig.DEBUG) {
+                if (BuildConfig.DEBUG) {
                     Log.d("IOUtils", "Error writing job to disk - unable to delete previous temporary file");
                 }
                 canContinue = false;
@@ -107,7 +115,8 @@ public class IOUtils {
             oos.writeObject(o);
             oos.flush();
         } catch (IOException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.d("IOUtils", "Error writing Object to disk", e);
             }
         } finally {
@@ -115,7 +124,8 @@ public class IOUtils {
                 try {
                     oos.close();
                 } catch (IOException e) {
-                    if(BuildConfig.DEBUG) {
+                    Crashlytics.logException(e);
+                    if (BuildConfig.DEBUG) {
                         Log.d("IOUtils", "Error closing stream when writing Object to disk", e);
                     }
                 }
@@ -124,7 +134,7 @@ public class IOUtils {
         boolean canWrite = true;
         if (destinationFile.exists()) {
             if (!destinationFile.delete()) {
-                if(BuildConfig.DEBUG) {
+                if (BuildConfig.DEBUG) {
                     Log.d("IOUtils", "Error writing Object to disk - unable to delete previous file to allow replace");
                 }
                 canWrite = false;
@@ -139,9 +149,9 @@ public class IOUtils {
         long KB = 1024;
         long MB = KB * 1024;
         String text = " ";
-        if(cacheBytes < KB) {
+        if (cacheBytes < KB) {
             text += String.format(Locale.getDefault(), "%1$.0f Bytes", cacheBytes);
-        } else if(cacheBytes < MB) {
+        } else if (cacheBytes < MB) {
             double kb = (cacheBytes / KB);
             text += String.format(Locale.getDefault(), "%1$.1f KB", kb);
         } else {

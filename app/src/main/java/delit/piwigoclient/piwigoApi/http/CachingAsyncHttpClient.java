@@ -3,6 +3,7 @@ package delit.piwigoclient.piwigoApi.http;
 import android.content.Context;
 import android.os.Looper;
 
+import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.HttpDelete;
@@ -182,6 +183,7 @@ public class CachingAsyncHttpClient implements Closeable {
                 URI _uri = new URI(_url.getProtocol(), _url.getUserInfo(), _url.getHost(), _url.getPort(), _url.getPath(), _url.getQuery(), _url.getRef());
                 url = _uri.toASCIIString();
             } catch (Exception ex) {
+                Crashlytics.logException(ex);
                 // Should not really happen, added just for sake of validity
                 log.e(LOG_TAG, "getUrlWithQueryString encoding URL", ex);
             }
@@ -240,6 +242,7 @@ public class CachingAsyncHttpClient implements Closeable {
                 is.close();
             }
         } catch (IOException e) {
+            Crashlytics.logException(e);
             log.w(LOG_TAG, "Cannot close input stream", e);
         }
     }
@@ -255,6 +258,7 @@ public class CachingAsyncHttpClient implements Closeable {
                 os.close();
             }
         } catch (IOException e) {
+            Crashlytics.logException(e);
             log.w(LOG_TAG, "Cannot close output stream", e);
         }
     }
@@ -284,6 +288,7 @@ public class CachingAsyncHttpClient implements Closeable {
                     }
                 }
             } catch (Throwable t) {
+                Crashlytics.logException(t);
                 log.e(LOG_TAG, "wrappedEntity consume", t);
             }
         }
@@ -1492,6 +1497,7 @@ public class CachingAsyncHttpClient implements Closeable {
                 entity = params.getEntity(responseHandler);
             }
         } catch (IOException e) {
+            Crashlytics.logException(e);
             if (responseHandler != null) {
                 responseHandler.sendFailureMessage(0, null, null, e);
             } else {

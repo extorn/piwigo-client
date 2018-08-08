@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.AsyncHttpClient;
 
 import java.io.File;
@@ -83,7 +84,7 @@ public class HttpClientFactory {
 
     public void flushCookies(ConnectionPreferences.ProfilePreferences profile) {
         PersistentProfileCookieStore cookieStore = cookieStoreMap.get(profile);
-        if(cookieStore != null) {
+        if (cookieStore != null) {
             cookieStore.clear();
         }
     }
@@ -104,6 +105,7 @@ public class HttpClientFactory {
         try {
             closeClient(asyncClientMap.remove(profile));
         } catch (IOException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing asyncClient");
             }
@@ -111,6 +113,7 @@ public class HttpClientFactory {
         try {
             closeClient(syncClientMap.remove(profile));
         } catch (IOException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing syncClient");
             }
@@ -118,6 +121,7 @@ public class HttpClientFactory {
         try {
             closeClient(videoDownloadClientMap.remove(profile));
         } catch (IOException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing videoDownloadClient");
             }
@@ -125,6 +129,7 @@ public class HttpClientFactory {
         try {
             closeClient(videoDownloadSyncClientMap.remove(profile));
         } catch (IOException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error closing sync videoDownloadClient");
             }
@@ -234,7 +239,7 @@ public class HttpClientFactory {
     }
 
     private PersistentProfileCookieStore getCookieStore(ConnectionPreferences.ProfilePreferences connectionPrefs, Context context) {
-        synchronized(connectionPrefs) {
+        synchronized (connectionPrefs) {
             PersistentProfileCookieStore cookieStore = cookieStoreMap.get(connectionPrefs);
             if (cookieStore == null) {
                 cookieStore = new PersistentProfileCookieStore(context.getApplicationContext(), connectionPrefs.getAbsoluteProfileKey(prefs, context));
@@ -305,6 +310,7 @@ public class HttpClientFactory {
             try {
                 sslContext = SSLContext.getDefault();
             } catch (NoSuchAlgorithmException e) {
+                Crashlytics.logException(e);
                 e.printStackTrace();
             }
         }
@@ -331,18 +337,22 @@ public class HttpClientFactory {
             return contextBuilder.build();
 
         } catch (NoSuchAlgorithmException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }
         } catch (UnrecoverableKeyException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }
         } catch (KeyStoreException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }
         } catch (KeyManagementException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error building sslContext", e);
             }

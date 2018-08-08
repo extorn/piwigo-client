@@ -40,11 +40,11 @@ public class LocalFoldersListPreference extends Preference {
     @Override
     public CharSequence getSummary() {
         CharSequence summaryPattern = super.getSummary();
-        if(summaryPattern == null) {
+        if (summaryPattern == null) {
             return null;
         }
         String albumName = getValue();
-        if(albumName != null) {
+        if (albumName != null) {
             return String.format(super.getSummary().toString(), albumName);
         } else {
             return getContext().getString(R.string.local_folder_preference_summary_default);
@@ -53,7 +53,7 @@ public class LocalFoldersListPreference extends Preference {
 
     @Override
     protected void onAttachedToActivity() {
-        if(!EventBus.getDefault().isRegistered(this)) {
+        if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
         super.onAttachedToActivity();
@@ -98,15 +98,15 @@ public class LocalFoldersListPreference extends Preference {
     private void requestFolderSelection() {
         String initialFolder = getValue();
         ArrayList<String> selection = new ArrayList<>();
-        if(initialFolder == null) {
+        if (initialFolder == null) {
             initialFolder = Environment.getExternalStorageDirectory().getAbsolutePath();
         } else {
             File initialSelection = new File(initialFolder);
-            if(initialSelection.exists()) {
+            if (initialSelection.exists()) {
                 initialFolder = initialSelection.getParentFile().getAbsolutePath();
                 selection.add(initialSelection.getAbsolutePath());
             } else {
-                while(!initialSelection.exists()) {
+                while (!initialSelection.exists()) {
                     initialSelection = initialSelection.getParentFile();
                 }
                 initialFolder = initialSelection.getAbsolutePath();
@@ -122,12 +122,12 @@ public class LocalFoldersListPreference extends Preference {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(FileSelectionCompleteEvent event) {
-        if(event.getActionId() != this.folderSelectActionId) {
+        if (event.getActionId() != this.folderSelectActionId) {
             return;
         }
         folderSelectActionId = -1;
         File selectedFile = event.getSelectedFiles().get(0);
-        if(selectedFile.isDirectory()) {
+        if (selectedFile.isDirectory()) {
             setValue(selectedFile.getAbsolutePath());
             notifyChanged();
         }
@@ -174,8 +174,8 @@ public class LocalFoldersListPreference extends Preference {
                         return new SavedState[size];
                     }
                 };
-        private int trackedRequest;
         public String value;
+        private int trackedRequest;
 
         public SavedState(Parcel source) {
             super(source);
@@ -194,5 +194,5 @@ public class LocalFoldersListPreference extends Preference {
             dest.writeString(value);
         }
     }
-    
+
 }

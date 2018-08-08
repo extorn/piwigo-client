@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 
 public class RoundableImageView extends android.support.v7.widget.AppCompatImageView {
@@ -37,7 +36,7 @@ public class RoundableImageView extends android.support.v7.widget.AppCompatImage
 
     @Override
     public void setImageDrawable(@Nullable Drawable drawable) {
-        if(!enableRoundedCorners || !(drawable instanceof BitmapDrawable)) {
+        if (!enableRoundedCorners || !(drawable instanceof BitmapDrawable)) {
             // pass straight through.
             super.setImageDrawable(drawable);
             return;
@@ -50,7 +49,7 @@ public class RoundableImageView extends android.support.v7.widget.AppCompatImage
 
     @Override
     public void setImageBitmap(Bitmap bm) {
-        if(enableRoundedCorners) {
+        if (enableRoundedCorners) {
             RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), bm);
             roundedDrawable.setCornerRadius(cornerRadius);
             bm = roundedDrawable.getBitmap();

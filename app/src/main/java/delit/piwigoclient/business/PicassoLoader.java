@@ -22,11 +22,12 @@ import delit.piwigoclient.util.picasso.RoundedTransformation;
  */
 public class PicassoLoader implements Callback {
 
-    private String uriToLoad;
-    private final ImageView loadInto;
-    private File fileToLoad;
-    private final static int DEFAULT_AUTO_RETRIES = 1;
     public final static int INFINITE_AUTO_RETRIES = -1;
+    public static final String PICASSO_REQUEST_TAG = "PIWIGO";
+    private final static int DEFAULT_AUTO_RETRIES = 1;
+    private final ImageView loadInto;
+    private String uriToLoad;
+    private File fileToLoad;
     private int maxRetries = DEFAULT_AUTO_RETRIES;
     private int retries = 0;
     private boolean imageLoaded;
@@ -34,10 +35,10 @@ public class PicassoLoader implements Callback {
     private float rotation = 0;
     private int resourceToLoad = Integer.MIN_VALUE;
     private boolean imageUnavailable;
-    public static final String PICASSO_REQUEST_TAG = "PIWIGO";
     private String placeholderUri;
     private boolean placeholderLoaded;
-    private @DrawableRes int errorResourceId = R.drawable.ic_error_black_240px;
+    private @DrawableRes
+    int errorResourceId = R.drawable.ic_error_black_240px;
     private RoundedTransformation transformation;
 
     public PicassoLoader(ImageView loadInto) {
@@ -52,7 +53,7 @@ public class PicassoLoader implements Callback {
     public final void onSuccess() {
         imageLoading = false;
 
-        if(placeholderUri != null && !placeholderLoaded) {
+        if (placeholderUri != null && !placeholderLoaded) {
             placeholderUri = null;
             placeholderLoaded = true;
             load();
@@ -103,18 +104,18 @@ public class PicassoLoader implements Callback {
     }
 
     public void load(boolean forceServerRequest) {
-        if(imageLoading) {
+        if (imageLoading) {
             return;
         }
         imageLoading = true;
         //TODO this hack isn't needed if the resource isnt a vector drawable... later version of com.squareup.picasso?
-        if(resourceToLoad != Integer.MIN_VALUE) {
+        if (resourceToLoad != Integer.MIN_VALUE) {
             getLoadInto().setImageResource(getResourceToLoad());
             onSuccess();
         } else {
             PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
             RequestCreator loader = customiseLoader(buildLoader());
-            if(forceServerRequest) {
+            if (forceServerRequest) {
                 loader.memoryPolicy(MemoryPolicy.NO_CACHE);
                 loader.networkPolicy(NetworkPolicy.NO_CACHE);
             }
@@ -123,7 +124,7 @@ public class PicassoLoader implements Callback {
     }
 
     public void cancelImageLoadIfRunning() {
-        if(loadInto != null) {
+        if (loadInto != null) {
             PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
         }
         imageLoading = false;
@@ -131,7 +132,7 @@ public class PicassoLoader implements Callback {
 
     private Context getContext() {
         Context context = loadInto.getContext();
-        if(context == null) {
+        if (context == null) {
             throw new IllegalStateException("Context is not available in the view at this time");
         }
         return context;
@@ -139,20 +140,20 @@ public class PicassoLoader implements Callback {
 
     protected RequestCreator buildLoader() {
         RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext())).error(errorResourceId);
-        if(transformation != null) {
+        if (transformation != null) {
             rc.transform(transformation);
         }
-        if(placeholderLoaded) {
+        if (placeholderLoaded) {
             rc.noPlaceholder();
         } else {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 rc.placeholder(R.drawable.ic_file_gray_24dp);
             } else {
                 loadInto.setImageResource(R.drawable.ic_file_gray_24dp);
             }
         }
 
-        if(Math.abs(rotation) > Float.MIN_NORMAL) {
+        if (Math.abs(rotation) > Float.MIN_NORMAL) {
             rc.rotate(rotation);
         }
         rc.tag(PICASSO_REQUEST_TAG);
@@ -160,14 +161,14 @@ public class PicassoLoader implements Callback {
     }
 
     private RequestCreator buildRequestCreator(Picasso picassoSingleton) {
-        if(placeholderUri != null) {
+        if (placeholderUri != null) {
             return picassoSingleton.load(placeholderUri);
         }
         if (uriToLoad != null) {
             return picassoSingleton.load(uriToLoad);
         } else if (fileToLoad != null) {
             return picassoSingleton.load(fileToLoad);
-        } else if(resourceToLoad != Integer.MIN_VALUE) {
+        } else if (resourceToLoad != Integer.MIN_VALUE) {
             return picassoSingleton.load(resourceToLoad);
         }
         throw new IllegalStateException("No valid source specified from which to load image");
@@ -175,27 +176,6 @@ public class PicassoLoader implements Callback {
 
     protected RequestCreator customiseLoader(RequestCreator placeholder) {
         return placeholder;
-    }
-
-    public void setFileToLoad(File fileToLoad) {
-        this.uriToLoad = null;
-        this.resourceToLoad = Integer.MIN_VALUE;
-        this.fileToLoad = fileToLoad;
-        resetLoadState();
-    }
-
-    public void setUriToLoad(String uriToLoad) {
-        this.uriToLoad = uriToLoad;
-        this.resourceToLoad = Integer.MIN_VALUE;
-        this.fileToLoad = null;
-        resetLoadState();
-    }
-
-    public void setResourceToLoad(int resourceToLoad) {
-        this.uriToLoad = null;
-        this.resourceToLoad = resourceToLoad;
-        this.fileToLoad = null;
-        resetLoadState();
     }
 
     protected void resetImageToLoad() {
@@ -225,12 +205,33 @@ public class PicassoLoader implements Callback {
         return resourceToLoad;
     }
 
+    public void setResourceToLoad(int resourceToLoad) {
+        this.uriToLoad = null;
+        this.resourceToLoad = resourceToLoad;
+        this.fileToLoad = null;
+        resetLoadState();
+    }
+
     protected File getFileToLoad() {
         return fileToLoad;
     }
 
+    public void setFileToLoad(File fileToLoad) {
+        this.uriToLoad = null;
+        this.resourceToLoad = Integer.MIN_VALUE;
+        this.fileToLoad = fileToLoad;
+        resetLoadState();
+    }
+
     protected String getUriToLoad() {
         return uriToLoad;
+    }
+
+    public void setUriToLoad(String uriToLoad) {
+        this.uriToLoad = uriToLoad;
+        this.resourceToLoad = Integer.MIN_VALUE;
+        this.fileToLoad = null;
+        resetLoadState();
     }
 
     protected ImageView getLoadInto() {

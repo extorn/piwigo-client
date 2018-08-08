@@ -7,6 +7,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
@@ -90,8 +91,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             synchronized (this) {
                 try {
                     this.notifyAll();
-                } catch(IllegalMonitorStateException e) {
-                    if(BuildConfig.DEBUG) {
+                } catch (IllegalMonitorStateException e) {
+                    Crashlytics.logException(e);
+                    if (BuildConfig.DEBUG) {
                         Log.e(getTag(), "unable to notify threads waiting on this object", e);
                     }
                 }
@@ -198,7 +200,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     triedLoggingInAgain = true;
                     PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
                     String newToken = null;
-                    if(sessionDetails != null) {
+                    if (sessionDetails != null) {
                         newToken = sessionDetails.getSessionToken();
                     }
                     if (newToken != null && !newToken.equals(sessionToken)) {
@@ -240,7 +242,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             this.statusCode = statusCode;
             this.headers = headers;
             this.responseBody = responseBody;
-            if(this.error == null) {
+            if (this.error == null) {
                 this.error = error;
             }
             onFailure(statusCode, headers, responseBody, this.error, triedLoggingInAgain);
@@ -298,6 +300,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 requestHandle = runCall(client, this);
             }
         } catch (RuntimeException e) {
+            Crashlytics.logException(e);
             if (client == null) {
                 sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
             } else {

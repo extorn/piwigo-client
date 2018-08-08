@@ -16,6 +16,7 @@
 
 package com.google.android.vending.licensing;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.util.Base64;
 import com.google.android.vending.licensing.util.Base64DecoderException;
 
@@ -106,14 +107,18 @@ class LicenseValidator {
                     return;
                 }
             } catch (NoSuchAlgorithmException e) {
+Crashlytics.logException(e);
                 // This can't happen on an Android compatible device.
                 throw new RuntimeException(e);
             } catch (InvalidKeyException e) {
+Crashlytics.logException(e);
                 handleApplicationError(LicenseCheckerCallback.ERROR_INVALID_PUBLIC_KEY);
                 return;
             } catch (SignatureException e) {
+Crashlytics.logException(e);
                 throw new RuntimeException(e);
             } catch (Base64DecoderException e) {
+Crashlytics.logException(e);
                 if(BuildConfig.DEBUG) {
                     Log.e(TAG, "Could not Base64-decode signature.");
                 }
@@ -125,6 +130,7 @@ class LicenseValidator {
             try {
                 data = ResponseData.parse(signedData);
             } catch (IllegalArgumentException e) {
+Crashlytics.logException(e);
                 if(BuildConfig.DEBUG) {
                     Log.e(TAG, "Could not parse response.");
                 }

@@ -41,7 +41,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
 
     @Override
     protected HttpDataSource createDataSourceInternal(HttpDataSource.RequestProperties defaultRequestProperties) {
-        if(cachingEnabled) {
+        if (cachingEnabled) {
             return createCachingDataSource(defaultRequestProperties);
         } else {
             return createDirectDataSource(defaultRequestProperties);
@@ -71,7 +71,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
 
     public boolean setRedirectsAllowed(boolean redirectsAllowed) {
         boolean changed = false;
-        if(this.redirectsAllowed != redirectsAllowed) {
+        if (this.redirectsAllowed != redirectsAllowed) {
             changed = true;
         }
         this.redirectsAllowed = redirectsAllowed;
@@ -80,7 +80,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
 
     public boolean setMaxRedirects(int maxRedirects) {
         boolean changed = false;
-        if(this.maxRedirects != maxRedirects) {
+        if (this.maxRedirects != maxRedirects) {
             changed = true;
         }
         this.maxRedirects = maxRedirects;
@@ -98,7 +98,7 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
 
     public boolean setCachingEnabled(boolean cachingEnabled) {
         boolean changed = false;
-        if(this.cachingEnabled != cachingEnabled) {
+        if (this.cachingEnabled != cachingEnabled) {
             changed = true;
         }
         this.cachingEnabled = cachingEnabled;
@@ -123,15 +123,15 @@ public class RemoteFileCachingDataSourceFactory extends HttpDataSource.BaseFacto
 
         @Override
         public void onPause() {
-            if(dataSource instanceof RemoteAsyncFileCachingDataSource) {
-                ((RemoteAsyncFileCachingDataSource)dataSource).pauseBackgroundLoad();
+            if (dataSource instanceof RemoteAsyncFileCachingDataSource) {
+                ((RemoteAsyncFileCachingDataSource) dataSource).pauseBackgroundLoad();
             }
         }
 
         @Override
         public void onResume() {
-            if(dataSource instanceof RemoteAsyncFileCachingDataSource) {
-                ((RemoteAsyncFileCachingDataSource)dataSource).resumeBackgroundLoad();
+            if (dataSource instanceof RemoteAsyncFileCachingDataSource) {
+                ((RemoteAsyncFileCachingDataSource) dataSource).resumeBackgroundLoad();
             }
         }
     }

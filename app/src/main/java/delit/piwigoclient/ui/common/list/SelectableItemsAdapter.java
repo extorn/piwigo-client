@@ -8,11 +8,18 @@ import java.util.HashSet;
 
 public interface SelectableItemsAdapter<T> {
     HashSet<T> getSelectedItems();
-    HashSet<Long> getSelectedItemIds();
-    void clearSelectedItemIds();
-    void selectAllItemIds();
-    void setItemSelected(Long selectedItemId);
+
     void setSelectedItems(HashSet<Long> currentSelection);
+
+    HashSet<Long> getSelectedItemIds();
+
+    void clearSelectedItemIds();
+
+    void selectAllItemIds();
+
+    void setItemSelected(Long selectedItemId);
+
     void setInitiallySelectedItems(HashSet<Long> initialSelection);
+
     boolean isAllowItemDeselection(long itemId);
 }

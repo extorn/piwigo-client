@@ -31,7 +31,7 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
 
     @Override
     protected void removeItemFromInternalStore(int idxRemoved) {
-        if(idxRemoved >= 0 && idxRemoved < itemStore.getItemCount()) {
+        if (idxRemoved >= 0 && idxRemoved < itemStore.getItemCount()) {
             itemStore.getItems().remove(idxRemoved);
         }
     }
@@ -43,7 +43,7 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
     @Override
     public HashSet<Long> getItemsSelectedButNotLoaded() {
         HashSet<Long> loadedSelectedItemIds = new HashSet<>(getSelectedItemIds());
-        for(T group : itemStore.getItems()) {
+        for (T group : itemStore.getItems()) {
             loadedSelectedItemIds.remove(group.getId());
         }
         return loadedSelectedItemIds;

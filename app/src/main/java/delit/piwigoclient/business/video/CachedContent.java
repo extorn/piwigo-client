@@ -14,32 +14,32 @@ import java.util.Date;
 
 public class CachedContent implements Serializable {
 
-    private String originalUri;
     private static final long serialVersionUID = -2786159844161672410L;
+    private final ArrayList<SerializableRange> cachedRanges = new ArrayList<>();
+    private String originalUri;
     private String cacheDataFilename;
     private Date lastAccessed;
-    private final ArrayList<SerializableRange> cachedRanges = new ArrayList<>();
     private long totalBytes;
     private transient File persistTo;
 
-    public void setCacheDataFilename(String cacheDataFilename) {
-        this.cacheDataFilename = cacheDataFilename;
-    }
-
-    public void setOriginalUri(String originalUri) {
-        this.originalUri = originalUri;
+    public CachedContent() {
+        lastAccessed = new Date();
     }
 
     public String getOriginalUri() {
         return originalUri;
     }
 
-    public CachedContent() {
-        lastAccessed = new Date();
+    public void setOriginalUri(String originalUri) {
+        this.originalUri = originalUri;
     }
 
     public String getCacheDataFilename() {
         return cacheDataFilename;
+    }
+
+    public void setCacheDataFilename(String cacheDataFilename) {
+        this.cacheDataFilename = cacheDataFilename;
     }
 
     public File getCachedDataFile() {
@@ -55,12 +55,12 @@ public class CachedContent implements Serializable {
     }
 
     public void consolidateRanges() {
-        for(int i = 0; i < cachedRanges.size() - 1; i++) {
+        for (int i = 0; i < cachedRanges.size() - 1; i++) {
             SerializableRange first = cachedRanges.get(i);
-            SerializableRange second = cachedRanges.get(i+1);
-            if(second.lower <= first.upper + 1) {
-                if(first.mergeWithRange(second)) {
-                    cachedRanges.remove(i+1);
+            SerializableRange second = cachedRanges.get(i + 1);
+            if (second.lower <= first.upper + 1) {
+                if (first.mergeWithRange(second)) {
+                    cachedRanges.remove(i + 1);
                     i--; // check the next item with this merged one.
                 }
             }
@@ -73,8 +73,8 @@ public class CachedContent implements Serializable {
 
     public SerializableRange getRangeContaining(long value) {
         lastAccessed = new Date();
-        for(SerializableRange range : cachedRanges) {
-            if(range.contains(value)) {
+        for (SerializableRange range : cachedRanges) {
+            if (range.contains(value)) {
                 return range;
             }
         }
@@ -82,35 +82,35 @@ public class CachedContent implements Serializable {
     }
 
     public boolean isComplete() {
-        if(cachedRanges.size() == 1) {
+        if (cachedRanges.size() == 1) {
             SerializableRange range = cachedRanges.get(0);
             return range.bytes == totalBytes;
         }
         return false;
     }
 
-    public void setTotalBytes(long totalBytes) {
-        this.totalBytes = totalBytes;
-    }
-
     public long getTotalBytes() {
         return totalBytes;
     }
 
+    public void setTotalBytes(long totalBytes) {
+        this.totalBytes = totalBytes;
+    }
+
     public long getCachedBytes() {
         long total = 0;
-        for(SerializableRange range : cachedRanges) {
+        for (SerializableRange range : cachedRanges) {
             total += range.getBytes();
         }
         return total;
     }
 
-    public void setPersistTo(File persistTo) {
-        this.persistTo = persistTo;
-    }
-
     public File getPersistTo() {
         return persistTo;
+    }
+
+    public void setPersistTo(File persistTo) {
+        this.persistTo = persistTo;
     }
 
     /**
@@ -166,7 +166,7 @@ public class CachedContent implements Serializable {
 
         public boolean mergeWithRange(long lower, long upper) {
             boolean merged = false;
-            if((lower >= this.lower && lower <= this.upper + 1)
+            if ((lower >= this.lower && lower <= this.upper + 1)
                     || (this.lower >= lower && this.lower <= upper + 1)) {
                 // can merge
                 this.lower = Math.min(this.lower, lower);
@@ -186,7 +186,7 @@ public class CachedContent implements Serializable {
         }
 
         public void pushUpperBoundTo(long newRangeUpperBound) {
-            if(this.upper < newRangeUpperBound) {
+            if (this.upper < newRangeUpperBound) {
                 this.upper = newRangeUpperBound;
                 this.bytes = (this.upper - this.lower) + 1;
             }

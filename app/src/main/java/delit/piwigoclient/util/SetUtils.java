@@ -12,8 +12,8 @@ import java.util.Set;
 public class SetUtils {
     public static HashSet<Long> asSet(long[] itemsArr) {
         HashSet<Long> items = new HashSet<>(itemsArr != null ? itemsArr.length : 0);
-        if(itemsArr != null) {
-            for(long id : itemsArr) {
+        if (itemsArr != null) {
+            for (long id : itemsArr) {
                 items.add(id);
             }
         }
@@ -30,8 +30,8 @@ public class SetUtils {
      */
     public static <T> HashSet<T> difference(Set<T> masterSet, Set<T> comparisionSet) {
         HashSet<T> difference = new HashSet<>();
-        for(T item : masterSet) {
-            if(!comparisionSet.contains(item)) {
+        for (T item : masterSet) {
+            if (!comparisionSet.contains(item)) {
                 difference.add(item);
             }
         }
@@ -41,20 +41,21 @@ public class SetUtils {
     /**
      * Returns all those items in either setA or setB but not in both
      * Empty set if there are no elements fitting the above description (including if setA or B is null)
+     *
      * @param setA
      * @param setB
      * @param <T>
      * @return
      */
     public static <T> HashSet<T> differences(Set<T> setA, Set<T> setB) {
-        if(setA == null) {
-            if(setB == null) {
+        if (setA == null) {
+            if (setB == null) {
                 return new HashSet<>(0);
             } else {
                 return new HashSet<>(setB);
             }
         }
-        if(setB == null) {
+        if (setB == null) {
             return new HashSet<>(setA);
         }
         HashSet<T> diffs = difference(setA, setB);
@@ -65,7 +66,7 @@ public class SetUtils {
     public static String[] asStringArray(Collection<String> items) {
         String[] arr = new String[items.size()];
         int i = 0;
-        for(String id : items) {
+        for (String id : items) {
             arr[i++] = id;
         }
         return arr;
@@ -74,7 +75,7 @@ public class SetUtils {
     public static long[] asArray(Collection<Long> items) {
         long[] arr = new long[items.size()];
         int i = 0;
-        for(Long id : items) {
+        for (Long id : items) {
             arr[i++] = id;
         }
         return arr;
@@ -86,16 +87,16 @@ public class SetUtils {
                 && collectionB.containsAll(collectionA);
     }
 
-    public static <X extends Map<K,V>,K,V> void setNotNull(X memberSaveActionIds, Map<K,V> newValues) {
+    public static <X extends Map<K, V>, K, V> void setNotNull(X memberSaveActionIds, Map<K, V> newValues) {
         memberSaveActionIds.clear();
-        if(newValues != null) {
+        if (newValues != null) {
             memberSaveActionIds.putAll(newValues);
         }
     }
 
     public static <X extends Collection<T>, T> void setNotNull(X memberSaveActionIds, Collection<T> newValues) {
         memberSaveActionIds.clear();
-        if(newValues != null) {
+        if (newValues != null) {
             memberSaveActionIds.addAll(newValues);
         }
     }

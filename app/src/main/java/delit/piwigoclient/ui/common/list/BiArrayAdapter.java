@@ -40,7 +40,7 @@ public class BiArrayAdapter<T> extends ArrayAdapter<T> {
 
     public T getItemById(long id) {
         int idx = objectIds.indexOf(id);
-        if(idx < 0) {
+        if (idx < 0) {
             throw new IllegalStateException("item not found");
         }
         return getItem(idx);
@@ -53,7 +53,7 @@ public class BiArrayAdapter<T> extends ArrayAdapter<T> {
     @Override
     public void remove(@Nullable T object) {
         int positionToRemove = getPosition(object);
-        if(positionToRemove >= 0) {
+        if (positionToRemove >= 0) {
             objectIds.remove(positionToRemove);
         }
         super.remove(object);

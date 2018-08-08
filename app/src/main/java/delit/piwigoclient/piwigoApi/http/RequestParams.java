@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.http;
 
+import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.JsonStreamerEntity;
 import com.loopj.android.http.ResponseHandlerInterface;
 
@@ -550,6 +551,7 @@ public class RequestParams implements Serializable {
         try {
             return new UrlEncodedFormEntity(getParamsList(), contentEncoding);
         } catch (UnsupportedEncodingException e) {
+            Crashlytics.logException(e);
             CachingAsyncHttpClient.log.e(LOG_TAG, "createFormEntity failed", e);
             return null; // Can happen, if the 'contentEncoding' won't be HTTP.UTF_8
         }

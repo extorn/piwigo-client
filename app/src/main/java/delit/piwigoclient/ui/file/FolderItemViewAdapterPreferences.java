@@ -28,7 +28,8 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     private int columnsOfFiles = 2;
     private boolean showFilenames = true;
 
-    protected FolderItemViewAdapterPreferences(){}
+    protected FolderItemViewAdapterPreferences() {
+    }
 
     public FolderItemViewAdapterPreferences(boolean allowFileSelection, boolean allowFolderSelection, boolean multiSelectAllowed) {
         this.allowFileSelection = allowFileSelection;
@@ -61,9 +62,9 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     }
 
     public FolderItemViewAdapterPreferences withVisibleContent(@Nullable ArrayList<String> visibleFileTypes, int fileSortOrder) {
-        if(visibleFileTypes != null) {
+        if (visibleFileTypes != null) {
             this.visibleFileTypes = new ArrayList<>(visibleFileTypes);
-            for(int i = 0; i < visibleFileTypes.size(); i++) {
+            for (int i = 0; i < visibleFileTypes.size(); i++) {
                 visibleFileTypes.set(i, visibleFileTypes.get(i).toLowerCase());
             }
         }
@@ -135,11 +136,11 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
             }
 
             private boolean filenameMatches(File pathname) {
-                if(visibleFileTypes == null) {
+                if (visibleFileTypes == null) {
                     return true;
                 }
-                for(String fileExt : visibleFileTypes) {
-                    if(pathname.getName().toLowerCase().endsWith(fileExt)) {
+                for (String fileExt : visibleFileTypes) {
+                    if (pathname.getName().toLowerCase().endsWith(fileExt)) {
                         return true;
                     }
                 }
@@ -148,12 +149,12 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         };
     }
 
-    public void setInitialSelection(ArrayList<String> initialSelection) {
-        this.initialSelection = initialSelection;
-    }
-
     public ArrayList<String> getInitialSelection() {
         return initialSelection;
+    }
+
+    public void setInitialSelection(ArrayList<String> initialSelection) {
+        this.initialSelection = initialSelection;
     }
 
     public int getColumnsOfFiles() {

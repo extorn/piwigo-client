@@ -11,6 +11,8 @@ import android.net.NetworkInfo;
 import android.os.PowerManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;

@@ -17,11 +17,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import cz.msebera.android.httpclient.HttpStatus;
-import cz.msebera.android.httpclient.client.HttpClient;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 import delit.piwigoclient.ui.PicassoFactory;
@@ -60,14 +57,14 @@ public class CustomImageDownloader implements Downloader {
         handler.setCallDetails(context, connectionPrefs, false);
         handler.runCall();
 
-        if(!handler.isSuccess()) {
-            PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse)handler.getResponse();
+        if (!handler.isSuccess()) {
+            PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse) handler.getResponse();
             final String toastMessage = errorResponse.getUrl() + '\n' + errorResponse.getErrorMessage() + '\n' + errorResponse.getErrorDetail();
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-            if(uri.getScheme().equalsIgnoreCase("http") && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
+            if (uri.getScheme().equalsIgnoreCase("http") && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
                 EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs));
             }
-            if(errorResponse.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
+            if (errorResponse.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
                 EventBus.getDefault().post(new BadRequestUsesRedirectionServerEvent(connectionPrefs));
             }
             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -77,7 +74,7 @@ public class CustomImageDownloader implements Downloader {
                 }
             });
             Integer drawableId = errorDrawables.get(errorResponse.getStatusCode());
-            if(drawableId != null && drawableId > 0) {
+            if (drawableId != null && drawableId > 0) {
                 //return locked padlock image.
                 Bitmap icon = PicassoFactory.getInstance().getPicassoSingleton(context).load(drawableId).get();
                 return new Downloader.Response(icon, true);
@@ -85,7 +82,7 @@ public class CustomImageDownloader implements Downloader {
             return null;
 //            throw new ResponseException("Error downloading " + uri.toString() + " : " + handler.getError(), networkPolicy, errorResponse.getStatusCode());
         }
-        byte[] imageData = ((PiwigoResponseBufferingHandler.UrlSuccessResponse)handler.getResponse()).getData();
+        byte[] imageData = ((PiwigoResponseBufferingHandler.UrlSuccessResponse) handler.getResponse()).getData();
         return new Downloader.Response(new ByteArrayInputStream(imageData), false, imageData.length);
     }
 

@@ -18,6 +18,8 @@ import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 
 public class ConnectionPreferences {
 
+    private static ProfilePreferences activeProfile;
+
     public static String getActiveConnectionProfile(SharedPreferences prefs, Context context) {
         return prefs.getString(context.getString(R.string.preference_piwigo_connection_profile_key), "");
     }
@@ -27,11 +29,11 @@ public class ConnectionPreferences {
     }
 
     public static void deletePreferences(SharedPreferences prefs, Context context, @NonNull String prefix) {
-        if(prefix == null || prefix.isEmpty()) {
+        if (prefix == null || prefix.isEmpty()) {
             //TODO do this better - this causes exceptions (crashes) for users.
 //            throw new IllegalArgumentException("Unable to delete the core app preferences");
         }
-        if(activeProfile != null && prefix.equals(activeProfile.prefix)) {
+        if (activeProfile != null && prefix.equals(activeProfile.prefix)) {
             throw new IllegalArgumentException("Unable to delete preferences for active profile");
         }
         new ProfilePreferences(prefix).delete(prefs, context);
@@ -43,10 +45,8 @@ public class ConnectionPreferences {
         toPrefs.copyFrom(prefs, context, fromPrefs);
     }
 
-    private static ProfilePreferences activeProfile;
-
     public static ProfilePreferences getActiveProfile() {
-        if(activeProfile == null) {
+        if (activeProfile == null) {
             activeProfile = new ProfilePreferences(null);
         }
         return activeProfile;
@@ -80,10 +80,10 @@ public class ConnectionPreferences {
 
         @Override
         public boolean equals(Object obj) {
-            if(!(obj instanceof ProfilePreferences)) {
+            if (!(obj instanceof ProfilePreferences)) {
                 return false;
             }
-            ProfilePreferences other = (ProfilePreferences)obj;
+            ProfilePreferences other = (ProfilePreferences) obj;
             boolean equals = (prefix == other.prefix) || (prefix != null && prefix.equals(other.prefix));
             return equals && (asGuest == other.asGuest);
         }
@@ -91,20 +91,20 @@ public class ConnectionPreferences {
         @Override
         public int compareTo(@NonNull ProfilePreferences o) {
             int retVal = 0;
-            if(prefix == null) {
-                if(o.prefix != null) {
+            if (prefix == null) {
+                if (o.prefix != null) {
                     return 1;
                 }
             } else {
                 retVal = prefix.compareTo(o.prefix);
             }
-            if(retVal != 0) {
+            if (retVal != 0) {
                 return retVal;
             }
-            if(asGuest && !o.asGuest) {
+            if (asGuest && !o.asGuest) {
                 return 1;
             }
-            if(!asGuest && o.asGuest) {
+            if (!asGuest && o.asGuest) {
                 return -1;
             }
             return 0;
@@ -122,15 +122,15 @@ public class ConnectionPreferences {
         }
 
         public String getProfileId(SharedPreferences prefs, Context context) {
-            if(prefix != null) {
+            if (prefix != null) {
                 return prefix;
             } else {
                 return prefs.getString(context.getString(R.string.preference_piwigo_connection_profile_key), "");
             }
         }
-        
+
         private String getKey(Context context, @StringRes int keyId) {
-            if(this.prefix != null && this.prefix.length() > 0) {
+            if (this.prefix != null && this.prefix.length() > 0) {
                 return prefix + ':' + context.getString(keyId);
             }
             return context.getString(keyId);
@@ -171,7 +171,7 @@ public class ConnectionPreferences {
         }
 
         public String getPiwigoUsername(SharedPreferences prefs, Context context) {
-            if(asGuest) {
+            if (asGuest) {
                 return null;
             }
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
@@ -185,7 +185,7 @@ public class ConnectionPreferences {
 
         public String getPiwigoPasswordNotNull(SharedPreferences prefs, Context context) {
             String pass = getPiwigoPassword(prefs, context);
-            if(pass == null) {
+            if (pass == null) {
                 return "";
             }
             return pass;
@@ -239,7 +239,7 @@ public class ConnectionPreferences {
             SharedPreferences.Editor editor = prefs.edit();
 
             // piwigo server connection details
-            writeStringPref(editor,getKey(context, R.string.preference_piwigo_server_address_key), fromPrefs.getPiwigoServerAddress(prefs, context));
+            writeStringPref(editor, getKey(context, R.string.preference_piwigo_server_address_key), fromPrefs.getPiwigoServerAddress(prefs, context));
             writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_piwigo_server_username_key), fromPrefs.getPiwigoUsername(prefs, context));
             writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_piwigo_server_password_key), fromPrefs.getPiwigoPassword(prefs, context));
 

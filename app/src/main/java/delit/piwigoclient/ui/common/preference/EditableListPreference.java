@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
@@ -41,9 +42,9 @@ import delit.piwigoclient.ui.common.button.CustomImageButton;
  */
 
 public class EditableListPreference extends DialogPreference {
+    private final int entriesPref;
     private Set<String> entries;
     private boolean entriesAltered;
-    private final int entriesPref;
     private String summary;
     private String currentValue;
     private RecyclerView listRecyclerView;
@@ -57,7 +58,7 @@ public class EditableListPreference extends DialogPreference {
         TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.EditableListPreference, defStyleAttr, 0);
         entriesPref = a.getResourceId(R.styleable.EditableListPreference_entriesPref, -1);
-        if(entriesPref < 0) {
+        if (entriesPref < 0) {
             throw new IllegalArgumentException("entriesPref is a mandatory field");
         }
 
@@ -66,6 +67,14 @@ public class EditableListPreference extends DialogPreference {
         a.recycle();
 
         summary = String.valueOf(super.getSummary());
+    }
+
+    public EditableListPreference(Context context, AttributeSet attrs) {
+        this(context, attrs, android.R.attr.dialogPreferenceStyle);
+    }
+
+    public EditableListPreference(Context context) {
+        this(context, null);
     }
 
     public void setListener(EditableListPreferenceChangeListener listener) {
@@ -80,19 +89,12 @@ public class EditableListPreference extends DialogPreference {
 
     /**
      * Override to load list values from a different location than shared preferences.
+     *
      * @param preferenceManager
      */
     protected void loadEntries(PreferenceManager preferenceManager) {
         entriesAltered = false;
         entries = preferenceManager.getSharedPreferences().getStringSet(getContext().getString(entriesPref), new HashSet<String>(1));
-    }
-
-    public EditableListPreference(Context context, AttributeSet attrs) {
-        this(context, attrs, android.R.attr.dialogPreferenceStyle);
-    }
-
-    public EditableListPreference(Context context) {
-        this(context, null);
     }
 
     /**
@@ -103,6 +105,37 @@ public class EditableListPreference extends DialogPreference {
      */
     public String getValue() {
         return currentValue;
+    }
+
+    /**
+     * Sets the value of the key. This should be one of the entriesList in
+     * {@link #getEntryValues()}.
+     *
+     * @param value The value to set for the key.
+     */
+    public void setValue(String value) {
+        // Always persist/notify the first time.
+        String oldValue = currentValue;
+        final boolean changed = !TextUtils.equals(currentValue, value);
+        if (changed || !currentValueSet) {
+            currentValue = value;
+            currentValueSet = true;
+            persistString(value);
+
+            if (changed) {
+                notifyChanged();
+                if (listener != null) {
+                    listener.onItemSelectionChanged(this, oldValue, value, entries.contains(oldValue));
+                }
+            }
+        }
+        if (currentValueSet) {
+            // this is happening because we selected an item.
+            persistEntries(entries);
+        }
+        if (getDialog() != null && getDialog().isShowing()) {
+            getDialog().dismiss();
+        }
     }
 
     @Override
@@ -138,6 +171,7 @@ public class EditableListPreference extends DialogPreference {
 
     /**
      * Use identity mapping (i.e. value identical to displayed text).
+     *
      * @return
      */
     protected Set<String> getEntryValues() {
@@ -145,46 +179,15 @@ public class EditableListPreference extends DialogPreference {
     }
 
     /**
-     * Sets the value of the key. This should be one of the entriesList in
-     * {@link #getEntryValues()}.
-     *
-     * @param value The value to set for the key.
-     */
-    public void setValue(String value) {
-        // Always persist/notify the first time.
-        String oldValue = currentValue;
-        final boolean changed = !TextUtils.equals(currentValue, value);
-        if (changed || !currentValueSet) {
-            currentValue = value;
-            currentValueSet = true;
-            persistString(value);
-
-            if (changed) {
-                notifyChanged();
-                if(listener != null) {
-                    listener.onItemSelectionChanged(this, oldValue, value, entries.contains(oldValue));
-                }
-            }
-        }
-        if(currentValueSet) {
-            // this is happening because we selected an item.
-            persistEntries(entries);
-        }
-        if(getDialog() != null && getDialog().isShowing()) {
-            getDialog().dismiss();
-        }
-    }
-
-    /**
      * Attempts to persist a set of Strings if this Preference is persistent.
      *
      * @param values The values to persist.
      * @return True if this Preference is persistent. (This is not whether the
-     *         value was persisted, since we may not necessarily commit if there
-     *         will be a batch commit later.)
+     * value was persisted, since we may not necessarily commit if there
+     * will be a batch commit later.)
      * @see #getPersistedStringSet(Set)
      */
-    public boolean persistEntries(Set<String>  values) {
+    public boolean persistEntries(Set<String> values) {
         if (!shouldPersist()) {
             return false;
         }
@@ -194,7 +197,8 @@ public class EditableListPreference extends DialogPreference {
         editor.putStringSet(getContext().getString(entriesPref), values);
         try {
             editor.apply();
-        } catch (AbstractMethodError unused) {
+        } catch (AbstractMethodError e) {
+            Crashlytics.logException(e);
             // The app injected its own pre-Gingerbread
             // SharedPreferences.Editor implementation without
             // an apply method.
@@ -245,41 +249,11 @@ public class EditableListPreference extends DialogPreference {
 //        }
     }
 
-    public static class SavedState extends BaseSavedState {
-        private String value;
-
-        public SavedState(Parcel source) {
-            super(source);
-            value = source.readString();
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeString(value);
-        }
-
-        public SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        public static final Parcelable.Creator<SavedState> CREATOR =
-                new Parcelable.Creator<SavedState>() {
-                    public SavedState createFromParcel(Parcel in) {
-                        return new SavedState(in);
-                    }
-
-                    public SavedState[] newArray(int size) {
-                        return new SavedState[size];
-                    }
-                };
-    }
-
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
         return a.getString(index);
     }
-    
+
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
@@ -297,7 +271,7 @@ public class EditableListPreference extends DialogPreference {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_recycler_list, null, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -313,7 +287,7 @@ public class EditableListPreference extends DialogPreference {
         listRecyclerView = view.findViewById(R.id.list);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         listRecyclerView.setLayoutManager(mLayoutManager);
-        if(entriesAltered) {
+        if (entriesAltered) {
             loadEntries(getPreferenceManager());
         }
         List<String> entriesList = new ArrayList<>(entries);
@@ -349,7 +323,7 @@ public class EditableListPreference extends DialogPreference {
     private void showEditBox(final boolean editingExistingValue, final String initialValue) {
         // popup with text entry field.
         AlertDialog.Builder b = new AlertDialog.Builder(getContext());
-        if(editingExistingValue) {
+        if (editingExistingValue) {
             b.setMessage(R.string.title_editing_item);
         } else {
             b.setMessage(R.string.title_adding_item);
@@ -358,7 +332,7 @@ public class EditableListPreference extends DialogPreference {
         final EditText input = new EditText(getContext());
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        if(initialValue != null) {
+        if (initialValue != null) {
             input.setText(initialValue);
         }
         b.setView(input);
@@ -367,9 +341,9 @@ public class EditableListPreference extends DialogPreference {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
-                if(editingExistingValue) {
+                if (editingExistingValue) {
                     String newValue = input.getText().toString();
-                    if(!newValue.equals(initialValue)) {
+                    if (!newValue.equals(initialValue)) {
                         onChangeItem(initialValue, newValue);
                     }
                 } else {
@@ -387,7 +361,7 @@ public class EditableListPreference extends DialogPreference {
     }
 
     protected void onChangeItem(String oldValue, String newValue) {
-        if(entries.contains(newValue)) {
+        if (entries.contains(newValue)) {
             AlertDialog.Builder b = new AlertDialog.Builder(getContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
@@ -402,14 +376,14 @@ public class EditableListPreference extends DialogPreference {
             List<String> entriesList = new ArrayList<>(entries);
             RecyclerView.Adapter<RecyclerView.ViewHolder> adapter = buildNewRecyclerViewAdapter(getContext(), entriesList, entriesList, currentValue);
             listRecyclerView.setAdapter(adapter);
-            if(listener != null) {
+            if (listener != null) {
                 listener.onItemAltered(this, oldValue, newValue);
             }
         }
     }
 
     protected void onAddNewItemToList(String newItem) {
-        if(entries.contains(newItem)) {
+        if (entries.contains(newItem)) {
             AlertDialog.Builder b = new AlertDialog.Builder(getContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
@@ -423,7 +397,7 @@ public class EditableListPreference extends DialogPreference {
             List<String> entriesList = new ArrayList<>(entries);
             RecyclerView.Adapter<RecyclerView.ViewHolder> adapter = buildNewRecyclerViewAdapter(getContext(), entriesList, entriesList, currentValue);
             listRecyclerView.setAdapter(adapter);
-            if(listener != null) {
+            if (listener != null) {
                 listener.onItemAdded(newItem);
             }
         }
@@ -442,7 +416,7 @@ public class EditableListPreference extends DialogPreference {
         entriesAltered = true;
         // delete the item from the list.
         entries.remove(entry);
-        if(listener != null) {
+        if (listener != null) {
             listener.onItemRemoved(entryValue);
         }
     }
@@ -451,6 +425,83 @@ public class EditableListPreference extends DialogPreference {
      */
     public RecyclerView.Adapter<RecyclerView.ViewHolder> buildNewRecyclerViewAdapter(Context context, List<String> entries, List<String> entryValues, String currentValue) {
         return new DefaultListContentsAdapter(context, entries, entryValues, currentValue);
+    }
+
+    @Override
+    protected void onDialogClosed(boolean positiveResult) {
+        super.onDialogClosed(positiveResult);
+
+        if (positiveResult && userSelectedItem != null && getEntryValues() != null) {
+            String value = userSelectedItem;
+            if (callChangeListener(value)) {
+
+                setValue(value);
+            }
+        }
+    }
+
+    public interface EditableListPreferenceChangeListener {
+        void onItemAdded(String newItem);
+
+        void onItemRemoved(String newItem);
+
+        void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists);
+
+        void onItemSelectionChanged(EditableListPreference preference, String oldSelection, String newSelection, boolean oldSelectionExists);
+
+        void onItemAltered(EditableListPreference preference, String oldValue, String newValue);
+    }
+
+    public static class SavedState extends BaseSavedState {
+        public static final Parcelable.Creator<SavedState> CREATOR =
+                new Parcelable.Creator<SavedState>() {
+                    public SavedState createFromParcel(Parcel in) {
+                        return new SavedState(in);
+                    }
+
+                    public SavedState[] newArray(int size) {
+                        return new SavedState[size];
+                    }
+                };
+        private String value;
+
+        public SavedState(Parcel source) {
+            super(source);
+            value = source.readString();
+        }
+
+        public SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeString(value);
+        }
+    }
+
+    public static class EditableListPreferenceChangeAdapter implements EditableListPreferenceChangeListener {
+
+        @Override
+        public void onItemAdded(String newItem) {
+        }
+
+        @Override
+        public void onItemRemoved(String newItem) {
+        }
+
+        @Override
+        public void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists) {
+        }
+
+        @Override
+        public void onItemSelectionChanged(EditableListPreference preference, String oldSelection, String newSelection, boolean oldSelectionExists) {
+        }
+
+        @Override
+        public void onItemAltered(EditableListPreference preference, String oldValue, String newValue) {
+        }
     }
 
     private class DefaultListContentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -481,6 +532,42 @@ public class EditableListPreference extends DialogPreference {
             return new ActionableListItemViewHolder(view);
         }
 
+        protected View.OnLongClickListener buildViewLongClickListener(RecyclerView.ViewHolder vh) {
+            return new ViewLongClickListener(vh);
+        }
+
+        protected ViewClickListener buildViewClickListener(RecyclerView.ViewHolder vh) {
+            return new ViewClickListener(vh);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
+            ActionableListItemViewHolder viewHolder = (ActionableListItemViewHolder) holder;
+            viewHolder.selected.setVisibility(View.GONE);
+            String thisValue = entriesList.get(holder.getAdapterPosition());
+            viewHolder.itemName.setText(thisValue);
+            if (thisValue.equals(currentSelectedValue)) {
+                viewHolder.itemName.setTypeface(viewHolder.itemName.getTypeface(), Typeface.BOLD);
+            }
+            viewHolder.itemDescription.setVisibility(View.GONE);
+            viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onDeleteItem(holder.getAdapterPosition(), v);
+                }
+            });
+        }
+
+        protected void onDeleteItem(int position, View v) {
+            deleteItemFromList(position, entriesList.get(position), entryValues.get(position));
+            entriesList.remove(position);
+            if (entryValues.size() != entriesList.size()) {
+                // can't delete the value twice! (test needed for identity mapping where same reference used for values as entries)
+                entryValues.remove(position);
+            }
+            notifyItemRangeRemoved(position, 1);
+        }
+
         protected class ActionableListItemViewHolder extends RecyclerView.ViewHolder {
 
             protected final CustomImageButton deleteButton;
@@ -499,14 +586,6 @@ public class EditableListPreference extends DialogPreference {
             }
         }
 
-        protected View.OnLongClickListener buildViewLongClickListener(RecyclerView.ViewHolder vh) {
-            return new ViewLongClickListener(vh);
-        }
-
-        protected ViewClickListener buildViewClickListener(RecyclerView.ViewHolder vh) {
-            return new ViewClickListener(vh);
-        }
-
         protected class ViewLongClickListener implements View.OnLongClickListener {
 
             private final RecyclerView.ViewHolder vh;
@@ -517,11 +596,11 @@ public class EditableListPreference extends DialogPreference {
 
             @Override
             public boolean onLongClick(View v) {
-                if(!allowItemEdit) {
+                if (!allowItemEdit) {
                     return false;
                 }
                 String itemValue;
-                if(vh.getItemId() == RecyclerView.NO_ID) {
+                if (vh.getItemId() == RecyclerView.NO_ID) {
                     itemValue = entriesList.get(vh.getAdapterPosition());
                 } else {
                     throw new IllegalStateException("Stable IDs are not supported by default ViewLongClickListener");
@@ -545,7 +624,7 @@ public class EditableListPreference extends DialogPreference {
 
             protected void onClick(RecyclerView.ViewHolder vh, View v) {
                 String newValue;
-                if(vh.getItemId() == RecyclerView.NO_ID) {
+                if (vh.getItemId() == RecyclerView.NO_ID) {
                     newValue = entriesList.get(vh.getAdapterPosition());
                 } else {
                     throw new IllegalStateException("Stable IDs are not supported by default ViewClickListener");
@@ -555,83 +634,11 @@ public class EditableListPreference extends DialogPreference {
                 EditableListPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
                 userSelectedItem = newValue;
                 dialog.dismiss();
-                if(listener != null) {
+                if (listener != null) {
                     listener.onItemSelectionChange(currentValue, newValue, entries.contains(currentValue));
                 }
             }
 
         }
-
-        @Override
-        public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
-            ActionableListItemViewHolder viewHolder = (ActionableListItemViewHolder)holder;
-            viewHolder.selected.setVisibility(View.GONE);
-            String thisValue = entriesList.get(holder.getAdapterPosition());
-            viewHolder.itemName.setText(thisValue);
-            if(thisValue.equals(currentSelectedValue)) {
-                viewHolder.itemName.setTypeface(viewHolder.itemName.getTypeface(), Typeface.BOLD);
-            }
-            viewHolder.itemDescription.setVisibility(View.GONE);
-            viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteItem(holder.getAdapterPosition(), v);
-                }
-            });
-        }
-
-        protected void onDeleteItem(int position, View v) {
-            deleteItemFromList(position, entriesList.get(position), entryValues.get(position));
-            entriesList.remove(position);
-            if(entryValues.size() != entriesList.size()) {
-                // can't delete the value twice! (test needed for identity mapping where same reference used for values as entries)
-                entryValues.remove(position);
-            }
-            notifyItemRangeRemoved(position, 1);
-        }
-    }
-
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        super.onDialogClosed(positiveResult);
-
-        if (positiveResult && userSelectedItem != null && getEntryValues() != null) {
-            String value = userSelectedItem;
-            if (callChangeListener(value)) {
-
-                setValue(value);
-            }
-        }
-    }
-
-    public static class EditableListPreferenceChangeAdapter implements EditableListPreferenceChangeListener {
-
-        @Override
-        public void onItemAdded(String newItem) {
-        }
-
-        @Override
-        public void onItemRemoved(String newItem) {
-        }
-
-        @Override
-        public void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists) {
-        }
-
-        @Override
-        public void onItemSelectionChanged(EditableListPreference preference, String oldSelection, String newSelection, boolean oldSelectionExists) {
-        }
-
-        @Override
-        public void onItemAltered(EditableListPreference preference, String oldValue, String newValue) {
-        }
-    }
-
-    public interface EditableListPreferenceChangeListener {
-        void onItemAdded(String newItem);
-        void onItemRemoved(String newItem);
-        void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists);
-        void onItemSelectionChanged(EditableListPreference preference, String oldSelection, String newSelection, boolean oldSelectionExists);
-        void onItemAltered(EditableListPreference preference, String oldValue, String newValue);
     }
 }

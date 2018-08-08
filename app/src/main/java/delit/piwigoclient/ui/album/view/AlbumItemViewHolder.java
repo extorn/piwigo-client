@@ -7,6 +7,8 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
@@ -15,7 +17,6 @@ import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.ui.common.SquareLinearLayout;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
-import delit.piwigoclient.util.picasso.RoundedTransformation;
 
 import static android.view.View.GONE;
 import static delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences.SCALING_QUALITY_VLOW;
@@ -44,7 +45,7 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
 
     @Override
     public <T> void redisplayOldValues(Context context, T newItem, boolean allowItemDeletion) {
-        if(!imageLoader.isImageLoading() && !imageLoader.isImageLoaded()) {
+        if (!imageLoader.isImageLoading() && !imageLoader.isImageLoaded()) {
             imageLoader.load();
         }
     }
@@ -56,7 +57,7 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
     }
 
     protected void updateRecentlyViewedMarker(GalleryItem newItem) {
-        if(mRecentlyAlteredMarkerView != null) {
+        if (mRecentlyAlteredMarkerView != null) {
             if (newItem.getLastAltered() != null && newItem.getLastAltered().compareTo(parentAdapter.getAdapterPrefs().getRecentlyAlteredThresholdDate()) > 0) {
                 // is null for blank categories (dummmy spacers) and also for categories only visible because this is an admin user (without explicit access)
                 PicassoLoader picasso = new PicassoLoader(mRecentlyAlteredMarkerView);
@@ -78,7 +79,7 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
         mItemContainer = itemView.findViewById(R.id.item_container);
 
         final ViewTreeObserver.OnPreDrawListener predrawListener;
-        if(!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+        if (!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
             predrawListener = configureNonMasonryThumbnailLoader(mImageView);
         } else {
             predrawListener = configureMasonryThumbnailLoader(mImageView);
@@ -108,7 +109,8 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
                     if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading()) {
                         imageLoader.load();
                     }
-                } catch(IllegalStateException e) {
+                } catch (IllegalStateException e) {
+                    Crashlytics.logException(e);
                     // image loader not configured yet...
                 }
                 return true;
@@ -130,12 +132,13 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
                             imgSize = target.getMeasuredWidth();
                         } else {
                             // need that math.max to ensure that the image size remains positive
-                            imgSize = Math.max(SCALING_QUALITY_VLOW,Math.min(desiredScalingQuality, target.getMeasuredWidth()));
+                            imgSize = Math.max(SCALING_QUALITY_VLOW, Math.min(desiredScalingQuality, target.getMeasuredWidth()));
                         }
                         ((ResizingPicassoLoader) imageLoader).setResizeTo(imgSize, imgSize);
                         imageLoader.load();
                     }
                 } catch (IllegalStateException e) {
+                    Crashlytics.logException(e);
                     // image loader not configured yet...
                 }
                 return true;

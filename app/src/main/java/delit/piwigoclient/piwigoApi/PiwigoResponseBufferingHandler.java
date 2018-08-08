@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.util.LongSparseArray;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonElement;
 
 import java.io.File;
@@ -204,8 +205,8 @@ public class PiwigoResponseBufferingHandler {
         if (handlerId != null) {
             handler = handlers.get(handlerId);
         } else {
-            if(BuildConfig.DEBUG) {
-                Log.e(TAG, "No handler registered for message with id " +response.getMessageId());
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "No handler registered for message with id " + response.getMessageId());
             }
             handler = null;
         }
@@ -225,6 +226,7 @@ public class PiwigoResponseBufferingHandler {
                             responses.put(response.getMessageId(), response);
                         }
                     } catch (IllegalArgumentException e) {
+                        Crashlytics.logException(e);
                         //TODO this keeps happening in the wild - sink it and the response for now to prevent crash.
                         // the handler is attached, but to an unrecognised component type
                         if (BuildConfig.DEBUG) {

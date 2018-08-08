@@ -36,7 +36,7 @@ public class AboutFragment extends MyFragment {
         View view = inflater.inflate(R.layout.fragment_about, container, false);
 
         AdView adView = view.findViewById(R.id.about_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -96,6 +96,7 @@ public class AboutFragment extends MyFragment {
 
         /**
          * Will retrieve the headings
+         *
          * @param position
          * @return
          */
@@ -105,7 +106,7 @@ public class AboutFragment extends MyFragment {
         }
 
         public String getItemData(int position) {
-            return data[1 +  (position * 2)];
+            return data[1 + (position * 2)];
         }
 
         @Override
@@ -122,7 +123,7 @@ public class AboutFragment extends MyFragment {
             }
             // set view properties to reflect data for the given row
 
-            String heading = (String)getItem(position);
+            String heading = (String) getItem(position);
             String data = getItemData(position);
 
             populateView(view, heading, data);

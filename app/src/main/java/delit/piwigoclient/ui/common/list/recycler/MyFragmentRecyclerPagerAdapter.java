@@ -36,32 +36,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import delit.piwigoclient.ui.slideshow.AbstractSlideshowItemFragment;
-
 /**
  * Implementation of {@link PagerAdapter} that
  * uses a {@link Fragment} to manage each page. This class also handles
  * saving and restoring of fragment's state.
- *
+ * <p>
  * This implementation is very similar to {@link FragmentPagerAdapter} except it caches and reuses the
  * fragments like a recycler view does. The advantage is better memory management.
- *
+ * <p>
  * The number of fragments whose state is maintained when the parent view is destroyed can be controlled
  * to prevent transaction size problems. By default this is limited to 3 fragments, though it can be increased.
- *
+ * <p>
  * Note that state for all fragments is kept while the page is still visible, it is only when it is not that the
  * state is trimmed.
  */
 public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     private static final String TAG = "FrgmntStatePagerAdapter";
     private static final boolean DEBUG = false;
-
+    private final Map<Class, Queue<Fragment>> availableFragmentPool = new HashMap<>();
+    private final Map<Integer, Fragment> activeFragments = new HashMap<>(3);
     private FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction = null;
-
     private ArrayList<Fragment.SavedState> pageState;
-    private final Map<Class,Queue<Fragment>> availableFragmentPool = new HashMap<>();
-    private final Map<Integer,Fragment> activeFragments = new HashMap<>(3);
     private int maxFragmentsToSaveInState = 3;
     private int visibleItemIdx = -1;
     private Fragment mCurrentPrimaryItem;
@@ -70,16 +66,16 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         mFragmentManager = fm;
     }
 
-    public void setFragmentManager(FragmentManager fragmentManager) {
-        this.mFragmentManager = fragmentManager;
-    }
-
     public void setMaxFragmentsToSaveInState(int maxFragmentsToSaveInState) {
         this.maxFragmentsToSaveInState = maxFragmentsToSaveInState;
     }
 
     public FragmentManager getFragmentManager() {
         return mFragmentManager;
+    }
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.mFragmentManager = fragmentManager;
     }
 
     @Override
@@ -98,7 +94,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
         activeFragments.remove(position);
 
-        if(availableFragmentPool.size() == 0) {
+        if (availableFragmentPool.size() == 0) {
             // not using pooling
             return;
         }
@@ -106,21 +102,21 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     }
 
     public Fragment getNextAvailableFragmentFromPool(Class<? extends Fragment> fragmentType) {
-        if(fragmentType == null) {
+        if (fragmentType == null) {
             // not using fragment pooling
             return null;
         }
         Queue<Fragment> fragmentPool = availableFragmentPool.get(fragmentType);
-        if(fragmentPool == null) {
+        if (fragmentPool == null) {
             fragmentPool = new ArrayDeque<>(3);
             availableFragmentPool.put(fragmentType, fragmentPool);
             return null;
         }
-        if(fragmentPool.size() == 0) {
+        if (fragmentPool.size() == 0) {
             return null;
         }
         Fragment f = fragmentPool.poll();
-        if(!f.isAdded()) {
+        if (!f.isAdded()) {
             return f;
         }
         // still being removed - cannot add to page again yet
@@ -143,23 +139,23 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
         Class<? extends Fragment> fragmentTypeNeeded = getFragmentType(position);
 
-        if(activeFragments.size() == 0) {
+        if (activeFragments.size() == 0) {
             List<Fragment> fragments = mFragmentManager.getFragments();
             // if fragments is not empty then the page was very probably rotated
-            for(Fragment f : fragments) {
-                activeFragments.put(((PagerItemFragment)f).getPagerIndex(), f);
+            for (Fragment f : fragments) {
+                activeFragments.put(((PagerItemFragment) f).getPagerIndex(), f);
             }
         }
 
         // check if fragment is already active. If so, do nothing
         Fragment f = activeFragments.get(position);
-        if(f != null) {
+        if (f != null) {
             return f;
         }
 
         f = getNextAvailableFragmentFromPool(fragmentTypeNeeded);
 
-        if(f == null) {
+        if (f == null) {
             f = createNewItem(fragmentTypeNeeded, position);
         } else {
             bindDataToFragment(f, position);
@@ -196,7 +192,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
 
         Fragment fragment = getActiveFragment(position);
-        if(fragment == null) {
+        if (fragment == null) {
             //nothing to do here, fragment no longer managed.
             return;
         }
@@ -217,7 +213,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
     @Override
     public void notifyDataSetChanged() {
-        if(pageState == null) {
+        if (pageState == null) {
             pageState = new ArrayList<>(getCount());
         } else {
             pageState.ensureCapacity(getCount());
@@ -226,14 +222,14 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     }
 
     protected void recordPageState(Fragment fragment, int position) {
-        if(pageState == null) {
+        if (pageState == null) {
             pageState = new ArrayList<>(getCount());
         }
         while (pageState.size() <= position) {
             pageState.add(null);
         }
 
-        if(fragment.isAdded() && position >= 0) {
+        if (fragment.isAdded() && position >= 0) {
             pageState.set(position, mFragmentManager.saveFragmentInstanceState(fragment));
         } else {
             pageState.set(position, null);
@@ -242,7 +238,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
     @Override
     public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        Fragment fragment = (Fragment)object;
+        Fragment fragment = (Fragment) object;
         if (fragment != mCurrentPrimaryItem) {
             if (mCurrentPrimaryItem != null) {
                 mCurrentPrimaryItem.setMenuVisibility(false);
@@ -265,18 +261,18 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-        return ((Fragment)object).getView() == view;
+        return ((Fragment) object).getView() == view;
     }
 
     private int getMinIdxFragmentStateToKeep() {
-        if(maxFragmentsToSaveInState == 0) {
+        if (maxFragmentsToSaveInState == 0) {
             return Integer.MAX_VALUE;
         }
-        return (int)Math.round(visibleItemIdx - Math.floor(((double)maxFragmentsToSaveInState-1) / 2));
+        return (int) Math.round(visibleItemIdx - Math.floor(((double) maxFragmentsToSaveInState - 1) / 2));
     }
 
     private int getMaxIdxFragmentStateToKeep() {
-        if(maxFragmentsToSaveInState == 0) {
+        if (maxFragmentsToSaveInState == 0) {
             return Integer.MIN_VALUE;
         }
         return getMinIdxFragmentStateToKeep() + maxFragmentsToSaveInState;
@@ -291,7 +287,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         Bundle state = new Bundle();
 
         int windowStart = visibleItemIdx - 1;
-        for(Map.Entry<Integer, Fragment> activeFragmentEntry : activeFragments.entrySet()) {
+        for (Map.Entry<Integer, Fragment> activeFragmentEntry : activeFragments.entrySet()) {
             recordPageState(activeFragmentEntry.getValue(), activeFragmentEntry.getKey());
         }
 
@@ -316,11 +312,11 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     @Override
     public void restoreState(Parcelable state, ClassLoader loader) {
         if (state != null) {
-            Bundle bundle = (Bundle)state;
+            Bundle bundle = (Bundle) state;
             bundle.setClassLoader(loader);
             Parcelable[] fss = bundle.getParcelableArray("pagesState");
 
-            if(pageState == null) {
+            if (pageState == null) {
                 pageState = new ArrayList<>(fss != null ? fss.length : 0);
             } else {
                 pageState.clear();

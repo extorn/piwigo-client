@@ -5,17 +5,18 @@ import java.util.Collection;
 
 public class CollectionUtils {
 
-    private CollectionUtils() {}
+    private CollectionUtils() {
+    }
 
     public static String toCsvList(Collection<? extends Number> items) {
 
-        if(items == null || items.size() == 0) {
+        if (items == null || items.size() == 0) {
             return null;
         }
 
         StringBuilder sb = new StringBuilder();
 
-        for(Number item : items) {
+        for (Number item : items) {
             sb.append(item);
             sb.append(',');
         }
@@ -25,11 +26,11 @@ public class CollectionUtils {
 
     public static ArrayList<Integer> integersFromCsvList(String csvValue) {
         ArrayList<Integer> value = new ArrayList<>();
-        if(csvValue == null) {
+        if (csvValue == null) {
             return value;
         }
         String[] strValues = csvValue.split(",");
-        for(String val : strValues) {
+        for (String val : strValues) {
             value.add(Integer.valueOf(val));
         }
         return value;

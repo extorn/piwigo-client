@@ -10,8 +10,15 @@
         android:text="@string/licences_heading"
         style="@style/Base.TextAppearance.AppCompat.Title"/>
 
-    <ScrollView
+    <Button
+        android:id="@+id/other_oss_licences_button"
         android:layout_below="@+id/licences_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/other_licences_button_text"/>
+
+    <ScrollView
+        android:layout_below="@+id/other_oss_licences_button"
         android:layout_above="@+id/licences_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_width="fill_parent"

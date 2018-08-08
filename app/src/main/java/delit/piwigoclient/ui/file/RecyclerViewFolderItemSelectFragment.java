@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -75,7 +76,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        if(isNotAuthorisedToAlterState()) {
+        if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
 
@@ -86,7 +87,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(id > 0) {
+                if (id > 0) {
                     MappedArrayAdapter<String, File> adapter = (MappedArrayAdapter) parent.getAdapter();
                     File newRoot = adapter.getItemValue(position);
                     getListAdapter().updateContent(newRoot);
@@ -105,9 +106,9 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             @Override
             public void onFolderOpened(File oldFolder, File newFolder) {
                 String item = folderRootsAdapter.getItemByValue(newFolder);
-                if(item == null) {
+                if (item == null) {
                     // reset the selection
-                    if(spinner.getSelectedItemId() >= 0) {
+                    if (spinner.getSelectedItemId() >= 0) {
                         spinner.setAdapter(folderRootsAdapter);
                     }
                 } else {
@@ -117,17 +118,17 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                 File f = newFolder;
                 folderPathView.removeAllViews();
 
-                while(!f.getName().isEmpty()) {
+                while (!f.getName().isEmpty()) {
                     TextView pathItem = new TextView(getContext());
 
                     folderPathView.addView(pathItem, 0);
-                    pathItem.setText('/'+f.getName());
+                    pathItem.setText('/' + f.getName());
                     final File thisFile = f;
 
                     pathItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            TextView tv = (TextView)v;
+                            TextView tv = (TextView) v;
                             getListAdapter().updateContent(thisFile);
                         }
                     });
@@ -138,7 +139,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>() {
         }, getViewPrefs());
-        if(!viewAdapter.isItemSelectionAllowed()) {
+        if (!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();
         }
 
@@ -152,14 +153,13 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         setListAdapter(viewAdapter);
 
         int colsOnScreen = Math.max(getViewPrefs().getColumnsOfFiles(), getViewPrefs().getColumnsOfFolders());
-        if(getViewPrefs().getColumnsOfFiles() % getViewPrefs().getColumnsOfFolders() > 0) {
+        if (getViewPrefs().getColumnsOfFiles() % getViewPrefs().getColumnsOfFolders() > 0) {
             colsOnScreen = getViewPrefs().getColumnsOfFiles() * getViewPrefs().getColumnsOfFolders();
         }
-        GridLayoutManager layoutMan = new GridLayoutManager(getContext(),colsOnScreen);
+        GridLayoutManager layoutMan = new GridLayoutManager(getContext(), colsOnScreen);
         layoutMan.setSpanSizeLookup(new SpanSizeLookup(viewAdapter, colsOnScreen));
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(viewAdapter);
-
 
 
         return v;
@@ -168,7 +168,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     @Override
     public boolean onBackButton() {
         File parent = getListAdapter().getActiveFolder().getParentFile();
-        if(parent.getName().isEmpty()) {
+        if (parent.getName().isEmpty()) {
             return false;
         } else {
             getListAdapter().updateContent(parent);
@@ -176,41 +176,12 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         }
     }
 
-    private static class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
-
-        private final int spanCount;
-        private final FolderItemRecyclerViewAdapter viewAdapter;
-
-        public SpanSizeLookup(FolderItemRecyclerViewAdapter viewAdapter, int spanCount) {
-            this.viewAdapter = viewAdapter;
-            this.spanCount = spanCount;
-        }
-
-        @Override
-        public int getSpanSize(int position) {
-            try {
-                int itemType = viewAdapter.getItemViewType(position);
-                switch (itemType) {
-                    case FolderItemRecyclerViewAdapter.VIEW_TYPE_FOLDER:
-                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFolders();
-                    case FolderItemRecyclerViewAdapter.VIEW_TYPE_FILE:
-                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFiles();
-                    default:
-                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFiles();
-                }
-            } catch(IndexOutOfBoundsException e) {
-                //TODO why does this occur? How?
-                return 1;
-            }
-        }
-    }
-
-    private MappedArrayAdapter<String,File> buildFolderRootsAdapter() {
+    private MappedArrayAdapter<String, File> buildFolderRootsAdapter() {
         List<String> rootLabels = ArrayUtils.toArrayList(new String[]{getString(R.string.folder_root_root), getString(R.string.folder_root_userdata), getString(R.string.folder_extstorage)});
 
         List<File> rootPaths = ArrayUtils.toArrayList(new File[]{Environment.getRootDirectory(), Environment.getDataDirectory(), Environment.getExternalStorageDirectory()});
 
-        if(getViewPrefs().getInitialFolderAsFile() != null && !rootPaths.contains(getViewPrefs().getInitialFolderAsFile())) {
+        if (getViewPrefs().getInitialFolderAsFile() != null && !rootPaths.contains(getViewPrefs().getInitialFolderAsFile())) {
             rootPaths.add(0, getViewPrefs().getInitialFolderAsFile());
             rootLabels.add(0, getString(R.string.folder_default));
         }
@@ -243,7 +214,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         HashSet<File> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems)));
         // now pop this screen off the stack.
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
     }
@@ -252,6 +223,36 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     public void onCancelChanges() {
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), null));
         super.onCancelChanges();
+    }
+
+    private static class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
+
+        private final int spanCount;
+        private final FolderItemRecyclerViewAdapter viewAdapter;
+
+        public SpanSizeLookup(FolderItemRecyclerViewAdapter viewAdapter, int spanCount) {
+            this.viewAdapter = viewAdapter;
+            this.spanCount = spanCount;
+        }
+
+        @Override
+        public int getSpanSize(int position) {
+            try {
+                int itemType = viewAdapter.getItemViewType(position);
+                switch (itemType) {
+                    case FolderItemRecyclerViewAdapter.VIEW_TYPE_FOLDER:
+                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFolders();
+                    case FolderItemRecyclerViewAdapter.VIEW_TYPE_FILE:
+                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFiles();
+                    default:
+                        return spanCount / viewAdapter.getAdapterPrefs().getColumnsOfFiles();
+                }
+            } catch (IndexOutOfBoundsException e) {
+                Crashlytics.logException(e);
+                //TODO why does this occur? How?
+                return 1;
+            }
+        }
     }
 
 }

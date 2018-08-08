@@ -11,7 +11,8 @@ public class Group implements Identifiable, Serializable {
     private boolean isDefault;
     private int memberCount;
 
-    public Group() {}
+    public Group() {
+    }
 
     public Group(long id, String name, boolean isDefault) {
         this.id = id;
@@ -26,18 +27,6 @@ public class Group implements Identifiable, Serializable {
         this.memberCount = memberCount;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setMemberCount(int memberCount) {
-        this.memberCount = memberCount;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public void setIsDefault(boolean isDefault) {
         this.isDefault = isDefault;
     }
@@ -46,8 +35,16 @@ public class Group implements Identifiable, Serializable {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isDefault() {
@@ -56,6 +53,10 @@ public class Group implements Identifiable, Serializable {
 
     public int getMemberCount() {
         return memberCount;
+    }
+
+    public void setMemberCount(int memberCount) {
+        this.memberCount = memberCount;
     }
 
 }

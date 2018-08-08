@@ -27,8 +27,6 @@ public class UploadJob implements Serializable {
     private static final Integer REQUIRES_DELETE = 5;
     private static final Integer DELETED = 6;
     private final long jobId;
-    private int jobConfigId = -1;
-    private boolean runInBackground;
     private final long responseHandlerId;
     private final ArrayList<File> filesForUpload;
     private final HashMap<File, Integer> fileUploadStatus;
@@ -36,6 +34,8 @@ public class UploadJob implements Serializable {
     private final ArrayList<Long> uploadToCategoryParentage;
     private final long uploadToCategory;
     private final int privacyLevelWanted;
+    private int jobConfigId = -1;
+    private boolean runInBackground;
     private ConnectionPreferences.ProfilePreferences connectionPrefs;
     private HashMap<File, String> fileChecksums;
     private boolean finished;
@@ -249,7 +249,7 @@ public class UploadJob implements Serializable {
         for (File f : filesNotFinished) {
             // recalculate checksums for all files not yet uploaded
             final String checksum = Md5SumUtils.calculateMD5(f);
-            if(!newJob) {
+            if (!newJob) {
                 fileChecksums.remove(f);
             }
             fileChecksums.put(f, checksum);
@@ -370,12 +370,12 @@ public class UploadJob implements Serializable {
     }
 
     public void filterPreviouslyUploadedFiles(HashMap<File, String> fileUploadedHashMap) {
-        for(HashMap.Entry<File,String> fileUploadedEntry : fileUploadedHashMap.entrySet()) {
+        for (HashMap.Entry<File, String> fileUploadedEntry : fileUploadedHashMap.entrySet()) {
             File potentialDuplicateUpload = fileUploadedEntry.getKey();
-            if(filesForUpload.contains(potentialDuplicateUpload)) {
+            if (filesForUpload.contains(potentialDuplicateUpload)) {
                 // a file at this absolute path has been uploaded previously to this end point
                 String checksum = fileChecksums.get(potentialDuplicateUpload);
-                if(checksum != null) {
+                if (checksum != null) {
                     if (checksum.equals(fileUploadedEntry.getValue())) {
                         // the file is identical to that previously uploaded (checksum check)
                         if (!fileUploadStatus.containsKey(potentialDuplicateUpload)) {
@@ -394,12 +394,12 @@ public class UploadJob implements Serializable {
         return filePartialUploadProgress.size() > 0;
     }
 
-    public void setLoadedFromFile(File loadedFromFile) {
-        this.loadedFromFile = loadedFromFile;
-    }
-
     public File getLoadedFromFile() {
         return loadedFromFile;
+    }
+
+    public void setLoadedFromFile(File loadedFromFile) {
+        this.loadedFromFile = loadedFromFile;
     }
 
     protected static class PartialUploadData implements Serializable {

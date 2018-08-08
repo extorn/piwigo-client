@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -28,7 +30,8 @@ import static android.view.View.GONE;
 public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences, CategoryItemStub> {
 
     private final CategoryItem parentAlbum;
-    private final @IdRes int txtViewId;
+    private final @IdRes
+    int txtViewId;
 
     public AvailableAlbumsListAdapter(AvailableAlbumsListAdapterPreferences viewPrefs, CategoryItem parentAlbum, @NonNull Context context, @LayoutRes int itemLayout) {
         super(context, viewPrefs, itemLayout);
@@ -36,18 +39,20 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
         this.parentAlbum = parentAlbum;
     }
 
-    private static @IdRes int getTextFieldId(AvailableAlbumsListAdapterPreferences prefs) {
-        return R.id.actionable_list_item_text;
-    }
-
-    private static @LayoutRes int getLayoutId(AvailableAlbumsListAdapterPreferences prefs) {
-        return prefs.isMultiSelectionEnabled()? R.layout.actionable_simple_triselect_list_item_layout : R.layout.actionable_simple_select_list_item_layout;
-    }
-
     public AvailableAlbumsListAdapter(AvailableAlbumsListAdapterPreferences prefs, CategoryItem parentAlbum, @NonNull Context context) {
         super(context, prefs, getLayoutId(prefs), getTextFieldId(prefs));
         this.txtViewId = getTextFieldId(prefs);
         this.parentAlbum = parentAlbum;
+    }
+
+    private static @IdRes
+    int getTextFieldId(AvailableAlbumsListAdapterPreferences prefs) {
+        return R.id.actionable_list_item_text;
+    }
+
+    private static @LayoutRes
+    int getLayoutId(AvailableAlbumsListAdapterPreferences prefs) {
+        return prefs.isMultiSelectionEnabled() ? R.layout.actionable_simple_triselect_list_item_layout : R.layout.actionable_simple_select_list_item_layout;
     }
 
     @Override
@@ -64,7 +69,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
     @Override
     public View getView(int position, View view, @NonNull ViewGroup parent) {
         View v = super.getView(position, view, parent);
-        if(v instanceof TextView) {
+        if (v instanceof TextView) {
             v.setPadding(0, 0, 0, 0);
         }
         return v;
@@ -75,7 +80,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
         try {
             boolean isCustomView = false;
             TextView textView;
-            if(aView instanceof TextView) {
+            if (aView instanceof TextView) {
                 textView = (TextView) aView;
             } else {
                 textView = aView.findViewById(txtViewId);
@@ -85,20 +90,21 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
             if (parentAlbum.getId() != item.getId() || position > 0) {
                 // only display items that are not the root.
                 int paddingStart = 0;
-                if(getPrefs().isShowHierachy()) {
+                if (getPrefs().isShowHierachy()) {
                     paddingStart = 35 * getDepth(item);
                 }
                 textView.setPaddingRelative(paddingStart, textView.getPaddingTop(), textView.getPaddingEnd(), textView.getPaddingBottom());
             }
-            if(isCustomView) {
+            if (isCustomView) {
                 CompoundButton checkboxTriState = aView.findViewById(R.id.actionable_list_item_checked);
                 checkboxTriState.setEnabled(getPrefs().isEnabled());
 
                 CustomImageButton button = aView.findViewById(R.id.actionable_list_item_delete_button);
-                button.setVisibility(getPrefs().isAllowItemDeletion()?View.VISIBLE:GONE);
+                button.setVisibility(getPrefs().isAllowItemDeletion() ? View.VISIBLE : GONE);
             }
         } catch (ClassCastException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e("AvailableAlbumsListAd", "You must supply a resource ID for a TextView");
             }
             throw new IllegalStateException(
@@ -115,9 +121,9 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
         CategoryItemStub thisItem = item;
         int pos = getPosition(thisItem.getId());
         int depth = 0;
-        while(pos >= 0) {
+        while (pos >= 0) {
             pos = getPosition(thisItem.getParentId());
-            if(pos >= 0) {
+            if (pos >= 0) {
                 depth++;
                 thisItem = getItem(pos);
             }

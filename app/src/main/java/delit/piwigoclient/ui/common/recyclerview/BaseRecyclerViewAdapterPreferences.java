@@ -11,7 +11,8 @@ public class BaseRecyclerViewAdapterPreferences {
     private boolean enabled;
     private boolean readonly;
 
-    public BaseRecyclerViewAdapterPreferences(){}
+    public BaseRecyclerViewAdapterPreferences() {
+    }
 
     public BaseRecyclerViewAdapterPreferences readonly() {
         readonly = true;
@@ -71,12 +72,24 @@ public class BaseRecyclerViewAdapterPreferences {
         return allowItemSelection;
     }
 
+    public void setAllowItemSelection(boolean allowItemSelection) {
+        this.allowItemSelection = allowItemSelection;
+    }
+
     public boolean isAllowItemAddition() {
         return allowItemAddition && !readonly;
     }
 
+    public void setAllowItemAddition(boolean allowItemAddition) {
+        this.allowItemAddition = allowItemAddition;
+    }
+
     public boolean isInitialSelectionLocked() {
         return initialSelectionLocked;
+    }
+
+    public void setInitialSelectionLocked(boolean initialSelectionLocked) {
+        this.initialSelectionLocked = initialSelectionLocked;
     }
 
     public boolean isMultiSelectionEnabled() {
@@ -91,20 +104,8 @@ public class BaseRecyclerViewAdapterPreferences {
         return enabled && !readonly;
     }
 
-    public void setAllowItemSelection(boolean allowItemSelection) {
-        this.allowItemSelection = allowItemSelection;
-    }
-
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public void setAllowItemAddition(boolean allowItemAddition) {
-        this.allowItemAddition = allowItemAddition;
-    }
-
-    public void setInitialSelectionLocked(boolean initialSelectionLocked) {
-        this.initialSelectionLocked = initialSelectionLocked;
     }
 
     public void withAllowMultiSelect(boolean multiSelectionAllowed) {

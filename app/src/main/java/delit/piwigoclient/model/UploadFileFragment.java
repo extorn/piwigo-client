@@ -59,10 +59,10 @@ public class UploadFileFragment {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof UploadFileFragment)) {
+        if (!(obj instanceof UploadFileFragment)) {
             return false;
         }
-        UploadFileFragment other = (UploadFileFragment)obj;
+        UploadFileFragment other = (UploadFileFragment) obj;
         return this.chunkId == other.chunkId
                 && this.jobId == other.jobId
                 && this.originalFile == other.originalFile;

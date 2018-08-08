@@ -11,10 +11,6 @@ import android.widget.ScrollView;
 
 public abstract class CustomClickTouchListener implements View.OnTouchListener {
 
-    public boolean onClick() {
-        return false;
-    }
-
     private final GestureDetector detector;
     private boolean allowScrollWhenNested;
 
@@ -34,14 +30,14 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                if(allowScrollWhenNested) {
-                    int intDistanceX = (int)Math.rint(distanceX);
-                    int intDistanceY = (int)Math.rint(distanceY);
-                    if(!linkedView.canScrollVertically(intDistanceY)) {
+                if (allowScrollWhenNested) {
+                    int intDistanceX = (int) Math.rint(distanceX);
+                    int intDistanceY = (int) Math.rint(distanceY);
+                    if (!linkedView.canScrollVertically(intDistanceY)) {
 
                         View parentView = getParentScrollView(linkedView);
-                        int adjustedXscroll = parentView.canScrollHorizontally(intDistanceX)?intDistanceX:0;
-                        int adjustedYscroll = parentView.canScrollVertically(intDistanceY)?intDistanceY:0;
+                        int adjustedXscroll = parentView.canScrollHorizontally(intDistanceX) ? intDistanceX : 0;
+                        int adjustedYscroll = parentView.canScrollVertically(intDistanceY) ? intDistanceY : 0;
                         parentView.scrollBy(adjustedXscroll, adjustedYscroll);
 
                     }
@@ -50,10 +46,10 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
             }
 
             private View getParentScrollView(View linkedView) {
-                View v  = linkedView;
-                while(!(v instanceof ScrollView)) {
+                View v = linkedView;
+                while (!(v instanceof ScrollView)) {
                     v = (View) v.getParent();
-                    if(v == null) {
+                    if (v == null) {
                         throw new IllegalStateException("Component must be inside a scroll view for this to work");
                     }
                 }
@@ -68,6 +64,10 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
         detector = new GestureDetector(linkedView.getContext(), listener);
     }
 
+    public boolean onClick() {
+        return false;
+    }
+
     public CustomClickTouchListener withScrollingWhenNested() {
         allowScrollWhenNested = true;
         return this;
@@ -78,8 +78,8 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
 
     @Override
     public final boolean onTouch(View v, MotionEvent event) {
-        if(!detector.onTouchEvent(event)) {
-            if(allowScrollWhenNested) {
+        if (!detector.onTouchEvent(event)) {
+            if (allowScrollWhenNested) {
                 v.getParent().requestDisallowInterceptTouchEvent(true);
             }
             return onTouchNonClick(v, event);

@@ -19,7 +19,7 @@ public abstract class ResourceContainer<S extends Identifiable, T extends Identi
 
     public ResourceItem getResourceItemById(long itemId) {
         T item = getItemById(itemId);
-        if(item instanceof ResourceItem) {
+        if (item instanceof ResourceItem) {
             return (ResourceItem) item;
         }
         throw new RuntimeException("Item is present, but is not an album resource, is a " + item.getClass().getName());
@@ -35,12 +35,12 @@ public abstract class ResourceContainer<S extends Identifiable, T extends Identi
         return containerDetails;
     }
 
+    public void setContainerDetails(S item) {
+        containerDetails = item;
+    }
+
     @Override
     public long getId() {
         return containerDetails.getId();
-    }
-
-    public void setContainerDetails(S item) {
-        containerDetails = item;
     }
 }

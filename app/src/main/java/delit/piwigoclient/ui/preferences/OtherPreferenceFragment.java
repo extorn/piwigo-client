@@ -29,13 +29,13 @@ public class OtherPreferenceFragment extends MyPreferenceFragment {
     private float getScreenWidthInches() {
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float)dm.widthPixels / dm.xdpi;
+        return (float) dm.widthPixels / dm.xdpi;
     }
 
     private float getScreenHeightInches() {
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float)dm.heightPixels / dm.xdpi;
+        return (float) dm.heightPixels / dm.xdpi;
     }
 
     /**
@@ -51,7 +51,7 @@ public class OtherPreferenceFragment extends MyPreferenceFragment {
             screenWidth = getScreenHeightInches();
         }
         int columnsToShow = (int) Math.round(screenWidth - (screenWidth % 0.75)); // allow a minimum of 0.75 inch per column
-        return Math.max(1,columnsToShow); // never allow less than one column by default.
+        return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 
     /**
@@ -67,7 +67,7 @@ public class OtherPreferenceFragment extends MyPreferenceFragment {
             screenWidth = getScreenHeightInches();
         }
         int columnsToShow = (int) Math.round(screenWidth - (screenWidth % 0.1)); // allow a minimum of 1 inch per column
-        return Math.max(1,columnsToShow); // never allow less than one column by default.
+        return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 
     @Override
@@ -78,7 +78,7 @@ public class OtherPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        if(view != null) {
+        if (view != null) {
             return view;
         }
         view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);

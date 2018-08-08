@@ -34,14 +34,14 @@ public final class PausableLoadControl extends DefaultLoadControl {
 
     public void pauseBuffering() {
         paused = true;
-        if(listener != null) {
+        if (listener != null) {
             listener.onPause();
         }
     }
 
     public void resumeBuffering() {
         paused = false;
-        if(listener != null) {
+        if (listener != null) {
             listener.onResume();
         }
     }
@@ -60,6 +60,7 @@ public final class PausableLoadControl extends DefaultLoadControl {
 
     public interface Listener {
         void onPause();
+
         void onResume();
     }
 }

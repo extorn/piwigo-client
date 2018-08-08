@@ -64,13 +64,13 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        if(isServerConnectionChanged()) {
+        if (isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
         }
 
-        if(isNotAuthorisedToAlterState()) {
+        if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
 
@@ -85,7 +85,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
                 EventBus.getDefault().post(new ViewGroupEvent(item));
             }
         }, getViewPrefs());
-        if(!viewAdapter.isItemSelectionAllowed()) {
+        if (!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();
         }
 
@@ -129,11 +129,11 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     public void onResume() {
         super.onResume();
 
-        if(isServerConnectionChanged()) {
+        if (isServerConnectionChanged()) {
             return;
         }
 
-        if(groupsModel.getPagesLoaded() == 0) {
+        if (groupsModel.getPagesLoaded() == 0) {
             getListAdapter().notifyDataSetChanged();
             loadGroupsPage(0);
         }
@@ -143,7 +143,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
 
         groupsModel.acquirePageLoadLock();
         try {
-            if(groupsModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+            if (groupsModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
                 return;
             }
 
@@ -158,7 +158,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     protected void rerunRetrievalForFailedPages() {
         groupsModel.acquirePageLoadLock();
         try {
-            for(Integer reloadPageNum = null; reloadPageNum != null; reloadPageNum = groupsModel.getNextPageToReload()) {
+            for (Integer reloadPageNum = null; reloadPageNum != null; reloadPageNum = groupsModel.getNextPageToReload()) {
                 loadGroupsPage(reloadPageNum);
             }
 
@@ -171,10 +171,10 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         GroupRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<Long> groupsNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
-        if(groupsNeededToBeLoaded.size() > 0) {
+        if (groupsNeededToBeLoaded.size() > 0) {
             groupsModel.acquirePageLoadLock();
             try {
-                if(groupsModel.isPageLoadedOrBeingLoaded(PagedList.MISSING_ITEMS_PAGE)) {
+                if (groupsModel.isPageLoadedOrBeingLoaded(PagedList.MISSING_ITEMS_PAGE)) {
                     // already in progress... wait it out.
                     return;
                 }
@@ -189,7 +189,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         HashSet<Group> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new GroupSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
     }
@@ -197,17 +197,6 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
-    }
-
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
-        @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
-            } else {
-                onGroupsLoadFailed(response);
-            }
-        }
     }
 
     protected void onGroupsLoadFailed(PiwigoResponseBufferingHandler.Response response) {
@@ -224,11 +213,11 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         groupsModel.acquirePageLoadLock();
         try {
             groupsModel.recordPageLoadSucceeded(response.getMessageId());
-            if(response.getPage() == PagedList.MISSING_ITEMS_PAGE) {
+            if (response.getPage() == PagedList.MISSING_ITEMS_PAGE) {
                 // this is a special page of all missing items from those selected.
                 int firstIdxAdded = groupsModel.addItemPage(groupsModel.getPagesLoaded(), response.getPageSize(), response.getGroups());
                 getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());
-                if(groupsModel.hasNoFailedPageLoads()) {
+                if (groupsModel.hasNoFailedPageLoads()) {
                     onListItemLoadSuccess();
                 }
                 setAppropriateComponentState();
@@ -238,7 +227,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             int firstIdxAdded = groupsModel.addItemPage(response.getPage(), response.getPageSize(), response.getGroups());
             getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());
             setAppropriateComponentState();
-            if(groupsModel.hasNoFailedPageLoads()) {
+            if (groupsModel.hasNoFailedPageLoads()) {
                 onListItemLoadSuccess();
             }
         } finally {
@@ -249,5 +238,16 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GroupUpdatedEvent event) {
         getListAdapter().replaceOrAddItem(event.getGroup());
+    }
+
+    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
+                onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
+            } else {
+                onGroupsLoadFailed(response);
+            }
+        }
     }
 }

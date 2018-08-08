@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataSourceException;
 import com.google.android.exoplayer2.upstream.DataSpec;
@@ -67,17 +68,15 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private final Predicate<String> contentTypePredicate;
     private final RequestProperties requestProperties;
     private final TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener;
-    private CachingAsyncHttpClient client;
     private final Context context;
+    private final boolean logEnabled = false;
+    private CachingAsyncHttpClient client;
     private DownloadListener downloadListener;
-
     private DataSpec dataSpec;
     private InputStream inputStream;
     private boolean opened;
-
     private long bytesToSkip;
     private long bytesToRead;
-
     private long bytesSkipped;
     private long bytesRead;
     private HttpResponse httpResponse;
@@ -85,7 +84,6 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private boolean enableRedirects;
     private long lastSentNotification;
     private long downloadedBytesSinceLastReport;
-    private final boolean logEnabled = false;
 
 
     /**
@@ -130,18 +128,18 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     }
 
     /**
-     * @param userAgent                   The User-Agent string that should be used.
-     * @param contentTypePredicate        An optional {@link Predicate}. If a content type is rejected by the
-     *                                    predicate then a {@link HttpDataSource.InvalidContentTypeException} is thrown from
-     *                                    {@link #open(DataSpec)}.
-     * @param listener                    An optional listener.
-     * @param connectTimeoutMillis        The connection timeout, in milliseconds. A timeout of zero is
-     *                                    interpreted as an infinite timeout. Pass {@link #DEFAULT_CONNECT_TIMEOUT_MILLIS} to use
-     *                                    the default value.
-     * @param readTimeoutMillis           The read timeout, in milliseconds. A timeout of zero is interpreted
-     *                                    as an infinite timeout. Pass {@link #DEFAULT_READ_TIMEOUT_MILLIS} to use the default value.
-     * @param defaultRequestProperties    The default request properties to be sent to the server as
-     *                                    HTTP headers or {@code null} if not required.
+     * @param userAgent                The User-Agent string that should be used.
+     * @param contentTypePredicate     An optional {@link Predicate}. If a content type is rejected by the
+     *                                 predicate then a {@link HttpDataSource.InvalidContentTypeException} is thrown from
+     *                                 {@link #open(DataSpec)}.
+     * @param listener                 An optional listener.
+     * @param connectTimeoutMillis     The connection timeout, in milliseconds. A timeout of zero is
+     *                                 interpreted as an infinite timeout. Pass {@link #DEFAULT_CONNECT_TIMEOUT_MILLIS} to use
+     *                                 the default value.
+     * @param readTimeoutMillis        The read timeout, in milliseconds. A timeout of zero is interpreted
+     *                                 as an infinite timeout. Pass {@link #DEFAULT_READ_TIMEOUT_MILLIS} to use the default value.
+     * @param defaultRequestProperties The default request properties to be sent to the server as
+     *                                 HTTP headers or {@code null} if not required.
      */
     public RemoteDirectHttpClientBasedHttpDataSource(Context context, String userAgent, Predicate<String> contentTypePredicate,
                                                      TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener, int connectTimeoutMillis,
@@ -162,7 +160,8 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     }
 
     private void startClient() {
-        if(client == null) { client = HttpClientFactory.getInstance(context).getVideoDownloadSyncHttpClient(ConnectionPreferences.getPreferences(null), context);
+        if (client == null) {
+            client = HttpClientFactory.getInstance(context).getVideoDownloadSyncHttpClient(ConnectionPreferences.getPreferences(null), context);
         }
     }
 
@@ -214,6 +213,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         try {
             makeConnection(dataSpec);
         } catch (IOException e) {
+            Crashlytics.logException(e);
             throw new HttpDataSourceException("Unable to connect to " + dataSpec.uri.toString(), e,
                     dataSpec, HttpDataSourceException.TYPE_OPEN);
         }
@@ -222,6 +222,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         try {
             responseCode = httpResponse.getStatusLine().getStatusCode();
         } catch (NullPointerException e) {
+            Crashlytics.logException(e);
             closeConnectionQuietly();
             throw new HttpDataSourceException("Unable to connect to " + dataSpec.uri.toString(), new IOException(e),
                     dataSpec, HttpDataSourceException.TYPE_OPEN);
@@ -272,6 +273,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         try {
             inputStream = httpResponse.getEntity().getContent();
         } catch (IOException e) {
+            Crashlytics.logException(e);
             closeConnectionQuietly();
             throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_OPEN);
         }
@@ -290,6 +292,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             skipInternal();
             return readInternal(buffer, offset, readLength);
         } catch (IOException e) {
+            Crashlytics.logException(e);
             throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_READ);
         }
     }
@@ -299,33 +302,35 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 
         // Do I need to hard close this resource?
 //        try {
-            // must not close this as it will stop it working for all future videos.
+        // must not close this as it will stop it working for all future videos.
 //            if (client != null) {
 //                client.cancelAllRequests(true);
 //                client.close();
 //                client = null;
 //            }
 //        } /*catch (IOException e) {
+//        Crashlytics.logException(e);
 //            throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_CLOSE);
 //        }*/ finally {
-            try {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_CLOSE);
-                    }
-                }
-            } finally {
-                inputStream = null;
-                closeConnectionQuietly();
-                if (opened) {
-                    opened = false;
-                    if (listener != null) {
-                        listener.onTransferEnd(this);
-                    }
+        try {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    Crashlytics.logException(e);
+                    throw new HttpDataSourceException(e, dataSpec, HttpDataSourceException.TYPE_CLOSE);
                 }
             }
+        } finally {
+            inputStream = null;
+            closeConnectionQuietly();
+            if (opened) {
+                opened = false;
+                if (listener != null) {
+                    listener.onTransferEnd(this);
+                }
+            }
+        }
 //        }
     }
 
@@ -391,7 +396,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 
         List<Header> headers = new ArrayList<>();
 
-        if(position == 0 && length == C.LENGTH_UNSET) {
+        if (position == 0 && length == C.LENGTH_UNSET) {
             // pass the request through without range header
             headers.add(new BasicHeader("Range", "bytes=" + position + "-" + 10240)); // 100kb (for the headers
         } else {
@@ -424,7 +429,8 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             try {
                 contentLength = Long.parseLong(contentLengthHeader);
             } catch (NumberFormatException e) {
-                if(logEnabled && BuildConfig.DEBUG) {
+                Crashlytics.logException(e);
+                if (logEnabled && BuildConfig.DEBUG) {
                     Log.e(TAG, "Unexpected Content-Length [" + contentLengthHeader + "]");
                 }
             }
@@ -451,14 +457,15 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
                         // assume the one with the larger value is correct. We have seen cases where carrier
                         // change one of them to reduce the size of a request, but it is unlikely anybody would
                         // increase it.
-                        if(logEnabled && BuildConfig.DEBUG) {
+                        if (logEnabled && BuildConfig.DEBUG) {
                             Log.w(TAG, "Inconsistent headers [" + contentLengthHeader + "] [" + contentRangeHeader
                                     + "]");
                         }
                         contentLength = Math.max(contentLength, contentLengthFromRange);
                     }
                 } catch (NumberFormatException e) {
-                    if(logEnabled && BuildConfig.DEBUG) {
+                    Crashlytics.logException(e);
+                    if (logEnabled && BuildConfig.DEBUG) {
                         Log.e(TAG, "Unexpected Content-Range [" + contentRangeHeader + "]");
                     }
                 }
@@ -500,9 +507,9 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             if (listener != null) {
                 listener.onBytesTransferred(this, read);
             }
-            if(downloadListener != null) {
+            if (downloadListener != null) {
                 long now = System.currentTimeMillis();
-                if(now - lastSentNotification > 1000) {
+                if (now - lastSentNotification > 1000) {
                     // max one update every 1000 millis.
                     lastSentNotification = now;
                     downloadListener.onDownload(bytesRead, bytesToRead, downloadedBytesSinceLastReport);
@@ -510,7 +517,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
                 }
             }
         }
-        if(downloadListener != null && downloadedBytesSinceLastReport > 0) {
+        if (downloadListener != null && downloadedBytesSinceLastReport > 0) {
             downloadListener.onDownload(bytesRead, bytesToRead, downloadedBytesSinceLastReport);
             downloadedBytesSinceLastReport = 0;
         }
@@ -551,7 +558,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             maxReadLen = (int) Math.min(maxReadLen, bytesRemaining);
         }
 
-        int read = inputStream.read(buffer, offset, (int)maxReadLen);
+        int read = inputStream.read(buffer, offset, (int) maxReadLen);
         if (read == -1) {
             if (bytesToRead != C.LENGTH_UNSET) {
                 // End of stream reached having not read sufficient data.
@@ -564,10 +571,10 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         if (listener != null) {
             listener.onBytesTransferred(this, read);
         }
-        if(downloadListener != null) {
+        if (downloadListener != null) {
             downloadedBytesSinceLastReport += read;
             long now = System.currentTimeMillis();
-            if(now - lastSentNotification > 1000) {
+            if (now - lastSentNotification > 1000) {
                 // max one update every 1000 millis.
                 lastSentNotification = now;
                 downloadListener.onDownload(bytesRead, bytesToRead, downloadedBytesSinceLastReport);
@@ -613,6 +620,10 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         this.maxRedirects = maxRedirects;
     }
 
+    public interface DownloadListener {
+        void onDownload(long bytesCachedInThisRange, long totalBytes, long bytesDownloaded);
+    }
+
     private class CustomResponseHandler extends DataAsyncHttpResponseHandler {
 
         public CustomResponseHandler() {
@@ -635,10 +646,6 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             // do nothing
         }
 
-    }
-
-    public interface DownloadListener {
-        void onDownload(long bytesCachedInThisRange, long totalBytes, long bytesDownloaded);
     }
 }
 

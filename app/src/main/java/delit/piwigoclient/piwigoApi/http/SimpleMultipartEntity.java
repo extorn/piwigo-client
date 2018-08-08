@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.http;
 
+import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.ResponseHandlerInterface;
 
 import java.io.ByteArrayOutputStream;
@@ -65,6 +66,7 @@ class SimpleMultipartEntity implements HttpEntity {
             out.write(value.getBytes());
             out.write(CR_LF);
         } catch (final IOException e) {
+            Crashlytics.logException(e);
             // Shall not happen on ByteArrayOutputStream
             CachingAsyncHttpClient.log.e(LOG_TAG, "addPart ByteArrayOutputStream exception", e);
         }
@@ -240,6 +242,7 @@ class SimpleMultipartEntity implements HttpEntity {
                 headerStream.write(TRANSFER_ENCODING_BINARY);
                 headerStream.write(CR_LF);
             } catch (IOException e) {
+                Crashlytics.logException(e);
                 // Can't happen on ByteArrayOutputStream
                 CachingAsyncHttpClient.log.e(LOG_TAG, "createHeader ByteArrayOutputStream exception", e);
             }

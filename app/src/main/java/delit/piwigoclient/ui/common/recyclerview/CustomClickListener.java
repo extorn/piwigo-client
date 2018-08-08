@@ -5,9 +5,9 @@ import android.view.View;
 public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T, S extends CustomViewHolder<V, T>> implements View.OnClickListener, View.OnLongClickListener {
 
     private final S viewHolder;
-    private final BaseRecyclerViewAdapter<V,T,S> parentAdapter;
+    private final BaseRecyclerViewAdapter<V, T, S> parentAdapter;
 
-    public <Q extends BaseRecyclerViewAdapter<V,T,S>> CustomClickListener(S viewHolder, Q parentAdapter) {
+    public <Q extends BaseRecyclerViewAdapter<V, T, S>> CustomClickListener(S viewHolder, Q parentAdapter) {
         this.viewHolder = viewHolder;
         this.parentAdapter = parentAdapter;
     }
@@ -23,7 +23,7 @@ public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T
             return;
         }
         //TODO Note - the way this works, click event is sunk if item selection is enabled... allow override?
-       if (parentAdapter.isMultiSelectionAllowed()) {
+        if (parentAdapter.isMultiSelectionAllowed()) {
 //                 multi selection mode is enabled.
             if (parentAdapter.getSelectedItemIds().contains(viewHolder.getItemId())) {
                 viewHolder.setChecked(false);
@@ -33,9 +33,9 @@ public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T
             //TODO Not sure why we'd call this?
             viewHolder.itemView.setPressed(false);
         } else if (!parentAdapter.isItemSelectionAllowed()) {
-           //If not currently in list item selection mode
-           parentAdapter.getMultiSelectStatusListener().onItemClick(parentAdapter, viewHolder.getItem());
-       }
+            //If not currently in list item selection mode
+            parentAdapter.getMultiSelectStatusListener().onItemClick(parentAdapter, viewHolder.getItem());
+        }
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T
         return true;
     }
 
-    public <Q extends BaseRecyclerViewAdapter<V,T,S>> Q getParentAdapter() {
+    public <Q extends BaseRecyclerViewAdapter<V, T, S>> Q getParentAdapter() {
         return (Q) parentAdapter;
     }
 

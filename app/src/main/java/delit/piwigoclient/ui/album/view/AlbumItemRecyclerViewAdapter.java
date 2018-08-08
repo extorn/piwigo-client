@@ -36,7 +36,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
     @NonNull
     protected View inflateView(@NonNull ViewGroup parent, int viewType) {
         View view;
-        if(getAdapterPrefs().isUseMasonryStyle()) {
+        if (getAdapterPrefs().isUseMasonryStyle()) {
             view = inflateMasonryView(parent, viewType);
         } else if (viewType == GalleryItem.CATEGORY_TYPE) {
             view = inflateNonMasonryAlbumView(parent);
@@ -63,14 +63,14 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
     private View inflateNonMasonryAlbumView(ViewGroup parent) {
         View view;
-        if(getAdapterPrefs().isShowLargeAlbumThumbnails()) {
+        if (getAdapterPrefs().isShowLargeAlbumThumbnails()) {
             view = LayoutInflater.from(getContext())
                     .inflate(R.layout.fragment_galleryitem_album_grid, parent, false);
         } else {
             view = LayoutInflater.from(getContext())
                     .inflate(R.layout.fragment_galleryitem_album_list, parent, false);
         }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             view.setClipToOutline(true);
         }
         return view;
@@ -85,7 +85,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
             view = LayoutInflater.from(getContext())
                     .inflate(R.layout.fragment_galleryitem_resource_masonry, parent, false);
         }
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             view.setClipToOutline(true);
         }
         return view;
@@ -94,7 +94,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
     @Override
     public AlbumItemViewHolder buildViewHolder(View view, int viewType) {
 
-        switch(viewType) {
+        switch (viewType) {
             case GalleryItem.CATEGORY_TYPE:
                 return new CategoryItemViewHolder(view, this, viewType);
             case GalleryItem.VIDEO_RESOURCE_TYPE:
@@ -109,7 +109,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
     @Override
     public void onViewRecycled(@NonNull AlbumItemViewHolder holder) {
-        if(holder != null) {
+        if (holder != null) {
             holder.onRecycled();
         }
     }
@@ -121,17 +121,17 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
     @Override
     public void onBindViewHolder(@NonNull AlbumItemViewHolder holder, int position) {
-        if(holder == null) {
+        if (holder == null) {
             // adverts
             return;
         }
         GalleryItem newItem = getItemByPosition(position);
-        if(!isHolderOutOfSync(holder, newItem)) {
+        if (!isHolderOutOfSync(holder, newItem)) {
             // rendering the same item
-            switch(newItem.getType()) {
+            switch (newItem.getType()) {
                 case GalleryItem.VIDEO_RESOURCE_TYPE:
                 case GalleryItem.PICTURE_RESOURCE_TYPE:
-                    ((ResourceItemViewHolder)holder).updateCheckableStatus();
+                    ((ResourceItemViewHolder) holder).updateCheckableStatus();
                 default:
             }
 
@@ -170,16 +170,16 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
         @Override
         public void onItemLongClick(BaseRecyclerViewAdapter adapter, Object item) {
-            if(item instanceof CategoryItem) {
-                onCategoryLongClick((CategoryItem)item);
+            if (item instanceof CategoryItem) {
+                onCategoryLongClick((CategoryItem) item);
             }
         }
     }
 
     private static class AlbumItemCustomClickListener<T extends Identifiable> extends CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<T>> {
 
-        private int manualRetries = 0;
         private final int maxManualRetries = 2;
+        private int manualRetries = 0;
 
         public AlbumItemCustomClickListener(AlbumItemViewHolder<T> viewHolder, AlbumItemRecyclerViewAdapter<T> adapter) {
             super(viewHolder, adapter);
@@ -219,11 +219,11 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
         @Override
         public void onClick(View v) {
-            if(v == getViewHolder().mImageView && !getViewHolder().imageLoader.isImageLoaded() && getViewHolder().imageLoader.isImageUnavailable() && manualRetries < maxManualRetries) {
+            if (v == getViewHolder().mImageView && !getViewHolder().imageLoader.isImageLoaded() && getViewHolder().imageLoader.isImageUnavailable() && manualRetries < maxManualRetries) {
                 manualRetries++;
                 getViewHolder().imageLoader.loadNoCache();
             } else {
-                if(getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
+                if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
                     onCategoryClick();
                 } else {
                     onNonCategoryClick();
@@ -238,14 +238,14 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
         }
 
         private void onCategoryLongClick() {
-            if(getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled() && getParentAdapter().getMultiSelectStatusListener() != null) {
+            if (getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled() && getParentAdapter().getMultiSelectStatusListener() != null) {
                 MultiSelectStatusAdapter multiSelectListener = getParentAdapter().getMultiSelectStatusListener();
-                multiSelectListener.onCategoryLongClick((CategoryItem)getViewHolder().getItem());
+                multiSelectListener.onCategoryLongClick((CategoryItem) getViewHolder().getItem());
             }
         }
 
         private void onNonCategoryLongClick() {
-            if(getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled()) {
+            if (getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled()) {
                 getParentAdapter().toggleItemSelection();
                 if (getParentAdapter().getAdapterPrefs().isAllowItemSelection()) {
                     getViewHolder().setChecked(true);
@@ -255,7 +255,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
         @Override
         public boolean onLongClick(View v) {
-            if(getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
+            if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
                 onCategoryLongClick();
             } else {
                 onNonCategoryLongClick();

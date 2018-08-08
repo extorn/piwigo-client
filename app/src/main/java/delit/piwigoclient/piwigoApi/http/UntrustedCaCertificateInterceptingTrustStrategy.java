@@ -1,5 +1,7 @@
 package delit.piwigoclient.piwigoApi.http;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.security.KeyStore;
@@ -68,6 +70,7 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
                 EventBus.getDefault().post(new NewUnTrustedCaCertificateReceivedEvent(chain[0], untrustedCerts));
             }
         } catch (NoSuchAlgorithmException e) {
+            Crashlytics.logException(e);
             throw new CertificateException("Unable to calculate thumbprint for recieved certificate", e);
         }
         return false;

@@ -5,9 +5,6 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;

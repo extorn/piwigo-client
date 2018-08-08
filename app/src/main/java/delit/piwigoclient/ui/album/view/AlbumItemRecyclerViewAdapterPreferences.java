@@ -11,6 +11,13 @@ import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferen
  * preferredThumbnailSize = prefs.getString(parent.getContext().getString(R.string.preference_gallery_item_thumbnail_size_key), parent.getContext().getString(R.string.preference_gallery_item_thumbnail_size_default));
  */
 public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
+    public static final int SCALING_QUALITY_PERFECT = Integer.MAX_VALUE;
+    public static final int SCALING_QUALITY_VHIGH = 960;
+    public static final int SCALING_QUALITY_HIGH = 480;
+    public static final int SCALING_QUALITY_MEDIUM = 240;
+    public static final int SCALING_QUALITY_LOW = 120;
+    public static final int SCALING_QUALITY_VLOW = 60;
+    private final int scalingQuality = SCALING_QUALITY_MEDIUM;
     private Date recentlyAlteredThresholdDate;
     private String preferredThumbnailSize;
     private String preferredAlbumThumbnailSize;
@@ -20,13 +27,6 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
     private float albumWidth;
     private boolean showResourceNames;
     private boolean useMasonryStyle;
-    private final int scalingQuality = SCALING_QUALITY_MEDIUM;
-    public static final int SCALING_QUALITY_PERFECT = Integer.MAX_VALUE;
-    public static final int SCALING_QUALITY_VHIGH = 960;
-    public static final int SCALING_QUALITY_HIGH = 480;
-    public static final int SCALING_QUALITY_MEDIUM = 240;
-    public static final int SCALING_QUALITY_LOW = 120;
-    public static final int SCALING_QUALITY_VLOW = 60;
 
     public AlbumItemRecyclerViewAdapterPreferences() {
     }

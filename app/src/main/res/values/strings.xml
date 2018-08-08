@@ -148,11 +148,12 @@
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">You\'ve requested to delete %1$d resources. Do you wish to delete these from all albums (and the server) - permanently, or just unlink them from this tag?</string>
     <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">You\'ve requested to delete %1$d resources. Do you wish to delete these from all albums (and the server) - permanently? (You cannot remove tags from images without the UserTags plugin installed on your server)</string>
     <string name="about_menu_title">About</string>
-    <string name="licences_menu_title">Licence</string>
+    <string name="other_licences_button_text">Other Licenced components</string>
+    <string name="oss_licences_menu_title">OSS Licences</string>
     <string name="about_heading">About This App</string>
-    <integer name="eula_version">3</integer>
+    <integer name="eula_version">4</integer>
     <string name="eula" formatted="false">"End­User License Agreement (\"Agreement\")
-Last updated: 19 November 2017
+Last updated: 7 August 2018
 
 Please read this End­User License Agreement (\"Agreement\") carefully before clicking the \"I Agree\"
 button, downloading or using Piwigo Client (\"Application\").
@@ -189,6 +190,10 @@ b) decompile or otherwise view the source code or byte code of the application e
 c) run or attempt to run this application in anything other than a physical device of type phone or tablet, and that uses the android operating system as its main operating system.
 d) run or attempt to run this application in an emulator or other sandbox environment for the purposes of examining its behaviour.
 e) create derivative works based on this application.
+
+User Data Collection
+
+Firebase integration has been added to this application to facilitate tracking use of the application with the main purposes being more efficient bug resolution and ascertaining the way the app is being used. The minimum data required to achieve this purpose will be collected.
 
 
 Limited Warranty and Disclaimer
@@ -262,7 +267,7 @@ At the moment, it provides a basic level of functionality to allow navigation ar
 
 Please can I ask that if you uninstall the app, you use the link on the app menu to email me telling me why the app did not meet your needs so I can address this.
 
-The version of the PIWIGO server I test against is currently 2.9.3.
+The version of the PIWIGO server I test against is currently 2.9.4.
 
 My test gallery contains .jpg and .mp4 files only. If yours contains others, you may well encounter problems - if so, please tell me and I'll prioritise work on those file types.
 
@@ -323,8 +328,10 @@ SOFTWARE.
 
 
 
-
-
+*** Google Firebase - com.google.firebase
+*** Crashlytics - com.crashlytics
+*** play-services-oss-licenses
+*** com.android.support
 
 
 *** GSON - https://github.com/google/gson - Apache License 2.0
@@ -335,7 +342,6 @@ SOFTWARE.
 *** EventBus - http://greenrobot.org - Apache License 2.0
 *** android-async-http - http://loopj.com/android-async-http/ - Apache License 2.0
 *** android-sliding-layer-lib - https://github.com/wunderlist/android-sliding-layer-lib - Apache License 2.0
-
 
  Apache License
                            Version 2.0, January 2004

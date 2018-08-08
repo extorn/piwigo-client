@@ -127,11 +127,11 @@
     <string name="alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern">Du hast darum gebeten, %1$d Ressourcen zu löschen. Möchten Sie diese aus allen Alben (und dem Server) löschen - dauerhaft, oder einfach nur von diesem Tag trennen?</string>
     <string name="alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern">Du hast darum gebeten, %1$d Ressourcen zu löschen. Möchten Sie diese aus allen Alben (und dem Server) löschen - dauerhaft? (Sie können keine Tags aus Bildern entfernen, ohne das UserTags-Plugin auf Ihrem Server installiert zu haben.</string>
     <string name="about_menu_title">Über</string>
-    <string name="licences_menu_title">Lizenz</string>
+    <string name="other_licences_button_text">Andere lizenzierte Komponenten</string>
+    <string name="oss_licences_menu_title">OSS Lizenz</string>
     <string name="about_heading">Über diese App</string>
-    <integer name="eula_version">3</integer>
     <string formatted="false" name="eula"> "Endbenutzer-Lizenzvertrag (\"Vertrag\")
-Letzte Aktualisierung 19. November 2017
+Letzte Aktualisierung 7. August 2018
 
 Bitte lesen Sie diese Endbenutzer-Lizenzvereinbarung (\"Vereinbarung\") sorgfältig durch, bevor Sie auf \"Ich stimme zu\" klicken.
 Schaltfläche, Herunterladen oder Verwenden des Piwigo-Clients (\"Anwendung\").
@@ -169,6 +169,9 @@ c) diese Anwendung auf einem anderen als einem physischen Gerät vom Typ Telefon
 d) diese Anwendung in einem Emulator oder einer anderen Sandbox-Umgebung auszuführen oder zu versuchen, um ihr Verhalten zu untersuchen.
 e) abgeleitete Werke auf der Grundlage dieser Anwendung zu erstellen.
 
+Benutzerdatenerfassung
+
+Die Firebase Integration wurde zu dieser Anwendung hinzugefügt, um das Tracking der Anwendung zu erleichtern, wobei die Hauptziele eine effizientere Fehlerbehebung und die Ermittlung der Art und Weise, wie die Anwendung verwendet wird, sind. Die zur Erreichung dieses Zwecks erforderlichen Mindestdaten werden erhoben.
 
 Eingeschränkte Garantie und Haftungsausschluss
 
@@ -239,7 +242,7 @@ Im Moment bietet es eine grundlegende Funktionalität, um in einer bestehenden G
 
 Wenn Sie die App deinstallieren, können Sie mir über den Link im App-Menü per E-Mail mitteilen, warum die App nicht Ihren Bedürfnissen entsprach, damit ich mich darum kümmern kann.
 
-Die Version des PIWIGO-Servers, gegen den ich teste, ist derzeit 2.9.3.
+Die Version des PIWIGO-Servers, gegen den ich teste, ist derzeit 2.9.4.
 
 Meine Testgalerie enthält nur .jpg und.mp4 Dateien. Wenn Ihre Datei andere enthält, kann es zu Problemen kommen - wenn ja, sagen Sie es mir bitte und ich werde die Arbeit an diesen Dateitypen priorisieren.
 
@@ -257,7 +260,6 @@ Bitte wählen Sie, ob Sie jeden Absturz melden möchten. Falls der Fehler auch n
 
 Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit der Veröffentlichungen mit zunehmender Reife der Apps abnimmt. Der Veröffentlichungszeitplan und die Historie sind unten aufgeführt. Das kann sich ändern und die Dinge können sich verzögern, aber Sie können sehen, was auf der Liste steht.
 "</string>
-    <string name="licences_heading">Lizenzen für die in dieser App verwendeten Ressourcen</string>
     <string name="slideshow_image_details_name_title">Name der Ressource</string>
     <string name="slideshow_image_details_description_title">Ressourcenbeschreibung</string>
     <string name="unlock_menu_title">Entsperren</string>

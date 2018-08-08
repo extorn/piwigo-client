@@ -14,22 +14,18 @@ public class CategoryItemStub implements Serializable {
     private ArrayList<Long> parentageChain;
     private boolean isUserSelectable = true;
 
-    public CategoryItemStub(String name,  long id, ArrayList<Long> parentageChain) {
+    public CategoryItemStub(String name, long id, ArrayList<Long> parentageChain) {
         this.name = name;
         this.id = id;
         this.parentageChain = parentageChain;
     }
 
-    public CategoryItemStub(String name,  long id) {
+    public CategoryItemStub(String name, long id) {
         this(name, id, new ArrayList<Long>());
     }
 
     public Long getParentId() {
-        return parentageChain.size() == 0? null : parentageChain.get(parentageChain.size() - 1);
-    }
-
-    public void setParentageChain(List<Long> parentageChain) {
-        this.parentageChain = new ArrayList<>(parentageChain);
+        return parentageChain.size() == 0 ? null : parentageChain.get(parentageChain.size() - 1);
     }
 
     public void setParentageChain(List<Long> parentageChain, long directParent) {
@@ -38,10 +34,14 @@ public class CategoryItemStub implements Serializable {
     }
 
     public List<Long> getParentageChain() {
-        if(parentageChain == null) {
+        if (parentageChain == null) {
             return null;
         }
         return Collections.unmodifiableList(parentageChain);
+    }
+
+    public void setParentageChain(List<Long> parentageChain) {
+        this.parentageChain = new ArrayList<>(parentageChain);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class CategoryItemStub implements Serializable {
     }
 
     public CategoryItemStub markNonUserSelectable() {
-        if(this == ROOT_GALLERY) {
+        if (this == ROOT_GALLERY) {
             return ROOT_GALLERY_NON_SELECTABLE;
         }
         this.isUserSelectable = false;

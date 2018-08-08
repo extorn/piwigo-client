@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.ValidationException;
 
@@ -21,13 +22,6 @@ public class SecurePrefsUtil {
     private static SecurePrefsUtil instance;
     private final AESObfuscator obfuscator;
 
-    public synchronized static SecurePrefsUtil getInstance(Context c) {
-        if(instance == null) {
-            instance = new SecurePrefsUtil(c);
-        }
-        return instance;
-    }
-
     private SecurePrefsUtil(Context c) {
         // Try to use more data here. ANDROID_ID is a single point of attack.
         String deviceId = Settings.Secure.getString(c.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -41,6 +35,13 @@ public class SecurePrefsUtil {
         obfuscator = new AESObfuscator(salt, myPackageName, deviceId);
     }
 
+    public synchronized static SecurePrefsUtil getInstance(Context c) {
+        if (instance == null) {
+            instance = new SecurePrefsUtil(c);
+        }
+        return instance;
+    }
+
     public void writeSecurePreference(SharedPreferences prefs, String preferenceKey, String preferenceValue) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(preferenceKey, encryptValue(preferenceKey, preferenceValue));
@@ -49,7 +50,7 @@ public class SecurePrefsUtil {
 
     public String readSecureStringPreference(SharedPreferences prefs, String preferenceKey, String defaultValue) {
         String prefValue = prefs.getString(preferenceKey, defaultValue);
-        if(prefValue == null || prefValue.length() == 0) {
+        if (prefValue == null || prefValue.length() == 0) {
             return prefValue;
         }
         return decryptValue(preferenceKey, prefValue, defaultValue);
@@ -58,8 +59,9 @@ public class SecurePrefsUtil {
     public String decryptValue(String key, String encryptedVal, String defaultValue) {
         try {
             return obfuscator.unobfuscate(encryptedVal, key);
-        } catch(ValidationException e) {
-            if(delit.piwigoclient.BuildConfig.DEBUG) {
+        } catch (ValidationException e) {
+            Crashlytics.logException(e);
+            if (delit.piwigoclient.BuildConfig.DEBUG) {
                 Log.e(TAG, "Preference has been corrupted or is otherwise irretrievable. Returning default.", e);
             }
             return defaultValue;

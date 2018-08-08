@@ -18,6 +18,7 @@ package com.google.android.vending.licensing;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.util.Base64;
 import com.google.android.vending.licensing.util.Base64DecoderException;
 
@@ -69,6 +70,7 @@ public class AESObfuscator implements Obfuscator {
             SecretKey tmp = factory.generateSecret(keySpec);
             secret = new SecretKeySpec(tmp.getEncoded(), "AES");
         } catch (GeneralSecurityException e) {
+Crashlytics.logException(e);
             // This can't happen on a compatible Android device.
             throw new RuntimeException("Invalid environment", e);
         }
@@ -109,10 +111,13 @@ public class AESObfuscator implements Obfuscator {
             baos.write(data);
             return Base64.encode(baos.toByteArray());
         } catch (UnsupportedEncodingException e) {
+Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         } catch (GeneralSecurityException e) {
+Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         } catch (IOException e) {
+Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         }
     }
@@ -139,24 +144,34 @@ public class AESObfuscator implements Obfuscator {
             }
             return result.substring(header.length()+key.length(), result.length());
         } catch (Base64DecoderException e) {
+Crashlytics.logException(e);
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch (IllegalBlockSizeException e) {
+Crashlytics.logException(e);
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch(ArrayIndexOutOfBoundsException e) {
+Crashlytics.logException(e);
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch(IllegalArgumentException e) {
+Crashlytics.logException(e);
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch(BadPaddingException e) {
+Crashlytics.logException(e);
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch (UnsupportedEncodingException e) {
+Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         } catch (NoSuchPaddingException e) {
+Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         } catch (InvalidKeyException e) {
+Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         } catch (NoSuchAlgorithmException e) {
+Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         } catch (InvalidAlgorithmParameterException e) {
+Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         }
     }

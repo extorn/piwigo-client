@@ -2,6 +2,7 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -91,27 +92,29 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         String response = null;
         try {
             int idx = -1;
-            for(int i = 0; i < responseBody.length; i++) {
-                if(responseBody[i] == '{') {
+            for (int i = 0; i < responseBody.length; i++) {
+                if (responseBody[i] == '{') {
                     idx = i;
                     break;
                 }
             }
             int jsonStartsAt = idx;
             ByteArrayInputStream jsonBis = new ByteArrayInputStream(responseBody);
-            if(jsonStartsAt > 0) {
+            if (jsonStartsAt > 0) {
                 jsonBis.skip(jsonStartsAt - 1);
             }
             PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(jsonBis), PiwigoJsonResponse.class);
             processJsonResponse(getMessageId(), piwigoMethod, piwigoResponse, responseBody);
 
         } catch (JsonSyntaxException e) {
+            Crashlytics.logException(e);
             boolean handled = handleLogLoginFailurePluginResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
             if (!handled) {
                 PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
                 storeResponse(r);
             }
         } catch (JsonIOException e) {
+            Crashlytics.logException(e);
             PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
             storeResponse(r);
         }
@@ -149,6 +152,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                     throw new JSONException("Unexpected piwigo response code");
             }
         } catch (JSONException e) {
+            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n', e);
             }
@@ -211,7 +215,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         if (BuildConfig.DEBUG) {
             Log.d(getTag(), "calling " + getPiwigoWsApiUri() + '&' + getRequestParameters().toString());
         }
-        Log.e(getTag(), "Invoking call to server ("+getRequestParameters()+") thread from thread " + Thread.currentThread().getName());
+        Log.e(getTag(), "Invoking call to server (" + getRequestParameters() + ") thread from thread " + Thread.currentThread().getName());
         return client.post(getPiwigoWsApiUri(), getRequestParameters(), handler);
     }
 }

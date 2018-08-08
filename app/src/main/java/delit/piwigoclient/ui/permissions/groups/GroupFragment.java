@@ -82,7 +82,8 @@ public class GroupFragment extends MyFragment {
     private static final String IN_FLIGHT_MEMBER_SAVE_ACTION_IDS = "memberSaveActionIds";
     private static final String IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS = "permissionsSaveActionIds";
     private static final String STATE_SELECT_USERS_ACTION_ID = "selectUsersActionId";
-
+    private final HashSet<Long> memberSaveActionIds = new HashSet<>(2);
+    private final HashSet<Long> permissionsSaveActionIds = new HashSet<>(2);
     // Fields
     private TextView groupNameField;
     private TextView membersField;
@@ -91,7 +92,6 @@ public class GroupFragment extends MyFragment {
     private CustomImageButton discardButton;
     private CustomImageButton saveButton;
     private CustomImageButton deleteButton;
-
     // stuff stored in state.
     private Group currentGroup;
     private ArrayList<Username> currentGroupMembers;
@@ -102,8 +102,6 @@ public class GroupFragment extends MyFragment {
     private ArrayList<CategoryItemStub> availableGalleries;
     private boolean fieldsEditable;
     private CheckBox isDefaultField;
-    private final HashSet<Long> memberSaveActionIds = new HashSet<>(2);
-    private final HashSet<Long> permissionsSaveActionIds = new HashSet<>(2);
     private int selectUsersActionId;
 
     public static GroupFragment newInstance(Group group) {
@@ -166,7 +164,7 @@ public class GroupFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
+        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -175,7 +173,7 @@ public class GroupFragment extends MyFragment {
         View v = inflater.inflate(R.layout.fragment_group, container, false);
 
         AdView adView = v.findViewById(R.id.group_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -250,7 +248,7 @@ public class GroupFragment extends MyFragment {
             }
         });
 
-        if(currentGroup.getId() < 0) {
+        if (currentGroup.getId() < 0) {
             currentAccessibleAlbumIds = new HashSet<>();
             currentGroupMembers = new ArrayList<>();
             fieldsEditable = true;
@@ -258,7 +256,7 @@ public class GroupFragment extends MyFragment {
 
         setFieldsEditable(fieldsEditable);
 
-        if(newGroup != null) {
+        if (newGroup != null) {
             setFieldsFromModel(newGroup);
         } else {
             setFieldsFromModel(currentGroup);
@@ -283,14 +281,14 @@ public class GroupFragment extends MyFragment {
 
         HashSet<Long> preselectedUsernames = buildPreselectedUserIds(currentSelection);
         UsernameSelectionNeededEvent usernameSelectionNeededEvent = new UsernameSelectionNeededEvent(true, fieldsEditable, new HashSet<Long>(0), preselectedUsernames);
-        selectUsersActionId =  usernameSelectionNeededEvent.getActionId();
+        selectUsersActionId = usernameSelectionNeededEvent.getActionId();
         EventBus.getDefault().post(usernameSelectionNeededEvent);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(UsernameSelectionCompleteEvent usernameSelectionCompleteEvent) {
 
-        if(selectUsersActionId == usernameSelectionCompleteEvent.getActionId()) {
+        if (selectUsersActionId == usernameSelectionCompleteEvent.getActionId()) {
             selectUsersActionId = -1;
             newGroupMembers = new ArrayList<>(usernameSelectionCompleteEvent.getSelectedItems());
             populateGroupMembersField();
@@ -303,7 +301,7 @@ public class GroupFragment extends MyFragment {
         String name = groupNameField.getText().toString();
         boolean isDefault = isDefaultField.isChecked();
         newGroup = new Group(currentGroup.getId(), name, isDefault);
-        if(newGroup.getId() < 0) {
+        if (newGroup.getId() < 0) {
             long saveActionId = new GroupAddResponseHandler(newGroup).invokeAsync(getContext());
             addActiveServiceCall(R.string.progress_adding_group, saveActionId);
 
@@ -315,9 +313,9 @@ public class GroupFragment extends MyFragment {
 
     private HashSet<Long> getLatestAlbumPermissions() {
         HashSet<Long> albumPermissions;
-        if(newAccessibleAlbumIds != null) {
+        if (newAccessibleAlbumIds != null) {
             albumPermissions = newAccessibleAlbumIds;
-        } else if(currentAccessibleAlbumIds != null) {
+        } else if (currentAccessibleAlbumIds != null) {
             albumPermissions = currentAccessibleAlbumIds;
         } else {
             currentAccessibleAlbumIds = new HashSet<>();
@@ -335,7 +333,7 @@ public class GroupFragment extends MyFragment {
         if (currentGroupMembers == null) {
             ArrayList<Long> groups = new ArrayList<>(1);
             groups.add(group.getId());
-            addActiveServiceCall(R.string.progress_loading_group_details,new UsernamesGetListResponseHandler(groups, 0, 100).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(groups, 0, 100).invokeAsync(getContext()));
         }
 
         if (availableGalleries == null) {
@@ -363,7 +361,7 @@ public class GroupFragment extends MyFragment {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if(Boolean.TRUE == positiveAnswer) {
+                if (Boolean.TRUE == positiveAnswer) {
                     deleteGroupNow(group);
                 }
             }
@@ -393,36 +391,8 @@ public class GroupFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
-        @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) {
-                onUsernamesLoaded((PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) {
-                onGroupDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) {
-                onGroupPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) response);
-            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse) {
-                onGroupInfoUpdated((PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse)response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAddGroupResponse) {
-                onGroupAdded((PiwigoResponseBufferingHandler.PiwigoAddGroupResponse)response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupAddMembersResponse) {
-                onGroupMembersAdded((PiwigoResponseBufferingHandler.PiwigoGroupAddMembersResponse)response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupRemoveMembersResponse) {
-                onGroupMembersRemoved((PiwigoResponseBufferingHandler.PiwigoGroupRemoveMembersResponse)response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsAddedResponse) {
-                onGroupPermissionsAdded((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsAddedResponse)response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRemovedResponse) {
-                onGroupPermissionsRemoved((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRemovedResponse)response);
-            }
-            //TODO check I'm handling all data flow streams for adding and updating an existing group... including sending that refreshed gorup back to previous groups list screen.
-        }
-    }
-
     private void publishGroupAddedOrAlteredEventIfFinished() {
-        if(newGroup == null && newAccessibleAlbumIds == null && newGroupMembers == null) {
+        if (newGroup == null && newAccessibleAlbumIds == null && newGroupMembers == null) {
             EventBus.getDefault().post(new GroupUpdatedEvent(currentGroup));
         }
         setFieldsFromModel(currentGroup);
@@ -431,7 +401,7 @@ public class GroupFragment extends MyFragment {
     private void onGroupPermissionsRemoved(PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRemovedResponse response) {
         synchronized (permissionsSaveActionIds) {
             permissionsSaveActionIds.remove(response.getMessageId());
-            if(permissionsSaveActionIds.size() == 0) {
+            if (permissionsSaveActionIds.size() == 0) {
                 currentAccessibleAlbumIds = newAccessibleAlbumIds;
                 newAccessibleAlbumIds = null;
             }
@@ -442,7 +412,7 @@ public class GroupFragment extends MyFragment {
     private void onGroupPermissionsAdded(PiwigoResponseBufferingHandler.PiwigoGroupPermissionsAddedResponse response) {
         synchronized (permissionsSaveActionIds) {
             permissionsSaveActionIds.remove(response.getMessageId());
-            if(permissionsSaveActionIds.size() == 0) {
+            if (permissionsSaveActionIds.size() == 0) {
                 currentAccessibleAlbumIds = newAccessibleAlbumIds;
                 newAccessibleAlbumIds = null;
             }
@@ -454,7 +424,7 @@ public class GroupFragment extends MyFragment {
         synchronized (memberSaveActionIds) {
             memberSaveActionIds.remove(response.getMessageId());
             currentGroup = response.getGroup();
-            if(memberSaveActionIds.size() == 0) {
+            if (memberSaveActionIds.size() == 0) {
                 currentGroupMembers = newGroupMembers;
                 newGroupMembers = null;
             }
@@ -466,7 +436,7 @@ public class GroupFragment extends MyFragment {
         synchronized (memberSaveActionIds) {
             memberSaveActionIds.remove(response.getMessageId());
             currentGroup = response.getGroup();
-            if(memberSaveActionIds.size() == 0) {
+            if (memberSaveActionIds.size() == 0) {
                 currentGroupMembers = newGroupMembers;
                 newGroupMembers = null;
             }
@@ -476,14 +446,14 @@ public class GroupFragment extends MyFragment {
 
     private Set<Long> getUserIds(Collection<Username> usernameList) {
         Set<Long> userIds = new HashSet<>();
-        for(Username username : usernameList) {
+        for (Username username : usernameList) {
             userIds.add(username.getId());
         }
         return userIds;
     }
 
     private void saveGroupMembershipChangesIfRequired() {
-        if(newGroupMembers == null) {
+        if (newGroupMembers == null) {
             //nothing to do.
             return;
         }
@@ -510,7 +480,7 @@ public class GroupFragment extends MyFragment {
     }
 
     private void saveUserPermissionsChangesIfRequired() {
-        if(newAccessibleAlbumIds == null) {
+        if (newAccessibleAlbumIds == null) {
             //nothing to do.
             return;
         }
@@ -554,7 +524,7 @@ public class GroupFragment extends MyFragment {
     private void onGroupDeleted(PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse response) {
         EventBus.getDefault().post(new GroupDeletedEvent(currentGroup));
         // return to previous screen
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
     }
@@ -582,11 +552,11 @@ public class GroupFragment extends MyFragment {
 
     private ArrayList<Username> getLatestGroupMembers() {
         ArrayList<Username> latestGroupMembers;
-        if(currentGroup.getId() < 0) {
+        if (currentGroup.getId() < 0) {
             currentGroupMembers = new ArrayList<>(0);
         }
         latestGroupMembers = currentGroupMembers;
-        if(newGroupMembers != null) {
+        if (newGroupMembers != null) {
             latestGroupMembers = newGroupMembers;
         }
         return latestGroupMembers;
@@ -622,7 +592,7 @@ public class GroupFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAlbumPermissionsSelectedEvent(AlbumPermissionsSelectionCompleteEvent event) {
-        if(getUiHelper().isTrackingRequest(event.getActionId())) {
+        if (getUiHelper().isTrackingRequest(event.getActionId())) {
             newAccessibleAlbumIds = event.getSelectedAlbums();
         }
     }
@@ -636,8 +606,8 @@ public class GroupFragment extends MyFragment {
     }
 
     private void populateAlbumPermissionsList() {
-        AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter)albumAccessRightsField.getAdapter();
-        if(adapter == null) {
+        AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter) albumAccessRightsField.getAdapter();
+        if (adapter == null) {
             BaseRecyclerViewAdapterPreferences adapterPreferences = new BaseRecyclerViewAdapterPreferences();
             adapterPreferences.selectable(true, false);
             adapterPreferences.readonly();
@@ -651,8 +621,36 @@ public class GroupFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAppLockedEvent(AppLockedEvent event) {
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
+        }
+    }
+
+    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) {
+                onUsernamesLoaded((PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) {
+                onGroupDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) {
+                onGroupPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) response);
+            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse) {
+                onGroupInfoUpdated((PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAddGroupResponse) {
+                onGroupAdded((PiwigoResponseBufferingHandler.PiwigoAddGroupResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupAddMembersResponse) {
+                onGroupMembersAdded((PiwigoResponseBufferingHandler.PiwigoGroupAddMembersResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupRemoveMembersResponse) {
+                onGroupMembersRemoved((PiwigoResponseBufferingHandler.PiwigoGroupRemoveMembersResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsAddedResponse) {
+                onGroupPermissionsAdded((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsAddedResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRemovedResponse) {
+                onGroupPermissionsRemoved((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRemovedResponse) response);
+            }
+            //TODO check I'm handling all data flow streams for adding and updating an existing group... including sending that refreshed gorup back to previous groups list screen.
         }
     }
 }
