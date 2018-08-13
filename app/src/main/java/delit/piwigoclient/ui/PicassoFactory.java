@@ -49,6 +49,10 @@ public class PicassoFactory {
         return instance;
     }
 
+    public MyPicasso getPicassoSingleton() {
+        return picasso;
+    }
+
     public Picasso getPicassoSingleton(Context context) {
         synchronized (MyApplication.class) {
             if (picasso == null) {

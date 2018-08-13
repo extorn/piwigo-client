@@ -124,6 +124,9 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
             @Override
             public boolean onPreDraw() {
                 try {
+                    if(!imageLoader.hasResourceToLoad()) {
+                        return true;
+                    }
                     if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading() && !imageLoader.isImageUnavailable()) {
 
                         int desiredScalingQuality = parentAdapter.getAdapterPrefs().getScalingQuality();

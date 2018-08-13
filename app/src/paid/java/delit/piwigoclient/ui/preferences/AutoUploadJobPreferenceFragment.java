@@ -215,9 +215,9 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
 
         @Override
-        protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg) {
+        protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg, String detail) {
             // for now, allow the default "retry button" to pop-up.
-            super.handleErrorRetryPossible(errorResponse, title, msg);
+            super.handleErrorRetryPossible(errorResponse, title, msg, null);
             // ensure the job is marked as invalid (it'll be updated if the user retries and it succeeds)
             finishPreferenceValuesValidation(null);
 

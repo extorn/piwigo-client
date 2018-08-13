@@ -28,6 +28,7 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
+import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.ThemeAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.IOUtils;
@@ -175,6 +176,23 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         NumberPickerPreference pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_albums_preferredColumnsLandscape_key);
         int defaultVal = getDefaultAlbumsColumnCount(Configuration.ORIENTATION_LANDSCAPE);
         pref.updateDefaultValue(defaultVal);
+
+        Preference pageStructurePref = findPreference(R.string.preference_gallery_masonry_view_key);
+        pageStructurePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(AlbumAlteredEvent.ALL_ALBUMS_ID));
+                return true;
+            }
+        });
+        pageStructurePref = findPreference(R.string.preference_gallery_show_large_thumbnail_key);
+        pageStructurePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(AlbumAlteredEvent.ALL_ALBUMS_ID));
+                return true;
+            }
+        });
 
         pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_images_preferredColumnsLandscape_key);
         defaultVal = getDefaultImagesColumnCount(Configuration.ORIENTATION_LANDSCAPE);

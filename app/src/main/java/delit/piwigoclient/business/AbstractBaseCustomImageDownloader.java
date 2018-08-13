@@ -8,10 +8,17 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
+import android.util.Log;
 import android.util.SparseIntArray;
 import android.widget.Toast;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 import com.squareup.picasso.Downloader;
+import com.squareup.picasso.LruExifCache;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,22 +36,23 @@ import delit.piwigoclient.ui.events.BadRequestUsingHttpToHttpsServerEvent;
  * Created by gareth on 18/05/17.
  */
 
-public class CustomImageDownloader implements Downloader {
+public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
+    private static final String TAG = "CustomImageDwnldr";
     private final Context context;
     private final SparseIntArray errorDrawables = new SparseIntArray();
     private final ConnectionPreferences.ProfilePreferences connectionPrefs;
 
-    public CustomImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+    public AbstractBaseCustomImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         this.context = context;
         this.connectionPrefs = connectionPrefs;
     }
 
-    public CustomImageDownloader(Context context) {
+    public AbstractBaseCustomImageDownloader(Context context) {
         this(context, ConnectionPreferences.getActiveProfile());
     }
 
-    public CustomImageDownloader addErrorDrawable(int statusCode, @DrawableRes int drawable) {
+    public AbstractBaseCustomImageDownloader addErrorDrawable(int statusCode, @DrawableRes int drawable) {
         errorDrawables.put(statusCode, drawable);
         return this;
     }
@@ -83,8 +91,13 @@ public class CustomImageDownloader implements Downloader {
 //            throw new ResponseException("Error downloading " + uri.toString() + " : " + handler.getError(), networkPolicy, errorResponse.getStatusCode());
         }
         byte[] imageData = ((PiwigoResponseBufferingHandler.UrlSuccessResponse) handler.getResponse()).getData();
+
+        processImageData(uri, imageData);
+
         return new Downloader.Response(new ByteArrayInputStream(imageData), false, imageData.length);
     }
+
+    protected abstract void processImageData(Uri uri, byte[] imageData);
 
     @Override
     public void shutdown() {

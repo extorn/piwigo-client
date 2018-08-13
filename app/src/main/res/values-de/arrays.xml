@@ -83,31 +83,38 @@
         <item>1.3.95</item>
         <item> "Änderungen:
          - Verfeinerung der Benutzeroberfläche
-         - Möglicherweise - Vereinfachen der App-Einstellungen
          - Unterstützung für Favoriten - abhängig von der PIWIGO-API-Erweiterung
          - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese Anwendung noch nicht tun kann"
         </item>
         <item>1.3.94</item>
         <item> "Änderungen:
          - Möglicherweise - den Upload-Prozess mit einer Komprimierungsroutine für Videos verknüpfen.
-         - Überarbeitung der Art und Weise, wie Popup-Meldungen und Fortschrittsanzeigen angezeigt werden, damit sie immer angezeigt werden - Untersuchung mit Hilfe von Toast-Meldungen
+         - Überarbeitung der Darstellung von Popup-Meldungen und Fortschrittsanzeigen - Untersuchung mit weiteren Toastmeldungen
          - Möglicherweise - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Erstellen von Waisenkindern).
          - Möglicherweise - Verwaltung verwaister Dateien
          - Möglicherweise Erlaubt das Verkleinern der Diashow (Ansicht kleiner als Vollbild)
          - Möglicherweise Unterstützung für farbiges Tag-Plugin untersuchen
-         - Paid App Only : Die Idee der Zufallsfotos auf der piwigo web UI umgesetzt
-         - Paid App Only : (Maybe) : Unterstützung für Benutzerkommentare
-         - Paid App Only : (Maybe) : Benutzer über verfügbare Server-Updates benachrichtigen
-         - Aktualisieren Sie die Bilder im App Store, um die Entfernung der roten Schaltfläche 'Details anzeigen' zu reflektieren."
-        </item>
-        <item>1.3.93.16</item>
-        <item>"Änderungen:
-            - Titel aus IPTC-Daten verwenden, falls beim Hochladen von Bildern vorhanden
-            - Vielleicht: Speichern Sie das zuvor geöffnete Foto oder Album, wenn der Benutzer die Anwendung öffnet.
-            - Vielleicht: Nach der Rückkehr aus der Diashow den vorherigen Speicherort im Album merken"
+         - Nur bezahlte App: Die Idee der Zufallsfotos auf der piwigo web UI umgesetzt
+         - Nur bezahlte App: (Maybe) : Unterstützung für Benutzerkommentare
+         - Nur bezahlte App: (Vielleicht): Benachrichtigen Sie den Benutzer über verfügbare Server-Updates.
+         - Nur bezahlte App: Möglicherweise Unterstützung für die Bearbeitung von EXIF- und weiteren Bildmetadatenformaten.
+         - Vielleicht: Speichern Sie das zuvor geöffnete Foto oder Album, wenn der Benutzer die Anwendung öffnet.
+         - Erlaubt dem Benutzer, nach dem Löschen eines Elements in der Diashow zu bleiben."
         </item>
     </string-array>
     <string-array name="release_history">
+        <item>1.3.93.16</item>
+        <item>"Änderungen:
+            - Nur bezahlte App: Listet einen Dump aller Metadaten für Bilder auf.
+            - Titel (caption) aus IPTC-Daten verwenden, falls vorhanden, beim Hochladen von Bildern
+            - Umgekehrte Dateisortierreihenfolge bei der Auswahl für den Upload
+            - Web-Response verfügbar, um HTTP-Fehler zu sehen
+            - Nach der Rückkehr aus der Diashow den vorherigen Speicherort im Album merken
+            Bugfix:
+            - wieder feste Mauerwerksansicht
+            - Absturz beim Hochladen einer Datei ohne EXIF-Daten - Erstellungsdatum
+            - Diverse weitere Verbesserungen"
+        </item>
         <item>1.3.93.15.2</item>
         <item>"Änderungen:
             - Code hinzugefügt, um eine bessere und schnellere Fehlerbehebung zu ermöglichen"
@@ -240,7 +247,7 @@
         </item>
         <item>1.3.93</item>
         <item> "Änderungen:
-         - Nur kostenpflichtige Anwendung: Aktivieren Sie die Funktion 'Abfrage eines Geräteordners' und laden Sie alle gefundenen Inhalte automatisch in ein bestimmtes Piwigo-Profil hoch (derzeit nur Basisfunktionalität).
+         - Nur bezahlte App: Aktivieren Sie die Funktion 'Abfrage eines Geräteordners' und laden Sie alle gefundenen Inhalte automatisch in ein bestimmtes Piwigo-Profil hoch (derzeit nur Basisfunktionalität).
          Bugfix:
          - Klicken Sie auf Ereignisse, die in der Albumansicht nicht korrekt behandelt werden"
         </item>

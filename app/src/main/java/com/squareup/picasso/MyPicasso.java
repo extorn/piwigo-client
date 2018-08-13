@@ -15,9 +15,11 @@ import java.util.concurrent.ExecutorService;
 public class MyPicasso extends Picasso {
 
     private List<RequestHandler> myRequestHandlers;
+    private LruExifCache cache;
 
-    MyPicasso(Context context, Dispatcher dispatcher, Cache cache, Listener listener, RequestTransformer requestTransformer, List<RequestHandler> extraRequestHandlers, Stats stats, Bitmap.Config defaultBitmapConfig, boolean indicatorsEnabled, boolean loggingEnabled) {
+    MyPicasso(Context context, Dispatcher dispatcher, LruExifCache cache, Listener listener, RequestTransformer requestTransformer, List<RequestHandler> extraRequestHandlers, Stats stats, Bitmap.Config defaultBitmapConfig, boolean indicatorsEnabled, boolean loggingEnabled) {
         super(context, dispatcher, cache, listener, requestTransformer, extraRequestHandlers, stats, defaultBitmapConfig, indicatorsEnabled, loggingEnabled);
+        this.cache = cache;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class MyPicasso extends Picasso {
         private final Context context;
         private Downloader downloader;
         private ExecutorService service;
-        private Cache cache;
+        private LruExifCache cache;
         private Listener listener;
         private RequestTransformer transformer;
         private List<RequestHandler> requestHandlers;
@@ -102,19 +104,19 @@ public class MyPicasso extends Picasso {
             return this;
         }
 
-        /**
-         * Specify the memory cache used for the most recent images.
-         */
-        public Builder memoryCache(Cache memoryCache) {
-            if (memoryCache == null) {
-                throw new IllegalArgumentException("Memory cache must not be null.");
-            }
-            if (this.cache != null) {
-                throw new IllegalStateException("Memory cache already set.");
-            }
-            this.cache = memoryCache;
-            return this;
-        }
+//        /**
+//         * Specify the memory cache used for the most recent images.
+//         */
+//        public Builder memoryCache(Cache memoryCache) {
+//            if (memoryCache == null) {
+//                throw new IllegalArgumentException("Memory cache must not be null.");
+//            }
+//            if (this.cache != null) {
+//                throw new IllegalStateException("Memory cache already set.");
+//            }
+//            this.cache = memoryCache;
+//            return this;
+//        }
 
         /**
          * Specify a listener for interesting events.
@@ -202,7 +204,7 @@ public class MyPicasso extends Picasso {
                 downloader = Utils.createDefaultDownloader(context);
             }
             if (cache == null) {
-                cache = new LruCache(context);
+                cache = new LruExifCache(context);
             }
             if (service == null) {
                 service = new PicassoExecutorService();
@@ -220,4 +222,7 @@ public class MyPicasso extends Picasso {
         }
     }
 
+    public LruExifCache getCache() {
+        return cache;
+    }
 }

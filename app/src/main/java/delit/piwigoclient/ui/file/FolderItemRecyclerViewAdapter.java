@@ -109,7 +109,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                         if (o1.lastModified() == o2.lastModified()) {
                             return o1.getName().compareTo(o2.getName());
                         } else {
-                            return o1.lastModified() > o2.lastModified() ? 1 : -1;
+                            // this is reversed order
+                            return o1.lastModified() > o2.lastModified() ? -1 : 1;
                         }
                     default:
                         return 0;
@@ -145,6 +146,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         } else {
             return new FolderItemFileViewHolder(view);
         }
+        //TODO allow blank "folder" spacer items to correct the visual display.
     }
 
     @Override

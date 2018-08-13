@@ -37,6 +37,8 @@ import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.DisplayUtils;
 
+import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_FLAG;
+
 public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<PictureResourceItem> {
 
     private static final String STATE_CURRENT_IMAGE_URL = "currentImageUrl";
@@ -145,7 +147,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                     @Override
                     public void onSelection(String selectedUrl, float rotateDegrees, float maxZoom) {
                         currentImageUrlDisplayed = selectedUrl;
-                        loader.setUriToLoad(currentImageUrlDisplayed);
+                        loader.setUriToLoad(currentImageUrlDisplayed + '&' + EXIF_WANTED_URI_FLAG);
                         //TODO work out how to do auto rotation!
                         if (0 != Float.compare(rotateDegrees, 0f)) {
                             loader.setRotation(rotateDegrees);
@@ -197,7 +199,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         }
         loader.cancelImageLoadIfRunning();
         loader.setPlaceholderImageUri(model.getThumbnailUrl());
-        loader.setUriToLoad(currentImageUrlDisplayed);
+        loader.setUriToLoad(currentImageUrlDisplayed + '&' + EXIF_WANTED_URI_FLAG);
         loader.load();
     }
 
@@ -239,6 +241,10 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     public void onGetResource(final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
         super.onGetResource(response);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_image_download_title, getString(R.string.alert_image_download_complete_message));
+    }
+
+    public String getCurrentImageUrlDisplayed() {
+        return currentImageUrlDisplayed;
     }
 
     /**

@@ -425,6 +425,7 @@ public class PiwigoResponseBufferingHandler {
         private final int statusCode;
         private final String errorMessage;
         private final String errorDetail;
+        private String response;
 
         public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, String errorDetail) {
             super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod());
@@ -432,6 +433,14 @@ public class PiwigoResponseBufferingHandler {
             this.statusCode = statusCode;
             this.errorMessage = errorMessage;
             this.errorDetail = errorDetail;
+        }
+
+        public void setResponse(String response) {
+            this.response = response;
+        }
+
+        public String getResponse() {
+            return response;
         }
 
         public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage) {

@@ -3,6 +3,7 @@ package delit.piwigoclient.business;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
@@ -104,30 +105,43 @@ public class PicassoLoader implements Callback {
     }
 
     public void load(boolean forceServerRequest) {
-        if (imageLoading) {
-            return;
-        }
-        imageLoading = true;
-        //TODO this hack isn't needed if the resource isnt a vector drawable... later version of com.squareup.picasso?
-        if (resourceToLoad != Integer.MIN_VALUE) {
-            getLoadInto().setImageResource(getResourceToLoad());
-            onSuccess();
-        } else {
-            PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
-            RequestCreator loader = customiseLoader(buildLoader());
-            if (forceServerRequest) {
-                loader.memoryPolicy(MemoryPolicy.NO_CACHE);
-                loader.networkPolicy(NetworkPolicy.NO_CACHE);
+        synchronized (this) {
+            if (imageLoading) {
+                return;
             }
-            loader.into(loadInto, this);
+            imageLoading = true;
+            //TODO this hack isn't needed if the resource isnt a vector drawable... later version of com.squareup.picasso?
+            if (resourceToLoad != Integer.MIN_VALUE) {
+                getLoadInto().setImageResource(getResourceToLoad());
+                onSuccess();
+            } else {
+                PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
+                RequestCreator loader = customiseLoader(buildLoader());
+                if (forceServerRequest) {
+                    loader.memoryPolicy(MemoryPolicy.NO_CACHE);
+                    loader.networkPolicy(NetworkPolicy.NO_CACHE);
+                }
+//                if(placeholderUri != null) {
+//                    Log.d("PicassoLoader", "Loading: " + placeholderUri, new Exception().fillInStackTrace());
+//                } else {
+//                    Log.d("PicassoLoader", "Loading: " + uriToLoad, new Exception().fillInStackTrace());
+//                }
+                loader.into(loadInto, this);
+            }
         }
     }
 
     public void cancelImageLoadIfRunning() {
-        if (loadInto != null) {
-            PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
+        synchronized (this) {
+            if(!imageLoading) {
+                return;
+            }
+            if (loadInto != null) {
+                Log.d("PicassoLoader", "Cancelling: " + uriToLoad, new Exception().fillInStackTrace());
+                PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
+            }
+            imageLoading = false;
         }
-        imageLoading = false;
     }
 
     private Context getContext() {
@@ -232,6 +246,10 @@ public class PicassoLoader implements Callback {
         this.resourceToLoad = Integer.MIN_VALUE;
         this.fileToLoad = null;
         resetLoadState();
+    }
+
+    public boolean hasResourceToLoad() {
+        return uriToLoad != null || fileToLoad != null || resourceToLoad > Integer.MIN_VALUE;
     }
 
     protected ImageView getLoadInto() {

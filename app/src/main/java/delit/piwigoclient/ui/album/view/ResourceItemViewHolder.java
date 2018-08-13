@@ -106,15 +106,13 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
                 }
                 // needed for images that don't load correctly.
                 mImageView.setBackgroundColor(Color.WHITE);
-                // this doesn't exist on a masonry view
-                mImageContainer.setBackgroundResource(R.color.black);
             } else {
                 itemView.setBackgroundColor(Color.WHITE);
+                // this doesn't exist on a masonry view
                 mImageContainer.setBackgroundResource(R.color.black);
             }
         } else {
             if (parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
-
             } else {
                 mImageView.setBackgroundColor(Color.WHITE);
                 mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);

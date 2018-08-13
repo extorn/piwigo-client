@@ -293,7 +293,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
         Fragment.SavedState[] fss;
         // Save the state of those pages not currently active
-        if (pageState.size() > 0) {
+        if (pageState != null && pageState.size() > 0) {
             fss = new Fragment.SavedState[pageState.size()];
             fss = pageState.toArray(fss);
 

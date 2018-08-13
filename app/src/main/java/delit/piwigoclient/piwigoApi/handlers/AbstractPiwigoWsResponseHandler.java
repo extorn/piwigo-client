@@ -107,15 +107,21 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             processJsonResponse(getMessageId(), piwigoMethod, piwigoResponse, responseBody);
 
         } catch (JsonSyntaxException e) {
+            String responseBodyStr = new String(responseBody);
+            Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
             Crashlytics.logException(e);
             boolean handled = handleLogLoginFailurePluginResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
             if (!handled) {
                 PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
+                r.setResponse(responseBodyStr);
                 storeResponse(r);
             }
         } catch (JsonIOException e) {
+            String responseBodyStr = new String(responseBody);
+            Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
             Crashlytics.logException(e);
             PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
+            r.setResponse(responseBodyStr);
             storeResponse(r);
         }
     }
@@ -206,6 +212,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         }
         String errorDetail = error != null ? error.getMessage() : "";
         PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, errorDetail);
+        r.setResponse(new String(responseBody));
         storeResponse(r);
     }
 

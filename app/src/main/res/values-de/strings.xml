@@ -508,8 +508,10 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="slideshow_image_tab_exif_data">EXIF-Daten</string>
     <string name="alert_bad_request_http_to_https">Schlechte Anfrage an Ressource über HTTP. Möchten Sie alle HTTP-URIs für dieses Verbindungsprofil auf HTTPS umschreiben? Kann später in den App-Voreinstellungen geändert werden.</string>
     <string name="alert_bad_request_follow_redirects">Der Server hat eine 302-Redirect-Antwort zurückgegeben. Möchten Sie diese für diesen Server zulassen?</string>
-    <string name="picture_resource_exif_data_unavailable">Piwigo API unterstützt nicht das Abrufen von EXIF-Daten</string>
-    <string name="picture_resource_exif_data_unavailable_no_plugins">Keine Plugins bekannt, die das Abrufen von EXIF-Daten über die ws-API unterstützen.</string>
+    <string name="picture_resource_exif_data_unavailable">Noch keine Bild-Metadaten vorhanden</string>
     <string name="video_caching_disabled_not_recommended">Das Deaktivieren des Video-Caches hat gravierende Auswirkungen auf die Performance.</string>
     <string name="video_caching_disabled_warning">Warnung. Der Video-Cache ist deaktiviert. Download auf Anfrage.</string>
+    <string name="alert_error_album_no_longer_on_server">Dieses Album konnte nicht vom Server geladen werden. Wechsel zum übergeordneten Album.</string>
+    <string name="button_show_details">Detail anzeigen</string>
+    <string name="button_hide_details">Detail ausblenden</string>
 </resources>

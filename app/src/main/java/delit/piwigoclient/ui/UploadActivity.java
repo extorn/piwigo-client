@@ -281,10 +281,12 @@ public class UploadActivity extends MyActivity {
         if (!f.exists()) {
             f = new File(getRealPathFromURI(imageUri));
         }
-        if (f.exists()) {
+        if (f.exists() && f.isFile()) {
             filesToUpload.add(f);
         } else {
-            errors.put(imageUri.toString(), "File does not exist");
+            if(!f.isDirectory()) {
+                errors.put(imageUri.toString(), "File does not exist");
+            }
         }
     }
 

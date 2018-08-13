@@ -128,6 +128,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private static final String STATE_USERNAME_SELECTION_WANTED_NEXT = "usernameSelectionWantedNext";
     private static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
+    private static final String STATE_RECYCLER_LAYOUT = "recyclerLayout";
     private static final int UPDATE_IN_PROGRESS = 1;
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
@@ -279,6 +280,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         outState.putBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT, usernameSelectionWantedNext);
         outState.putSerializable(STATE_DELETE_ACTION_DATA, deleteActionData);
         outState.putLong(STATE_USER_GUID, userGuid);
+        outState.putParcelable(STATE_RECYCLER_LAYOUT, galleryListView.getLayoutManager().onSaveInstanceState());
     }
 
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
@@ -365,6 +367,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 deleteActionData = null;
             } else {
                 deleteActionData = (DeleteActionData) savedInstanceState.getSerializable(STATE_DELETE_ACTION_DATA);
+            }
+            if(galleryListView != null) {
+                galleryListView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(STATE_RECYCLER_LAYOUT));
             }
         } else {
             // fresh view of the root of the gallery - reset the admin list
@@ -881,8 +886,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 return;
             }
             galleryModel.clear();
-            viewAdapter.notifyDataSetChanged();
-            //FIXME app crashes in this method! Every time!
+            galleryListView.swapAdapter(viewAdapter, true);
+//            viewAdapter.notifyDataSetChanged();
+
             loadAlbumSubCategories();
             loadAlbumResourcesPage(0);
             if (PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
@@ -1350,7 +1356,24 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void onAdminListOfAlbumsLoaded(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse response) {
         albumAdminList = response.getAdminList();
-        adminCategories = albumAdminList.getDirectChildrenOfAlbum(galleryModel.getContainerDetails().getParentageChain(), galleryModel.getContainerDetails().getId());
+        try {
+            adminCategories = albumAdminList.getDirectChildrenOfAlbum(galleryModel.getContainerDetails().getParentageChain(), galleryModel.getContainerDetails().getId());
+        } catch(IllegalStateException e) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_album_no_longer_on_server), new UIHelper.QuestionResultListener() {
+                @Override
+                public void onDismiss(AlertDialog dialog) {
+                    getFragmentManager().popBackStack();
+                }
+
+                @Override
+                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+
+                }
+            });
+            return;
+        }
+
+        // will only run if the album was found on the server
         if (!loadingMessageIds.containsValue("C")) {
             // categories have finished loading. Let's superimpose those not already present.
             boolean changed = galleryModel.addMissingAlbums(adminCategories);
@@ -1359,6 +1382,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 viewAdapter.notifyDataSetChanged();
             }
         }
+
     }
 
     private void onResourceUnlinked(PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse response) {
@@ -1922,7 +1946,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        if (galleryModel != null && galleryModel.getContainerDetails().getId() == albumAlteredEvent.id) {
+        if (galleryModel != null && (galleryModel.getContainerDetails().getId() == albumAlteredEvent.id || albumAlteredEvent.id < 0)) {
             galleryIsDirty = true;
             if (isResumed()) {
                 reloadAlbumContent();

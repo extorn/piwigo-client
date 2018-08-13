@@ -230,7 +230,7 @@ Crashlytics.logException(e);
         try {
             lMaxRetries = Long.parseLong(maxRetries);
         } catch (NumberFormatException e) {
-Crashlytics.logException(e);
+//Crashlytics.logException(e);
             // No response or not parsable, expire immediately
             Log.w(TAG, "Licence retry count (GR) missing, grace period disabled");
             maxRetries = "0";

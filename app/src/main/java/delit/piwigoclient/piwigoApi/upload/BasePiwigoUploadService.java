@@ -16,6 +16,13 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.iptc.IptcDirectory;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -139,7 +146,10 @@ public abstract class BasePiwigoUploadService extends IntentService {
         }
         UploadJob job = loadForegroundJobStateFromDisk(context);
         if (job != null && job.getJobId() != jobId) {
-            throw new RuntimeException("Job exists on disk, but it doesn't match that expected by the app");
+            // Is this an error caused by corruption. Delete the old job. We can't use it anyway.
+            Crashlytics.log(Log.WARN, TAG, "Job exists on disk, but it doesn't match that expected by the app - deleting");
+            deleteStateFromDisk(context, job);
+            job = null;
         }
         return job;
     }
@@ -796,48 +806,45 @@ public abstract class BasePiwigoUploadService extends IntentService {
     }
 
     private void setUploadedImageDetailsFromExifData(File fileForUpload, ResourceItem uploadedResource) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            SimpleDateFormat dateTimeOriginalFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(fileForUpload);
-                ExifInterface exifInterface = new ExifInterface(fis);
-                String description = exifInterface.getAttribute(ExifInterface.TAG_IMAGE_DESCRIPTION);
-                if (description != null) {
-                    uploadedResource.setName(description);
-                }
-                String creationDateStr = exifInterface.getAttribute(ExifInterface.TAG_DATETIME_ORIGINAL);
-                try {
-                    Date creationDate = dateTimeOriginalFormat.parse(creationDateStr);
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(fileForUpload);
+            Directory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+            if(directory != null) {
+                Date creationDate = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+                if (creationDate != null) {
                     uploadedResource.setCreationDate(creationDate);
-                } catch (ParseException e) {
-                    Crashlytics.logException(e);
-                    // ignore for now
-                    if (BuildConfig.DEBUG) {
-                        Log.e(TAG, "Error parsing EXIF data : date time original", e);
-                    }
                 }
-
-            } catch (Throwable th) {
-                Crashlytics.logException(th);
-                // ignore for now
-                if (BuildConfig.DEBUG) {
-                    Log.e(TAG, "Error parsing EXIF data : sinking", th);
-                } else {
-                    Crashlytics.log(Log.ERROR, TAG, "Error parsing EXIF data : sinking");
+                String imageDescription = directory.getString(ExifSubIFDDirectory.TAG_IMAGE_DESCRIPTION);
+                if (imageDescription != null) {
+                    uploadedResource.setName(imageDescription);
                 }
-            } finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        Crashlytics.logException(e);
-                        // ignore for now
-                        if (BuildConfig.DEBUG) {
-                            Log.e(TAG, "Error closing inputstream for uploaded image", e);
-                        }
-                    }
+            }
+            directory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+            if(directory != null) {
+                Date creationDate = directory.getDate(IptcDirectory.TAG_DATE_CREATED);
+                if (creationDate != null) {
+                    uploadedResource.setCreationDate(creationDate);
                 }
+                String imageDescription = directory.getString(IptcDirectory.TAG_CAPTION);
+                if (imageDescription != null) {
+                    uploadedResource.setName(imageDescription);
+                }
+            }
+        } catch (ImageProcessingException e) {
+            Crashlytics.logException(e);
+            // ignore for now
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Error parsing EXIF data : sinking", e);
+            } else {
+                Crashlytics.log(Log.ERROR, TAG, "Error parsing EXIF data : sinking");
+            }
+        } catch (IOException e) {
+            Crashlytics.logException(e);
+            // ignore for now
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Error parsing EXIF data : sinking", e);
+            } else {
+                Crashlytics.log(Log.ERROR, TAG, "Error parsing EXIF data : sinking");
             }
         }
     }

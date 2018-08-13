@@ -24,7 +24,7 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
     private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
     private boolean fullyLoaded;
-    private transient ReentrantLock pageLoadLock = new ReentrantLock();
+    private transient ReentrantLock pageLoadLock;
 
     public PagedList(String itemType) {
         this(itemType, 10);
@@ -33,6 +33,7 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     public PagedList(String itemType, int maxExpectedItemCount) {
         this.itemType = itemType;
         this.items = new ArrayList<>(maxExpectedItemCount);
+        this.pageLoadLock = new ReentrantLock();
     }
 
     public void updateMaxExpectedItemCount(int newCount) {
