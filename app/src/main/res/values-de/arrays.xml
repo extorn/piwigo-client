@@ -112,6 +112,7 @@
             - Nach der Rückkehr aus der Diashow den vorherigen Speicherort im Album merken
             Bugfix:
             - wieder feste Mauerwerksansicht
+            - Kann Benutzer, Gruppen und Tags wieder öffnen. Entschuldigung!
             - Absturz beim Hochladen einer Datei ohne EXIF-Daten - Erstellungsdatum
             - Diverse weitere Verbesserungen"
         </item>

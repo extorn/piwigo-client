@@ -59,8 +59,9 @@ public class UsersListFragment extends MyFragment {
     private BaseRecyclerViewAdapterPreferences viewPrefs;
 
     public static UsersListFragment newInstance() {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(false, false).deletable();
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().deletable();
         prefs.setAllowItemAddition(true);
+        prefs.setEnabled(true);
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
         UsersListFragment fragment = new UsersListFragment();

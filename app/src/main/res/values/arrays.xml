@@ -192,6 +192,7 @@
             - Remember the previous location within album after return from slideshow
             Bugfix:
             - fixed masonry view again
+            - Can open users, groups, and tags again. Sorry!
             - Crash uploading file without EXIF data - creation date
             - Several other improvements"
         </item>

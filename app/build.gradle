@@ -30,12 +30,13 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
+        // Enabling multidex support.
+        multiDexEnabled true
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
         }
         debug {
 //            minifyEnabled true
@@ -102,7 +103,12 @@ dependencies {
     implementation 'com.github.machinarius:preferencefragment:0.1.2'
     implementation 'com.github.hotchemi:android-rate:1.0.1'
     implementation 'com.loopj.android:android-async-http:1.4.9'
-    implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
+    //implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.8.2'
+    //implementation 'com.google.android.exoplayer:exoplayer-dash:2.8.2'
+    //implementation 'com.google.android.exoplayer:exoplayer-hls:2.8.2'
+    //implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.8.2'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.8.2'
     // vector graphics support
     implementation 'com.android.support:support-vector-drawable:27.1.1'
     // annotations support
@@ -116,10 +122,9 @@ dependencies {
     // custom tab support
     implementation 'com.android.support:customtabs:27.1.1'
     //EXIF Support
-    implementation "com.android.support:exifinterface:27.1.1"
+    //implementation "com.android.support:exifinterface:27.1.1"
     // Core libraries (v4)
     //implementation 'com.android.support:support-v4:27.1.1' (all of them!)
-    implementation 'com.android.support:support-media-compat:27.1.1'
     implementation 'com.android.support:support-core-ui:27.1.1'
     implementation 'com.android.support:support-core-utils:27.1.1'
     implementation 'com.android.support:support-fragment:27.1.1'
@@ -134,12 +139,12 @@ dependencies {
     implementation 'com.android.support:transition:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout-solver:1.1.2'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    //implementation 'com.google.android.gms:play-services-ads:15.0.1'
     implementation 'com.google.firebase:firebase-core:16.0.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
     implementation 'com.google.firebase:firebase-ads:15.0.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:16.0.0'
-    //implementation 'com.google.firebase:firebase-perf:16.0.0' (have hit multidex limit!)
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.firebase:firebase-perf:16.0.0'
     testImplementation 'junit:junit:4.12'
 }
 
