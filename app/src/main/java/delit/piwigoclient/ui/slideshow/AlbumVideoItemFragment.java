@@ -335,7 +335,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 }
                 boolean factorySettingsAltered = dataSourceFactory.setCachingEnabled(isUseCache());
                 if (factorySettingsAltered) {
-                    logStatus("Need to create a new datasource");
+                    logStatus("Need to create a new datasource (video playback stopped and data load paused)");
                     player.setPlayWhenReady(false);
                     loadControl.pauseBuffering();
                     player.stop();
@@ -409,7 +409,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     }
 
     private void stopVideoDownloadAndPlay() {
-        if (player != null) {
+        if (player != null && player.getPlaybackState() != Player.STATE_IDLE) {
             videoIsPlayingWhenVisible = player.getPlayWhenReady();
             videoPlaybackPosition = player.getCurrentPosition();
             player.setPlayWhenReady(false);

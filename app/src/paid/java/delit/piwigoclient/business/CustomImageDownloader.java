@@ -56,4 +56,13 @@ public class CustomImageDownloader extends AbstractBaseCustomImageDownloader {
             }
         }
     }
+
+    protected String getUriString(Uri uri) {
+        String uriStr = uri.toString();
+        int idx = uriStr.indexOf(EXIF_WANTED_URI_FLAG) - 1;
+        if(idx > 0) {
+            uriStr = uriStr.substring(0, idx);
+        }
+        return uriStr;
+    }
 }

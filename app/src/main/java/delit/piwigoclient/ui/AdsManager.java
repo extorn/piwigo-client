@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
@@ -22,6 +24,7 @@ import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 
+import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 /**
@@ -140,6 +143,7 @@ public class AdsManager {
         private AdView advertView;
         private int retries;
         private long adLastLoadedAt;
+        private boolean lastAdLoadFailed;
 
         public MyBannerAdListener(AdView advertView) {
             this(advertView, DEFAULT_MIN_ADVERT_DISPLAY_TIME_MILLIS);
@@ -169,16 +173,16 @@ public class AdsManager {
                 }
                 loadAdvert();
             } else {
-                Crashlytics.log(Log.DEBUG, TAG, "Gave up trying to load advert after 3 attempts");
-//                if(BuildConfig.DEBUG) {
-//                    Log.d("BannerAd", "Advert failed to load 3 times, hiding");
-//                }
-//                advertView.setVisibility(View.GONE);
+                Crashlytics.log(Log.DEBUG, TAG, "Gave up trying to load advert after 3 attempts - hiding advert");
+                advertView.setVisibility(View.GONE);
+                lastAdLoadFailed = true;
+                retries = 0;
             }
         }
 
         public void onAdLoaded() {
             retries = 0;
+            lastAdLoadFailed = false;
             adLastLoadedAt = System.currentTimeMillis();
         }
 
@@ -190,6 +194,9 @@ public class AdsManager {
 
         public void replaceAd() {
             boolean adExpired = System.currentTimeMillis() - adLastLoadedAt > minimumAdVisibleTimeMillis;
+            if(adExpired && lastAdLoadFailed) {
+                advertView.setVisibility(VISIBLE);
+            }
             if (!advertView.isLoading() && advertView.getVisibility() == View.VISIBLE && adExpired) {
                 retries = 0;
                 loadAdvert();

@@ -149,6 +149,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         if (getUiHelper().isTrackingRequest(stickyEvent.getActionId()) || stickyEvent.getActionId() == Integer.MIN_VALUE) {
             EventBus.getDefault().removeStickyEvent(stickyEvent);
             updateFilesForUploadList(stickyEvent.getSelectedFiles());
+            AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
         }
     }
 

@@ -147,7 +147,9 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                     @Override
                     public void onSelection(String selectedUrl, float rotateDegrees, float maxZoom) {
                         currentImageUrlDisplayed = selectedUrl;
-                        loader.setUriToLoad(currentImageUrlDisplayed + '&' + EXIF_WANTED_URI_FLAG);
+                        char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
+                        String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
+                        loader.setUriToLoad(uriToLoad);
                         //TODO work out how to do auto rotation!
                         if (0 != Float.compare(rotateDegrees, 0f)) {
                             loader.setRotation(rotateDegrees);
@@ -199,7 +201,9 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         }
         loader.cancelImageLoadIfRunning();
         loader.setPlaceholderImageUri(model.getThumbnailUrl());
-        loader.setUriToLoad(currentImageUrlDisplayed + '&' + EXIF_WANTED_URI_FLAG);
+        char separator = currentImageUrlDisplayed.indexOf('?') > 0 ? '&' : '?';
+        String uriToLoad = currentImageUrlDisplayed + separator + EXIF_WANTED_URI_FLAG;
+        loader.setUriToLoad(uriToLoad);
         loader.load();
     }
 

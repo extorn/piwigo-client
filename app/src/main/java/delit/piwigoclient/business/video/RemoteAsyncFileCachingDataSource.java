@@ -359,16 +359,16 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                 if (activeRange != null) {
                     maxAvailableToReadNow = activeRange.getBytesFrom(currentPosition);
                 } else {
-                    if (logEnabled && BuildConfig.DEBUG) {
-                        if (activeRequestHandle == null || activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) {
-                            if (!this.httpResponseHandler.isLoadSucceeded() || this.httpResponseHandler.isIdle()) {
-                                try {
+                    if (activeRequestHandle == null || activeRequestHandle.isFinished() || activeRequestHandle.isCancelled()) {
+                        if (!this.httpResponseHandler.isLoadSucceeded() || this.httpResponseHandler.isIdle()) {
+                            try {
+                                if (logEnabled && BuildConfig.DEBUG) {
                                     Log.e(TAG, "Need to invoke a server call - No data Range available covering position " + currentPosition);
-                                    invokeNewCallToServer(currentPosition);
-                                } catch (IOException e) {
-                                    Crashlytics.logException(e);
-                                    throw new HttpDataSourceException("cache data file that was in use suddenly doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
                                 }
+                                invokeNewCallToServer(currentPosition);
+                            } catch (IOException e) {
+                                Crashlytics.logException(e);
+                                throw new HttpDataSourceException("cache data file that was in use suddenly doesn't exist (" + cacheMetaData.getCachedDataFile().getAbsolutePath() + ")", e, dataSpec, TYPE_OPEN);
                             }
                         }
                     }

@@ -60,8 +60,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
     @Override
     public Response load(Uri uri, int networkPolicy) throws IOException {
 
-        String uriToCall = uri.toString();
-        ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(uriToCall);
+        ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriString(uri));
         handler.setCallDetails(context, connectionPrefs, false);
         handler.runCall();
 
@@ -95,6 +94,10 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         processImageData(uri, imageData);
 
         return new Downloader.Response(new ByteArrayInputStream(imageData), false, imageData.length);
+    }
+
+    protected String getUriString(Uri uri) {
+        return uri.toString();
     }
 
     protected abstract void processImageData(Uri uri, byte[] imageData);

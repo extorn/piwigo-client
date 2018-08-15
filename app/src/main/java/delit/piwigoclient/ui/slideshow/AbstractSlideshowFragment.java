@@ -1,11 +1,13 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,12 +105,28 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
+        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
+        if (useDarkMode) {
+            view.setBackgroundColor(Color.BLACK);
+        } else {
+            view.setBackgroundColor(Color.WHITE);
+        }
+
         progressIndicator = view.findViewById(R.id.slideshow_page_loadingIndicator);
         hideProgressIndicator();
 
+        boolean largeEnoughScreenSizeForAdvert = false;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        float yInches= metrics.heightPixels/metrics.ydpi;
+        if (yInches>=3) {
+            largeEnoughScreenSizeForAdvert = true;
+        }
+
         adView = view.findViewById(R.id.slideshow_adView);
         if (AdsManager.getInstance().shouldShowAdverts()
-                && getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+                && (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT
+                || largeEnoughScreenSizeForAdvert)) {
             adView.loadAd(new AdRequest.Builder().build());
             adView.setAdListener(new AdsManager.MyBannerAdListener(adView));
             adView.setVisibility(VISIBLE);

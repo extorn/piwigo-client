@@ -439,6 +439,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         AdView adView = view.findViewById(R.id.gallery_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {
+            adView.setVisibility(VISIBLE);
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(GONE);

@@ -137,7 +137,6 @@ public class PicassoLoader implements Callback {
                 return;
             }
             if (loadInto != null) {
-                Log.d("PicassoLoader", "Cancelling: " + uriToLoad, new Exception().fillInStackTrace());
                 PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
             }
             imageLoading = false;

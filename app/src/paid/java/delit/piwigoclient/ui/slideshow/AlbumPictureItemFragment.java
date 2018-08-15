@@ -63,7 +63,7 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ExifDataRetrievedEvent event) {
-        if(event.getUri().toString().equals(getCurrentImageUrlDisplayed() + '&' + EXIF_WANTED_URI_FLAG)) {
+        if(event.getUri().toString().startsWith(getCurrentImageUrlDisplayed())) {
             setupExifDataTab(exifDataView, event.getMetadata());
         }
     }

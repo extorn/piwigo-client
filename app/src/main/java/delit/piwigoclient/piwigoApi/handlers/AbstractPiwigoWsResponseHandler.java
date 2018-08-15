@@ -212,7 +212,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         }
         String errorDetail = error != null ? error.getMessage() : "";
         PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, errorDetail);
-        r.setResponse(new String(responseBody));
+        r.setResponse(responseBody != null ? new String(responseBody) : "");
         storeResponse(r);
     }
 

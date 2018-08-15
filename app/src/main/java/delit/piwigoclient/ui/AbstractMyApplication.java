@@ -86,9 +86,6 @@ public abstract class AbstractMyApplication extends Application implements Appli
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if (activity instanceof FileSelectActivity) {
-            AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
-        }
     }
 
     @Override
