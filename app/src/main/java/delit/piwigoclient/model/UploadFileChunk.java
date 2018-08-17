@@ -76,10 +76,10 @@ public class UploadFileChunk {
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof UploadFileChunk)) {
+        if (!(obj instanceof UploadFileChunk)) {
             return false;
         }
-        UploadFileChunk other = (UploadFileChunk)obj;
+        UploadFileChunk other = (UploadFileChunk) obj;
         return this.chunkId == other.chunkId
                 && this.chunkCount == other.chunkCount
                 && this.jobId == other.jobId

@@ -3,10 +3,14 @@ package delit.piwigoclient.ui.common.util;
 import android.content.SharedPreferences;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.lang.reflect.Method;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.ui.common.MyActivity;
 
 /**
@@ -18,7 +22,7 @@ public class PreferenceUtils {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
         Set<String> allPreEntries = prefs.getAll().keySet();
         SharedPreferences.Editor editor = prefs.edit();
-        for(String pref : allPreEntries) {
+        for (String pref : allPreEntries) {
             editor.remove(pref);
         }
         editor.commit();
@@ -26,12 +30,17 @@ public class PreferenceUtils {
 
     public static void refreshDisplayedPreference(Preference preference) {
         Class iterClass = preference.getClass();
-        while(iterClass != Object.class) {
+        while (iterClass != Object.class) {
             try {
                 Method m = iterClass.getDeclaredMethod("onSetInitialValue", boolean.class, Object.class);
                 m.setAccessible(true);
                 m.invoke(preference, true, null);
-            } catch (Exception e) { }
+            } catch (Exception e) {
+                Crashlytics.logException(e);
+                if (BuildConfig.DEBUG) {
+                    Log.e("PrefUtils", "Error Refreshing Pref", e);
+                }
+            }
             iterClass = iterClass.getSuperclass();
         }
     }

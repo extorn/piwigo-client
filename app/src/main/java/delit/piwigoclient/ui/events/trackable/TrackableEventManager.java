@@ -20,12 +20,13 @@ public class TrackableEventManager {
 
     /**
      * removes the event if sticky too. Not idempotent method!
+     *
      * @param event
      * @return
      */
     public boolean wasTrackingEvent(TrackableResponseEvent event) {
         EventBus.getDefault().removeStickyEvent(event);
-        if(trackedEventId != event.getActionId()) {
+        if (trackedEventId != event.getActionId()) {
             return false;
         }
         trackedEventId = -1;

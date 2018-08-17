@@ -19,6 +19,8 @@ package com.google.android.vending.licensing;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 /**
  * An wrapper for SharedPreferences that transparently performs data obfuscation.
  */
@@ -57,6 +59,7 @@ public class PreferenceObfuscator {
             try {
                 result = mObfuscator.unobfuscate(value, key);
             } catch (ValidationException e) {
+Crashlytics.logException(e);
                 // Unable to unobfuscate, data corrupt or tampered
                 if(BuildConfig.DEBUG) {
                     Log.w(TAG, "Validation error while reading preference: " + key);

@@ -45,12 +45,12 @@ public abstract class AlbumAlterPermissionsResponseHandler extends AbstractPiwig
         params.put("cat_id", galleryId.toString());
         if (newAllowedUsers != null) {
             for (Long id : newAllowedUsers) {
-                params.add("user_id", id.toString());
+                params.add("user_id[]", id.toString());
             }
         }
         if (newAllowedGroups != null) {
             for (Long id : newAllowedGroups) {
-                params.add("group_id", id.toString());
+                params.add("group_id[]", id.toString());
             }
         }
         if (recursive) {

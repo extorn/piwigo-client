@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.PersistentCookieStore;
 import com.squareup.picasso.UrlConnectionDownloader;
 
@@ -46,7 +47,7 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
         PersistentCookieStore cookieStore = new PersistentCookieStore(context.getApplicationContext());
 
         List<Cookie> cookies = cookieStore.getCookies();
-        if(cookies.size() > 0) {
+        if (cookies.size() > 0) {
             Cookie cookie = cookies.get(0);
             String cookieName = cookie.getName();
             String cookieValue = cookie.getValue();
@@ -83,7 +84,8 @@ public class CookieImageDownloader extends UrlConnectionDownloader {
             }
             return r;
         } catch (ResponseException e) {
-            if(BuildConfig.DEBUG) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Error downloading image", e);
             }
             throw e;

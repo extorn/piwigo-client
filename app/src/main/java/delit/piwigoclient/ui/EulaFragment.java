@@ -42,7 +42,7 @@ public class EulaFragment extends MyFragment {
         View view = inflater.inflate(R.layout.fragment_eula, container, false);
 
         AdView adView = view.findViewById(R.id.eula_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -53,7 +53,7 @@ public class EulaFragment extends MyFragment {
         boolean agreedEula = agreedEulaVersion >= currentEulaVersion;
         Button cancelButton = view.findViewById(R.id.eula_cancel_button);
         Button agreeButton = view.findViewById(R.id.eula_agree_button);
-        if(agreedEula) {
+        if (agreedEula) {
             cancelButton.setVisibility(View.GONE);
             agreeButton.setVisibility(View.GONE);
         } else {
@@ -78,7 +78,7 @@ public class EulaFragment extends MyFragment {
         email.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendEmail(((TextView)v).getText().toString());
+                sendEmail(((TextView) v).getText().toString());
             }
         });
 
@@ -96,10 +96,10 @@ public class EulaFragment extends MyFragment {
         intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
         String serverVersion = "Unknown";
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if(sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
             serverVersion = sessionDetails.getPiwigoVersion();
         }
-        intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: "+ appVersion +"\nType and model of Device Being Used:\n");
+        intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: " + appVersion + "\nType and model of Device Being Used:\n");
         getContext().startActivity(Intent.createChooser(intent, ""));
     }
 

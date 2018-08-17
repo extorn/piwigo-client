@@ -14,11 +14,11 @@ public class PiwigoGalleryDetails implements Serializable {
 
     private final ArrayList<Long> parentageChain;
     private final CategoryItemStub parentGallery;
-    private Long galleryId;
     private final String galleryName;
     private final String galleryDescription;
     private final boolean userCommentsAllowed;
     private final boolean isPrivate;
+    private Long galleryId;
     private HashSet<Long> allowedGroups;
     private HashSet<Long> allowedUsers;
 

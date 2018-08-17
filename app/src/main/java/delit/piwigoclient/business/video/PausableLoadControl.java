@@ -10,6 +10,7 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator;
  */
 public final class PausableLoadControl extends DefaultLoadControl {
 
+    private Listener listener;
     private boolean paused;
 
     /**
@@ -17,6 +18,10 @@ public final class PausableLoadControl extends DefaultLoadControl {
      */
     public PausableLoadControl() {
         super(new DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE));
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -29,10 +34,16 @@ public final class PausableLoadControl extends DefaultLoadControl {
 
     public void pauseBuffering() {
         paused = true;
+        if (listener != null) {
+            listener.onPause();
+        }
     }
 
     public void resumeBuffering() {
         paused = false;
+        if (listener != null) {
+            listener.onResume();
+        }
     }
 
     @Override
@@ -45,5 +56,11 @@ public final class PausableLoadControl extends DefaultLoadControl {
 
     public boolean isPaused() {
         return paused;
+    }
+
+    public interface Listener {
+        void onPause();
+
+        void onResume();
     }
 }

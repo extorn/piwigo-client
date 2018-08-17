@@ -78,13 +78,13 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        if(isServerConnectionChanged()) {
+        if (isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
         }
 
-        if(isNotAuthorisedToAlterState()) {
+        if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
 
@@ -131,7 +131,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     public void onResume() {
         super.onResume();
 
-        if(isServerConnectionChanged()) {
+        if (isServerConnectionChanged()) {
             return;
         }
 
@@ -145,7 +145,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
 
         usernamesModel.acquirePageLoadLock();
         try {
-            if(usernamesModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+            if (usernamesModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
                 return;
             }
 
@@ -160,7 +160,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     protected void rerunRetrievalForFailedPages() {
         usernamesModel.acquirePageLoadLock();
         try {
-            for(Integer reloadPageNum = null; reloadPageNum != null; reloadPageNum = usernamesModel.getNextPageToReload()) {
+            for (Integer reloadPageNum = usernamesModel.getNextPageToReload(); reloadPageNum != null; reloadPageNum = usernamesModel.getNextPageToReload()) {
                 loadUsernamesPage(reloadPageNum);
             }
 
@@ -173,10 +173,10 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         UsernameRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<Long> usernamesNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
-        if(usernamesNeededToBeLoaded.size() > 0) {
+        if (usernamesNeededToBeLoaded.size() > 0) {
             usernamesModel.acquirePageLoadLock();
             try {
-                if(usernamesModel.isPageLoadedOrBeingLoaded(PagedList.MISSING_ITEMS_PAGE)) {
+                if (usernamesModel.isPageLoadedOrBeingLoaded(PagedList.MISSING_ITEMS_PAGE)) {
                     // already in progress... wait it out.
                     return;
                 }
@@ -191,7 +191,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         HashSet<Username> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new UsernameSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));
         // now pop this screen off the stack.
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
     }
@@ -199,17 +199,6 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
-    }
-
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
-        @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) {
-                onUsernamesLoaded((PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) response);
-            } else {
-                onUsernamesLoadFailed(response);
-            }
-        }
     }
 
     protected void onUsernamesLoadFailed(PiwigoResponseBufferingHandler.Response response) {
@@ -226,11 +215,11 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         usernamesModel.acquirePageLoadLock();
         try {
             usernamesModel.recordPageLoadSucceeded(response.getMessageId());
-            if(response.getPage() == PagedList.MISSING_ITEMS_PAGE) {
+            if (response.getPage() == PagedList.MISSING_ITEMS_PAGE) {
                 // this is a special page of all missing items from those selected.
                 int firstIdxAdded = usernamesModel.addItemPage(usernamesModel.getPagesLoaded(), response.getPageSize(), response.getUsernames());
                 getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getUsernames().size());
-                if(usernamesModel.hasNoFailedPageLoads()) {
+                if (usernamesModel.hasNoFailedPageLoads()) {
                     onListItemLoadSuccess();
                 }
                 setAppropriateComponentState();
@@ -239,12 +228,23 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
             }
             int firstIdxAdded = usernamesModel.addItemPage(response.getPage(), response.getPageSize(), response.getUsernames());
             getListAdapter().notifyItemRangeInserted(firstIdxAdded, response.getUsernames().size());
-            if(usernamesModel.hasNoFailedPageLoads()) {
+            if (usernamesModel.hasNoFailedPageLoads()) {
                 onListItemLoadSuccess();
             }
             setAppropriateComponentState();
         } finally {
             usernamesModel.releasePageLoadLock();
+        }
+    }
+
+    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) {
+                onUsernamesLoaded((PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) response);
+            } else {
+                onUsernamesLoadFailed(response);
+            }
         }
     }
 }

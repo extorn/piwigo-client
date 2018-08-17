@@ -7,19 +7,20 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.ResponseHandlerInterface;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URL;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -92,8 +93,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             synchronized (this) {
                 try {
                     this.notifyAll();
-                } catch(IllegalMonitorStateException e) {
-                    if(BuildConfig.DEBUG) {
+                } catch (IllegalMonitorStateException e) {
+                    Crashlytics.logException(e);
+                    if (BuildConfig.DEBUG) {
                         Log.e(getTag(), "unable to notify threads waiting on this object", e);
                     }
                 }
@@ -200,7 +202,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     triedLoggingInAgain = true;
                     PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
                     String newToken = null;
-                    if(sessionDetails != null) {
+                    if (sessionDetails != null) {
                         newToken = sessionDetails.getSessionToken();
                     }
                     if (newToken != null && !newToken.equals(sessionToken)) {
@@ -236,13 +238,13 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             }
         }
         if (!tryingAgain) {
-            if (BuildConfig.DEBUG && !"Method name is not valid".equals(error.getMessage())) {
+            if (BuildConfig.DEBUG && error != null && !"Method name is not valid".equals(error.getMessage())) {
                 Log.e(getTag(), "Tracking piwigo failure class: " + error.getClass() + " message: " + error.getMessage(), error);
             }
             this.statusCode = statusCode;
             this.headers = headers;
             this.responseBody = responseBody;
-            if(this.error == null) {
+            if (this.error == null) {
                 this.error = error;
             }
             onFailure(statusCode, headers, responseBody, this.error, triedLoggingInAgain);
@@ -300,10 +302,11 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 requestHandle = runCall(client, this);
             }
         } catch (RuntimeException e) {
+            Crashlytics.logException(e);
             if (client == null) {
                 sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
             } else {
-                sendFailureMessage(-1, null, null, e);
+                sendFailureMessage(-1, null, null, new RuntimeException(getContext().getString(R.string.error_unexpected_error_calling_server), e));
             }
         } finally {
             if (requestHandle == null) {
@@ -387,6 +390,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     protected String getPiwigoServerUrl() {
         return connectionPrefs.getPiwigoServerAddress(sharedPrefs, context);
+    }
+
+    protected SharedPreferences getSharedPrefs() {
+        return sharedPrefs;
     }
 
     public String getPiwigoWsApiUri() {

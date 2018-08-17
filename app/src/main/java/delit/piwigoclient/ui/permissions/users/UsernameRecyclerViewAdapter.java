@@ -80,7 +80,7 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Bas
 
             checkBox = itemView.findViewById(R.id.checked);
 //            checkBox.setClickable(isItemSelectionAllowed());
-            checkBox.setOnCheckedChangeListener(new ItemSelectionListener(UsernameRecyclerViewAdapter.this,this));
+            checkBox.setOnCheckedChangeListener(new ItemSelectionListener(UsernameRecyclerViewAdapter.this, this));
 
             txtTitle = itemView.findViewById(R.id.name);
 

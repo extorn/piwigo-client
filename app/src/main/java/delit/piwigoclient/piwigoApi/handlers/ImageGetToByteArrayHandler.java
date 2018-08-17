@@ -5,6 +5,8 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.net.URI;
+
 import cz.msebera.android.httpclient.Header;
 import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -19,7 +21,7 @@ import delit.piwigoclient.ui.events.CancelDownloadEvent;
 public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHandler {
 
     private static final String TAG = "GetImgRspHdlr";
-    private final String resourceUrl;
+    private String resourceUrl;
 
     public ImageGetToByteArrayHandler(String resourceUrl) {
         super(TAG);
@@ -46,6 +48,9 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
+        if (getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext()) && resourceUrl.toLowerCase().startsWith("http://")) {
+            resourceUrl = resourceUrl.replaceFirst("://", "s://");
+        }
         return client.get(resourceUrl, handler);
     }
 

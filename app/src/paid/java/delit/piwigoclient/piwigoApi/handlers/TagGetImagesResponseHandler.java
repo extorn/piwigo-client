@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -144,12 +145,28 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
                 m.reset(originalResourceUrl);
             }
 
-            String dateLastAlteredStr = image.get("date_available").getAsString();
             Date dateLastAltered = null;
-            try {
-                dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
-            } catch (ParseException e) {
-                throw new JSONException("Unable to parse date " + dateLastAlteredStr);
+            JsonElement dateLastAlteredElem = image.get("date_available");
+            if(!dateLastAlteredElem.isJsonNull()) {
+                String dateLastAlteredStr = dateLastAlteredElem.getAsString();
+                try {
+                    dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
+                } catch (ParseException e) {
+Crashlytics.logException(e);
+                    throw new JSONException("Unable to parse date " + dateLastAlteredStr);
+                }
+            }
+
+            Date dateCreated = null;
+            JsonElement dateCreationElem = image.get("date_creation");
+            if(!dateCreationElem.isJsonNull()) {
+                String dateCreatedStr = dateCreationElem.getAsString();
+                try {
+                    dateCreated = piwigoDateFormat.parse(dateCreatedStr);
+                } catch (ParseException e) {
+Crashlytics.logException(e);
+                    throw new JSONException("Unable to parse date " + dateCreatedStr);
+                }
             }
 
             int originalResourceUrlWidth = 0;
@@ -170,7 +187,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
                 if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
                 }
-                item = new VideoResourceItem(id, name, null, dateLastAltered, thumbnail);
+                item = new VideoResourceItem(id, name, null, dateCreated, dateLastAltered, thumbnail);
                 ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", originalResourceUrl, originalResourceUrlWidth, originalResourceUrlHeight);
                 item.addResourceFile(originalImage);
                 item.setFullSizeImage(originalImage);
@@ -184,7 +201,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
                 Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
                 thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
 
-                PictureResourceItem picItem = new PictureResourceItem(id, name, null, dateLastAltered, thumbnail);
+                PictureResourceItem picItem = new PictureResourceItem(id, name, null, dateCreated, dateLastAltered, thumbnail);
 
                 long bestWidth = 0;
 

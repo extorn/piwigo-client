@@ -54,7 +54,7 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        if(!getUiHelper().isServiceCallInProgress()) {
+        if (!getUiHelper().isServiceCallInProgress()) {
             loginButton.callOnClick();
         }
     }
@@ -72,30 +72,30 @@ public class LoginFragment extends MyFragment implements View.OnClickListener {
         return new CustomPiwigoResponseListener();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
-        @Override
-        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
-                if(PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
-                    onLogin(rsp.getOldCredentials());
-                } else {
-                    onLoginFailed();
-                }
-            } else {
-                if(response instanceof PiwigoResponseBufferingHandler.ErrorResponse){
-                    onLoginFailed();
-                }
-            }
-        }
-    }
-
     private void onLogin(PiwigoSessionDetails oldCredentials) {
         EventBus.getDefault().post(new PiwigoLoginSuccessEvent(oldCredentials, true));
     }
 
     private void onLoginFailed() {
         loginButton.setEnabled(true);
+    }
+
+    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
+                if (PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
+                    onLogin(rsp.getOldCredentials());
+                } else {
+                    onLoginFailed();
+                }
+            } else {
+                if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
+                    onLoginFailed();
+                }
+            }
+        }
     }
 
 }

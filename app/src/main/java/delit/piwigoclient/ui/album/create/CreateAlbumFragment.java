@@ -97,7 +97,7 @@ public class CreateAlbumFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GroupSelectionCompleteEvent groupSelectionCompleteEvent) {
 
-        if(getUiHelper().isTrackingRequest(groupSelectionCompleteEvent.getActionId())) {
+        if (getUiHelper().isTrackingRequest(groupSelectionCompleteEvent.getActionId())) {
             this.selectedGroups = new ArrayList<>(groupSelectionCompleteEvent.getSelectedItems());
             userIdsInSelectedGroups = null;
             setAllowedGroupsText();
@@ -108,7 +108,7 @@ public class CreateAlbumFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(UsernameSelectionCompleteEvent usernameSelectionCompleteEvent) {
 
-        if(getUiHelper().isTrackingRequest(usernameSelectionCompleteEvent.getActionId())) {
+        if (getUiHelper().isTrackingRequest(usernameSelectionCompleteEvent.getActionId())) {
             this.selectedUsernames = new ArrayList<>(usernameSelectionCompleteEvent.getSelectedItems());
             setAllowedUsernamesText();
         }
@@ -168,7 +168,7 @@ public class CreateAlbumFragment extends MyFragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            parentGallery = (CategoryItemStub)args.getSerializable(STATE_UPLOAD_TO_GALLERY);
+            parentGallery = (CategoryItemStub) args.getSerializable(STATE_UPLOAD_TO_GALLERY);
             actionId = args.getInt(STATE_ACTION_ID);
         }
     }
@@ -204,7 +204,7 @@ public class CreateAlbumFragment extends MyFragment {
             getFragmentManager().popBackStack();
             return null;
         }
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             parentGallery = (CategoryItemStub) savedInstanceState.getSerializable(STATE_UPLOAD_TO_GALLERY);
             newAlbum = (PiwigoGalleryDetails) savedInstanceState.getSerializable(STATE_NEW_GALLERY);
             createGalleryMessageId = savedInstanceState.getLong(STATE_CREATE_GALLERY_CALL_ID);
@@ -218,7 +218,7 @@ public class CreateAlbumFragment extends MyFragment {
         View view = inflater.inflate(R.layout.fragment_create_new_gallery, container, false);
 
         AdView adView = view.findViewById(R.id.createGallery_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -259,8 +259,8 @@ public class CreateAlbumFragment extends MyFragment {
         allowedUsernamesTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(selectedGroups == null || selectedGroups.size() == 0 || userIdsInSelectedGroups != null) {
-                    if(selectedGroups == null || selectedGroups.size() == 0) {
+                if (selectedGroups == null || selectedGroups.size() == 0 || userIdsInSelectedGroups != null) {
+                    if (selectedGroups == null || selectedGroups.size() == 0) {
                         userIdsInSelectedGroups = new HashSet<>(0);
                     }
 
@@ -272,10 +272,10 @@ public class CreateAlbumFragment extends MyFragment {
 
                 } else {
                     ArrayList<Long> selectedGroupIds = new ArrayList<>(selectedGroups.size());
-                    for(Group g : selectedGroups) {
+                    for (Group g : selectedGroups) {
                         selectedGroupIds.add(g.getId());
                     }
-                    addActiveServiceCall(R.string.progress_loading_group_details,new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100).invokeAsync(getContext()));
                 }
             }
         });
@@ -324,7 +324,7 @@ public class CreateAlbumFragment extends MyFragment {
 
     private void onCreateGallery() {
         String galleryName = galleryNameEditField.getText().toString();
-        if(galleryName.isEmpty()) {
+        if (galleryName.isEmpty()) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_provide_an_album_name));
             return;
         }
@@ -343,41 +343,8 @@ public class CreateAlbumFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
-        @Override
-        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse) {
-                onAlbumDeleted((PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse) {
-                onAlbumCreated((PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse) {
-                onAlbumPermissionsAdded((PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse) {
-                onAlbumStatusAltered((PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse) response);
-            } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) {
-                onUsernamesRetrievedForSelectedGroups((PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse)response);
-            }
-        }
-
-        @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
-                if (response.getMessageId() == createGalleryMessageId) {
-                    // error action failed and server state unchanged.
-                    showDialogBox(R.string.alert_failure, getString(R.string.album_create_failed));
-                } else if (response.getMessageId() == setGalleryPermissionsMessageId) {
-//                    deleteGalleryMessageId = PiwigoAccessService.startActionDeleteAlbum(newAlbum.getGalleryId(), getContext());
-//                    addActiveServiceCall(deleteGalleryMessageId);
-                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
-                } else if (response.getMessageId() == deleteGalleryMessageId) {
-//                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
-                }
-            }
-        }
-    }
-
     private void onUsernamesRetrievedForSelectedGroups(PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse response) {
-        if(response.getItemsOnPage() == response.getPageSize()) {
+        if (response.getItemsOnPage() == response.getPageSize()) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_too_many_users_message));
         } else {
             ArrayList<Username> usernamesInGroups = response.getUsernames();
@@ -432,7 +399,7 @@ public class CreateAlbumFragment extends MyFragment {
 
         showDialogBox(R.string.alert_success, getString(R.string.alert_album_created));
         EventBus.getDefault().post(new AlbumCreatedEvent(actionId, parentGallery.getId(), newAlbum.getGalleryId()));
-        for(Long parentId : newAlbum.getParentageChain()) {
+        for (Long parentId : newAlbum.getParentageChain()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(parentId));
         }
     }
@@ -441,8 +408,15 @@ public class CreateAlbumFragment extends MyFragment {
 
         showDialogBox(R.string.alert_success, getString(R.string.alert_album_created));
         EventBus.getDefault().post(new AlbumCreatedEvent(actionId, parentGallery.getId(), newAlbum.getGalleryId()));
-        for(Long parentId : newAlbum.getParentageChain()) {
+        for (Long parentId : newAlbum.getParentageChain()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(parentId));
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onAppLockedEvent(AppLockedEvent event) {
+        if (isVisible()) {
+            getFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -450,10 +424,36 @@ public class CreateAlbumFragment extends MyFragment {
         void onDialogClose();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onAppLockedEvent(AppLockedEvent event) {
-        if(isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse) {
+                onAlbumDeleted((PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse) {
+                onAlbumCreated((PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse) {
+                onAlbumPermissionsAdded((PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse) {
+                onAlbumStatusAltered((PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) {
+                onUsernamesRetrievedForSelectedGroups((PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) response);
+            }
+        }
+
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
+                if (response.getMessageId() == createGalleryMessageId) {
+                    // error action failed and server state unchanged.
+                    showDialogBox(R.string.alert_failure, getString(R.string.album_create_failed));
+                } else if (response.getMessageId() == setGalleryPermissionsMessageId) {
+//                    deleteGalleryMessageId = PiwigoAccessService.startActionDeleteAlbum(newAlbum.getGalleryId(), getContext());
+//                    addActiveServiceCall(deleteGalleryMessageId);
+                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
+                } else if (response.getMessageId() == deleteGalleryMessageId) {
+//                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
+                }
+            }
         }
     }
 }

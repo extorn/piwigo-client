@@ -31,7 +31,7 @@ public class AppCompatCheckboxTriState extends AppCompatCheckBox {
     @Override
     public void setActivated(boolean activated) {
         super.setActivated(activated);
-        if(activated != isChecked()) {
+        if (activated != isChecked()) {
             setChecked(activated);
         }
         updateDrawable();
@@ -45,7 +45,7 @@ public class AppCompatCheckboxTriState extends AppCompatCheckBox {
     }
 
     private void updateDrawable() {
-        if(alwaysChecked && !(isChecked() || isActivated())) {
+        if (alwaysChecked && !(isChecked() || isActivated())) {
             setAlpha(0.5f);
         } else {
             setAlpha(1f);

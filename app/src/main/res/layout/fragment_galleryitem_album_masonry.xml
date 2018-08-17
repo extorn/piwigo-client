@@ -40,13 +40,12 @@
             android:scaleType="fitCenter" />
     </RelativeLayout>
 
-
-
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/newly_altered_marker_image"
+        android:layout_alignTop="@id/thumbnail_container_layout"
+        android:layout_alignEnd="@id/thumbnail_container_layout"
         android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignParentEnd="true"/>
+        android:layout_height="24dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

@@ -11,18 +11,17 @@ public class Basket implements Serializable {
 
     public static final int ACTION_COPY = 1;
     public static final int ACTION_CUT = 2;
-
+    private final HashSet<ResourceItem> contents = new HashSet<>();
     private int action;
     private CategoryItem contentParent;
-    private final HashSet<ResourceItem> contents = new HashSet<>();
 
     public void addItem(int action, ResourceItem item, CategoryItem contentParent) {
         // only add items to be appended if the action is the same
-        if(action != this.action) {
+        if (action != this.action) {
             contents.clear();
         }
         // only allow items from the same album to be added to the clipboard
-        if(contents.size() > 0 && !contents.iterator().next().getParentId().equals(item.getParentId())) {
+        if (contents.size() > 0 && !contents.iterator().next().getParentId().equals(item.getParentId())) {
             contents.clear();
         }
 
@@ -41,7 +40,7 @@ public class Basket implements Serializable {
 
     public void removeItem(ResourceItem item) {
         contents.remove(item);
-        if(contents.size() == 0) {
+        if (contents.size() == 0) {
             contentParent = null;
         }
     }

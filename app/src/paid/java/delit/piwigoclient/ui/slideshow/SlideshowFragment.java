@@ -23,7 +23,7 @@ import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshowFragment<T> {
 
     public static <S extends Identifiable> SlideshowFragment<S> newInstance(ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
-        SlideshowFragment<S> fragment = new SlideshowFragment<S>();
+        SlideshowFragment<S> fragment = new SlideshowFragment<>();
         fragment.setArguments(buildArgs(gallery, currentGalleryItem));
         return fragment;
     }

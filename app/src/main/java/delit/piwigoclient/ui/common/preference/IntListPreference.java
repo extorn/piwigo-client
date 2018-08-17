@@ -7,6 +7,8 @@ import android.support.annotation.ArrayRes;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
+import com.crashlytics.android.Crashlytics;
+
 import delit.piwigoclient.util.ArrayUtils;
 
 public class IntListPreference extends MappedListPreference<Integer> {
@@ -15,6 +17,7 @@ public class IntListPreference extends MappedListPreference<Integer> {
     public IntListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public IntListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -30,11 +33,11 @@ public class IntListPreference extends MappedListPreference<Integer> {
 
     @Override
     protected Integer transform(Object obj) {
-        if(obj == null) {
+        if (obj == null) {
             return null;
         }
-        if(obj instanceof Integer) {
-            return (Integer)obj;
+        if (obj instanceof Integer) {
+            return (Integer) obj;
         }
         return Integer.valueOf(obj.toString());
     }
@@ -55,13 +58,15 @@ public class IntListPreference extends MappedListPreference<Integer> {
         int defaultInt = defaultValue != null ? defaultValue : Integer.MIN_VALUE;
         try {
             return getPersistedInt(defaultInt);
-        } catch(ClassCastException e) {
+        } catch (ClassCastException e) {
+            Crashlytics.logException(e);
             // this will occur if swapping this pref type in for an old string type.
             if (e.getMessage().equals("java.lang.String cannot be cast to java.lang.Integer")) {
                 return Integer.MIN_VALUE;
             }
             throw e;
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
+            Crashlytics.logException(e);
             // thrown if no persisted value
             return Integer.MIN_VALUE;
         }
@@ -78,13 +83,13 @@ public class IntListPreference extends MappedListPreference<Integer> {
     }
 
 
-
     @Override
     protected boolean persistString(String value) {
         try {
             int val = Integer.valueOf(value);
             return persistInt(val);
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
+            Crashlytics.logException(e);
             // need to persist the default
             return persistInt(Integer.MIN_VALUE);
         }

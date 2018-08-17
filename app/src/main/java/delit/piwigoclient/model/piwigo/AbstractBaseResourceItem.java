@@ -21,13 +21,19 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     private ResourceFile fullSizeImage;
     private HashSet<Long> linkedAlbums;
     private String fileChecksum;
+    private Date creationDate;
 
-    public AbstractBaseResourceItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
+    public AbstractBaseResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, lastAltered, thumbnailUrl);
+        this.creationDate = creationDate;
     }
 
     public String getFileChecksum() {
         return fileChecksum;
+    }
+
+    public void setFileChecksum(String fileChecksum) {
+        this.fileChecksum = fileChecksum;
     }
 
     public ArrayList<ResourceFile> getAvailableFiles() {
@@ -41,10 +47,6 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             }
         }
         return null;
-    }
-
-    public void setLinkedAlbums(HashSet<Long> linkedAlbums) {
-        this.linkedAlbums = linkedAlbums;
     }
 
     public void addResourceFile(ResourceFile img) {
@@ -70,6 +72,14 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         return fullSizeImage.url.substring(idx + 1);
     }
 
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
     @Override
     public int hashCode() {
         return super.hashCode();
@@ -84,14 +94,14 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         // calculate filename from URI
         Pattern p = Pattern.compile("^.*/([^?]*).*$");
         Matcher m = p.matcher(selectedItem.url);
-        if(!m.matches()) {
+        if (!m.matches()) {
             throw new IllegalArgumentException("Filename pattern is not working for url " + selectedItem.url);
         }
         String filenameInUrl = m.group(1);
 
         String ext = filenameInUrl.substring(filenameInUrl.lastIndexOf('.'));
         String filenameRoot = getName();
-        if(filenameRoot == null) {
+        if (filenameRoot == null) {
             filenameRoot = filenameInUrl.substring(0, filenameInUrl.lastIndexOf('.'));
         } else {
             if (filenameRoot.endsWith(ext)) {
@@ -100,7 +110,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         }
         String filesystemSafeFilenameRoot = filenameRoot.replaceAll("[:\\\\/*\"?|<>']", "_");
         int maxLen = 127 - selectedItem.name.length() - ext.length();
-        if(filesystemSafeFilenameRoot.length() > maxLen) {
+        if (filesystemSafeFilenameRoot.length() > maxLen) {
             filesystemSafeFilenameRoot = filesystemSafeFilenameRoot.substring(0, 127);
         }
         return filesystemSafeFilenameRoot + '_' + selectedItem.name + ext;
@@ -110,28 +120,32 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         return linkedAlbums;
     }
 
-    public void setPrivacyLevel(int privacyLevel) {
-        this.privacyLevel = privacyLevel;
-    }
-
-    public void setAverageRating(float averageRating) {
-        this.averageRating = averageRating;
-    }
-
-    public void setYourRating(float yourRating) {
-        this.yourRating = yourRating;
+    public void setLinkedAlbums(HashSet<Long> linkedAlbums) {
+        this.linkedAlbums = linkedAlbums;
     }
 
     public float getYourRating() {
         return yourRating;
     }
 
+    public void setYourRating(float yourRating) {
+        this.yourRating = yourRating;
+    }
+
     public float getAverageRating() {
         return averageRating;
     }
 
+    public void setAverageRating(float averageRating) {
+        this.averageRating = averageRating;
+    }
+
     public int getPrivacyLevel() {
         return privacyLevel;
+    }
+
+    public void setPrivacyLevel(int privacyLevel) {
+        this.privacyLevel = privacyLevel;
     }
 
     public int getRatingsGiven() {
@@ -140,10 +154,6 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
 
     public void setRatingsGiven(int ratingsGiven) {
         this.ratingsGiven = ratingsGiven;
-    }
-
-    public void setFileChecksum(String fileChecksum) {
-        this.fileChecksum = fileChecksum;
     }
 
     public void copyFrom(AbstractBaseResourceItem other, boolean copyParentage) {

@@ -8,27 +8,36 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.ExifInterface;
 import android.os.Build;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import com.drew.metadata.iptc.IptcDirectory;
+
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,7 +52,6 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.UploadFileChunk;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -138,23 +146,26 @@ public abstract class BasePiwigoUploadService extends IntentService {
         }
         UploadJob job = loadForegroundJobStateFromDisk(context);
         if (job != null && job.getJobId() != jobId) {
-            throw new RuntimeException("Job exists on disk, but it doesn't match that expected by the app");
+            // Is this an error caused by corruption. Delete the old job. We can't use it anyway.
+            Crashlytics.log(Log.WARN, TAG, "Job exists on disk, but it doesn't match that expected by the app - deleting");
+            deleteStateFromDisk(context, job);
+            job = null;
         }
         return job;
     }
 
     private static List<UploadJob> loadBackgroundJobsStateFromDisk(Context c) {
         File jobsFolder = new File(c.getApplicationContext().getExternalCacheDir(), "uploadJobs");
-        if(!jobsFolder.exists()) {
+        if (!jobsFolder.exists()) {
             jobsFolder.mkdir();
-            return new ArrayList<UploadJob>();
+            return new ArrayList<>();
         }
 
         List<UploadJob> jobs = new ArrayList<>();
         File[] jobFiles = jobsFolder.listFiles();
-        for(int i = 0; i < jobFiles.length; i++) {
+        for (int i = 0; i < jobFiles.length; i++) {
             UploadJob job = IOUtils.readObjectFromFile(jobFiles[i]);
-            if(job != null) {
+            if (job != null) {
                 job.setLoadedFromFile(jobFiles[i]);
                 jobs.add(job);
             } else {
@@ -190,10 +201,27 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
     public static void deleteStateFromDisk(Context c, UploadJob thisUploadJob) {
         File stateFile = thisUploadJob.getLoadedFromFile();
-        if(stateFile == null) {
+        if (stateFile == null) {
             stateFile = getJobStateFile(c, thisUploadJob.isRunInBackground(), thisUploadJob.getJobId());
         }
         deleteJobStateFile(stateFile);
+    }
+
+    private static void deleteJobStateFile(File f) {
+        if (f.exists()) {
+            if (!f.delete()) {
+                Log.d(TAG, "Error deleting job state from disk");
+            }
+        }
+    }
+
+    private static File getJobStateFile(Context c, boolean isBackgroundJob, long jobId) {
+        if (isBackgroundJob) {
+            File jobsFolder = new File(c.getExternalCacheDir(), "uploadJobs");
+            return new File(jobsFolder, jobId + ".state");
+        } else {
+            return new File(c.getExternalCacheDir(), "uploadJob.state");
+        }
     }
 
     protected void runPostJobCleanup(UploadJob uploadJob, boolean deleteUploadedFiles) {
@@ -203,12 +231,14 @@ public abstract class BasePiwigoUploadService extends IntentService {
                     if (!f.getAbsoluteFile().delete()) {
                         if (BuildConfig.DEBUG) {
                             Log.e(TAG, "Unable to delete uploaded file : " + f.getAbsolutePath());
+                        } else {
+                            Crashlytics.log(Log.WARN, TAG, "\"Unable to delete uploaded file");
                         }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             try {
                                 Files.delete(f.toPath());
                             } catch (IOException e) {
-
+                                Crashlytics.logException(e);
                                 if (BuildConfig.DEBUG) {
                                     Log.e(TAG, "Really unable to delete uploaded file : " + f.getAbsolutePath(), e);
                                 }
@@ -216,14 +246,6 @@ public abstract class BasePiwigoUploadService extends IntentService {
                         }
                     }
                 }
-            }
-        }
-    }
-
-    private static void deleteJobStateFile(File f) {
-        if (f.exists()) {
-            if (!f.delete()) {
-                Log.d(TAG, "Error deleting job state from disk");
             }
         }
     }
@@ -280,7 +302,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
     protected void updateNotificationText(String text, boolean showIndeterminateProgress) {
         NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
         Notification.Builder notificationBuilder = buildNotification(text);
-        if(showIndeterminateProgress) {
+        if (showIndeterminateProgress) {
             notificationBuilder.setProgress(0, 0, true);
         }
         notificationManager.notify(getNotificationId(), notificationBuilder.build());
@@ -299,7 +321,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
     private void createNotificationChannelIfNeeded() {
         NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
-        if(channel == null) {
+        if (channel == null) {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             String name = getBaseContext().getString(R.string.app_name);
             channel = new NotificationChannel(getDefaultNotificationChannelId(), name, importance);
@@ -337,10 +359,6 @@ public abstract class BasePiwigoUploadService extends IntentService {
         runJob(thisUploadJob, null);
     }
 
-    protected interface JobUploadListener {
-        void onJobReadyToUpload(Context c, UploadJob thisUploadJob);
-    }
-
     protected void runJob(UploadJob thisUploadJob, JobUploadListener listener) {
 
         int maxChunkUploadAutoRetries = prefs.getInt(getString(R.string.preference_data_upload_chunk_auto_retries_key), getResources().getInteger(R.integer.preference_data_upload_chunk_auto_retries_default));
@@ -348,6 +366,8 @@ public abstract class BasePiwigoUploadService extends IntentService {
         if (thisUploadJob == null) {
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Upload job could not be located immediately after creating it - weird!");
+            } else {
+                Crashlytics.log(Log.WARN, TAG, "Upload job could not be located immediately after creating it - weird!");
             }
             return;
         }
@@ -357,10 +377,10 @@ public abstract class BasePiwigoUploadService extends IntentService {
         try {
 
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(thisUploadJob.getConnectionPrefs());
-            if(sessionDetails == null) {
+            if (sessionDetails == null) {
                 LoginResponseHandler handler = new LoginResponseHandler();
                 invokeWithRetries(thisUploadJob, handler, 2);
-                if(handler.isSuccess()) {
+                if (handler.isSuccess()) {
                     sessionDetails = PiwigoSessionDetails.getInstance(thisUploadJob.getConnectionPrefs());
                 } else {
                     postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
@@ -369,24 +389,24 @@ public abstract class BasePiwigoUploadService extends IntentService {
             }
 
             ArrayList<CategoryItemStub> availableAlbumsOnServer = retrieveListOfAlbumsOnServer(thisUploadJob, sessionDetails);
-            if(availableAlbumsOnServer == null) {
+            if (availableAlbumsOnServer == null) {
                 //try again. This is really important.
                 availableAlbumsOnServer = retrieveListOfAlbumsOnServer(thisUploadJob, sessionDetails);
             }
-            if(availableAlbumsOnServer == null) {
+            if (availableAlbumsOnServer == null) {
                 // This is fatal really. It is necessary for a resilient upload. Stop the upload.
                 return;
             }
 
-            if(thisUploadJob.getTemporaryUploadAlbum() > 0) {
+            if (thisUploadJob.getTemporaryUploadAlbum() > 0) {
                 // check it still exists (ensure one is created again if not) - could have been deleted by a user manually.
                 boolean tempAlbumExists = false;
-                for(CategoryItemStub cat : availableAlbumsOnServer) {
-                    if(cat.getId() == thisUploadJob.getTemporaryUploadAlbum()) {
+                for (CategoryItemStub cat : availableAlbumsOnServer) {
+                    if (cat.getId() == thisUploadJob.getTemporaryUploadAlbum()) {
                         tempAlbumExists = true;
                     }
                 }
-                if(!tempAlbumExists) {
+                if (!tempAlbumExists) {
                     // allow a new one to be created and tracked
                     thisUploadJob.setTemporaryUploadAlbum(-1);
                 }
@@ -408,7 +428,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
             } else {
                 uniqueIdsList = thisUploadJob.getFileChecksums().values();
             }
-            if(!thisUploadJob.getFilesForUpload().isEmpty()) {
+            if (!thisUploadJob.getFilesForUpload().isEmpty()) {
                 // remove any files that already exist on the server from the upload.
                 ImageFindExistingImagesResponseHandler imageFindExistingHandler = new ImageFindExistingImagesResponseHandler(uniqueIdsList, nameUnique);
                 invokeWithRetries(thisUploadJob, imageFindExistingHandler, 2);
@@ -469,20 +489,20 @@ public abstract class BasePiwigoUploadService extends IntentService {
     }
 
     private ArrayList<CategoryItemStub> retrieveListOfAlbumsOnServer(UploadJob thisUploadJob, PiwigoSessionDetails sessionDetails) {
-        if(sessionDetails.isAdminUser(thisUploadJob.getConnectionPrefs())) {
+        if (sessionDetails.isAdminUser(thisUploadJob.getConnectionPrefs())) {
             AlbumGetSubAlbumsAdminResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
             invokeWithRetries(thisUploadJob, handler, 2);
-            if(handler.isSuccess()) {
+            if (handler.isSuccess()) {
                 PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse rsp = (PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) handler.getResponse();
                 return rsp.getAdminList().flattenTree();
             } else {
                 postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
             }
-        } else if(sessionDetails.isUseCommunityPlugin()) {
+        } else if (sessionDetails.isUseCommunityPlugin()) {
             final boolean recursive = true;
             CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive);
             invokeWithRetries(thisUploadJob, handler, 2);
-            if(handler.isSuccess()) {
+            if (handler.isSuccess()) {
                 CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse rsp = (CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) handler.getResponse();
                 return rsp.getAlbumNames();
             } else {
@@ -491,7 +511,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         } else {
             final boolean recursive = true;
             AlbumGetSubAlbumNamesResponseHandler handler = new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive);
-            if(handler.isSuccess()) {
+            if (handler.isSuccess()) {
                 invokeWithRetries(thisUploadJob, handler, 2);
                 AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse rsp = (AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) handler.getResponse();
                 return rsp.getAlbumNames();
@@ -504,15 +524,6 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
     public void saveStateToDisk(UploadJob thisUploadJob) {
         IOUtils.saveObjectToFile(getJobStateFile(getApplicationContext(), thisUploadJob.isRunInBackground(), thisUploadJob.getJobId()), thisUploadJob);
-    }
-
-    private static File getJobStateFile(Context c, boolean isBackgroundJob, long jobId) {
-        if(isBackgroundJob) {
-            File jobsFolder = new File(c.getExternalCacheDir(), "uploadJobs");
-            return new File(jobsFolder, jobId + ".state");
-        } else {
-            return new File(c.getExternalCacheDir(), "uploadJob.state");
-        }
     }
 
     private boolean deleteTemporaryUploadAlbum(UploadJob thisUploadJob) {
@@ -576,7 +587,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 File fileFoundOnServer = fileCheckSumEntry.getKey();
                 Long serverResourceId = preexistingItemsMap.get(uploadedFileUid);
 
-                // theoretically we needen't retrieve the item again if we already have it (not null), but it may have been changed by other means...
+                // theoretically we needn't retrieve the item again if we already have it (not null), but it may have been changed by other means...
                 ResourceItem resourceItem = thisUploadJob.getUploadedFileResource(fileFoundOnServer);
 
                 if (thisUploadJob.isFileUploadComplete(fileFoundOnServer)) {
@@ -605,7 +616,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
         for (Map.Entry<File, Long> entry : resourcesToRetrieve.entrySet()) {
 
-            ImageGetInfoResponseHandler getImageInfoHandler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null), multimediaExtensionList);
+            ImageGetInfoResponseHandler getImageInfoHandler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null, null), multimediaExtensionList);
             int allowedAttempts = 2;
             boolean success = false;
             while (!success && allowedAttempts > 0) {
@@ -641,9 +652,9 @@ public abstract class BasePiwigoUploadService extends IntentService {
         byte[] chunkBuffer = buildSensibleBuffer();
 
         Set<Long> allServerAlbumIds = null;
-        if(availableAlbumsOnServer != null) {
+        if (availableAlbumsOnServer != null) {
             allServerAlbumIds = new HashSet<>(availableAlbumsOnServer.size());
-            for(CategoryItemStub cat : availableAlbumsOnServer) {
+            for (CategoryItemStub cat : availableAlbumsOnServer) {
                 allServerAlbumIds.add(cat.getId());
             }
         }
@@ -651,16 +662,13 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
         for (File fileForUpload : thisUploadJob.getFilesForUpload()) {
 
-            if(!fileForUpload.exists()) {
+            if (!fileForUpload.exists()) {
                 thisUploadJob.cancelFileUpload(fileForUpload);
             }
 
             if (thisUploadJob.needsUpload(fileForUpload)) {
                 uploadFileData(thisUploadJob, fileForUpload, chunkBuffer, maxChunkUploadAutoRetries);
             }
-
-
-
 
 
             saveStateToDisk(thisUploadJob);
@@ -769,20 +777,74 @@ public abstract class BasePiwigoUploadService extends IntentService {
                         uploadedResource.setPrivacyLevel(thisUploadJob.getPrivacyLevelWanted());
                         uploadedResource.setFileChecksum(thisUploadJob.getFileChecksum(fileForUpload));
 
+                        long lastModifiedTime = fileForUpload.lastModified();
+                        if (lastModifiedTime > 0) {
+                            Date lastModDate = new Date(lastModifiedTime);
+                            uploadedResource.setCreationDate(lastModDate);
+                        }
+
+                        setUploadedImageDetailsFromExifData(fileForUpload, uploadedResource);
+
                         thisUploadJob.addFileUploaded(fileForUpload, uploadedResource);
 
                     } else if (!thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
                         //This block gets entered when the upload is cancelled for a file
                     } else {
                         // notify the listener of the final error we received from the server
-                        String errorMsg = getString(R.string.error_upload_server_response_invalid);
+                        String errorMsg = getString(R.string.error_upload_file_chunk_upload_failed_after_retries, maxChunkUploadAutoRetries);
                         notifyListenersOfCustomErrorUploadingFile(thisUploadJob, fileForUpload, errorMsg);
                     }
                 }
             } catch (FileNotFoundException e) {
+                Crashlytics.logException(e);
                 postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUpload, e));
             } catch (final IOException e) {
+                Crashlytics.logException(e);
                 postNewResponse(jobId, new PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUpload, e));
+            }
+        }
+    }
+
+    private void setUploadedImageDetailsFromExifData(File fileForUpload, ResourceItem uploadedResource) {
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(fileForUpload);
+            Directory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+            if(directory != null) {
+                Date creationDate = directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+                if (creationDate != null) {
+                    uploadedResource.setCreationDate(creationDate);
+                }
+                String imageDescription = directory.getString(ExifSubIFDDirectory.TAG_IMAGE_DESCRIPTION);
+                if (imageDescription != null) {
+                    uploadedResource.setName(imageDescription);
+                }
+            }
+            directory = metadata.getFirstDirectoryOfType(IptcDirectory.class);
+            if(directory != null) {
+                Date creationDate = directory.getDate(IptcDirectory.TAG_DATE_CREATED);
+                if (creationDate != null) {
+                    uploadedResource.setCreationDate(creationDate);
+                }
+                String imageDescription = directory.getString(IptcDirectory.TAG_CAPTION);
+                if (imageDescription != null) {
+                    uploadedResource.setName(imageDescription);
+                }
+            }
+        } catch (ImageProcessingException e) {
+            Crashlytics.logException(e);
+            // ignore for now
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Error parsing EXIF data : sinking", e);
+            } else {
+                Crashlytics.log(Log.ERROR, TAG, "Error parsing EXIF data : sinking");
+            }
+        } catch (IOException e) {
+            Crashlytics.logException(e);
+            // ignore for now
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Error parsing EXIF data : sinking", e);
+            } else {
+                Crashlytics.log(Log.ERROR, TAG, "Error parsing EXIF data : sinking");
             }
         }
     }
@@ -805,17 +867,17 @@ public abstract class BasePiwigoUploadService extends IntentService {
         uploadedResource.getLinkedAlbums().add(thisUploadJob.getUploadToCategory());
         ImageUpdateInfoResponseHandler imageInfoUpdateHandler = new ImageUpdateInfoResponseHandler(uploadedResource);
         invokeWithRetries(thisUploadJob, imageInfoUpdateHandler, 2);
-        if(!imageInfoUpdateHandler.isSuccess()) {
+        if (!imageInfoUpdateHandler.isSuccess()) {
             Iterator<Long> iter = uploadedResource.getLinkedAlbums().iterator();
             boolean ghostAlbumRemovedFromImage = false;
-            while(iter.hasNext()) {
+            while (iter.hasNext()) {
                 Long albumId = iter.next();
-                if(!allServerAlbumIds.contains(albumId)) {
+                if (!allServerAlbumIds.contains(albumId)) {
                     ghostAlbumRemovedFromImage = true;
                     iter.remove();
                 }
             }
-            if(ghostAlbumRemovedFromImage) {
+            if (ghostAlbumRemovedFromImage) {
                 // retry.
                 invokeWithRetries(thisUploadJob, imageInfoUpdateHandler, 2);
             }
@@ -890,7 +952,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                         lastChunkUploadResult = uploadStreamChunk(thisUploadJob, currentUploadFileChunk, maxChunkUploadAutoRetries);
 
                         chunkId++;
-                        boolean chunkUploadedOk = lastChunkUploadResult.first;
+                        @SuppressWarnings("ConstantConditions") boolean chunkUploadedOk = lastChunkUploadResult.first;
                         if (chunkUploadedOk) {
                             fileBytesUploaded += bytesOfDataInChunk;
                             thisUploadJob.markFileAsPartiallyUploaded(fileForUpload, uploadToFilename, fileBytesUploaded, chunkId);
@@ -918,6 +980,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 try {
                     bis.close();
                 } catch (IOException e) {
+                    Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {
                         Log.e(TAG, "Exception on closing File input stream", e);
                     }
@@ -949,6 +1012,10 @@ public abstract class BasePiwigoUploadService extends IntentService {
         }
 
         return new SerializablePair<>(imageChunkUploadHandler.isSuccess(), uploadedResource);
+    }
+
+    protected interface JobUploadListener {
+        void onJobReadyToUpload(Context c, UploadJob thisUploadJob);
     }
 
 

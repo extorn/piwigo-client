@@ -19,8 +19,8 @@ public class DownloadItemsListAdapter extends ArrayAdapter<ResourceItem.Resource
     }
 
     public int getPosition(String urlSought) {
-        for(int i = 0; i < getCount(); i++) {
-            if(getItem(i).getUrl().equals(urlSought)) {
+        for (int i = 0; i < getCount(); i++) {
+            if (getItem(i).getUrl().equals(urlSought)) {
                 return i;
             }
         }

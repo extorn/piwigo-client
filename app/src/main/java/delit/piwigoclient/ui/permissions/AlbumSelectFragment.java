@@ -39,7 +39,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     public static AlbumSelectFragment newInstance(ArrayList<CategoryItemStub> availableAlbums, BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
         AlbumSelectFragment fragment = new AlbumSelectFragment();
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
-        if(indirectSelection != null) {
+        if (indirectSelection != null) {
             args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
             args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>());
@@ -72,20 +72,19 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     }
 
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        if(isServerConnectionChanged()) {
+        if (isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
         }
 
-        if(isNotAuthorisedToAlterState()) {
+        if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
 
@@ -106,7 +105,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     @Override
     public void onResume() {
         super.onResume();
-        if(isServerConnectionChanged()) {
+        if (isServerConnectionChanged()) {
             return;
         }
         rerunRetrievalForFailedPages();
@@ -117,7 +116,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         if (availableItems == null) {
             //TODO FEATURE: Support albums list paging (load page size from settings)
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
-        } else if(getListAdapter() == null) {
+        } else if (getListAdapter() == null) {
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableItems, indirectSelection, getViewPrefs());
             ListView listView = getList();
             availableItemsAdapter.linkToListView(listView, getInitialSelection(), getCurrentSelection());
@@ -135,7 +134,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
 //        }
         EventBus.getDefault().post(new AlbumPermissionsSelectionCompleteEvent(getActionId(), selectedIdsSet));
         // now pop this screen off the stack.
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
     }
@@ -143,6 +142,16 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
+    }
+
+    private void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+        getUiHelper().dismissProgressDialog();
+//        if (response.getItemsOnPage() == response.getPageSize()) {
+//            //TODO FEATURE: Support groups paging
+//            getUiHelper().showOrQueueMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));
+//        }
+        availableItems = response.getAlbumNames();
+        rerunRetrievalForFailedPages();
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
@@ -154,15 +163,5 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
                 onListItemLoadFailed();
             }
         }
-    }
-
-    private void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
-        getUiHelper().dismissProgressDialog();
-//        if (response.getItemsOnPage() == response.getPageSize()) {
-//            //TODO FEATURE: Support groups paging
-//            getUiHelper().showOrQueueMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));
-//        }
-        availableItems = response.getAlbumNames();
-        rerunRetrievalForFailedPages();
     }
 }

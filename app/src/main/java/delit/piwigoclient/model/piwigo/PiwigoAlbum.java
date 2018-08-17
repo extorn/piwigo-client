@@ -13,45 +13,44 @@ import java.util.List;
  */
 public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> implements Serializable {
 
-    private int subAlbumCount;
-    private int spacerAlbums;
-    private int advertCount;
-
     private final transient Comparator<GalleryItem> itemComparator = new Comparator<GalleryItem>() {
         @Override
         public int compare(GalleryItem o1, GalleryItem o2) {
             boolean firstIsCategory = o1 instanceof CategoryItem;
             boolean secondIsCategory = o2 instanceof CategoryItem;
-            if(firstIsCategory && secondIsCategory) {
-                if(o1 == CategoryItem.ADVERT) {
+            if (firstIsCategory && secondIsCategory) {
+                if (o1 == CategoryItem.ADVERT) {
                     return -1;
-                } else if(o2 == CategoryItem.ADVERT) {
+                } else if (o2 == CategoryItem.ADVERT) {
                     return 1;
                 } else {
                     return 0;
                 }
-            } else if(!firstIsCategory && !secondIsCategory) {
-                if(o1 == GalleryItem.ADVERT) {
+            } else if (!firstIsCategory && !secondIsCategory) {
+                if (o1 == GalleryItem.ADVERT) {
                     return -1;
-                } else if(o2 == GalleryItem.ADVERT) {
+                } else if (o2 == GalleryItem.ADVERT) {
                     return 1;
                 } else {
                     return 0;
                 }
-            } else if(firstIsCategory) {
+            } else if (firstIsCategory) {
                 return -1;
-            } else{
+            } else {
                 return 1;
             }
         }
     };
+    private int subAlbumCount;
+    private int spacerAlbums;
+    private int advertCount;
 
     public PiwigoAlbum(CategoryItem albumDetails) {
         super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));
     }
 
     public void addItem(CategoryItem item) {
-        if(item != CategoryItem.ADVERT) {
+        if (item != CategoryItem.ADVERT) {
             subAlbumCount++;
         } else {
             advertCount++;
@@ -97,9 +96,10 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     public void setSpacerAlbumCount(int spacerAlbumsNeeded) {
         // remove all spacers
         ArrayList<GalleryItem> items = getItems();
-        while(items.remove(CategoryItem.BLANK)){}
+        while (items.remove(CategoryItem.BLANK)) {
+        }
         spacerAlbums = spacerAlbumsNeeded;
-        if(spacerAlbumsNeeded > 0) {
+        if (spacerAlbumsNeeded > 0) {
             // add correct number of spacers
             for (int i = 0; i < spacerAlbumsNeeded; i++) {
                 items.add(CategoryItem.BLANK);
@@ -115,7 +115,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
 
     public void updateSpacerAlbumCount(int albumsPerRow) {
         int spacerAlbumsNeeded = getSubAlbumCount() % albumsPerRow;
-        if(spacerAlbumsNeeded > 0) {
+        if (spacerAlbumsNeeded > 0) {
             spacerAlbumsNeeded = albumsPerRow - spacerAlbumsNeeded;
         }
         setSpacerAlbumCount(spacerAlbumsNeeded);
@@ -123,10 +123,10 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
 
     public GalleryItem remove(int idx) {
         GalleryItem removedItem = super.remove(idx);
-        if(removedItem instanceof CategoryItem) {
-            if(removedItem == CategoryItem.ADVERT) {
+        if (removedItem instanceof CategoryItem) {
+            if (removedItem == CategoryItem.ADVERT) {
                 advertCount--;
-            } else if(removedItem == CategoryItem.BLANK) {
+            } else if (removedItem == CategoryItem.BLANK) {
                 subAlbumCount--;
             }
         } else {
@@ -136,7 +136,19 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     @Override
-    public long getImgResourceCount() {
+    public int getImgResourceCount() {
         return getContainerDetails().getPhotoCount();
+    }
+
+    public CategoryItem getSubAlbumByRepresentativeImageId(long representativePictureId) {
+        for (GalleryItem item : this.getItems()) {
+            if (item instanceof CategoryItem) {
+                Long albumRepresentativePictureId = ((CategoryItem) item).getRepresentativePictureId();
+                if (albumRepresentativePictureId != null && representativePictureId == albumRepresentativePictureId) {
+                    return (CategoryItem) item;
+                }
+            }
+        }
+        return null;
     }
 }

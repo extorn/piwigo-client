@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -42,23 +42,25 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         if (thumbnailSize != null) {
             params.put("thumbnail_size", thumbnailSize);
         }
-        if (recursive == true || !PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs())) {
+        if (recursive || !PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs())) {
             // community plugin is very broken!
             params.put("recursive", String.valueOf(recursive));
         }
+        boolean communityPluginInstalled = PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs());
+        params.put("faked_by_community", String.valueOf(!communityPluginInstalled));
         return params;
     }
 
     @Override
     public boolean getNewLogin() {
         boolean success = super.getNewLogin();
-        if(success) {
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
-                withConnectionPreferences(getConnectionPrefs().asGuest());
-                return super.getNewLogin();
-            }
-        }
+//        if(success) {
+//            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+//            if(sessionDetails != null && sessionDetails.isUseCommunityPlugin() && !sessionDetails.isGuest()) {
+//                withConnectionPreferences(getConnectionPrefs().asGuest());
+//                return super.getNewLogin();
+//            }
+//        }
         return success;
     }
 
@@ -81,7 +83,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
                 name = nameElem.getAsString();
             }
 
-            long photos = category.get("nb_images").getAsLong();
+            int photos = category.get("nb_images").getAsInt();
             long totalPhotos = category.get("total_nb_images").getAsLong();
             long subCategories = category.get("nb_categories").getAsLong();
 
@@ -112,7 +114,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
                 thumbnail = category.get("tn_url").getAsString();
             }
 
-            Date dateLastAltered = null;
+            Date dateLastAltered;
             try {
                 if (null == dateLastAlteredStr) {
                     dateLastAltered = new Date(0);
@@ -120,6 +122,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
                     dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
                 }
             } catch (ParseException e) {
+                Crashlytics.logException(e);
                 throw new JSONException("Unable to parse date " + dateLastAlteredStr);
             }
 

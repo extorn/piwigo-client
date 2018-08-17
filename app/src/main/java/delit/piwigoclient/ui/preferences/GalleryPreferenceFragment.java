@@ -13,12 +13,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -27,9 +28,10 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
+import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.ThemeAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.util.DisplayUtils;
+import delit.piwigoclient.util.IOUtils;
 
 /**
  * Created by gareth on 12/05/17.
@@ -38,43 +40,45 @@ import delit.piwigoclient.util.DisplayUtils;
 public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Gallery Settings";
-    private View view;
-
     private final Preference.OnPreferenceChangeListener videoCacheEnabledPrefListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(final Preference preference, Object value) {
             final Boolean val = (Boolean) value;
-            if(Boolean.TRUE.equals(val)) {
+            if (Boolean.TRUE.equals(val)) {
                 getUiHelper().runWithExtraPermissions(GalleryPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
             } else {
                 getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
+                getUiHelper().showToast(R.string.video_caching_disabled_not_recommended);
             }
             return true;
         }
     };
-
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its pkg value.
      */
-    private final Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+    private final Preference.OnPreferenceChangeListener selectedImageSizeNativeSupportCheckListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
-            if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_thumbnail_size_key))) {
-                if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_thumbnail_size_not_natively_supported_by_server));
-                }
-            } else if (getView() != null && preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key))) {
-                if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_slideshow_image_size_not_natively_supported_by_server));
+            if (getView() != null) {
+                if (preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_thumbnail_size_key))
+                        || preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_album_thumbnail_size_key))) {
+                    if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_thumbnail_size_not_natively_supported_by_server));
+                    }
+                } else if (preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key))) {
+                    if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_slideshow_image_size_not_natively_supported_by_server));
+                    }
                 }
             }
             return true;
         }
     };
+    private View view;
 
     // Not needed from API v23 and above
     public Context getContext() {
@@ -84,13 +88,13 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
     private float getScreenWidthInches() {
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float)dm.widthPixels / dm.xdpi;
+        return (float) dm.widthPixels / dm.xdpi;
     }
 
     private float getScreenHeightInches() {
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float)dm.heightPixels / dm.xdpi;
+        return (float) dm.heightPixels / dm.xdpi;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -120,7 +124,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
             screenWidth = getScreenHeightInches();
         }
         int columnsToShow = Math.max(1, Math.round(screenWidth - (screenWidth % 1))); // allow a minimum of 1 inch per column
-        return Math.max(1,columnsToShow); // never allow less than one column by default.
+        return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 
     /**
@@ -129,14 +133,14 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
      */
     @SuppressWarnings("JavadocReference")
     private int getDefaultAlbumsColumnCount(int orientationId) {
-        float screenWidth ;
+        float screenWidth;
         if (getResources().getConfiguration().orientation == orientationId) {
             screenWidth = getScreenWidthInches();
         } else {
             screenWidth = getScreenHeightInches();
         }
-        int columnsToShow = Math.max(1, Math.round(screenWidth - (screenWidth % 3))); // allow a minimum of 3 inch per column
-        return Math.max(1,columnsToShow); // never allow less than one column by default.
+        int columnsToShow = Math.max(1, Math.round(screenWidth - (screenWidth % 1))); // allow a minimum of 1 inch per column
+        return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 
     @Override
@@ -147,7 +151,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        if(view != null) {
+        if (view != null) {
             return view;
         }
         view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
@@ -173,6 +177,23 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         int defaultVal = getDefaultAlbumsColumnCount(Configuration.ORIENTATION_LANDSCAPE);
         pref.updateDefaultValue(defaultVal);
 
+        Preference pageStructurePref = findPreference(R.string.preference_gallery_masonry_view_key);
+        pageStructurePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(AlbumAlteredEvent.ALL_ALBUMS_ID));
+                return true;
+            }
+        });
+        pageStructurePref = findPreference(R.string.preference_gallery_show_large_thumbnail_key);
+        pageStructurePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(AlbumAlteredEvent.ALL_ALBUMS_ID));
+                return true;
+            }
+        });
+
         pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_images_preferredColumnsLandscape_key);
         defaultVal = getDefaultImagesColumnCount(Configuration.ORIENTATION_LANDSCAPE);
         pref.updateDefaultValue(defaultVal);
@@ -185,22 +206,18 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         defaultVal = getDefaultImagesColumnCount(Configuration.ORIENTATION_PORTRAIT);
         pref.updateDefaultValue(defaultVal);
 
-        pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_detail_sheet_offset_key);
-        int stdOffsetDp = getResources().getInteger(R.integer.preference_gallery_detail_sheet_offset_default);
-        stdOffsetDp += DisplayUtils.pxToDp(getContext(), DisplayUtils.getNavBarHeight(getContext()));
-        defaultVal = stdOffsetDp;
-        pref.updateDefaultValue(defaultVal);
-
-        findPreference(R.string.preference_gallery_item_thumbnail_size_key).setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
-        findPreference(R.string.preference_gallery_item_slideshow_image_size_key).setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
+        findPreference(R.string.preference_gallery_album_thumbnail_size_key).setOnPreferenceChangeListener(selectedImageSizeNativeSupportCheckListener);
+        findPreference(R.string.preference_gallery_item_thumbnail_size_key).setOnPreferenceChangeListener(selectedImageSizeNativeSupportCheckListener);
+        findPreference(R.string.preference_gallery_item_slideshow_image_size_key).setOnPreferenceChangeListener(selectedImageSizeNativeSupportCheckListener);
 
         Preference button = findPreference(R.string.preference_gallery_clearMemoryCache_key);
         button.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                PicassoFactory.getInstance().clearPicassoCache(getContext().getApplicationContext());
+                PicassoFactory.getInstance().clearPicassoCache(getContext().getApplicationContext(), true);
                 getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
+                preference.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
                 return true;
 
             }
@@ -214,7 +231,8 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
                 try {
                     CacheUtils.clearVideoCache(getContext());
                     getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.videoCacheCleared_message));
-                } catch(IOException e) {
+                } catch (IOException e) {
+                    Crashlytics.logException(e);
                     getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.videoCacheClearFailed_message));
                 }
                 setVideoCacheButtonText(preference);
@@ -226,20 +244,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
     }
 
     private String suffixCacheSize(String basicString, long cacheSizeBytes) {
-        double cacheBytes = cacheSizeBytes;
-        long KB = 1024;
-        long MB = KB * 1024;
-        String spaceSuffix = " ";
-        if(cacheBytes < KB) {
-            spaceSuffix += String.format(Locale.getDefault(), "(%1$.0f Bytes)", cacheBytes);
-        } else if(cacheBytes < MB) {
-            double kb = (cacheBytes / KB);
-            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f KB)", kb);
-        } else {
-            double mb = (cacheBytes / MB);
-            spaceSuffix += String.format(Locale.getDefault(), "(%1$.1f MB)", mb);
-        }
-        return basicString + spaceSuffix;
+        return basicString + '(' + IOUtils.toNormalizedText(cacheSizeBytes) + ')';
     }
 
     private void setVideoCacheButtonText(Preference videoCacheFlushButton) {

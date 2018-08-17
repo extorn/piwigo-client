@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -150,13 +151,30 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                 m.reset(originalResourceUrl);
             }
 
-            String dateLastAlteredStr = image.get("date_available").getAsString();
-            Date dateLastAltered;
-            try {
-                dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
-            } catch (ParseException e) {
-                throw new JSONException("Unable to parse date " + dateLastAlteredStr);
+            Date dateLastAltered = null;
+            JsonElement dateLastAlteredElem = image.get("date_available");
+            if (!dateLastAlteredElem.isJsonNull()) {
+                String dateLastAlteredStr = dateLastAlteredElem.getAsString();
+                try {
+                    dateLastAltered = piwigoDateFormat.parse(dateLastAlteredStr);
+                } catch (ParseException e) {
+                    Crashlytics.logException(e);
+                    throw new JSONException("Unable to parse date " + dateLastAlteredStr);
+                }
             }
+
+            Date dateCreated = null;
+            JsonElement dateCreationElem = image.get("date_creation");
+            if (!dateCreationElem.isJsonNull()) {
+                String dateCreatedStr = dateCreationElem.getAsString();
+                try {
+                    dateCreated = piwigoDateFormat.parse(dateCreatedStr);
+                } catch (ParseException e) {
+                    Crashlytics.logException(e);
+                    throw new JSONException("Unable to parse date " + dateCreatedStr);
+                }
+            }
+
 
             HashSet<Long> linkedAlbums = new HashSet<>();
             JsonArray linkedAlbumsJsonArr = image.get("categories").getAsJsonArray();
@@ -183,7 +201,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                 if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
                 }
-                item = new VideoResourceItem(id, name, description, dateLastAltered, thumbnail);
+                item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, thumbnail);
                 ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", originalResourceUrl, originalResourceUrlWidth, originalResourceUrlHeight);
                 item.addResourceFile(originalImage);
                 item.setFullSizeImage(originalImage);
@@ -197,7 +215,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                 Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
                 thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
 
-                PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateLastAltered, thumbnail);
+                PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateCreated, dateLastAltered, thumbnail);
 
                 long bestWidth = 0;
 
@@ -205,17 +223,17 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                     String imageSizeKey = imageSizeKeys.next();
                     JsonObject imageSizeObj = derivatives.get(imageSizeKey).getAsJsonObject();
                     JsonElement jsonElem = imageSizeObj.get("url");
-                    if(jsonElem.isJsonNull()) {
+                    if (jsonElem.isJsonNull()) {
                         continue;
                     }
                     String url = jsonElem.getAsString();
                     jsonElem = imageSizeObj.get("width");
-                    if(jsonElem.isJsonNull()) {
+                    if (jsonElem.isJsonNull()) {
                         continue;
                     }
                     int thisWidth = jsonElem.getAsInt();
                     jsonElem = imageSizeObj.get("height");
-                    if(jsonElem.isJsonNull()) {
+                    if (jsonElem.isJsonNull()) {
                         continue;
                     }
                     int thisHeight = jsonElem.getAsInt();

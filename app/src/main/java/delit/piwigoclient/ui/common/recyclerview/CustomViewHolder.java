@@ -13,7 +13,7 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
         super(view);
     }
 
-    public abstract void fillValues(Context context, T newItem, boolean allowItemDeletion);
+    public abstract void fillValues(Context context, T item, boolean allowItemDeletion);
 
     public abstract void cacheViewFieldsAndConfigure();
 
@@ -36,5 +36,8 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
 
     public CustomClickListener getItemActionListener() {
         return itemActionListener;
+    }
+
+    public <T> void redisplayOldValues(Context context, T newItem, boolean allowItemDeletion) {
     }
 }

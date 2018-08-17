@@ -48,10 +48,12 @@
 
     <TextView
         android:id="@+id/resource_name"
+        android:layout_marginTop="-2dp"
         android:layout_marginStart="2dp"
         android:layout_marginEnd="2dp"
+        android:layout_marginBottom="2dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/thumbnail_container"
         android:textAppearance="?attr/textAppearanceListItem" />
 

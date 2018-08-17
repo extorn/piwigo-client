@@ -7,8 +7,8 @@ import java.util.Date;
  */
 public class VideoResourceItem extends ResourceItem {
 
-    public VideoResourceItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
-        super(id, name, description, lastAltered, thumbnailUrl);
+    public VideoResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String thumbnailUrl) {
+        super(id, name, description, dateCreated, lastAltered, thumbnailUrl);
     }
 
     public int getType() {

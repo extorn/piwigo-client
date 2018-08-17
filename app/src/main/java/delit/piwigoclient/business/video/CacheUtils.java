@@ -3,13 +3,13 @@ package delit.piwigoclient.business.video;
 import android.content.Context;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.util.Base64Utils;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InvalidClassException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,11 +28,33 @@ import delit.piwigoclient.util.IOUtils;
 
 public class CacheUtils {
 
+    private static final FilenameFilter metadataFileFilter = new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+            return name.endsWith(".dat");
+        }
+    };
+    private static final Comparator<CachedContent> cacheItemAgeComparator = new Comparator<CachedContent>() {
+
+        @Override
+        public int compare(CachedContent o1, CachedContent o2) {
+            Date first = o1.getLastAccessed();
+            Date second = o2.getLastAccessed();
+            if (first == null) {
+                return -1;
+            }
+            if (second == null) {
+                return 1;
+            }
+            return o1.getLastAccessed().compareTo(o2.getLastAccessed());
+        }
+    };
+
     private static File getVideoCacheFolder(Context c) throws IOException {
         File f = new File(c.getApplicationContext().getExternalCacheDir(), "videos");
-        if(!f.exists() || !f.isDirectory()) {
+        if (!f.exists() || !f.isDirectory()) {
             boolean created = f.mkdir();
-            if(!created) {
+            if (!created) {
                 throw new IOException("Unable to configure the cache folder");
             }
         }
@@ -46,7 +68,11 @@ public class CacheUtils {
 
     public static void clearVideoCache(Context c) throws IOException {
         File cacheDir = getVideoCacheFolder(c);
-        deleteQuietly(cacheDir);
+        if (deleteQuietly(cacheDir)) {
+            cacheDir.mkdir();
+        } else {
+            Log.e("CacheUtils", "Error deleting video cache. Delete failed");
+        }
 //        for(File f : cacheDir.listFiles()) {
 //            if(f.isDirectory()) {
 //                deleteDir(f);
@@ -58,34 +84,11 @@ public class CacheUtils {
 
     public static CachedContent loadCachedContent(File f) {
         CachedContent cachedContent = IOUtils.readObjectFromFile(f);
-        if(cachedContent != null) {
+        if (cachedContent != null) {
             cachedContent.setPersistTo(f);
         }
         return cachedContent;
     }
-
-    private static final FilenameFilter metadataFileFilter = new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-            return name.endsWith(".dat");
-        }
-    };
-
-    private static final Comparator<CachedContent> cacheItemAgeComparator = new Comparator<CachedContent>() {
-
-        @Override
-        public int compare(CachedContent o1, CachedContent o2) {
-            Date first = o1.getLastAccessed();
-            Date second = o2.getLastAccessed();
-            if(first == null) {
-                return -1;
-            }
-            if(second == null) {
-                return 1;
-            }
-            return o1.getLastAccessed().compareTo(o2.getLastAccessed());
-        }
-    };
 
     public static void manageVideoCache(Context c, long maxCacheSizeBytesVar) throws IOException {
         long maxCacheSizeBytes = Math.max(0, maxCacheSizeBytesVar);
@@ -99,7 +102,7 @@ public class CacheUtils {
                 while (!loaded) {
                     try {
                         CachedContent content = loadCachedContent(cacheMetadataFile);
-                        if(content != null) {
+                        if (content != null) {
                             cacheContent.add(content);
                             totalCacheSize += content.getTotalBytes();
                         } else {
@@ -109,6 +112,7 @@ public class CacheUtils {
                         }
                         loaded = true;
                     } catch (IOException e) {
+                        Crashlytics.logException(e);
                         // occurs when file is in use
                         attempts++;
                         try {
@@ -138,19 +142,21 @@ public class CacheUtils {
 
     private static void deleteCacheItem(CachedContent cc) {
         File metadataFile = cc.getPersistTo();
-        if(metadataFile.exists()) {
+        if (metadataFile.exists()) {
             boolean deleted = metadataFile.delete();
             if (deleted) {
                 File dataFile = cc.getCachedDataFile();
-                if(dataFile.exists()) {
+                if (dataFile.exists()) {
                     deleted = dataFile.delete();
                 }
             }
-            if(!deleted) {
+            if (!deleted) {
                 // something went wrong...
                 //TODO think of some thing to do in this instance...
-                if(BuildConfig.DEBUG) {
-                    Log.e("VideoCacheUtils","Error, Unable to delete cache item");
+                if (BuildConfig.DEBUG) {
+                    Log.e("VideoCacheUtils", "Error, Unable to delete cache item");
+                } else {
+                    Crashlytics.log(Log.ERROR, "VideoCacheUtils", "Error, Unable to delete cache item");
                 }
             }
         }
@@ -160,36 +166,41 @@ public class CacheUtils {
     public static void saveCachedContent(CachedContent cacheFileContent) throws IOException {
         ObjectOutputStream oos = null;
         try {
+            if (!cacheFileContent.getPersistTo().exists()) {
+                cacheFileContent.getPersistTo().getParentFile().mkdirs();
+                cacheFileContent.getPersistTo().createNewFile();
+            }
             oos = new ObjectOutputStream(new FileOutputStream(cacheFileContent.getPersistTo()));
             oos.writeObject(cacheFileContent);
             oos.flush();
         } finally {
-            if(oos != null) {
+            if (oos != null) {
                 oos.close();
             }
         }
     }
 
     public static void deleteCachedContent(Context ctx, String uri) throws IOException {
-        String filename = getVideoFilename(uri);
-        File metadataFile = getCacheMetadataFile(ctx, filename);
-        if(metadataFile.exists()) {
+        String filenameStem = getVideoCacheFilenameStemFromVideoUri(uri);
+        File metadataFile = getCacheMetadataFile(ctx, filenameStem);
+        if (metadataFile.exists()) {
             boolean deleted = metadataFile.delete();
             if (deleted) {
-                File dataFile = getCacheDataFile(ctx, filename);
-                if(dataFile.exists()) {
+                File dataFile = getCacheDataFile(ctx, filenameStem);
+                if (dataFile.exists()) {
                     deleted = dataFile.delete();
                 }
             }
-            if(!deleted) {
+            if (!deleted) {
                 // something went wrong...
                 //TODO think of some thing to do in this instance...
             }
         }
     }
 
-    public static String getVideoFilename(String uri) {
-        return uri.replaceAll("^.*/", "");
+    public static String getVideoCacheFilenameStemFromVideoUri(String uri) {
+        return Base64Utils.encodeUrlSafe(uri.toString().getBytes());
+//        return uri.replaceAll("^.*/", "");
     }
 
     public static File getCacheMetadataFile(Context context, String connectedToFile) throws IOException {
@@ -254,11 +265,12 @@ public class CacheUtils {
             if (!cacheFolder.exists()) {
                 cacheFolder.mkdir();
             }
-            if(!(cacheFolder.canRead() && cacheFolder.canWrite())) {
+            if (!(cacheFolder.canRead() && cacheFolder.canWrite())) {
                 //Permission has been revoked!
                 throw new SecurityException(context.getString(R.string.error_insufficient_permissions_for_cache_folder));
             }
-        } catch(SecurityException e) {
+        } catch (SecurityException e) {
+            Crashlytics.logException(e);
             //Permission has been revoked!
             throw new SecurityException(context.getString(R.string.error_insufficient_permissions_for_cache_folder));
         }
@@ -270,6 +282,7 @@ public class CacheUtils {
             File responseCacheFolder = getBasicCacheFolder(context);
             return folderSize(responseCacheFolder);
         } catch (SecurityException e) {
+            Crashlytics.logException(e);
             return 0;
         }
     }
@@ -279,6 +292,7 @@ public class CacheUtils {
             File videoCacheFolder = getVideoCacheFolder(context);
             return folderSize(videoCacheFolder);
         } catch (IOException e) {
+            Crashlytics.logException(e);
             return 0;
         }
     }
@@ -286,7 +300,7 @@ public class CacheUtils {
     private static long folderSize(File directory) {
         long length = 0;
         File[] fileList = directory.listFiles();
-        if(fileList != null) {
+        if (fileList != null) {
             for (File file : fileList) {
                 if (file.isFile())
                     length += file.length();

@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.File;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.StopActivityEvent;
@@ -29,9 +30,9 @@ import delit.piwigoclient.ui.file.RecyclerViewFolderItemSelectFragment;
  */
 
 public class FileSelectActivity extends MyActivity {
-    private static final String STATE_STARTED_ALREADY = "startedAlready";
     public static final String INTENT_SELECTED_FILES = "selectedFiles";
     public static final String INTENT_SOURCE_EVENT_ID = "sourceEventId";
+    private static final String STATE_STARTED_ALREADY = "startedAlready";
     public static String INTENT_DATA = "configData";
     private boolean startedWithPermissions;
 
@@ -72,11 +73,11 @@ public class FileSelectActivity extends MyActivity {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             startedWithPermissions = savedInstanceState.getBoolean(STATE_STARTED_ALREADY);
         }
 
-        if(!hasAgreedToEula()) {
+        if (!hasAgreedToEula()) {
             finish();
         } else {
             setContentView(R.layout.activity_file_select);
@@ -87,9 +88,9 @@ public class FileSelectActivity extends MyActivity {
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.app_content);
-        if(fragment instanceof BackButtonHandler && fragment.isAdded()) {
+        if (fragment instanceof BackButtonHandler && fragment.isAdded()) {
             boolean sinkEvent = ((BackButtonHandler) fragment).onBackButton();
-            if(!sinkEvent) {
+            if (!sinkEvent) {
                 finish();
             }
         } else {
@@ -100,7 +101,7 @@ public class FileSelectActivity extends MyActivity {
     @Subscribe
     public void onEvent(FileSelectionCompleteEvent event) {
         int sourceEventId = getTrackedIntentType(event.getActionId());
-        if(sourceEventId >= 0) {
+        if (sourceEventId >= 0) {
             Intent result = this.getIntent();
             result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
             if (event.getSelectedFiles() != null) {
@@ -115,7 +116,7 @@ public class FileSelectActivity extends MyActivity {
 
     @Subscribe
     public void onEvent(StopActivityEvent event) {
-        if(getUiHelper().isTrackingRequest(event.getActionId())) {
+        if (getUiHelper().isTrackingRequest(event.getActionId())) {
             finish();
         }
     }
@@ -126,7 +127,7 @@ public class FileSelectActivity extends MyActivity {
         String initialFolder = event.getInitialFolder();
 
         File f = new File(initialFolder);
-        while(!f.exists()) {
+        while (!f.exists()) {
             f = f.getParentFile();
         }
         initialFolder = f.getAbsolutePath();
@@ -138,6 +139,9 @@ public class FileSelectActivity extends MyActivity {
         // basic settings
         prefs.selectable(event.isMultiSelectAllowed(), false);
         prefs.setInitialSelection(event.getInitialSelection());
+        prefs.withShowFilenames(OtherPreferences.isShowFilenames(getSharedPrefs(), getApplicationContext()));
+        prefs.withColumnsOfFiles(OtherPreferences.getFileSelectorColumnsOfFiles(getSharedPrefs(), getApplicationContext()));
+        prefs.withColumnsOfFolders(OtherPreferences.getFileSelectorColumnsOfFolders(getSharedPrefs(), getApplicationContext()));
 
 
         removeFragmentsFromHistory(RecyclerViewFolderItemSelectFragment.class, true);
@@ -145,7 +149,7 @@ public class FileSelectActivity extends MyActivity {
         int uniqueEventId = TrackableRequestEvent.getNextEventId();
 
         RecyclerViewFolderItemSelectFragment fragment = RecyclerViewFolderItemSelectFragment.newInstance(prefs, uniqueEventId);
-        setTrackedIntent(uniqueEventId,event.getActionId());
+        setTrackedIntent(uniqueEventId, event.getActionId());
         showFragmentNow(fragment);
     }
 
@@ -160,10 +164,10 @@ public class FileSelectActivity extends MyActivity {
 
         Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.app_content);
         String lastFragmentName = "";
-        if(lastFragment != null) {
+        if (lastFragment != null) {
             lastFragmentName = lastFragment.getTag();
         }
-        if(!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
+        if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
             getSupportFragmentManager().popBackStackImmediate();
         }
         //TODO I've added code that clears stack when showing root album... is this "good enough"?

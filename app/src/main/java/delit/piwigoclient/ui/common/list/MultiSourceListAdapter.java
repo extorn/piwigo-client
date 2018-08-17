@@ -12,6 +12,8 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -30,9 +32,9 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
     private final Context context;
     private final S adapterPrefs;
+    private final ArrayList<T> availableItems;
     private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
     private HashSet<Long> indirectlySelectedItems;
-    private final ArrayList<T> availableItems;
     private LongSparseArray<Integer> itemIdToLevelMap;
     private LongSparseArray<Integer> idPositionMap;
     private ListView parentList;
@@ -114,7 +116,7 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        if(idPositionMap == null) {
+        if (idPositionMap == null) {
             idPositionMap = buildIdPositionMap();
         }
         View view = convertView; // re-use an existing view, if one is supplied
@@ -132,9 +134,9 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
         final AppCompatCheckboxTriState imageView = getAppCompatCheckboxTriState(view);
 
-        imageView.setVisibility(showItemSelectedMarker(imageView)?View.VISIBLE:View.GONE);
+        imageView.setVisibility(showItemSelectedMarker(imageView) ? View.VISIBLE : View.GONE);
 
-        if(getAdapterPrefs().isMultiSelectionEnabled()) {
+        if (getAdapterPrefs().isMultiSelectionEnabled()) {
             imageView.setButtonDrawable(R.drawable.always_clear_checkbox);
         } else {
             imageView.setButtonDrawable(R.drawable.always_clear_radio);
@@ -165,15 +167,16 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         return LayoutInflater.from(context).inflate(getItemViewLayoutRes(), parent, false);
     }
 
-    protected @LayoutRes int getItemViewLayoutRes() {
+    protected @LayoutRes
+    int getItemViewLayoutRes() {
         return R.layout.layout_permission_list_item;
     }
 
     /**
      * Override this to tweak the display of the items when using the default layout.
      *
-     * @param view View of an item
-     * @param item item to be displayed
+     * @param view              View of an item
+     * @param item              item to be displayed
      * @param levelInTreeOfItem level within the tree of the item (root is 0)
      */
     protected void setViewContentForItemDisplay(View view, T item, int levelInTreeOfItem) {
@@ -186,13 +189,13 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        adapterPrefs.setEnabled(enabled);
+    public boolean isEnabled() {
+        return adapterPrefs.isEnabled();
     }
 
     @Override
-    public boolean isEnabled() {
-        return adapterPrefs.isEnabled();
+    public void setEnabled(boolean enabled) {
+        adapterPrefs.setEnabled(enabled);
     }
 
     @Override
@@ -213,23 +216,23 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         return new HashSet<>(indirectlySelectedItems);
     }
 
-    public int getPosition(Long itemId) {
-        if(itemId == null) {
-            return -1;
-        }
-        if(idPositionMap == null) {
-            idPositionMap = buildIdPositionMap();
-        }
-        Integer pos = idPositionMap.get(itemId);
-        if(pos != null) {
-            return pos;
-        }
-        return -1;
-    }
-
     public void setIndirectlySelectedItems(HashSet<Long> indirectAlbumPermissions) {
         indirectlySelectedItems = indirectAlbumPermissions;
         notifyDataSetChanged();
+    }
+
+    public int getPosition(Long itemId) {
+        if (itemId == null) {
+            return -1;
+        }
+        if (idPositionMap == null) {
+            idPositionMap = buildIdPositionMap();
+        }
+        Integer pos = idPositionMap.get(itemId);
+        if (pos != null) {
+            return pos;
+        }
+        return -1;
     }
 
     @Override
@@ -240,9 +243,23 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
                 selectedItems.add(getItemById(selectedItemId));
             }
             return selectedItems;
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
             throw new IllegalStateException("Not all items are loaded yet. Unable to provide a list of them");
         }
+    }
+
+    @Override
+    public void setSelectedItems(HashSet<Long> selectedResourceIds) {
+        if (initialSelectedResourceIds == null) {
+            throw new IllegalStateException("initially selected items should never be null at this point");
+        }
+        parentList.clearChoices();
+        HashSet<Long> resourcesToSelect = selectedResourceIds != null ? new HashSet<>(selectedResourceIds) : new HashSet<>(initialSelectedResourceIds);
+        for (Long resourceId : resourcesToSelect) {
+            parentList.setItemChecked(getPosition(resourceId), true);
+        }
+
     }
 
     @Override
@@ -257,7 +274,7 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
 
     @Override
     public void selectAllItemIds() {
-        for(int i = 0; i < parentList.getCount(); i++) {
+        for (int i = 0; i < parentList.getCount(); i++) {
             parentList.setItemChecked(i, true);
         }
     }
@@ -273,28 +290,15 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
     }
 
     @Override
-    public void setSelectedItems(HashSet<Long> selectedResourceIds) {
-        if(initialSelectedResourceIds == null) {
-            throw new IllegalStateException("initially selected items should never be null at this point");
-        }
-        parentList.clearChoices();
-        HashSet<Long> resourcesToSelect = selectedResourceIds != null ? new HashSet<>(selectedResourceIds) : new HashSet<Long>(initialSelectedResourceIds);
-        for(Long resourceId : resourcesToSelect) {
-            parentList.setItemChecked(getPosition(resourceId), true);
-        }
-
-    }
-
-    @Override
     public boolean isAllowItemDeselection(long itemId) {
         return !adapterPrefs.isInitialSelectionLocked() || !initialSelectedResourceIds.contains(itemId);
     }
 
     public void linkToListView(final ListView listView, HashSet<Long> initialSelection, HashSet<Long> currentSelection) {
         parentList = listView;
-        if(adapterPrefs.isMultiSelectionEnabled()) {
+        if (adapterPrefs.isMultiSelectionEnabled()) {
             listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        } else if(adapterPrefs.isAllowItemSelection()) {
+        } else if (adapterPrefs.isAllowItemSelection()) {
             listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
         } else {
             listView.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
@@ -304,6 +308,14 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         // set the initial selection.
         setInitiallySelectedItems(initialSelection);
         setSelectedItems(currentSelection);
+    }
+
+    public ArrayList<Long> getItemIds() {
+        ArrayList<Long> ids = new ArrayList<>(availableItems.size());
+        for (T item : availableItems) {
+            ids.add(getItemId(item));
+        }
+        return ids;
     }
 
     protected class ItemSelectionListener implements CompoundButton.OnCheckedChangeListener {
@@ -318,20 +330,11 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             long itemId = getItemId(position);
             if (!isChecked) {
-                if(!isAllowItemDeselection(itemId)) {
+                if (!isAllowItemDeselection(itemId)) {
                     parentList.setItemChecked(position, true);
                 }
             }
         }
-    }
-
-
-    public ArrayList<Long> getItemIds() {
-        ArrayList<Long> ids = new ArrayList<>(availableItems.size());
-        for(T item : availableItems) {
-            ids.add(getItemId(item));
-        }
-        return ids;
     }
 
 }

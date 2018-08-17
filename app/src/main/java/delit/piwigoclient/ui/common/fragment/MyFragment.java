@@ -7,10 +7,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.crashlytics.android.Crashlytics;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -33,8 +36,18 @@ public class MyFragment extends Fragment {
     private String piwigoSessionToken;
     private String piwigoServerConnected;
 
-    protected long addActiveServiceCall(int titleStringId, long messageId) {
+    protected long addActiveServiceCall(@StringRes int titleStringId, long messageId) {
         return addActiveServiceCall(getString(titleStringId), messageId);
+    }
+
+    protected long addNonBlockingActiveServiceCall(@StringRes int titleStringId, long messageId) {
+        uiHelper.addNonBlockingActiveServiceCall(getString(titleStringId), messageId);
+        return messageId;
+    }
+
+    protected long addNonBlockingActiveServiceCall(String title, long messageId) {
+        uiHelper.addNonBlockingActiveServiceCall(title, messageId);
+        return messageId;
     }
 
     protected long addActiveServiceCall(String title, long messageId) {
@@ -48,6 +61,7 @@ public class MyFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        Crashlytics.log("onDetach : " + getClass().getName());
         uiHelper.deregisterFromActiveServiceCalls();
         uiHelper.closeAllDialogs();
         super.onDetach();
@@ -55,6 +69,7 @@ public class MyFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        Crashlytics.log("onSaveInstanceState : " + getClass().getName());
         uiHelper.onSaveInstanceState(outState);
         outState.putString(STATE_ACTIVE_SESSION_TOKEN, piwigoSessionToken);
         outState.putString(STATE_ACTIVE_SERVER_CONNECTION, piwigoServerConnected);
@@ -63,8 +78,9 @@ public class MyFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+        Crashlytics.log("onAttach : " + getClass().getName());
         prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        if(uiHelper == null) {
+        if (uiHelper == null) {
             uiHelper = buildUIHelper(context);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener(context);
             listener.withUiHelper(this, uiHelper);
@@ -85,6 +101,7 @@ public class MyFragment extends Fragment {
     protected boolean isSessionDetailsChanged() {
         return !PiwigoSessionDetails.matchesSessionToken(ConnectionPreferences.getActiveProfile(), piwigoSessionToken);
     }
+
     protected boolean isServerConnectionChanged() {
         return !PiwigoSessionDetails.matchesServerConnection(ConnectionPreferences.getActiveProfile(), piwigoServerConnected);
     }
@@ -95,11 +112,18 @@ public class MyFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        Crashlytics.log("onPause : " + getClass().getName());
+        super.onPause();
+    }
+
+    @Override
     public void onResume() {
+        Crashlytics.log("onResume : " + getClass().getName());
         super.onResume();
 
         // This block wrapper is to hopefully protect against a WindowManager$BadTokenException when showing a dialog as part of this call.
-        if(getActivity().isDestroyed() || getActivity().isFinishing()) {
+        if (getActivity().isDestroyed() || getActivity().isFinishing()) {
             return;
         }
 
@@ -114,13 +138,15 @@ public class MyFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         if (savedInstanceState != null) {
+            Crashlytics.log("onCreateView(restore) : " + getClass().getName());
             uiHelper.onRestoreSavedInstanceState(savedInstanceState);
             piwigoSessionToken = savedInstanceState.getString(STATE_ACTIVE_SESSION_TOKEN);
             piwigoServerConnected = savedInstanceState.getString(STATE_ACTIVE_SERVER_CONNECTION);
+        } else {
+            Crashlytics.log("onCreateView(fresh) : " + getClass().getName());
         }
-        if(piwigoSessionToken == null) {
+        if (piwigoSessionToken == null) {
             updateActiveSessionDetails();
         }
 
@@ -137,7 +163,7 @@ public class MyFragment extends Fragment {
     }
 
     private void setupDialogBoxes() {
-        if(determinateProgressDialog != null) {
+        if (determinateProgressDialog != null) {
             // don't set them up twice.
             return;
         }

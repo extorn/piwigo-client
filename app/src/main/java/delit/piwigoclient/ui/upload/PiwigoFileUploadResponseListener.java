@@ -20,10 +20,10 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
     public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
 
         if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse) {
-            onUploadComplete(context, ((PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse)response).getJob());
+            onUploadComplete(context, ((PiwigoResponseBufferingHandler.PiwigoUploadFileJobCompleteResponse) response).getJob());
         } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse) {
             onPrepareUploadFailed(context, (PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse) response);
-        } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoCleanupPostUploadFailedResponse) {
+        } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoCleanupPostUploadFailedResponse) {
             onCleanupPostUploadFailed(context, (PiwigoResponseBufferingHandler.PiwigoCleanupPostUploadFailedResponse) response);
         } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) {
             onFileUploadProgressUpdate(context, (PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse) response);
@@ -35,11 +35,11 @@ public abstract class PiwigoFileUploadResponseListener extends BasicPiwigoRespon
             onChunkUploadFailed(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileChunkFailedResponse) response);
         } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse) {
             onAddUploadedFileToAlbumFailure(context, (PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse) response);
-        } else if(response instanceof PiwigoResponseBufferingHandler.FileUploadCancelledResponse) {
-            onRequestedFileUploadCancelComplete(context, ((PiwigoResponseBufferingHandler.FileUploadCancelledResponse)response).getCancelledFile());
-        } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoStartUploadFileResponse) {
+        } else if (response instanceof PiwigoResponseBufferingHandler.FileUploadCancelledResponse) {
+            onRequestedFileUploadCancelComplete(context, ((PiwigoResponseBufferingHandler.FileUploadCancelledResponse) response).getCancelledFile());
+        } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoStartUploadFileResponse) {
             // ignore for now.
-        } else if(response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
+        } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
             onErrorResponse((PiwigoResponseBufferingHandler.ErrorResponse) response);
         }
     }

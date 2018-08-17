@@ -6,7 +6,7 @@ package delit.piwigoclient.model.piwigo;
 
 public abstract class ResourceContainer<S extends Identifiable, T extends Identifiable> extends IdentifiablePagedList<T> implements Identifiable {
 
-    private final S containerDetails;
+    private S containerDetails;
 
     public ResourceContainer(S containerDetails, String itemType) {
         this(containerDetails, itemType, 10);
@@ -19,7 +19,7 @@ public abstract class ResourceContainer<S extends Identifiable, T extends Identi
 
     public ResourceItem getResourceItemById(long itemId) {
         T item = getItemById(itemId);
-        if(item instanceof ResourceItem) {
+        if (item instanceof ResourceItem) {
             return (ResourceItem) item;
         }
         throw new RuntimeException("Item is present, but is not an album resource, is a " + item.getClass().getName());
@@ -29,15 +29,18 @@ public abstract class ResourceContainer<S extends Identifiable, T extends Identi
         return getItemCount();
     }
 
-    public abstract long getImgResourceCount();
+    public abstract int getImgResourceCount();
 
     public S getContainerDetails() {
         return containerDetails;
+    }
+
+    public void setContainerDetails(S item) {
+        containerDetails = item;
     }
 
     @Override
     public long getId() {
         return containerDetails.getId();
     }
-
 }

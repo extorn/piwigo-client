@@ -38,7 +38,7 @@ public abstract class CustomSelectListAdapter<P extends BaseRecyclerViewAdapterP
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View aView = super.getDropDownView(position, convertView, parent);
-        if(idPositionMap == null) {
+        if (idPositionMap == null) {
             idPositionMap = buildIdPositionMap();
         }
         setViewData(position, aView, true);
@@ -49,7 +49,7 @@ public abstract class CustomSelectListAdapter<P extends BaseRecyclerViewAdapterP
     @Override
     public View getView(final int position, View view, @NonNull ViewGroup parent) {
         View aView = super.getView(position, view, parent);
-        if(idPositionMap == null) {
+        if (idPositionMap == null) {
             idPositionMap = buildIdPositionMap();
         }
 //        aView.setEnabled(prefs.isAllowItemSelection());
@@ -85,31 +85,26 @@ public abstract class CustomSelectListAdapter<P extends BaseRecyclerViewAdapterP
     @Override
     public long getItemId(int position) {
         int itemCount = getCount();
-        if(itemCount > position) {
+        if (itemCount > position) {
             T item = getItem(position);
             return getItemId(item);
         } else {
-            throw new IllegalStateException("The adapter is out of sync with the screen for some reason. Wanted item at position " + position + " but there are only " + getCount() + " items in the adapter. The local id map contains " + (idPositionMap!=null?idPositionMap.size():0) + " items");
+            throw new IllegalStateException("The adapter is out of sync with the screen for some reason. Wanted item at position " + position + " but there are only " + getCount() + " items in the adapter. The local id map contains " + (idPositionMap != null ? idPositionMap.size() : 0) + " items");
         }
     }
 
     public int getPosition(Long itemId) {
-        if(itemId == null) {
+        if (itemId == null) {
             return -1;
         }
-        if(idPositionMap == null) {
+        if (idPositionMap == null) {
             idPositionMap = buildIdPositionMap();
         }
         Integer pos = idPositionMap.get(itemId);
-        if(pos != null) {
+        if (pos != null) {
             return pos;
         }
         return -1;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        prefs.setEnabled(enabled);
     }
 
     @Override
@@ -127,9 +122,14 @@ public abstract class CustomSelectListAdapter<P extends BaseRecyclerViewAdapterP
         return prefs.isEnabled();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        prefs.setEnabled(enabled);
+    }
+
     public T getItemById(Long selectedId) {
         int pos = getPosition(selectedId);
-        if(pos < 0) {
+        if (pos < 0) {
             return null;
         }
         return getItem(pos);

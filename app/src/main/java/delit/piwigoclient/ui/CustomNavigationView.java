@@ -69,19 +69,19 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         headerView = (ViewGroup) super.inflateHeaderView(res);
 
         boolean useDarkMode = prefs.getBoolean(getResources().getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
-        if(useDarkMode) {
+        if (useDarkMode) {
             headerView.setBackgroundColor(Color.BLACK);
         }
 
         String appVersion;
-        if(isInEditMode()) {
+        if (isInEditMode()) {
             appVersion = "1.0.0";
         } else {
             appVersion = ProjectUtils.getVersionName(getContext());
         }
 
         TextView appName = headerView.findViewById(R.id.app_name);
-        if(BuildConfig.PAID_VERSION) {
+        if (BuildConfig.PAID_VERSION) {
             appName.setText(String.format(getResources().getString(R.string.app_paid_name_and_version_pattern), appVersion));
         } else {
             appName.setText(String.format(getResources().getString(R.string.app_name_and_version_pattern), appVersion));
@@ -92,7 +92,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         email.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendEmail(((TextView)v).getText().toString());
+                sendEmail(((TextView) v).getText().toString());
             }
         });
 
@@ -109,18 +109,18 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         intent.putExtra(Intent.EXTRA_SUBJECT, "PIWIGO Client");
         String serverVersion = "Unknown";
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if(sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
             serverVersion = sessionDetails.getPiwigoVersion();
         }
-        intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: "+ appVersion +"\nType and model of Device Being Used:\n");
+        intent.putExtra(Intent.EXTRA_TEXT, "Comments:\nFeature Request:\nBug Summary:\nBug Details:\nVersion of Piwigo Server Connected to: " + serverVersion + "\nVersion of PIWIGO Client: " + appVersion + "\nType and model of Device Being Used:\n");
         getContext().startActivity(Intent.createChooser(intent, ""));
     }
 
     @Override
     public void inflateMenu(int resId) {
         prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
-        if(uiHelper == null) {
-            if(!isInEditMode()) {
+        if (uiHelper == null) {
+            if (!isInEditMode()) {
                 // don't do this if showing in the IDE.
                 uiHelper = new ViewGroupUIHelper(this, prefs, getContext());
                 CustomPiwigoListener listener = new CustomPiwigoListener();
@@ -130,7 +130,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
         super.inflateMenu(resId);
         setMenuVisibilityToMatchSessionState();
-        if(!isInEditMode()) {
+        if (!isInEditMode()) {
             uiHelper.registerToActiveServiceCalls();
         }
         EventBus.getDefault().register(this);
@@ -158,7 +158,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         String username;
-        if(sessionDetails != null) {
+        if (sessionDetails != null) {
             username = sessionDetails.getUsername();
         } else {
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(getContext());
@@ -171,7 +171,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if(Boolean.TRUE == positiveAnswer) {
+                if (Boolean.TRUE == positiveAnswer) {
                     EditText passwordEdit = dialog.findViewById(R.id.password);
                     String password = passwordEdit.getText().toString();
                     EventBus.getDefault().post(new UnlockAppEvent(password));
@@ -183,6 +183,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     protected void addActiveServiceCall(long messageId) {
         uiHelper.addActiveServiceCall(R.string.talking_to_server_please_wait, messageId);
     }
+
     @Override
     public Parcelable onSaveInstanceState() {
         EventBus.getDefault().unregister(this);
@@ -201,19 +202,6 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         super.onRestoreInstanceState(((SavedState) savedState).getSuperState());
     }
 
-    class CustomPiwigoListener extends BasicPiwigoResponseListener {
-        @Override
-        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            // invokeAndWait the chained call before hiding the progress dialog to avoid flicker.
-            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
-                if(PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
-                    onLogin(rsp.getOldCredentials());
-                }
-            }
-        }
-    }
-
     private void onLogin(PiwigoSessionDetails oldCredentials) {
         lockAppInReadOnlyMode(false);
         uiHelper.closeAllDialogs();
@@ -229,7 +217,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if(Boolean.TRUE == positiveAnswer) {
+                if (Boolean.TRUE == positiveAnswer) {
                     EventBus.getDefault().post(new LockAppEvent());
                 }
             }
@@ -282,10 +270,23 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
     public void updateTheme() {
         boolean useDarkMode = prefs.getBoolean(getResources().getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
-        if(useDarkMode) {
+        if (useDarkMode) {
             headerView.setBackgroundColor(Color.BLACK);
         } else {
             headerView.setBackgroundResource(R.drawable.side_nav_bar);
+        }
+    }
+
+    class CustomPiwigoListener extends BasicPiwigoResponseListener {
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            // invokeAndWait the chained call before hiding the progress dialog to avoid flicker.
+            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
+                if (PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
+                    onLogin(rsp.getOldCredentials());
+                }
+            }
         }
     }
 }

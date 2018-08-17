@@ -60,17 +60,17 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             canContinue = getNewSessionKey(password);
         }
 
-        if(canContinue) {
+        if (canContinue) {
             haveValidSessionKey = true;
         }
 
-        if(canContinue && isSessionDetailsOutOfDate(PiwigoSessionDetails.getInstance(connectionPrefs))) {
+        if (canContinue && isSessionDetailsOutOfDate(PiwigoSessionDetails.getInstance(connectionPrefs))) {
             canContinue = getNewSessionDetails(loginResponse);
         }
 
         loginResponse.setNewSessionDetails(PiwigoSessionDetails.getInstance(connectionPrefs));
 
-        if(canContinue && isCommunityPluginSessionStatusUnknown(PiwigoSessionDetails.getInstance(connectionPrefs))) {
+        if (canContinue && isCommunityPluginSessionStatusUnknown(PiwigoSessionDetails.getInstance(connectionPrefs))) {
             canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
         }
 
@@ -107,14 +107,14 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         GetNewSessionKeyResponseHandler newSessionKeyHandler = new GetNewSessionKeyResponseHandler(password, getContext());
         newSessionKeyHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         newSessionKeyHandler.run(getContext(), getConnectionPrefs());
-        if(!newSessionKeyHandler.isSuccess()) {
+        if (!newSessionKeyHandler.isSuccess()) {
             reportNestedFailure(newSessionKeyHandler);
         }
         return newSessionKeyHandler.isSuccess();
     }
 
     private boolean isNeedUserDetails(PiwigoSessionDetails sessionDetails) {
-        if(sessionDetails == null || !sessionDetails.isLoggedInWithFullSessionDetails()) {
+        if (sessionDetails == null || !sessionDetails.isLoggedInWithFullSessionDetails()) {
             return false;
         }
         return !sessionDetails.isFullyLoggedIn();
@@ -131,7 +131,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private boolean isSessionKeyInvalid(PiwigoSessionDetails sessionDetails, SharedPreferences prefs, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         String username = connectionPrefs.getPiwigoUsername(prefs, getContext());
-        if(sessionDetails == null) {
+        if (sessionDetails == null) {
             return username != null && !username.trim().isEmpty();
         } else {
             return sessionDetails.isSessionMayHaveExpired() || !sessionDetails.isLoggedIn();
@@ -188,12 +188,12 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             this.oldCredentials = oldCredentials;
         }
 
-        public void setNewSessionDetails(PiwigoSessionDetails sessionDetails) {
-            this.sessionDetails = sessionDetails;
-        }
-
         public PiwigoSessionDetails getNewSessionDetails() {
             return sessionDetails;
+        }
+
+        public void setNewSessionDetails(PiwigoSessionDetails sessionDetails) {
+            this.sessionDetails = sessionDetails;
         }
     }
 }

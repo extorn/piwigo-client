@@ -18,25 +18,25 @@ public class HttpUtils {
     public static String getHttpErrorMessage(int statusCode, Throwable error) {
         String errorMessage = null;
         if (error != null) {
-            errorMessage = error.getMessage();
+            errorMessage = error.getMessage() != null ? error.getMessage() : "Undefined error";
         }
         Throwable cause;
-        if(error instanceof SSLHandshakeException) {
+        if (error instanceof SSLHandshakeException) {
             cause = error.getCause();
-            if(cause instanceof CertificateException) {
+            if (cause instanceof CertificateException) {
                 cause = cause.getCause();
-                if(cause instanceof CertPathValidatorException) {
+                if (cause instanceof CertPathValidatorException) {
                     errorMessage = "";
                     CertPathValidatorException certPathException = (CertPathValidatorException) cause;
                     cause = certPathException.getCause();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         CertPathValidatorException.Reason r = certPathException.getReason();
-                        if(r == CertPathValidatorException.BasicReason.EXPIRED) {
+                        if (r == CertPathValidatorException.BasicReason.EXPIRED) {
                             X509Certificate cert = X509Utils.findFirstExpiredCert(certPathException.getCertPath().getCertificates());
                             String certName = cert.getSubjectX500Principal().getName();
                             errorMessage = "\nCertificate : " + certName + "\n\n";
                             // test expiry date
-                        } else if(r == CertPathValidatorException.BasicReason.NOT_YET_VALID) {
+                        } else if (r == CertPathValidatorException.BasicReason.NOT_YET_VALID) {
                             // test expiry date
                             X509Certificate cert = X509Utils.findFirstCertNotYetValid(certPathException.getCertPath().getCertificates());
                             String certName = cert.getSubjectX500Principal().getName();

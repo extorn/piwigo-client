@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="none">
 
         <item
             android:id="@+id/nav_gallery"
@@ -44,9 +44,9 @@
             android:title="@string/about_menu_title" />
 
         <item
-            android:id="@+id/nav_licences"
+            android:id="@+id/nav_oss_licences"
             android:icon="@drawable/ic_help_black_24px"
-            android:title="@string/licences_menu_title" />
+            android:title="@string/oss_licences_menu_title" />
 
         <item
             android:id="@+id/nav_eula"

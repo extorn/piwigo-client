@@ -29,13 +29,13 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
     private float getScreenWidthInches() {
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float)dm.widthPixels / dm.xdpi;
+        return (float) dm.widthPixels / dm.xdpi;
     }
 
     private float getScreenHeightInches() {
         DisplayMetrics dm = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float)dm.heightPixels / dm.xdpi;
+        return (float) dm.heightPixels / dm.xdpi;
     }
 
     /**
@@ -51,7 +51,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
             screenWidth = getScreenHeightInches();
         }
         int columnsToShow = Math.max(1, Math.round(screenWidth - (screenWidth % 1))); // allow a minimum of 1 inch per column
-        return Math.max(1,columnsToShow); // never allow less than one column by default.
+        return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 
     @Override
@@ -62,7 +62,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        if(view != null) {
+        if (view != null) {
             return view;
         }
         view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);

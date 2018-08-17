@@ -42,8 +42,8 @@ public class SecureEditTextPreference extends EditTextPreference implements Secu
      *
      * @param value The value to persist.
      * @return True if the Preference is persistent. (This is not whether the
-     *         value was persisted, since we may not necessarily commit if there
-     *         will be a batch commit later.)
+     * value was persisted, since we may not necessarily commit if there
+     * will be a batch commit later.)
      * @see #getPersistedString(String)
      */
     protected boolean persistString(String value) {
@@ -57,13 +57,13 @@ public class SecureEditTextPreference extends EditTextPreference implements Secu
 
     @Override
     public String decrypt(String encryptedVal, String defaultReturnValue) {
-        if(defaultReturnValue == null) {
-            if(encryptedVal == null) {
+        if (defaultReturnValue == null) {
+            if (encryptedVal == null) {
                 return null;
             }
-        } else if(defaultReturnValue.equals(encryptedVal)) {
+        } else if (defaultReturnValue.equals(encryptedVal)) {
             return defaultReturnValue;
-        } else if(encryptedVal == null) {
+        } else if (encryptedVal == null) {
             return defaultReturnValue;
         }
         return SecurePrefsUtil.getInstance(getContext()).decryptValue(getKey(), encryptedVal, defaultReturnValue);
@@ -76,10 +76,10 @@ public class SecureEditTextPreference extends EditTextPreference implements Secu
      * from the {@link PreferenceManager}, and get the value.
      *
      * @param defaultReturnValue The default value to return if either the
-     *            Preference is not persistent or the Preference is not in the
-     *            shared preferences.
+     *                           Preference is not persistent or the Preference is not in the
+     *                           shared preferences.
      * @return The value from the SharedPreferences or the default return
-     *         value.
+     * value.
      * @see #persistString(String)
      */
     protected String getPersistedString(String defaultReturnValue) {

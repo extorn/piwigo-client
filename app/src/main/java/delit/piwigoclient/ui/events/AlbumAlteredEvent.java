@@ -5,6 +5,7 @@ package delit.piwigoclient.ui.events;
  */
 
 public class AlbumAlteredEvent {
+    public static final long ALL_ALBUMS_ID = -1;
     public final long id;
 
     public AlbumAlteredEvent(long id) {

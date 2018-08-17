@@ -79,13 +79,13 @@ public class CommonPreferencesFragment extends MyFragment {
             getFragmentManager().popBackStack();
             return null;
         }
-        if(view != null) {
+        if (view != null) {
             return view;
         }
         view = inflater.inflate(R.layout.activity_preferences, container, false);
 
         AdView adView = view.findViewById(R.id.prefs_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -111,7 +111,7 @@ public class CommonPreferencesFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAppLockedEvent(AppLockedEvent event) {
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
     }
@@ -141,6 +141,8 @@ public class CommonPreferencesFragment extends MyFragment {
                     return getString(R.string.preference_page_gallery);
                 case 2:
                     return getString(R.string.preference_page_upload);
+                case 3:
+                    return getString(R.string.preference_page_other);
                 default:
                     throw new RuntimeException("PagerAdapter count doesn't match positions available");
             }
@@ -155,6 +157,8 @@ public class CommonPreferencesFragment extends MyFragment {
                     return new GalleryPreferenceFragment();
                 case 2:
                     return new UploadPreferenceFragment();
+                case 3:
+                    return new OtherPreferenceFragment();
                 default:
                     throw new RuntimeException("PagerAdapter count doesn't match positions available");
             }
@@ -162,7 +166,7 @@ public class CommonPreferencesFragment extends MyFragment {
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
     }

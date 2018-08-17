@@ -6,9 +6,9 @@ package delit.piwigoclient.ui.events;
 
 public class SlideshowSizeUpdateEvent {
     private final int loadedResources;
-    private final long totalResources;
+    private final int totalResources;
 
-    public SlideshowSizeUpdateEvent(int loadedResources, long totalResources) {
+    public SlideshowSizeUpdateEvent(int loadedResources, int totalResources) {
         this.loadedResources = loadedResources;
         this.totalResources = totalResources;
     }
@@ -17,7 +17,7 @@ public class SlideshowSizeUpdateEvent {
         return loadedResources;
     }
 
-    public long getTotalResources() {
+    public int getTotalResources() {
         return totalResources;
     }
 }

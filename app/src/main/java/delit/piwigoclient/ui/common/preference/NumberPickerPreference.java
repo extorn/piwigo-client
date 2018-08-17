@@ -47,8 +47,8 @@ public class NumberPickerPreference extends DialogPreference {
     private final int minValue;
     private final boolean setDefaultOnAttach;
     private final boolean wrapPickList;
-    private NumberPicker mPicker;
     private final int multiplier;
+    private NumberPicker mPicker;
     private int mNumber = 0;
 
     public NumberPickerPreference(Context context, AttributeSet attrs) {
@@ -106,7 +106,7 @@ public class NumberPickerPreference extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        if(setDefaultOnAttach) {
+        if (setDefaultOnAttach) {
             setValue(restoreValue ? getAdjustedPersistedInt(getPersistedInt(mNumber * multiplier)) : (Integer) defaultValue);
         }
     }

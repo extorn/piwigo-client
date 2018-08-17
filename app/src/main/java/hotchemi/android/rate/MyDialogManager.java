@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
+
 import static hotchemi.android.rate.IntentHelper.createIntentForAmazonAppstore;
 import static hotchemi.android.rate.IntentHelper.createIntentForGooglePlay;
 import static hotchemi.android.rate.PreferenceHelper.setAgreeShowDialog;
@@ -39,7 +41,8 @@ final class MyDialogManager {
                         createIntentForGooglePlay(context) : createIntentForAmazonAppstore(context);
                 try {
                     context.startActivity(intentToAppstore);
-                }catch(ActivityNotFoundException e) {
+                } catch (ActivityNotFoundException e) {
+                    Crashlytics.logException(e);
                     // should never happen but will on an emulator almost certainly.
                     //Lets just sink the error for now and let the dialog close.
                     AlertDialog.Builder builder1 = new AlertDialog.Builder(context);

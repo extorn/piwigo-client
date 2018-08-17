@@ -9,7 +9,7 @@ public class SingleUseEvent {
     private boolean handled;
 
     public synchronized boolean isHandled() {
-        if(!handled) {
+        if (!handled) {
             handled = true;
             return false;
         }

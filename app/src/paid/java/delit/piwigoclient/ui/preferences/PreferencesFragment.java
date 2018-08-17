@@ -21,7 +21,7 @@ public class PreferencesFragment extends CommonPreferencesFragment {
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 3:
+                case 4:
                     return getString(R.string.preference_page_auto_upload_jobs);
                 default:
                     return super.getPageTitle(position);
@@ -31,7 +31,7 @@ public class PreferencesFragment extends CommonPreferencesFragment {
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 3:
+                case 4:
                     return AutoUploadJobsPreferenceFragment.newInstance();
                 default:
                     return super.getItem(position);

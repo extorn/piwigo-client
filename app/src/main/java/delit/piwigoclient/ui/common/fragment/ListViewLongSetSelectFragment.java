@@ -41,8 +41,8 @@ public abstract class ListViewLongSetSelectFragment<X extends Enableable, Z exte
     @Override
     protected void selectOnlyListItems(Set<Long> selectionIds) {
         X listAdapter = getListAdapter();
-        if(listAdapter instanceof SelectableItemsAdapter) {
-            ((SelectableItemsAdapter)listAdapter).setSelectedItems(new HashSet(selectionIds));
+        if (listAdapter instanceof SelectableItemsAdapter) {
+            ((SelectableItemsAdapter) listAdapter).setSelectedItems(new HashSet(selectionIds));
         } else {
             ListView list = getList();
             for (int i = 0; i < list.getCount(); i++) {

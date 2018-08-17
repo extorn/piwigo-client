@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
@@ -87,6 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
             tools:context=".ui.album.view.ViewAlbumFragment"/>
 
         <include layout="@layout/basket_summary"
@@ -144,25 +145,16 @@
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/gallery_bottom_sheet"
-        android:clickable="true"
-        android:visibility="visible"
+    <com.wunderlist.slidinglayer.SlidingLayer
+        xmlns:slidingLayer="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/slidingDetailBottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:behavior_hideable="true"
-        app:behavior_peekHeight="350dp"
-        app:layout_behavior="@string/custom_bottom_sheet_behavior">
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/gallery_actionButton_details"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="-20dp"
-            android:clickable="true"
-            app:fabSize="mini" />
+        slidingLayer:shadowSize="20dp"
+        slidingLayer:shadowDrawable="@drawable/sidebar_shadow"
+        slidingLayer:offsetDistance="16dp"
+        slidingLayer:stickTo="bottom"
+        slidingLayer:changeStateOnTap="true">
 
         <LinearLayout
             android:id="@+id/gallery_bottom_sheet_content"
@@ -171,6 +163,7 @@
             android:layout_marginTop="0dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
+            android:layout_gravity="bottom|center_horizontal"
             android:background="@color/white"
             android:orientation="vertical"
             android:padding="5dp">
@@ -308,6 +301,6 @@
             </RelativeLayout>
 
         </LinearLayout>
-    </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+    </com.wunderlist.slidinglayer.SlidingLayer>
+</RelativeLayout>
 

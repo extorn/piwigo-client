@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,7 +35,6 @@ import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
@@ -99,7 +99,7 @@ public class UploadActivity extends MyActivity {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             fileSelectionEventId = savedInstanceState.getInt(STATE_FILE_SELECT_EVENT_ID);
             startedWithPermissions = savedInstanceState.getBoolean(STATE_STARTED_ALREADY);
         } else {
@@ -108,7 +108,7 @@ public class UploadActivity extends MyActivity {
 
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
 
-        if(!hasAgreedToEula() || connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
+        if (!hasAgreedToEula() || connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()).isEmpty()) {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
             setContentView(R.layout.activity_upload);
@@ -121,7 +121,7 @@ public class UploadActivity extends MyActivity {
         TextView uploadingAsLabelField = findViewById(R.id.upload_username_label);
         TextView uploadingAsField = findViewById(R.id.upload_username);
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if(sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
             uploadingAsField.setText(sessionDetails.getUsername());
             uploadingAsField.setVisibility(View.VISIBLE);
             uploadingAsLabelField.setVisibility(View.VISIBLE);
@@ -134,7 +134,7 @@ public class UploadActivity extends MyActivity {
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.upload_details);
-        if(fragment instanceof UploadFragment && fragment.isAdded()) {
+        if (fragment instanceof UploadFragment && fragment.isAdded()) {
             finish();
         } else {
             super.onBackPressed();
@@ -162,7 +162,7 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe
     public void onEvent(StopActivityEvent event) {
-        if(getUiHelper().isTrackingRequest(event.getActionId())) {
+        if (getUiHelper().isTrackingRequest(event.getActionId())) {
             finish();
         }
     }
@@ -179,11 +179,11 @@ public class UploadActivity extends MyActivity {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         long initialGalleryId = getIntent().getLongExtra("galleryId", 0);
 
-        if(isCurrentUserAuthorisedToUpload(sessionDetails)) {
+        if (isCurrentUserAuthorisedToUpload(sessionDetails)) {
             Fragment f = UploadFragment.newInstance(initialGalleryId, fileSelectionEventId);
             removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
-        } else if(allowLogin && sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
+        } else if (allowLogin && sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
             runLogin(connectionPrefs);
         } else {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
@@ -192,7 +192,7 @@ public class UploadActivity extends MyActivity {
 
     private void runLogin(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         String serverUri = connectionPrefs.getPiwigoServerAddress(prefs, getApplicationContext());
-        if(serverUri == null || serverUri.trim().isEmpty()) {
+        if (serverUri == null || serverUri.trim().isEmpty()) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
             getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getApplicationContext(), connectionPrefs));
@@ -253,13 +253,13 @@ public class UploadActivity extends MyActivity {
         ArrayList<File> filesToUpload;
         if (imageUris != null) {
             filesToUpload = new ArrayList<>(imageUris.size());
-            for(Uri imageUri : imageUris) {
+            for (Uri imageUri : imageUris) {
                 handleSentImage(imageUri, filesToUpload);
             }
         } else {
             filesToUpload = new ArrayList<>(0);
         }
-        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[])null);
+        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[]) null);
         return filesToUpload;
     }
 
@@ -272,7 +272,7 @@ public class UploadActivity extends MyActivity {
         } else {
             filesToUpload = new ArrayList<>(0);
         }
-        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[])null);
+        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[]) null);
         return filesToUpload;
     }
 
@@ -281,15 +281,17 @@ public class UploadActivity extends MyActivity {
         if (!f.exists()) {
             f = new File(getRealPathFromURI(imageUri));
         }
-        if(f.exists()) {
+        if (f.exists() && f.isFile()) {
             filesToUpload.add(f);
         } else {
-            errors.put(imageUri.toString(), "File does not exist");
+            if(!f.isDirectory()) {
+                errors.put(imageUri.toString(), "File does not exist");
+            }
         }
     }
 
     public String getRealPathFromURI(Uri contentUri) {
-        String[] proj = { MediaStore.Images.Media.DATA };
+        String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = getApplicationContext().getContentResolver().query(contentUri, proj,
                 null, null, null);
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
@@ -316,7 +318,7 @@ public class UploadActivity extends MyActivity {
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
 
                 int eventId = requestCode;
-                if(requestCode != fileSelectionEventId) {
+                if (requestCode != fileSelectionEventId) {
                     // this is an unexpected event - need to ensure the upload fragment will pick it up.
                     eventId = Integer.MIN_VALUE;
                 }
@@ -339,17 +341,17 @@ public class UploadActivity extends MyActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UsernameSelectionNeededEvent event) {
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        if(!event.isAllowEditing()) {
+        if (!event.isAllowEditing()) {
             prefs.readonly();
         }
-        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(),  event.getInitialSelection());
+        UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
         showFragmentNow(fragment);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final GroupSelectionNeededEvent event) {
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        if(!event.isAllowEditing()) {
+        if (!event.isAllowEditing()) {
             prefs.readonly();
         }
         GroupSelectFragment fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
@@ -358,15 +360,15 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PermissionsWantedResponse event) {
-        if(getUiHelper().completePermissionsWantedRequest(event)) {
+        if (getUiHelper().completePermissionsWantedRequest(event)) {
             int fileSelectionEventIdToUse = fileSelectionEventId;
-            if(startedWithPermissions) {
-                // already started up. Therefore the fileSelectionEventId is valid and linked to the faragment
+            if (startedWithPermissions) {
+                // already started up. Therefore the fileSelectionEventId is valid and linked to the fragment
             } else {
                 startedWithPermissions = true;
                 fileSelectionEventIdToUse = Integer.MIN_VALUE;
             }
-            if(event.areAllPermissionsGranted()) {
+            if (event.areAllPermissionsGranted()) {
                 FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventIdToUse, handleSentFiles());
                 EventBus.getDefault().postSticky(evt);
             } else {
@@ -399,10 +401,10 @@ public class UploadActivity extends MyActivity {
 
         Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.upload_details);
         String lastFragmentName = "";
-        if(lastFragment != null) {
+        if (lastFragment != null) {
             lastFragmentName = lastFragment.getTag();
         }
-        if(!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
+        if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
             getSupportFragmentManager().popBackStackImmediate();
         }
         //TODO I've added code that clears stack when showing root album... is this "good enough"?
@@ -417,14 +419,19 @@ public class UploadActivity extends MyActivity {
 
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener() {
-        return super.buildPiwigoResponseListener();
+        return new CustomPiwigoResponseListener();
     }
 
     class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
-            if(response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse)response).getNewSessionDetails().getConnectionPrefs());
+            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                if (((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails() != null) {
+                    Log.e("UploadActivity", "Retrieved user login success response. Showing upload fragment");
+                    showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails().getConnectionPrefs());
+                } else {
+                    createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);
+                }
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }

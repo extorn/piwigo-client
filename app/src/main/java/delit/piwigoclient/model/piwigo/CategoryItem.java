@@ -2,8 +2,6 @@ package delit.piwigoclient.model.piwigo;
 
 import android.util.Log;
 
-import com.google.android.gms.common.util.ListUtils;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -16,15 +14,6 @@ import delit.piwigoclient.BuildConfig;
  */
 public class CategoryItem extends GalleryItem {
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
-    private List<CategoryItem> childAlbums;
-    private long photoCount;
-    private long totalPhotoCount;
-    private long subCategories;
-    private boolean isPrivate;
-    private Long representativePictureId;
-    private long[] users;
-    private long[] groups;
-
     public static final CategoryItem ADVERT = new CategoryItem(Long.MIN_VALUE + 1, null, null, true, null, 0, 0, 0, null) {
         @Override
         public int getType() {
@@ -32,12 +21,20 @@ public class CategoryItem extends GalleryItem {
         }
     };
     public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
+    private List<CategoryItem> childAlbums;
+    private int photoCount;
+    private long totalPhotoCount;
+    private long subCategories;
+    private boolean isPrivate;
+    private Long representativePictureId;
+    private long[] users;
+    private long[] groups;
 
     public CategoryItem(long id) {
         super(id, null, null, null, null);
     }
 
-    public CategoryItem(long id, String name, String description, boolean isPrivate, Date lastAltered, long photoCount, long totalPhotoCount, long subCategories, String thumbnailUrl) {
+    public CategoryItem(long id, String name, String description, boolean isPrivate, Date lastAltered, int photoCount, long totalPhotoCount, long subCategories, String thumbnailUrl) {
         super(id, name, description, lastAltered, thumbnailUrl);
         this.photoCount = photoCount;
         this.isPrivate = isPrivate;
@@ -47,10 +44,11 @@ public class CategoryItem extends GalleryItem {
 
     /**
      * Used for the admin list of albums
+     *
      * @param childAlbum
      */
     public void addChildAlbum(CategoryItem childAlbum) {
-        if(childAlbums == null) {
+        if (childAlbums == null) {
             childAlbums = new ArrayList<>();
         }
         childAlbums.add(childAlbum);
@@ -58,18 +56,19 @@ public class CategoryItem extends GalleryItem {
 
     /**
      * Used for the admin list of albums
+     *
      * @return
      */
     public List<CategoryItem> getChildAlbums() {
         return childAlbums;
     }
 
-    public void setRepresentativePictureId(Long representativePictureId) {
-        this.representativePictureId = representativePictureId;
-    }
-
     public Long getRepresentativePictureId() {
         return representativePictureId;
+    }
+
+    public void setRepresentativePictureId(Long representativePictureId) {
+        this.representativePictureId = representativePictureId;
     }
 
     public boolean isPrivate() {
@@ -103,10 +102,6 @@ public class CategoryItem extends GalleryItem {
         return this.getId() == ROOT_ALBUM.getId() && getParentId() == null;
     }
 
-    public void setSubCategories(int subCategories) {
-        this.subCategories = subCategories;
-    }
-
     public CategoryItemStub toStub() {
         CategoryItemStub stub = new CategoryItemStub(getName(), getId());
         stub.setParentageChain(getParentageChain());
@@ -138,7 +133,7 @@ public class CategoryItem extends GalleryItem {
         totalPhotoCount--;
     }
 
-    public long getPhotoCount() {
+    public int getPhotoCount() {
         return photoCount;
     }
 
@@ -146,24 +141,28 @@ public class CategoryItem extends GalleryItem {
         return subCategories;
     }
 
+    public void setSubCategories(int subCategories) {
+        this.subCategories = subCategories;
+    }
+
     public CategoryItem locateChildAlbum(List<Long> parentageChain) {
-        return locateChildAlbum(parentageChain,1);
+        return locateChildAlbum(parentageChain, 1);
     }
 
     private CategoryItem locateChildAlbum(List<Long> parentageChain, int idx) {
-        if(parentageChain.size() <= idx) {
-            if(BuildConfig.DEBUG) {
+        if (parentageChain.size() <= idx) {
+            if (BuildConfig.DEBUG) {
                 Log.e("catItem", "Idx out of bounds for parentage chain : " + parentageChain.toArray() + " idx : " + idx);
             }
             return null;
         }
-        if(getId() != parentageChain.get(idx)) {
+        if (getId() != parentageChain.get(idx)) {
             return null;
         }
-        if(parentageChain.size() == getParentageChain().size() + 1) {
+        if (parentageChain.size() == getParentageChain().size() + 1) {
             return this;
         }
-        if(childAlbums != null) {
+        if (childAlbums != null) {
             for (CategoryItem c : childAlbums) {
                 CategoryItem item = c.locateChildAlbum(parentageChain, idx + 1);
                 if (item != null) {
@@ -175,7 +174,7 @@ public class CategoryItem extends GalleryItem {
     }
 
     public void updateTotalPhotoAndSubAlbumCount() {
-        if(childAlbums == null) {
+        if (childAlbums == null) {
             subCategories = 0;
             totalPhotoCount = photoCount;
         } else {
@@ -199,7 +198,7 @@ public class CategoryItem extends GalleryItem {
     public boolean removeChildAlbum(long albumId) {
         CategoryItem item;
         boolean removed = false;
-        if(childAlbums != null) {
+        if (childAlbums != null) {
             for (Iterator<CategoryItem> iter = childAlbums.iterator(); iter.hasNext(); ) {
                 item = iter.next();
                 if (item.getId() == albumId) {
@@ -209,7 +208,7 @@ public class CategoryItem extends GalleryItem {
                 }
             }
         }
-        if(removed) {
+        if (removed) {
             updateTotalPhotoAndSubAlbumCount();
         }
         return removed;

@@ -8,8 +8,8 @@ import java.util.Date;
 public class PictureResourceItem extends ResourceItem {
     private ResourceFile fullScreenImage;
 
-    public PictureResourceItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
-        super(id, name, description, lastAltered, thumbnailUrl);
+    public PictureResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String thumbnailUrl) {
+        super(id, name, description, dateCreated, lastAltered, thumbnailUrl);
     }
 
     public ResourceFile getFullScreenImage() {

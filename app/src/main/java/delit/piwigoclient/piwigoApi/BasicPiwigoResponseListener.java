@@ -69,23 +69,38 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         uiHelper.showOrQueueDialogMessage(title, message);
     }
 
-    private void showOrQueueRetryDialogMessage(final PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg) {
+    private void showOrQueueRetryDialogMessageWithDetail(final PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg, String detail) {
         if (response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
             final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse = (PiwigoResponseBufferingHandler.RemoteErrorResponse) response;
-            handleErrorRetryPossible(errorResponse, title, msg);
+            handleErrorRetryPossible(errorResponse, title, msg, detail);
 
         } else {
-            handleErrorRetryNotPossible(response, title, msg);
+            handleErrorRetryNotPossible(response, title, msg, detail);
         }
     }
 
-    protected void handleErrorRetryNotPossible(PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg) {
-        showOrQueueMessage(title, msg);
+    private void showOrQueueRetryDialogMessage(final PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg) {
+        if (response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
+            final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse = (PiwigoResponseBufferingHandler.RemoteErrorResponse) response;
+            handleErrorRetryPossible(errorResponse, title, msg, null);
+
+        } else {
+            handleErrorRetryNotPossible(response, title, msg, null);
+        }
     }
 
-    protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg) {
+    protected void handleErrorRetryNotPossible(PiwigoResponseBufferingHandler.BasePiwigoResponse response, int title, String msg, String detail) {
+        if(detail == null) {
+            showOrQueueMessage(title, msg);
+        } else {
+            showOrQueueMessage(title, msg + "\n\n" + detail);
+        }
+    }
+
+    protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg, String detail) {
         final AbstractPiwigoDirectResponseHandler handler = errorResponse.getHttpResponseHandler();
-        uiHelper.showOrQueueDialogQuestion(title, msg, R.string.button_cancel, R.string.button_retry, new UIHelper.QuestionResultListener() {
+
+        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultListener() {
             @Override
             public void onDismiss(AlertDialog dialog) {
                 // don't care
@@ -95,7 +110,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE.equals(positiveAnswer)) {
                     uiHelper.addActiveServiceCall(handler.getMessageId());
-                    if(handler.isRunAsync()) {
+                    if (handler.isRunAsync()) {
                         handler.invokeAsyncAgain(dialog.getContext().getApplicationContext());
                     } else {
                         handler.invokeAgain(dialog.getContext().getApplicationContext());
@@ -104,7 +119,13 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
                     onAfterHandlePiwigoResponse(errorResponse);
                 }
             }
-        });
+        };
+
+        if(detail == null) {
+            uiHelper.showOrQueueDialogQuestion(title, msg, R.string.button_cancel, R.string.button_retry, dialogListener);
+        } else {
+            uiHelper.showOrQueueEnhancedDialogQuestion(title, msg, detail, R.string.button_cancel, R.string.button_retry, dialogListener);
+        }
     }
 
     public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -140,13 +161,12 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     }
 
     protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
-
         if (msg.getStatusCode() < 0) {
-            showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage());
+            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_talking_to_server, msg.getErrorMessage(), msg.getResponse());
         } else if (msg.getStatusCode() == 0) {
-            showOrQueueRetryDialogMessage(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage());
+            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_error_connecting_to_server, msg.getErrorMessage(), msg.getResponse());
         } else {
-            showOrQueueRetryDialogMessage(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()));
+            showOrQueueRetryDialogMessageWithDetail(msg, R.string.alert_title_server_error, uiHelper.getContext().getString(R.string.alert_server_error_pattern, msg.getStatusCode(), msg.getErrorMessage()), msg.getResponse());
         }
     }
 

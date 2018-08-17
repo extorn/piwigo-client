@@ -9,6 +9,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
 
 import java.io.File;
@@ -28,11 +29,11 @@ import delit.piwigoclient.util.ObjectUtils;
 
 public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemRecyclerViewAdapter.FolderItemViewHolder> {
 
-    private transient List<File> currentDisplayContent;
-    private File activeFolder;
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
+    private transient List<File> currentDisplayContent;
+    private File activeFolder;
     private Comparator<? super File> fileComparator;
     private NavigationListener navigationListener;
 
@@ -44,7 +45,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     public void setInitiallySelectedItems() {
         List<String> initialSelectionItems = getAdapterPrefs().getInitialSelection();
-        if(initialSelectionItems != null) {
+        if (initialSelectionItems != null) {
             HashSet<Long> initialSelectionIds = new HashSet<>(initialSelectionItems.size());
             for (String selectedItem : initialSelectionItems) {
                 int pos = getItemPosition(new File(selectedItem));
@@ -59,7 +60,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     protected void updateContent(File newContent) {
-        if(ObjectUtils.areEqual(activeFolder, newContent)) {
+        if (ObjectUtils.areEqual(activeFolder, newContent)) {
             return;
         }
         navigationListener.onFolderOpened(activeFolder, newContent);
@@ -79,16 +80,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         this.activeFolder = activeFolder;
     }
 
-    public interface NavigationListener {
-        void onFolderOpened(File oldFolder, File newFolder);
-    }
-
     protected CustomClickListener<FolderItemViewAdapterPreferences, File, FolderItemViewHolder> buildCustomClickListener(FolderItemViewHolder viewHolder) {
         return new FolderItemCustomClickListener(viewHolder, this);
     }
 
     public Comparator<? super File> getFileComparator() {
-        if(fileComparator == null) {
+        if (fileComparator == null) {
             fileComparator = buildFileComparator();
         }
         return fileComparator;
@@ -99,49 +96,27 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
             @Override
             public int compare(File o1, File o2) {
-                if(o1.isDirectory() && !o2.isDirectory()) {
+                if (o1.isDirectory() && !o2.isDirectory()) {
                     return -1;
                 }
-                if(!o1.isDirectory() && o2.isDirectory()) {
+                if (!o1.isDirectory() && o2.isDirectory()) {
                     return 1;
                 }
-                switch(getAdapterPrefs().getFileSortOrder()) {
+                switch (getAdapterPrefs().getFileSortOrder()) {
                     case FolderItemViewAdapterPreferences.ALPHABETICAL:
                         return o1.getName().compareTo(o2.getName());
                     case FolderItemViewAdapterPreferences.LAST_MODIFIED_DATE:
-                        if(o1.lastModified() == o2.lastModified()) {
+                        if (o1.lastModified() == o2.lastModified()) {
                             return o1.getName().compareTo(o2.getName());
                         } else {
-                            return o1.lastModified() > o2.lastModified() ? 1 : -1;
+                            // this is reversed order
+                            return o1.lastModified() > o2.lastModified() ? -1 : 1;
                         }
                     default:
                         return 0;
                 }
             }
         };
-    }
-
-    class FolderItemCustomClickListener extends CustomClickListener<FolderItemViewAdapterPreferences, File, FolderItemViewHolder> {
-        public <Q extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemViewHolder>> FolderItemCustomClickListener(FolderItemViewHolder viewHolder, Q parentAdapter) {
-            super(viewHolder, parentAdapter);
-        }
-
-        @Override
-        public void onClick(View v) {
-            if(getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER) {
-                updateContent(getViewHolder().getItem());
-            } else if(getAdapterPrefs().isAllowFileSelection()) {
-                super.onClick(v);
-            }
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            if(getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER && getAdapterPrefs().isAllowFolderSelection()) {
-                super.onClick(v);
-            }
-            return super.onLongClick(v);
-        }
     }
 
     @Override
@@ -152,7 +127,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     @Override
     public int getItemViewType(int position) {
         File f = getItemByPosition(position);
-        if(f.isDirectory()) {
+        if (f.isDirectory()) {
             return VIEW_TYPE_FOLDER;
         }
         return VIEW_TYPE_FILE;
@@ -166,11 +141,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @Override
     public FolderItemViewHolder buildViewHolder(View view, int viewType) {
-        if(viewType == VIEW_TYPE_FOLDER) {
+        if (viewType == VIEW_TYPE_FOLDER) {
             return new FolderItemFolderViewHolder(view);
         } else {
             return new FolderItemFileViewHolder(view);
         }
+        //TODO allow blank "folder" spacer items to correct the visual display.
     }
 
     @Override
@@ -186,7 +162,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     @Override
     protected void removeItemFromInternalStore(int idxRemoved) {
         File f = currentDisplayContent.get(idxRemoved);
-        if(f.exists()) {
+        if (f.exists()) {
             f.delete();
         }
         currentDisplayContent.remove(idxRemoved);
@@ -205,10 +181,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @Override
     protected void addItemToInternalStore(File item) {
-        if(!item.exists()) {
+        if (!item.exists()) {
             throw new IllegalStateException("Cannot add File to display that does not yet exist");
         }
-        if(!item.getParentFile().equals(activeFolder)) {
+        if (!item.getParentFile().equals(activeFolder)) {
             throw new IllegalArgumentException("File is not a child of the currently displayed folder");
         }
         currentDisplayContent.add(item);
@@ -224,14 +200,6 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return isDirtyItemViewHolder(holder) || !(getItemPosition(holder.getItem()) == getItemPosition(newItem));
     }
 
-    /**
-     * @param holder
-     * @return true if this holder has never been used before (or is totally clean)
-     */
-    private boolean isDirtyItemViewHolder(FolderItemViewHolder holder) {
-        return holder.getOldPosition() < 0 || holder.getItem() == null;
-    }
-
     @Override
     public HashSet<Long> getItemsSelectedButNotLoaded() {
         return new HashSet<>(0);
@@ -240,6 +208,33 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     @Override
     public int getItemCount() {
         return currentDisplayContent.size();
+    }
+
+    public interface NavigationListener {
+        void onFolderOpened(File oldFolder, File newFolder);
+    }
+
+    class FolderItemCustomClickListener extends CustomClickListener<FolderItemViewAdapterPreferences, File, FolderItemViewHolder> {
+        public <Q extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemViewHolder>> FolderItemCustomClickListener(FolderItemViewHolder viewHolder, Q parentAdapter) {
+            super(viewHolder, parentAdapter);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER) {
+                updateContent(getViewHolder().getItem());
+            } else if (getAdapterPrefs().isAllowFileSelection()) {
+                super.onClick(v);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (getViewHolder().getItemViewType() == VIEW_TYPE_FOLDER && getAdapterPrefs().isAllowFolderSelection()) {
+                super.onClick(v);
+            }
+            return super.onLongClick(v);
+        }
     }
 
     protected class FolderItemFolderViewHolder extends FolderItemViewHolder {
@@ -251,11 +246,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         public void fillValues(Context context, File newItem, boolean allowItemDeletion) {
             setItem(newItem);
+            getTxtTitle().setVisibility(View.VISIBLE);
             getTxtTitle().setText(newItem.getName());
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
-            getCheckBox().setVisibility(getAdapterPrefs().isAllowFolderSelection()? View.VISIBLE : View.GONE);
+            getCheckBox().setVisibility(getAdapterPrefs().isAllowFolderSelection() ? View.VISIBLE : View.GONE);
             getCheckBox().setChecked(getSelectedItems().contains(newItem));
             getCheckBox().setEnabled(isEnabled());
         }
@@ -277,11 +273,16 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         public void fillValues(Context context, File newItem, boolean allowItemDeletion) {
             setItem(newItem);
-            getTxtTitle().setText(newItem.getName());
+            if (getAdapterPrefs().isShowFilenames()) {
+                getTxtTitle().setVisibility(View.VISIBLE);
+                getTxtTitle().setText(newItem.getName());
+            } else {
+                getTxtTitle().setVisibility(View.GONE);
+            }
             if (!allowItemDeletion) {
                 getDeleteButton().setVisibility(View.GONE);
             }
-            getCheckBox().setVisibility(getAdapterPrefs().isAllowFileSelection()? View.VISIBLE : View.GONE);
+            getCheckBox().setVisibility(getAdapterPrefs().isAllowFileSelection() ? View.VISIBLE : View.GONE);
             getCheckBox().setChecked(getSelectedItems().contains(newItem));
             getCheckBox().setEnabled(isEnabled());
             getIconViewLoader().setFileToLoad(getItem());
@@ -302,6 +303,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                             getIconViewLoader().load();
                         }
                     } catch (IllegalStateException e) {
+                        Crashlytics.logException(e);
                         // image loader not configured yet...
                     }
                     return true;
@@ -372,7 +374,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             checkBox = itemView.findViewById(R.id.list_item_checked);
             checkBox.setClickable(getItemActionListener().getParentAdapter().isItemSelectionAllowed());
             checkBox.setOnCheckedChangeListener(getItemActionListener().getParentAdapter().new ItemSelectionListener(getItemActionListener().getParentAdapter(), this));
-            if(isMultiSelectionAllowed()) {
+            if (isMultiSelectionAllowed()) {
                 checkBox.setButtonDrawable(R.drawable.always_clear_checkbox);
             } else {
                 checkBox.setButtonDrawable(R.drawable.always_clear_radio);

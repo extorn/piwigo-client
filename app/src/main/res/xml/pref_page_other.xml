@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        android:layout="@android:layout/preference_category"
+        android:title="@string/preference_gallery_category_general">
+        <SwitchPreference
+            android:defaultValue="@bool/preference_app_show_toolbar_default"
+            android:key="@string/preference_app_show_toolbar_key"
+            android:summary="@string/preference_app_show_toolbar_summary"
+            android:title="@string/preference_app_show_toolbar_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:layout="@android:layout/preference_category"
+        android:title="@string/preference_other_category_file_selector">
+        <SwitchPreference
+            android:defaultValue="@bool/preference_data_file_selector_showFilenames_default"
+            android:key="@string/preference_data_file_selector_showFilenames_key"
+            android:summary="@string/preference_data_file_selector_showFilenames_summary"
+            android:title="@string/preference_data_file_selector_showFilenames_title" />
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+            app:minValue="1"
+            app:maxValue="50"
+            app:setDefaultOnAttach="false"
+            android:key="@string/preference_data_file_selector_preferredFileColumnsLandscape_key"
+            android:title="@string/preference_data_file_selector_preferredFileColumnsLandscape_title"
+            android:summary="@string/preference_data_file_selector_preferredFileColumnsLandscape_summary"/>
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+            app:minValue="1"
+            app:maxValue="50"
+            app:setDefaultOnAttach="false"
+            android:key="@string/preference_data_file_selector_preferredFileColumnsPortrait_key"
+            android:title="@string/preference_data_file_selector_preferredFileColumnsPortrait_title"
+            android:summary="@string/preference_data_file_selector_preferredFileColumnsPortrait_summary"/>
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+            app:minValue="1"
+            app:maxValue="50"
+            app:setDefaultOnAttach="false"
+            android:key="@string/preference_data_file_selector_preferredFolderColumnsLandscape_key"
+            android:title="@string/preference_data_file_selector_preferredFolderColumnsLandscape_title"
+            android:summary="@string/preference_data_file_selector_preferredFolderColumnsLandscape_summary"/>
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+            app:minValue="1"
+            app:maxValue="50"
+            app:setDefaultOnAttach="false"
+            android:key="@string/preference_data_file_selector_preferredFolderColumnsPortrait_key"
+            android:title="@string/preference_data_file_selector_preferredFolderColumnsPortrait_title"
+            android:summary="@string/preference_data_file_selector_preferredFolderColumnsPortrait_summary"/>
+    </PreferenceCategory>
+</PreferenceScreen>

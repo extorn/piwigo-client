@@ -8,6 +8,7 @@ import android.widget.ListView;
 public class ViewListUtils {
     /**
      * Expand list height so that all children are visible without scrolling.
+     *
      * @param listView
      */
     public static void setListViewHeightBasedOnChildren(ListView listView) {
@@ -16,6 +17,7 @@ public class ViewListUtils {
 
     /**
      * Expand list height so that a maximum of x children are visible without scrolling.
+     *
      * @param listView
      * @param maxVisibleChildren
      */

@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Created by gareth on 09/10/17.
  */
 
-public class SerializablePair<T extends Serializable, S extends Serializable> extends Pair<T,S> implements Serializable {
+public class SerializablePair<T extends Serializable, S extends Serializable> extends Pair<T, S> implements Serializable {
     /**
      * Constructor for a Pair.
      *

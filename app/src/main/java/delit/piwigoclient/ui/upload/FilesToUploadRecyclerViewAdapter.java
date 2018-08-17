@@ -14,6 +14,8 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -30,20 +32,20 @@ import delit.piwigoclient.ui.PicassoFactory;
  */
 public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<FilesToUploadRecyclerViewAdapter.ViewHolder> {
 
-    private boolean useDarkMode;
-    private final ArrayList<File> filesToUpload;
-    private final HashMap<File, Integer> fileUploadProgress = new HashMap<>();
-    private final RemoveListener listener;
     public static final int VIEW_TYPE_LIST = 0;
     public static final int VIEW_TYPE_GRID = 1;
-    private int viewType = VIEW_TYPE_LIST;
     public static final int SCALING_QUALITY_PERFECT = Integer.MAX_VALUE;
     public static final int SCALING_QUALITY_VHIGH = 960;
     public static final int SCALING_QUALITY_HIGH = 480;
     public static final int SCALING_QUALITY_MEDIUM = 240;
     public static final int SCALING_QUALITY_LOW = 120;
     public static final int SCALING_QUALITY_VLOW = 60;
+    private final ArrayList<File> filesToUpload;
+    private final HashMap<File, Integer> fileUploadProgress = new HashMap<>();
+    private final RemoveListener listener;
     private final int scalingQuality = SCALING_QUALITY_MEDIUM;
+    private boolean useDarkMode;
+    private int viewType = VIEW_TYPE_LIST;
 
     public FilesToUploadRecyclerViewAdapter(ArrayList<File> filesToUpload, @NonNull Context context, RemoveListener listener) {
         this.listener = listener;
@@ -52,7 +54,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     }
 
     public void setViewType(int viewType) {
-        if(viewType != VIEW_TYPE_GRID && viewType != VIEW_TYPE_LIST) {
+        if (viewType != VIEW_TYPE_GRID && viewType != VIEW_TYPE_LIST) {
             throw new IllegalArgumentException("illegal view type");
         }
         this.viewType = viewType;
@@ -83,7 +85,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             throw new IllegalStateException("viewType not supported" + viewType);
         }
 
-        if(useDarkMode) {
+        if (useDarkMode) {
             view.setBackgroundColor(Color.WHITE);
         }
 
@@ -92,8 +94,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         viewHolder.fileForUploadImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!viewHolder.imageLoader.isImageLoaded()) {
-                    viewHolder.imageLoader.load();
+                if (!viewHolder.imageLoader.isImageLoaded()) {
+                    viewHolder.imageLoader.loadNoCache();
                 }
             }
         });
@@ -116,19 +118,20 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             @Override
             public boolean onPreDraw() {
                 try {
-                    if(!viewHolder.imageLoader.isImageLoaded()  && !viewHolder.imageLoader.isImageLoading()) {
+                    if (!viewHolder.imageLoader.isImageLoaded() && !viewHolder.imageLoader.isImageLoading()) {
                         int imgSize = scalingQuality;
                         if (imgSize == Integer.MAX_VALUE) {
                             imgSize = viewHolder.fileForUploadImageView.getMeasuredWidth();
                         } else {
                             // need that math.max to ensure that the image size remains positive
                             //FIXME How can this ever be called before the ImageView object has a size?
-                            imgSize = Math.max(SCALING_QUALITY_VLOW,Math.min(scalingQuality, viewHolder.fileForUploadImageView.getMeasuredWidth()));
+                            imgSize = Math.max(SCALING_QUALITY_VLOW, Math.min(scalingQuality, viewHolder.fileForUploadImageView.getMeasuredWidth()));
                         }
                         viewHolder.imageLoader.setResizeTo(imgSize, imgSize);
                         viewHolder.imageLoader.load();
                     }
-                } catch(IllegalStateException e) {
+                } catch (IllegalStateException e) {
+                    Crashlytics.logException(e);
                     // image loader not configured yet...
                 }
                 return true;
@@ -234,6 +237,10 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         notifyDataSetChanged();
     }
 
+    public interface RemoveListener {
+        void onRemove(FilesToUploadRecyclerViewAdapter adapter, File itemToRemove, boolean longClick);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         private final ProgressBar progressBar;
@@ -251,7 +258,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             fileNameField = itemView.findViewById(R.id.file_for_upload_txt);
             deleteButton = itemView.findViewById(R.id.file_for_upload_delete_button);
             Context context = view.getContext();
-            if(context == null) {
+            if (context == null) {
                 throw new IllegalStateException("Context is not available in the view at this time");
             }
             PicassoFactory.getInstance().getPicassoSingleton(context).load(R.drawable.ic_delete_black_24px).into(deleteButton);
@@ -264,9 +271,5 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         public String toString() {
             return super.toString() + " '" + mItem.getName() + "'";
         }
-    }
-
-    public interface RemoveListener {
-        void onRemove(FilesToUploadRecyclerViewAdapter adapter, File itemToRemove, boolean longClick);
     }
 }

@@ -15,27 +15,35 @@ import java.util.concurrent.ExecutorService;
 public class MyPicasso extends Picasso {
 
     private List<RequestHandler> myRequestHandlers;
+    private LruExifCache cache;
 
-    MyPicasso(Context context, Dispatcher dispatcher, Cache cache, Listener listener, RequestTransformer requestTransformer, List<RequestHandler> extraRequestHandlers, Stats stats, Bitmap.Config defaultBitmapConfig, boolean indicatorsEnabled, boolean loggingEnabled) {
+    MyPicasso(Context context, Dispatcher dispatcher, LruExifCache cache, Listener listener, RequestTransformer requestTransformer, List<RequestHandler> extraRequestHandlers, Stats stats, Bitmap.Config defaultBitmapConfig, boolean indicatorsEnabled, boolean loggingEnabled) {
         super(context, dispatcher, cache, listener, requestTransformer, extraRequestHandlers, stats, defaultBitmapConfig, indicatorsEnabled, loggingEnabled);
+        this.cache = cache;
     }
 
     @Override
     List<RequestHandler> getRequestHandlers() {
-        if(myRequestHandlers == null) {
+        if (myRequestHandlers == null) {
             myRequestHandlers = super.getRequestHandlers();
             myRequestHandlers = Collections.unmodifiableList(myRequestHandlers.subList(1, myRequestHandlers.size()));
         }
         return myRequestHandlers;
     }
 
-    /** Fluent API for creating {@link Picasso} instances. */
+    public int getCacheSize() {
+        return cache == null ? 0 : cache.size();
+    }
+
+    /**
+     * Fluent API for creating {@link Picasso} instances.
+     */
     @SuppressWarnings("UnusedDeclaration") // Public API.
     public static class Builder {
         private final Context context;
         private Downloader downloader;
         private ExecutorService service;
-        private Cache cache;
+        private LruExifCache cache;
         private Listener listener;
         private RequestTransformer transformer;
         private List<RequestHandler> requestHandlers;
@@ -44,7 +52,9 @@ public class MyPicasso extends Picasso {
         private boolean indicatorsEnabled;
         private boolean loggingEnabled;
 
-        /** Start building a new {@link Picasso} instance. */
+        /**
+         * Start building a new {@link Picasso} instance.
+         */
         public Builder(Context context) {
             if (context == null) {
                 throw new IllegalArgumentException("Context must not be null.");
@@ -64,7 +74,9 @@ public class MyPicasso extends Picasso {
             return this;
         }
 
-        /** Specify the {@link Downloader} that will be used for downloading images. */
+        /**
+         * Specify the {@link Downloader} that will be used for downloading images.
+         */
         public Builder downloader(Downloader downloader) {
             if (downloader == null) {
                 throw new IllegalArgumentException("Downloader must not be null.");
@@ -92,19 +104,23 @@ public class MyPicasso extends Picasso {
             return this;
         }
 
-        /** Specify the memory cache used for the most recent images. */
-        public Builder memoryCache(Cache memoryCache) {
-            if (memoryCache == null) {
-                throw new IllegalArgumentException("Memory cache must not be null.");
-            }
-            if (this.cache != null) {
-                throw new IllegalStateException("Memory cache already set.");
-            }
-            this.cache = memoryCache;
-            return this;
-        }
+//        /**
+//         * Specify the memory cache used for the most recent images.
+//         */
+//        public Builder memoryCache(Cache memoryCache) {
+//            if (memoryCache == null) {
+//                throw new IllegalArgumentException("Memory cache must not be null.");
+//            }
+//            if (this.cache != null) {
+//                throw new IllegalStateException("Memory cache already set.");
+//            }
+//            this.cache = memoryCache;
+//            return this;
+//        }
 
-        /** Specify a listener for interesting events. */
+        /**
+         * Specify a listener for interesting events.
+         */
         public Builder listener(Listener listener) {
             if (listener == null) {
                 throw new IllegalArgumentException("Listener must not be null.");
@@ -133,13 +149,15 @@ public class MyPicasso extends Picasso {
             return this;
         }
 
-        /** Register a {@link RequestHandler}. */
+        /**
+         * Register a {@link RequestHandler}.
+         */
         public Builder addRequestHandler(RequestHandler requestHandler) {
             if (requestHandler == null) {
                 throw new IllegalArgumentException("RequestHandler must not be null.");
             }
             if (requestHandlers == null) {
-                requestHandlers = new ArrayList<RequestHandler>();
+                requestHandlers = new ArrayList<>();
             }
             if (requestHandlers.contains(requestHandler)) {
                 throw new IllegalStateException("RequestHandler already registered.");
@@ -152,11 +170,14 @@ public class MyPicasso extends Picasso {
          * @deprecated Use {@link #indicatorsEnabled(boolean)} instead.
          * Whether debugging is enabled or not.
          */
-        @Deprecated public Builder debugging(boolean debugging) {
+        @Deprecated
+        public Builder debugging(boolean debugging) {
             return indicatorsEnabled(debugging);
         }
 
-        /** Toggle whether to display debug indicators on images. */
+        /**
+         * Toggle whether to display debug indicators on images.
+         */
         public Builder indicatorsEnabled(boolean enabled) {
             this.indicatorsEnabled = enabled;
             return this;
@@ -173,7 +194,9 @@ public class MyPicasso extends Picasso {
             return this;
         }
 
-        /** Create the {@link Picasso} instance. */
+        /**
+         * Create the {@link Picasso} instance.
+         */
         public MyPicasso build() {
             Context context = this.context;
 
@@ -181,7 +204,7 @@ public class MyPicasso extends Picasso {
                 downloader = Utils.createDefaultDownloader(context);
             }
             if (cache == null) {
-                cache = new LruCache(context);
+                cache = new LruExifCache(context);
             }
             if (service == null) {
                 service = new PicassoExecutorService();
@@ -199,8 +222,7 @@ public class MyPicasso extends Picasso {
         }
     }
 
-    public int getCacheSize() {
-        return cache == null ? 0 : cache.size();
+    public LruExifCache getCache() {
+        return cache;
     }
-
 }

@@ -13,6 +13,7 @@ import java.util.List;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
@@ -36,6 +37,8 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
             params.put("cat_id", String.valueOf(parentAlbumId));
         }
         params.put("recursive", String.valueOf(recursive));
+        boolean communityPluginInstalled = PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs());
+        params.put("faked_by_community", String.valueOf(!communityPluginInstalled));
         return params;
     }
 
@@ -61,11 +64,11 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
             CategoryItemStub album = new CategoryItemStub(name, id, null);
             if (parentId != null) {
                 CategoryItemStub parentAlbum = availableGalleriesMap.get(parentId);
-                if(parentAlbum != null) {
+                if (parentAlbum != null) {
                     album.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
                 }
             }
-            if(album.getParentageChain() == null) {
+            if (album.getParentageChain() == null) {
                 if (category.has("uppercats")) {
                     String parentCatsCsv = category.get("uppercats").getAsString();
                     List<Long> parentage = toParentageChain(id, parentCatsCsv);
@@ -83,7 +86,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
 
     private List<Long> toParentageChain(long thisAlbumId, String parentCatsCsv) {
         String[] cats = parentCatsCsv.split(",");
-        ArrayList<Long> list = new ArrayList();
+        ArrayList<Long> list = new ArrayList<>();
         list.add(CategoryItem.ROOT_ALBUM.getId());
         for (String cat : cats) {
             list.add(Long.valueOf(cat));

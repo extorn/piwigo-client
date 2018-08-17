@@ -59,8 +59,9 @@ public class UsersListFragment extends MyFragment {
     private BaseRecyclerViewAdapterPreferences viewPrefs;
 
     public static UsersListFragment newInstance() {
-        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(false, false).deletable();
+        BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().deletable();
         prefs.setAllowItemAddition(true);
+        prefs.setEnabled(true);
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
         UsersListFragment fragment = new UsersListFragment();
@@ -70,11 +71,11 @@ public class UsersListFragment extends MyFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(getArguments());
             setArguments(null);
         }
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
         super.onCreate(savedInstanceState);
@@ -106,7 +107,7 @@ public class UsersListFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
+        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -121,7 +122,7 @@ public class UsersListFragment extends MyFragment {
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
 
         AdView adView = view.findViewById(R.id.list_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -141,7 +142,7 @@ public class UsersListFragment extends MyFragment {
         saveButton.setVisibility(View.GONE);
 
         CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
-        addListItemButton.setVisibility(viewPrefs.isAllowItemAddition()?View.VISIBLE:View.GONE);
+        addListItemButton.setVisibility(viewPrefs.isAllowItemAddition() ? View.VISIBLE : View.GONE);
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,14 +201,14 @@ public class UsersListFragment extends MyFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(usersModel.getPagesLoaded() == 0 && viewAdapter != null) {
+        if (usersModel.getPagesLoaded() == 0 && viewAdapter != null) {
             viewAdapter.notifyDataSetChanged();
             loadUsersPage(0);
         }
     }
 
     private void loadUsersPage(int pageToLoad) {
-        if(!usersModel.isPageLoaded(pageToLoad)) {
+        if (!usersModel.isPageLoaded(pageToLoad)) {
             this.pageToLoadNow = pageToLoad;
             int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
             addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
@@ -237,7 +238,7 @@ public class UsersListFragment extends MyFragment {
 
                 @Override
                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                    if(Boolean.TRUE == positiveAnswer) {
+                    if (Boolean.TRUE == positiveAnswer) {
                         deleteUserNow(thisItem);
                     }
                 }
@@ -255,60 +256,6 @@ public class UsersListFragment extends MyFragment {
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
     }
-
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
-
-        @Override
-        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if(isVisible()) {
-                updateActiveSessionDetails();
-            }
-            super.onBeforeHandlePiwigoResponse(response);
-        }
-
-        @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse) {
-                onUsersLoaded((PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) {
-                onUserDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) response);
-            } else if(response instanceof PiwigoResponseBufferingHandler.ErrorResponse){
-                if(deleteActionsPending.size() == 0) {
-                    // assume this to be a list reload that's required.
-                    retryActionButton.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-
-        @Override
-        protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
-            if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onUserDeleteFailed(msg.getMessageId());
-            } else {
-                super.handlePiwigoHttpErrorResponse(msg);
-            }
-        }
-
-        @Override
-        protected void handlePiwigoUnexpectedReplyErrorResponse(PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse msg) {
-            if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onUserDeleteFailed(msg.getMessageId());
-            } else {
-                super.handlePiwigoUnexpectedReplyErrorResponse(msg);
-            }
-        }
-
-        @Override
-        protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
-            if (deleteActionsPending.containsKey(msg.getMessageId())) {
-                onUserDeleteFailed(msg.getMessageId());
-            } else {
-                super.handlePiwigoServerErrorResponse(msg);
-            }
-        }
-    }
-
-
 
     private void onUsersLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse response) {
         synchronized (this) {
@@ -344,8 +291,60 @@ public class UsersListFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AppLockedEvent event) {
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
+        }
+    }
+
+    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+
+        @Override
+        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (isVisible()) {
+                updateActiveSessionDetails();
+            }
+            super.onBeforeHandlePiwigoResponse(response);
+        }
+
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse) {
+                onUsersLoaded((PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) {
+                onUserDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
+                if (deleteActionsPending.size() == 0) {
+                    // assume this to be a list reload that's required.
+                    retryActionButton.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
+        @Override
+        protected void handlePiwigoHttpErrorResponse(PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse msg) {
+            if (deleteActionsPending.containsKey(msg.getMessageId())) {
+                onUserDeleteFailed(msg.getMessageId());
+            } else {
+                super.handlePiwigoHttpErrorResponse(msg);
+            }
+        }
+
+        @Override
+        protected void handlePiwigoUnexpectedReplyErrorResponse(PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse msg) {
+            if (deleteActionsPending.containsKey(msg.getMessageId())) {
+                onUserDeleteFailed(msg.getMessageId());
+            } else {
+                super.handlePiwigoUnexpectedReplyErrorResponse(msg);
+            }
+        }
+
+        @Override
+        protected void handlePiwigoServerErrorResponse(PiwigoResponseBufferingHandler.PiwigoServerErrorResponse msg) {
+            if (deleteActionsPending.containsKey(msg.getMessageId())) {
+                onUserDeleteFailed(msg.getMessageId());
+            } else {
+                super.handlePiwigoServerErrorResponse(msg);
+            }
         }
     }
 

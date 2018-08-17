@@ -209,7 +209,7 @@ public class TagsListFragment extends MyFragment {
 
     private void addNewTag() {
         final View v = LayoutInflater.from(getContext()).inflate(R.layout.create_tag ,null);
-        EditText tagNameEdit = (EditText)v.findViewById(R.id.tag_tagname);
+        EditText tagNameEdit = v.findViewById(R.id.tag_tagname);
 
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
 
@@ -219,7 +219,7 @@ public class TagsListFragment extends MyFragment {
                     return;
                 }
                 AlertDialog alert = (AlertDialog)dialog;
-                EditText tagNameEdit = (EditText)alert.findViewById(R.id.tag_tagname);
+                EditText tagNameEdit = alert.findViewById(R.id.tag_tagname);
                 String tagName = tagNameEdit.getText().toString();
                 createNewTag(tagName);
             }
@@ -240,7 +240,7 @@ public class TagsListFragment extends MyFragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String tagName = s.toString();
-                ((AlertDialog) addNewTagDialog).getButton(
+                addNewTagDialog.getButton(
                         AlertDialog.BUTTON_POSITIVE).setEnabled(!tagsModel.containsTag(tagName));
             }
 

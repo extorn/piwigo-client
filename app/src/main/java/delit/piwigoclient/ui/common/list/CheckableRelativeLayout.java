@@ -28,14 +28,14 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
     }
 
     @Override
-    public void setChecked(boolean checked) {
-        this.checked = checked;
-        updateCheckableChildrenToMatch();
+    public boolean isChecked() {
+        return checked;
     }
 
     @Override
-    public boolean isChecked() {
-        return checked;
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+        updateCheckableChildrenToMatch();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class CheckableRelativeLayout extends RelativeLayout implements Checkable
     }
 
     private void updateCheckableChildrenToMatch() {
-        for(Checkable child : checkableChildren) {
+        for (Checkable child : checkableChildren) {
             child.setChecked(checked);
         }
     }

@@ -57,7 +57,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        if(isServerConnectionChanged()) {
+        if (isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -81,7 +81,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     public void onResume() {
         super.onResume();
 
-        if(isServerConnectionChanged()) {
+        if (isServerConnectionChanged()) {
             return;
         }
 
@@ -92,7 +92,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     protected void rerunRetrievalForFailedPages() {
         if (availableAlbums == null) {
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
-        } else if(getListAdapter() == null) {
+        } else if (getListAdapter() == null) {
             AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), CategoryItem.ROOT_ALBUM, getContext());
             availableGalleries.clear();
             // leaving the root album out prevents it's selection (not wanted).
@@ -102,15 +102,15 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
             listView.setAdapter(availableGalleries);
             // clear checked items
             listView.clearChoices();
-            if(isMultiSelectEnabled()) {
+            if (isMultiSelectEnabled()) {
                 listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
             } else {
                 listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
             }
 
-            for(Long selectedAlbum : getCurrentSelection()) {
+            for (Long selectedAlbum : getCurrentSelection()) {
                 int itemPos = availableGalleries.getPosition(selectedAlbum);
-                if(itemPos >= 0) {
+                if (itemPos >= 0) {
                     listView.setItemChecked(itemPos, true);
                 }
             }
@@ -120,17 +120,16 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     }
 
 
-
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         HashSet<CategoryItemStub> selectedAlbums = new HashSet<>(selectedIdsSet.size());
         AvailableAlbumsListAdapter listAdapter = getListAdapter();
-        for(Long selectedId : selectedIdsSet) {
+        for (Long selectedId : selectedIdsSet) {
             selectedAlbums.add(listAdapter.getItemById(selectedId));
         }
         EventBus.getDefault().post(new AlbumSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedAlbums));
         // now pop this screen off the stack.
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
     }
@@ -138,6 +137,12 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
+    }
+
+    private void onAlbumsLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+        getUiHelper().dismissProgressDialog();
+        availableAlbums = response.getAlbumNames();
+        rerunRetrievalForFailedPages();
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
@@ -149,11 +154,5 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
                 onListItemLoadFailed();
             }
         }
-    }
-
-    private void onAlbumsLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
-        getUiHelper().dismissProgressDialog();
-        availableAlbums = response.getAlbumNames();
-        rerunRetrievalForFailedPages();
     }
 }

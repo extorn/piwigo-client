@@ -2,6 +2,8 @@ package delit.piwigoclient.util;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +27,7 @@ public class Md5SumUtils {
         try {
             digest = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
+            Crashlytics.logException(e);
             Log.e(TAG, "Exception while getting digest", e);
             return null;
         }
@@ -46,15 +49,18 @@ public class Md5SumUtils {
                 output = String.format("%32s", output).replace(' ', '0');
                 return output;
             } catch (IOException e) {
+                Crashlytics.logException(e);
                 throw new RuntimeException("Unable to process file for MD5", e);
             } finally {
                 try {
                     is.close();
                 } catch (IOException e) {
+                    Crashlytics.logException(e);
                     Log.e(TAG, "Exception on closing MD5 input stream", e);
                 }
             }
         } catch (FileNotFoundException e) {
+            Crashlytics.logException(e);
             Log.e(TAG, "Exception while getting FileInputStream", e);
             return null;
         }

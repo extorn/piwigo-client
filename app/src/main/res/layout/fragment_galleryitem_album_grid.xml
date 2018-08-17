@@ -14,7 +14,7 @@
         android:background="@color/black_overlay"
         android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatImageView
+        <delit.piwigoclient.ui.common.RoundableImageView
             android:id="@+id/resource_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -23,12 +23,6 @@
             android:scaleType="fitCenter" />
 
     </delit.piwigoclient.ui.common.SquareLinearLayout>
-
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/newly_altered_marker_image"
-        android:layout_alignParentEnd="true"
-        android:layout_width="24dp"
-        android:layout_height="24dp"/>
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/resource_name"
@@ -47,6 +41,12 @@
         android:textSize="16sp"
         android:shadowColor="#FFFFFF"
         android:shadowRadius="1" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/newly_altered_marker_image"
+        android:layout_alignParentEnd="true"
+        android:layout_width="24dp"
+        android:layout_height="24dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"

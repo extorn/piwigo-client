@@ -5,8 +5,8 @@
 
     <!-- Non editable preferences -->
 
-    <string name="preference_agreed_eula_version_key">preference_agreed_eula_version</string>
-    <string name="preference_app_prefs_version_key">preference_app_prefs_version</string>
+    <string name="preference_agreed_eula_version_key" translatable="false">preference_agreed_eula_version</string>
+    <string name="preference_app_prefs_version_key" translatable="false">preference_app_prefs_version</string>
 
     <!-- Server Page -->
 
@@ -16,68 +16,73 @@
 
     <!-- prefs -->
 
-    <string name="preference_server_connection_max_redirects_key">preference_server_connection_max_redirects</string>
+    <string name="preference_server_connection_max_redirects_key" translatable="false">preference_server_connection_max_redirects</string>
     <string name="preference_server_connection_max_redirects_title">Max server redirects</string>
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>
     <integer name="preference_server_connection_max_redirects_default">5</integer>
 
-    <string name="preference_server_connection_allow_redirects_key">preference_server_connection_allow_redirects</string>
+    <string name="preference_server_connection_force_https_key" translatable="false">preference_server_connection_force_https</string>
+    <string name="preference_server_connection_force_https_title">Rewrite Http URLs to Https</string>
+    <string name="preference_server_connection_force_https_summary">All http:// urls rewritten to https:// for https server</string>
+    <bool name="preference_server_connection_force_https_default">false</bool>
+
+    <string name="preference_server_connection_allow_redirects_key" translatable="false">preference_server_connection_allow_redirects</string>
     <string name="preference_server_connection_allow_redirects_title">Allow server redirects</string>
     <string name="preference_server_connection_allow_redirects_summary">Follow http 3xx responses</string>
-    <bool name="preference_server_connection_allow_redirects_default">false</bool>
+    <bool name="preference_server_connection_allow_redirects_default">true</bool>
 
-    <string name="preference_server_socketTimeout_millisecs_key">preference_server_socketTimeout_millisecs</string>
+    <string name="preference_server_socketTimeout_millisecs_key" translatable="false">preference_server_socketTimeout_millisecs</string>
     <string name="preference_server_socketTimeout_millisecs_title">Connection timeout (milliseconds)</string>
     <string name="preference_server_socketTimeout_millisecs_summary">%1$d millisecs</string>
     <integer name="preference_server_socketTimeout_millisecs_default">10000</integer>
 
-    <string name="preference_server_connection_retries_key">preference_server_connection_retries</string>
+    <string name="preference_server_connection_retries_key" translatable="false">preference_server_connection_retries</string>
     <string name="preference_server_connection_retries_title">Connection retries before failure</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
     <integer name="preference_server_connection_retries_default">3</integer>
 
-    <string name="preference_server_basic_auth_username_key">basic_auth_username</string>
+    <string name="preference_server_basic_auth_username_key" translatable="false">basic_auth_username</string>
     <string name="preference_server_basic_auth_username_title">Basic Authentication Username</string>
 
-    <string name="preference_server_basic_auth_password_key">basic_auth_password</string>
+    <string name="preference_server_basic_auth_password_key" translatable="false">basic_auth_password</string>
     <string name="preference_server_basic_auth_password_title">Basic Authentication Password</string>
 
-    <string name="preference_server_use_basic_auth_key">use_basic_auth</string>
+    <string name="preference_server_use_basic_auth_key" translatable="false">use_basic_auth</string>
     <string name="preference_server_use_basic_auth_title">Use Basic Authentication</string>
     <string name="preference_server_use_basic_auth_summary">Enable if server requires Basic Authentication</string>
     <bool name="preference_server_use_basic_auth_default">false</bool>
 
-    <string name="preference_server_use_client_certs_key">preference_server_use_client_certs</string>
+    <string name="preference_server_use_client_certs_key" translatable="false">preference_server_use_client_certs</string>
     <bool name="preference_server_use_client_certs_default">false</bool>
     <string name="preference_server_use_client_certs_title">Use Client Certificate Authentication</string>
     <string name="preference_server_use_client_certs_summary">Enable if server requires Certificate based Client Authentication</string>
 
-    <string name="preference_select_client_certificate_key">preference_select_client_certificate</string>
+    <string name="preference_select_client_certificate_key" translatable="false">preference_select_client_certificate</string>
     <string name="preference_select_client_certificate_title">Client Certificates (and Private Keys)</string>
     <string name="preference_select_client_certificate_summary">Select Client certificate for authentication</string>
 
-    <string name="preference_piwigo_connection_profile_key">preference_piwigo_connection_profile</string>
+    <string name="preference_piwigo_connection_profile_key" translatable="false">preference_piwigo_connection_profile</string>
     <string name="preference_piwigo_connection_profile_title">Select Connection Profile</string>
     <string name="preference_piwigo_connection_profile_summary">Active connection profile (%1$s)</string>
 
     <!-- list of connection profiles to select from -->
-    <string name="preference_piwigo_connection_profile_list_key">preference_select_piwigo_connection_profile</string>
+    <string name="preference_piwigo_connection_profile_list_key" translatable="false">preference_select_piwigo_connection_profile</string>
 
 
-    <string name="preference_piwigo_server_address_key">piwigo_server_address</string>
+    <string name="preference_piwigo_server_address_key" translatable="false">piwigo_server_address</string>
     <string name="preference_piwigo_server_address_title">Server Address</string>
     <string name="preference_piwigo_server_address_summary">%1$s</string>
 
-    <string name="preference_piwigo_server_username_key">piwigo_username</string>
+    <string name="preference_piwigo_server_username_key" translatable="false">piwigo_username</string>
     <string name="preference_piwigo_server_username_title">Username</string>
     <string name="preference_piwigo_server_username_summary">%1$s</string>
 
 
-    <string name="preference_piwigo_server_password_key">piwigo_password</string>
+    <string name="preference_piwigo_server_password_key" translatable="false">piwigo_password</string>
     <string name="preference_piwigo_server_password_title">Password</string>
     <string name="preference_piwigo_server_password_summary">%1$s</string>
 
-    <string name="preference_server_ssl_certificate_hostname_verification_key">preference_server_ssl_certificate_hostname_verification</string>
+    <string name="preference_server_ssl_certificate_hostname_verification_key" translatable="false">preference_server_ssl_certificate_hostname_verification</string>
     <string name="preference_server_ssl_certificate_hostname_verification_title">SSL Certificate Hostname validation</string>
     <string name="preference_server_ssl_certificate_hostname_verification_summary">%1$s</string>
     <string name="preference_server_ssl_certificate_hostname_verification_default" translatable="false">1</string>
@@ -86,17 +91,17 @@
     <string name="preference_caching_clearResponseCache_key" translatable="false">preference_caching_clearResponseCache</string>
     <string name="preference_caching_clearResponseCache_summary">Deletes all server responses cached to disk</string>
 
-    <string name="preference_caching_level_key">preference_caching_level</string>
+    <string name="preference_caching_level_key" translatable="false">preference_caching_level</string>
     <string name="preference_caching_level_title">Response Cache Level</string>
     <string name="preference_caching_level_summary">%1$s</string>
     <string name="preference_caching_level_default">disk</string>
 
-    <string name="preference_caching_max_cache_entries_key">preference_caching_max_cache_entries</string>
+    <string name="preference_caching_max_cache_entries_key" translatable="false">preference_caching_max_cache_entries</string>
     <string name="preference_caching_max_cache_entries_title">Max number cache entriesList</string>
     <string name="preference_caching_max_cache_entries_summary">%1$d</string>
     <integer name="preference_caching_max_cache_entries_default">1000</integer>
 
-    <string name="preference_caching_max_cache_entry_size_key">preference_caching_max_cache_entry_size</string>
+    <string name="preference_caching_max_cache_entry_size_key" translatable="false">preference_caching_max_cache_entry_size</string>
     <string name="preference_caching_max_cache_entry_size_title">Max Cache Entry size (KB)</string>
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
     <integer name="preference_caching_max_cache_entry_size_default">1024</integer>
@@ -104,24 +109,27 @@
     <string name="preference_connections_category_trusted_server_ca">Trusted Server Certificate CAs</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Use a custom list of trusted CA certificates to validate server SSL certificates</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Use custom trusted certificate authorities</string>
-    <string name="preference_server_use_custom_trusted_ca_certs_key">preference_server_use_custom_trusted_ca_certs</string>
+    <string name="preference_server_use_custom_trusted_ca_certs_key" translatable="false">preference_server_use_custom_trusted_ca_certs</string>
     <bool name="preference_server_use_custom_trusted_ca_certs_default">false</bool>
 
-    <string name="preference_select_trusted_certificate_key">preference_select_trusted_certificate</string>
+    <string name="preference_select_trusted_certificate_key" translatable="false">preference_select_trusted_certificate</string>
     <string name="preference_select_trusted_certificate_title">Select trusted CA certificates</string>
     <string name="preference_select_trusted_certificate_summary">View and edit the list of trusted CA certificates</string>
 
-    <string name="preference_pre_user_notified_certificates_key">preference_pre_user_notified_certificates</string>
+    <string name="preference_pre_user_notified_certificates_key" translatable="false">preference_pre_user_notified_certificates</string>
 
     <!-- Gallery Page -->
 
     <string name="preference_page_gallery">Gallery</string>
-    <string name="preference_gallery_category_multimedia">Multimedia</string>
     <string name="preference_gallery_category_general">General</string>
+    <string name="preference_gallery_category_advanced">Advanced</string>
+    <string name="preference_gallery_category_slideshow">Slideshow</string>
+    <string name="preference_gallery_category_resources">Resources</string>
+    <string name="preference_gallery_category_albums">Albums</string>
 
     <!-- prefs -->
 
-    <string name="preference_app_show_toolbar_key">preference_app_show_toolbar</string>
+    <string name="preference_app_show_toolbar_key" translatable="false">preference_app_show_toolbar</string>
     <string name="preference_app_show_toolbar_title">Show App Toolbar</string>
     <string name="preference_app_show_toolbar_summary">Show the toolbar at the top of the application</string>
     <bool name="preference_app_show_toolbar_default">true</bool>
@@ -131,7 +139,7 @@
     <string name="preference_gallery_albums_preferredColumnsLandscape_title">Landscape: Columns of Albums to show</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_gallery_show_image_name_key">preference_gallery_show_image_name</string>
+    <string name="preference_gallery_show_image_name_key" translatable="false">preference_gallery_show_image_name</string>
     <string name="preference_gallery_show_image_name_title">Show image names in album</string>
     <string name="preference_gallery_show_image_name_summary">Shows the name of the image under each image</string>
     <bool name="preference_gallery_show_image_name_default">true</bool>
@@ -139,11 +147,6 @@
     <string name="preference_gallery_images_preferredColumnsLandscape_key" translatable="false">preference_gallery_images_preferredColumnsLandscape</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_title">Landscape: Columns of Images to show</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
-
-    <string name="preference_gallery_detail_sheet_offset_key" translatable="false">preference_gallery_detail_sheet_offset</string>
-    <string name="preference_gallery_detail_sheet_offset_title">Detail sheet toggle - offset (dp)</string>
-    <string name="preference_gallery_detail_sheet_offset_summary">%1$d</string>
-    <integer name="preference_gallery_detail_sheet_offset_default">20</integer>
 
     <string name="preference_gallery_use_dark_mode_key" translatable="false">preference_gallery_use_dark_mode</string>
     <string name="preference_gallery_use_dark_mode_title">Use Dark Theme</string>
@@ -166,7 +169,7 @@
     <string name="preference_gallery_show_large_thumbnail_key" translatable="false">preference_gallery_show_large_thumbnail</string>
     <string name="preference_gallery_show_large_thumbnail_title">Display albums with large thumbnail</string>
     <string name="preference_gallery_show_large_thumbnail_summary">Image thumbnails fill the column</string>
-    <bool name="preference_gallery_show_large_thumbnail_default">false</bool>
+    <bool name="preference_gallery_show_large_thumbnail_default">true</bool>
 
     <string name="preference_gallery_include_videos_in_slideshow_key" translatable="false">preference_gallery_include_videos_in_slideshow</string>
     <string name="preference_gallery_include_videos_in_slideshow_title">Show videos in Slideshow</string>
@@ -183,12 +186,12 @@
     <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
     <string name="preference_piwigo_playable_media_extensions_default">mpg,avi,mp3,ogg,mp4</string>
 
-    <string name="preference_video_cache_enabled_key">preference_video_cache_enabled</string>
+    <string name="preference_video_cache_enabled_key" translatable="false">preference_video_cache_enabled</string>
     <string name="preference_video_cache_enabled_title">Cache videos viewed to file</string>
     <string name="preference_video_cache_enabled_summary">When enabled, any streamed videos will be cached for later playback</string>
-    <bool name="preference_video_cache_enabled_default">false</bool>
+    <bool name="preference_video_cache_enabled_default">true</bool>
 
-    <string name="preference_video_cache_maxsize_mb_key">preference_video_cache_maxsize_mb</string>
+    <string name="preference_video_cache_maxsize_mb_key" translatable="false">preference_video_cache_maxsize_mb</string>
     <string name="preference_video_cache_maxsize_mb_title">Maximum Video Cache Size (MB)</string>
     <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
     <integer name="preference_video_cache_maxsize_mb_default">512</integer>
@@ -212,41 +215,46 @@
     <string name="preference_gallery_clearVideoCache_summary">Deletes all  videos cached to disk</string>
     <string name="preference_gallery_clearVideoCache_summary_pattern">Deletes all %1$.2fMB of videos cached to disk</string>
 
-    <string name="preference_app_read_only_mode_key">readOnlyMode</string>
-    <string name="preference_gallery_recentlyAlteredAgeMillis_key">preference_gallery_recentlyAlteredAgeMillis</string>
+    <string name="preference_app_read_only_mode_key" translatable="false">readOnlyMode</string>
+    <string name="preference_gallery_recentlyAlteredAgeMillis_key" translatable="false">preference_gallery_recentlyAlteredAgeMillis</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Max age recent items (days)</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d days</string>
     <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
     <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
 
-    <string name="preference_groups_request_pagesize_key">preference_groups_request_pagesize</string>
+    <string name="preference_groups_request_pagesize_key" translatable="false">preference_groups_request_pagesize</string>
     <string name="preference_groups_request_pagesize_title">Groups server request page-size</string>
     <string name="preference_groups_request_pagesize_summary">%1$d items</string>
     <integer name="preference_groups_request_pagesize_default">20</integer>
 
-    <string name="preference_users_request_pagesize_key">preference_users_request_pagesize</string>
+    <string name="preference_users_request_pagesize_key" translatable="false">preference_users_request_pagesize</string>
     <string name="preference_users_request_pagesize_title">Users server request page-size</string>
     <string name="preference_users_request_pagesize_summary">%1$d items</string>
     <integer name="preference_users_request_pagesize_default">20</integer>
 
-    <string name="preference_album_request_pagesize_key">preference_album_request_pagesize</string>
+    <string name="preference_album_request_pagesize_key" translatable="false">preference_album_request_pagesize</string>
     <string name="preference_album_request_pagesize_title">Album server request page-size</string>
     <string name="preference_album_request_pagesize_summary">%1$d items</string>
     <integer name="preference_album_request_pagesize_default">20</integer>
 
-    <string name="preference_gallery_item_thumbnail_size_title">GalleryItem thumbnail image</string>
-    <string name="preference_gallery_item_thumbnail_size_key">gallery_item_thumbnail_size</string>
+    <string name="preference_gallery_item_thumbnail_size_title">Resource thumbnail size</string>
+    <string name="preference_gallery_item_thumbnail_size_key" translatable="false">gallery_item_thumbnail_size</string>
     <string name="preference_gallery_item_thumbnail_size_summary">%1$s</string>
     <string name="preference_gallery_item_thumbnail_size_default" translatable="false">thumb</string>
 
+    <string name="preference_gallery_album_thumbnail_size_title">Album thumbnail size</string>
+    <string name="preference_gallery_album_thumbnail_size_key" translatable="false">gallery_album_thumbnail_size</string>
+    <string name="preference_gallery_album_thumbnail_size_summary">%1$s</string>
+    <string name="preference_gallery_album_thumbnail_size_default" translatable="false">thumb</string>
+
     <string name="preference_gallery_item_slideshow_image_size_title">Slideshow default image size</string>
-    <string name="preference_gallery_item_slideshow_image_size_key">preference_gallery_item_slideshow_image_size</string>
+    <string name="preference_gallery_item_slideshow_image_size_key" translatable="false">preference_gallery_item_slideshow_image_size</string>
     <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
     <string name="preference_gallery_item_slideshow_image_size_default" translatable="false">best-fit</string>
 
     <string name="preference_gallery_masonry_view_title">Use Masonry Style Layout (experimental)</string>
     <string name="preference_gallery_masonry_view_summary">Best fit album content in a tapestry effect</string>
-    <string name="preference_gallery_masonry_view_key">preference_gallery_masonry_view</string>
+    <string name="preference_gallery_masonry_view_key" translatable="false">preference_gallery_masonry_view</string>
     <bool name="preference_gallery_masonry_view_default">false</bool>
 
     <!-- Data Upload page -->
@@ -280,11 +288,38 @@
     <string name="preference_data_upload_preferredColumnsLandscape_title">Landscape: Columns of Images to show</string>
     <string name="preference_data_upload_preferredColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_data_upload_max_filesize_mb_key">preference_data_upload_max_filesize_mb</string>
+    <string name="preference_data_upload_max_filesize_mb_key" translatable="false">preference_data_upload_max_filesize_mb</string>
     <string name="preference_data_upload_max_filesize_mb_title">Max Filesize to upload without warning you (in MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
 
+    <!-- other page -->
+
+    <string name="preference_page_other">Other</string>
+    <string name="preference_other_category_file_selector">File Selector</string>
+
+    <!-- prefs -->
+
+    <bool name="preference_data_file_selector_showFilenames_default">true</bool>
+    <string name="preference_data_file_selector_showFilenames_key">preference_data_file_selector_showFilenames</string>
+    <string name="preference_data_file_selector_showFilenames_title">Show file names</string>
+    <string name="preference_data_file_selector_showFilenames_summary">Filenames shown for each file</string>
+
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_key">preference_data_file_selector_preferredFileColumnsLandscape</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Landscape: Columns of Files to show</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
+
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_key">preference_data_file_selector_preferredFileColumnsPortrait</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portrait: Columns of Files to show</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
+
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_key">preference_data_file_selector_preferredFolderColumnsLandscape</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Landscape: Columns of Folders to show</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
+
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_key">preference_data_file_selector_preferredFolderColumnsPortrait</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Portrait: Columns of Folders to show</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 
     <!-- Automatic Upload Jobs page -->
 
@@ -294,57 +329,57 @@
 
     <!-- prefs -->
 
-    <string name="preference_data_upload_automatic_upload_enable_key">preference_data_upload_automatic_upload_enable</string>
+    <string name="preference_data_upload_automatic_upload_enable_key" translatable="false">preference_data_upload_automatic_upload_enable</string>
     <string name="preference_data_upload_automatic_upload_enable_summary">Enable background uploading</string>
     <string name="preference_data_upload_automatic_upload_enable_title">Automatic Upload</string>
 
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">Only use Auto Upload on Wireless</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Over Wireless Only</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_key">preference_data_upload_automatic_upload_wireless_only</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_key" translatable="false">preference_data_upload_automatic_upload_wireless_only</string>
 
-    <string name="preference_data_upload_automatic_upload_jobs_key">preference_data_upload_automatic_upload_jobs</string>
+    <string name="preference_data_upload_automatic_upload_jobs_key" translatable="false">preference_data_upload_automatic_upload_jobs</string>
     <string name="preference_data_upload_automatic_upload_jobs_title">Auto Upload Jobs</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
 
     <!-- boolean flag set that if false will stop the job running -->
 
-    <string name="preference_data_upload_automatic_job_is_valid_key">preference_data_upload_automatic_job_is_valid</string>
+    <string name="preference_data_upload_automatic_job_is_valid_key" translatable="false">preference_data_upload_automatic_job_is_valid</string>
     <string name="preference_data_upload_automatic_job_is_valid_title">Job is Valid</string>
 
-    <string name="preference_data_upload_automatic_job_enabled_key">preference_data_upload_automatic_server_enabled</string>
+    <string name="preference_data_upload_automatic_job_enabled_key" translatable="false">preference_data_upload_automatic_server_enabled</string>
     <string name="preference_data_upload_automatic_job_enabled_summary">Is this job listening in the background?</string>
     <string name="preference_data_upload_automatic_job_enabled_title">Job Enabled</string>
 
     <string name="preference_data_upload_automatic_job_server_title">Upload to Server</string>
-    <string name="preference_data_upload_automatic_job_server_key">preference_data_upload_automatic_server</string>
+    <string name="preference_data_upload_automatic_job_server_key" translatable="false">preference_data_upload_automatic_server</string>
     <string name="preference_data_upload_automatic_job_server_summary">Profile: %1$s</string>
     
-    <string name="preference_data_upload_automatic_job_server_album_key">preference_data_upload_automatic_server_album</string>
+    <string name="preference_data_upload_automatic_job_server_album_key" translatable="false">preference_data_upload_automatic_server_album</string>
     <string name="preference_data_upload_automatic_job_server_album_title">Upload to Album</string>
     <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
     <string name="preference_data_upload_automatic_job_local_folder_title">Upload from folder</string>
-    <string name="preference_data_upload_automatic_job_local_folder_key">preference_data_upload_automatic_local_folder</string>
+    <string name="preference_data_upload_automatic_job_local_folder_key" translatable="false">preference_data_upload_automatic_local_folder</string>
     <string name="preference_data_upload_automatic_job_local_folder_summary">Upload %1$s</string>
 
-    <string name="preference_data_upload_automatic_job_delete_uploaded_key">preference_data_upload_automatic_server_delete_uploaded</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_key" translatable="false">preference_data_upload_automatic_server_delete_uploaded</string>
     <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Delete successfully uploaded files</string>
     <string name="preference_data_upload_automatic_job_delete_uploaded_title">Auto delete</string>
 
     <integer name="preference_data_upload_automatic_job_max_upload_size_mb_default">20</integer>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_key">preference_data_upload_automatic_max_upload_size</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_key" translatable="false">preference_data_upload_automatic_max_upload_size</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize uploaded</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_key">preference_data_upload_automatic_server_file_exts_uploaded</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_key" translatable="false">preference_data_upload_automatic_server_file_exts_uploaded</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">jpg,png,raw</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">File extensions</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Upload files with ext %1$s</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">Privacy Level</string>
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Uploaded files visible to %1$s</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_key">preference_data_upload_automatic_job_privacy_level</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_key" translatable="false">preference_data_upload_automatic_job_privacy_level</string>
 
-    <string name="preference_data_upload_automatic_job_files_uploaded_already_key">preference_data_upload_automatic_job_files_uploaded_already</string>
+    <string name="preference_data_upload_automatic_job_files_uploaded_already_key" translatable="false">preference_data_upload_automatic_job_files_uploaded_already</string>
 </resources>

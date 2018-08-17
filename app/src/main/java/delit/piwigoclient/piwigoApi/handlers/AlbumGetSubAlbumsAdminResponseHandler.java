@@ -45,7 +45,7 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
                 name = category.get("name").getAsString();
             }
 
-            long photos = category.get("nb_images").getAsLong();
+            int photos = category.get("nb_images").getAsInt();
 
             JsonElement commentElem = category.get("comment");
             String description = null;

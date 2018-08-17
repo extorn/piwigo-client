@@ -27,7 +27,7 @@ public class DisplayUtils {
 
     public static int pxToDp(Context context, int px) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return Math.round((float)px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return Math.round((float) px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
     }
 
     public static boolean isRunningOnUIThread() {
@@ -45,17 +45,11 @@ public class DisplayUtils {
                 .getSystemService(Context.WINDOW_SERVICE);
         Display getOrient = windowManager.getDefaultDisplay();
 
-        int orientation = Configuration.ORIENTATION_UNDEFINED;
+        int orientation = Configuration.ORIENTATION_LANDSCAPE;
         Point p = new Point();
         getOrient.getSize(p);
-        if(p.x == p.y){
-            orientation = Configuration.ORIENTATION_SQUARE;
-        } else{
-            if(p.x < p.y) {
-                orientation = Configuration.ORIENTATION_PORTRAIT;
-            }else {
-                orientation = Configuration.ORIENTATION_LANDSCAPE;
-            }
+        if (p.x < p.y) {
+            orientation = Configuration.ORIENTATION_PORTRAIT;
         }
         return orientation;
     }
@@ -65,15 +59,15 @@ public class DisplayUtils {
         boolean hasMenuKey = ViewConfiguration.get(c).hasPermanentMenuKey();
         boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
 
-        if(!hasMenuKey && !hasBackKey) {
+        if (!hasMenuKey && !hasBackKey) {
             //The device has a navigation bar
             Resources resources = c.getResources();
 
             int orientation = resources.getConfiguration().orientation;
             int resourceId;
-            if (isTablet(c)){
+            if (isTablet(c)) {
                 resourceId = resources.getIdentifier(orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_height_landscape", "dimen", "android");
-            }  else {
+            } else {
                 resourceId = resources.getIdentifier(orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_width", "dimen", "android");
             }
 

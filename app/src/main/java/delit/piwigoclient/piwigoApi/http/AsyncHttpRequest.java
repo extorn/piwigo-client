@@ -20,6 +20,7 @@ package delit.piwigoclient.piwigoApi.http;
 
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RangeFileAsyncHttpResponseHandler;
 import com.loopj.android.http.ResponseHandlerInterface;
@@ -89,7 +90,7 @@ public class AsyncHttpRequest implements Runnable {
 
     @Override
     public void run() {
-        Log.e("AsyncHttpRequest", "Running request "+request.toString()+" on thread " + Thread.currentThread().getName());
+        Log.e("AsyncHttpRequest", "Running request " + request.toString() + " on thread " + Thread.currentThread().getName());
 
         if (isCancelled()) {
             return;
@@ -114,6 +115,7 @@ public class AsyncHttpRequest implements Runnable {
         try {
             makeRequestWithRetries();
         } catch (IOException e) {
+            Crashlytics.logException(e);
             if (!isCancelled()) {
                 responseHandler.sendFailureMessage(0, null, null, e);
             } else {
@@ -185,18 +187,21 @@ public class AsyncHttpRequest implements Runnable {
                     makeRequest();
                     return;
                 } catch (UnknownHostException e) {
+                    Crashlytics.logException(e);
                     // switching between WI-FI and mobile data networks can cause a retry which then results in an UnknownHostException
                     // while the WI-FI is initialising. The retry logic will be invoked here, if this is NOT the first retry
                     // (to assist in genuine cases of unknown host) which seems better than outright failure
                     cause = new IOException("UnknownHostException exception: " + e.getMessage());
                     retry = (executionCount > 0) && retryHandler.retryRequest(e, ++executionCount, context);
                 } catch (NullPointerException e) {
+                    Crashlytics.logException(e);
                     // there's a bug in HttpClient 4.0.x that on some occasions causes
                     // DefaultRequestExecutor to throw an NPE, see
                     // https://code.google.com/p/android/issues/detail?id=5255
                     cause = new IOException("NPE in HttpClient: " + e.getMessage());
                     retry = retryHandler.retryRequest(cause, ++executionCount, context);
                 } catch (IOException e) {
+                    Crashlytics.logException(e);
                     if (isCancelled()) {
                         // Eating exception, as the request was cancelled
                         return;
@@ -209,6 +214,7 @@ public class AsyncHttpRequest implements Runnable {
                 }
             }
         } catch (Exception e) {
+            Crashlytics.logException(e);
             // catch anything else to ensure failure message is propagated
             AsyncHttpClient.log.e("AsyncHttpRequest", "Unhandled exception origin cause", e);
             cause = new IOException("Unhandled exception: " + e.getMessage());

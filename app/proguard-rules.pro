@@ -68,11 +68,11 @@
 
 # Application classes that will be serialized/deserialized over Gson
 -keep class delit.piwigoclient.model.piwigo.PiwigoJsonResponse { *; }
-
--keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.android.gms.flags.ModuleDescriptor {
-    java.lang.String MODULE_ID;
-    int MODULE_VERSION;
-}
+#
+#-keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.android.gms.flags.ModuleDescriptor {
+#    java.lang.String MODULE_ID;
+#    int MODULE_VERSION;
+#}
 -keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.android.gms.ads.dynamite.ModuleDescriptor {
     java.lang.String MODULE_ID;
     int MODULE_VERSION;
@@ -107,5 +107,31 @@
 
 # Gson specific classes
 -dontwarn sun.misc.**
+
+# support-v4
+#https://stackoverflow.com/questions/18978706/obfuscate-android-support-v7-widget-gridlayout-issue
+#-dontwarn android.support.v4.**
+-keep class android.support.v4.app.** { public *; }
+-keep interface android.support.v4.app.** { public *; }
+-keep class android.support.v4.** { public *; }
+
+-keep class com.wunderlist.slidinglayer.** { public *; }
+
+# support-v7
+#-dontwarn android.support.v7.**
+-keep class android.support.v7.internal.** { public *; }
+-keep interface android.support.v7.internal.** { public *; }
+-keep class android.support.v7.** { public *; }
+
+#-dontwarn com.google.firebase.crash.**
+-keep class com.google.firebase.** { public *; }
+-keep class com.crashlytics.** { public *; }
+-keep class io.fabric.sdk.android.services.** { public *; }
+-keep class io.fabric.sdk.android.Kit { public *; }
+-keep class io.fabric.sdk.android.Logger { public *; }
+-keep class io.fabric.sdk.android.ActivityLifecycleManager { public *; }
+-keep class io.fabric.sdk.android.ActivityLifecycleManager$Callbacks { public *; }
+
+-keep class delit.piwigoclient.**.*Activity { public *; }
 
 #-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement

@@ -14,6 +14,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -88,6 +91,30 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     private ArrayList<Serializable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
 
+    public static void performNoBackStackTransaction(final FragmentManager fragmentManager, String tag, Fragment fragment) {
+        final int newBackStackLength = fragmentManager.getBackStackEntryCount() + 1;
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_view, fragment, tag)
+                .addToBackStack(tag)
+                .commit();
+
+        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                int nowCount = fragmentManager.getBackStackEntryCount();
+                if (newBackStackLength != nowCount) {
+                    // we don't really care if going back or forward. we already performed the logic here.
+                    fragmentManager.removeOnBackStackChangedListener(this);
+
+                    if (newBackStackLength > nowCount) { // user pressed back
+                        fragmentManager.popBackStackImmediate();
+                    }
+                }
+            }
+        });
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putSerializable(STATE_CURRENT_ALBUM, currentAlbum);
@@ -95,11 +122,9 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         super.onSaveInstanceState(outState);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (savedInstanceState != null) {
             currentAlbum = (CategoryItem) savedInstanceState.getSerializable(STATE_CURRENT_ALBUM);
             basket = (Basket) savedInstanceState.getSerializable(STATE_BASKET);
@@ -129,7 +154,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        if(!hasAgreedToEula()) {
+        if (!hasAgreedToEula()) {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         } else {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
@@ -190,16 +215,16 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
 
-            if(!"".equals(connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
+            if (!"".equals(connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
                 // Can and need to login to the server, so lets do that.
                 boolean haveBeenLoggedIn = null != getSupportFragmentManager().findFragmentByTag(LoginFragment.class.getName());
 
-                if(haveBeenLoggedIn && !PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
+                if (haveBeenLoggedIn && !PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
 
                     // clear the backstack - its for an old session (clear stack back to first session login).
-                    for(int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
+                    for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
                         FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(i);
-                        if(LoginFragment.class.getName().equals(entry.getName())) {
+                        if (LoginFragment.class.getName().equals(entry.getName())) {
                             int popToFragmentId = entry.getId();
                             getSupportFragmentManager().popBackStack(popToFragmentId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                             break;
@@ -222,12 +247,12 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void doDefaultBackOperation() {
-        if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             // pop the current fragment off
             getSupportFragmentManager().popBackStack();
             // get the next fragment
             int i = getSupportFragmentManager().getBackStackEntryCount() - 2;
-            if(i >= 0) {
+            if (i >= 0) {
                 FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(i);
                 // while we have another fragment in history and the next fragment is a Login fragment, pop it off and go to the previous one.
                 while (LoginFragment.class.getName().equals(entry.getName()) && i >= 0) {
@@ -239,7 +264,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 }
             }
             // if there are no fragments left, do default back operation (i.e. close app)
-            if(i < 0) {
+            if (i < 0) {
                 super.onBackPressed();
             }
         } else {
@@ -279,7 +304,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void showGallery(final CategoryItem gallery) {
-        if(CategoryItem.ROOT_ALBUM.equals(gallery)) {
+        if (CategoryItem.ROOT_ALBUM.equals(gallery)) {
             // check if we've shown any albums before. If so, pop everything off the stack.
             removeFragmentsFromHistory(ViewAlbumFragment.class, true);
         }
@@ -314,7 +339,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             case R.id.nav_about:
                 showAboutFragment();
                 break;
-            case R.id.nav_licences:
+            case R.id.nav_oss_licences:
                 showLicencesFragment();
                 break;
             case R.id.nav_settings:
@@ -369,7 +394,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     private void showAlbumPermissions(final ArrayList<CategoryItemStub> availableAlbums, final HashSet<Long> directAlbumPermissions, final HashSet<Long> indirectAlbumPermissions, boolean allowEdit, int actionId) {
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(true, false);
-        if(!allowEdit) {
+        if (!allowEdit) {
             prefs.readonly();
         }
         delit.piwigoclient.ui.permissions.AlbumSelectFragment fragment = delit.piwigoclient.ui.permissions.AlbumSelectFragment.newInstance(availableAlbums, prefs, actionId, indirectAlbumPermissions, directAlbumPermissions);
@@ -387,7 +412,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumDeletedEvent event) {
-        for(Long itemParent : event.getItem().getParentageChain()) {
+        for (Long itemParent : event.getItem().getParentageChain()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
         }
         getSupportFragmentManager().popBackStackImmediate();
@@ -414,6 +439,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 } else if (allowVideoPlayback) {
                     newFragment = new AlbumVideoItemFragment();
                     newFragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) selectedItem, 1, 1, 1, true));
+                    ((AlbumVideoItemFragment) newFragment).onPageSelected();
                 }
             } else if (selectedItem instanceof PictureResourceItem) {
                 newFragment = new SlideshowFragment();
@@ -466,7 +492,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
         boolean cacheCleared;
         // Determine which lifecycle or system event was raised.
-            switch (level) {
+        switch (level) {
 
             case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
 
@@ -533,21 +559,21 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GenericLowMemoryEvent event) {
-        if(event.isPicassoCacheCleared()) {
+        if (event.isPicassoCacheCleared()) {
             showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message, event.getMemoryLevel());
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MemoryTrimmedRunningAppEvent event) {
-        if(event.isPicassoCacheCleared()) {
+        if (event.isPicassoCacheCleared()) {
             showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message, event.getMemoryLevel());
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(MemoryTrimmedEvent event) {
-        if(event.isPicassoCacheCleared()) {
+        if (event.isPicassoCacheCleared()) {
             showLowMemoryWarningMessage(R.string.alert_warning_lowMemory_message, event.getMemoryLevel());
         }
     }
@@ -559,7 +585,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final UsernameSelectionNeededEvent event) {
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        if(!event.isAllowEditing()) {
+        if (!event.isAllowEditing()) {
             prefs.readonly();
         }
         UsernameSelectFragment fragment = UsernameSelectFragment.newInstance(prefs, event.getActionId(), event.getIndirectSelection(), event.getInitialSelection());
@@ -587,10 +613,10 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
         Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
         String lastFragmentName = "";
-        if(lastFragment != null) {
+        if (lastFragment != null) {
             lastFragmentName = lastFragment.getTag();
         }
-        if(!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
+        if (!addDuplicatePreviousToBackstack && f.getClass().getName().equals(lastFragmentName)) {
             getSupportFragmentManager().popBackStackImmediate();
         }
         //TODO I've added code that clears stack when showing root album... is this "good enough"?
@@ -599,30 +625,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         tx.addToBackStack(f.getClass().getName());
         tx.replace(R.id.main_view, f, f.getClass().getName()).commit();
-    }
-
-    public static void performNoBackStackTransaction(final FragmentManager fragmentManager, String tag, Fragment fragment) {
-        final int newBackStackLength = fragmentManager.getBackStackEntryCount() +1;
-
-        fragmentManager.beginTransaction()
-                .replace(R.id.main_view, fragment, tag)
-                .addToBackStack(tag)
-                .commit();
-
-        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                int nowCount = fragmentManager.getBackStackEntryCount();
-                if (newBackStackLength != nowCount) {
-                    // we don't really care if going back or forward. we already performed the logic here.
-                    fragmentManager.removeOnBackStackChangedListener(this);
-
-                    if ( newBackStackLength > nowCount ) { // user pressed back
-                        fragmentManager.popBackStackImmediate();
-                    }
-                }
-            }
-        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -634,7 +636,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final GroupSelectionNeededEvent event) {
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
-        if(!event.isAllowEditing()) {
+        if (!event.isAllowEditing()) {
             prefs.readonly();
         }
         GroupSelectFragment fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
@@ -669,7 +671,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     private boolean invokeStoredActionIfAvailable() {
 
         boolean invoked = invokeStoredActionIfAvailableOnClass(AbstractMainActivity.class);
-        if(!invoked) {
+        if (!invoked) {
             invoked = invokeStoredActionIfAvailableOnClass(MainActivity.class);
         }
         return invoked;
@@ -681,8 +683,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         boolean actionAvailable = onLoginActionMethodName != null;
         if (actionAvailable) {
             Method[] methods = c.getDeclaredMethods();
-            for(Method m : methods) {
-                if(m.getName().equals(onLoginActionMethodName)) {
+            for (Method m : methods) {
+                if (m.getName().equals(onLoginActionMethodName)) {
                     onLoginActionMethodName = null;
                     try {
                         invoked = true;
@@ -691,9 +693,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                         m.invoke(this, params);
                         break;
                     } catch (IllegalAccessException e) {
-                        throw new RuntimeException("Error running post login action ",e );
+                        Crashlytics.logException(e);
+                        throw new RuntimeException("Error running post login action ", e);
                     } catch (InvocationTargetException e) {
-                        throw new RuntimeException("Error running post login action ",e );
+                        Crashlytics.logException(e);
+                        throw new RuntimeException("Error running post login action ", e);
                     }
                 }
             }
@@ -741,7 +745,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
         prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         prefs.withShowHierachy();
-        if(!event.isAllowEditing()) {
+        if (!event.isAllowEditing()) {
             prefs.readonly();
         }
         showAlbumSelectionFragment(event.getActionId(), prefs, event.getInitialSelection());

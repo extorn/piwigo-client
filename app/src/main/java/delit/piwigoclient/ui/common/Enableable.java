@@ -5,6 +5,7 @@ package delit.piwigoclient.ui.common;
  */
 
 public interface Enableable {
-    void setEnabled(boolean enabled);
     boolean isEnabled();
+
+    void setEnabled(boolean enabled);
 }

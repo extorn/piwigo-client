@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 public class KeystoreLoadOperation extends X509LoadOperation {
+    private final Map<String, char[]> aliasPassMapp;
     private List<String> aliasesToLoad;
     private char[] keystorePass;
-    private final Map<String, char[]> aliasPassMapp;
 
     public KeystoreLoadOperation(File file) {
         super(file);
@@ -18,12 +18,19 @@ public class KeystoreLoadOperation extends X509LoadOperation {
         aliasesToLoad = null;
     }
 
+    public static KeystoreLoadOperation from(X509LoadOperation loadOp) {
+        if (loadOp instanceof KeystoreLoadOperation) {
+            return (KeystoreLoadOperation) loadOp;
+        }
+        return new KeystoreLoadOperation(loadOp.getFile());
+    }
+
     public List<String> getAliasesToLoad() {
         return aliasesToLoad;
     }
 
     public void addAliasToLoad(String alias) {
-        if(aliasesToLoad == null) {
+        if (aliasesToLoad == null) {
             aliasesToLoad = new ArrayList<>();
         }
         aliasesToLoad.add(alias);
@@ -41,15 +48,8 @@ public class KeystoreLoadOperation extends X509LoadOperation {
         return aliasPassMapp;
     }
 
-    public static KeystoreLoadOperation from(X509LoadOperation loadOp) {
-        if(loadOp instanceof KeystoreLoadOperation) {
-            return (KeystoreLoadOperation) loadOp;
-        }
-        return new KeystoreLoadOperation(loadOp.getFile());
-    }
-
     public void removeAliasToLoad(String alias) {
-        if(aliasesToLoad != null) {
+        if (aliasesToLoad != null) {
             aliasesToLoad.remove(alias);
         }
     }

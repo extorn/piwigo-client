@@ -90,7 +90,9 @@ public class UserFragment extends MyFragment {
     private static final String STATE_NEW_GROUP_MEMBERSHIP = "newGroupMembership";
     private static final String IN_FLIGHT_SAVE_ACTION_IDS = "saveActionIds";
     private static final String STATE_SELECT_GROUPS_ACTION_ID = "selectGroupsActionId";
-
+    // other stuff
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.UK);
+    private final HashSet<Long> saveActionIds = new HashSet<>(5);
     // fields
     private EditText usernameField;
     private Spinner usertypeField;
@@ -105,21 +107,15 @@ public class UserFragment extends MyFragment {
     private TextView userGroupsField;
     private EditText passwordField;
     private TextView lastVisitedFieldLabel;
-
-    // other stuff
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.UK);
-
     // field value options
     private int[] userPrivacyLevelValues;
     private List<String> userTypeValues;
-
     // following fields are stored in state
     private User newUser;
     private User user;
     private ArrayList<CategoryItemStub> availableGalleries;
     private boolean fieldsEditable = false;
     private ListView albumPermissionsField;
-    private final HashSet<Long> saveActionIds = new HashSet<>(5);
     private HashSet<Long> currentDirectAlbumPermissions;
     private HashSet<Long> currentIndirectAlbumPermissions;
     private HashSet<Long> newDirectAlbumPermissions;
@@ -187,8 +183,8 @@ public class UserFragment extends MyFragment {
     }
 
     private int getArrayIndex(int[] array, int item) {
-        for(int i = 0; i < array.length; i++) {
-            if(array[i] == item) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == item) {
                 return i;
             }
         }
@@ -197,7 +193,7 @@ public class UserFragment extends MyFragment {
 
     private HashSet<Long> getGroupMembership(HashSet<Group> groupMembership) {
         HashSet<Long> groupIds = PiwigoUtils.toSetOfIds(groupMembership);
-        if(groupIds == null) {
+        if (groupIds == null) {
             groupIds = new HashSet<>(0);
         }
         return groupIds;
@@ -208,11 +204,11 @@ public class UserFragment extends MyFragment {
         aUser.setLastVisit(user.getLastVisit());
         aUser.setUsername(usernameField.getText().toString());
         String email = emailField.getText().toString();
-        if(!email.equals(getString(R.string.none_value))) {
+        if (!email.equals(getString(R.string.none_value))) {
             aUser.setEmail(email);
         }
         String passwordFieldText = passwordField.getText().toString();
-        if(!passwordFieldText.equals(getString(R.string.password_unchanged))) {
+        if (!passwordFieldText.equals(getString(R.string.password_unchanged))) {
             aUser.setPassword(passwordField.getText().toString());
         } else {
             aUser.setPassword(null);
@@ -220,7 +216,7 @@ public class UserFragment extends MyFragment {
         aUser.setHighDefinitionEnabled(highDefinitionEnabled.isChecked());
         aUser.setUserType(userTypeValues.get(usertypeField.getSelectedItemPosition()));
         aUser.setPrivacyLevel(userPrivacyLevelValues[userPrivacyLevelField.getSelectedItemPosition()]);
-        if(newGroupMembership != null) {
+        if (newGroupMembership != null) {
             aUser.setGroups(getGroupMembership(newGroupMembership));
         } else {
             aUser.setGroups(getGroupMembership(currentGroupMembership));
@@ -252,7 +248,7 @@ public class UserFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
+        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return null;
@@ -261,7 +257,7 @@ public class UserFragment extends MyFragment {
         View v = inflater.inflate(R.layout.fragment_user, container, false);
 
         AdView adView = v.findViewById(R.id.user_adView);
-        if(AdsManager.getInstance().shouldShowAdverts()) {
+        if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
             adView.setVisibility(View.GONE);
@@ -278,7 +274,7 @@ public class UserFragment extends MyFragment {
             newUser = (User) savedInstanceState.getSerializable(NEW_USER);
             fieldsEditable = savedInstanceState.getBoolean(STATE_FIELDS_EDITABLE);
             newGroupMembership = (HashSet<Group>) savedInstanceState.getSerializable(STATE_NEW_GROUP_MEMBERSHIP);
-            SetUtils.setNotNull(saveActionIds,(HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_SAVE_ACTION_IDS));
+            SetUtils.setNotNull(saveActionIds, (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_SAVE_ACTION_IDS));
             selectGroupsActionId = savedInstanceState.getInt(STATE_SELECT_GROUPS_ACTION_ID);
         }
 
@@ -343,7 +339,7 @@ public class UserFragment extends MyFragment {
         TextView passwordFieldLabel = v.findViewById(R.id.user_password_label);
         passwordField = v.findViewById(R.id.user_password_field);
 
-        if(user.getId() < 0) {
+        if (user.getId() < 0) {
             // this is a new user creation.
             fieldsEditable = true;
             currentGroupMembership = new HashSet<>(0);
@@ -369,7 +365,7 @@ public class UserFragment extends MyFragment {
         }.withScrollingWhenNested());
 
         setFieldsEditable(fieldsEditable);
-        if(newUser != null) {
+        if (newUser != null) {
             setFieldsFromModel(newUser);
         } else {
             setFieldsFromModel(user);
@@ -379,7 +375,7 @@ public class UserFragment extends MyFragment {
             addActiveServiceCall(R.string.progress_loading_user_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         }
 
-        if(user.getId() < 0) {
+        if (user.getId() < 0) {
             currentGroupMembership = new HashSet<>();
             currentDirectAlbumPermissions = new HashSet<>();
             currentIndirectAlbumPermissions = new HashSet<>();
@@ -406,7 +402,7 @@ public class UserFragment extends MyFragment {
     private void saveUserChanges() {
         newUser = setModelFromFields(new User());
         setFieldsEditable(false);
-        if(newUser.getId() < 0) {
+        if (newUser.getId() < 0) {
             long saveActionId = new UserAddResponseHandler(newUser).invokeAsync(getContext());
             saveActionIds.add(saveActionId);
             addActiveServiceCall(R.string.progress_adding_user, saveActionId);
@@ -421,7 +417,7 @@ public class UserFragment extends MyFragment {
 
     private HashSet<Group> getLatestGroupMembership() {
         HashSet<Group> currentSelection;
-        if(newGroupMembership != null) {
+        if (newGroupMembership != null) {
             currentSelection = newGroupMembership;
         } else {
             currentSelection = currentGroupMembership;
@@ -443,9 +439,9 @@ public class UserFragment extends MyFragment {
             emailField.setText(R.string.none_value);
         }
 
-        if(user.getPassword() != null) {
+        if (user.getPassword() != null) {
             passwordField.setText(user.getPassword());
-        } else if(user.getId() >= 0){
+        } else if (user.getId() >= 0) {
             passwordField.setText(R.string.password_unchanged);
         } else {
             passwordField.setText("");
@@ -453,14 +449,14 @@ public class UserFragment extends MyFragment {
 
         fillGroupMembershipField();
 
-        if(user.getId() < 0) {
+        if (user.getId() < 0) {
             // this is a new user creation.
             lastVisitedField.setVisibility(GONE);
             lastVisitedFieldLabel.setVisibility(GONE);
         } else {
             lastVisitedField.setVisibility(VISIBLE);
             lastVisitedFieldLabel.setVisibility(VISIBLE);
-            if(user.getLastVisit() != null) {
+            if (user.getLastVisit() != null) {
                 lastVisitedField.setText(dateFormatter.format(user.getLastVisit()));
             } else {
                 lastVisitedField.setText(R.string.last_visit_never);
@@ -476,7 +472,7 @@ public class UserFragment extends MyFragment {
         HashSet<Group> currentSelection = getLatestGroupMembership();
         HashSet<Long> preselectedGroups = new HashSet<>(currentSelection.size());
 
-        for(Group g : currentSelection) {
+        for (Group g : currentSelection) {
             preselectedGroups.add(g.getId());
         }
         GroupSelectionNeededEvent groupSelectionNeededEvent = new GroupSelectionNeededEvent(true, fieldsEditable, preselectedGroups);
@@ -498,7 +494,7 @@ public class UserFragment extends MyFragment {
 
                 @Override
                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                    if(Boolean.TRUE == positiveAnswer) {
+                    if (Boolean.TRUE == positiveAnswer) {
                         deleteUserNow(user);
                     }
                 }
@@ -521,8 +517,13 @@ public class UserFragment extends MyFragment {
             user.setGroups(newUser.getGroups());
             newUser = null;
 
-            if(newGroupMembership == null && user.getGroups().size() == 0) {
-                currentGroupMembership = new HashSet<>(0);
+            if (newGroupMembership == null) {
+                if (user.getGroups().size() == 0) {
+                    currentGroupMembership = new HashSet<>(0);
+                } else {
+                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()).invokeAsync(getContext()));
+                    currentGroupMembership = null;
+                }
             } else {
                 currentGroupMembership = newGroupMembership;
                 newGroupMembership = null;
@@ -539,7 +540,7 @@ public class UserFragment extends MyFragment {
     }
 
     private void saveUserPermissionsChangesIfRequired() {
-        if(newDirectAlbumPermissions == null) {
+        if (newDirectAlbumPermissions == null) {
             //nothing to do.
             return;
         }
@@ -569,9 +570,9 @@ public class UserFragment extends MyFragment {
 
     private HashSet<Long> getLatestDirectAlbumPermissions() {
         HashSet<Long> directAlbumPermissions;
-        if(newDirectAlbumPermissions != null) {
+        if (newDirectAlbumPermissions != null) {
             directAlbumPermissions = newDirectAlbumPermissions;
-        } else if(currentDirectAlbumPermissions != null) {
+        } else if (currentDirectAlbumPermissions != null) {
             directAlbumPermissions = currentDirectAlbumPermissions;
         } else {
             currentDirectAlbumPermissions = new HashSet<>();
@@ -582,9 +583,9 @@ public class UserFragment extends MyFragment {
 
     private HashSet<Long> getLatestIndirectAlbumPermissions() {
         HashSet<Long> indirectAlbumPermissions;
-        if(newIndirectAlbumPermissions != null) {
+        if (newIndirectAlbumPermissions != null) {
             indirectAlbumPermissions = newIndirectAlbumPermissions;
-        } else if(currentIndirectAlbumPermissions != null) {
+        } else if (currentIndirectAlbumPermissions != null) {
             indirectAlbumPermissions = currentIndirectAlbumPermissions;
         } else {
             currentIndirectAlbumPermissions = new HashSet<>();
@@ -595,7 +596,7 @@ public class UserFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumPermissionsSelectionCompleteEvent event) {
-        if(getUiHelper().isTrackingRequest(event.getActionId())) {
+        if (getUiHelper().isTrackingRequest(event.getActionId())) {
             newDirectAlbumPermissions = event.getSelectedAlbums();
         }
     }
@@ -660,31 +661,6 @@ public class UserFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
-        @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if(response instanceof PiwigoResponseBufferingHandler.PiwigoUserPermissionsRemovedResponse) {
-                onUserPermissionsRemoved((PiwigoResponseBufferingHandler.PiwigoUserPermissionsRemovedResponse) response);
-            } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse) {
-                onUserPermissionsAdded((PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse) response);
-            } else if(response instanceof PiwigoResponseBufferingHandler.PiwigoAddUserResponse) {
-                onUserCreated((PiwigoResponseBufferingHandler.PiwigoAddUserResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse) {
-                onUserSaved((PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse) {
-                onUserPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse) response);
-            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) {
-                onUserDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) {
-                onGroupMembershipAlbumPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse)response);
-            }
-        }
-    }
-
     private void onUserCreated(PiwigoResponseBufferingHandler.PiwigoAddUserResponse response) {
         saveActionIds.remove(response.getMessageId());
         User savedUser = response.getUser();
@@ -725,22 +701,21 @@ public class UserFragment extends MyFragment {
     private void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
         EventBus.getDefault().post(new UserDeletedEvent(user));
         // return to previous screen
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
     }
 
-
     private synchronized void populateAlbumPermissionsList(HashSet<Long> initialSelection, HashSet<Long> indirectAlbumPermissions) {
-        AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter)albumPermissionsField.getAdapter();
-        if(adapter == null) {
+        AlbumSelectionListAdapter adapter = (AlbumSelectionListAdapter) albumPermissionsField.getAdapter();
+        if (adapter == null) {
             BaseRecyclerViewAdapterPreferences adapterPreferences = new BaseRecyclerViewAdapterPreferences();
             adapterPreferences.selectable(true, false);
             adapterPreferences.readonly();
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, indirectAlbumPermissions, adapterPreferences);
             availableItemsAdapter.linkToListView(albumPermissionsField, initialSelection, initialSelection);
             ViewListUtils.setListViewHeightBasedOnChildren(albumPermissionsField, 6);
-        } else if(!SetUtils.equals(adapter.getSelectedItems(), initialSelection)) {
+        } else if (!SetUtils.equals(adapter.getSelectedItems(), initialSelection)) {
             adapter.setSelectedItems(initialSelection);
         }
     }
@@ -748,12 +723,12 @@ public class UserFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GroupSelectionCompleteEvent groupSelectionCompleteEvent) {
 
-        if(selectGroupsActionId == groupSelectionCompleteEvent.getActionId()) {
+        if (selectGroupsActionId == groupSelectionCompleteEvent.getActionId()) {
             newGroupMembership = new HashSet<>(groupSelectionCompleteEvent.getSelectedItems());
             fillGroupMembershipField();
 
             HashSet<Long> newGroupsMembership = new HashSet<>(groupSelectionCompleteEvent.getCurrentSelection());
-            if(newGroupsMembership.size() > 0) {
+            if (newGroupsMembership.size() > 0) {
                 addActiveServiceCall(R.string.progress_reloading_album_permissions, new GroupGetPermissionsResponseHandler(newGroupsMembership).invokeAsync(getContext()));
             } else {
                 newIndirectAlbumPermissions = new HashSet<>(0);
@@ -764,8 +739,33 @@ public class UserFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AppLockedEvent event) {
-        if(isVisible()) {
+        if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
+        }
+    }
+
+    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserPermissionsRemovedResponse) {
+                onUserPermissionsRemoved((PiwigoResponseBufferingHandler.PiwigoUserPermissionsRemovedResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse) {
+                onUserPermissionsAdded((PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAddUserResponse) {
+                onUserCreated((PiwigoResponseBufferingHandler.PiwigoAddUserResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse) {
+                onUserSaved((PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
+                onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse) {
+                onUserPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse) response);
+            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) {
+                onUserDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) {
+                onGroupMembershipAlbumPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) response);
+            }
         }
     }
 }

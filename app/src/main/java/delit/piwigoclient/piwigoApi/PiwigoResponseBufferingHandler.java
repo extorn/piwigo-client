@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.util.LongSparseArray;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonElement;
 
 import java.io.File;
@@ -22,12 +23,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.model.piwigo.Username;
@@ -85,7 +84,7 @@ public class PiwigoResponseBufferingHandler {
         List<Long> handlersToRemove = new ArrayList<>(10);
         HashMap<Long, Response> responsesToHandle = new HashMap<>();
         for (Map.Entry<Long, Long> handlerResponseEntry : handlerResponseMap.entrySet()) {
-            if (handlerResponseEntry.getValue() == handler.getHandlerId()) { // deliberate object referemce equality.
+            if (handlerResponseEntry.getValue() == handler.getHandlerId()) { // deliberate object reference equality.
                 long responseMessageId = handlerResponseEntry.getKey();
                 Response r = responses.remove(responseMessageId);
                 if (r != null) {
@@ -155,7 +154,7 @@ public class PiwigoResponseBufferingHandler {
     public synchronized void preRegisterResponseHandlerForNewMessage(long currentMessageId, long newMessageId) {
         Long handlerId = handlerResponseMap.get(currentMessageId);
         if (handlerId == null) {
-            // record the parentage for processing when a handler is re-addded.
+            // record the parentage for processing when a handler is re-added.
             parkChildMessageId(currentMessageId, newMessageId);
         } else {
             handlerResponseMap.put(newMessageId, handlerId);
@@ -206,8 +205,8 @@ public class PiwigoResponseBufferingHandler {
         if (handlerId != null) {
             handler = handlers.get(handlerId);
         } else {
-            if(BuildConfig.DEBUG) {
-                Log.e(TAG, "No handler registered for message with id " +response.getMessageId());
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "No handler registered for message with id " + response.getMessageId());
             }
             handler = null;
         }
@@ -227,6 +226,7 @@ public class PiwigoResponseBufferingHandler {
                             responses.put(response.getMessageId(), response);
                         }
                     } catch (IllegalArgumentException e) {
+                        Crashlytics.logException(e);
                         //TODO this keeps happening in the wild - sink it and the response for now to prevent crash.
                         // the handler is attached, but to an unrecognised component type
                         if (BuildConfig.DEBUG) {
@@ -280,7 +280,7 @@ public class PiwigoResponseBufferingHandler {
                 iterator.remove();
             }
         }
-        return new HashSet<Long>(messageIdsToCheck);
+        return new HashSet<>(messageIdsToCheck);
     }
 
     public interface PiwigoResponse extends Response {
@@ -425,6 +425,7 @@ public class PiwigoResponseBufferingHandler {
         private final int statusCode;
         private final String errorMessage;
         private final String errorDetail;
+        private String response;
 
         public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, String errorDetail) {
             super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod());
@@ -432,6 +433,14 @@ public class PiwigoResponseBufferingHandler {
             this.statusCode = statusCode;
             this.errorMessage = errorMessage;
             this.errorDetail = errorDetail;
+        }
+
+        public void setResponse(String response) {
+            this.response = response;
+        }
+
+        public String getResponse() {
+            return response;
         }
 
         public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage) {
