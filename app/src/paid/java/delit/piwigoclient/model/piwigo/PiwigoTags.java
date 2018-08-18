@@ -17,37 +17,29 @@ import java.util.concurrent.locks.ReentrantLock;
 public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
 
     private final ArrayList<Tag> items = new ArrayList<>();
-    private int pagesLoaded = 0;
     private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
     private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
+    private int pagesLoaded = 0;
     private transient ReentrantLock pageLoadLock = new ReentrantLock();
+    private transient Comparator<Tag> tagComparator = new TagComparator();
 
     public PiwigoTags() {
     }
 
-    private transient final Comparator<Tag> tagComparator = new Comparator<Tag>() {
-
-        @Override
-        public int compare(Tag o1, Tag o2) {
-            // bubble tags with images to the top.
-            if(o1.getUsageCount() == 0 && o2.getUsageCount() != 0) {
-                return 1;
-            }
-            if(o1.getUsageCount() != 0 && o2.getUsageCount() == 0) {
-                return -1;
-            }
-            // sort all tags into name order
-            return o1.getName().compareTo(o2.getName());
-        }
-    };
+    private void readObject(java.io.ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.tagComparator = new TagComparator();
+        this.pageLoadLock = new ReentrantLock();
+    }
 
     public void sort() {
         Collections.sort(items, tagComparator);
     }
 
     public boolean containsTag(String tagName) {
-        for(Tag tag : items) {
-            if(tag.getName().equals(tagName)) {
+        for (Tag tag : items) {
+            if (tag.getName().equals(tagName)) {
                 return true;
             }
         }
@@ -72,7 +64,7 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     @Override
     public Tag getItemById(long selectedItemId) {
         for (Tag item : items) {
-            if(item.getId() == selectedItemId) {
+            if (item.getId() == selectedItemId) {
                 return item;
             }
         }
@@ -81,11 +73,11 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
 
     public int addItemPage(boolean isAdminPage, HashSet<Tag> tags) {
         pagesLoaded++;
-        if(items.size() == 0) {
+        if (items.size() == 0) {
             items.addAll(tags);
             return 0;
         }
-        if(isAdminPage) {
+        if (isAdminPage) {
             // remove any already present in the store.
             tags.removeAll(getItems());
         } else {
@@ -144,7 +136,7 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
 
     public Integer getNextPageToReload() {
         Integer retVal = null;
-        if(!pagesFailedToLoad.isEmpty()) {
+        if (!pagesFailedToLoad.isEmpty()) {
             Iterator<Integer> iter = pagesFailedToLoad.iterator();
             retVal = iter.next();
             iter.remove();
@@ -158,12 +150,28 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
 
     public void recordPageLoadFailed(long loaderId) {
         Integer pageNum = pagesBeingLoaded.remove(loaderId);
-        if(pageNum != null) {
+        if (pageNum != null) {
             pagesFailedToLoad.add(pageNum);
         }
     }
 
     public boolean hasNoFailedPageLoads() {
         return pagesFailedToLoad.isEmpty();
+    }
+
+    private static class TagComparator implements Comparator<Tag> {
+
+        @Override
+        public int compare(Tag o1, Tag o2) {
+            // bubble tags with images to the top.
+            if (o1.getUsageCount() == 0 && o2.getUsageCount() != 0) {
+                return 1;
+            }
+            if (o1.getUsageCount() != 0 && o2.getUsageCount() == 0) {
+                return -1;
+            }
+            // sort all tags into name order
+            return o1.getName().compareTo(o2.getName());
+        }
     }
 }

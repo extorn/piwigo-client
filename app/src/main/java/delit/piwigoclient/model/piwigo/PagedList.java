@@ -1,5 +1,6 @@
 package delit.piwigoclient.model.piwigo;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,6 +34,12 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     public PagedList(String itemType, int maxExpectedItemCount) {
         this.itemType = itemType;
         this.items = new ArrayList<>(maxExpectedItemCount);
+        this.pageLoadLock = new ReentrantLock();
+    }
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
         this.pageLoadLock = new ReentrantLock();
     }
 

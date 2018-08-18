@@ -56,98 +56,11 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Connection Settings";
     private static final String STATE_RELOGIN_NEEDED = "loginNeeded";
-    private final transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(final Preference preference, Object value) {
-            String currentPersistedValue = getPrefs().getString(preference.getKey(), null);
-            final String newValue = (String) value;
-            boolean valueChanged = (newValue != null && !newValue.equals(currentPersistedValue));
-
-            if ("disk".equals(newValue) || valueChanged) {
-                getUiHelper().runWithExtraPermissions(ConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
-            }/* else if(valueChanged) {
-                if (!initialising) {
-                    // clear the existing session - it's not valid any more.
-                    forkLogoutIfNeeded();
-                }
-            }*/
-
-            Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
-            responseCacheFlushButton.setEnabled("disk".equals(newValue));
-
-            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entries_key)).setEnabled(!"disabled".equals(newValue));
-            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entry_size_key)).setEnabled(!"disabled".equals(newValue));
-
-            return true;
-        }
-    };
+    private transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
+    private transient Preference.OnPreferenceChangeListener trustedCertsAuthPreferenceListener = new TrustedCertsPrefListener();
+    private transient Preference.OnPreferenceChangeListener simplePreferenceListener = new SimplePrefListener();
+    private transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
     private boolean initialising = false;
-    private final transient Preference.OnPreferenceChangeListener trustedCertsAuthPreferenceListener = new Preference.OnPreferenceChangeListener() {
-
-        AsyncTask<Context, Object, Set<String>> runningTask = null;
-
-        @Override
-        public boolean onPreferenceChange(final Preference preference, Object value) {
-            final Boolean val = (Boolean) value;
-            if (runningTask != null && !runningTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
-                runningTask.cancel(true);
-            }
-
-            if (val && !initialising) {
-                // If we're enabling this feature, flush the list.
-
-                runningTask = new LoadCertificatesTask(getUiHelper(), getPrefs(), preference.getPreferenceManager());
-                runningTask.execute(getContext());
-            } else {
-                preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_select_trusted_certificate_key)).setEnabled(val);
-            }
-            return true;
-        }
-    };
-    private final transient Preference.OnPreferenceChangeListener simplePreferenceListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-
-            if (!initialising) {
-                // clear the existing session - it's not valid any more.
-                forkLogoutIfNeeded();
-            }
-            return true;
-        }
-    };
-    private final transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-            String val = stringValue.toLowerCase();
-            boolean isHttps = val.startsWith("https://");
-            boolean isHttp = val.startsWith("http://");
-
-            if (!initialising) {
-
-                SwitchPreference p = (SwitchPreference) findPreference(R.string.preference_server_connection_force_https_key);
-                if (isHttp) {
-                    p.setEnabled(false);
-                    getPrefs().edit().putBoolean(getString(R.string.preference_server_connection_force_https_key), false).commit();
-                }
-                if (isHttps) {
-                    p.setEnabled(true);
-                }
-
-                if (!(isHttp || isHttps)) {
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
-                } else if (isHttp) {
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
-                }
-
-                // clear the existing session - it's not valid any more.
-                forkLogoutIfNeeded();
-                AdsManager.getInstance().updateShowAdvertsSetting(getContext().getApplicationContext());
-            }
-
-            return true;
-        }
-    };
     private boolean loginOnLogout;
     private View view;
 
@@ -166,6 +79,15 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             }
         }
     }
+
+//    private void readObject(java.io.ObjectInputStream in)
+//            throws IOException, ClassNotFoundException {
+//        in.defaultReadObject();
+//        cacheLevelPrefListener = new CacheLevelPreferenceListener();
+//        trustedCertsAuthPreferenceListener = new TrustedCertsPrefListener();
+//        simplePreferenceListener = new SimplePrefListener();
+//        serverAddressPrefListener = new ServerNamePreferenceListener();
+//    }
 
     @Override
     public void onStart() {
@@ -381,7 +303,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         return false;
     }
 
-
     private void testLogin(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         String serverUri = connectionPrefs.getPiwigoServerAddress(getPrefs(), getContext());
         if (serverUri == null || serverUri.trim().isEmpty()) {
@@ -468,6 +389,100 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                 return true;
             }
             return false;
+        }
+    }
+
+    private class CacheLevelPreferenceListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(final Preference preference, Object value) {
+            String currentPersistedValue = getPrefs().getString(preference.getKey(), null);
+            final String newValue = (String) value;
+            boolean valueChanged = (newValue != null && !newValue.equals(currentPersistedValue));
+
+            if ("disk".equals(newValue) || valueChanged) {
+                getUiHelper().runWithExtraPermissions(ConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
+            }/* else if(valueChanged) {
+                if (!initialising) {
+                    // clear the existing session - it's not valid any more.
+                    forkLogoutIfNeeded();
+                }
+            }*/
+
+            Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
+            responseCacheFlushButton.setEnabled("disk".equals(newValue));
+
+            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entries_key)).setEnabled(!"disabled".equals(newValue));
+            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entry_size_key)).setEnabled(!"disabled".equals(newValue));
+
+            return true;
+        }
+    }
+
+    private class TrustedCertsPrefListener implements Preference.OnPreferenceChangeListener {
+        AsyncTask<Context, Object, Set<String>> runningTask = null;
+
+        @Override
+        public boolean onPreferenceChange(final Preference preference, Object value) {
+            final Boolean val = (Boolean) value;
+            if (runningTask != null && !runningTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
+                runningTask.cancel(true);
+            }
+
+            if (val && !initialising) {
+                // If we're enabling this feature, flush the list.
+
+                runningTask = new LoadCertificatesTask(getUiHelper(), getPrefs(), preference.getPreferenceManager());
+                runningTask.execute(getContext());
+            } else {
+                preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_select_trusted_certificate_key)).setEnabled(val);
+            }
+            return true;
+        }
+    }
+
+    private class SimplePrefListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object value) {
+
+            if (!initialising) {
+                // clear the existing session - it's not valid any more.
+                forkLogoutIfNeeded();
+            }
+            return true;
+        }
+    }
+
+    private class ServerNamePreferenceListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object value) {
+            String stringValue = value.toString();
+            String val = stringValue.toLowerCase();
+            boolean isHttps = val.startsWith("https://");
+            boolean isHttp = val.startsWith("http://");
+
+            if (!initialising) {
+
+                SwitchPreference p = (SwitchPreference) findPreference(R.string.preference_server_connection_force_https_key);
+                if (isHttp) {
+                    p.setEnabled(false);
+                    getPrefs().edit().putBoolean(getString(R.string.preference_server_connection_force_https_key), false).commit();
+                }
+                if (isHttps) {
+                    p.setEnabled(true);
+                }
+
+                if (!(isHttp || isHttps)) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
+                } else if (isHttp) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
+                }
+
+                // clear the existing session - it's not valid any more.
+                forkLogoutIfNeeded();
+                AdsManager.getInstance().updateShowAdvertsSetting(getContext().getApplicationContext());
+            }
+
+            return true;
         }
     }
 

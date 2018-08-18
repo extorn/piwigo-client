@@ -52,6 +52,8 @@
 
 -keep class com.ortiz.touch.TouchImageView* { public *; }
 
+-keep class android.os.Build { public *; }
+
 -keep class com.loopj.android.http.SerializableCookie { *; }
 
 -keep class cz.msebera.android.httpclient.cookie.Cookie { *; }

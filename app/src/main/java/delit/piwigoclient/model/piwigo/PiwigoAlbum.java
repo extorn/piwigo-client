@@ -1,10 +1,12 @@
 package delit.piwigoclient.model.piwigo;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -13,7 +15,12 @@ import java.util.List;
  */
 public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> implements Serializable {
 
-    private final transient Comparator<GalleryItem> itemComparator = new Comparator<GalleryItem>() {
+    private transient Comparator<GalleryItem> itemComparator = new AlbumComparator();
+    private int subAlbumCount;
+    private int spacerAlbums;
+    private int advertCount;
+
+    private static class AlbumComparator implements Comparator<GalleryItem> {
         @Override
         public int compare(GalleryItem o1, GalleryItem o2) {
             boolean firstIsCategory = o1 instanceof CategoryItem;
@@ -41,9 +48,12 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
             }
         }
     };
-    private int subAlbumCount;
-    private int spacerAlbums;
-    private int advertCount;
+
+    private void readObject(java.io.ObjectInputStream in)
+            throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        itemComparator = new AlbumComparator();
+    }
 
     public PiwigoAlbum(CategoryItem albumDetails) {
         super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));

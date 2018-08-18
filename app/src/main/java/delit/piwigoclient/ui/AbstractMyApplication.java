@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.multidex.MultiDexApplication;
 import android.support.v7.app.AppCompatDelegate;
 
 import delit.piwigoclient.R;
@@ -15,7 +16,7 @@ import delit.piwigoclient.util.ProjectUtils;
  * Created by gareth on 14/06/17.
  */
 
-public abstract class AbstractMyApplication extends Application implements Application.ActivityLifecycleCallbacks {
+public abstract class AbstractMyApplication extends MultiDexApplication implements Application.ActivityLifecycleCallbacks {
 
     static {
         // required for vector graphics support on older devices

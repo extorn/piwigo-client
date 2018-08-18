@@ -9,12 +9,6 @@ import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
 public class MyApplication extends AbstractMyApplication {
 
     @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
-    }
-
-    @Override
     protected void onAppCreate() {
         if(new AutoUploadJobsConfig(getPrefs()).isBackgroundUploadEnabled(getApplicationContext())) {
             if (!BackgroundPiwigoUploadService.isStarted()) {

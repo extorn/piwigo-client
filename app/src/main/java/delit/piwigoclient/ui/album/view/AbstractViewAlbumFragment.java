@@ -1447,6 +1447,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private void onResourceMoved(PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse response) {
 
         Basket basket = getBasket();
+        if(basket == null) {
+            Crashlytics.log("Basket is null when expecting to handle onResourceMoved event");
+            return;
+        }
         CategoryItem movedParent = basket.getContentParent();
         basket.removeItem(response.getPiwigoResource());
         movedParent.reducePhotoCount();

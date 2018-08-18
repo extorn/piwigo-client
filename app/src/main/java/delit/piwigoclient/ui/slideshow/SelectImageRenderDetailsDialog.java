@@ -106,7 +106,9 @@ class SelectImageRenderDetailsDialog {
         builder1.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                listener.onSelection(getSelectedFile().getUrl(), getRotateDegrees(), maxZoomPicker.isChecked() ? 100 : 3);
+                if(fileSelectList.getCheckedItemCount() > 0) {
+                    listener.onSelection(getSelectedFile().getUrl(), getRotateDegrees(), maxZoomPicker.isChecked() ? 100 : 3);
+                }
             }
         });
         builder1.setCancelable(true);
