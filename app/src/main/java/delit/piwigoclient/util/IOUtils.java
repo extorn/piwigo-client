@@ -1,5 +1,13 @@
 package delit.piwigoclient.util;
 
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.os.Build;
+import android.os.Environment;
+import android.os.storage.StorageManager;
+import android.os.storage.StorageVolume;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.os.EnvironmentCompat;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -17,6 +25,8 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import delit.piwigoclient.BuildConfig;
@@ -159,5 +169,64 @@ public class IOUtils {
             text += String.format(Locale.getDefault(), "%1$.1f MB", mb);
         }
         return text;
+    }
+
+    /**
+     * returns a list of all available sd cards paths, or null if not found.
+     *
+     * @param includePrimaryExternalStorage set to true if you wish to also include the path of the primary external storage
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static List<String> getSdCardPaths(final Context context, final boolean includePrimaryExternalStorage)
+    {
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            StorageManager sm = (StorageManager) context.getApplicationContext().getSystemService(Context.STORAGE_SERVICE);
+//            StorageVolume volume = sm.getPrimaryStorageVolume();
+//        }
+
+
+        final File[] externalCacheDirs= ContextCompat.getExternalCacheDirs(context);
+        if(externalCacheDirs==null||externalCacheDirs.length==0)
+            return null;
+        if(externalCacheDirs.length==1)
+        {
+            if(externalCacheDirs[0]==null)
+                return null;
+            final String storageState= EnvironmentCompat.getStorageState(externalCacheDirs[0]);
+            if(!Environment.MEDIA_MOUNTED.equals(storageState))
+                return null;
+            if(!includePrimaryExternalStorage&& Build.VERSION.SDK_INT>= Build.VERSION_CODES.HONEYCOMB&&Environment.isExternalStorageEmulated())
+                return null;
+        }
+        final List<String> result=new ArrayList<>();
+        if(includePrimaryExternalStorage||externalCacheDirs.length==1)
+            result.add(getRootOfInnerSdCardFolder(externalCacheDirs[0]));
+        for(int i=1;i<externalCacheDirs.length;++i)
+        {
+            final File file=externalCacheDirs[i];
+            if(file==null)
+                continue;
+            final String storageState=EnvironmentCompat.getStorageState(file);
+            if(Environment.MEDIA_MOUNTED.equals(storageState))
+                result.add(getRootOfInnerSdCardFolder(externalCacheDirs[i]));
+        }
+        if(result.isEmpty())
+            return null;
+        return result;
+    }
+
+    /** Given any file/folder inside an sd card, this will return the path of the sd card */
+    private static String getRootOfInnerSdCardFolder(File file)
+    {
+        if(file==null)
+            return null;
+        final long totalSpace=file.getTotalSpace();
+        while(true)
+        {
+            final File parentFile=file.getParentFile();
+            if(parentFile==null||parentFile.getTotalSpace()!=totalSpace)
+                return file.getAbsolutePath();
+            file=parentFile;
+        }
     }
 }

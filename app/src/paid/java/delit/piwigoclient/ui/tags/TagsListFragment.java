@@ -257,10 +257,7 @@ public class TagsListFragment extends MyFragment {
 
     public void onDeleteTag(final Tag thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_tag);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-            }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

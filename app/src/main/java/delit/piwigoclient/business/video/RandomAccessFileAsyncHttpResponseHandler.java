@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -180,11 +181,10 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
         } catch (SocketException e) {
             Crashlytics.logException(e);
             Log.d(TAG, "Sinking Socket exception");
+        } catch (ClosedChannelException e) {
+            Crashlytics.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
         } catch (ConnectionClosedException e) {
-            Crashlytics.logException(e);
-            if (logEnabled && BuildConfig.DEBUG) {
-                Log.d(TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
-            }
+            Crashlytics.log(Log.DEBUG, TAG, "Connection closed while reading data from http response. The request was probably cancelled. Sinking error");
         } catch (IOException e) {
             Crashlytics.logException(e);
             if (logEnabled && BuildConfig.DEBUG) {

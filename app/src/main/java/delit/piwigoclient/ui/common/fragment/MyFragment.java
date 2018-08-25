@@ -1,6 +1,10 @@
 package delit.piwigoclient.ui.common.fragment;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +24,9 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
+import delit.piwigoclient.ui.common.UIHelper;
 
 /**
  * Created by gareth on 26/05/17.
@@ -133,6 +140,41 @@ public class MyFragment extends Fragment {
         }
         uiHelper.handleAnyQueuedPiwigoMessages();
         uiHelper.showNextQueuedMessage();
+        if(AdsManager.getInstance().hasAdvertLoadProblem(getContext())) {
+            Crashlytics.log(Log.INFO, getTag(), "warning user that adverts are unavailable");
+            prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 5000).commit();
+            uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, new AdLoadErrorDialogListener());
+        }
+    }
+
+    private class AdLoadErrorDialogListener extends UIHelper.QuestionResultAdapter {
+
+        private long shownAt;
+        LifecycleObserver observer;
+
+        @Override
+        public void onShow(AlertDialog alertDialog) {
+            super.onShow(alertDialog);
+            observer = new LifecycleObserver() {
+                @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+                public void onPause() {
+                    shownAt = System.currentTimeMillis();
+                }
+            };
+            getActivity().getLifecycle().addObserver(observer);
+            shownAt = System.currentTimeMillis();
+        }
+
+        @Override
+        public void onDismiss(AlertDialog dialog) {
+            if(System.currentTimeMillis() < shownAt + 5000) {
+                dialog.show();
+//                uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, this);
+            } else {
+                getActivity().getLifecycle().removeObserver(observer);
+                prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 0).commit();
+            }
+        }
     }
 
     @Nullable

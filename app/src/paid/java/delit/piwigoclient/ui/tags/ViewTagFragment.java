@@ -458,11 +458,7 @@ public class ViewTagFragment extends MyFragment {
             return;
         }
 
-        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
+        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -503,11 +499,7 @@ public class ViewTagFragment extends MyFragment {
 
     private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

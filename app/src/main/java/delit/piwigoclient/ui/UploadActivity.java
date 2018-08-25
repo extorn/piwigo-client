@@ -146,16 +146,11 @@ public class UploadActivity extends MyActivity {
         final int trackingRequestId = TrackableRequestEvent.getNextEventId();
         getUiHelper().setTrackingRequest(trackingRequestId);
 
-        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultListener() {
+        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultAdapter() {
             @Override
             public void onDismiss(AlertDialog dialog) {
                 //exit the app.
                 EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
-            }
-
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                // don't care
             }
         });
     }

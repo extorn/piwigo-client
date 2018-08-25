@@ -65,11 +65,7 @@ public class LicenceCheckingHelper {
 
     private void showDialog(final boolean showRetryButton) {
         String msg = activity.getString(showRetryButton ? R.string.unlicensed_dialog_retry_body : R.string.unlicensed_dialog_body);
-        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(android.app.AlertDialog dialog) {
-
-            }
+        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(android.app.AlertDialog dialog, Boolean positiveAnswer) {

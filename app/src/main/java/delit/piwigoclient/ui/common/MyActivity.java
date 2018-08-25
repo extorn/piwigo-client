@@ -72,8 +72,15 @@ public abstract class MyActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        uiHelper.deregisterFromActiveServiceCalls();
+        super.onPause();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        uiHelper.registerToActiveServiceCalls();
         if (!EventBus.getDefault().isRegistered(this)) {
             throw new RuntimeException("Activity must register with event bus to ensure handling of UserNotUniqueWarningEvent");
         }

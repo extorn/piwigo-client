@@ -47,14 +47,10 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
             PiwigoJsonResponse piwigoResponse = gson.fromJson(new InputStreamReader(new ByteArrayInputStream(responseBody)), PiwigoJsonResponse.class);
             onPiwigoFailure(piwigoResponse);
         } catch (JsonSyntaxException e) {
-            Crashlytics.logException(e);
             super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession);
         } catch (JsonIOException e) {
-            Crashlytics.logException(e);
             super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession);
         } catch (JSONException e) {
-            Crashlytics.logException(e);
-            // response body not available - treat as a standard http error
             super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession);
         }
     }

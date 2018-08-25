@@ -353,11 +353,7 @@ public class GroupFragment extends MyFragment {
 
     private void deleteGroup(final Group group) {
         String message = getString(R.string.alert_confirm_really_delete_group);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

@@ -838,6 +838,8 @@ public abstract class BasePiwigoUploadService extends IntentService {
             } else {
                 Crashlytics.log(Log.ERROR, TAG, "Error parsing EXIF data : sinking");
             }
+        } catch(FileNotFoundException e) {
+            Crashlytics.log(Log.WARN, TAG, "File Not found - Unable to parse EXIF data : sinking");
         } catch (IOException e) {
             Crashlytics.logException(e);
             // ignore for now
@@ -865,6 +867,9 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
     private PiwigoResponseBufferingHandler.BaseResponse updateImageInfoAndPermissions(UploadJob thisUploadJob, File fileForUpload, ResourceItem uploadedResource, Set<Long> allServerAlbumIds) {
         uploadedResource.getLinkedAlbums().add(thisUploadJob.getUploadToCategory());
+        if(thisUploadJob.getTemporaryUploadAlbum() > 0) {
+            uploadedResource.getLinkedAlbums().remove(thisUploadJob.getTemporaryUploadAlbum());
+        }
         ImageUpdateInfoResponseHandler imageInfoUpdateHandler = new ImageUpdateInfoResponseHandler(uploadedResource);
         invokeWithRetries(thisUploadJob, imageInfoUpdateHandler, 2);
         if (!imageInfoUpdateHandler.isSuccess()) {

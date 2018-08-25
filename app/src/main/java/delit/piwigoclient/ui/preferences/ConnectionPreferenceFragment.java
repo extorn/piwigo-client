@@ -80,7 +80,11 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-//    private void readObject(java.io.ObjectInputStream in)
+//
+// private void writeObject(ObjectOutputStream out) throws IOException {
+//    out.defaultWriteObject();
+//}
+// private void readObject(java.io.ObjectInputStream in)
 //            throws IOException, ClassNotFoundException {
 //        in.defaultReadObject();
 //        cacheLevelPrefListener = new CacheLevelPreferenceListener();

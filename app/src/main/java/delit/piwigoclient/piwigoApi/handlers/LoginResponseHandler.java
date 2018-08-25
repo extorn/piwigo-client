@@ -142,7 +142,8 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         GetSessionStatusResponseHandler sessionLoadHandler = new GetSessionStatusResponseHandler();
         sessionLoadHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         sessionLoadHandler.run(getContext(), getConnectionPrefs());
-        if (PiwigoSessionDetails.getInstance(getConnectionPrefs()).isLoggedInWithBasicSessionDetails() // get new copy (old may be invalid)
+        PiwigoSessionDetails activeSessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (activeSessionDetails != null && activeSessionDetails.isLoggedInWithBasicSessionDetails() // get new copy (old may be invalid)
                 && sessionLoadHandler.getResponse() instanceof GetSessionStatusResponseHandler.PiwigoSessionStatusRetrievedResponse) {
         } else {
             reportNestedFailure(sessionLoadHandler);

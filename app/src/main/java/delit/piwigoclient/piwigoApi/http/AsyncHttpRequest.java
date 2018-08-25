@@ -27,8 +27,11 @@ import com.loopj.android.http.ResponseHandlerInterface;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
@@ -201,7 +204,12 @@ public class AsyncHttpRequest implements Runnable {
                     cause = new IOException("NPE in HttpClient: " + e.getMessage());
                     retry = retryHandler.retryRequest(cause, ++executionCount, context);
                 } catch (IOException e) {
-                    Crashlytics.logException(e);
+                    if(e instanceof SocketTimeoutException) {
+                        Crashlytics.log(Log.DEBUG, "AsyncRequest", "Error - " + e.getClass().getName());
+                    } else {
+                        Crashlytics.log(Log.DEBUG, "AsyncRequest", "Error - " + e.getClass().getName());
+//                        Crashlytics.logException(e);
+                    }
                     if (isCancelled()) {
                         // Eating exception, as the request was cancelled
                         return;

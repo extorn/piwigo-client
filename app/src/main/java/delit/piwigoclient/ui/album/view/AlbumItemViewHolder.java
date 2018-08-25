@@ -106,7 +106,7 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
             @Override
             public boolean onPreDraw() {
                 try {
-                    if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading()) {
+                    if (imageLoader.hasResourceToLoad() && !imageLoader.isImageLoaded() && !imageLoader.isImageLoading()) {
                         imageLoader.load();
                     }
                 } catch (IllegalStateException e) {

@@ -747,6 +747,7 @@ SOFTWARE.
     <string name="folder_root_root">Device Root</string>
     <string name="folder_root_userdata">User Data</string>
     <string name="folder_extstorage">External Storage</string>
+    <string name="folder_extstorage_device_pattern">External Storage %1$d</string>
     <string name="folder_default">Default</string>
     <string name="button_all">Check All</string>
     <string name="button_none">Check None</string>
@@ -778,4 +779,8 @@ SOFTWARE.
     <string name="alert_error_album_no_longer_on_server">This Album could not be loaded from the server. Moving to parent album.</string>
     <string name="button_show_details">Show Detail</string>
     <string name="button_hide_details">Hide Detail</string>
+    <string name="alert_message_max_upload_file_count_reached">Maximum number of files to be uploaded reached. To upload more at one time, please purchase and use the paid version of this app.</string>
+    <string name="alert_message_advert_load_error">Adverts are persistently having problems loading. Please report this to me, as these form an important though very small source of revenue to me. Please consider purchasing the paid version to remove adverts entirely. The app will now freeze for 5 seconds during which this screen must remain visible. The countdown will restart if the message is hidden. After 5 seconds you can close this message and continue using the app as normal.</string>
+    <string name="alert_temporary_upload_album_deleted">Temporary upload album deleted successfully</string>
+    <string name="alert_deleting_temporary_upload_album">Deleting temporary upload album</string>
 </resources>

@@ -109,7 +109,9 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         } catch (JsonSyntaxException e) {
             String responseBodyStr = new String(responseBody);
             Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
-            Crashlytics.logException(e);
+            if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
+                Crashlytics.logException(e);
+            }
             boolean handled = handleLogLoginFailurePluginResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
             if (!handled) {
                 PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
@@ -199,9 +201,11 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
 
             if (getNestedFailureMethod() != null) {
-                Log.e(getTag(), getNestedFailureMethod() + " onFailure: \n" + errorBody, error);
+                Crashlytics.log(Log.ERROR, getTag(), getNestedFailureMethod() + " onFailure: \n" + errorBody);
+                Crashlytics.logException(error);
             } else {
-                Log.e(getTag(), piwigoMethod + " onFailure: \n" + getRequestParameters() + '\n' + errorBody, error);
+                Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onFailure: \n" + getRequestParameters() + '\n' + errorBody);
+                Crashlytics.logException(error);
             }
         }
         String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
@@ -221,8 +225,8 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 //        String thread = Thread.currentThread().getName();
         if (BuildConfig.DEBUG) {
             Log.d(getTag(), "calling " + getPiwigoWsApiUri() + '&' + getRequestParameters().toString());
+            Log.e(getTag(), "Invoking call to server (" + getRequestParameters() + ") thread from thread " + Thread.currentThread().getName());
         }
-        Log.e(getTag(), "Invoking call to server (" + getRequestParameters() + ") thread from thread " + Thread.currentThread().getName());
         return client.post(getPiwigoWsApiUri(), getRequestParameters(), handler);
     }
 }

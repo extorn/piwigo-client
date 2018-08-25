@@ -314,11 +314,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void onUseAsAlbumThumbnailForParent() {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -623,10 +619,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private void onDeleteItem(final T model) {
         String message = getString(R.string.alert_confirm_really_delete_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-            }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

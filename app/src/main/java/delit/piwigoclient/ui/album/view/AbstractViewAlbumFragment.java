@@ -601,12 +601,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     }
                     String message = String.format(getString(msgPatternId), basket.getItemCount(), galleryModel.getContainerDetails().getName());
 
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-                        @Override
-                        public void onDismiss(AlertDialog dialog) {
-
-                        }
-
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
                         @Override
                         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                             if (Boolean.TRUE == positiveAnswer) {
@@ -758,21 +753,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void onAlbumDeleteRequest(final CategoryItem album) {
         String msg = String.format(getString(R.string.alert_confirm_really_delete_album_from_server_pattern), album.getName());
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
-
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
                     String msg = String.format(getString(R.string.alert_confirm_really_really_delete_album_from_server_pattern), album.getName(), album.getPhotoCount(), album.getSubCategories(), album.getTotalPhotos() - album.getPhotoCount());
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-                        @Override
-                        public void onDismiss(AlertDialog dialog) {
-                        }
-
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
                         @Override
                         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                             if (Boolean.TRUE == positiveAnswer) {
@@ -804,11 +790,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
         if (sharedResources.size() > 0) {
             String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern, sharedResources.size());
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new UIHelper.QuestionResultListener() {
-                @Override
-                public void onDismiss(AlertDialog dialog) {
-
-                }
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new UIHelper.QuestionResultAdapter() {
 
                 @Override
                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -836,12 +818,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
-
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
@@ -1360,16 +1337,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         try {
             adminCategories = albumAdminList.getDirectChildrenOfAlbum(galleryModel.getContainerDetails().getParentageChain(), galleryModel.getContainerDetails().getId());
         } catch(IllegalStateException e) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_album_no_longer_on_server), new UIHelper.QuestionResultListener() {
-                @Override
-                public void onDismiss(AlertDialog dialog) {
-                    getFragmentManager().popBackStack();
-                }
-
-                @Override
-                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-
-                }
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_album_no_longer_on_server), new UIHelper.QuestionResultAdapter() {
             });
             return;
         }
@@ -1387,14 +1355,17 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void onResourceUnlinked(PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse response) {
-        deleteActionData.removeProcessedResource(response.getPiwigoResource());
+        if(deleteActionData.removeProcessedResource(response.getPiwigoResource())) {
+            deleteActionData = null;
+        }
     }
 
     protected void onResourceInfoRetrieved(PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse response) {
         if (deleteActionData != null && deleteActionData.isTrackingMessageId(response.getMessageId())) {
             this.deleteActionData.updateLinkedAlbums(response.getResource());
-            this.deleteActionData.isResourceInfoAvailable();
-            onDeleteResources(deleteActionData);
+            if(this.deleteActionData.isResourceInfoAvailable()) {
+                onDeleteResources(deleteActionData);
+            }
         }
     }
 
@@ -1481,7 +1452,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         viewAdapter.toggleItemSelection();
         // now update this album view to reflect the server content
         galleryIsDirty = true;
-        if (deleteActionData.removeProcessedResources(response.getDeletedItemIds())) {
+        if (deleteActionData != null && deleteActionData.removeProcessedResources(response.getDeletedItemIds())) {
             deleteActionData = null;
         }
         reloadAlbumContent();
@@ -1646,10 +1617,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 // update the ui.
                 allowedUsersField.setText(String.format(getString(R.string.click_to_view_pattern), currentUsers.length));
                 int msgId = R.string.alert_information_own_user_readded_to_permissions_list;
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(msgId), R.string.button_ok, false, new UIHelper.QuestionResultListener() {
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-                    }
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(msgId), R.string.button_ok, false, new UIHelper.QuestionResultAdapter() {
 
                     @Override
                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1667,11 +1635,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     if (currentLoggedInUserId >= 0 && newlyAddedUsers.contains(currentLoggedInUserId)) {
                         //we're having to force add this user explicitly therefore for safety we need to apply the change recursively
                         String msg = String.format(getString(R.string.alert_information_add_album_permissions_recursively_pattern), galleryModel.getContainerDetails().getSubCategories());
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg, R.string.button_ok, false, new UIHelper.QuestionResultListener() {
-                            @Override
-                            public void onDismiss(AlertDialog dialog) {
-
-                            }
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg, R.string.button_ok, false, new UIHelper.QuestionResultAdapter() {
 
                             @Override
                             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1683,11 +1647,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     } else {
 
                         String msg = String.format(getString(R.string.alert_confirm_add_album_permissions_recursively_pattern), newlyAddedGroups.size(), newlyAddedUsers.size(), galleryModel.getContainerDetails().getSubCategories());
-                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-                            @Override
-                            public void onDismiss(AlertDialog dialog) {
-
-                            }
+                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
 
                             @Override
                             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1724,10 +1684,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
             if (galleryModel.getContainerDetails().getSubCategories() > 0) {
                 String message = String.format(getString(R.string.alert_confirm_really_remove_album_permissions_pattern), newlyRemovedGroups.size(), newlyRemovedUsers.size());
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-                    }
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
 
                     @Override
                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1916,11 +1873,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final BadRequestUsingHttpToHttpsServerEvent event) {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1933,11 +1886,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final BadRequestUsesRedirectionServerEvent event) {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_follow_redirects), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_follow_redirects), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -1965,7 +1914,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         final HashSet<ResourceItem> selectedItems;
         boolean resourceInfoAvailable;
         private ArrayList<Long> trackedMessageIds = new ArrayList<>();
-        private ResourceItem[] itemsWithoutLinkedAlbumData;
 
         public DeleteActionData(HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
             this.selectedItemIds = selectedItemIds;

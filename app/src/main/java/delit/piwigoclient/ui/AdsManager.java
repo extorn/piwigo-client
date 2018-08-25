@@ -34,6 +34,7 @@ import static android.view.View.VISIBLE;
 public class AdsManager {
 
     private static final String TAG = "AdMan";
+    public static final String BLOCK_MILLIS_PREF = "BLOCK_MILLIS";
     private static AdsManager instance;
     private transient InterstitialAd selectFileToUploadAd;
     private transient InterstitialAd albumBrowsingAd;
@@ -41,6 +42,7 @@ public class AdsManager {
     private boolean showAds = true;
     private boolean appLicensed = false;
     private transient SharedPreferences prefs;
+    private static int advertLoadFailures = 0;
 
     private AdsManager() {
     }
@@ -73,7 +75,7 @@ public class AdsManager {
                     String host = URI.create(serverAddress).getHost();
                     showAds = BuildConfig.DEBUG || !"sail2port.ddns.net".equals(host);
                 } catch (IllegalArgumentException e) {
-                    Crashlytics.logException(e);
+                    Crashlytics.log(Log.DEBUG, TAG, "Error parsing URI - adverts enabled");
                     showAds = true;
                 }
             } else {
@@ -100,6 +102,14 @@ public class AdsManager {
                 albumBrowsingAd.loadAd(new AdRequest.Builder().build());
             }
         }
+    }
+
+    public boolean hasAdvertLoadProblem(Context c) {
+        if(advertLoadFailures > 10 || getPrefs(c).getLong(BLOCK_MILLIS_PREF, 0) > 0) {
+            advertLoadFailures = 0;
+            return true;
+        }
+        return false;
     }
 
     public boolean shouldShowAdverts() {
@@ -163,23 +173,24 @@ public class AdsManager {
             advertView.loadAd(new AdRequest.Builder().build());
         }
 
+        @Override
         public void onAdFailedToLoad(int var1) {
             if (var1 == 3) {
                 retries++;
             }
             if (retries < 3) {
-                if (BuildConfig.DEBUG) {
-                    Log.d("BannerAd", "Advert failed to load, retrying");
-                }
+                Crashlytics.log(Log.DEBUG, "BannerAd", "advert load failed, retrying");
                 loadAdvert();
             } else {
-                Crashlytics.log(Log.DEBUG, TAG, "Gave up trying to load advert after 3 attempts - hiding advert");
+                Crashlytics.log(Log.DEBUG, "BannerAd", "Gave up trying to load advert after 3 attempts");
                 advertView.setVisibility(View.GONE);
+                advertLoadFailures++;
                 lastAdLoadFailed = true;
                 retries = 0;
             }
         }
 
+        @Override
         public void onAdLoaded() {
             retries = 0;
             lastAdLoadFailed = false;
@@ -210,6 +221,7 @@ public class AdsManager {
         private final Context context;
         private int onCloseActionId = -1;
         private Intent onCloseIntent;
+        private int retries;
 
         public MyAdListener(Context context, InterstitialAd ad) {
             this.ad = ad;
@@ -233,6 +245,25 @@ public class AdsManager {
             };
             mainHandler.post(myRunnable);
 
+        }
+
+        private void loadAdvert() {
+            ad.loadAd(new AdRequest.Builder().build());
+        }
+
+        @Override
+        public void onAdFailedToLoad(int var1) {
+            if (var1 == 3) {
+                retries++;
+            }
+            if (retries < 3) {
+                Crashlytics.log(Log.DEBUG, "InterstitialAd", "advert load failed, retrying");
+                loadAdvert();
+            } else {
+                Crashlytics.log(Log.DEBUG, "InterstitialAd", "Gave up trying to load advert after 3 attempts");
+                advertLoadFailures++;
+                retries = 0;
+            }
         }
 
         public void addAdCloseAction(Intent intent, int actionId) {

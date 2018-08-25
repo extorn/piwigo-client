@@ -1,6 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +26,10 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     private transient Comparator<Tag> tagComparator = new TagComparator();
 
     public PiwigoTags() {
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
     }
 
     private void readObject(java.io.ObjectInputStream in)

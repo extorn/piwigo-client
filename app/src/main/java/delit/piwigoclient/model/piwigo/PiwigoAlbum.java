@@ -1,6 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +49,10 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
             }
         }
     };
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+    }
 
     private void readObject(java.io.ObjectInputStream in)
             throws IOException, ClassNotFoundException {

@@ -99,7 +99,9 @@ class SelectImageRenderDetailsDialog {
         };
         fileSelectList.setOnItemClickListener(itemClickListener);
         int defaultFileSelectionPos = adapter.getPosition(currentImageUrlDisplayed);
-        fileSelectList.setItemChecked(defaultFileSelectionPos, true);
+        if(defaultFileSelectionPos >= 0) {
+            fileSelectList.setItemChecked(defaultFileSelectionPos, true);
+        }
         itemClickListener.onItemClick(fileSelectList, null, defaultFileSelectionPos, -1);
         builder1.setView(view);
         builder1.setNegativeButton(R.string.button_cancel, null);

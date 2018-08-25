@@ -1,6 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,6 +36,10 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
         this.itemType = itemType;
         this.items = new ArrayList<>(maxExpectedItemCount);
         this.pageLoadLock = new ReentrantLock();
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
     }
 
     private void readObject(java.io.ObjectInputStream in)
@@ -79,6 +84,10 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
 
     public void recordPageLoadSucceeded(long loaderId) {
         pagesBeingLoaded.remove(loaderId);
+    }
+
+    public boolean isTrackingPageLoaderWithId(long loaderId) {
+        return pagesBeingLoaded.containsKey(loaderId);
     }
 
     public void recordPageLoadFailed(long loaderId) {

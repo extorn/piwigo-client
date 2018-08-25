@@ -483,6 +483,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="folder_root_root">Gerätewurzel</string>
     <string name="folder_root_userdata">Benutzerdaten</string>
     <string name="folder_extstorage">Externer Speicher</string>
+    <string name="folder_extstorage_device_pattern">Externer Speicher %1$d</string>
     <string name="folder_default">Standard</string>
     <string name="button_all">Alles prüfen</string>
     <string name="button_none">Keine prüfen</string>
@@ -514,4 +515,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_album_no_longer_on_server">Dieses Album konnte nicht vom Server geladen werden. Wechsel zum übergeordneten Album.</string>
     <string name="button_show_details">Detail anzeigen</string>
     <string name="button_hide_details">Detail ausblenden</string>
+    <string name="alert_message_max_upload_file_count_reached">Die maximale Anzahl der hochzuladenden Dateien ist erreicht. Um mehrere Dateien auf einmal hochzuladen, kaufen und verwenden Sie bitte die kostenpflichtige Version dieser App.</string>
+    <string name="alert_message_advert_load_error">Die Anzeigen haben immer wieder Probleme beim Laden. Bitte melden Sie mir dies, da diese eine wichtige, wenn auch sehr kleine Einnahmequelle für mich darstellen. Bitte denken Sie daran, die kostenpflichtige Version zu kaufen, um Anzeigen vollständig zu entfernen. Die App friert nun für 5 Sekunden ein, während derer dieser Bildschirm sichtbar bleiben muss. Der Countdown wird neu gestartet, wenn die Nachricht versteckt ist. Nach 5 Sekunden können Sie diese Meldung schließen und die App wie gewohnt weiter verwenden.</string>
+    <string name="alert_temporary_upload_album_deleted">Temporäres Upload-Album erfolgreich gelöscht</string>
+    <string name="alert_deleting_temporary_upload_album">Löschen eines temporären Upload-Albums</string>
 </resources>

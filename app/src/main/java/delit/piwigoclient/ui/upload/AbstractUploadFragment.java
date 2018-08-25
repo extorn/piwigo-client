@@ -45,6 +45,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
@@ -73,7 +74,7 @@ import delit.piwigoclient.util.ArrayUtils;
  * Use the {@link UploadFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class UploadFragment extends MyFragment implements FilesToUploadRecyclerViewAdapter.RemoveListener {
+public abstract class AbstractUploadFragment extends MyFragment implements FilesToUploadRecyclerViewAdapter.RemoveListener {
 
     // the fragment initialization parameters
     private static final String ARG_CURRENT_GALLERY_ID = "currentGalleryId";
@@ -102,16 +103,11 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
     private CustomImageButton newGalleryButton;
     private FilesToUploadRecyclerViewAdapter filesToUploadAdapter;
 
-    public UploadFragment() {
-    }
-
-    public static UploadFragment newInstance(long currentGalleryId, int actionId) {
-        UploadFragment fragment = new UploadFragment();
+    protected Bundle buildArgs(long currentGalleryId, int actionId) {
         Bundle args = new Bundle();
         args.putLong(ARG_CURRENT_GALLERY_ID, currentGalleryId);
         args.putInt(ARG_SELECT_FILES_ACTION_ID, actionId);
-        fragment.setArguments(args);
-        return fragment;
+        return args;
     }
 
     @Override
@@ -125,6 +121,10 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         if (uploadJobId != null) {
             outState.putLong(SAVED_STATE_UPLOAD_JOB_ID, uploadJobId);
         }
+    }
+
+    protected RecyclerView getFilesForUploadView() {
+        return filesForUploadView;
     }
 
     @Override
@@ -265,16 +265,16 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         deleteUploadJobButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, getString(R.string.alert_really_delete_upload_job), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-
-                    }
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, getString(R.string.alert_really_delete_upload_job), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
 
                     @Override
                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                         UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
                         if (positiveAnswer != null && positiveAnswer) {
+                            if(job.getTemporaryUploadAlbum() > 0) {
+                                AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbum());
+                                getUiHelper().addNonBlockingActiveServiceCall(getString(R.string.alert_deleting_temporary_upload_album), albumDelHandler.invokeAsync(getContext(), job.getConnectionPrefs()));
+                            }
                             ForegroundPiwigoUploadService.removeJob(job);
                             ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), job);
                             allowUserUploadConfiguration(null);
@@ -454,7 +454,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         }
     }
 
-    private void updateFilesForUploadList(ArrayList<File> filesToBeUploaded) {
+    protected void updateFilesForUploadList(ArrayList<File> filesToBeUploaded) {
         FilesToUploadRecyclerViewAdapter adapter = (FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter();
         adapter.addAll(filesToBeUploaded);
         uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
@@ -505,14 +505,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             }
         }
         if (filesForReview.size() > 0) {
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
 
                 final Set<File> filesToDelete = filesForReview;
-
-                @Override
-                public void onDismiss(AlertDialog dialog) {
-
-                }
 
                 @Override
                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -640,10 +635,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             if (activeJob.isFinished()) {
                 if (activeJob.uploadItemRequiresAction(itemToRemove)) {
                     String message = getString(R.string.alert_message_remove_file_server_state_incorrect);
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-                        @Override
-                        public void onDismiss(AlertDialog dialog) {
-                        }
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
 
                         @Override
                         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -668,11 +660,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             }
         } else {
             if (longClick) {
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_delete_all_files_selected_for_upload), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-                    @Override
-                    public void onDismiss(AlertDialog dialog) {
-
-                    }
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_delete_all_files_selected_for_upload), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
 
                     @Override
                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -825,7 +813,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
             if (isAdded()) {
                 if (job.hasJobCompletedAllActionsSuccessfully() && job.isFinished()) {
                     uploadJobId = null;
-                    if (UploadFragment.this.isAdded()) {
+                    if (AbstractUploadFragment.this.isAdded()) {
                         ForegroundPiwigoUploadService.removeJob(job);
                     }
                     HashSet<File> filesPendingApproval = job.getFilesPendingApproval();
@@ -838,10 +826,7 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                     if (job.getFilesNotYetUploaded().size() == 0) {
                         errMsgResourceId = R.string.alert_message_error_uploading_end;
                     }
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_error_upload, getContext().getString(errMsgResourceId), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-                        @Override
-                        public void onDismiss(AlertDialog dialog) {
-                        }
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_error_upload, getContext().getString(errMsgResourceId), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
 
                         @Override
                         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -956,6 +941,8 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
                 onGetSubGalleryNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
                 onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse) {
+                onAlbumDeleted((PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse)response);
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }
@@ -999,5 +986,9 @@ public class UploadFragment extends MyFragment implements FilesToUploadRecyclerV
         protected void onGetSubGalleryNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
             updateSpinnerWithNewAlbumsList(response.getAlbumNames());
         }
+    }
+
+    private void onAlbumDeleted(PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse response) {
+        getUiHelper().showToast(R.string.alert_temporary_upload_album_deleted);
     }
 }

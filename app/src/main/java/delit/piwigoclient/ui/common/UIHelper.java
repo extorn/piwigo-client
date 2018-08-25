@@ -263,6 +263,7 @@ public abstract class UIHelper<T> {
         dismissListener.setListener(nextMessage.getListener());
         dismissListener.setBuildNewDialogOnDismiss(nextMessage.getLayoutId() != Integer.MIN_VALUE);
         alertDialog.show();
+        nextMessage.getListener().onShow(alertDialog);
     }
 
     protected void showDialog(final QueuedMessage nextMessage) {
@@ -285,6 +286,10 @@ public abstract class UIHelper<T> {
         });
         dismissListener.setListener(nextMessage.getListener());
         alertDialog.show();
+        QuestionResultListener l = nextMessage.getListener();
+        if (l != null) {
+            l.onShow(alertDialog);
+        }
     }
 
     public void addActiveServiceCall(int titleStringId, long messageId) {
@@ -517,12 +522,7 @@ public abstract class UIHelper<T> {
         }
         String message = sb.toString();
 
-        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultListener() {
-
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-            }
-
+        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
@@ -546,6 +546,11 @@ public abstract class UIHelper<T> {
                         }
                     });
                 }
+            }
+
+            @Override
+            public void onShow(AlertDialog alertDialog) {
+
             }
         });
     }
@@ -664,10 +669,29 @@ public abstract class UIHelper<T> {
         return false;
     }
 
+    public static abstract class QuestionResultAdapter implements QuestionResultListener {
+        @Override
+        public void onShow(AlertDialog alertDialog) {
+
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+
+        }
+
+        @Override
+        public void onDismiss(AlertDialog dialog) {
+
+        }
+    }
+
     public interface QuestionResultListener extends Serializable {
         void onDismiss(AlertDialog dialog);
 
         void onResult(AlertDialog dialog, Boolean positiveAnswer);
+
+        void onShow(AlertDialog alertDialog);
     }
 
     private static class QueuedMessage implements Serializable {
@@ -791,18 +815,19 @@ public abstract class UIHelper<T> {
 
         @Override
         public void populateCustomView(LinearLayout dialogView) {
-            final TextView detailView = dialogView.findViewById(R.id.details);
-            detailView.setText(getDetail());
+            if(layoutId == R.layout.dialog_detailed) {
+                final TextView detailView = dialogView.findViewById(R.id.details);
+                detailView.setText(getDetail());
 
-            ToggleButton detailsVisibleButton = dialogView.findViewById(R.id.details_toggle);
-            detailsVisibleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    detailView.setVisibility(isChecked?View.VISIBLE:View.GONE);
-                }
-            });
-            detailsVisibleButton.toggle();
-
+                ToggleButton detailsVisibleButton = dialogView.findViewById(R.id.details_toggle);
+                detailsVisibleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        detailView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                    }
+                });
+                detailsVisibleButton.toggle();
+            }
             super.populateCustomView(dialogView);
         }
     }

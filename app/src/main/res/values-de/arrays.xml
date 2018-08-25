@@ -107,6 +107,16 @@
         </item>
     </string-array>
     <string-array name="release_history">
+        <item>1.3.94.2</item>
+        <item>"Bugfix:
+            - Intermittierender Absturz auf Benutzer- und Gruppenlistenseiten beim Laden von Ergebnissen
+            - Absturz durch Entsperren nach dem Sperren der Anwendung, um nur lesen zu können
+            - Absturz nach erneutem Öffnen der App, um nach langer Zeit die Albumseite zu durchsuchen
+            - Absturz beim Schließen der Seite Upload sofort und während der Serveranfrage, die noch im Gange ist.
+            - Mehrere andere Bugs wurden identifiziert, die aber keine Abstürze verursachen
+            - Hochladen - temporäres Upload-Album - Verschieben statt Kopieren von Objekten in das Zielalbum
+            - Upload - temporäres Upload-Album - Löschen, wenn der Auftrag nach einem Fehler gelöscht wurde"
+        </item>
         <item>1.3.94.1</item>
         <item>"Änderungen:
             - Korrigierte Anzeige auf der Diashow-Seite

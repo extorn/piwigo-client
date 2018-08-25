@@ -30,6 +30,7 @@ import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
+import delit.piwigoclient.util.IOUtils;
 
 public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
     private static final String ACTIVE_FOLDER = "activeFolder";
@@ -180,6 +181,29 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         List<String> rootLabels = ArrayUtils.toArrayList(new String[]{getString(R.string.folder_root_root), getString(R.string.folder_root_userdata), getString(R.string.folder_extstorage)});
 
         List<File> rootPaths = ArrayUtils.toArrayList(new File[]{Environment.getRootDirectory(), Environment.getDataDirectory(), Environment.getExternalStorageDirectory()});
+        List<String> sdCardPaths = IOUtils.getSdCardPaths(getContext(), true);
+        if(sdCardPaths != null) {
+            int extStorageDeviceId = 1;
+            for(String path : sdCardPaths) {
+                File f = new File(path);
+                File[] locations = f.listFiles();
+                if(locations.length > 0) {
+                    for (File location : locations) {
+                        if (location.isDirectory() && !rootPaths.contains(location)) {
+                            rootLabels.add(getString(R.string.folder_extstorage_device_pattern, extStorageDeviceId));
+                            rootPaths.add(location);
+                            extStorageDeviceId++;
+                        }
+                    }
+                } else {
+                    if (!rootPaths.contains(f)) {
+                        rootLabels.add(getString(R.string.folder_extstorage_device_pattern, extStorageDeviceId));
+                        rootPaths.add(f);
+                        extStorageDeviceId++;
+                    }
+                }
+            }
+        }
 
         if (getViewPrefs().getInitialFolderAsFile() != null && !rootPaths.contains(getViewPrefs().getInitialFolderAsFile())) {
             rootPaths.add(0, getViewPrefs().getInitialFolderAsFile());

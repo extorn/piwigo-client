@@ -100,11 +100,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg, String detail) {
         final AbstractPiwigoDirectResponseHandler handler = errorResponse.getHttpResponseHandler();
 
-        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-                // don't care
-            }
+        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
