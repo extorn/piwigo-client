@@ -195,6 +195,7 @@ public class AdsManager {
             retries = 0;
             lastAdLoadFailed = false;
             adLastLoadedAt = System.currentTimeMillis();
+            advertLoadFailures = 0;
         }
 
         @Override
@@ -249,6 +250,12 @@ public class AdsManager {
 
         private void loadAdvert() {
             ad.loadAd(new AdRequest.Builder().build());
+        }
+
+        @Override
+        public void onAdLoaded() {
+            retries = 0;
+            advertLoadFailures = 0;
         }
 
         @Override
