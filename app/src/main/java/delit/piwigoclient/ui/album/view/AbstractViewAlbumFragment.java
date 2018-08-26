@@ -329,7 +329,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        return inflater.inflate(R.layout.fragment_gallery, container, false);
+        View v = inflater.inflate(R.layout.fragment_gallery, container, false);
+        Crashlytics.log(Log.DEBUG, getTag(), "view from album fragment - " + v);
+        return v;
     }
 
     @Override
@@ -1909,6 +1911,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private static class DeleteActionData implements Serializable {
+        private static final long serialVersionUID = 835907412196288214L;
         final HashSet<Long> selectedItemIds;
         final HashSet<Long> itemsUpdated;
         final HashSet<ResourceItem> selectedItems;

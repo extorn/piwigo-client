@@ -371,6 +371,7 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private static class DeleteActionData implements Serializable {
+        private static final long serialVersionUID = 3480088510158353462L;
         final HashSet<Long> selectedItemIds;
         final HashSet<Long> itemsUpdated;
         final HashSet<ResourceItem> selectedItems;

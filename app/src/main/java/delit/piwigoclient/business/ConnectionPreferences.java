@@ -57,6 +57,8 @@ public class ConnectionPreferences {
     }
 
     public static class ProfilePreferences implements Serializable, Comparable<ProfilePreferences> {
+
+        private static final long serialVersionUID = -839430660180276975L;
         private final String prefix;
         private boolean asGuest;
 

@@ -19,6 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializable {
 
+    private static final long serialVersionUID = 6459233465655813249L;
     public static int MISSING_ITEMS_PAGE = -1;
     private final String itemType;
     private final SortedSet<Integer> pagesLoaded = new TreeSet<>();

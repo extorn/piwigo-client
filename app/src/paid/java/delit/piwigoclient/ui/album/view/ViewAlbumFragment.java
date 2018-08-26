@@ -196,6 +196,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     private class AddTagsToResourcesAction implements Serializable {
+        private static final long serialVersionUID = -6944626147044296967L;
         private final HashSet<ResourceItem> selectedResources;
         private final HashSet<ResourceItem> resourcesReadyToProcess;
         private HashMap<ResourceItem,ArrayList<Tag>> tagMembershipChangesPending;

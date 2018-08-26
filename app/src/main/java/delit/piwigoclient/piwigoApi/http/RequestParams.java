@@ -85,6 +85,7 @@ public class RequestParams implements Serializable {
             "application/json";
 
     protected final static String LOG_TAG = "RequestParams";
+    private static final long serialVersionUID = 3700827104089916193L;
     protected final ConcurrentHashMap<String, String> urlParams = new ConcurrentHashMap<>();
     protected final ConcurrentHashMap<String, StreamWrapper> streamParams = new ConcurrentHashMap<>();
     protected final ConcurrentHashMap<String, FileWrapper> fileParams = new ConcurrentHashMap<>();
@@ -656,6 +657,7 @@ public class RequestParams implements Serializable {
     }
 
     public static class FileWrapper implements Serializable {
+        private static final long serialVersionUID = -1298395465881130096L;
         public final File file;
         public final String contentType;
         public final String customFileName;

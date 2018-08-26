@@ -695,6 +695,7 @@ public abstract class UIHelper<T> {
     }
 
     private static class QueuedMessage implements Serializable {
+        private static final long serialVersionUID = 3026567735215782957L;
         private final int titleId;
         private final String message;
         private final int positiveButtonTextId;

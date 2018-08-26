@@ -188,7 +188,7 @@
                             android:layout_height="match_parent">
 
                             <LinearLayout
-                                android:id="@+id/gallery_details_edit_fields"
+                                android:id="@+id/picture_resource_basic_fields"
                                 android:orientation="vertical"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">

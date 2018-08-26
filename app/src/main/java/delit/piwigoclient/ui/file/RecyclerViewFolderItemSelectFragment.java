@@ -187,7 +187,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             for(String path : sdCardPaths) {
                 File f = new File(path);
                 File[] locations = f.listFiles();
-                if(locations.length > 0) {
+                if(locations != null && locations.length > 0) {
                     for (File location : locations) {
                         if (location.isDirectory() && !rootPaths.contains(location)) {
                             rootLabels.add(getString(R.string.folder_extstorage_device_pattern, extStorageDeviceId));

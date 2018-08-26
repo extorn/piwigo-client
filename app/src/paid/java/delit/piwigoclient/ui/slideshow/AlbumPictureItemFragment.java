@@ -51,7 +51,7 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
         TabHost.TabSpec basicInfoTab = tabPanels.newTabSpec("BasicInfoTab");
         TabHost.TabSpec exifInfoTab = tabPanels.newTabSpec("EXIFdataTab");
         basicInfoTab.setIndicator(getString(R.string.slideshow_image_tab_basic_info));
-        basicInfoTab.setContent(R.id.gallery_details_edit_fields);
+        basicInfoTab.setContent(R.id.picture_resource_basic_fields);
         exifInfoTab.setIndicator(getString(R.string.slideshow_image_tab_exif_data));
         exifInfoTab.setContent(R.id.picture_resource_exif_data);
         exifDataView = v.findViewById(R.id.picture_resource_exif_data);

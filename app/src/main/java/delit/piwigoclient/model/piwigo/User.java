@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 
 public class User implements Identifiable, Serializable {
+    private static final long serialVersionUID = -3747900490774558690L;
     private String email;
     private long id = -1;
     private String username;

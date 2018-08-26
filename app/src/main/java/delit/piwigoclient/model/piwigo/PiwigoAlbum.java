@@ -16,6 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> implements Serializable {
 
+    private static final long serialVersionUID = 919642836918692590L;
     private transient Comparator<GalleryItem> itemComparator = new AlbumComparator();
     private int subAlbumCount;
     private int spacerAlbums;

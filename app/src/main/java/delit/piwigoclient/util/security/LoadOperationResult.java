@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LoadOperationResult implements Serializable {
+    private static final long serialVersionUID = -2017370395340153712L;
     private final List<KeystoreLoadOperationResult> keystoreLoadResults;
     private final List<CertificateLoadOperationResult> certLoadResults;
 

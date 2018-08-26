@@ -199,12 +199,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             allowDownload = savedInstanceState.getBoolean(ALLOW_DOWNLOAD);
             updatedLinkedAlbumSet = (HashSet<Long>) savedInstanceState.getSerializable(STATE_UPDATED_LINKED_ALBUM_SET);
             albumsRequiringReload = (HashSet<Long>) savedInstanceState.getSerializable(STATE_ALBUMS_REQUIRING_UPDATE);
-            if (getArguments() == null) {
-                model = (T) savedInstanceState.getSerializable(ARG_GALLERY_ITEM);
-                albumItemIdx = savedInstanceState.getInt(ARG_ALBUM_ITEM_IDX);
-                albumLoadedItemCount = savedInstanceState.getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
-                albumTotalItemCount = savedInstanceState.getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
-            }
         }
 
         boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
@@ -257,6 +251,13 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 //                addActiveServiceCall(R.string.progress_loading_resource_details, PiwigoAccessService.startActionGetResourceInfo(model, getContext()));
 //            }
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // need to do this here because text fields don't update correctly when set in onCreateView / onViewCreated
+        fillResourceEditFields();
     }
 
     @Nullable
@@ -492,8 +493,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
 
         ratingBar = v.findViewById(R.id.slideshow_image_ratingBar);
-
-        fillResourceEditFields();
     }
 
     protected abstract void onSaveModelChanges(T model);
@@ -546,6 +545,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             resourceNameView.setText("");
         } else {
             resourceNameView.setText(model.getName());
+            resourceNameView.invalidate();
         }
 
         if (model.getDescription() == null) {

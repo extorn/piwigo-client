@@ -89,7 +89,7 @@ public class LicenceCheckingHelper {
     }
 
     private void doVisualCheck() {
-        activity.getUiHelper().showProgressDialog(R.string.checking_license);
+        activity.getUiHelper().showToast(R.string.checking_license);
         doCheck();
     }
 
@@ -117,7 +117,6 @@ public class LicenceCheckingHelper {
     private void displayResult(final String result) {
         mHandler.post(new Runnable() {
             public void run() {
-                activity.getUiHelper().dismissProgressDialog();
                 activity.getUiHelper().showOrQueueDialogMessage(R.string.alert_information, result);
             }
         });
@@ -126,7 +125,6 @@ public class LicenceCheckingHelper {
     private void displayDialog(final boolean showRetry) {
         mHandler.post(new Runnable() {
             public void run() {
-                activity.getUiHelper().dismissProgressDialog();
                 showDialog(showRetry);
             }
         });
@@ -150,7 +148,6 @@ public class LicenceCheckingHelper {
                 // Don't update UI if Activity is finishing.
                 return;
             }
-            activity.getUiHelper().dismissProgressDialog();
             AdsManager.getInstance().setAppLicensed(true);
             // Should allow user access.
 //            displayResult(activity.getString(R.string.allow));
@@ -161,7 +158,6 @@ public class LicenceCheckingHelper {
                 // Don't update UI if Activity is finishing.
                 return;
             }
-            activity.getUiHelper().dismissProgressDialog();
             AdsManager.getInstance().setAppLicensed(false);
             if (policyReason == Policy.NOT_LICENSED) {
                 PreferenceUtils.wipeAppPreferences(activity);

@@ -3,8 +3,8 @@
     <string name="checking_license">Lizenz prüfen....</string>
     <string name="button_quit">Beenden</string>
     <string name="button_buy">App kaufen</string>
-    <string name="unlicensed_dialog_retry_body">Lizenz kann nicht validiert werden. Prüfen Sie, ob eine Netzwerkverbindung verfügbar ist.</string>
-    <string name="unlicensed_dialog_body">Diese Anwendung ist nicht lizenziert. Bitte kaufen Sie es im Android Market.</string>
+    <string name="unlicensed_dialog_retry_body">Kann nicht bestätigen, dass die Anwendung lizenziert ist. Bitte kaufen Sie es im Android Market. Wenn ja, überprüfen Sie bitte, ob eine Netzwerkverbindung vorhanden ist, und versuchen Sie es erneut mit dieser Lizenzprüfung.</string>
+    <string name="unlicensed_dialog_body">Lizenz kann nicht validiert werden. Überprüfen Sie, ob eine Netzwerkverbindung verfügbar ist.</string>
     <string name="unlicensed_dialog_title">Anwendung nicht lizenziert</string>
     <string name="application_error">Anwendungsfehler: %1$d</string>
 

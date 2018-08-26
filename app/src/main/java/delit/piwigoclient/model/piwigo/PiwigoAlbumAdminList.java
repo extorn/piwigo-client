@@ -13,6 +13,7 @@ import static delit.piwigoclient.model.piwigo.CategoryItem.ROOT_ALBUM;
 
 public class PiwigoAlbumAdminList implements Serializable {
 
+    private static final long serialVersionUID = 5263416921276570075L;
     private final ArrayList<CategoryItem> rootAlbums = new ArrayList<>();
 
 

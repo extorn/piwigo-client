@@ -38,7 +38,7 @@
 
 -keep class delit.piwigoclient.ui.events.**
 
--keep class delit.piwigoclient.model.piwigo.CategoryItem
+#-keep class delit.piwigoclient.model.piwigo.CategoryItem
 
 -keep class com.google.android.exoplayer2.** { public *; }
 #-dontwarn com.google.android.exoplayer2.**
@@ -46,13 +46,12 @@
 -keep class com.google.android.gms.** { public *; }
 #-dontwarn com.google.android.gms.**
 
--keep class delit.piwigoclient.ui.common.SlidingTabLayout* { public *; }
+#-keep class delit.piwigoclient.ui.common.SlidingTabLayout* { public *; }
+-keep class delit.piwigoclient.ui.common.SlidingTabLayout$TabColorizer { public *; }
 
 -keep class com.google.ads.** { public *; }
 
 -keep class com.ortiz.touch.TouchImageView* { public *; }
-
--keep class android.os.Build { public *; }
 
 -keep class com.loopj.android.http.SerializableCookie { *; }
 
@@ -71,10 +70,12 @@
 # Application classes that will be serialized/deserialized over Gson
 -keep class delit.piwigoclient.model.piwigo.PiwigoJsonResponse { *; }
 #
-#-keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.android.gms.flags.ModuleDescriptor {
-#    java.lang.String MODULE_ID;
-#    int MODULE_VERSION;
-#}
+
+-keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.firebase.perf.ModuleDescriptor {
+    java.lang.String MODULE_ID;
+    int MODULE_VERSION;
+}
+
 -keepclassmembers class com.google.android.gms.dynamite.descriptors.com.google.android.gms.ads.dynamite.ModuleDescriptor {
     java.lang.String MODULE_ID;
     int MODULE_VERSION;
@@ -82,8 +83,6 @@
 
 -keepclassmembers class com.google.android.gms.dynamite.DynamiteModule$DynamiteLoaderClassLoader { java.lang.ClassLoader sClassLoader; }
 
-# For using GSON @Expose annotation
--keepattributes *Annotation*
 -keepclassmembers class ** {
     @org.greenrobot.eventbus.Subscribe <methods>;
 }
@@ -94,15 +93,16 @@
     <init>(java.lang.Throwable);
 }
 
--keep class **.R
-
--keep class **.R$* {
-     <fields>;
+# Allow customised serialization to work (all serializable classes must have serialVersionUID for this to be sufficient)
+-keepclassmembers class * implements java.io.Serializable {
+     static final long serialVersionUID;
+     private static final java.io.ObjectStreamField[] serialPersistentFields;
+     !static !transient <fields>;
+     private void writeObject(java.io.ObjectOutputStream);
+     private void readObject(java.io.ObjectInputStream);
+     java.lang.Object writeReplace();
+     java.lang.Object readResolve();
 }
-
--keep class delit.piwigoclient.ui.Constants
-
--keep class delit.piwigoclient.business.video.CachedContent
 
 # We're not using the okhttp library at the moment so we don't need it on the classpath.
 -dontwarn com.squareup.okhttp.**
@@ -113,7 +113,6 @@
 # support-v4
 #https://stackoverflow.com/questions/18978706/obfuscate-android-support-v7-widget-gridlayout-issue
 #-dontwarn android.support.v4.**
--keep class android.support.v4.app.** { public *; }
 -keep interface android.support.v4.app.** { public *; }
 -keep class android.support.v4.** { public *; }
 
@@ -121,11 +120,9 @@
 
 # support-v7
 #-dontwarn android.support.v7.**
--keep class android.support.v7.internal.** { public *; }
 -keep interface android.support.v7.internal.** { public *; }
 -keep class android.support.v7.** { public *; }
 
-#-dontwarn com.google.firebase.crash.**
 -keep class com.google.firebase.** { public *; }
 -keep class com.crashlytics.** { public *; }
 -keep class io.fabric.sdk.android.services.** { public *; }
@@ -133,7 +130,14 @@
 -keep class io.fabric.sdk.android.Logger { public *; }
 -keep class io.fabric.sdk.android.ActivityLifecycleManager { public *; }
 -keep class io.fabric.sdk.android.ActivityLifecycleManager$Callbacks { public *; }
-
--keep class delit.piwigoclient.**.*Activity { public *; }
+-keep class com.google.android.gms.internal.firebase-perf.** { *; }
+-keep class android.arch.lifecycle.LifecycleOwner { public *; }
+-keep class android.arch.lifecycle.Observer { public *; }
+-keep class com.drew.** { public *; }
+-keep class com.adobe.xmp.** { public *; }
+-keep class **.R  { public *; }
+-keep class **.R$*  { public *; }
+#-keep public class * implements java.lang.annotation.Annotation { *; }
+#-keep class delit.piwigoclient.**.*Activity { public *; }
 
 #-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement

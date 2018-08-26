@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 
 public class SerializablePair<T extends Serializable, S extends Serializable> extends Pair<T, S> implements Serializable {
+    private static final long serialVersionUID = -5448324655943992896L;
+
     /**
      * Constructor for a Pair.
      *

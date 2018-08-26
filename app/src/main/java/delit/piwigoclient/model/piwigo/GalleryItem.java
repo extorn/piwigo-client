@@ -24,6 +24,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Seria
             return GalleryItem.RESOURCE_ADVERT_TYPE;
         }
     };
+    private static final long serialVersionUID = 7684159305897923971L;
     private final long id;
     private String thumbnailUrl;
     private String name;

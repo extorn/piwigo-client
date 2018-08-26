@@ -4,8 +4,8 @@
     <string name="checking_license">Checking license…</string>
     <string name="button_quit">Exit</string>
     <string name="button_buy">Buy App</string>
-    <string name="unlicensed_dialog_retry_body">Unable to validate license. Check to see if a network connection is available.</string>
-    <string name="unlicensed_dialog_body">This application is not licensed. Please purchase it from Android Market.</string>
+    <string name="unlicensed_dialog_retry_body">Unable to confirm that the application is licensed. Please purchase it from Android Market. If you have, please check that there is a network connection available, and retry this licence check.</string>
+    <string name="unlicensed_dialog_body">Unable to validate license. Check to see if a network connection is available.</string>
     <string name="unlicensed_dialog_title">Application not licensed</string>
     <string name="application_error">Application error: %1$d</string>
 

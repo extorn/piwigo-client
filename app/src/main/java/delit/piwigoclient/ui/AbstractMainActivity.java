@@ -10,6 +10,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -609,6 +610,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
 
+        Crashlytics.log(Log.DEBUG, TAG, "showing fragment: " + f.getClass().getName());
         checkLicenceIfNeeded();
 
         Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
@@ -625,6 +627,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         tx.addToBackStack(f.getClass().getName());
         tx.replace(R.id.main_view, f, f.getClass().getName()).commit();
+        Crashlytics.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + f.getClass().getName());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

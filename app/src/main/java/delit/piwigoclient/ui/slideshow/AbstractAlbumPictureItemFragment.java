@@ -222,6 +222,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 //Granted
                 DownloadSelectionDialog dialogFactory = new DownloadSelectionDialog(getContext());
                 AlertDialog dialog = dialogFactory.buildDialog(getModel().getName(), getModel().getAvailableFiles(), new DownloadSelectionDialog.DownloadSelectionListener() {
+
                     @Override
                     public void onSelection(ResourceItem.ResourceFile selectedItem) {
                         File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);

@@ -3,6 +3,7 @@ package delit.piwigoclient.model.piwigo;
 import java.io.Serializable;
 
 public class Username implements Identifiable, Serializable {
+    private static final long serialVersionUID = -135397513975209201L;
     private final long id;
     private final String username;
     private final String userType; //guest,    generic,    normal,    admin,    webmaster

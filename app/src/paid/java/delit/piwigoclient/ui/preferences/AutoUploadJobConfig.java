@@ -140,6 +140,7 @@ public class AutoUploadJobConfig {
 
     public static class PriorUploads implements Serializable {
 
+        private static final long serialVersionUID = 4250545241017682232L;
         private int jobId;
         private final HashMap<File, String> filesToHashMap;
 

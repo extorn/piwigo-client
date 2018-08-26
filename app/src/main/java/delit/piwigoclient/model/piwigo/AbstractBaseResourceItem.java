@@ -169,6 +169,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     }
 
     public static class ResourceFile implements Comparable<ResourceFile>, Serializable {
+        private static final long serialVersionUID = 2807336261739692481L;
         private final String name;
         private final String url;
         private final int width;
