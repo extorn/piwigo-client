@@ -612,16 +612,19 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private void notifyUserUploadStatus(Context ctx, String message) {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ctx, getUiHelper().getDefaultNotificationChannelId())
-                .setSmallIcon(R.drawable.ic_notifications_black_24dp)
                 .setContentTitle(ctx.getString(R.string.notification_upload_event))
                 .setContentText(message)
                 .setAutoCancel(true);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            // this is not a vector graphic
+            mBuilder.setSmallIcon(R.drawable.ic_notifications_black);
             mBuilder.setCategory("progress");
         } else {
+            mBuilder.setSmallIcon(R.drawable.ic_notifications_black_24dp);
             mBuilder.setCategory(Notification.CATEGORY_PROGRESS);
         }
+
 
 //      Clear the last notification
         getUiHelper().clearNotification(TAG, 1);

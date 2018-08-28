@@ -182,23 +182,36 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         getUiHelper().addBackgroundServiceCall(activeDownloadActionId);
     }
 
+    private void loadArgsFromBundle(Bundle b) {
+        model = (T) b.getSerializable(ARG_GALLERY_ITEM);
+        albumItemIdx = b.getInt(ARG_ALBUM_ITEM_IDX);
+        albumLoadedItemCount = b.getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
+        albumTotalItemCount = b.getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
+    }
+
+    private void loadNonArgsFromBundle(Bundle b) {
+        editingItemDetails = b.getBoolean(STATE_EDITING_ITEM_DETAILS);
+        informationShowing = b.getBoolean(STATE_INFORMATION_SHOWING);
+        allowDownload = b.getBoolean(ALLOW_DOWNLOAD);
+        updatedLinkedAlbumSet = (HashSet<Long>) b.getSerializable(STATE_UPDATED_LINKED_ALBUM_SET);
+        albumsRequiringReload = (HashSet<Long>) b.getSerializable(STATE_ALBUMS_REQUIRING_UPDATE);
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        boolean argsLoaded = false;
         if (getArguments() != null) {
             intialiseFields();
-            model = (T) getArguments().getSerializable(ARG_GALLERY_ITEM);
-            albumItemIdx = getArguments().getInt(ARG_ALBUM_ITEM_IDX);
-            albumLoadedItemCount = getArguments().getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
-            albumTotalItemCount = getArguments().getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
+            loadArgsFromBundle(savedInstanceState);
             setArguments(null);
+            argsLoaded = true;
         }
         if (savedInstanceState != null) {
             //restore saved state
-            editingItemDetails = savedInstanceState.getBoolean(STATE_EDITING_ITEM_DETAILS);
-            informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
-            allowDownload = savedInstanceState.getBoolean(ALLOW_DOWNLOAD);
-            updatedLinkedAlbumSet = (HashSet<Long>) savedInstanceState.getSerializable(STATE_UPDATED_LINKED_ALBUM_SET);
-            albumsRequiringReload = (HashSet<Long>) savedInstanceState.getSerializable(STATE_ALBUMS_REQUIRING_UPDATE);
+            if(!argsLoaded) {
+                loadArgsFromBundle(savedInstanceState);
+            }
+            loadNonArgsFromBundle(savedInstanceState);
         }
 
         boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
