@@ -790,7 +790,7 @@ public abstract class UIHelper<T> {
 
             super(titleId, message, detail, positiveButtonTextId, false, listener);
             this.negativeButtonTextId = negativeButtonTextId;
-            if(detail != null && layoutId == Integer.MIN_VALUE) {
+            if(detail != null && !detail.trim().isEmpty() && layoutId == Integer.MIN_VALUE) {
                 this.layoutId = R.layout.dialog_detailed;
             } else {
                 this.layoutId = layoutId;

@@ -21,6 +21,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.Set;
@@ -479,6 +480,12 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
                 } else if (isHttp) {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
+                } else {
+                    try {
+                        URI uri = URI.create(val);
+                    } catch (IllegalArgumentException e) {
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_invalid_uri_pattern, e.getMessage()));
+                    }
                 }
 
                 // clear the existing session - it's not valid any more.

@@ -77,36 +77,41 @@
     </string-array>
     <string-array name="planned_releases">
         <item>Veröffentlichung 1.3.x</item>
-        <item> "Änderungen:
-         - ? Französisch, andere Übersetzungen für die App ?"
+        <item>"Änderungen:
+         - ? Französisch / andere Übersetzungen für die App?"
         </item>
+        <item>1.3.97</item>
+        <item>"Änderungen:
+            - Möglicherweise - Verfeinerungen der Benutzeroberfläche
+            - Möglicherweise - Unterstützung für Favoriten - abhängig von der PIWIGO-API-Erweiterung
+            - Möglicherweise - den Upload-Prozess mit einer Komprimierungsroutine für Videos verknüpfen.
+            - Möglicherweise - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Erstellen von Waisenkindern).
+            - Möglicherweise - Verwaltung verwaister Dateien
+            - Möglicherweise Erlaubt das Verkleinern der Diashow (Ansicht kleiner als Vollbild)
+            - Möglicherweise Unterstützung für farbiges Tag-Plugin untersuchen
+            - Möglicherweise Speichern Sie das zuvor geöffnete Foto oder Album, wenn der Benutzer die Anwendung öffnet.
+            - Paid App Only : (Maybe) : Die Idee der Zufallsfotos auf der piwigo web UI umgesetzt
+            - Paid App Only : (Maybe) : Unterstützung für Benutzerkommentare
+            - Nur kostenpflichtige Anwendung: (Vielleicht): Benachrichtigen Sie den Benutzer über verfügbare Server-Updates.
+            - Paid App Only : (Maybe) : Möglicherweise Unterstützung für die Bearbeitung von EXIF und anderen Bildmetadatenformaten.
+            - Nur bezahlte Anwendung : (Vielleicht) : Präferenz hinzufügen, um das Ein-/Ausblenden der EXIF usw. Felder zu erlauben
+            - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder wünschen, dass diese Anwendung noch nicht funktioniert"</item>
         <item>1.3.96</item>
-        <item> "Änderungen:
-         - Verfeinerung der Benutzeroberfläche
-         - Unterstützung für Favoriten - abhängig von der PIWIGO-API-Erweiterung
-         - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese Anwendung noch nicht tun kann"
+        <item>"Änderungen:
+            - Überarbeitung der Darstellung von Popup-Meldungen und Fortschrittsanzeigen - Untersuchung mit weiteren Toastmeldungen".
         </item>
         <item>1.3.95</item>
-        <item> "Änderungen:
-         - Möglicherweise - den Upload-Prozess mit einer Komprimierungsroutine für Videos verknüpfen.
-         - Überarbeitung der Darstellung von Popup-Meldungen und Fortschrittsanzeigen - Untersuchung mit weiteren Toastmeldungen
-         - Möglicherweise - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Erstellen von Waisenkindern).
-         - Möglicherweise - Verwaltung verwaister Dateien
-         - Möglicherweise Erlaubt das Verkleinern der Diashow (Ansicht kleiner als Vollbild)
-         - Möglicherweise Unterstützung für farbiges Tag-Plugin untersuchen
-         - Nur kostenpflichtige Anwendung: Die Idee der Zufallsfotos auf der piwigo web UI umgesetzt
-         - Nur kostenpflichtige Anwendung: (Maybe) : Unterstützung für Benutzerkommentare
-         - Nur kostenpflichtige Anwendung: (Vielleicht): Benachrichtigen Sie den Benutzer über verfügbare Server-Updates.
-         - Nur kostenpflichtige Anwendung: Möglicherweise Unterstützung für die Bearbeitung von EXIF- und anderen Bildmetadatenformaten.
-         - Vielleicht: Speichern Sie das zuvor geöffnete Foto oder Album, wenn der Benutzer die Anwendung öffnet.
-         - Erlaubt dem Benutzer, nach dem Löschen eines Elements in der Diashow zu bleiben.
-         - Fügen Sie eine Art Hilfe hinzu, um den Benutzer bei der Kenntnis der Funktionen zu unterstützen.
-         - Nur kostenpflichtige Anwendung: Einstellung hinzufügen, um das Ein-/Ausblenden der EXIF-Felder etc. zu erlauben
-         - Korrekte Verrücktheit bei Korbware (Kopierpaste löschen)
-         - Erlaubt dem Benutzer, nach dem Löschen eines Elements in der Diashow zu bleiben."
+        <item>"Änderungen:
+            - Erlaubt dem Benutzer, nach dem Löschen eines Elements in der Diashow zu bleiben.
+            - Fügen Sie eine Art Hilfe hinzu, um den Benutzer bei der Kenntnis der Funktionen zu unterstützen.
+            - Korrekte Merkwürdigkeit bei Korbware (Kopierpaste)".
         </item>
     </string-array>
     <string-array name="release_history">
+        <item>1.3.94.7</item>
+        <item>"Bugfix:
+            - Absturz beim Wiederherstellen der Diashow nach dem Minimieren der Anwendung
+            - Vektorgrafiken verursachen Abstürze Android früher als 5 (Lollipop)"</item>
         <item>1.3.94.6</item>
         <item>"Bugfix:
             - Absturz beim Wiederherstellen der Diashow nach dem Minimieren der Anwendung

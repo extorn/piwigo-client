@@ -783,4 +783,5 @@ SOFTWARE.
     <string name="alert_message_advert_load_error">Adverts are persistently having problems loading. Please report this to me, as these form an important though very small source of revenue to me. Please consider purchasing the paid version to remove adverts entirely. The app will now freeze for 5 seconds during which this screen must remain visible. The countdown will restart if the message is hidden. After 5 seconds you can close this message and continue using the app as normal.</string>
     <string name="alert_temporary_upload_album_deleted">Temporary upload album deleted successfully</string>
     <string name="alert_deleting_temporary_upload_album">Deleting temporary upload album</string>
+    <string name="alert_invalid_uri_pattern">Invalid URI. %1$s</string>
 </resources>

@@ -202,7 +202,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         boolean argsLoaded = false;
         if (getArguments() != null) {
             intialiseFields();
-            loadArgsFromBundle(savedInstanceState);
+            loadArgsFromBundle(getArguments());
             setArguments(null);
             argsLoaded = true;
         }

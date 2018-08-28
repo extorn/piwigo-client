@@ -519,4 +519,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_message_advert_load_error">Die Anzeigen haben immer wieder Probleme beim Laden. Bitte melden Sie mir dies, da diese eine wichtige, wenn auch sehr kleine Einnahmequelle für mich darstellen. Bitte denken Sie daran, die kostenpflichtige Version zu kaufen, um Anzeigen vollständig zu entfernen. Die App friert nun für 5 Sekunden ein, während derer dieser Bildschirm sichtbar bleiben muss. Der Countdown wird neu gestartet, wenn die Nachricht versteckt ist. Nach 5 Sekunden können Sie diese Meldung schließen und die App wie gewohnt weiter verwenden.</string>
     <string name="alert_temporary_upload_album_deleted">Temporäres Upload-Album erfolgreich gelöscht</string>
     <string name="alert_deleting_temporary_upload_album">Löschen eines temporären Upload-Albums</string>
+    <string name="alert_invalid_uri_pattern">Ungültige URI. %1$s</string>
 </resources>
+
