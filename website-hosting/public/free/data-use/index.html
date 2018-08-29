@@ -22,8 +22,19 @@
 <body>
 <div id="message">
     <h2>Piwigo Client - Free</h2>
-    <h1>Information about the app</h1>
-    <a href="./data-use/index.html">Privacy Policy</a>
+    <h1>Privacy Policy</h1>
+    <h3>Why do we record app use</h3>
+    <p>We track use of the application with the following purposes:</p>
+    <ul><li>More efficient bug resolution</li>
+        <li>Ascertaining the way the app is being used.</li>
+    </ul>
+    <p>We aim to collect the minimum data required to achieve this purpose.</p>
+    <h3>How do we achieve this?</h3>
+    <ul>
+        <li>We use the firebase api to log user actions within the app (e.g. navigate to the upload or settings page).</li>
+        <li>We use the firebase api to log errors that occur within the app (even if the app does not crash) in order to fix bugs.</li>
+        <li>We use unique adverts within the app, and the advert framework allows us to see information about which adverts are being served. This allows us to get an idea of which pages are used most frequently, but does not contain user identifiable information</li>
+    </ul>
 </div>
 </body>
 </html>
