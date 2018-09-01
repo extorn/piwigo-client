@@ -107,9 +107,11 @@ public class TagsListFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if (savedInstanceState != null && !isSessionDetailsChanged()) {
-            tagsModel = (PiwigoTags) savedInstanceState.getSerializable(GROUPS_MODEL);
-            pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
+        if (savedInstanceState != null) {
+            if(!isSessionDetailsChanged()) {
+                tagsModel = (PiwigoTags) savedInstanceState.getSerializable(GROUPS_MODEL);
+                pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
+            }
             viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
 

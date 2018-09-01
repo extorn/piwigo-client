@@ -412,9 +412,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
 
-        if (viewPrefs.isUseDarkMode()) {
-            view.setBackgroundColor(Color.BLACK);
-        }
+//        if (viewPrefs.isUseDarkMode()) {
+//            view.setBackgroundColor(Color.BLACK);
+//        }
 
         initialiseBasketView(view);
 

@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -26,8 +25,7 @@
             android:layout_below="@+id/gallery_adView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="@color/colorAccent">
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/gallery_details_name_header"
@@ -36,7 +34,7 @@
                 android:text="Gallery name"
                 android:layout_alignParentStart="true"
                 android:layout_margin="5dp"
-                style="@style/Base.TextAppearance.AppCompat.Body1"
+                style="@style/Base.TextAppearance.AppCompat.Title"
                 />
 
             <TextView
@@ -46,6 +44,7 @@
                 android:text="Gallery Description"
                 android:layout_below="@+id/gallery_details_name_header"
                 android:layout_margin="5dp"
+                style="@style/Base.TextAppearance.AppCompat.Body1"
                 />
 
             <ImageButton
@@ -75,7 +74,6 @@
             style="@style/Base.TextAppearance.AppCompat.Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/white"
             android:layout_margin="5dp"
             android:padding="5dp"
             android:text="A Reason that this gallery is empty or which calls need repeating"/>
@@ -164,7 +162,6 @@
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
             android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/white"
             android:orientation="vertical"
             android:padding="5dp">
 
@@ -235,8 +232,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
                         android:clickable="true"
-                        android:maxLines="3"
-                        android:textColor="@drawable/edit_text_color_selector"/>
+                        android:maxLines="3"/>
 
                     <TextView
                         android:id="@+id/gallery_details_description_label"
@@ -249,8 +245,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
-                        android:maxLines="10"
-                        android:textColor="@drawable/edit_text_color_selector"/>
+                        android:maxLines="10"/>
 
                     <TextView
                         android:id="@+id/gallery_details_status_label"
@@ -263,7 +258,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:showText="true"
-                        android:textColor="@drawable/edit_text_color_selector"
                         android:text="@string/gallery_details_status"
                         android:textOff="@string/gallery_details_status_galleryIsPublic"
                         android:textOn="@string/gallery_details_status_galleryIsPrivate"/>
@@ -278,8 +272,7 @@
                         android:id="@+id/gallery_details_allowed_groups"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/click_to_view"
-                        android:textColor="@drawable/edit_text_color_selector"/>
+                        android:text="@string/click_to_view"/>
 
                     <TextView
                         android:id="@+id/gallery_details_allowed_users_label"
@@ -291,8 +284,7 @@
                         android:id="@+id/gallery_details_allowed_users"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/click_to_view"
-                        android:textColor="@drawable/edit_text_color_selector"/>
+                        android:text="@string/click_to_view"/>
 
                 </LinearLayout>
 

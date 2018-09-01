@@ -37,7 +37,7 @@
     <string name="piwigo_title_testConnection">Test Connection</string>
     <string name="piwigo_title_testConnectionSummary">Test connection to the server</string>
     <string name="gallery_photos_summary_text_pattern">%1$d photos</string>
-    <string name="gallery_subcategory_summary_text_pattern">%2$d in %1$d sub-albums</string>
+    <string name="gallery_subcategory_summary_text_pattern">%1$d sub-albums and %2$d photos</string>
     <string name="admin_email" translatable="false"><a href="mailto:gd_apps-piwigoclient@yahoo.co.uk">gd_apps-piwigoclient@yahoo.co.uk</a></string>
     <string name="alert_title_connectionTest">Connection Test</string>
     <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>

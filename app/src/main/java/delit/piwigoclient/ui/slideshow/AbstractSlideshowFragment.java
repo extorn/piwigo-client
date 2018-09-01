@@ -105,12 +105,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
-        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
-        if (useDarkMode) {
-            view.setBackgroundColor(Color.BLACK);
-        } else {
-            view.setBackgroundColor(Color.WHITE);
-        }
+//        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
+//        if (useDarkMode) {
+//            view.setBackgroundColor(Color.BLACK);
+//        } else {
+//            view.setBackgroundColor(Color.WHITE);
+//        }
 
         progressIndicator = view.findViewById(R.id.slideshow_page_loadingIndicator);
         hideProgressIndicator();

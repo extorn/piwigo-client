@@ -98,7 +98,16 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
             // not using pooling
             return;
         }
-        availableFragmentPool.get(f.getClass()).add(f);
+        getFragmentPool(f.getClass()).add(f);
+    }
+
+    private Queue<Fragment> getFragmentPool(Class<? extends Fragment> fragmentType) {
+        Queue<Fragment> fragmentPool = availableFragmentPool.get(fragmentType);
+        if (fragmentPool == null) {
+            fragmentPool = new ArrayDeque<>(3);
+            availableFragmentPool.put(fragmentType, fragmentPool);
+        }
+        return fragmentPool;
     }
 
     public Fragment getNextAvailableFragmentFromPool(Class<? extends Fragment> fragmentType) {
@@ -106,12 +115,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
             // not using fragment pooling
             return null;
         }
-        Queue<Fragment> fragmentPool = availableFragmentPool.get(fragmentType);
-        if (fragmentPool == null) {
-            fragmentPool = new ArrayDeque<>(3);
-            availableFragmentPool.put(fragmentType, fragmentPool);
-            return null;
-        }
+        Queue<Fragment> fragmentPool = getFragmentPool(fragmentType);
         if (fragmentPool.size() == 0) {
             return null;
         }

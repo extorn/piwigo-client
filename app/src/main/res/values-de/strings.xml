@@ -17,7 +17,7 @@
     <string name="piwigo_title_testConnection">Testverbindung</string>
     <string name="piwigo_title_testConnectionSummary">Verbindung zum Server testen</string>
     <string name="gallery_photos_summary_text_pattern">%1$d Fotos</string>
-    <string name="gallery_subcategory_summary_text_pattern">%2$d in %1$d Unteralben</string>
+    <string name="gallery_subcategory_summary_text_pattern">%1$d Unteralben und %2$d Fotos</string>
     <string name="alert_title_connectionTest">Verbindungstest</string>
     <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Warning\nServer hat keine verfügbaren Bildgrößen gemeldet.</string>

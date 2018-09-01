@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--<color name="colorPrimary">#3F51B5</color>-->
-    <color name="colorPrimary">#6782ff</color>
-    <!--<color name="colorPrimaryDark">#303F9F</color>-->
-    <color name="colorPrimaryDark">#3458ff</color>
-    <!--<color name="colorAccent">#FF4081</color>-->
-    <color name="colorAccent">#ff6782</color>
+    <!-- primary + background + surface - light gray #606060 -->
+    <color name="colorAccent">#404040</color>
+    <!-- primary variant 1 - ultra dark gray #3c3c3c -->
+    <color name="colorPrimary">#2f2f2f</color>
+    <!-- primary variant 2 - dark gray -->
+    <color name="colorPrimaryDark">#1d1d1d</color>
+    <!-- on primary + on background + on surface - white-->
+    <color name="on_primary">#ffffff</color>
+
+
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="black_overlay">#66000000</color>
@@ -15,4 +19,8 @@
     <color name="bright_foreground_dark_inverse">@color/bright_foreground_light</color>
     <color name="video_locally_cached">#CC90AAD4</color>
     <color name="video_unplayed">#FF555555</color>
+    <color name="primary_material_dark">#303030</color>
+    <color name="primary_dark_material_dark">#1d1d1d</color>
+    <color name="foreground_material_light">#ffffff</color>
+    <color name="background_material_light">#404040</color>
 </resources>

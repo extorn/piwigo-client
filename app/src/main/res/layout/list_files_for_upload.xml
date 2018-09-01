@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="3dp"
-    android:layout_marginStart="3dp"
-    android:background="@color/white">
+    android:layout_marginStart="3dp">
 
     <ImageView
         android:id="@+id/file_for_upload_img"

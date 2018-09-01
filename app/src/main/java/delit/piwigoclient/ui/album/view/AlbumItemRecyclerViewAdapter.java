@@ -36,9 +36,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
     @NonNull
     protected View inflateView(@NonNull ViewGroup parent, int viewType) {
         View view;
-        if (getAdapterPrefs().isUseMasonryStyle()) {
-            view = inflateMasonryView(parent, viewType);
-        } else if (viewType == GalleryItem.CATEGORY_TYPE) {
+        if (viewType == GalleryItem.CATEGORY_TYPE) {
             view = inflateNonMasonryAlbumView(parent);
         } else if (viewType == GalleryItem.PICTURE_RESOURCE_TYPE || viewType == GalleryItem.VIDEO_RESOURCE_TYPE) {
             view = inflateNonMasonryResourceItemView(parent);
@@ -63,28 +61,8 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
     private View inflateNonMasonryAlbumView(ViewGroup parent) {
         View view;
-        if (getAdapterPrefs().isShowLargeAlbumThumbnails()) {
-            view = LayoutInflater.from(getContext())
-                    .inflate(R.layout.fragment_galleryitem_album_grid, parent, false);
-        } else {
-            view = LayoutInflater.from(getContext())
-                    .inflate(R.layout.fragment_galleryitem_album_list, parent, false);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            view.setClipToOutline(true);
-        }
-        return view;
-    }
-
-    private View inflateMasonryView(ViewGroup parent, int viewType) {
-        View view;
-        if (viewType == GalleryItem.CATEGORY_TYPE) {
-            view = LayoutInflater.from(getContext())
-                    .inflate(R.layout.fragment_galleryitem_album_masonry, parent, false);
-        } else {
-            view = LayoutInflater.from(getContext())
-                    .inflate(R.layout.fragment_galleryitem_resource_masonry, parent, false);
-        }
+        view = LayoutInflater.from(getContext())
+                .inflate(R.layout.fragment_galleryitem_album_list, parent, false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             view.setClipToOutline(true);
         }

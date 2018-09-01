@@ -124,6 +124,9 @@ public class FileSelectActivity extends MyActivity {
     private void showFileSelectFragment() {
 
         FileSelectionNeededEvent event = (FileSelectionNeededEvent) getIntent().getSerializableExtra(INTENT_DATA);
+        if(event == null) {
+            event = new FileSelectionNeededEvent(true,true, true);
+        }
         String initialFolder = event.getInitialFolder();
 
         File f = new File(initialFolder);

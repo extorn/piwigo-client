@@ -99,24 +99,24 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
         if (parentAdapter.getAdapterPrefs().isUseDarkMode()) {
             if (parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
                 // needed for the background behind the title text
-                if (parentAdapter.getAdapterPrefs().isShowResourceNames()) {
-                    itemView.setBackgroundResource(R.color.white);
-                } else {
-                    itemView.setBackgroundResource(R.color.black_overlay);
-                }
+//                if (parentAdapter.getAdapterPrefs().isShowResourceNames()) {
+//                    itemView.setBackgroundResource(R.color.white);
+//                } else {
+//                    itemView.setBackgroundResource(R.color.black_overlay);
+//                }
                 // needed for images that don't load correctly.
-                mImageView.setBackgroundColor(Color.WHITE);
+//                mImageView.setBackgroundColor(Color.WHITE);
             } else {
-                itemView.setBackgroundColor(Color.WHITE);
+//                itemView.setBackgroundColor(Color.WHITE);
                 // this doesn't exist on a masonry view
-                mImageContainer.setBackgroundResource(R.color.black);
+//                mImageContainer.setBackgroundResource(R.color.black);
             }
         } else {
             if (parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
             } else {
-                mImageView.setBackgroundColor(Color.WHITE);
-                mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);
-                mNameView.setBackgroundResource(R.color.white);
+//                mImageView.setBackgroundColor(Color.WHITE);
+//                mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);
+//                mNameView.setBackgroundResource(R.color.white);
             }
         }
     }

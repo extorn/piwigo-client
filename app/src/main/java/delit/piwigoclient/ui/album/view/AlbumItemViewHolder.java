@@ -25,7 +25,7 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
     protected final int viewType;
     public AppCompatImageView mImageView;
     public TextView mNameView;
-    //        public final TextView mDescriptionView;
+    public TextView mDescView;
     public ImageView mRecentlyAlteredMarkerView;
     protected SquareLinearLayout mImageContainer;
     protected PicassoLoader imageLoader;
@@ -60,9 +60,6 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
         if (mRecentlyAlteredMarkerView != null) {
             if (newItem.getLastAltered() != null && newItem.getLastAltered().compareTo(parentAdapter.getAdapterPrefs().getRecentlyAlteredThresholdDate()) > 0) {
                 // is null for blank categories (dummmy spacers) and also for categories only visible because this is an admin user (without explicit access)
-                PicassoLoader picasso = new PicassoLoader(mRecentlyAlteredMarkerView);
-                picasso.setResourceToLoad(R.drawable.ic_star_yellow_24dp);
-                picasso.load();
                 mRecentlyAlteredMarkerView.setVisibility(View.VISIBLE);
             } else {
                 mRecentlyAlteredMarkerView.setVisibility(GONE);
@@ -73,17 +70,14 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
     @Override
     public void cacheViewFieldsAndConfigure() {
         mNameView = itemView.findViewById(R.id.resource_name);
+        mDescView = itemView.findViewById(R.id.resource_description);
         mImageView = itemView.findViewById(R.id.resource_thumbnail);
         mRecentlyAlteredMarkerView = itemView.findViewById(R.id.newly_altered_marker_image);
         mImageContainer = itemView.findViewById(R.id.thumbnail_container);
         mItemContainer = itemView.findViewById(R.id.item_container);
 
         final ViewTreeObserver.OnPreDrawListener predrawListener;
-        if (!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
-            predrawListener = configureNonMasonryThumbnailLoader(mImageView);
-        } else {
-            predrawListener = configureMasonryThumbnailLoader(mImageView);
-        }
+        predrawListener = configureNonMasonryThumbnailLoader(mImageView);
         mImageView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {
@@ -98,24 +92,6 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
         mImageView.setOnClickListener(getItemActionListener());
         mImageView.setOnLongClickListener(getItemActionListener());
 
-    }
-
-    protected ViewTreeObserver.OnPreDrawListener configureMasonryThumbnailLoader(AppCompatImageView target) {
-        imageLoader = new PicassoLoader(target);
-        return new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                try {
-                    if (imageLoader.hasResourceToLoad() && !imageLoader.isImageLoaded() && !imageLoader.isImageLoading()) {
-                        imageLoader.load();
-                    }
-                } catch (IllegalStateException e) {
-                    Crashlytics.logException(e);
-                    // image loader not configured yet...
-                }
-                return true;
-            }
-        };
     }
 
     protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(final AppCompatImageView target) {
@@ -156,6 +132,5 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
 
     public void onRecycled() {
         UIHelper.recycleImageViewContent(mImageView);
-        UIHelper.recycleImageViewContent(mRecentlyAlteredMarkerView);
     }
 }
