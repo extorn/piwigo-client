@@ -4,8 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
-import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.os.EnvironmentCompat;
 import android.util.Log;
@@ -102,7 +100,7 @@ public class IOUtils {
         return null;
     }
 
-    public static void saveObjectToFile(File destinationFile, Serializable o) {
+    public static void saveObjectToFile(File destinationFile, Serializable o) throws IOException {
         boolean canContinue = true;
         if (destinationFile.isDirectory()) {
             throw new RuntimeException("Not designed to work with a folder as a destination!");
@@ -116,9 +114,24 @@ public class IOUtils {
                 canContinue = false;
             }
         }
+        if(canContinue && !destinationFile.getParentFile().isDirectory()) {
+            if (!destinationFile.getParentFile().mkdir()) {
+                if (BuildConfig.DEBUG) {
+                    Log.d("IOUtils", "Error writing job to disk - unable to create parent folder");
+                }
+                canContinue = false;
+            }
+        }
+        if (canContinue && !tmpFile.createNewFile()) {
+            if (BuildConfig.DEBUG) {
+                Log.d("IOUtils", "Error writing job to disk - unable to create new temporary file");
+            }
+            canContinue = false;
+        }
         if (!canContinue) {
             return;
         }
+
         ObjectOutputStream oos = null;
         try {
             oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)));
