@@ -149,21 +149,26 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     private void processJsonResponse(long messageId, String piwigoMethod, PiwigoJsonResponse jsonResponse, byte[] rawData) {
         try {
-            switch (jsonResponse.getStat()) {
-                case "fail":
-                    onPiwigoFailure(jsonResponse);
-                    break;
-                case "ok":
-                    onPiwigoSuccess(jsonResponse.getResult());
-                    break;
-                default:
-                    throw new JSONException("Unexpected piwigo response code");
+            if(jsonResponse != null && jsonResponse.getStat() != null) {
+                switch (jsonResponse.getStat()) {
+                    case "fail":
+                        onPiwigoFailure(jsonResponse);
+                        break;
+                    case "ok":
+                        onPiwigoSuccess(jsonResponse.getResult());
+                        break;
+                    default:
+                        throw new JSONException("Unexpected piwigo response code");
+                }
+            } else {
+                Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
+                String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
+                PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
+                storeResponse(r);
             }
         } catch (JSONException e) {
+            Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
             Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n', e);
-            }
             String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
             PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
             storeResponse(r);
