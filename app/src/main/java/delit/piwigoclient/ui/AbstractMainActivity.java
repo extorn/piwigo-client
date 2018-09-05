@@ -716,6 +716,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PiwigoLoginSuccessEvent event) {
+
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        Crashlytics.setString("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
+
+
         CustomNavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setMenuVisibilityToMatchSessionState();
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {

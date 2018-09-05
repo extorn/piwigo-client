@@ -8,6 +8,8 @@ import android.preference.PreferenceManager;
 import android.support.multidex.MultiDexApplication;
 import android.support.v7.app.AppCompatDelegate;
 
+import java.net.URI;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.util.ProjectUtils;
@@ -40,7 +42,18 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_password_key, null);
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             editor.commit();
-        } else if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
+        } else if(prefsVersion <= 144) {
+            // Fix any addresses with a space character.
+            SharedPreferences.Editor editor = prefs.edit();
+            String serverName = prefs.getString(getString(R.string.preference_piwigo_server_address_key), null);
+            if(serverName != null) {
+                try {
+                    URI.create(serverName);
+                } catch (IllegalArgumentException e) {
+                    editor.putString(getString(R.string.preference_piwigo_server_address_key), serverName.replaceAll(" ", ""));
+                }
+            }
+        } if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             editor.commit();
