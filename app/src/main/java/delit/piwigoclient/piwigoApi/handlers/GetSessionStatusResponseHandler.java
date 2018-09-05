@@ -14,6 +14,8 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
+import static delit.piwigoclient.model.piwigo.PiwigoSessionDetails.UNKNOWN_VERSION;
+
 public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "LoginRspHdlr";
@@ -44,7 +46,8 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         String user = result.get("username").getAsString();
         String userStatus = result.get("status").getAsString();
         String token = result.get("pwg_token").getAsString();
-        String piwigoVersion = result.get("version").getAsString();
+        JsonElement versionElem = result.get("version");
+        String piwigoVersion = versionElem != null ? versionElem.getAsString() : UNKNOWN_VERSION;
         Set<String> availableSizes = new HashSet<>();
         JsonElement availableSizesJsonElem = result.get("available_sizes");
         if (availableSizesJsonElem == null || availableSizesJsonElem.isJsonNull()) {
