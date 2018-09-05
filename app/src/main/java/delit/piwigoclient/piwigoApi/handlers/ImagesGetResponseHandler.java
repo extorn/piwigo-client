@@ -66,17 +66,26 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
         ArrayList<GalleryItem> resources = new ArrayList<>();
 
         JsonObject result = rsp.getAsJsonObject();
-        JsonArray images = result.get("images").getAsJsonArray();
+        JsonArray images;
+        if(result.has("images")) {
+            images = result.get("images").getAsJsonArray();
+        } else if(result.has("_content")) {
+            images = result.get("_content").getAsJsonArray();
+        } else {
+            images = null;
+        }
 
         ResourceParser resourceParser = new ResourceParser(getContext(), multimediaExtensionList);
 
-        for (int i = 0; i < images.size(); i++) {
-            JsonObject image = (JsonObject) images.get(i);
-            ResourceItem item = resourceParser.parseAndProcessResourceData(image);
+        if(images != null) {
+            for (int i = 0; i < images.size(); i++) {
+                JsonObject image = (JsonObject) images.get(i);
+                ResourceItem item = resourceParser.parseAndProcessResourceData(image);
 
-            item.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
-            resources.add(item);
+                item.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
+                resources.add(item);
 
+            }
         }
 
         PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse r = new PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources);
