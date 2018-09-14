@@ -180,12 +180,11 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
      * @param levelInTreeOfItem level within the tree of the item (root is 0)
      */
     protected void setViewContentForItemDisplay(View view, T item, int levelInTreeOfItem) {
-        int px = DisplayUtils.dpToPx(view.getContext(), levelInTreeOfItem * 15);
-
-        TextView textField = view.findViewById(R.id.permission_text);
-        textField.setPadding(px, 0, 0, 0);
-
-        textField.setText(item.toString());
+        TextView textView = view.findViewById(R.id.permission_text);
+        int defaultPaddingStartDp = 8;
+        int paddingStartPx = DisplayUtils.dpToPx(view.getContext(), defaultPaddingStartDp + (levelInTreeOfItem * 15));
+        textView.setPaddingRelative(paddingStartPx, textView.getPaddingTop(), textView.getPaddingEnd(), textView.getPaddingBottom());
+        textView.setText(item.toString());
     }
 
     @Override

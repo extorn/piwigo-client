@@ -56,6 +56,10 @@ public class AutoUploadJobConfig {
         return jobPreferences.getBoolean(c.getString(prefKeyId), false);
     }
 
+    private boolean getBooleanValue(Context c, @StringRes int prefKeyId, boolean defaultVal) {
+        return jobPreferences.getBoolean(c.getString(prefKeyId), defaultVal);
+    }
+
     private int getIntValue(Context c, @StringRes int prefKeyId) {
         if(!jobPreferences.contains(c.getString(prefKeyId))) {
             throw new IllegalStateException("Job misconfigured");
@@ -72,9 +76,6 @@ public class AutoUploadJobConfig {
 
     private @NonNull String getStringValue(Context c, @StringRes int prefKeyId) {
         String value = jobPreferences.getString(c.getString(prefKeyId), null);
-        if(value == null) {
-            throw new IllegalStateException("Job misconfigured");
-        }
         return value;
     }
 
@@ -110,16 +111,22 @@ public class AutoUploadJobConfig {
 
     public String getUploadToAlbumName(Context c) {
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
+        if(remoteAlbumDetails == null) {
+            return null;
+        }
         return ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumName(remoteAlbumDetails);
     }
 
     public long getUploadToAlbumId(Context c) {
+        if(!isJobValid(c)) {
+            throw new IllegalStateException("Unable to retrieve upload album for invalid job");
+        }
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
         return ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteAlbumDetails);
     }
 
     public boolean isJobValid(Context c) {
-        return getBooleanValue(c, R.string.preference_data_upload_automatic_job_is_valid_key);
+        return getBooleanValue(c, R.string.preference_data_upload_automatic_job_is_valid_key, false);
     }
 
     public int getUploadedFilePrivacyLevel(Context c) {
@@ -227,6 +234,9 @@ public class AutoUploadJobConfig {
     }
 
     public CategoryItemStub getUploadToAlbum(Context context) {
+        if(!isJobValid(context)) {
+            throw new IllegalStateException("Unable to retrieve upload album for invalid job");
+        }
         String albumName = getUploadToAlbumName(context);
         long albumId = getUploadToAlbumId(context);
         return new CategoryItemStub(albumName, albumId);

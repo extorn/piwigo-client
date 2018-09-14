@@ -20,6 +20,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.list.CustomSelectListAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.util.DisplayUtils;
 
 import static android.view.View.GONE;
 
@@ -91,8 +92,11 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
                 // only display items that are not the root.
                 int paddingStart = 0;
                 if (getPrefs().isShowHierachy()) {
-                    paddingStart = 35 * getDepth(item);
+                    int treeDepth = getDepth(item);
+                    paddingStart = 15 * treeDepth;
                 }
+                int defaultPaddingStartDp = 8;
+                paddingStart = DisplayUtils.dpToPx(getContext(), defaultPaddingStartDp + paddingStart);
                 textView.setPaddingRelative(paddingStart, textView.getPaddingTop(), textView.getPaddingEnd(), textView.getPaddingBottom());
             }
             if (isCustomView) {

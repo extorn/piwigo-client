@@ -377,6 +377,9 @@ public class AutoUploadJobsPreference extends DialogPreference {
             String serverName = connPrefs.getPiwigoServerAddress(getSharedPreferences(), getContext());
             String username = connPrefs.getPiwigoUsername(getSharedPreferences(), getContext());
             String uploadFolder = item.getUploadToAlbumName(getContext());
+            if(uploadFolder == null) {
+                uploadFolder = "???";
+            }
 
             String user = Strings.emptyToNull(username);
             if(user == null) {

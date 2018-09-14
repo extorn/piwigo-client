@@ -37,6 +37,7 @@ import java.util.Set;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
 
 /**
  * Created by gareth on 23/01/18.
@@ -293,6 +294,7 @@ public class EditableListPreference extends DialogPreference {
         List<String> entriesList = new ArrayList<>(entries);
         RecyclerView.Adapter<RecyclerView.ViewHolder> adapter = buildNewRecyclerViewAdapter(getContext(), entriesList, entriesList, currentValue);
         listRecyclerView.setAdapter(adapter);
+        listRecyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
 
         CustomImageButton addListItemButton = view.findViewById(R.id.list_action_add_item_button);
         addListItemButton.setVisibility(View.VISIBLE);
@@ -523,7 +525,7 @@ public class EditableListPreference extends DialogPreference {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.actionable_list_item_layout, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
             return buildViewHolder(view);
         }
 

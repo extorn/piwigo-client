@@ -146,8 +146,8 @@ public class ServerAlbumListPreference extends DialogPreference {
         view.findViewById(R.id.list_action_add_item_button).setVisibility(View.GONE);
 
         TextView heading = view.findViewById(R.id.heading);
-        heading.setText(R.string.preference_data_upload_automatic_job_server_album_title);
-        heading.setVisibility(View.VISIBLE);
+//        heading.setText(R.string.preference_data_upload_automatic_job_server_album_title);
+        heading.setVisibility(View.GONE);
 
         itemListView = view.findViewById(R.id.list);
 

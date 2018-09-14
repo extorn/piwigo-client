@@ -2,7 +2,7 @@
 <!--delit.piwigoclient.ui.common.list.Checkable -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
         android:id="@+id/permission_status_icon"
@@ -15,7 +15,7 @@
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/permission_text"
         android:text="some text"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="8dp"
         android:layout_width="wrap_content"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="15dp"

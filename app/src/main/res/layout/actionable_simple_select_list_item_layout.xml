@@ -13,6 +13,7 @@
         android:checked="false"
         android:clickable="false"
         android:focusable="false"/>
+
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/actionable_list_item_text"
         android:layout_marginStart="5dp"
@@ -20,18 +21,20 @@
         android:layout_marginTop="15dp"
         android:layout_centerVertical="true"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/actionable_list_item_checked"
+        android:layout_toEndOf="@+id/actionable_list_item_checked"
         android:layout_toStartOf="@+id/actionable_list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
+        android:padding="5dp"
         android:text="dummy text"
+        android:background="@color/colorPrimaryDark"
         android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/actionable_list_item_delete_button"
         android:layout_alignParentEnd="true"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:layout_centerVertical="true"
         android:focusable="false"
         app:srcCompat="@drawable/ic_delete_black_24px" />

@@ -83,7 +83,6 @@ public class ViewTagFragment extends MyFragment {
 
     private AlbumItemRecyclerViewAdapter viewAdapter;
     private FloatingActionButton retryActionButton;
-    private TextView tagNameHeader;
     private RelativeLayout bulkActionsContainer;
     private FloatingActionButton bulkActionButtonDelete;
     // Start fields maintained in saved session state.
@@ -143,6 +142,11 @@ public class ViewTagFragment extends MyFragment {
     public void onDestroy() {
         super.onDestroy();
         UIHelper.recycleImageViewContent(actionIndicatorImg);
+    }
+
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.tag_heading_pattern, tag.getName());
     }
 
     @Override
@@ -271,10 +275,6 @@ public class ViewTagFragment extends MyFragment {
         emptyTagLabel.setVisibility(GONE);
 
         bulkActionsContainer = view.findViewById(R.id.tag_actions_bulk_container);
-
-        tagNameHeader = view.findViewById(R.id.tag_details_name_header);
-
-        setTagHeadings();
 
         int imagesOnScreen = selectBestColumnCountForScreenSize();
         colsOnScreen = imagesOnScreen;
@@ -560,11 +560,6 @@ public class ViewTagFragment extends MyFragment {
         } else {
             bulkActionButtonDelete.setVisibility(GONE);
         }
-    }
-
-    private void setTagHeadings() {
-        tagNameHeader.setText(getString(R.string.tag_heading_pattern, tag.getName()));
-        tagNameHeader.setVisibility(View.VISIBLE);
     }
 
     private int selectBestColumnCountForScreenSize() {

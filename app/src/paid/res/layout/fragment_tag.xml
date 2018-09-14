@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+       <!-- <RelativeLayout
             android:id="@+id/tag_header_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
                 android:layout_margin="5dp"
                 android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-        </RelativeLayout>
+        </RelativeLayout>-->
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/tag_retryAction_actionButton"
@@ -42,7 +42,6 @@
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/tag_empty_content"
-            android:layout_below="@id/tag_header_bar"
             android:visibility="visible"
             android:textAppearance="@style/Custom.TextAppearance.AppCompat.Headline"
             android:layout_width="wrap_content"
