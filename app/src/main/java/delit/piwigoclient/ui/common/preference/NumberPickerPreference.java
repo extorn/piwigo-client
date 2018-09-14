@@ -17,13 +17,18 @@
 package delit.piwigoclient.ui.common.preference;
 
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
+import android.os.IBinder;
 import android.preference.DialogPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 
@@ -168,5 +173,16 @@ public class NumberPickerPreference extends DialogPreference {
             return String.format(summary.toString(), mNumber);
         }
         return null;
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        super.onClick(dialog, which);
+    }
+
+    public void hideKeyboardFrom(Context context, IBinder windowToken) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(windowToken, 0);
     }
 }

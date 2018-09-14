@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- V21 extras -->
+        <item name="android:colorAccent">@color/colorAccent</item>
+
+        <!-- Customize your theme here. -->
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorSecondary</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="android:windowActionBarOverlay">true</item>
+
+        <item name="android:colorForeground">@color/on_primary</item>
+        <item name="android:colorBackground">@color/colorPrimary</item>
+
+        <item name="android:alertDialogTheme">@style/Theme.Custom.AppCompat.Dialog</item>
+        <item name="android:dialogTheme">@style/Theme.Custom.AppCompat.Dialog</item>
+        <item name="preferenceTheme">@style/Theme.Custom.Preference</item>
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <!--<item name="android:selectableItemBackground">@color/colorAccent</item>-->
+        <!--<item name="android:selectableItemBackground">@color/colorPrimary</item>-->
+        <!--<item name="android:colorBackgroundFloating">@color/colorPrimary</item> v23 upwards -->
+        <item name="android:textAppearanceLarge">@style/Custom.TextAppearance.AppCompat.Large</item>
+        <item name="android:textColorPrimaryDisableOnly">@color/on_primary</item>
+        <item name="android:textColorPrimary">@color/on_primary</item>
+        <item name="android:textColorSecondary">@color/colorSecondary</item>
+        <item name="android:textColorLink">@color/colorSecondary</item>
+        <item name="android:editTextColor">@drawable/edit_text_color_selector</item>
+        <!-- edit field underline, vertical scroll indicators, etc -->
+        <item name="android:colorControlNormal">@color/on_primary</item>
+        <item name="android:colorButtonNormal">@drawable/button_color_selector</item>
+
+
+        <!-- Spinner styles -->
+        <item name="android:spinnerStyle">@style/Custom.Widget.AppCompat.Spinner</item>
+        <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
+        <item name="android:dropDownListViewStyle">@style/Custom.Widget.AppCompat.DropDownItem.Spinner</item>
+
+        <!-- Required for use of support_simple_spinner_dropdown_item.xml -->
+        <item name="spinnerDropDownItemStyle">@style/Custom.Widget.AppCompat.DropDownItem.Spinner</item>
+        <item name="dropdownListPreferredItemHeight">?attr/listPreferredItemHeightSmall</item>
+
+
+        <!-- not used?? -->
+        <!--<item name="android:colorControlActivated">@color/red</item>-->
+
+    </style>
+    <style name="Custom.Widget.AppCompat.Spinner" parent="Widget.AppCompat.Spinner">
+        <!--<item name="android:background">@android:drawable/btn_dropdown</item>-->
+        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat.Widget.DropDownItem</item>
+        <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+    <style name="Custom.TextAppearance.AppCompat.Widget.DropDownItem" parent="TextAppearance.AppCompat.Widget.DropDownItem">
+        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat.Body1</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+    <style name="Custom.Widget.AppCompat.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat.Body1</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+    <style name="Custom.Widget.AppCompat.TextView.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat.Body1</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+
+    <style name="Theme.Custom.Preference" parent="PreferenceThemeOverlay">
+        <!--<style name="dialogPreferenceStyle">@style/Theme.Custom.AppCompat.Dialog</style>-->
+        <item name="android:selectableItemBackground">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+    </style>
+
+    <style name="Theme.Custom.AppCompat.Dialog" parent="Theme.AppCompat.Dialog">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorSecondary</item>
+        <item name="android:colorForeground">@color/on_primary</item>
+        <item name="android:colorBackground">@color/colorPrimary</item>
+
+        <item name="android:selectableItemBackground">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+        <item name="android:textAppearance">@style/Custom.TextAppearance.AppCompat</item>
+        <item name="android:textColor">@color/on_primary</item>
+    </style>
+
+    <!-- The platform's desired minimum size for a dialog's width when it
+        is along the major axis (that is the screen is landscape).  This may
+        be either a fraction or a dimension. -->
+    <item type="dimen" name="dialog_min_width_major">70%</item>
+
+    <style name="Custom.TextAppearance.AppCompat" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@drawable/edit_text_color_selector</item>
+    </style>
+    <style name="Custom.TextAppearance.AppCompat.Large" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textColor">@drawable/edit_text_color_selector</item>
+        <item name="android:textSize">55sp</item> <!-- this number is not being used for some reason!!! -->
+    </style>
+    <style name="Custom.TextAppearance.AppCompat.Body1" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@drawable/edit_text_color_selector</item>
+    </style>
+    <style name="Custom.TextAppearance.AppCompat.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@drawable/edit_text_color_selector</item>
+    </style>
+    <style name="Custom.TextAppearance.AppCompat.Body2" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textColor">@drawable/edit_text_color_selector</item>
+    </style>
+    <style name="Custom.TextAppearance.AppCompat.Body1.Clickable" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textColor">@color/colorSecondary</item>
+    </style>
+    <style name="Custom.TextAppearance.AppCompat.Body2.Clickable" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:textColor">@color/colorSecondary</item>
+    </style>
+    <style name="Custom.TextAppearance.AppCompat.Medium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@drawable/edit_text_color_selector</item>
+    </style>
+    <style name="Custom.TextAppearance.AppCompat.Small" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@drawable/edit_text_color_selector</item>
+    </style>
+    <style name="Custom.TextAppearance.AppCompat.Headline" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textColor">@drawable/edit_text_color_selector</item>
+    </style>
+
+</resources>

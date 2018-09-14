@@ -14,7 +14,7 @@
         android:clickable="false"
         android:focusable="false"
         android:button="@drawable/always_clear_checkbox"/>
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/name"
         android:layout_marginStart="5dp"
         android:layout_width="match_parent"
@@ -23,8 +23,9 @@
         android:layout_toEndOf="@id/checked"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
         android:text="dummy text"/>
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/details"
         android:layout_marginStart="5dp"
         android:layout_width="match_parent"
@@ -34,12 +35,12 @@
         android:layout_toEndOf="@id/checked"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
         android:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"/>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/list_item_delete_button"
         android:layout_alignParentEnd="true"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"

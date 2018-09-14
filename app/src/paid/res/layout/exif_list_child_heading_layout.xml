@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="fill"
+    android:layout_columnWeight="1"
+    android:paddingTop="5dp"
+    android:paddingLeft="10dp"
+    android:paddingBottom="5dp"
+    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+    <!--android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft"-->

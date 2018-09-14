@@ -1,7 +1,9 @@
 package delit.piwigoclient.ui.file;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,8 +137,17 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     @NonNull
     protected View inflateView(@NonNull ViewGroup parent, int viewType) {
-        return LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.actionable_triselect_list_item_icon_layout, parent, false);
+        switch (viewType) {
+            default:
+            case VIEW_TYPE_FILE:
+            case VIEW_TYPE_FILE_IMAGE:
+                return LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.actionable_triselect_list_item_large_icon_layout, parent, false);
+            case VIEW_TYPE_FOLDER:
+                return LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.actionable_triselect_list_item_icon_layout, parent, false);
+        }
+
     }
 
     @Override
@@ -259,6 +270,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         public void cacheViewFieldsAndConfigure() {
             super.cacheViewFieldsAndConfigure();
+            getIconView().setColorFilter(ContextCompat.getColor(getContext(),R.color.colorSecondary), PorterDuff.Mode.SRC_IN);
             getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             getIconViewLoader().load();
         }

@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -281,13 +282,12 @@ public class EditableListPreference extends DialogPreference {
         view.findViewById(R.id.list_action_toggle_all_button).setVisibility(View.GONE);
 
         TextView heading = view.findViewById(R.id.heading);
-        heading.setText(getTitle());
-        heading.setVisibility(View.VISIBLE);
+        heading.setVisibility(View.INVISIBLE);
 
         listRecyclerView = view.findViewById(R.id.list);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         listRecyclerView.setLayoutManager(mLayoutManager);
-        if (entriesAltered) {
+        if (entriesAltered || entries == null || entries.size() == 0) {
             loadEntries(getPreferenceManager());
         }
         List<String> entriesList = new ArrayList<>(entries);
@@ -305,7 +305,6 @@ public class EditableListPreference extends DialogPreference {
 
         Button saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.GONE);
-
         return view;
     }
 

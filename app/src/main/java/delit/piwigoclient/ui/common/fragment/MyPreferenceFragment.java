@@ -2,12 +2,15 @@ package delit.piwigoclient.ui.common.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.inputmethodservice.InputMethodService;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.github.machinarius.preferencefragment.PreferenceFragment;
@@ -131,6 +134,7 @@ public class MyPreferenceFragment extends PreferenceFragment {
     @Override
     public void onResume() {
         super.onResume();
+//        TODO try force allways hiding the keyboard
         uiHelper.handleAnyQueuedPiwigoMessages();
         uiHelper.showNextQueuedMessage();
     }

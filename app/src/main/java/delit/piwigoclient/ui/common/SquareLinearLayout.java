@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.common;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
@@ -9,7 +10,7 @@ import android.widget.LinearLayout;
  * Created by gareth on 18/05/17.
  */
 
-public class SquareLinearLayout extends LinearLayout {
+public class SquareLinearLayout extends LinearLayoutCompat {
     public SquareLinearLayout(Context context) {
         super(context);
     }

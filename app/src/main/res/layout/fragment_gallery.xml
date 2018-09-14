@@ -27,27 +27,27 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/gallery_details_name_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Gallery name"
                 android:layout_alignParentStart="true"
                 android:layout_margin="5dp"
-                style="@style/Base.TextAppearance.AppCompat.Title"
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Title"
                 />
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/gallery_details_description_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Gallery Description"
                 android:layout_below="@+id/gallery_details_name_header"
                 android:layout_margin="5dp"
-                style="@style/Base.TextAppearance.AppCompat.Body1"
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
                 />
 
-            <ImageButton
+            <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/gallery_details_description_dropdown_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -67,11 +67,11 @@
             app:fabSize="mini" />
 
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/album_empty_content"
             android:layout_below="@id/album_header_bar"
             android:visibility="visible"
-            style="@style/Base.TextAppearance.AppCompat.Headline"
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -154,7 +154,7 @@
         slidingLayer:stickTo="bottom"
         slidingLayer:changeStateOnTap="true">
 
-        <LinearLayout
+        <android.support.v7.widget.LinearLayoutCompat
             android:id="@+id/gallery_bottom_sheet_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -163,6 +163,7 @@
             android:layout_marginEnd="5dp"
             android:layout_gravity="bottom|center_horizontal"
             android:orientation="vertical"
+            android:background="@color/colorPrimary"
             android:padding="5dp">
 
             <RelativeLayout
@@ -214,85 +215,105 @@
                     android:layout_height="wrap_content"/>
 
 
-                <LinearLayout
+                <android.support.v7.widget.LinearLayoutCompat
                     android:layout_below="@+id/gallery_action_delete"
                     android:id="@+id/gallery_details_edit_fields"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/gallery_details_name_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/gallery_details_name_title" />
+                        android:text="@string/gallery_details_name_title"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-                    <EditText
+                    <android.support.v7.widget.AppCompatEditText
                         android:id="@+id/gallery_details_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
                         android:clickable="true"
-                        android:maxLines="3"/>
+                        android:maxLines="3"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                        />
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/gallery_details_description_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/gallery_details_description_title" />
+                        android:text="@string/gallery_details_description_title"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-                    <EditText
+                    <android.support.v7.widget.AppCompatEditText
                         android:id="@+id/gallery_details_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textMultiLine"
-                        android:maxLines="10"/>
+                        android:maxLines="10"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                        />
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/gallery_details_status_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/gallery_details_status_title" />
+                        android:text="@string/gallery_details_status_title"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-                    <Switch
+                    <android.support.v7.widget.AppCompatCheckBox
                         android:id="@+id/gallery_details_status"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:showText="true"
-                        android:text="@string/gallery_details_status"
-                        android:textOff="@string/gallery_details_status_galleryIsPublic"
-                        android:textOn="@string/gallery_details_status_galleryIsPrivate"/>
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginTop="7dp"
+                        android:button="@null"
+                        android:textColor="@drawable/edit_text_color_selector"
+                        android:drawableRight="@drawable/always_clear_checkbox"
+                        android:text="@string/gallery_details_status"/>
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/gallery_details_allowed_groups_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/gallery_details_allowed_groups_title" />
+                        android:text="@string/gallery_details_allowed_groups_title"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/gallery_details_allowed_groups"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/click_to_view"/>
+                        android:text="@string/click_to_view"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2.Clickable"/>
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/gallery_details_allowed_users_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/gallery_details_allowed_users_title" />
+                        android:text="@string/gallery_details_allowed_users_title"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-                    <TextView
+                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/gallery_details_allowed_users"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/click_to_view"/>
+                        android:text="@string/click_to_view"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2.Clickable"/>
 
-                </LinearLayout>
+                </android.support.v7.widget.LinearLayoutCompat>
 
 
 
             </RelativeLayout>
 
-        </LinearLayout>
+        </android.support.v7.widget.LinearLayoutCompat>
     </com.wunderlist.slidinglayer.SlidingLayer>
 </RelativeLayout>
 

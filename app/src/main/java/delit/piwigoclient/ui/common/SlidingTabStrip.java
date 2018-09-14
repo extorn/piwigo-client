@@ -20,12 +20,16 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 
-class SlidingTabStrip extends LinearLayout {
+import delit.piwigoclient.R;
+
+class SlidingTabStrip extends LinearLayoutCompat {
 
     private static final int DEFAULT_BOTTOM_BORDER_THICKNESS_DIPS = 2;
     private static final byte DEFAULT_BOTTOM_BORDER_COLOR_ALPHA = 0x26;
@@ -67,7 +71,7 @@ class SlidingTabStrip extends LinearLayout {
                 DEFAULT_BOTTOM_BORDER_COLOR_ALPHA);
 
         mDefaultTabColorizer = new SimpleTabColorizer();
-        mDefaultTabColorizer.setIndicatorColors(DEFAULT_SELECTED_INDICATOR_COLOR);
+        mDefaultTabColorizer.setIndicatorColors(ContextCompat.getColor(context, R.color.colorAccent));
         mDefaultTabColorizer.setDividerColors(setColorAlpha(themeForegroundColor,
                 DEFAULT_DIVIDER_COLOR_ALPHA));
 

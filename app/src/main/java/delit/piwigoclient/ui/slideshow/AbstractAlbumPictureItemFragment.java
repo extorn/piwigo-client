@@ -93,7 +93,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView.setLayoutParams(layoutParams);
 
         CustomImageButton directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
         directDownloadButton.setVisibility(View.GONE);
 
         loader = new PicassoLoader(imageView) {

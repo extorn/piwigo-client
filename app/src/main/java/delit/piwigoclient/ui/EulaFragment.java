@@ -86,6 +86,11 @@ public class EulaFragment extends MyFragment {
         return view;
     }
 
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.app_licence_heading);
+    }
+
     private void sendEmail(String email) {
 
         final String appVersion = ProjectUtils.getVersionName(getContext());

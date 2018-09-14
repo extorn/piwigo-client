@@ -42,7 +42,7 @@ class SelectImageRenderDetailsDialog {
 
         imageRotation = view.findViewById(R.id.imageRotationField);
 
-        imageRotation.setAdapter(ArrayAdapter.createFromResource(context, R.array.rotation_array, R.layout.dark_spinner_item));
+        imageRotation.setAdapter(ArrayAdapter.createFromResource(context, R.array.rotation_array, R.layout.support_simple_spinner_dropdown_item));
         rotationValues = context.getResources().getIntArray(R.array.rotation_values_array);
         for (int i = 0; i < rotationValues.length; i++) {
             if (rotationValues[i] == 0) {
@@ -80,9 +80,9 @@ class SelectImageRenderDetailsDialog {
                             boolean newIsLandscape = selectedItem.getWidth() > selectedItem.getHeight();
 
                             if (newIsLandscape && !oldIsLandscape) {
-                                rotateDegrees = -90f;
-                            } else if (!newIsLandscape && oldIsLandscape) {
                                 rotateDegrees = 90f;
+                            } else if (!newIsLandscape && oldIsLandscape) {
+                                rotateDegrees = -90f;
                             }
                         }
                     }

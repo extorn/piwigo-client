@@ -96,9 +96,10 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         View view = inflateView(parent, viewType);
 
         final S viewHolder = buildViewHolder(view, viewType);
-        CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
-        viewHolder.internalCacheViewFieldsAndConfigure(clickListener);
-
+        if(viewHolder != null) {
+            CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
+            viewHolder.internalCacheViewFieldsAndConfigure(clickListener);
+        }
         return viewHolder;
     }
 

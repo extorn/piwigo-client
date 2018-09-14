@@ -68,11 +68,6 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
         headerView = (ViewGroup) super.inflateHeaderView(res);
 
-        boolean useDarkMode = prefs.getBoolean(getResources().getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
-//        if (useDarkMode) {
-//            headerView.setBackgroundColor(Color.BLACK);
-//        }
-
         String appVersion;
         if (isInEditMode()) {
             appVersion = "1.0.0";
@@ -263,12 +258,6 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     }
 
     public void updateTheme() {
-        boolean useDarkMode = prefs.getBoolean(getResources().getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
-//        if (useDarkMode) {
-//            headerView.setBackgroundColor(Color.BLACK);
-//        } else {
-//            headerView.setBackgroundResource(R.drawable.side_nav_bar);
-//        }
     }
 
     class CustomPiwigoListener extends BasicPiwigoResponseListener {

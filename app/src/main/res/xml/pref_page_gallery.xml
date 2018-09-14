@@ -3,17 +3,6 @@
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_gallery_category_general">
-        <SwitchPreference
-            android:defaultValue="@bool/preference_gallery_masonry_view_default"
-            android:key="@string/preference_gallery_masonry_view_key"
-            android:summary="@string/preference_gallery_masonry_view_summary"
-            android:title="@string/preference_gallery_masonry_view_title"
-            android:disableDependentsState="true"/>
-        <SwitchPreference
-            android:defaultValue="@bool/preference_gallery_use_dark_mode_default"
-            android:key="@string/preference_gallery_use_dark_mode_key"
-            android:summary="@string/preference_gallery_use_dark_mode_summary"
-            android:title="@string/preference_gallery_use_dark_mode_title" />
         <ListPreference
             android:defaultValue="@string/preference_gallery_unique_id_default"
             android:entries="@array/preference_gallery_unique_id_entries"
@@ -38,12 +27,6 @@
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_gallery_category_albums">
-        <SwitchPreference
-            android:defaultValue="@bool/preference_gallery_show_large_thumbnail_default"
-            android:key="@string/preference_gallery_show_large_thumbnail_key"
-            android:summary="@string/preference_gallery_show_large_thumbnail_summary"
-            android:title="@string/preference_gallery_show_large_thumbnail_title"
-            android:dependency="@string/preference_gallery_masonry_view_key"/>
         <ListPreference
             android:entries="@array/preference_gallery_item_thumbnail_size_array"
             android:defaultValue="@string/preference_gallery_album_thumbnail_size_default"
@@ -62,16 +45,14 @@
             app:setDefaultOnAttach="false"
             android:key="@string/preference_gallery_albums_preferredColumnsPortrait_key"
             android:title="@string/preference_gallery_albums_preferredColumnsPortrait_title"
-            android:summary="@string/preference_gallery_albums_preferredColumnsPortrait_summary"
-            android:dependency="@string/preference_gallery_masonry_view_key"/>
+            android:summary="@string/preference_gallery_albums_preferredColumnsPortrait_summary"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="10"
             app:setDefaultOnAttach="false"
             android:key="@string/preference_gallery_albums_preferredColumnsLandscape_key"
             android:title="@string/preference_gallery_albums_preferredColumnsLandscape_title"
-            android:summary="@string/preference_gallery_albums_preferredColumnsLandscape_summary"
-            android:dependency="@string/preference_gallery_masonry_view_key"/>
+            android:summary="@string/preference_gallery_albums_preferredColumnsLandscape_summary"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:layout="@android:layout/preference_category"

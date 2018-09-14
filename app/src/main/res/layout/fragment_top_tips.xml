@@ -5,13 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/toptips_heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/top_tips_heading"
-        style="@style/Base.TextAppearance.AppCompat.Title"/>
-
     <ScrollView
         android:layout_below="@+id/toptips_heading"
         android:layout_marginTop="20dp"
@@ -22,7 +15,7 @@
         android:scrollbars="vertical"
         android:fillViewport="true">
 
-        <LinearLayout
+        <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -37,7 +30,7 @@
                 android:layout_marginBottom="15dp"
                 android:divider="@null"
                 />
-        </LinearLayout>
+        </android.support.v7.widget.LinearLayoutCompat>
 
     </ScrollView>
 

@@ -94,6 +94,11 @@ public class CreateAlbumFragment extends MyFragment {
         return fragment;
     }
 
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.createGallery_pageTitle);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(GroupSelectionCompleteEvent groupSelectionCompleteEvent) {
 

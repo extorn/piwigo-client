@@ -48,7 +48,6 @@ public class CustomImageDownloader extends AbstractBaseCustomImageDownloader {
                 String uriStr = uri.toString();
                 cache.setMetadata(uriStr, metadata);
                 EventBus.getDefault().post(new ExifDataRetrievedEvent(uriStr, metadata));
-                Log.d("CustomImageLoader", "Loading Metadata for : " + uriStr, new Exception().fillInStackTrace());
             } catch (ImageProcessingException e) {
                 Crashlytics.logException(e);
             } catch (IOException e) {

@@ -18,6 +18,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,6 +78,7 @@ import delit.piwigoclient.ui.events.CancelDownloadEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
+import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
@@ -106,7 +109,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private RatingBar averageRatingsBar;
     private ProgressBar progressIndicator;
     private RatingBar ratingsBar;
-    private Spinner privacyLevelSpinner;
+    private AppCompatSpinner privacyLevelSpinner;
     private EditText resourceDescriptionView;
     private EditText resourceNameView;
     private ImageButton saveButton;
@@ -214,16 +217,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             loadNonArgsFromBundle(savedInstanceState);
         }
 
-        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
-        if (useDarkMode) {
-            view.setBackgroundColor(Color.BLACK);
-            itemPositionTextView.setBackgroundColor(getResources().getColor(R.color.black_overlay));
-            itemPositionTextView.setTextColor(Color.WHITE);
-        } else {
-            view.setBackgroundColor(Color.WHITE);
-            itemPositionTextView.setBackgroundColor(getResources().getColor(R.color.white_overlay));
-            itemPositionTextView.setTextColor(Color.BLACK);
-        }
         setAsAlbumThumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -287,7 +280,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         itemPositionTextView = v.findViewById(R.id.slideshow_resource_item_x_of_y_text);
         progressIndicator = v.findViewById(R.id.slideshow_image_loadingIndicator);
         setAsAlbumThumbnail = v.findViewById(R.id.slideshow_resource_action_use_for_album_thumbnail);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_wallpaper_black_24dp).into(setAsAlbumThumbnail);
         setAsAlbumThumbnail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -313,7 +305,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 //                }
 //            });
         bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
-        LinearLayout bottomSheetContent = bottomSheet.findViewById(R.id.slideshow_image_bottom_sheet_content);
+        LinearLayoutCompat bottomSheetContent = bottomSheet.findViewById(R.id.slideshow_image_bottom_sheet_content);
         View itemDetail = createCustomItemDetail(inflater, itemContentLayout, savedInstanceState, model);
         if (itemDetail != null) {
             bottomSheetContent.addView(itemDetail, bottomSheetContent.getChildCount());
@@ -437,9 +429,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         privacyLevelSpinner = v.findViewById(R.id.privacy_level);
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> privacyLevelOptionsAdapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.privacy_levels_groups_array, R.layout.dark_spinner_item);
+                R.array.privacy_levels_groups_array, R.layout.support_simple_spinner_dropdown_item);
 // Specify the layout to use when the list of choices appears
-        privacyLevelOptionsAdapter.setDropDownViewResource(R.layout.dark_spinner_item);
+        privacyLevelOptionsAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
         privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
 
@@ -743,12 +735,21 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return new CustomPiwigoResponseListener();
     }
 
+    @Override
+    protected void updatePageTitle() {
+        // Do nothing ( called in resume).
+    }
+
     public void onPageSelected() {
         if (isAdded()) {
             FragmentUIHelper uiHelper = getUiHelper();
             uiHelper.registerToActiveServiceCalls();
             uiHelper.setBlockDialogsFromShowing(false);
             uiHelper.handleAnyQueuedPiwigoMessages();
+
+            ToolbarEvent event = new ToolbarEvent();
+            event.setTitle(model.getName());
+            EventBus.getDefault().post(event);
         }
     }
 

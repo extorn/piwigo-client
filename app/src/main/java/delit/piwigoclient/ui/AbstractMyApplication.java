@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatDelegate;
 import java.net.URI;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.util.ProjectUtils;
 
@@ -53,7 +55,20 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                     editor.putString(getString(R.string.preference_piwigo_server_address_key), serverName.replaceAll(" ", ""));
                 }
             }
-        } if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
+            editor.commit();
+        } else if(prefsVersion <= 145) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.remove(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key));
+            editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key));
+            editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsPortrait_key));
+            editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsLandscape_key));
+            editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsPortrait_key));
+            editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsLandscape_key));
+            editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsPortrait_key));
+            editor.commit();
+        }
+
+        if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             editor.commit();

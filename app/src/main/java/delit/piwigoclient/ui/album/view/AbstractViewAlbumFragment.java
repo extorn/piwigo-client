@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
@@ -24,7 +25,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
@@ -97,6 +97,7 @@ import delit.piwigoclient.ui.events.BadRequestUsesRedirectionServerEvent;
 import delit.piwigoclient.ui.events.BadRequestUsingHttpToHttpsServerEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
+import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
@@ -151,7 +152,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private CustomImageButton pasteButton;
     private CustomImageButton cutButton;
     private CustomImageButton deleteButton;
-    private Switch galleryPrivacyStatusField;
+    private AppCompatCheckBox galleryPrivacyStatusField;
     private TextView allowedGroupsField;
     private TextView allowedUsersField;
     private RelativeLayout bulkActionsContainer;
@@ -285,12 +286,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
 
-        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
         boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
-
-        boolean showLargeAlbumThumbnails = prefs.getBoolean(getString(R.string.preference_gallery_show_large_thumbnail_key), getResources().getBoolean(R.bool.preference_gallery_show_large_thumbnail_default));
-
-        boolean useMasonryStyle = prefs.getBoolean(getString(R.string.preference_gallery_masonry_view_key), getResources().getBoolean(R.bool.preference_gallery_masonry_view_default));
 
         boolean showResourceNames = prefs.getBoolean(getString(R.string.preference_gallery_show_image_name_key), getResources().getBoolean(R.bool.preference_gallery_show_image_name_default));
 
@@ -307,11 +303,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
         viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
-        viewPrefs.withDarkMode(useDarkMode);
-        viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
         viewPrefs.withPreferredThumbnailSize(preferredThumbnailSize);
         viewPrefs.withPreferredAlbumThumbnailSize(preferredAlbumThumbnailSize);
-        viewPrefs.withMasonryStyle(useMasonryStyle);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
         viewPrefs.withAlbumWidth(getScreenWidth() / getAlbumsPerRow());
@@ -482,11 +475,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         recyclerView.setLayoutManager(gridLayoutMan);
 
-        if (!viewPrefs.isUseMasonryStyle()) {
-            int colsPerAlbum = colsOnScreen / getAlbumsPerRow();
-            int colsPerImage = colsOnScreen / imagesOnScreen;
-            ((GridLayoutManager) gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(galleryModel, colsPerAlbum, colsPerImage));
-        }
+        int colsPerAlbum = colsOnScreen / getAlbumsPerRow();
+        int colsPerImage = colsOnScreen / imagesOnScreen;
+        ((GridLayoutManager) gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(galleryModel, colsPerAlbum, colsPerImage));
 
         viewAdapterListener = new AlbumViewAdapterListener();
 
@@ -828,6 +819,17 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 }
             }
         });
+    }
+
+    @Override
+    protected String buildPageHeading() {
+        CategoryItem catItem = galleryModel.getContainerDetails();
+        if(CategoryItem.ROOT_ALBUM.equals(catItem)) {
+            return getString(R.string.album_title_home);
+        } else {
+            String currentAlbumName = "... / " + galleryModel.getContainerDetails().getName();
+            return currentAlbumName;
+        }
     }
 
     @Override
@@ -1260,10 +1262,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         if (galleryModel.getContainerDetails().getDescription() != null && !galleryModel.getContainerDetails().getDescription().isEmpty() && CategoryItem.ROOT_ALBUM != galleryModel.getContainerDetails()) {
             galleryDescriptionHeader.setText(galleryModel.getContainerDetails().getDescription());
         }
-        galleryDescriptionHeader.setVisibility(GONE);
-
 
         if (galleryModel.getContainerDetails().getDescription() != null && !galleryModel.getContainerDetails().getDescription().isEmpty()) {
+            galleryDescriptionHeader.setVisibility(VISIBLE);
             descriptionDropdownButton.setVisibility(View.VISIBLE);
             descriptionDropdownButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1276,6 +1277,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 }
             });
         } else {
+            galleryDescriptionHeader.setVisibility(GONE);
             descriptionDropdownButton.setVisibility(GONE);
         }
     }
@@ -1516,7 +1518,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             if (galleryModel.getContainerDetails().isRoot()) {
                 galleryModel.updateMaxExpectedItemCount(response.getAlbums().size());
             }
-//            galleryModel.addItem(CategoryItem.ADVERT);
+            if(response.getAlbums().size() > 1) {
+                galleryModel.addItem(CategoryItem.ALBUM_HEADING);
+            }
             for (CategoryItem item : response.getAlbums()) {
                 if (item.getId() != galleryModel.getContainerDetails().getId()) {
                     galleryModel.addItem(item);
@@ -1536,13 +1540,18 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             galleryModel.updateSpacerAlbumCount(getAlbumsPerRow());
             viewAdapter.notifyDataSetChanged();
         }
+        emptyGalleryLabel.setVisibility(galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
     }
 
     private void onGetResources(final PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
+            if(response.getPage() == 0 && response.getResources().size() > 0) {
+                galleryModel.addItem(CategoryItem.PICTURE_HEADING);
+            }
             galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
             viewAdapter.notifyDataSetChanged();
         }
+        emptyGalleryLabel.setVisibility(galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
     }
 
     private void onAlbumContentAltered(final PiwigoResponseBufferingHandler.PiwigoUpdateAlbumContentResponse response) {
@@ -2101,13 +2110,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
             int itemType = galleryModel.getItemByIdx(position).getType();
             switch (itemType) {
-                case GalleryItem.CATEGORY_ADVERT_TYPE:
+                case GalleryItem.ALBUM_HEADING_TYPE:
                     return colsOnScreen;
                 case GalleryItem.CATEGORY_TYPE:
                     return colsPerAlbum;
                 case GalleryItem.PICTURE_RESOURCE_TYPE:
                     return colsPerImage;
-                case GalleryItem.RESOURCE_ADVERT_TYPE:
+                case GalleryItem.PICTURE_HEADING_TYPE:
                     return colsOnScreen;
                 case GalleryItem.VIDEO_RESOURCE_TYPE:
                     return colsPerImage;

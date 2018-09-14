@@ -100,7 +100,7 @@ public class IOUtils {
         return null;
     }
 
-    public static void saveObjectToFile(File destinationFile, Serializable o) throws IOException {
+    public static void saveObjectToFile(File destinationFile, Serializable o) {
         boolean canContinue = true;
         if (destinationFile.isDirectory()) {
             throw new RuntimeException("Not designed to work with a folder as a destination!");
@@ -122,12 +122,20 @@ public class IOUtils {
                 canContinue = false;
             }
         }
-        if (canContinue && !tmpFile.createNewFile()) {
-            if (BuildConfig.DEBUG) {
-                Log.d("IOUtils", "Error writing job to disk - unable to create new temporary file");
+        try {
+            if (canContinue && !tmpFile.createNewFile()) {
+                if (BuildConfig.DEBUG) {
+                    Log.d("IOUtils", "Error writing job to disk - unable to create new temporary file");
+                }
+                canContinue = false;
             }
-            canContinue = false;
+        } catch (IOException e) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
+                Log.d("IOUtils", "Error writing Object to disk (creating new file)", e);
+            }
         }
+
         if (!canContinue) {
             return;
         }

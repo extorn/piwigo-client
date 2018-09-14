@@ -22,7 +22,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="15" />
+        android:text="15"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/basket_action_indicator"

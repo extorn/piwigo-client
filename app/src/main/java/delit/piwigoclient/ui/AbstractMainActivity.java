@@ -59,6 +59,7 @@ import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
 import delit.piwigoclient.ui.events.ThemeAlteredEvent;
+import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
 import delit.piwigoclient.ui.events.ViewUserEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
@@ -91,6 +92,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     private String onLoginActionMethodName = null;
     private ArrayList<Serializable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
+    private Toolbar toolbar;
 
     public static void performNoBackStackTransaction(final FragmentManager fragmentManager, String tag, Fragment fragment) {
         final int newBackStackLength = fragmentManager.getBackStackEntryCount() + 1;
@@ -132,10 +134,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         }
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        toolbar.setVisibility(prefs.getBoolean(getString(R.string.preference_app_show_toolbar_key), true) ? View.VISIBLE : View.GONE);
 
         /*
         Floating action button (all screens!) - if wanted
@@ -210,9 +210,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (preferencesShowing) {
-
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            toolbar.setVisibility(prefs.getBoolean(getString(R.string.preference_app_show_toolbar_key), true) ? View.VISIBLE : View.GONE);
 
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
 
@@ -706,6 +703,16 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             }
         }
         return invoked;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ToolbarEvent event) {
+        if(event.getTitle() != null) {
+            toolbar.setTitle(event.getTitle());
+            toolbar.setVisibility(View.VISIBLE);
+        } else {
+            toolbar.setVisibility(View.GONE);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

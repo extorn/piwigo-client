@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
 
@@ -150,6 +151,20 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             EventBus.getDefault().removeStickyEvent(stickyEvent);
             updateFilesForUploadList(stickyEvent.getSelectedFiles());
             AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
+        }
+    }
+
+    private void addUploadingAsFieldsIfAppropriate(View v) {
+        TextView uploadingAsLabelField = v.findViewById(R.id.upload_username_label);
+        TextView uploadingAsField = v.findViewById(R.id.upload_username);
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+            uploadingAsField.setText(sessionDetails.getUsername());
+            uploadingAsField.setVisibility(View.VISIBLE);
+            uploadingAsLabelField.setVisibility(View.VISIBLE);
+        } else {
+            uploadingAsField.setVisibility(View.GONE);
+            uploadingAsLabelField.setVisibility(View.GONE);
         }
     }
 
@@ -350,6 +365,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     @Override
     public void onStart() {
+        addUploadingAsFieldsIfAppropriate(getView());
         super.onStart();
         // need to register here so FileSelectionComplete events always get through after the UI has been built when forked from different process
         if (!EventBus.getDefault().isRegistered(this)) {

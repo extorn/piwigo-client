@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- primary + background + surface - light gray #606060 -->
-    <color name="colorAccent">#404040</color>
+    <!-- primary + background + surface - light gray #606060 what about #29819e -->
+    <color name="colorAccent">#2e2e2e</color>
     <!-- primary variant 1 - ultra dark gray #3c3c3c -->
-    <color name="colorPrimary">#2f2f2f</color>
+    <color name="colorPrimary">#4d4d4d</color>
     <!-- primary variant 2 - dark gray -->
-    <color name="colorPrimaryDark">#1d1d1d</color>
+    <color name="colorPrimaryDark">#161616</color>
+    <color name="colorPrimaryLight">#5d5d5d</color>
+
     <!-- on primary + on background + on surface - white-->
     <color name="on_primary">#ffffff</color>
+
+    <color name="colorSecondary">#FF90AAD4</color>
+    <color name="red">#FFFF0000</color><!--test-->
 
 
     <color name="white">#FFFFFF</color>

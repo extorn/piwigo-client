@@ -97,9 +97,13 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     }
 
     @Override
+    protected String buildPageHeading() {
+        return getString(R.string.access_rights_heading);
+    }
+
+    @Override
     protected void setPageHeading(TextView headingField) {
-        headingField.setText(R.string.access_rights_heading);
-        headingField.setVisibility(View.VISIBLE);
+        headingField.setVisibility(View.GONE);
     }
 
     @Override

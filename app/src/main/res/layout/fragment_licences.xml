@@ -3,16 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/licences_heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/licences_heading"
-        style="@style/Base.TextAppearance.AppCompat.Title"/>
-
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/other_oss_licences_button"
-        android:layout_below="@+id/licences_heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/other_licences_button_text"/>
@@ -26,10 +18,11 @@
         android:scrollbars="vertical"
         android:fillViewport="true">
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/licences_content"/>
+            android:text="@string/licences_content"
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
     </ScrollView>
 
     <com.google.android.gms.ads.AdView

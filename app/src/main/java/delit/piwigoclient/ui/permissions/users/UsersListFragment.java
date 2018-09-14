@@ -101,6 +101,12 @@ public class UsersListFragment extends MyFragment {
         viewPrefs.storeToBundle(outState);
     }
 
+
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.users_heading);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -129,8 +135,7 @@ public class UsersListFragment extends MyFragment {
         }
 
         TextView heading = view.findViewById(R.id.heading);
-        heading.setText(R.string.users_heading);
-        heading.setVisibility(View.VISIBLE);
+        heading.setVisibility(View.INVISIBLE);
 
         Button cancelButton = view.findViewById(R.id.list_action_cancel_button);
         cancelButton.setVisibility(View.GONE);

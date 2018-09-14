@@ -66,7 +66,7 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
 
         if (!(newItem.getDescription() == null || newItem.getDescription().isEmpty())) {
             mDescView.setVisibility(View.VISIBLE);
-            mDescView.setText(newItem.getName());
+            mDescView.setText(newItem.getDescription());
         } else {
             mDescView.setVisibility(INVISIBLE);
         }
@@ -105,14 +105,18 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
 
     private void configurePlaceholderThumbnail(CategoryItem newItem) {
         imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
-        if (!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+        if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
+            ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
+        } else {
             ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
         }
     }
 
     private void triggerLoadingSpecificThumbnail(CategoryItem newItem) {
         imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
-        if (!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
+        if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
+            ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
+        } else {
             ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
         }
         if (parentAdapter.getMultiSelectStatusListener() != null) {
@@ -125,12 +129,10 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
     private void configureLoadingBasicThumbnail(CategoryItem newItem) {
         imageLoader.setUriToLoad(newItem.getThumbnailUrl());
 
-        if (!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
-            if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-                ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
-            } else {
-                ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
-            }
+        if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
+            ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
+        } else {
+            ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
         }
     }
 

@@ -20,6 +20,7 @@
 
         <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/slideshow_resource_action_direct_download"
+            app:srcCompat="@drawable/ic_file_download_black_24px"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
@@ -29,6 +30,7 @@
 
         <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
+            app:srcCompat="@drawable/ic_wallpaper_black_24dp"
             android:layout_toEndOf="@id/slideshow_resource_action_direct_download"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
@@ -36,7 +38,7 @@
             android:layout_gravity="end"
             android:visibility="visible"/>
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/slideshow_resource_item_x_of_y_text"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
@@ -45,7 +47,7 @@
             android:layout_gravity="end"
             android:visibility="visible"
             android:text="x/y"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
         <RatingBar
             android:id="@+id/slideshow_image_average_ratingBar"
@@ -85,9 +87,9 @@
         slidingLayer:stickTo="bottom"
         slidingLayer:changeStateOnTap="true">
 
-        <LinearLayout
+        <android.support.v7.widget.LinearLayoutCompat
             android:id="@+id/slideshow_image_bottom_sheet_content"
-            android:background="@color/white"
+            android:background="@color/colorPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -168,12 +170,12 @@
                <TabHost
                    android:id="@+id/slideshow_image_tab_panels"
                    android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
+                   android:layout_height="match_parent"
                    android:layout_below="@+id/slideshow_resource_action_download">
 
-                    <LinearLayout
+                    <android.support.v7.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical">
 
                         <TabWidget
@@ -187,112 +189,119 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
-                            <LinearLayout
+                            <android.support.v7.widget.LinearLayoutCompat
                                 android:id="@+id/picture_resource_basic_fields"
                                 android:orientation="vertical"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <TextView
+                                <android.support.v7.widget.AppCompatTextView
                                     android:id="@+id/slideshow_image_details_name_label"
                                     android:labelFor="@+id/slideshow_image_details_name"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/slideshow_image_details_name_title" />
+                                    android:text="@string/slideshow_image_details_name_title"
+                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-                                <EditText
+                                <android.support.v7.widget.AppCompatEditText
+                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
                                     android:id="@+id/slideshow_image_details_name"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="textMultiLine"
                                     android:clickable="true"
                                     android:maxLines="3"
-                                    android:textColor="@drawable/edit_text_color_selector"
                                     android:focusable="true" />
 
-                                <TextView
+                                <android.support.v7.widget.AppCompatTextView
                                     android:id="@+id/slideshow_image_details_description_label"
                                     android:labelFor="@+id/slideshow_image_details_description"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/slideshow_image_details_description_title" />
+                                    android:text="@string/slideshow_image_details_description_title"
+                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-                                <EditText
+                                <android.support.v7.widget.AppCompatEditText
+                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
                                     android:id="@+id/slideshow_image_details_description"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="textMultiLine"
-                                    android:maxLines="10"
-                                    android:textColor="@drawable/edit_text_color_selector"/>
+                                    android:maxLines="10"/>
 
-                                <TextView
+                                <android.support.v7.widget.AppCompatTextView
                                     android:id="@+id/slideshow_image_details_linked_albums_label"
                                     android:labelFor="@+id/slideshow_image_details_linked_albums"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/slideshow_image_details_linked_albums_title" />
+                                    android:text="@string/slideshow_image_details_linked_albums_title"
+                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-                                <TextView
+                                <android.support.v7.widget.AppCompatTextView
                                     android:id="@+id/slideshow_image_details_linked_albums"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/click_to_view"
-                                    android:textColor="@drawable/edit_text_color_selector"/>
+                                    android:maxLines="2"
+                                    android:ellipsize="end"
+                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"/>
 
-                                <TextView
+                                <android.support.v7.widget.AppCompatTextView
                                     android:id="@+id/slideshow_image_details_tags_label"
                                     android:labelFor="@+id/slideshow_image_details_tags"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/slideshow_image_details_tags_title" />
+                                    android:text="@string/slideshow_image_details_tags_title"
+                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-                                <TextView
+                                <android.support.v7.widget.AppCompatTextView
                                     android:id="@+id/slideshow_image_details_tags"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/click_to_view"
-                                    android:textColor="@drawable/edit_text_color_selector"/>
+                                    android:maxLines="2"
+                                    android:ellipsize="end"
+                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"/>
 
-                                <TextView
+                                <android.support.v7.widget.AppCompatTextView
                                     android:id="@+id/slideshow_image_details_privacy_level"
                                     android:labelFor="@+id/privacy_level"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/upload_file_privacy_level_title"
-                                    />
+                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-                                <Spinner
+                                <android.support.v7.widget.AppCompatSpinner
                                     android:id="@+id/privacy_level"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:textColor="@drawable/edit_text_color_selector"/>
+                                    style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
-                            </LinearLayout>
+                            </android.support.v7.widget.LinearLayoutCompat>
 
-                            <LinearLayout
+                            <android.support.v7.widget.LinearLayoutCompat
                                 android:id="@+id/picture_resource_exif_data"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:minHeight="200dp"
                                 android:orientation="vertical">
-                                
-                                <android.support.v7.widget.RecyclerView
+
+                                <ExpandableListView
                                     android:clickable="true"
                                     android:focusable="true"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:id="@+id/exifDataList">
+                                </ExpandableListView>
 
-                                </android.support.v7.widget.RecyclerView>
-                            </LinearLayout>
+                            </android.support.v7.widget.LinearLayoutCompat>
 
                         </FrameLayout>
-                    </LinearLayout>
+                    </android.support.v7.widget.LinearLayoutCompat>
                 </TabHost>
 
             </RelativeLayout>
 
-        </LinearLayout>
+        </android.support.v7.widget.LinearLayoutCompat>
 
     </com.wunderlist.slidinglayer.SlidingLayer>
 

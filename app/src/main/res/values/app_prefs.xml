@@ -129,12 +129,6 @@
 
     <!-- prefs -->
 
-    <string name="preference_app_show_toolbar_key" translatable="false">preference_app_show_toolbar</string>
-    <string name="preference_app_show_toolbar_title">Show App Toolbar</string>
-    <string name="preference_app_show_toolbar_summary">Show the toolbar at the top of the application</string>
-    <bool name="preference_app_show_toolbar_default">true</bool>
-
-
     <string name="preference_gallery_albums_preferredColumnsLandscape_key" translatable="false">preference_gallery_albums_preferredColumnsLandscape</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_title">Landscape: Columns of Albums to show</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
@@ -148,15 +142,10 @@
     <string name="preference_gallery_images_preferredColumnsLandscape_title">Landscape: Columns of Images to show</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_gallery_use_dark_mode_key" translatable="false">preference_gallery_use_dark_mode</string>
-    <string name="preference_gallery_use_dark_mode_title">Use Dark Theme</string>
-    <string name="preference_gallery_use_dark_mode_summary">Select app theme</string>
-    <bool name="preference_gallery_use_dark_mode_default">true</bool>
-
     <string name="preference_gallery_show_album_thumbnail_zoomed_key" translatable="false">preference_gallery_show_album_thumbnail_zoomed</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">Show Zoomed Album Thumbnail</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Album thumbnails are center cropped</string>
-    <bool name="preference_gallery_show_album_thumbnail_zoomed_default">false</bool>
+    <bool name="preference_gallery_show_album_thumbnail_zoomed_default">true</bool>
 
     <string name="preference_gallery_albums_preferredColumnsPortrait_key" translatable="false">preference_gallery_albums_preferredColumnsPortrait</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrait: Columns of Albums to show</string>
@@ -165,11 +154,6 @@
     <string name="preference_gallery_images_preferredColumnsPortrait_key" translatable="false">preference_gallery_images_preferredColumnsPortrait</string>
     <string name="preference_gallery_images_preferredColumnsPortrait_title">Portrait: Columns of Images to show</string>
     <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
-
-    <string name="preference_gallery_show_large_thumbnail_key" translatable="false">preference_gallery_show_large_thumbnail</string>
-    <string name="preference_gallery_show_large_thumbnail_title">Display albums with large thumbnail</string>
-    <string name="preference_gallery_show_large_thumbnail_summary">Image thumbnails fill the column</string>
-    <bool name="preference_gallery_show_large_thumbnail_default">true</bool>
 
     <string name="preference_gallery_include_videos_in_slideshow_key" translatable="false">preference_gallery_include_videos_in_slideshow</string>
     <string name="preference_gallery_include_videos_in_slideshow_title">Show videos in Slideshow</string>
@@ -252,10 +236,6 @@
     <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
     <string name="preference_gallery_item_slideshow_image_size_default" translatable="false">best-fit</string>
 
-    <string name="preference_gallery_masonry_view_title">Use Masonry Style Layout (experimental)</string>
-    <string name="preference_gallery_masonry_view_summary">Best fit album content in a tapestry effect</string>
-    <string name="preference_gallery_masonry_view_key" translatable="false">preference_gallery_masonry_view</string>
-    <bool name="preference_gallery_masonry_view_default">false</bool>
 
     <!-- Data Upload page -->
 

@@ -19,6 +19,7 @@ package delit.piwigoclient.ui.common;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -28,6 +29,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.TextView;
+
+import delit.piwigoclient.R;
 
 /**
  * To be used with ViewPager to provide a tab indicator component which give constant feedback as to
@@ -150,6 +153,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
      */
     protected TextView createDefaultTabView(Context context) {
         TextView textView = new TextView(context);
+        textView.setTextColor(ContextCompat.getColor(context, R.color.on_primary));
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
         textView.setTypeface(Typeface.DEFAULT_BOLD);

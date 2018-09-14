@@ -81,6 +81,11 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     }
 
     @Override
+    protected void updatePageTitle() {
+        // Do nothing. This is handled by the items in the slideshow.
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(gallery));

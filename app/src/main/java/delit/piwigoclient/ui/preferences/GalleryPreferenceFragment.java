@@ -123,7 +123,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         } else {
             screenWidth = getScreenHeightInches();
         }
-        int columnsToShow = Math.max(1, Math.round(screenWidth - (screenWidth % 1))); // allow a minimum of 1 inch per column
+        int columnsToShow = Math.max(1, Math.round(screenWidth)); // allow a minimum of 1 inch per column
         return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 
@@ -139,7 +139,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         } else {
             screenWidth = getScreenHeightInches();
         }
-        int columnsToShow = Math.max(1, Math.round(screenWidth - (screenWidth % 1))); // allow a minimum of 1 inch per column
+        int columnsToShow = Math.max(1, Math.round(screenWidth / 2)); // allow a minimum of 2 inch per column
         return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 
@@ -163,36 +163,9 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         // updated to reflect the pkg value, per the Android Design
         // guidelines.
 
-        SwitchPreference themePref = (SwitchPreference) findPreference(R.string.preference_gallery_use_dark_mode_key);
-        themePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                EventBus.getDefault().post(new ThemeAlteredEvent());
-                return false;
-            }
-        });
-
         NumberPickerPreference pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_albums_preferredColumnsLandscape_key);
         int defaultVal = getDefaultAlbumsColumnCount(Configuration.ORIENTATION_LANDSCAPE);
         pref.updateDefaultValue(defaultVal);
-
-        Preference pageStructurePref = findPreference(R.string.preference_gallery_masonry_view_key);
-        pageStructurePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                EventBus.getDefault().post(new AlbumAlteredEvent(AlbumAlteredEvent.ALL_ALBUMS_ID));
-                return true;
-            }
-        });
-        pageStructurePref = findPreference(R.string.preference_gallery_show_large_thumbnail_key);
-        pageStructurePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                EventBus.getDefault().post(new AlbumAlteredEvent(AlbumAlteredEvent.ALL_ALBUMS_ID));
-                return true;
-            }
-        });
 
         pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_images_preferredColumnsLandscape_key);
         defaultVal = getDefaultImagesColumnCount(Configuration.ORIENTATION_LANDSCAPE);

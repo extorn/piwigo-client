@@ -10,9 +10,10 @@
         android:layout_alignParentEnd="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
         app:srcCompat="@drawable/ic_add_circle_black_24px" />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/heading"
         android:visibility="visible"
         android:layout_width="match_parent"
@@ -21,9 +22,9 @@
         android:layout_marginTop="5dp"
         android:layout_marginStart="5dp"
         android:text="Some Heading"
-        style="@style/Base.TextAppearance.AppCompat.Headline"/>
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Headline"/>
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/list_action_cancel_button"
         android:visibility="visible"
         android:layout_width="wrap_content"
@@ -33,7 +34,7 @@
         android:layout_alignParentStart="true"
         android:text="@string/button_cancel"/>
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/list_action_toggle_all_button"
         android:visibility="visible"
         android:layout_width="wrap_content"
@@ -43,7 +44,7 @@
         android:layout_centerHorizontal="true"
         android:text="@string/button_all" />
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/list_action_save_button"
         android:visibility="visible"
         android:layout_width="wrap_content"

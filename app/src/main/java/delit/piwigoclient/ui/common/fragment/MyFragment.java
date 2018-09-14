@@ -20,6 +20,9 @@ import android.view.ViewGroup;
 
 import com.crashlytics.android.Crashlytics;
 
+import org.greenrobot.eventbus.EventBus;
+
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -27,6 +30,7 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.events.ToolbarEvent;
 
 /**
  * Created by gareth on 26/05/17.
@@ -129,6 +133,8 @@ public class MyFragment extends Fragment {
         Crashlytics.log("onResume : " + getClass().getName());
         super.onResume();
 
+        updatePageTitle();
+
         // This block wrapper is to hopefully protect against a WindowManager$BadTokenException when showing a dialog as part of this call.
         if (getActivity().isDestroyed() || getActivity().isFinishing()) {
             return;
@@ -145,6 +151,16 @@ public class MyFragment extends Fragment {
             prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 5000).commit();
             uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, new AdLoadErrorDialogListener());
         }
+    }
+
+    protected void updatePageTitle() {
+        ToolbarEvent event = new ToolbarEvent();
+        event.setTitle(buildPageHeading());
+        EventBus.getDefault().post(event);
+    }
+
+    protected String buildPageHeading() {
+        return "Piwigo Client";
     }
 
     private class AdLoadErrorDialogListener extends UIHelper.QuestionResultAdapter {

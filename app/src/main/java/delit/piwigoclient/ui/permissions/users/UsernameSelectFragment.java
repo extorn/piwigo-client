@@ -122,9 +122,13 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     }
 
     @Override
+    protected String buildPageHeading() {
+        return getString(R.string.users_heading);
+    }
+
+    @Override
     protected void setPageHeading(TextView headingField) {
-        headingField.setText(R.string.users_heading);
-        headingField.setVisibility(View.VISIBLE);
+        headingField.setVisibility(View.GONE);
     }
 
     @Override

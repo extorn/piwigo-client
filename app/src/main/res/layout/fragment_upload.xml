@@ -2,13 +2,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="delit.piwigoclient.ui.upload.UploadFragment">
+    android:layout_height="match_parent">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/upload_username_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="@string/upload_username_title"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/upload_username"
+        android:layout_below="@+id/upload_username_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="username"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"/>
+
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/upload_to_label"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:layout_below="@+id/upload_username"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
         android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,10 +36,11 @@
         android:layout_toStartOf="@+id/add_new_gallery_button"
         android:layout_below="@+id/upload_to_label"
         android:layout_width="wrap_content"
+        android:layout_margin="5dp"
         android:gravity="fill_horizontal"
         android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dropdown"
+        style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/add_new_gallery_button"
@@ -33,11 +50,11 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_create_new_folder_black_24dp"/>
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/files_for_upload_label"
         android:layout_below="@+id/selected_gallery"
         android:layout_above="@+id/selected_files_for_upload"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
         android:layout_margin="5dp"
         android:gravity="center_vertical"
         android:layout_width="wrap_content"
@@ -66,12 +83,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/privacy_level_label"
-        tools:context=".ui.upload.UploadFragment"
-        android:background="#FFF3F3F3"/>
-    <TextView
+        tools:context=".ui.upload.UploadFragment"/>
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/privacy_level_label"
         android:layout_above="@id/privacy_level"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
         android:layout_margin="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -82,8 +98,8 @@
         android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_dropdown"/>
-    <Button
+        style="@style/Widget.AppCompat.Spinner.Underlined"/>
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/delete_upload_job_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -94,7 +110,7 @@
         android:layout_above="@+id/upload_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignParentStart="true"/>
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/upload_files_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

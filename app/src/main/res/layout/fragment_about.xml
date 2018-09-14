@@ -3,13 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/about_heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/about_heading"
-        style="@style/Base.TextAppearance.AppCompat.Title"/>
-
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -19,23 +12,24 @@
         android:scrollbars="vertical"
         android:fillViewport="true">
 
-        <LinearLayout
+        <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/about_text"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="@string/about_content"/>
+                android:text="@string/about_content"
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/about_planned_releases_header"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/planned_releases"
-                style="@style/Base.TextAppearance.AppCompat.Title"/>
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Title"/>
 
             <delit.piwigoclient.ui.common.list.StaticListView
                 android:id="@+id/about_planned_releases"
@@ -47,12 +41,12 @@
                 android:layout_marginBottom="5dp"
                 />
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/about_release_history_header"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/release_history"
-                style="@style/Base.TextAppearance.AppCompat.Title"/>
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Title"/>
 
             <delit.piwigoclient.ui.common.list.StaticListView
                 android:id="@+id/about_release_history"
@@ -64,7 +58,7 @@
                 android:layout_marginBottom="5dp"
                 />
 
-        </LinearLayout>
+        </android.support.v7.widget.LinearLayoutCompat>
 
 
     </ScrollView>

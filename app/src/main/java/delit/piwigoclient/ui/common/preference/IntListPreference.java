@@ -1,11 +1,16 @@
 package delit.piwigoclient.ui.common.preference;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.IBinder;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.view.inputmethod.InputMethodManager;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -93,5 +98,16 @@ public class IntListPreference extends MappedListPreference<Integer> {
             // need to persist the default
             return persistInt(Integer.MIN_VALUE);
         }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        super.onClick(dialog, which);
+    }
+
+    public void hideKeyboardFrom(Context context, IBinder windowToken) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(windowToken, 0);
     }
 }

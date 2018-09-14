@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--delit.piwigoclient.ui.common.list.Checkable -->
+<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp">
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/heading_text"
+        android:text="some heading"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Headline"/>
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="7dp"
+        android:background="@color/colorPrimaryDark"/>
+</android.support.v7.widget.LinearLayoutCompat>

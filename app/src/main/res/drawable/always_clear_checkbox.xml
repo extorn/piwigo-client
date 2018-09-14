@@ -9,7 +9,7 @@
         android:drawable="@drawable/ic_check_box_accent_24dp" />
 
     <item android:state_checked="false" android:state_enabled="true"
-        android:drawable="@drawable/ic_check_box_outline_blank_black_24dp" /> <!-- unchecked -->
+        android:drawable="@drawable/ic_check_box_outline_blank_accent_24dp" /> <!-- unchecked -->
 
     <item android:state_activated="true" android:state_enabled="false"
         android:drawable="@drawable/ic_check_box_black_24dp" />

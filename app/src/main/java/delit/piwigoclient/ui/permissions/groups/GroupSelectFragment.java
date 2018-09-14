@@ -120,9 +120,13 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     }
 
     @Override
+    protected String buildPageHeading() {
+        return getString(R.string.groups_heading);
+    }
+
+    @Override
     protected void setPageHeading(TextView headingField) {
-        headingField.setText(R.string.groups_heading);
-        headingField.setVisibility(View.VISIBLE);
+        headingField.setVisibility(View.GONE);
     }
 
     @Override

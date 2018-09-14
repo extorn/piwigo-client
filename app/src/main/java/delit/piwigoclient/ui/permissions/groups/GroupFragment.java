@@ -121,6 +121,11 @@ public class GroupFragment extends MyFragment {
     }
 
     @Override
+    protected String buildPageHeading() {
+        return getString(R.string.group_heading);
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         EventBus.getDefault().register(this);

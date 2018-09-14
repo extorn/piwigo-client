@@ -9,45 +9,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <android.support.v7.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/createGallery_pageTitle"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            android:layout_margin="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/createGallery_pageTitle" />
-
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/createGallery_parentGalleryTitle"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/createGallery_parentGalleryTitle" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/createGallery_parentGallery"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@drawable/edit_text_color_selector"
             android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="some gallery name"/>
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/createGallery_galleryNameTitle"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/createGallery_galleryNameTitle" />
 
-        <EditText
+        <android.support.v7.widget.AppCompatEditText
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
             android:id="@+id/createGallery_galleryName"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
@@ -57,15 +49,16 @@
             android:maxLines="1"
             android:text="" />
 
-        <TextView
+        <android.support.v7.widget.AppCompatTextView
             android:id="@+id/createGallery_galleryDescriptionTitle"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/createGallery_galleryDescriptionTitle" />
 
-        <EditText
+        <android.support.v7.widget.AppCompatEditText
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
             android:id="@+id/createGallery_galleryDescription"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
@@ -74,24 +67,24 @@
             android:inputType="textMultiLine"
             android:text="" />
 
-        <Switch
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/createGallery_galleryCommentsAllowed"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/createGallery_galleryCommentsAllowed" />
 
-        <Switch
+        <android.support.v7.widget.SwitchCompat
             android:id="@+id/createGallery_galleryIsPrivate"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checked="false"
             android:text="@string/createGallery_galleryIsPrivate" />
 
-        <LinearLayout
+        <android.support.v7.widget.LinearLayoutCompat
             android:id="@+id/createGallery_privatePermissions"
             android:visibility="visible"
             android:layout_width="match_parent"
@@ -99,9 +92,9 @@
             android:layout_weight="0.5"
             android:orientation="vertical">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/createGallery_permissions_allowedGroupsTitle"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -118,14 +111,14 @@
                 android:gravity="center_vertical"
                 android:textAppearance="?android:attr/textAppearanceMediumInverse"
                 android:text="@string/none_selected" />
-            <!--<Button
+            <!--<android.support.v7.widget.AppCompatButton
                 android:id="@+id/createGallery_permissions_allowedGroups"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/none_selected"/>-->
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/createGallery_permissions_allowedUsersTitle"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -137,21 +130,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine|textNoSuggestions"
-                android:textColor="?attr/editTextColor"
                 android:background="?attr/editTextBackground"
                 android:gravity="center_vertical"
-                android:textAppearance="?android:attr/textAppearanceMediumInverse"
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2.Clickable"
                 android:text="@string/none_selected" />
-        </LinearLayout>
+        </android.support.v7.widget.LinearLayoutCompat>
 
-        <Button
+        <android.support.v7.widget.AppCompatButton
             android:id="@+id/createGallery_createGalleryButton"
             android:layout_gravity="end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/createGallery_createGalleryButtonTitle" />
 
-    </LinearLayout>
+    </android.support.v7.widget.LinearLayoutCompat>
 
     </ScrollView>
 

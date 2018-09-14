@@ -71,13 +71,7 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
                 imageLoader.setUriToLoad(newItem.getThumbnailUrl());
             }
         }
-        if (!parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
-            if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-                ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
-            } else {
-                ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
-            }
-        }
+        ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
     }
 
     @Override

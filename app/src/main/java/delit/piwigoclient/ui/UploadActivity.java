@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -60,6 +61,7 @@ public class UploadActivity extends MyActivity {
     private final HashMap<String, String> errors = new HashMap<>();
     private int fileSelectionEventId;
     private boolean startedWithPermissions;
+    private Toolbar toolbar;
 
     @Override
     public void onStart() {
@@ -112,28 +114,16 @@ public class UploadActivity extends MyActivity {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
             setContentView(R.layout.activity_upload);
-            addUploadingAsFieldsIfAppropriate();
+            toolbar = findViewById(R.id.toolbar);
+            toolbar.setTitle(R.string.upload_page_title);
+            setSupportActionBar(toolbar);
             showUploadFragment(true, connectionPrefs);
-        }
-    }
-
-    private void addUploadingAsFieldsIfAppropriate() {
-        TextView uploadingAsLabelField = findViewById(R.id.upload_username_label);
-        TextView uploadingAsField = findViewById(R.id.upload_username);
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            uploadingAsField.setText(sessionDetails.getUsername());
-            uploadingAsField.setVisibility(View.VISIBLE);
-            uploadingAsLabelField.setVisibility(View.VISIBLE);
-        } else {
-            uploadingAsField.setVisibility(View.GONE);
-            uploadingAsLabelField.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.upload_details);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
         if (fragment instanceof UploadFragment && fragment.isAdded()) {
             finish();
         } else {
@@ -394,7 +384,7 @@ public class UploadActivity extends MyActivity {
 
         checkLicenceIfNeeded();
 
-        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.upload_details);
+        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
         String lastFragmentName = "";
         if (lastFragment != null) {
             lastFragmentName = lastFragment.getTag();
@@ -407,9 +397,7 @@ public class UploadActivity extends MyActivity {
 //        TODO maybe should be using current fragment classname when adding to backstack rather than one being replaced... hmmmm
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         tx.addToBackStack(f.getClass().getName());
-        tx.replace(R.id.upload_details, f, f.getClass().getName()).commit();
-
-        addUploadingAsFieldsIfAppropriate();
+        tx.replace(R.id.main_view, f, f.getClass().getName()).commit();
     }
 
     @Override

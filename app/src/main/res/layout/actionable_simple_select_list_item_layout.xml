@@ -13,7 +13,7 @@
         android:checked="false"
         android:clickable="false"
         android:focusable="false"/>
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/actionable_list_item_text"
         android:layout_marginStart="5dp"
         android:layout_width="match_parent"
@@ -23,7 +23,8 @@
         android:layout_toEndOf="@id/actionable_list_item_checked"
         android:layout_toStartOf="@+id/actionable_list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
-        android:text="dummy text"/>
+        android:text="dummy text"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/actionable_list_item_delete_button"

@@ -1,8 +1,19 @@
 package delit.piwigoclient.ui.common.preference;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 
 /**
  * Created by gareth on 26/01/18.
@@ -47,7 +58,13 @@ public class EditTextPreference extends android.preference.EditTextPreference {
     }
 
     @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        super.onDialogClosed(positiveResult);
+    public void onClick(DialogInterface dialog, int which) {
+        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        super.onClick(dialog, which);
+    }
+
+    public void hideKeyboardFrom(Context context, IBinder windowToken) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(windowToken, 0);
     }
 }

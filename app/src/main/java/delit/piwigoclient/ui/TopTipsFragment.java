@@ -45,4 +45,9 @@ public class TopTipsFragment extends MyFragment {
         }
         return view;
     }
+
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.top_tips_heading);
+    }
 }

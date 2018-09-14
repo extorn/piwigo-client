@@ -163,12 +163,8 @@ public class ViewTagFragment extends MyFragment {
             addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
         }
 
-        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
         boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
 
-        boolean showLargeAlbumThumbnails = prefs.getBoolean(getString(R.string.preference_gallery_show_large_thumbnail_key), getResources().getBoolean(R.bool.preference_gallery_show_large_thumbnail_default));
-
-        boolean useMasonryStyle = prefs.getBoolean(getString(R.string.preference_gallery_masonry_view_key), getResources().getBoolean(R.bool.preference_gallery_masonry_view_default));
 
         boolean showResourceNames = prefs.getBoolean(getString(R.string.preference_gallery_show_image_name_key), getResources().getBoolean(R.bool.preference_gallery_show_image_name_default));
 
@@ -181,9 +177,6 @@ public class ViewTagFragment extends MyFragment {
 
         viewPrefs.selectable(getMultiSelectionAllowed(), false);
         viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
-        viewPrefs.withDarkMode(useDarkMode);
-        viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
-        viewPrefs.withMasonryStyle(useMasonryStyle);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
 //        viewPrefs.withAlbumWidth(getScreenWidth() / albumsPerRow);

@@ -109,6 +109,11 @@ public class CommonPreferencesFragment extends MyFragment {
         return view;
     }
 
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.preferences_overall_heading);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {

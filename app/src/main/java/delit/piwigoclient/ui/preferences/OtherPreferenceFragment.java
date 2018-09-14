@@ -50,7 +50,7 @@ public class OtherPreferenceFragment extends MyPreferenceFragment {
         } else {
             screenWidth = getScreenHeightInches();
         }
-        int columnsToShow = (int) Math.round(screenWidth - (screenWidth % 0.75)); // allow a minimum of 0.75 inch per column
+        int columnsToShow = (int) Math.max(1, Math.round(screenWidth / 1)); // allow a minimum of 1 inch per column
         return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 
@@ -66,7 +66,7 @@ public class OtherPreferenceFragment extends MyPreferenceFragment {
         } else {
             screenWidth = getScreenHeightInches();
         }
-        int columnsToShow = (int) Math.round(screenWidth - (screenWidth % 0.1)); // allow a minimum of 1 inch per column
+        int columnsToShow = Math.max(1, Math.round(screenWidth / 2)); // allow a minimum of 2 inch per column
         return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 

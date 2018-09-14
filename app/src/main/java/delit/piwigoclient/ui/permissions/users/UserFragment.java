@@ -242,6 +242,11 @@ public class UserFragment extends MyFragment {
 
     }
 
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.user_user_heading);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

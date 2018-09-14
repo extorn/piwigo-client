@@ -40,7 +40,7 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
 
     private void addResourcesToIndex(int fromIdx, int selectedItem) {
         for (int i = fromIdx; i < gallery.getItemCount(); i++) {
-            if (gallery.getItemByIdx(i) instanceof CategoryItem) {
+            if (!(gallery.getItemByIdx(i) instanceof ResourceItem)) {
                 continue;
             }
             if (!shouldShowVideos && gallery.getItemByIdx(i) instanceof VideoResourceItem && i != selectedItem) {
@@ -128,13 +128,18 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         SlideshowItemFragment fragment = (SlideshowItemFragment) super.instantiateItem(container, position);
         if (fragment != null && position == ((ViewPager) container).getCurrentItem()) {
-            fragment.onPageSelected();
             if (lastPosition >= 0) {
                 onPageDeselected(lastPosition);
             }
             lastPosition = position;
         }
         return fragment;
+    }
+
+    @Override
+    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        super.setPrimaryItem(container, position, object);
+        ((SlideshowItemFragment)getActiveFragment(position)).onPageSelected();
     }
 
     public void onPageSelected(int position) {

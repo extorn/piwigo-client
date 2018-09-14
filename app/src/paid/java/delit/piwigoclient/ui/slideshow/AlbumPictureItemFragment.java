@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import android.widget.TabHost;
 
 import com.drew.metadata.Directory;
@@ -69,27 +70,10 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
     }
 
     private void setupExifDataTab(View exifTabContentView, Metadata metadata) {
-        RecyclerView exifDataList = exifTabContentView.findViewById(R.id.exifDataList);
+        ExpandableListView exifDataList = exifTabContentView.findViewById(R.id.exifDataList);
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences();
         prefs.readonly();
-        ExifDataListAdapter exifDataListAdapter = new ExifDataListAdapter(null, prefs);
-        List<ExifDataItem> data = new ArrayList<>();
-        if(metadata != null) {
-            for (Directory directory : metadata.getDirectories()) {
-                for (Tag tag : directory.getTags()) {
-                    data.add(new ExifDataItem(String.format("[%s] - %s", directory.getName(), tag.getTagName()), tag.getDescription()));
-                }
-                if (directory.hasErrors()) {
-                    for (String error : directory.getErrors()) {
-                        data.add(new ExifDataItem("ERROR", error));
-                    }
-                }
-            }
-        } else {
-            data.add(new ExifDataItem("Exif Data : ", getString(R.string.picture_resource_exif_data_unavailable)));
-        }
-        exifDataListAdapter.setData(data);
-        exifDataList.setLayoutManager(new GridLayoutManager(getContext(), 2, RecyclerView.VERTICAL, false));
+        ExifDataListAdapter exifDataListAdapter = ExifDataListAdapter.newAdapter(getContext(), metadata);
         exifDataList.setAdapter(exifDataListAdapter);
     }
 }
