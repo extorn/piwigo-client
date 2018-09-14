@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.preferences;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
@@ -172,7 +173,10 @@ public class AutoUploadJobsPreference extends DialogPreference {
         }
         showDialogOnCreate = true;
         trackableEventManager.postTrackedEvent(new AutoUploadJobViewRequestedEvent(jobId));
-        getDialog().dismiss();
+        Dialog d = getDialog();
+        if(d != null) {
+            d.dismiss();
+        }
     }
 
     private int getNextJobId() {
