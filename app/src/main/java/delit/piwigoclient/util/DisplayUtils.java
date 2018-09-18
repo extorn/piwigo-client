@@ -1,6 +1,9 @@
 package delit.piwigoclient.util;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
@@ -9,8 +12,11 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 /**
  * Created by gareth on 30/05/17.
@@ -133,5 +139,24 @@ public class DisplayUtils {
         display.getRealSize(size);
 
         return size;
+    }
+
+    public static boolean hideKeyboardFrom(Context context, DialogInterface dialog) {
+        if(dialog == null) {
+            return false;
+        }
+        Window window = ((AlertDialog)dialog).getWindow();
+        if(window == null) {
+            return false;
+        }
+        View attachedView = window.getDecorView();
+        if(attachedView == null) {
+            return false;
+        }
+
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(attachedView.getWindowToken(), 0);
+        return true;
+
     }
 }

@@ -10,6 +10,7 @@
 
     <!-- on primary + on background + on surface - white-->
     <color name="on_primary">#ffffff</color>
+    <color name="on_primary_dull">#FFFF0000</color>
 
     <color name="colorSecondary">#FF90AAD4</color>
     <color name="red">#FFFF0000</color><!--test-->

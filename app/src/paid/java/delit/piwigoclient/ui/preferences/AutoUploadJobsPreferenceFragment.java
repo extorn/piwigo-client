@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.preference.Preference;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,13 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
     private View view;
 
     public AutoUploadJobsPreferenceFragment(){}
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        // Load the preferences from an XML resource
+        setPreferencesFromResource(R.xml.pref_auto_upload_jobs, rootKey);
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(prefChangeListener);
+    }
 
     public static AutoUploadJobsPreferenceFragment newInstance() {
         AutoUploadJobsPreferenceFragment fragment = new AutoUploadJobsPreferenceFragment();
@@ -65,12 +74,16 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
     };
 
     @Override
+    protected DialogFragment onDisplayCustomPreferenceDialog(Preference preference) {
+        if(preference instanceof AutoUploadJobsPreference) {
+            return AutoUploadJobsPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+        }
+        return super.onDisplayCustomPreferenceDialog(preference);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(getPreferenceScreen() == null) {
-            addPreferencesFromResource(R.xml.pref_auto_upload_jobs);
-            getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(prefChangeListener);
-        }
         setHasOptionsMenu(true);
     }
 

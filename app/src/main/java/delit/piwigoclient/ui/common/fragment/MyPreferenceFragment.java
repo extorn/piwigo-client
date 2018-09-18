@@ -2,31 +2,47 @@ package delit.piwigoclient.ui.common.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.inputmethodservice.InputMethodService;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 
 import com.crashlytics.android.Crashlytics;
-import com.github.machinarius.preferencefragment.PreferenceFragment;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.preference.ClientCertificatePreference;
+import delit.piwigoclient.ui.common.preference.CustomEditTextPreference;
+import delit.piwigoclient.ui.common.preference.CustomEditTextPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.EditableListPreference;
+import delit.piwigoclient.ui.common.preference.EditableListPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.IntListPreference;
+import delit.piwigoclient.ui.common.preference.KeystorePreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.MappedListPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
+import delit.piwigoclient.ui.common.preference.NumberPickerPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.SecureEditTextPreference;
+import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
+import delit.piwigoclient.ui.preferences.ServerAlbumListPreference;
+import delit.piwigoclient.ui.preferences.ServerAlbumListPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.preferences.ServerConnectionsListPreference;
+import delit.piwigoclient.ui.preferences.ServerConnectionsListPreferenceDialogFragmentCompat;
 
 /**
  * Created by gareth on 26/05/17.
  */
 
-public class MyPreferenceFragment extends PreferenceFragment {
+public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
     private UIHelper uiHelper;
     private Context c;
+    protected static final String DIALOG_FRAGMENT_TAG =
+            "android.support.v7.preference.PreferenceFragment.DIALOG";
 
     protected UIHelper getUiHelper() {
         return uiHelper;
@@ -139,4 +155,39 @@ public class MyPreferenceFragment extends PreferenceFragment {
         uiHelper.showNextQueuedMessage();
     }
 
+    protected DialogFragment onDisplayCustomPreferenceDialog(Preference preference) {
+        return null;
+    }
+
+    @Override
+    public final void onDisplayPreferenceDialog(Preference preference) {
+        DialogFragment f = onDisplayCustomPreferenceDialog(preference);
+        if(f == null) {
+            if (preference instanceof ServerConnectionsListPreference) {
+                f = ServerConnectionsListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            } else if (preference instanceof ServerAlbumListPreference) {
+                f = ServerAlbumListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            } else if (preference instanceof IntListPreference) {
+                f = MappedListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            } else if (preference instanceof EditableListPreference) {
+                f = EditableListPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            } else if (preference instanceof SecureEditTextPreference) {
+                f = CustomEditTextPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            } else if (preference instanceof CustomEditTextPreference) {
+                f = CustomEditTextPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            } else if (preference instanceof TrustedCaCertificatesPreference) {
+                f = KeystorePreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            } else if (preference instanceof ClientCertificatePreference) {
+                f = KeystorePreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            }  else if (preference instanceof NumberPickerPreference) {
+                f = NumberPickerPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+            }
+        }
+        if(f != null) {
+            f.setTargetFragment(this, 0);
+            f.show(this.getFragmentManager(), DIALOG_FRAGMENT_TAG);
+        } else {
+            super.onDisplayPreferenceDialog(preference);
+        }
+    }
 }

@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,34 +56,39 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         getPreferenceManager().setSharedPreferencesName(AutoUploadJobConfig.getSharedPreferencesName(jobId));
     }
 
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        // Load the preferences from an XML resource
+        setPreferencesFromResource(R.xml.pref_auto_upload_job, rootKey);
+    }
+
 
     /**
      * disable this job as long as at least one preference is not valid
      */
     private void invokePreferenceValuesValidation(boolean isFinalValidationCheck) {
         SharedPreferences appPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        boolean allPreferencesValid = true;
+        boolean allPreferencesValid;
         ConnectionPreferences.ProfilePreferences profilePrefs;
         // check server connection details
 
+        String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_key);
+        allPreferencesValid = serverProfile != null;
         if(allPreferencesValid) {
-            String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_key);
-            allPreferencesValid &= serverProfile != null;
-            if(allPreferencesValid) {
-                profilePrefs = ConnectionPreferences.getPreferences(serverProfile);
-                String serverName = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
-                allPreferencesValid &= serverName != null;
-            }
+            profilePrefs = ConnectionPreferences.getPreferences(serverProfile);
+            String serverName = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
+            allPreferencesValid = serverName != null;
         }
+
         // check local folder
         if(allPreferencesValid) {
             String localFolder = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_local_folder_key);
-            allPreferencesValid &= localFolder != null && new File(localFolder).exists();
+            allPreferencesValid = localFolder != null && new File(localFolder).exists();
         }
         // check remote privacy level
         if(allPreferencesValid) {
             int privacyLevel = getPreferenceValueOrMinInt(R.string.preference_data_upload_automatic_job_privacy_level_key);
-            allPreferencesValid &= privacyLevel != Integer.MIN_VALUE;
+            allPreferencesValid = allPreferencesValid & privacyLevel != Integer.MIN_VALUE;
         }
 
         updateJobValidPreferenceIfNeeded(allPreferencesValid, isFinalValidationCheck);
@@ -156,9 +161,6 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(getPreferenceScreen() == null) {
-            addPreferencesFromResource(R.xml.pref_auto_upload_job);
-        }
         setHasOptionsMenu(true);
 
         invokePreferenceValuesValidation(false);

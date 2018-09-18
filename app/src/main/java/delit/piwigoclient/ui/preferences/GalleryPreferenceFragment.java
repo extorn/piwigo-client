@@ -5,13 +5,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.SwitchPreference;
+import android.support.v14.preference.SwitchPreference;
+import android.support.v7.preference.Preference;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -28,8 +26,6 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
-import delit.piwigoclient.ui.events.AlbumAlteredEvent;
-import delit.piwigoclient.ui.events.ThemeAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.IOUtils;
 
@@ -144,18 +140,8 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        if (view != null) {
-            return view;
-        }
-        view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
-        addPreferencesFromResource(R.xml.pref_page_gallery);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.pref_page_gallery, rootKey);
         setHasOptionsMenu(true);
 
         // Bind the summaries of EditText/List/Dialog/Ringtone activity_preferences
@@ -213,7 +199,6 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
 
             }
         });
-        return view;
     }
 
     private String suffixCacheSize(String basicString, long cacheSizeBytes) {

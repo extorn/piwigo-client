@@ -6,13 +6,10 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
-import android.preference.SwitchPreference;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v14.preference.SwitchPreference;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -63,7 +60,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     private transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
     private boolean initialising = false;
     private boolean loginOnLogout;
-    private View view;
+    private String preferencesKey;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PermissionsWantedResponse event) {
@@ -102,18 +99,8 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         cacheLevelPrefListener.onPreferenceChange(cacheLevelPref, getPreferenceValue(cacheLevelPref.getKey()));
     }
 
-    @Override
-    public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        if (view != null) {
-            return view;
-        }
-        view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
-        buildPreferencesViewAndInitialise();
-        return view;
-    }
-
-    private void buildPreferencesViewAndInitialise() {
-        addPreferencesFromResource(R.xml.pref_page_connection);
+    private void buildPreferencesViewAndInitialise(String rootKey) {
+        setPreferencesFromResource(R.xml.pref_page_connection, rootKey);
         setHasOptionsMenu(true);
 
         // Bind the summaries of EditText/List/Dialog/Ringtone activity_preferences
@@ -150,7 +137,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
                     // refresh all preference values on the page.
                     setPreferenceScreen(null);
-                    buildPreferencesViewAndInitialise();
+                    buildPreferencesViewAndInitialise(preferencesKey);
                     ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
                     testLogin(connectionPrefs);
                     initialising = false;
@@ -190,7 +177,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         trustedCertsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValueObject) {
-                KeyStore currentValue = ((TrustedCaCertificatesPreference) preference).getValue();
+                KeyStore currentValue = ((TrustedCaCertificatesPreference) preference).getKeystore();
                 KeyStore newValue = (KeyStore) newValueObject;
                 Set<String> newAliases = X509Utils.listAliasesInStore(newValue);
                 Set<String> removedCertThumbprints = SetUtils.difference(X509Utils.listAliasesInStore(currentValue), newAliases);
@@ -287,6 +274,13 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             loginOnLogout = savedInstanceState.getBoolean(STATE_RELOGIN_NEEDED);
         }
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        // Load the preferences from an XML resource
+        preferencesKey = rootKey;
+        buildPreferencesViewAndInitialise(rootKey);
     }
 
     @Override

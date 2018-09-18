@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
@@ -55,18 +53,8 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        if (view != null) {
-            return view;
-        }
-        view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
-        addPreferencesFromResource(R.xml.pref_page_upload);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.pref_page_upload, rootKey);
         setHasOptionsMenu(true);
 
         NumberPickerPreference pref = (NumberPickerPreference) findPreference(R.string.preference_data_upload_preferredColumnsLandscape_key);
@@ -76,7 +64,6 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
         pref = (NumberPickerPreference) findPreference(R.string.preference_data_upload_preferredColumnsPortrait_key);
         defaultVal = getDefaultImagesColumnCount(Configuration.ORIENTATION_PORTRAIT);
         pref.updateDefaultValue(defaultVal);
-        return view;
     }
 
 }

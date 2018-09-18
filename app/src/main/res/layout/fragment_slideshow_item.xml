@@ -83,7 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         slidingLayer:changeStateOnTap="true"
-        slidingLayer:offsetDistance="600dp"
+        slidingLayer:offsetDistance="16dp"
         slidingLayer:shadowDrawable="@drawable/sidebar_shadow"
         slidingLayer:shadowSize="20dp"
         slidingLayer:stickTo="bottom">

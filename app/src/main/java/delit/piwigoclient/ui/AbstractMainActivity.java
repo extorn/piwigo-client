@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -293,8 +292,10 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void showPreferences() {
-        PreferencesFragment fragment = new PreferencesFragment();
-        showFragmentNow(fragment);
+        Intent i = new Intent(this, PreferencesActivity.class);
+        startActivity(i);
+//        PreferencesFragment fragment = new PreferencesFragment();
+//        showFragmentNow(fragment);
     }
 
     private void showEula() {
@@ -351,11 +352,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-    }
-
-    protected void showLoginFragment() {
-        LoginFragment fragment = LoginFragment.newInstance();
-        showFragmentNow(fragment);
     }
 
     private void showTopTips() {

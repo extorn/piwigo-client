@@ -1,52 +1,47 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.DialogPreference;
-import android.preference.PreferenceManager;
+import android.support.v7.preference.DialogPreference;
+import android.support.v7.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.TextView;
 
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.common.util.Strings;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
-import delit.piwigoclient.ui.common.list.MultiSourceListAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.util.ObjectUtils;
 
 /**
  * Created by gareth on 15/07/17.
  */
 
 public class ServerConnectionsListPreference extends DialogPreference {
+    private String value;
 
-    private boolean mValueSet;
-    private ListView itemListView;
-    private String mValue;
+    public ServerConnectionsListPreference(Context context, AttributeSet attrs, int defStyleAttr,  int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        initPreference(context, attrs);
+    }
 
     public ServerConnectionsListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initPreference(context, attrs);
     }
 
     public ServerConnectionsListPreference(Context context, AttributeSet attrs) {
-        this(context, attrs, android.R.attr.dialogPreferenceStyle);
+        super(context, attrs);
+        initPreference(context, attrs);
+    }
+
+    public ServerConnectionsListPreference(Context context) {
+        super(context);
+        initPreference(context, null);
+    }
+
+    private void initPreference(Context context, AttributeSet attrs) {
     }
 
     /**
@@ -55,7 +50,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
      * @return The value of the key.
      */
     public String getValue() {
-        return mValue;
+        return value;
     }
 
     /**
@@ -63,7 +58,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
      *
      * @param value The value to set for the key.
      */
-    public void setValue(String value) {
+    /*public void setValue(String value) {
         // Always persist/notify the first time.
         boolean changed = !ObjectUtils.areEqual(this.mValue, value);
         if (!mValueSet || changed) {
@@ -74,6 +69,11 @@ public class ServerConnectionsListPreference extends DialogPreference {
                 notifyChanged();
             }
         }
+    }*/
+
+    public void persistStringValue(String value)
+    {
+        persistString(value);
     }
 
     @Override
@@ -81,9 +81,9 @@ public class ServerConnectionsListPreference extends DialogPreference {
         SharedPreferences prefs = getAppSharedPreferences();
 //        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(prefs, getContext());
         ServerConnection activeConnection;
-        if (mValue != null) {
-            ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(mValue);
-            activeConnection = new ServerConnection(mValue,
+        if (value != null) {
+            ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(value);
+            activeConnection = new ServerConnection(value,
                     selectedPref.getPiwigoServerAddress(prefs, getContext()),
                     selectedPref.getPiwigoUsername(prefs, getContext()));
         } else {
@@ -92,113 +92,8 @@ public class ServerConnectionsListPreference extends DialogPreference {
         return activeConnection.getSummary(getContext());
     }
 
-    @Override
-    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-        mValue = super.getPersistedString(null);
-        View view = buildListView();
-        builder.setView(view);
-    }
-
-    private View buildListView() {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.layout_fullsize_list, null, false);
-
-        AdView adView = view.findViewById(R.id.list_adView);
-        if (AdsManager.getInstance().shouldShowAdverts()) {
-            new AdsManager.MyBannerAdListener(adView);
-        } else {
-            adView.setVisibility(View.GONE);
-        }
-
-        view.findViewById(R.id.list_action_cancel_button).setVisibility(View.GONE);
-        view.findViewById(R.id.list_action_toggle_all_button).setVisibility(View.GONE);
-
-        TextView heading = view.findViewById(R.id.heading);
-        heading.setText(R.string.piwigo_connection_profile_heading);
-        heading.setVisibility(View.VISIBLE);
-
-        itemListView = view.findViewById(R.id.list);
-
-        view.findViewById(R.id.list_action_cancel_button).setVisibility(View.GONE);
-        view.findViewById(R.id.list_action_toggle_all_button).setVisibility(View.GONE);
-        view.findViewById(R.id.list_action_add_item_button).setVisibility(View.GONE);
-        view.findViewById(R.id.list_action_save_button).setVisibility(View.GONE);
-
-        return view;
-    }
-
     private SharedPreferences getAppSharedPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
-    }
-
-    private ArrayList<ServerConnection> loadServerConnections(SharedPreferences prefs) {
-        Set<String> profiles = ConnectionPreferences.getConnectionProfileList(prefs, getContext());
-        ArrayList<ServerConnection> connections = new ArrayList<>();
-        if (profiles.size() > 0) {
-            for (String p : profiles) {
-                ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(p);
-                connections.add(new ServerConnection(p,
-                        profilePrefs.getPiwigoServerAddress(prefs, getContext()),
-                        profilePrefs.getPiwigoUsername(prefs, getContext())));
-            }
-        } else {
-            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            connections.add(new ServerConnection("",
-                    connectionPrefs.getPiwigoServerAddress(prefs, getContext()),
-                    connectionPrefs.getPiwigoUsername(prefs, getContext())));
-        }
-        return connections;
-    }
-
-    /**
-     * Override to handle the add new item action
-     */
-    protected void onSelectItemsToAddToList() {
-    }
-
-    @Override
-    protected void showDialog(Bundle state) {
-        super.showDialog(state);
-        loadListValues();
-        if (itemListView.getAdapter().getCount() == 1) {
-            // ensure the value gets set.
-            ((ServerConnectionProfilesListAdapter) itemListView.getAdapter()).selectAllItemIds();
-            onClick(getDialog(), DialogInterface.BUTTON_POSITIVE);
-            getDialog().dismiss();
-        }
-    }
-
-    private void loadListValues() {
-
-        ArrayList<ServerConnection> serverConnections = loadServerConnections(getAppSharedPreferences());
-//        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(getSharedPreferences(), getContext());
-        HashSet<Long> selectedIdx = new HashSet<>(1);
-        int idxToSelect = 0;
-        for (ServerConnection c : serverConnections) {
-            if (c.getProfileName().equals(mValue)) {
-                selectedIdx.add(Long.valueOf(idxToSelect));
-                break;
-            }
-            idxToSelect++;
-        }
-
-
-        BaseRecyclerViewAdapterPreferences viewPrefs = new BaseRecyclerViewAdapterPreferences();
-        viewPrefs.selectable(false, false);
-        ServerConnectionProfilesListAdapter adapter = new ServerConnectionProfilesListAdapter(getContext(), serverConnections, viewPrefs);
-        adapter.linkToListView(itemListView, selectedIdx, selectedIdx);
-    }
-
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        if (positiveResult) {
-            mValueSet = false; // force the value to be saved.
-            ServerConnection selectedItem = ((ServerConnectionProfilesListAdapter) itemListView.getAdapter()).getSelectedItems().iterator().next();
-
-            if (callChangeListener(selectedItem == null ? null : selectedItem.profileName)) {
-                setValue(selectedItem == null ? null : selectedItem.profileName);
-            }
-        }
     }
 
     @Override
@@ -208,7 +103,18 @@ public class ServerConnectionsListPreference extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        setValue(restoreValue ? getPersistedString("") : (String) defaultValue);
+        if (restoreValue)
+        {
+            if (defaultValue == null) {
+                value = getPersistedString("");
+            } else {
+                value = getPersistedString(defaultValue.toString());
+            }
+        }
+        else
+        {
+            value = defaultValue.toString();
+        }
     }
 
     @Override
@@ -234,7 +140,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
 
         SavedState myState = (SavedState) state;
         super.onRestoreInstanceState(myState.getSuperState());
-        setValue(myState.value);
+        persistStringValue(myState.value);
     }
 
     public static class SavedState extends BaseSavedState {
@@ -268,7 +174,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
         }
     }
 
-    private class ServerConnection {
+    protected static class ServerConnection {
 
         private String serverName;
         private String username;
@@ -304,35 +210,6 @@ public class ServerConnectionsListPreference extends DialogPreference {
         }
     }
 
-    private class ServerConnectionProfilesListAdapter extends MultiSourceListAdapter<ServerConnection, BaseRecyclerViewAdapterPreferences> {
 
-        public ServerConnectionProfilesListAdapter(Context context, ArrayList<ServerConnection> availableItems, BaseRecyclerViewAdapterPreferences adapterPrefs) {
-            super(context, availableItems, adapterPrefs);
-        }
-
-        @Override
-        public long getItemId(ServerConnection item) {
-            return getPosition(item);
-        }
-
-        @Override
-        protected int getItemViewLayoutRes() {
-            return R.layout.simple_list_item_checkable_layout;
-        }
-
-        @Override
-        protected void setViewContentForItemDisplay(View itemView, ServerConnection item, int levelInTreeOfItem) {
-            TextView nameView = itemView.findViewById(R.id.name);
-            TextView detailView = itemView.findViewById(R.id.details);
-
-            nameView.setText(item.getProfileName());
-            detailView.setText(item.getUsername() + '@' + item.getServerName());
-        }
-
-        @Override
-        protected AppCompatCheckboxTriState getAppCompatCheckboxTriState(View view) {
-            return view.findViewById(R.id.checked);
-        }
-    }
 
 }

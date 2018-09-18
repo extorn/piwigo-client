@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent">
     <!-- Look at this as a way of auto enable disable prefs - android:dependency="EnablePreferences" -->
     <delit.piwigoclient.ui.common.preference.EditableListPreference
         android:title="@string/preference_piwigo_connection_profile_title"
@@ -11,7 +11,7 @@
     <PreferenceCategory
     android:layout="@android:layout/preference_category"
     android:title="@string/preference_connections_category_piwigo">
-        <delit.piwigoclient.ui.common.preference.EditTextPreference
+        <delit.piwigoclient.ui.common.preference.CustomEditTextPreference
             android:capitalize="words"
             android:inputType="none"
             android:key="@string/preference_piwigo_server_address_key"
@@ -51,7 +51,7 @@
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_server_basic_auth">
-    <SwitchPreference
+    <SwitchPreferenceCompat
         android:defaultValue="@bool/preference_server_use_basic_auth_default"
         android:key="@string/preference_server_use_basic_auth_key"
         android:summary="@string/preference_server_use_basic_auth_summary"
@@ -79,7 +79,7 @@
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_trusted_server_ca">
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="@string/preference_server_use_custom_trusted_ca_certs_key"
             android:summary="@string/preference_server_use_custom_trusted_ca_certs_summary"
@@ -92,7 +92,7 @@
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_client_certificate_auth">
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="@string/preference_server_use_client_certs_key"
             android:summary="@string/preference_server_use_client_certs_summary"
@@ -106,12 +106,12 @@
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_advanced">
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="@bool/preference_server_connection_force_https_default"
             android:key="@string/preference_server_connection_force_https_key"
             android:summary="@string/preference_server_connection_force_https_summary"
             android:title="@string/preference_server_connection_force_https_title" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="@bool/preference_server_connection_allow_redirects_default"
             android:key="@string/preference_server_connection_allow_redirects_key"
             android:summary="@string/preference_server_connection_allow_redirects_summary"
