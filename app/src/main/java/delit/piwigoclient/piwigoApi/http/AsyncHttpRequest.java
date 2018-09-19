@@ -31,8 +31,6 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.net.ssl.SSLHandshakeException;
-
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpUriRequest;

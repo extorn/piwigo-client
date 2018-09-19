@@ -1,13 +1,13 @@
 package delit.piwigoclient.util;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Looper;
+import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.KeyCharacterMap;

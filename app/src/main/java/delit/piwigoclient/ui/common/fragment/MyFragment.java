@@ -22,7 +22,6 @@ import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;

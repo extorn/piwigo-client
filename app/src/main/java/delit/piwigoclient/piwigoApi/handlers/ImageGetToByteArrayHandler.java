@@ -5,8 +5,6 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.net.URI;
-
 import cz.msebera.android.httpclient.Header;
 import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;

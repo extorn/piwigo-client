@@ -1,9 +1,11 @@
 package delit.piwigoclient.ui.preferences;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.DialogPreference;
@@ -12,6 +14,7 @@ import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -270,5 +273,16 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         protected boolean canShowDialog() {
             return getDialog() != null;
         }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        super.onClick(dialog, which);
+    }
+
+    public void hideKeyboardFrom(Context context, IBinder windowToken) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(windowToken, 0);
     }
 }

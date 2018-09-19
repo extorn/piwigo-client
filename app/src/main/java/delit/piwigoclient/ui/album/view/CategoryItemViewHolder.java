@@ -1,9 +1,7 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.AppCompatImageView;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
@@ -15,7 +13,6 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.ui.common.RoundableImageView;
 
-import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 
 public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemViewHolder<S> {
@@ -72,20 +69,16 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
         }
 
 
-        if (parentAdapter.getAdapterPrefs().isShowLargeAlbumThumbnails()) {
-            float albumWidth = parentAdapter.getAdapterPrefs().getAlbumWidth();
-            if (albumWidth > 3) {
-                mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
-            } else if (albumWidth > 2.4) {
-                mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
-            } else if (albumWidth > 1.8) {
-                mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-            } else {
-                mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-            }
-        } else {
-            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
-        }
+        float albumWidth = parentAdapter.getAdapterPrefs().getAlbumWidth();
+//        if (albumWidth > 3) {
+//            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);
+//        } else if (albumWidth > 2.4) {
+//            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
+//        } else if (albumWidth > 1.8) {
+//            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+//        } else {
+//            mNameView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+//        }
 
         //String preferredThubnailSize = getParentAdapter().getAdapterPrefs().getPreferredAlbumThumbnailSize();
             /*if(!"DEFAULT".equals(preferredThubnailSize) && category.getRepresentativePictureId() != null) {

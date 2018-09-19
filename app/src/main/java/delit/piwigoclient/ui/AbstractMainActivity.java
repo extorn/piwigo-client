@@ -292,10 +292,10 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void showPreferences() {
-        Intent i = new Intent(this, PreferencesActivity.class);
-        startActivity(i);
-//        PreferencesFragment fragment = new PreferencesFragment();
-//        showFragmentNow(fragment);
+//        Intent i = new Intent(this, PreferencesActivity.class);
+//        startActivity(i);
+        PreferencesFragment fragment = new PreferencesFragment();
+        showFragmentNow(fragment);
     }
 
     private void showEula() {

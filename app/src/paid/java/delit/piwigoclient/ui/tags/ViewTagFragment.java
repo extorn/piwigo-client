@@ -254,10 +254,6 @@ public class ViewTagFragment extends MyFragment {
             return;
         }
 
-        if(viewPrefs.isUseDarkMode()) {
-            view.setBackgroundColor(Color.BLACK);
-        }
-
         retryActionButton = view.findViewById(R.id.tag_retryAction_actionButton);
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_refresh_black_24dp).into(retryActionButton);
 
@@ -292,19 +288,12 @@ public class ViewTagFragment extends MyFragment {
         }
 
         // need to wait for the tag model to be initialised.
-        RecyclerView.LayoutManager gridLayoutMan;
-        if(viewPrefs.isUseMasonryStyle()) {
-            gridLayoutMan = new StaggeredGridLayoutManager(colsOnScreen, StaggeredGridLayoutManager.VERTICAL);
-        } else {
-            gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
-        }
+        GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
+        int colsPerImage = colsOnScreen / imagesOnScreen;
+        gridLayoutMan.setSpanSizeLookup(new SpanSizeLookup(tagModel, colsPerImage));
 
         recyclerView.setLayoutManager(gridLayoutMan);
 
-        if(!viewPrefs.isUseMasonryStyle()) {
-            int colsPerImage = colsOnScreen / imagesOnScreen;
-            ((GridLayoutManager)gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(tagModel, colsPerImage));
-        }
 
         viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), tagModel, new AlbumViewAdapterListener(), viewPrefs);
 

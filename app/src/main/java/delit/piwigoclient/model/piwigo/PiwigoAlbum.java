@@ -1,7 +1,5 @@
 package delit.piwigoclient.model.piwigo;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;

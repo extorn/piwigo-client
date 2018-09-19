@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.Preference;
-import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -20,6 +19,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -81,18 +81,6 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         return getActivity().getApplicationContext();
     }
 
-    private float getScreenWidthInches() {
-        DisplayMetrics dm = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.widthPixels / dm.xdpi;
-    }
-
-    private float getScreenHeightInches() {
-        DisplayMetrics dm = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.heightPixels / dm.xdpi;
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
@@ -107,38 +95,6 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    /**
-     * @param orientationId {@link Configuration.ORIENTATION_LANDSCAPE} or {@link Configuration.ORIENTATION_PORTRAIT}
-     * @return default column count
-     */
-    @SuppressWarnings("JavadocReference")
-    private int getDefaultImagesColumnCount(int orientationId) {
-        float screenWidth;
-        if (getResources().getConfiguration().orientation == orientationId) {
-            screenWidth = getScreenWidthInches();
-        } else {
-            screenWidth = getScreenHeightInches();
-        }
-        int columnsToShow = Math.max(1, Math.round(screenWidth)); // allow a minimum of 1 inch per column
-        return Math.max(1, columnsToShow); // never allow less than one column by default.
-    }
-
-    /**
-     * @param orientationId {@link Configuration.ORIENTATION_LANDSCAPE} or {@link Configuration.ORIENTATION_PORTRAIT}
-     * @return default column count
-     */
-    @SuppressWarnings("JavadocReference")
-    private int getDefaultAlbumsColumnCount(int orientationId) {
-        float screenWidth;
-        if (getResources().getConfiguration().orientation == orientationId) {
-            screenWidth = getScreenWidthInches();
-        } else {
-            screenWidth = getScreenHeightInches();
-        }
-        int columnsToShow = Math.max(1, Math.round(screenWidth / 2)); // allow a minimum of 2 inch per column
-        return Math.max(1, columnsToShow); // never allow less than one column by default.
-    }
-
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.pref_page_gallery, rootKey);
@@ -150,19 +106,19 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         // guidelines.
 
         NumberPickerPreference pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_albums_preferredColumnsLandscape_key);
-        int defaultVal = getDefaultAlbumsColumnCount(Configuration.ORIENTATION_LANDSCAPE);
+        int defaultVal = AlbumViewPreferences.getDefaultAlbumColumnCount(getActivity(), Configuration.ORIENTATION_LANDSCAPE);
         pref.updateDefaultValue(defaultVal);
 
         pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_images_preferredColumnsLandscape_key);
-        defaultVal = getDefaultImagesColumnCount(Configuration.ORIENTATION_LANDSCAPE);
+        defaultVal = AlbumViewPreferences.getDefaultImagesColumnCount(getActivity(), Configuration.ORIENTATION_LANDSCAPE);
         pref.updateDefaultValue(defaultVal);
 
         pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_albums_preferredColumnsPortrait_key);
-        defaultVal = getDefaultAlbumsColumnCount(Configuration.ORIENTATION_PORTRAIT);
+        defaultVal = AlbumViewPreferences.getDefaultAlbumColumnCount(getActivity(), Configuration.ORIENTATION_PORTRAIT);
         pref.updateDefaultValue(defaultVal);
 
         pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_images_preferredColumnsPortrait_key);
-        defaultVal = getDefaultImagesColumnCount(Configuration.ORIENTATION_PORTRAIT);
+        defaultVal = AlbumViewPreferences.getDefaultImagesColumnCount(getActivity(), Configuration.ORIENTATION_PORTRAIT);
         pref.updateDefaultValue(defaultVal);
 
         findPreference(R.string.preference_gallery_album_thumbnail_size_key).setOnPreferenceChangeListener(selectedImageSizeNativeSupportCheckListener);
@@ -178,7 +134,6 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
                 getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
                 preference.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
                 return true;
-
             }
         });
 

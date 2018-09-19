@@ -3,7 +3,6 @@ package delit.piwigoclient.business;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;

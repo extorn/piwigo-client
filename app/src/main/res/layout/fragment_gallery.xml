@@ -31,11 +31,10 @@
                 android:id="@+id/gallery_details_name_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gallery name"
                 android:layout_alignParentStart="true"
                 android:layout_margin="5dp"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Title"
-                />
+                android:text="Gallery name"
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Title" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/gallery_details_description_header"

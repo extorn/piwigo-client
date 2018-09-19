@@ -21,12 +21,9 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
     private Date recentlyAlteredThresholdDate;
     private String preferredThumbnailSize;
     private String preferredAlbumThumbnailSize;
-    private boolean useDarkMode;
     private boolean showAlbumThumbnailsZoomed;
-    private boolean showLargeAlbumThumbnails;
     private float albumWidth;
     private boolean showResourceNames;
-    private boolean useMasonryStyle;
 
     public AlbumItemRecyclerViewAdapterPreferences() {
     }
@@ -37,12 +34,9 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         b.putSerializable("recentlyAlteredThresholdDate", recentlyAlteredThresholdDate);
         b.putString("preferredThumbnailSize", preferredThumbnailSize);
         b.putString("preferredAlbumThumbnailSize", preferredAlbumThumbnailSize);
-        b.putBoolean("useDarkMode", useDarkMode);
         b.putBoolean("showAlbumThumbnailsZoomed", showAlbumThumbnailsZoomed);
-        b.putBoolean("showLargeAlbumThumbnails", showLargeAlbumThumbnails);
         b.putFloat("albumWidth", albumWidth);
         b.putBoolean("showResourceNames", showResourceNames);
-        b.putBoolean("useMasonryStyle", useMasonryStyle);
 //                b.putInt("scalingQuality", scalingQuality);
         parent.putBundle("AlbumItemRecyclerViewAdapterPreferences", b);
         super.storeToBundle(b);
@@ -55,12 +49,9 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         recentlyAlteredThresholdDate = (Date) b.getSerializable("recentlyAlteredThresholdDate");
         preferredThumbnailSize = b.getString("preferredThumbnailSize");
         preferredAlbumThumbnailSize = b.getString("preferredAlbumThumbnailSize");
-        useDarkMode = b.getBoolean("useDarkMode");
         showAlbumThumbnailsZoomed = b.getBoolean("showAlbumThumbnailsZoomed");
-        showLargeAlbumThumbnails = b.getBoolean("showLargeAlbumThumbnails");
         albumWidth = b.getFloat("albumWidth");
         showResourceNames = b.getBoolean("showResourceNames");
-        useMasonryStyle = b.getBoolean("useMasonryStyle");
 //                scalingQuality = b.getInt("scalingQuality");
         super.loadFromBundle(b);
         return this;
@@ -71,11 +62,6 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         return this;
     }
 
-    public AlbumItemRecyclerViewAdapterPreferences withDarkMode(boolean useDarkMode) {
-        this.useDarkMode = useDarkMode;
-        return this;
-    }
-
     public AlbumItemRecyclerViewAdapterPreferences withPreferredThumbnailSize(String preferredThumbnailSize) {
         this.preferredThumbnailSize = preferredThumbnailSize;
         return this;
@@ -83,11 +69,6 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
 
     public AlbumItemRecyclerViewAdapterPreferences withPreferredAlbumThumbnailSize(String preferredAlbumThumbnailSize) {
         this.preferredAlbumThumbnailSize = preferredAlbumThumbnailSize;
-        return this;
-    }
-
-    public AlbumItemRecyclerViewAdapterPreferences withLargeAlbumThumbnails(boolean showLargeAlbumThumbnails) {
-        this.showLargeAlbumThumbnails = showLargeAlbumThumbnails;
         return this;
     }
 
@@ -103,11 +84,6 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
 
     public AlbumItemRecyclerViewAdapterPreferences withShowingAlbumNames(boolean showResourceNames) {
         this.showResourceNames = showResourceNames;
-        return this;
-    }
-
-    public AlbumItemRecyclerViewAdapterPreferences withMasonryStyle(boolean useMasonryStyle) {
-        this.useMasonryStyle = useMasonryStyle;
         return this;
     }
 
@@ -131,20 +107,8 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
         return showAlbumThumbnailsZoomed;
     }
 
-    public boolean isShowLargeAlbumThumbnails() {
-        return showLargeAlbumThumbnails;
-    }
-
-    public boolean isUseDarkMode() {
-        return useDarkMode;
-    }
-
     public boolean isShowResourceNames() {
         return showResourceNames;
-    }
-
-    public boolean isUseMasonryStyle() {
-        return useMasonryStyle;
     }
 
     public String getPreferredAlbumThumbnailSize() {

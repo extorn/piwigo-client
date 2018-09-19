@@ -25,7 +25,6 @@ import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import delit.piwigoclient.R;
 

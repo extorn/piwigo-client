@@ -13,9 +13,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-import java.net.URL;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;

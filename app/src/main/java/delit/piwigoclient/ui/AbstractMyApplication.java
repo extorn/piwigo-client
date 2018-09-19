@@ -11,8 +11,6 @@ import android.support.v7.app.AppCompatDelegate;
 import java.net.URI;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.util.ProjectUtils;
 
@@ -56,7 +54,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                 }
             }
             editor.commit();
-        } else if(prefsVersion <= 145) {
+        } else if(prefsVersion <= 146) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.remove(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key));
             editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key));

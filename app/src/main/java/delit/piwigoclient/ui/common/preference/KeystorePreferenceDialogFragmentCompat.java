@@ -1,11 +1,13 @@
 package delit.piwigoclient.ui.common.preference;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -679,5 +682,16 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             keystoreLoadOperationResult = null;
             trackedRequest = -1;
         }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        super.onClick(dialog, which);
+    }
+
+    public void hideKeyboardFrom(Context context, IBinder windowToken) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(windowToken, 0);
     }
 }

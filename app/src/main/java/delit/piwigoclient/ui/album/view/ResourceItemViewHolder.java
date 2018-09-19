@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
@@ -79,7 +78,6 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
         super.cacheViewFieldsAndConfigure();
         checkBox = itemView.findViewById(R.id.checked);
         mTypeIndicatorImg = itemView.findViewById(R.id.type_indicator);
-        setItemBackground(viewType, this);
     }
 
     @Override
@@ -89,31 +87,6 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
         UIHelper.recycleImageViewContent(mTypeIndicatorImg);
     }
 
-    private void setItemBackground(int viewType, AlbumItemViewHolder viewHolder) {
-        if (parentAdapter.getAdapterPrefs().isUseDarkMode()) {
-            if (parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
-                // needed for the background behind the title text
-//                if (parentAdapter.getAdapterPrefs().isShowResourceNames()) {
-//                    itemView.setBackgroundResource(R.color.white);
-//                } else {
-//                    itemView.setBackgroundResource(R.color.black_overlay);
-//                }
-                // needed for images that don't load correctly.
-//                mImageView.setBackgroundColor(Color.WHITE);
-            } else {
-//                itemView.setBackgroundColor(Color.WHITE);
-                // this doesn't exist on a masonry view
-//                mImageContainer.setBackgroundResource(R.color.black);
-            }
-        } else {
-            if (parentAdapter.getAdapterPrefs().isUseMasonryStyle()) {
-            } else {
-//                mImageView.setBackgroundColor(Color.WHITE);
-//                mImageContainer.setBackgroundResource(R.drawable.curved_corners_layout_bg_white);
-//                mNameView.setBackgroundResource(R.color.white);
-            }
-        }
-    }
 
     @Override
     public void setChecked(boolean checked) {

@@ -1,11 +1,9 @@
 package delit.piwigoclient.ui.album.view;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -14,7 +12,6 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,6 +46,7 @@ import java.util.Set;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -97,7 +95,6 @@ import delit.piwigoclient.ui.events.BadRequestUsesRedirectionServerEvent;
 import delit.piwigoclient.ui.events.BadRequestUsingHttpToHttpsServerEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
-import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
@@ -130,14 +127,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
     private static final String STATE_RECYCLER_LAYOUT = "recyclerLayout";
+
     private static final int UPDATE_IN_PROGRESS = 1;
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
     private static final int UPDATE_SETTING_REMOVING_PERMISSIONS = 3;
     private static final int UPDATE_NOT_RUNNING = 0;
 
-    private static transient PiwigoAlbumAdminList albumAdminList;
-    private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
-    private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     AlbumItemRecyclerViewAdapter viewAdapter;
     FloatingActionButton bulkActionButtonTag;
     private FloatingActionButton retryActionButton;
@@ -165,6 +160,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private TextView allowedGroupsFieldLabel;
     private TextView allowedUsersFieldLabel;
     private CompoundButton.OnCheckedChangeListener checkedListener;
+
+    private static transient PiwigoAlbumAdminList albumAdminList;
+    private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
+    private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     private int albumsPerRow; // calculated each time view created.
     // Start fields maintained in saved session state.
     private PiwigoAlbum galleryModel;
@@ -178,7 +177,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private int updateAlbumDetailsProgress = UPDATE_NOT_RUNNING;
     private boolean usernameSelectionWantedNext;
     private CustomImageButton addNewAlbumButton;
-    private int colsOnScreen;
     private DeleteActionData deleteActionData;
     private long userGuid;
     private transient List<CategoryItem> adminCategories;
@@ -187,7 +185,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private AlbumViewAdapterListener viewAdapterListener;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
     private SlidingLayer bottomSheet;
-
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -214,24 +211,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 galleryIsDirty = true;
             }
         }
-    }
-
-    private float getScreenWidth() {
-        DisplayMetrics dm = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.widthPixels / dm.xdpi;
-    }
-
-    private int getDefaultImagesColumnCount() {
-        float screenWidth = getScreenWidth();
-        int columnsToShow = Math.round(screenWidth - (screenWidth % 1)); // allow 1 inch per column
-        return Math.max(1, columnsToShow);
-    }
-
-    private int getDefaultAlbumColumnCount() {
-        float screenWidth = getScreenWidth();
-        int columnsToShow = Math.round(screenWidth - (screenWidth % 3)); // allow 3 inch per column
-        return Math.max(1, columnsToShow);
     }
 
     private void fillGroupsField(TextView allowedGroupsField, Collection<Group> selectedGroups) {
@@ -286,20 +265,20 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
 
-        boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
+        boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, getContext());
 
-        boolean showResourceNames = prefs.getBoolean(getString(R.string.preference_gallery_show_image_name_key), getResources().getBoolean(R.bool.preference_gallery_show_image_name_default));
+        boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, getContext());
 
-        int recentlyAlteredThresholdAge = prefs.getInt(getString(R.string.preference_gallery_recentlyAlteredAgeMillis_key), getResources().getInteger(R.integer.preference_gallery_recentlyAlteredAgeMillis_default));
+        int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, getContext());
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
 
         if (viewPrefs == null) {
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
         }
 
-        String preferredThumbnailSize = prefs.getString(getString(R.string.preference_gallery_item_thumbnail_size_key), getString(R.string.preference_gallery_item_thumbnail_size_default));
+        String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs,getContext());
 
-        String preferredAlbumThumbnailSize = prefs.getString(getString(R.string.preference_gallery_album_thumbnail_size_key), getString(R.string.preference_gallery_album_thumbnail_size_default));
+        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
 
         viewPrefs.selectable(true, false); // set multi select mode enabled (side effect is it enables selection
         viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
@@ -307,9 +286,15 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         viewPrefs.withPreferredAlbumThumbnailSize(preferredAlbumThumbnailSize);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
-        viewPrefs.withAlbumWidth(getScreenWidth() / getAlbumsPerRow());
+        viewPrefs.withAlbumWidth(getScreenWidth(getActivity()) / albumsPerRow);
         viewPrefs.withRecentlyAlteredThresholdDate(recentlyAlteredThresholdDate);
         return viewPrefs;
+    }
+
+    private float getScreenWidth(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return (float) dm.widthPixels / dm.xdpi;
     }
 
     public AlbumItemRecyclerViewAdapterPreferences getViewPrefs() {
@@ -377,9 +362,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         albumsPerRow = 0;
 
         updateViewPrefs();
-
-        int imagesOnScreen = selectBestColumnCountForScreenSize();
-        colsOnScreen = imagesOnScreen;
 
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
 
@@ -463,21 +445,21 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
 
         // need to wait for the gallery model to be initialised.
-        RecyclerView.LayoutManager gridLayoutMan;
-        if (viewPrefs.isUseMasonryStyle()) {
-            gridLayoutMan = new StaggeredGridLayoutManager(colsOnScreen, StaggeredGridLayoutManager.VERTICAL);
-        } else {
-            if (imagesOnScreen % getAlbumsPerRow() > 0) {
-                colsOnScreen = imagesOnScreen * getAlbumsPerRow();
-            }
-            gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
+
+        int imagesDisplayedPerRow = AlbumViewPreferences.getImagesToDisplayPerRow(getActivity(), prefs);
+        int albumsDisplayedPerRow = AlbumViewPreferences.getAlbumsToDisplayPerRow(getActivity(), prefs);
+        int totalSpans = imagesDisplayedPerRow;
+        if (totalSpans % albumsDisplayedPerRow > 0) {
+            totalSpans *= albumsDisplayedPerRow;
         }
+        int colsSpannedByAlbum = totalSpans / albumsDisplayedPerRow;
+        int colsSpannedByImage = totalSpans / imagesDisplayedPerRow;
+        albumsPerRow = albumsDisplayedPerRow;
+
+        GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), totalSpans);
+        gridLayoutMan.setSpanSizeLookup(new SpanSizeLookup(galleryModel, totalSpans, colsSpannedByAlbum, colsSpannedByImage));
 
         recyclerView.setLayoutManager(gridLayoutMan);
-
-        int colsPerAlbum = colsOnScreen / getAlbumsPerRow();
-        int colsPerImage = colsOnScreen / imagesOnScreen;
-        ((GridLayoutManager) gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(galleryModel, colsPerAlbum, colsPerImage));
 
         viewAdapterListener = new AlbumViewAdapterListener();
 
@@ -644,18 +626,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private int getAlbumsPerRow() {
-        if (albumsPerRow == 0) {
-            albumsPerRow = getDefaultAlbumColumnCount();
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                albumsPerRow = prefs.getInt(getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key), albumsPerRow);
-            } else {
-                albumsPerRow = prefs.getInt(getString(R.string.preference_gallery_albums_preferredColumnsPortrait_key), albumsPerRow);
-            }
-        }
-        return albumsPerRow;
-    }
-
     private void initialiseBasketView(View v) {
         basketView = v.findViewById(R.id.basket);
 
@@ -774,7 +744,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 }
             }
         } else {
-            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
                 long messageId = new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext());
                 deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, messageId));
@@ -846,9 +816,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         } else if (itemsToLoad.size() > 0) {
             onReloadAlbum();
         } else {
-            int spacerAlbumsNeeded = galleryModel.getSubAlbumCount() % getAlbumsPerRow();
+
+            int spacerAlbumsNeeded = galleryModel.getSubAlbumCount() % albumsPerRow;
             if (spacerAlbumsNeeded > 0) {
-                spacerAlbumsNeeded = getAlbumsPerRow() - spacerAlbumsNeeded;
+                spacerAlbumsNeeded = albumsPerRow - spacerAlbumsNeeded;
             }
             galleryModel.setSpacerAlbumCount(spacerAlbumsNeeded);
             viewAdapter.notifyDataSetChanged();
@@ -917,9 +888,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     return;
                 }
 
-                String sortOrder = prefs.getString(getString(R.string.preference_gallery_sortOrder_key), getString(R.string.preference_gallery_sortOrder_default));
-                String multimediaExtensionList = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
-                int pageSize = prefs.getInt(getString(R.string.preference_album_request_pagesize_key), getResources().getInteger(R.integer.preference_album_request_pagesize_default));
+                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
+                String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
                 long loadingMessageId = new ImagesGetResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
                 galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
                 loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
@@ -1282,16 +1253,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private int selectBestColumnCountForScreenSize() {
-        int mColumnCount = getDefaultImagesColumnCount();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mColumnCount = prefs.getInt(getString(R.string.preference_gallery_images_preferredColumnsLandscape_key), mColumnCount);
-        } else {
-            mColumnCount = prefs.getInt(getString(R.string.preference_gallery_images_preferredColumnsPortrait_key), mColumnCount);
-        }
-        return Math.max(1, mColumnCount);
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -1351,7 +1312,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             // categories have finished loading. Let's superimpose those not already present.
             boolean changed = galleryModel.addMissingAlbums(adminCategories);
             if (changed) {
-                galleryModel.updateSpacerAlbumCount(getAlbumsPerRow());
+                galleryModel.updateSpacerAlbumCount(albumsPerRow);
                 viewAdapter.notifyDataSetChanged();
             }
         }
@@ -1537,7 +1498,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 // sink changed value - don't care here.
                 galleryModel.addMissingAlbums(adminCategories);
             }
-            galleryModel.updateSpacerAlbumCount(getAlbumsPerRow());
+            galleryModel.updateSpacerAlbumCount(albumsPerRow);
             viewAdapter.notifyDataSetChanged();
         }
         emptyGalleryLabel.setVisibility(galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
@@ -2090,13 +2051,15 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
 
-        private final int colsPerAlbum;
-        private final int colsPerImage;
+        private final int totalSpans;
+        private final int spansPerAlbum;
+        private final int spansPerImage;
         private final ResourceContainer<CategoryItem, GalleryItem> galleryModel;
 
-        public SpanSizeLookup(ResourceContainer<CategoryItem, GalleryItem> galleryModel, int colsPerAlbum, int colsPerImage) {
-            this.colsPerAlbum = colsPerAlbum;
-            this.colsPerImage = colsPerImage;
+        public SpanSizeLookup(ResourceContainer<CategoryItem, GalleryItem> galleryModel, int totalSpans, int spansPerAlbum, int spansPerImage) {
+            this.totalSpans = totalSpans;
+            this.spansPerAlbum = spansPerAlbum;
+            this.spansPerImage = spansPerImage;
             this.galleryModel = galleryModel;
         }
 
@@ -2111,17 +2074,17 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             int itemType = galleryModel.getItemByIdx(position).getType();
             switch (itemType) {
                 case GalleryItem.ALBUM_HEADING_TYPE:
-                    return colsOnScreen;
+                    return totalSpans;
                 case GalleryItem.CATEGORY_TYPE:
-                    return colsPerAlbum;
+                    return spansPerAlbum;
                 case GalleryItem.PICTURE_RESOURCE_TYPE:
-                    return colsPerImage;
+                    return spansPerImage;
                 case GalleryItem.PICTURE_HEADING_TYPE:
-                    return colsOnScreen;
+                    return totalSpans;
                 case GalleryItem.VIDEO_RESOURCE_TYPE:
-                    return colsPerImage;
+                    return spansPerImage;
                 default:
-                    return colsOnScreen;
+                    return totalSpans;
             }
         }
     }
@@ -2158,7 +2121,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         @Override
         public void notifyAlbumThumbnailInfoLoadNeeded(CategoryItem mItem) {
             PictureResourceItem resourceItem = new PictureResourceItem(mItem.getRepresentativePictureId(), null, null, null, null, null);
-            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
             ImageGetInfoResponseHandler handler = new ImageGetInfoResponseHandler<>(resourceItem, multimediaExtensionList);
             long messageId = handler.invokeAsync(getContext());
             albumThumbnailLoadActions.put(messageId, mItem);
