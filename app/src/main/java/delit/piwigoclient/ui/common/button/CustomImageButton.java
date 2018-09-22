@@ -39,7 +39,7 @@ public class CustomImageButton extends AppCompatImageButton {
         if (!enabled) {
             setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_IN);
         } else {
-            setColorFilter(ContextCompat.getColor(getContext(),R.color.on_primary), PorterDuff.Mode.SRC_IN);
+            setColorFilter(ContextCompat.getColor(getContext(),R.color.primary_text_default), PorterDuff.Mode.SRC_IN);
         }
     }
 }

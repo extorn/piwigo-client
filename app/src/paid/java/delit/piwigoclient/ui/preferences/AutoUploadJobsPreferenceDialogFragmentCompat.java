@@ -148,8 +148,6 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         });
         view.findViewById(R.id.list_action_save_button).setVisibility(View.GONE);
 
-        adapter.linkToListView(itemListView, null, null);
-
         return view;
     }
 
@@ -250,7 +248,6 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             TextView nameView = itemView.findViewById(R.id.name);
             TextView detailView = itemView.findViewById(R.id.details);
             AppCompatCheckboxTriState jobEnabledView = itemView.findViewById(R.id.enabled);
-            jobEnabledView.setButtonDrawable(R.drawable.always_clear_checkbox);
             CustomImageButton deleteButton = itemView.findViewById(R.id.list_item_delete_button);
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override

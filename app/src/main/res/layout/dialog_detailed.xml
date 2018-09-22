@@ -12,10 +12,10 @@
         android:textOff="@string/button_show_details"
         android:textOn="@string/button_hide_details"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textIsSelectable="true"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 </LinearLayout>

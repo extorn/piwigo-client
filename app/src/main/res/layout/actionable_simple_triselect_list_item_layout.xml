@@ -12,10 +12,9 @@
         android:layout_centerVertical="true"
         android:checked="false"
         android:clickable="false"
-        android:focusable="false"
-        android:button="@drawable/always_clear_checkbox"/>
+        android:focusable="false"/>
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/actionable_list_item_text"
             android:layout_marginStart="5dp"
             android:layout_width="match_parent"
@@ -27,8 +26,8 @@
             android:layout_alignWithParentIfMissing="true"
             android:padding="5dp"
             android:text="dummy text"
-            android:background="@color/colorPrimaryDark"
-            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+            android:background="@color/colorAlbumItemBackground"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
 
     <delit.piwigoclient.ui.common.button.CustomImageButton

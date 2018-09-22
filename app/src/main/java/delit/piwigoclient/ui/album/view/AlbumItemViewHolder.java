@@ -3,8 +3,10 @@ package delit.piwigoclient.ui.album.view;
 import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
@@ -28,7 +30,7 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
     public TextView mDescView;
     public ImageView mRecentlyAlteredMarkerView;
     protected SquareLinearLayout mImageContainer;
-    protected PicassoLoader imageLoader;
+    protected ResizingPicassoLoader imageLoader;
     protected AlbumItemRecyclerViewAdapter<S> parentAdapter;
     protected View mItemContainer;
 
@@ -94,7 +96,7 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
 
     }
 
-    protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(final AppCompatImageView target) {
+    protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(final ImageView target) {
         imageLoader = new ResizingPicassoLoader(target, 0, 0);
         return new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -103,6 +105,8 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
                     if(!imageLoader.hasResourceToLoad()) {
                         return true;
                     }
+                    int requiredSize = ((ViewGroup)target.getParent()).getMeasuredHeight();
+                    imageLoader.setResizeTo(requiredSize, requiredSize);
                     if (!imageLoader.isImageLoaded() && !imageLoader.isImageLoading() && !imageLoader.isImageUnavailable()) {
 
                         int desiredScalingQuality = parentAdapter.getAdapterPrefs().getScalingQuality();
@@ -113,7 +117,7 @@ public abstract class AlbumItemViewHolder<S extends Identifiable> extends Custom
                             // need that math.max to ensure that the image size remains positive
                             imgSize = Math.max(SCALING_QUALITY_VLOW, Math.min(desiredScalingQuality, target.getMeasuredWidth()));
                         }
-                        ((ResizingPicassoLoader) imageLoader).setResizeTo(imgSize, imgSize);
+                        imageLoader.setResizeTo(imgSize, imgSize);
                         imageLoader.load();
                     }
                 } catch (IllegalStateException e) {

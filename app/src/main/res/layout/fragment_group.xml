@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,9 +13,9 @@
 
         <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/group_action_edit_button"
-            android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
 
         <delit.piwigoclient.ui.common.button.CustomImageButton
@@ -29,8 +29,8 @@
             android:id="@+id/group_action_discard_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_undo_black_24dp"
-            android:layout_toEndOf="@id/group_action_save_button"/>
+            android:layout_toEndOf="@id/group_action_save_button"
+            app:srcCompat="@drawable/ic_undo_black_24dp" />
 
         <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/group_action_delete_button"
@@ -45,13 +45,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.LinearLayoutCompat
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/group_name_label"
+                android:labelFor="@id/group_name"
                 android:text="@string/group_name_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -59,9 +60,9 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
-            <android.support.v7.widget.AppCompatEditText
+            <EditText
                 android:id="@+id/group_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -70,23 +71,24 @@
                 android:clickable="true"
                 android:inputType="text|textNoSuggestions"
                 android:maxLines="1"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:focusable="true" />
 
-            <android.support.v7.widget.AppCompatCheckBox
+            <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
                 android:id="@+id/group_is_default"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="7dp"
-                android:button="@null"
-                android:drawableRight="@drawable/always_clear_checkbox"
-                android:text="@string/group_is_default_title"/>
+                app:checkbox_at_end="true"
+                android:text="@string/group_is_default_title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/group_members_label"
+                android:labelFor="@id/group_members"
                 android:text="@string/group_members_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -94,9 +96,9 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/group_members"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
@@ -105,13 +107,14 @@
                 android:inputType="textMultiLine|textNoSuggestions"
                 android:background="?attr/editTextBackground"
                 android:gravity="center_vertical"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2.Clickable"
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
                 android:text="@string/none_selected"
                 android:maxLines="2"
                 android:ellipsize="end"/>
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/group_access_rights_label"
+                android:labelFor="@id/group_access_rights"
                 android:text="@string/group_access_rights_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -119,7 +122,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="7dp"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
             <ListView
                 android:id="@+id/group_access_rights"
@@ -127,7 +130,7 @@
                 android:layout_height="160dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"/>
-        </android.support.v7.widget.LinearLayoutCompat>
+        </LinearLayout>
     </ScrollView>
 
     <com.google.android.gms.ads.AdView
@@ -139,4 +142,4 @@
         ads:adUnitId="@string/ad_id_group_edit_banner">
     </com.google.android.gms.ads.AdView>
 
-</android.support.v7.widget.LinearLayoutCompat>
+</LinearLayout>

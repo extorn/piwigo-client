@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.NumberPicker;
 
+import delit.piwigoclient.util.DisplayUtils;
+
 public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
 
     private NumberPicker mPicker;
@@ -67,12 +69,7 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        DisplayUtils.hideKeyboardFrom(getContext(), dialog);
         super.onClick(dialog, which);
-    }
-
-    public void hideKeyboardFrom(Context context, IBinder windowToken) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(windowToken, 0);
     }
 }

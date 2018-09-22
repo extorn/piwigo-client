@@ -38,7 +38,7 @@
             android:layout_gravity="end"
             android:visibility="visible"/>
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/slideshow_resource_item_x_of_y_text"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
@@ -47,7 +47,7 @@
             android:layout_gravity="end"
             android:visibility="visible"
             android:text="x/y"
-            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
         <RatingBar
             android:id="@+id/slideshow_image_average_ratingBar"
@@ -65,7 +65,7 @@
 
 
         <!-- this is currently unsupported by the Piwigo API 2.9.1 required -->
-        <!--<CheckBox
+        <!--<delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
             android:id="@+id/slideshow_image_favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -87,9 +87,9 @@
         slidingLayer:stickTo="bottom"
         slidingLayer:changeStateOnTap="true">
 
-        <android.support.v7.widget.LinearLayoutCompat
+        <LinearLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorAlbumBottomSheet"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -173,7 +173,7 @@
                    android:layout_height="match_parent"
                    android:layout_below="@+id/slideshow_resource_action_download">
 
-                    <android.support.v7.widget.LinearLayoutCompat
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
@@ -189,22 +189,22 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent">
 
-                            <android.support.v7.widget.LinearLayoutCompat
+                            <LinearLayout
                                 android:id="@+id/picture_resource_basic_fields"
                                 android:orientation="vertical"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
 
-                                <android.support.v7.widget.AppCompatTextView
+                                <TextView
                                     android:id="@+id/slideshow_image_details_name_label"
                                     android:labelFor="@+id/slideshow_image_details_name"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/slideshow_image_details_name_title"
-                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-                                <android.support.v7.widget.AppCompatEditText
-                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                                <EditText
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                                     android:id="@+id/slideshow_image_details_name"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -213,31 +213,31 @@
                                     android:maxLines="3"
                                     android:focusable="true" />
 
-                                <android.support.v7.widget.AppCompatTextView
+                                <TextView
                                     android:id="@+id/slideshow_image_details_description_label"
                                     android:labelFor="@+id/slideshow_image_details_description"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/slideshow_image_details_description_title"
-                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-                                <android.support.v7.widget.AppCompatEditText
-                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                                <EditText
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                                     android:id="@+id/slideshow_image_details_description"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:inputType="textMultiLine"
                                     android:maxLines="10"/>
 
-                                <android.support.v7.widget.AppCompatTextView
+                                <TextView
                                     android:id="@+id/slideshow_image_details_linked_albums_label"
                                     android:labelFor="@+id/slideshow_image_details_linked_albums"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/slideshow_image_details_linked_albums_title"
-                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-                                <android.support.v7.widget.AppCompatTextView
+                                <TextView
                                     android:id="@+id/slideshow_image_details_linked_albums"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -246,15 +246,15 @@
                                     android:ellipsize="end"
                                     android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"/>
 
-                                <android.support.v7.widget.AppCompatTextView
+                                <TextView
                                     android:id="@+id/slideshow_image_details_tags_label"
                                     android:labelFor="@+id/slideshow_image_details_tags"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/slideshow_image_details_tags_title"
-                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-                                <android.support.v7.widget.AppCompatTextView
+                                <TextView
                                     android:id="@+id/slideshow_image_details_tags"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -263,23 +263,23 @@
                                     android:ellipsize="end"
                                     android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"/>
 
-                                <android.support.v7.widget.AppCompatTextView
+                                <TextView
                                     android:id="@+id/slideshow_image_details_privacy_level"
                                     android:labelFor="@+id/privacy_level"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/upload_file_privacy_level_title"
-                                    android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-                                <android.support.v7.widget.AppCompatSpinner
+                                <Spinner
                                     android:id="@+id/privacy_level"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
-                            </android.support.v7.widget.LinearLayoutCompat>
+                            </LinearLayout>
 
-                            <android.support.v7.widget.LinearLayoutCompat
+                            <LinearLayout
                                 android:id="@+id/picture_resource_exif_data"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -293,15 +293,15 @@
                                     android:id="@+id/exifDataList">
                                 </ExpandableListView>
 
-                            </android.support.v7.widget.LinearLayoutCompat>
+                            </LinearLayout>
 
                         </FrameLayout>
-                    </android.support.v7.widget.LinearLayoutCompat>
+                    </LinearLayout>
                 </TabHost>
 
             </RelativeLayout>
 
-        </android.support.v7.widget.LinearLayoutCompat>
+        </LinearLayout>
 
     </com.wunderlist.slidinglayer.SlidingLayer>
 

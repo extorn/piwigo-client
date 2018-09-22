@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_data_upload_automatic_title">
+        android:title="@string/preference_data_upload_automatic_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <SwitchPreferenceCompat
             android:defaultValue="@bool/preference_data_upload_automatic_upload_enabled_default"
             android:key="@string/preference_data_upload_automatic_upload_enable_key"
             android:summary="@string/preference_data_upload_automatic_upload_enable_summary"
-            android:title="@string/preference_data_upload_automatic_upload_enable_title" />
+            android:title="@string/preference_data_upload_automatic_upload_enable_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <SwitchPreferenceCompat
             android:defaultValue="@bool/preference_data_upload_automatic_upload_wireless_only_default"
             android:key="@string/preference_data_upload_automatic_upload_wireless_only_key"
             android:summary="@string/preference_data_upload_automatic_upload_wireless_only_summary"
-            android:title="@string/preference_data_upload_automatic_upload_wireless_only_title" />
+            android:title="@string/preference_data_upload_automatic_upload_wireless_only_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.preferences.AutoUploadJobsPreference
             android:title="@string/preference_data_upload_automatic_upload_jobs_title"
             android:key="@string/preference_data_upload_automatic_upload_jobs_key"
-            android:summary="@string/preference_data_upload_automatic_upload_jobs_summary"/>
+            android:summary="@string/preference_data_upload_automatic_upload_jobs_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </PreferenceCategory>
 </PreferenceScreen>

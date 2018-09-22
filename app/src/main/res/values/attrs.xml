@@ -33,8 +33,9 @@
     <declare-styleable name="ClientCertificatePreference">
     </declare-styleable>
 
-    <declare-styleable name="AlwaysCheckedState">
+    <declare-styleable name="AppCompatCheckboxTriState">
         <attr name="state_always_checked" format="boolean"/>
+        <attr name="checkbox_at_end" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="EditableListPreference">

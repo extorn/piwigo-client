@@ -137,9 +137,9 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         imageView.setVisibility(showItemSelectedMarker(imageView) ? View.VISIBLE : View.GONE);
 
         if (getAdapterPrefs().isMultiSelectionEnabled()) {
-            imageView.setButtonDrawable(R.drawable.always_clear_checkbox);
+            imageView.setButtonDrawable(R.drawable.checkbox);
         } else {
-            imageView.setButtonDrawable(R.drawable.always_clear_radio);
+            imageView.setButtonDrawable(R.drawable.radio_button);
         }
 
         imageView.setEnabled(adapterPrefs.isEnabled());

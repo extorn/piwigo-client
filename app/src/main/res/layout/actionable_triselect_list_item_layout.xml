@@ -12,10 +12,9 @@
         android:layout_centerVertical="true"
         android:checked="false"
         android:clickable="false"
-        android:focusable="false"
-        android:button="@drawable/always_clear_checkbox"/>
+        android:focusable="false"/>
 
-    <android.support.v7.widget.LinearLayoutCompat
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/checked"
@@ -23,9 +22,9 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_centerVertical="true"
         android:orientation="vertical"
-        android:background="@color/colorPrimaryDark">
+        android:background="@color/colorAlbumItemBackground">
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/name"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -34,8 +33,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="dummy text"
-            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
-        <android.support.v7.widget.AppCompatTextView
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        <TextView
             android:id="@+id/details"
             android:layout_marginTop="0dp"
             android:layout_marginStart="8dp"
@@ -45,9 +44,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/name"
             android:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
-            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
-    </android.support.v7.widget.LinearLayoutCompat>
+    </LinearLayout>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/list_item_delete_button"

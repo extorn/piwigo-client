@@ -3,13 +3,13 @@ package delit.piwigoclient.ui.slideshow;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Switch;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ class SelectImageRenderDetailsDialog {
     private final Context context;
     private int[] rotationValues;
     private Spinner imageRotation;
-    private Switch maxZoomPicker;
+    private SwitchCompat maxZoomPicker;
     private DownloadItemsListAdapter adapter;
     private ListView fileSelectList;
 

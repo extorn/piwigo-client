@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import delit.piwigoclient.R;
@@ -11,7 +12,6 @@ import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
-import delit.piwigoclient.ui.common.RoundableImageView;
 
 import static android.view.View.INVISIBLE;
 
@@ -99,18 +99,18 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
     private void configurePlaceholderThumbnail(CategoryItem newItem) {
         imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
         if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-            ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
+            (imageLoader).setCenterCrop(true);
         } else {
-            ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
+            (imageLoader).setCenterCrop(false);
         }
     }
 
     private void triggerLoadingSpecificThumbnail(CategoryItem newItem) {
         imageLoader.setResourceToLoad(R.drawable.ic_photo_library_black_24px);
         if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-            ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
+            (imageLoader).setCenterCrop(true);
         } else {
-            ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
+            (imageLoader).setCenterCrop(false);
         }
         if (parentAdapter.getMultiSelectStatusListener() != null) {
             //Now trigger a load of the real data.
@@ -123,9 +123,9 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
         imageLoader.setUriToLoad(newItem.getThumbnailUrl());
 
         if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed()) {
-            ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
+            (imageLoader).setCenterCrop(true);
         } else {
-            ((ResizingPicassoLoader) imageLoader).setCenterCrop(false);
+            (imageLoader).setCenterCrop(false);
         }
     }
 
@@ -136,25 +136,13 @@ public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemVie
 //    }
 
     @Override
-    protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(AppCompatImageView target) {
-        RoundableImageView roundableImageView = (RoundableImageView) target;
-        //TODO this radius isn't working very logically - most likely because the image is being scaled afterwards!
-//        if (parentAdapter.getAdapterPrefs().isShowLargeAlbumThumbnails()) {
-//            if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed() || "square".equals(parentAdapter.getAdapterPrefs().getPreferredAlbumThumbnailSize())) {
-//                roundableImageView.setCornerRadius(14);
-//                roundableImageView.setEnableRoundedCorners(true);
-//            }
-//        } else {
-//            if (parentAdapter.getAdapterPrefs().isShowAlbumThumbnailsZoomed() || "square".equals(parentAdapter.getAdapterPrefs().getPreferredAlbumThumbnailSize())) {
-//                roundableImageView.setCornerRadius(24);
-//                roundableImageView.setEnableRoundedCorners(true);
-//            }
-//        }
-        return super.configureNonMasonryThumbnailLoader(roundableImageView);
+    public void setChecked(boolean checked) {
+        throw new UnsupportedOperationException("Shouldn't call this");
     }
 
     @Override
-    public void setChecked(boolean checked) {
-        throw new UnsupportedOperationException("Shouldn't call this");
+    protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(ImageView target) {
+        ImageView imageView = target;
+        return super.configureNonMasonryThumbnailLoader(imageView);
     }
 }

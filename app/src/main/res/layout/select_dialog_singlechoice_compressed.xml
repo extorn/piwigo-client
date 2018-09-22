@@ -24,8 +24,7 @@
     android:paddingStart="6dip"
     android:paddingEnd="3dip"
     android:checkMark="?android:attr/listChoiceIndicatorSingle"
-    android:ellipsize="marquee"
-    />
+    android:ellipsize="marquee"/>
 <!--
 android:minHeight="?android:attr/listPreferredItemHeight"
 -->

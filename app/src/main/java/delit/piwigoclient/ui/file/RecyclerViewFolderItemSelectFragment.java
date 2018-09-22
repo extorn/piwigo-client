@@ -157,7 +157,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
                     if(idx < pathItems.size()) {
                         TextView pathItemSeperator = new TextView(getContext());
-                        TextViewCompat.setTextAppearance(pathItemSeperator, R.style.Custom_TextAppearance_AppCompat_Body2);
+                        TextViewCompat.setTextAppearance(pathItemSeperator, R.style.TextAppearance_AppCompat_Body2);
                         pathItemSeperator.setText("/");
                         pathItemSeperator.setId(View.generateViewId());
                         relativeParams = new RelativeLayout.LayoutParams(

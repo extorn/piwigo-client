@@ -13,6 +13,8 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.inputmethod.InputMethodManager;
 
+import delit.piwigoclient.util.DisplayUtils;
+
 public class MappedListPreferenceDialogFragmentCompat<T> extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
 
     private int mClickedDialogEntryIndex;
@@ -92,12 +94,7 @@ public class MappedListPreferenceDialogFragmentCompat<T> extends PreferenceDialo
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        DisplayUtils.hideKeyboardFrom(getContext(), dialog);
         super.onClick(dialog, which);
-    }
-
-    public void hideKeyboardFrom(Context context, IBinder windowToken) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(windowToken, 0);
     }
 }

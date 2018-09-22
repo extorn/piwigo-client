@@ -60,6 +60,7 @@ import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
+import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.X509Utils;
 import delit.piwigoclient.util.security.CertificateLoadException;
 import delit.piwigoclient.util.security.CertificateLoadOperationResult;
@@ -686,12 +687,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        DisplayUtils.hideKeyboardFrom(getContext(), dialog);
         super.onClick(dialog, which);
-    }
-
-    public void hideKeyboardFrom(Context context, IBinder windowToken) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(windowToken, 0);
     }
 }

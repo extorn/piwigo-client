@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.AppCompatButton
+    <Button
         android:id="@+id/other_oss_licences_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,11 +18,11 @@
         android:scrollbars="vertical"
         android:fillViewport="true">
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/licences_content"
-            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
     </ScrollView>
 
     <com.google.android.gms.ads.AdView

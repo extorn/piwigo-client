@@ -27,12 +27,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round_new"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Custom.Theme">
         <activity
             android:launchMode="singleTop"
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme"
+            android:theme="@style/Custom.Theme"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,7 +43,7 @@
             android:launchMode="singleTop"
             android:name=".ui.PreferencesActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme"
+            android:theme="@style/Custom.Theme"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name=".Preferences" />
@@ -54,7 +54,7 @@
             android:launchMode="singleTop"
             android:name=".ui.UploadActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme"
+            android:theme="@style/Custom.Theme"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
                 <action android:name="delit.piwigoclient.MANUAL_UPLOAD" />
@@ -78,7 +78,7 @@
             android:launchMode="singleTop"
             android:name="delit.piwigoclient.ui.FileSelectActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme"
+            android:theme="@style/Custom.Theme"
             android:windowSoftInputMode="stateHidden"/>
         <activity android:name="com.google.android.gms.ads.AdActivity"/>
         <service

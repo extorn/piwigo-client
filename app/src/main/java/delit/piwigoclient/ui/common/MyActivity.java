@@ -18,7 +18,6 @@ import java.util.HashMap;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.ui.LoginFragment;
 import delit.piwigoclient.ui.MyApplication;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
@@ -142,9 +141,6 @@ public abstract class MyActivity extends AppCompatActivity {
                 if (i > 0) {
                     // if the previous item was a login action - force that off the stack too.
                     entry = getSupportFragmentManager().getBackStackEntryAt(i - 1);
-                    if (LoginFragment.class.getName().equals(entry.getName())) {
-                        i--;
-                    }
                     popToStateId = entry.getId();
                 }
             } else {

@@ -1,8 +1,12 @@
 package delit.piwigoclient.ui.common.button;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 
 import delit.piwigoclient.R;
 
@@ -15,17 +19,32 @@ public class AppCompatCheckboxTriState extends AppCompatCheckBox {
     private static final int[] STATE_ALWAYS_CHECKED = {R.attr.state_always_checked};
 
     private boolean alwaysChecked;
+    private boolean checkboxAtEnd;
 
     public AppCompatCheckboxTriState(Context context) {
-        super(context);
+        this(context, null);
     }
 
     public AppCompatCheckboxTriState(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, android.R.attr.checkboxStyle);
+    }
+
+    public AppCompatCheckboxTriState(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr);
+
+        final TypedArray a = context.obtainStyledAttributes(
+                attrs, R.styleable.AppCompatCheckboxTriState, defStyleAttr, defStyleRes);
+
+        checkboxAtEnd = a.getBoolean(R.styleable.AppCompatCheckboxTriState_checkbox_at_end, false);
+
+        a.recycle();
+
+        updateComponentLayout();
     }
 
     public AppCompatCheckboxTriState(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
+        this(context, attrs, defStyleAttr, 0);
+
     }
 
     @Override
@@ -41,6 +60,32 @@ public class AppCompatCheckboxTriState extends AppCompatCheckBox {
         if (this.alwaysChecked != alwaysChecked) {
             this.alwaysChecked = alwaysChecked;
             updateDrawable();
+        }
+    }
+
+    public void setCheckboxAtEnd(boolean checkboxAtEnd) {
+        if (this.checkboxAtEnd != checkboxAtEnd) {
+            this.checkboxAtEnd = checkboxAtEnd;
+
+            updateComponentLayout();
+        }
+    }
+
+    @Override
+    public void setLayoutParams(ViewGroup.LayoutParams params) {
+        if(checkboxAtEnd) {
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        }
+        super.setLayoutParams(params);
+    }
+
+    private void updateComponentLayout() {
+        if(checkboxAtEnd) {
+            if (ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR) {
+                ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_RTL);
+            } else {
+                ViewCompat.setLayoutDirection(this, ViewCompat.LAYOUT_DIRECTION_LTR);
+            }
         }
     }
 
@@ -77,4 +122,5 @@ public class AppCompatCheckboxTriState extends AppCompatCheckBox {
             return super.onCreateDrawableState(extraSpace);
         }
     }
+
 }

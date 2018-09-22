@@ -213,26 +213,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
 
             if (!"".equals(connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
-                // Can and need to login to the server, so lets do that.
-                boolean haveBeenLoggedIn = null != getSupportFragmentManager().findFragmentByTag(LoginFragment.class.getName());
-
-                if (haveBeenLoggedIn && !PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
-
-                    // clear the backstack - its for an old session (clear stack back to first session login).
-                    for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                        FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(i);
-                        if (LoginFragment.class.getName().equals(entry.getName())) {
-                            int popToFragmentId = entry.getId();
-                            getSupportFragmentManager().popBackStack(popToFragmentId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                            break;
-                        }
-                    }
-                    // we have been logged in before, and are now not logged in - need a new session.
-                    showGallery(CategoryItem.ROOT_ALBUM);
-                } else {
-                    // pop the current fragment off, close app if it is the last one
-                    doDefaultBackOperation();
-                }
+                doDefaultBackOperation();
             } else {
                 // pop the current fragment off, close app if it is the last one
                 doDefaultBackOperation();
@@ -249,17 +230,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             getSupportFragmentManager().popBackStack();
             // get the next fragment
             int i = getSupportFragmentManager().getBackStackEntryCount() - 2;
-            if (i >= 0) {
-                FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(i);
-                // while we have another fragment in history and the next fragment is a Login fragment, pop it off and go to the previous one.
-                while (LoginFragment.class.getName().equals(entry.getName()) && i >= 0) {
-                    getSupportFragmentManager().popBackStack();
-                    i--;
-                    if (i >= 0) {
-                        entry = getSupportFragmentManager().getBackStackEntryAt(i);
-                    }
-                }
-            }
             // if there are no fragments left, do default back operation (i.e. close app)
             if (i < 0) {
                 super.onBackPressed();

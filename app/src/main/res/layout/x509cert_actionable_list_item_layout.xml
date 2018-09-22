@@ -9,7 +9,7 @@
     android:paddingLeft="15dp"
     android:paddingRight="15dp">
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/x509_cert_identity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,9 +18,9 @@
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:text="Identity : A certificate name"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/x509_cert_verified_by"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,9 +30,9 @@
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:text="Verified by : A certificate name"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/x509_cert_valid_from"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,9 +42,9 @@
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:text="Valid From : 12/12/2008"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/x509_cert_valid_to"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:text="Valid To : 12/12/2012"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/list_item_delete_button"

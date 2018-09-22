@@ -350,11 +350,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         filesForUploadView.setLayoutManager(gridLayoutMan);
 
         FilesToUploadRecyclerViewAdapter filesForUploadAdapter = new FilesToUploadRecyclerViewAdapter(filesForUpload, getContext(), this);
-        if (showLargeFileThumbnails) {
-            filesForUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
-        } else {
-            filesForUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_LIST);
-        }
+        filesForUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
         filesForUploadView.setAdapter(filesForUploadAdapter);
 
 

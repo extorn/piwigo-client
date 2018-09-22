@@ -18,7 +18,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.AppCompatSpinner;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +26,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -302,7 +302,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 //                }
 //            });
         bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
-        LinearLayoutCompat bottomSheetContent = bottomSheet.findViewById(R.id.slideshow_image_bottom_sheet_content);
+        LinearLayout bottomSheetContent = bottomSheet.findViewById(R.id.slideshow_image_bottom_sheet_content);
         View itemDetail = createCustomItemDetail(inflater, itemContentLayout, savedInstanceState, model);
         if (itemDetail != null) {
             bottomSheetContent.addView(itemDetail, bottomSheetContent.getChildCount());

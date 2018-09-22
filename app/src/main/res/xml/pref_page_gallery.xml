@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_gallery_category_general">
+        android:title="@string/preference_gallery_category_general"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <ListPreference
             android:defaultValue="@string/preference_gallery_unique_id_default"
             android:entries="@array/preference_gallery_unique_id_entries"
             android:entryValues="@array/preference_gallery_unique_id_entryValues"
             android:key="@string/preference_gallery_unique_id_key"
             android:title="@string/preference_gallery_unique_id_title"
-            android:summary="@string/preference_gallery_unique_id_summary"/>
+            android:summary="@string/preference_gallery_unique_id_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_gallery_recentlyAlteredAgeDays_default"
             app:minValue="0"
@@ -17,83 +23,111 @@
             app:multiplier="86400000"
             android:key="@string/preference_gallery_recentlyAlteredAgeMillis_key"
             android:title="@string/preference_gallery_recentlyAlteredAgeMillis_title"
-            android:summary="@string/preference_gallery_recentlyAlteredAgeMillis_summary"/>
+            android:summary="@string/preference_gallery_recentlyAlteredAgeMillis_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <SwitchPreferenceCompat
             android:defaultValue="@bool/preference_gallery_enable_video_playback_default"
             android:key="@string/preference_gallery_enable_video_playback_key"
             android:summary="@string/preference_gallery_enable_video_playback_summary"
-            android:title="@string/preference_gallery_enable_video_playback_title" />
+            android:title="@string/preference_gallery_enable_video_playback_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_gallery_category_albums">
+        android:title="@string/preference_gallery_category_albums"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <ListPreference
             android:entries="@array/preference_gallery_item_thumbnail_size_array"
             android:defaultValue="@string/preference_gallery_album_thumbnail_size_default"
             android:entryValues="@array/preference_gallery_item_thumbnail_size_array_values"
             android:key="@string/preference_gallery_album_thumbnail_size_key"
             android:title="@string/preference_gallery_album_thumbnail_size_title"
-            android:summary="@string/preference_gallery_album_thumbnail_size_summary"/>
+            android:summary="@string/preference_gallery_album_thumbnail_size_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <SwitchPreferenceCompat
             android:defaultValue="@bool/preference_gallery_show_album_thumbnail_zoomed_default"
             android:key="@string/preference_gallery_show_album_thumbnail_zoomed_key"
             android:summary="@string/preference_gallery_show_album_thumbnail_zoomed_summary"
-            android:title="@string/preference_gallery_show_album_thumbnail_zoomed_title" />
+            android:title="@string/preference_gallery_show_album_thumbnail_zoomed_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="10"
             app:setDefaultOnAttach="false"
             android:key="@string/preference_gallery_albums_preferredColumnsPortrait_key"
             android:title="@string/preference_gallery_albums_preferredColumnsPortrait_title"
-            android:summary="@string/preference_gallery_albums_preferredColumnsPortrait_summary"/>
+            android:summary="@string/preference_gallery_albums_preferredColumnsPortrait_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="10"
             app:setDefaultOnAttach="false"
             android:key="@string/preference_gallery_albums_preferredColumnsLandscape_key"
             android:title="@string/preference_gallery_albums_preferredColumnsLandscape_title"
-            android:summary="@string/preference_gallery_albums_preferredColumnsLandscape_summary"/>
+            android:summary="@string/preference_gallery_albums_preferredColumnsLandscape_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_gallery_category_resources">
+        android:title="@string/preference_gallery_category_resources"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <ListPreference
             android:entries="@array/preference_gallery_item_thumbnail_size_array"
             android:defaultValue="@string/preference_gallery_item_thumbnail_size_default"
             android:entryValues="@array/preference_gallery_item_thumbnail_size_array_values"
             android:key="@string/preference_gallery_item_thumbnail_size_key"
             android:title="@string/preference_gallery_item_thumbnail_size_title"
-            android:summary="@string/preference_gallery_item_thumbnail_size_summary"/>
+            android:summary="@string/preference_gallery_item_thumbnail_size_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <SwitchPreferenceCompat
             android:defaultValue="@bool/preference_gallery_show_image_name_default"
             android:key="@string/preference_gallery_show_image_name_key"
             android:summary="@string/preference_gallery_show_image_name_summary"
-            android:title="@string/preference_gallery_show_image_name_title"/>
+            android:title="@string/preference_gallery_show_image_name_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <ListPreference
             android:defaultValue="@string/preference_gallery_sortOrder_default"
             android:entries="@array/preference_gallery_sortOrder_entries"
             android:entryValues="@array/preference_gallery_sortOrder_entryValues"
             android:key="@string/preference_gallery_sortOrder_key"
             android:title="@string/preference_gallery_sortOrder_title"
-            android:summary="@string/preference_gallery_sortOrder_summary"/>
+            android:summary="@string/preference_gallery_sortOrder_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
             app:setDefaultOnAttach="false"
             android:key="@string/preference_gallery_images_preferredColumnsPortrait_key"
             android:title="@string/preference_gallery_images_preferredColumnsPortrait_title"
-            android:summary="@string/preference_gallery_images_preferredColumnsPortrait_summary"/>
+            android:summary="@string/preference_gallery_images_preferredColumnsPortrait_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
             app:setDefaultOnAttach="false"
             android:key="@string/preference_gallery_images_preferredColumnsLandscape_key"
             android:title="@string/preference_gallery_images_preferredColumnsLandscape_title"
-            android:summary="@string/preference_gallery_images_preferredColumnsLandscape_summary"/>
+            android:summary="@string/preference_gallery_images_preferredColumnsLandscape_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_gallery_category_slideshow">
+        android:title="@string/preference_gallery_category_slideshow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <ListPreference
             android:entries="@array/preference_gallery_item_slideshow_image_size_array"
@@ -101,18 +135,24 @@
             android:entryValues="@array/preference_gallery_item_slideshow_image_size_array_values"
             android:key="@string/preference_gallery_item_slideshow_image_size_key"
             android:title="@string/preference_gallery_item_slideshow_image_size_title"
-            android:summary="@string/preference_gallery_item_slideshow_image_size_summary"/>
+            android:summary="@string/preference_gallery_item_slideshow_image_size_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <SwitchPreferenceCompat
             android:defaultValue="@bool/preference_gallery_include_videos_in_slideshow_default"
             android:key="@string/preference_gallery_include_videos_in_slideshow_key"
             android:summary="@string/preference_gallery_include_videos_in_slideshow_summary"
-            android:title="@string/preference_gallery_include_videos_in_slideshow_title" />
+            android:title="@string/preference_gallery_include_videos_in_slideshow_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </PreferenceCategory>
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_gallery_category_advanced">
+        android:title="@string/preference_gallery_category_advanced"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_album_request_pagesize_default"
@@ -120,21 +160,27 @@
             app:maxValue="500"
             android:key="@string/preference_album_request_pagesize_key"
             android:title="@string/preference_album_request_pagesize_title"
-            android:summary="@string/preference_album_request_pagesize_summary"/>
+            android:summary="@string/preference_album_request_pagesize_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_users_request_pagesize_default"
             app:minValue="5"
             app:maxValue="500"
             android:key="@string/preference_users_request_pagesize_key"
             android:title="@string/preference_users_request_pagesize_title"
-            android:summary="@string/preference_users_request_pagesize_summary"/>
+            android:summary="@string/preference_users_request_pagesize_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_groups_request_pagesize_default"
             app:minValue="5"
             app:maxValue="500"
             android:key="@string/preference_groups_request_pagesize_key"
             android:title="@string/preference_groups_request_pagesize_title"
-            android:summary="@string/preference_groups_request_pagesize_summary"/>
+            android:summary="@string/preference_groups_request_pagesize_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.CustomEditTextPreference
             android:capitalize="none"
             android:inputType="none"
@@ -144,27 +190,37 @@
             android:singleLine="true"
             android:defaultValue="@string/preference_piwigo_playable_media_extensions_default"
             android:title="@string/preference_piwigo_playable_media_extensions_title"
-            android:summary="@string/preference_piwigo_playable_media_extensions_summary"/>
+            android:summary="@string/preference_piwigo_playable_media_extensions_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <SwitchPreferenceCompat
             android:defaultValue="@bool/preference_video_cache_enabled_default"
             android:key="@string/preference_video_cache_enabled_key"
             android:summary="@string/preference_video_cache_enabled_summary"
-            android:title="@string/preference_video_cache_enabled_title" />
+            android:title="@string/preference_video_cache_enabled_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_video_cache_maxsize_mb_default"
             app:minValue="10"
             app:maxValue="10240"
             android:key="@string/preference_video_cache_maxsize_mb_key"
             android:title="@string/preference_video_cache_maxsize_mb_title"
-            android:summary="@string/preference_video_cache_maxsize_mb_summary"/>
+            android:summary="@string/preference_video_cache_maxsize_mb_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <Preference
             android:title="@string/preference_gallery_clearVideoCache_title"
             android:key="@string/preference_gallery_clearVideoCache_key"
             android:summary="@string/preference_gallery_clearVideoCache_summary"
-            android:dependency="@string/preference_video_cache_enabled_key"/>
+            android:dependency="@string/preference_video_cache_enabled_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <Preference
             android:title="@string/preference_gallery_clearMemoryCache_title"
             android:key="@string/preference_gallery_clearMemoryCache_key"
-            android:summary="@string/preference_gallery_clearMemoryCache_summary"/>
+            android:summary="@string/preference_gallery_clearMemoryCache_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </PreferenceCategory>
 </PreferenceScreen>

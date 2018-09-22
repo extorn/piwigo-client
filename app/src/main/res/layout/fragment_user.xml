@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="vertical"
@@ -45,14 +46,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.LinearLayoutCompat
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/user_username_label"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@+id/user_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,21 +63,22 @@
                 android:layout_marginTop="7dp"
                 android:text="@string/user_username_title" />
 
-            <android.support.v7.widget.AppCompatEditText
+            <EditText
                 android:id="@+id/user_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
                 android:clickable="true"
+                android:focusable="true"
                 android:inputType="text|textNoSuggestions"
                 android:maxLines="1"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
-                android:focusable="true" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                tools:text="some username" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/user_password_label"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@+id/user_password_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -86,7 +88,7 @@
                 android:layout_marginTop="7dp"
                 android:text="@string/user_password_title" />
 
-            <android.support.v7.widget.AppCompatEditText
+            <EditText
                 android:id="@+id/user_password_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,12 +97,12 @@
                 android:clickable="true"
                 android:inputType="textWebPassword"
                 android:maxLines="1"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:focusable="true" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/user_usertype_label"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@+id/user_usertype"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,16 +112,16 @@
                 android:layout_marginTop="7dp"
                 android:text="@string/user_usertype_title" />
 
-            <android.support.v7.widget.AppCompatSpinner
+            <Spinner
                 android:id="@+id/user_usertype"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/user_privacy_level_label"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@+id/user_privacy_level"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -129,16 +131,16 @@
                 android:layout_marginTop="7dp"
                 android:text="@string/user_privacy_level_title" />
 
-            <android.support.v7.widget.AppCompatSpinner
+            <Spinner
                 android:id="@+id/user_privacy_level"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/Widget.AppCompat.Spinner.Underlined"/>
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/user_email_label"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:labelFor="@+id/user_email_field"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -148,7 +150,7 @@
                 android:layout_marginTop="7dp"
                 android:text="@string/user_email_title" />
 
-            <android.support.v7.widget.AppCompatEditText
+            <EditText
                 android:id="@+id/user_email_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -157,14 +159,13 @@
                 android:clickable="true"
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
-
                 android:focusable="true"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/user_lastvisit_label"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -173,7 +174,7 @@
                 android:layout_marginTop="7dp"
                 android:text="@string/user_lastvisit_title" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/user_lastvisit"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
@@ -182,25 +183,24 @@
                 android:inputType="text|textNoSuggestions"
                 android:background="?attr/editTextBackground"
                 android:gravity="center_vertical"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:text="some text"/>
 
-            <android.support.v7.widget.AppCompatCheckBox
+            <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
                 android:id="@+id/user_high_definition_field"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
-                android:button="@null"
-                android:drawableEnd="@drawable/always_clear_checkbox"
+                app:checkbox_at_end="true"
                 android:text="@string/user_high_definition_title" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/user_groups_label"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -209,7 +209,7 @@
                 android:layout_marginTop="7dp"
                 android:text="@string/user_groups_title" />
 
-        <android.support.v7.widget.AppCompatTextView
+        <TextView
             android:id="@+id/user_groups"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
@@ -218,13 +218,13 @@
             android:inputType="textMultiLine|textNoSuggestions"
             android:background="?attr/editTextBackground"
             android:gravity="center_vertical"
-            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
             android:text="@string/none_selected"
             android:maxLines="2"
             android:ellipsize="end"/>
 
 
-            <android.support.v7.widget.AppCompatTextView
+            <TextView
                 android:id="@+id/user_access_rights_label"
                 android:text="@string/user_access_rights_title"
                 android:layout_width="wrap_content"
@@ -233,7 +233,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="7dp"
                 android:layout_marginBottom="3dp"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
             <ListView
                 android:id="@+id/user_access_rights"
@@ -242,7 +242,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"/>
 
-        </android.support.v7.widget.LinearLayoutCompat>
+        </LinearLayout>
 
     </ScrollView>
 
@@ -255,4 +255,4 @@
         ads:adUnitId="@string/ad_id_user_edit_banner">
     </com.google.android.gms.ads.AdView>
 
-</android.support.v7.widget.LinearLayoutCompat>
+</LinearLayout>

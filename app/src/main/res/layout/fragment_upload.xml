@@ -4,33 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/upload_username_label"
+        android:labelFor="@id/upload_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:text="@string/upload_username_title"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/upload_username"
         android:layout_below="@+id/upload_username_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:text="username"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"/>
+        tools:text="username"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/upload_to_label"
+        android:labelFor="@id/selected_gallery"
         android:layout_below="@+id/upload_username"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/gallery_to_alter_title" />
 
-    <android.support.v7.widget.AppCompatSpinner
+    <Spinner
         android:id="@+id/selected_gallery"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/add_new_gallery_button"
@@ -50,11 +52,12 @@
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_create_new_folder_black_24dp"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/files_for_upload_label"
+        android:labelFor="@id/selected_files_for_upload"
         android:layout_below="@+id/selected_gallery"
         android:layout_above="@+id/selected_files_for_upload"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:layout_margin="5dp"
         android:gravity="center_vertical"
         android:layout_width="wrap_content"
@@ -68,13 +71,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_add_circle_black_24px"/>
-    <!--<ListView
-        android:id="@+id/selected_files_for_upload"
-        android:layout_below="@+id/select_files_for_upload_button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/privacy_level_label"
-        android:focusable="true"/>-->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/selected_files_for_upload"
         android:layout_marginStart="5dp"
@@ -84,22 +80,23 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/privacy_level_label"
         tools:context=".ui.upload.UploadFragment"/>
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/privacy_level_label"
+        android:labelFor="@id/privacy_level"
         android:layout_above="@id/privacy_level"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         android:layout_margin="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/upload_file_privacy_level_title"/>
-    <android.support.v7.widget.AppCompatSpinner
+    <Spinner
         android:id="@+id/privacy_level"
         android:layout_above="@+id/upload_files_button"
         android:layout_margin="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Widget.AppCompat.Spinner.Underlined"/>
-    <android.support.v7.widget.AppCompatButton
+    <Button
         android:id="@+id/delete_upload_job_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -110,7 +107,7 @@
         android:layout_above="@+id/upload_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignParentStart="true"/>
-    <android.support.v7.widget.AppCompatButton
+    <Button
         android:id="@+id/upload_files_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -11,10 +11,9 @@
         android:layout_centerVertical="true"
         android:checked="false"
         android:clickable="false"
-        android:focusable="false"
-        android:button="@drawable/always_clear_checkbox"/>
+        android:focusable="false"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/name"
         android:layout_marginStart="5dp"
         android:layout_width="wrap_content"
@@ -23,8 +22,8 @@
         android:layout_toEndOf="@id/checked"
         android:layout_alignWithParentIfMissing="true"
         android:text="dummy text"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
-    <android.support.v7.widget.AppCompatTextView
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+    <TextView
         android:id="@+id/details"
         android:layout_marginStart="5dp"
         android:layout_width="wrap_content"
@@ -34,6 +33,6 @@
         android:layout_toEndOf="@id/checked"
         android:layout_alignWithParentIfMissing="true"
         android:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 </RelativeLayout>

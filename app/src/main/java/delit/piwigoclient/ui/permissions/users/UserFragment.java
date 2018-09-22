@@ -233,6 +233,7 @@ public class UserFragment extends MyFragment {
 
         usertypeField.setEnabled(editable);
         userPrivacyLevelField.setEnabled(editable);
+        lastVisitedField.setEnabled(editable);
 
         emailField.setEnabled(editable);
         highDefinitionEnabled.setEnabled(editable);

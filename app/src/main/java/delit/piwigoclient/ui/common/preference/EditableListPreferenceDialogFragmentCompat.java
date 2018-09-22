@@ -33,6 +33,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
+import delit.piwigoclient.util.DisplayUtils;
 
 public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     private RecyclerView listRecyclerView;
@@ -44,7 +45,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         super.onCreate(savedInstanceState);
         EditableListPreference pref = getPreference();
         pref.loadEntries();
-        if (savedInstanceState == null) {
+        if (savedInstanceState != null) {
             userSelectedItem = savedInstanceState.getString(STATE_USER_SELECTED_ITEM);
         }
     }
@@ -386,12 +387,8 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        DisplayUtils.hideKeyboardFrom(getContext(), dialog);
         super.onClick(dialog, which);
     }
 
-    public void hideKeyboardFrom(Context context, IBinder windowToken) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(windowToken, 0);
-    }
 }

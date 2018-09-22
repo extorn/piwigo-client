@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white">
+    android:layout_height="wrap_content">
 
     <delit.piwigoclient.ui.common.SquareLinearLayout
         android:id="@+id/thumbnail_container"
@@ -12,28 +11,26 @@
         android:background="@color/black_overlay"
         android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/file_for_upload_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="120dp"
-            android:minWidth="120dp"
             android:scaleType="fitCenter" />
 
     </delit.piwigoclient.ui.common.SquareLinearLayout>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/file_for_upload_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:layout_alignBottom="@+id/thumbnail_container"
-        android:background="@color/white"
+        android:background="@color/background_floating"
         android:backgroundTintMode="add"
         android:text="filename"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-    <android.support.v7.widget.AppCompatImageButton
+    <ImageButton
         android:id="@+id/file_for_upload_delete_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

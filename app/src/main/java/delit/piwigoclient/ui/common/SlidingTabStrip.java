@@ -70,7 +70,7 @@ class SlidingTabStrip extends LinearLayoutCompat {
                 DEFAULT_BOTTOM_BORDER_COLOR_ALPHA);
 
         mDefaultTabColorizer = new SimpleTabColorizer();
-        mDefaultTabColorizer.setIndicatorColors(ContextCompat.getColor(context, R.color.colorAccent));
+        mDefaultTabColorizer.setIndicatorColors(ContextCompat.getColor(context, R.color.accent));
         mDefaultTabColorizer.setDividerColors(setColorAlpha(themeForegroundColor,
                 DEFAULT_DIVIDER_COLOR_ALPHA));
 

@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <android.support.v7.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/basket_image"
         android:layout_width="80dp"
         android:layout_height="60dp"
@@ -16,16 +16,16 @@
         android:paddingRight="30dp"
         android:background="@drawable/border"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/basket_item_count"
         android:layout_alignEnd="@+id/basket_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:text="15"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-    <android.support.v7.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/basket_action_indicator"
         android:layout_alignEnd="@+id/basket_image"
         android:layout_alignBottom="@+id/basket_image"
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:padding="5dp"/>
 
-    <android.support.v7.widget.AppCompatImageView
+    <ImageView
         android:id="@+id/basket_clear_button"
         android:layout_toEndOf="@+id/basket_image"
         android:layout_width="wrap_content"

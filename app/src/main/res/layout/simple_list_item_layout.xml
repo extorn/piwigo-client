@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants">
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/name"
         android:layout_marginStart="5dp"
         android:layout_width="match_parent"
@@ -12,8 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_alignWithParentIfMissing="true"
         android:text="dummy text"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
-    <android.support.v7.widget.AppCompatTextView
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+    <TextView
         android:id="@+id/details"
         android:layout_marginStart="5dp"
         android:layout_width="match_parent"
@@ -22,6 +22,6 @@
         android:layout_below="@id/name"
         android:layout_alignWithParentIfMissing="true"
         android:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 </RelativeLayout>

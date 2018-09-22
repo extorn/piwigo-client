@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
@@ -63,8 +63,8 @@ public class CreateAlbumFragment extends MyFragment {
     private CategoryItemStub parentGallery;
     private TextView galleryNameEditField;
     private TextView galleryDescriptionEditField;
-    private Switch galleryCommentsAllowedSwitchField;
-    private Switch galleryIsPrivateSwitchField;
+    private SwitchCompat galleryCommentsAllowedSwitchField;
+    private SwitchCompat galleryIsPrivateSwitchField;
     private ArrayList<Group> selectedGroups;
     private ArrayList<Username> selectedUsernames;
     private AppCompatTextView allowedGroupsTextView;

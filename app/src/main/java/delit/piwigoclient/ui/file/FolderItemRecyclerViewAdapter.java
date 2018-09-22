@@ -270,7 +270,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         public void cacheViewFieldsAndConfigure() {
             super.cacheViewFieldsAndConfigure();
-            getIconView().setColorFilter(ContextCompat.getColor(getContext(),R.color.colorSecondary), PorterDuff.Mode.SRC_IN);
+            getIconView().setColorFilter(ContextCompat.getColor(getContext(),R.color.accent), PorterDuff.Mode.SRC_IN);
             getIconViewLoader().setResourceToLoad(R.drawable.ic_folder_black_24dp);
             getIconViewLoader().load();
         }
@@ -387,9 +387,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             checkBox.setClickable(getItemActionListener().getParentAdapter().isItemSelectionAllowed());
             checkBox.setOnCheckedChangeListener(getItemActionListener().getParentAdapter().new ItemSelectionListener(getItemActionListener().getParentAdapter(), this));
             if (isMultiSelectionAllowed()) {
-                checkBox.setButtonDrawable(R.drawable.always_clear_checkbox);
+                checkBox.setButtonDrawable(R.drawable.checkbox);
             } else {
-                checkBox.setButtonDrawable(R.drawable.always_clear_radio);
+                checkBox.setButtonDrawable(R.drawable.radio_button);
             }
 
             txtTitle = itemView.findViewById(R.id.list_item_name);

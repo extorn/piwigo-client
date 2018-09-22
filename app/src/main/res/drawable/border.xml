@@ -10,5 +10,5 @@
         android:width="1dp"
         android:color="@android:color/black" />
 
-    <solid android:color="@color/colorAccent"/>
+    <solid android:color="@color/accent"/>
 </shape>

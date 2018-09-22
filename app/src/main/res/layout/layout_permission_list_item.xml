@@ -9,10 +9,9 @@
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:button="@drawable/always_clear_checkbox"/>
+        android:layout_height="wrap_content"/>
 
-    <android.support.v7.widget.AppCompatTextView
+    <TextView
         android:id="@+id/permission_text"
         android:text="some text"
         android:layout_marginStart="8dp"
@@ -21,5 +20,5 @@
         android:layout_marginTop="15dp"
         android:layout_toEndOf="@id/permission_status_icon"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 </RelativeLayout>
