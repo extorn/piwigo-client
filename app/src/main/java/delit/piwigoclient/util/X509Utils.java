@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -75,40 +76,34 @@ public class X509Utils {
         saveKeystore(context, clientKeystore, trustStorePass, "trustStore." + KeyStore.getDefaultType());
     }
 
-    public static void saveKeystore(Context context, KeyStore keystore, char[] keystorePassword, String keystoreFilename) {
+    public static byte[] saveKeystore(String keystoreDestId, KeyStore keystore, char[] keystorePass) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        saveKeystore(keystoreDestId, keystore, new BufferedOutputStream(baos), keystorePass);
+        return baos.toByteArray();
+    }
 
-        File appDataDir = context.getApplicationContext().getFilesDir();
-        if (!appDataDir.exists()) {
-            appDataDir.mkdir();
-        }
-        BufferedOutputStream bos = null;
+    public static void saveKeystore(String keystoreDestId, KeyStore keystore, BufferedOutputStream bos, char[] keystorePass) {
         try {
-            bos = new BufferedOutputStream(new FileOutputStream(new File(appDataDir, keystoreFilename)));
-            keystore.store(bos, keystorePassword);
-        } catch (FileNotFoundException e) {
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
-            }
+            keystore.store(bos, keystorePass);
         } catch (CertificateException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
+                Log.e(TAG, "Error saving keystore : " + keystoreDestId, e);
             }
         } catch (NoSuchAlgorithmException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
+                Log.e(TAG, "Error saving keystore : " + keystoreDestId, e);
             }
         } catch (KeyStoreException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
+                Log.e(TAG, "Error saving keystore : " + keystoreDestId, e);
             }
         } catch (IOException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
+                Log.e(TAG, "Error saving keystore : " + keystoreDestId, e);
             }
         } finally {
             if (bos != null) {
@@ -117,9 +112,26 @@ public class X509Utils {
                 } catch (IOException e) {
                     Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {
-                        Log.e(TAG, "Error closing keystore after save : " + keystoreFilename, e);
+                        Log.e(TAG, "Error closing keystore after save : " + keystoreDestId, e);
                     }
                 }
+            }
+        }
+    }
+
+    public static void saveKeystore(Context context, KeyStore keystore, char[] keystorePassword, String keystoreFilename) {
+
+        File appDataDir = context.getApplicationContext().getFilesDir();
+        if (!appDataDir.exists()) {
+            appDataDir.mkdir();
+        }
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File(appDataDir, keystoreFilename)));
+            saveKeystore(keystoreFilename, keystore, bos, keystorePassword);
+        } catch (FileNotFoundException e) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
+                Log.e(TAG, "Error saving keystore : " + keystoreFilename, e);
             }
         }
     }
@@ -193,12 +205,11 @@ public class X509Utils {
         return keystore;
     }
 
-    public static KeyStore loadKeystore(Context context, String keystoreFilename, char[] keystorePassword) {
-        File appDataDir = context.getApplicationContext().getFilesDir();
-        if (!appDataDir.exists()) {
-            appDataDir.mkdir();
-        }
-        File keystoreFile = new File(appDataDir, keystoreFilename);
+    public static KeyStore loadKeystore(String keystoreSrcId, byte[] bytes, char[] keystorePassword) {
+        return loadKeystore(keystoreSrcId, new BufferedInputStream(new ByteArrayInputStream(bytes)), keystorePassword);
+    }
+
+    public static KeyStore loadKeystore(String keystoreSrcId, BufferedInputStream keystoreInput, char[] keystorePassword) {
         KeyStore keystore = null;
         try {
             keystore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -206,48 +217,41 @@ public class X509Utils {
         } catch (KeyStoreException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error generating blank keystore : " + keystoreFilename, e);
+                Log.e(TAG, "Error generating blank keystore : " + keystoreSrcId, e);
             }
         } catch (CertificateException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error generating blank keystore : " + keystoreFilename, e);
+                Log.e(TAG, "Error generating blank keystore : " + keystoreSrcId, e);
             }
         } catch (NoSuchAlgorithmException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error generating blank keystore : " + keystoreFilename, e);
+                Log.e(TAG, "Error generating blank keystore : " + keystoreSrcId, e);
             }
         } catch (IOException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error generating blank keystore : " + keystoreFilename, e);
+                Log.e(TAG, "Error generating blank keystore : " + keystoreSrcId, e);
             }
         }
-        if (keystore != null && keystoreFile.exists()) {
-            BufferedInputStream keystoreInput = null;
+        if (keystore != null) {
             try {
-                keystoreInput = new BufferedInputStream(new FileInputStream(keystoreFile));
                 keystore.load(keystoreInput, keystorePassword);
             } catch (CertificateException e) {
                 Crashlytics.logException(e);
                 if (BuildConfig.DEBUG) {
-                    Log.e(TAG, "Error loading keystore : " + keystoreFilename, e);
+                    Log.e(TAG, "Error loading keystore : " + keystoreSrcId, e);
                 }
             } catch (NoSuchAlgorithmException e) {
                 Crashlytics.logException(e);
                 if (BuildConfig.DEBUG) {
-                    Log.e(TAG, "Error loading keystore : " + keystoreFilename, e);
-                }
-            } catch (FileNotFoundException e) {
-                Crashlytics.logException(e);
-                if (BuildConfig.DEBUG) {
-                    Log.e(TAG, "Error loading keystore : " + keystoreFilename, e);
+                    Log.e(TAG, "Error loading keystore : " + keystoreSrcId, e);
                 }
             } catch (IOException e) {
                 Crashlytics.logException(e);
                 if (BuildConfig.DEBUG) {
-                    Log.e(TAG, "Error loading keystore : " + keystoreFilename, e);
+                    Log.e(TAG, "Error loading keystore : " + keystoreSrcId, e);
                 }
             } finally {
                 if (keystoreInput != null) {
@@ -256,13 +260,33 @@ public class X509Utils {
                     } catch (IOException e) {
                         Crashlytics.logException(e);
                         if (BuildConfig.DEBUG) {
-                            Log.e(TAG, "Error closing keystore after load : " + keystoreFilename, e);
+                            Log.e(TAG, "Error closing keystore after load : " + keystoreSrcId, e);
                         }
                     }
                 }
             }
         }
         return keystore;
+    }
+
+    public static KeyStore loadKeystore(Context context, String keystoreFilename, char[] keystorePassword) {
+        File appDataDir = context.getApplicationContext().getFilesDir();
+        if (!appDataDir.exists()) {
+            appDataDir.mkdir();
+        }
+        File keystoreFile = new File(appDataDir, keystoreFilename);
+        if(keystoreFile.exists()) {
+            try {
+                BufferedInputStream keystoreInput = new BufferedInputStream(new FileInputStream(keystoreFile));
+                return loadKeystore(keystoreFilename, keystoreInput, keystorePassword);
+            } catch (FileNotFoundException e) {
+                Crashlytics.logException(e);
+                if (BuildConfig.DEBUG) {
+                    Log.e(TAG, "Error loading keystore : " + keystoreFilename, e);
+                }
+            }
+        }
+        return null;
     }
 
     public static String getCertificateThumbprint(Certificate x509Certificate) throws NoSuchAlgorithmException {

@@ -1,13 +1,11 @@
 package delit.piwigoclient.ui.common.preference;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -19,7 +17,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -77,6 +74,8 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     private String STATE_TRACKED_REQUEST = "KeystorePreference.TrackedRequest";
     private String STATE_LOAD_OP_RESULT = "KeystorePreference.LoadOperationResult";
     private String STATE_LOAD_IN_PROGRESS = "KeystorePreference.LoadInProgress";
+    private String STATE_KEYSTORE = "KeystorePreference.KeyStore";
+    private static final char[] keystorePass = new char[]{'!', 'P', '1', 'r', '!', '4', 't', '3', '5', '!'};
     // State persistant items
     private boolean keystoreLoadInProgress;
     private LoadOperationResult keystoreLoadOperationResult;
@@ -86,6 +85,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
     private CustomImageButton addListItemButton;
+    private KeyStore keystore;
 
     @Override
     public Preference findPreference(CharSequence key) {
@@ -120,10 +120,8 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
     }
 
     @Override
-    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-        View view = buildCertificateListView(getPreference().getKeystore());
-        builder.setView(view);
+    protected View onCreateDialogView(Context context) {
+        return buildCertificateListView(keystore);
     }
 
     private View buildCertificateListView(KeyStore keystore) {
@@ -670,6 +668,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         outState.putInt(STATE_TRACKED_REQUEST, trackedRequest);
         outState.putSerializable(STATE_LOAD_OP_RESULT, keystoreLoadOperationResult);
         outState.putBoolean(STATE_LOAD_IN_PROGRESS, keystoreLoadInProgress);
+        outState.putByteArray(STATE_KEYSTORE, X509Utils.saveKeystore("byteArray", keystore, keystorePass));
     }
 
     @Override
@@ -679,7 +678,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             trackedRequest = savedInstanceState.getInt(STATE_TRACKED_REQUEST, -1);
             keystoreLoadOperationResult = (LoadOperationResult) savedInstanceState.getSerializable(STATE_LOAD_OP_RESULT);
             keystoreLoadInProgress = savedInstanceState.getBoolean(STATE_LOAD_IN_PROGRESS);
+            keystore = X509Utils.loadKeystore("byteArray", savedInstanceState.getByteArray(STATE_KEYSTORE), keystorePass) ;
         } else {
+            KeyStorePreference pref = getPreference();
+            keystore = pref.getKeystore();
             keystoreLoadOperationResult = null;
             trackedRequest = -1;
         }

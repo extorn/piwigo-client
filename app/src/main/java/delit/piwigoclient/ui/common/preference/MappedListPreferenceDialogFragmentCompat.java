@@ -1,24 +1,27 @@
 package delit.piwigoclient.ui.common.preference;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
-import android.view.inputmethod.InputMethodManager;
+
+import java.io.Serializable;
 
 import delit.piwigoclient.util.DisplayUtils;
 
-public class MappedListPreferenceDialogFragmentCompat<T> extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
+public class MappedListPreferenceDialogFragmentCompat<T extends Serializable> extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
 
-    private int mClickedDialogEntryIndex;
-    private String SAVE_STATE_INDEX = "MappedListPreferenceDialogFragment.index";
+    private static final String SAVE_STATE_INDEX = "MappedListPreference.index";
+    private static final String STATE_ENTRIES = "MappedListPreference.entries";
+    private static final String STATE_ENTRY_VALUES = "MappedListPreference.entryValues";
+    private int checkedItem;
+    private T[] entryValues;
+    private CharSequence[] entries;
+
 
     @Override
     public Preference findPreference(CharSequence key) {
@@ -29,32 +32,37 @@ public class MappedListPreferenceDialogFragmentCompat<T> extends PreferenceDialo
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState != null) {
-            mClickedDialogEntryIndex = savedInstanceState.getInt(SAVE_STATE_INDEX, 0);
+            checkedItem = savedInstanceState.getInt(SAVE_STATE_INDEX, 0);
+            entries = savedInstanceState.getCharSequenceArray(STATE_ENTRIES);
+            entryValues = (T[]) savedInstanceState.getSerializable(STATE_ENTRY_VALUES);
         } else {
             MappedListPreference<T> pref = (MappedListPreference<T>) getPreference();
-            mClickedDialogEntryIndex = pref.getValueIndex();
+            checkedItem = pref.getValueIndex();
+            entryValues = pref.getEntryValues();
+            entries = pref.getEntries();
         }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SAVE_STATE_INDEX, mClickedDialogEntryIndex);
+        outState.putInt(SAVE_STATE_INDEX, checkedItem);
+        outState.putSerializable(STATE_ENTRY_VALUES, entryValues);
+        outState.putCharSequenceArray(STATE_ENTRIES, entries);
     }
 
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        MappedListPreference<T> pref = (MappedListPreference<T>) getPreference();
-        if (pref.getEntries() == null || pref.getEntryValues() == null) {
+        if (entries == null ||  entryValues == null) {
             throw new IllegalStateException(
                     "ListPreference requires an entries array and an entryValues array.");
         }
 
-        builder.setSingleChoiceItems(pref.getEntries(), pref.getValueIndex(),
+        builder.setSingleChoiceItems(entries, checkedItem,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        mClickedDialogEntryIndex = which;
+                        checkedItem = which;
                         /*
                          * Clicking on an item simulates the positive button
                          * click, and dismisses the dialog.
@@ -75,8 +83,8 @@ public class MappedListPreferenceDialogFragmentCompat<T> extends PreferenceDialo
     @Override
     public void onDialogClosed(boolean positiveResult) {
         MappedListPreference<T> pref = (MappedListPreference<T>) getPreference();
-        if (positiveResult && mClickedDialogEntryIndex >= 0 && pref.getEntryValues() != null) {
-            T value = pref.getEntryValues()[mClickedDialogEntryIndex];
+        if (positiveResult && checkedItem >= 0 && pref.getEntryValues() != null) {
+            T value = pref.getEntryValues()[checkedItem];
             if (pref.callChangeListener(value)) {
                 pref.setValue(value);
             }

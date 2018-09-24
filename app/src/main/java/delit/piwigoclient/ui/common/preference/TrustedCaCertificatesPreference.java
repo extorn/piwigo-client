@@ -12,7 +12,6 @@ import delit.piwigoclient.util.X509Utils;
  */
 
 public class TrustedCaCertificatesPreference extends KeyStorePreference {
-    private static final String TAG = "trustedCaCertPref";
 
     public TrustedCaCertificatesPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr,defStyleRes);

@@ -34,14 +34,6 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
         return fragment;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        if(view == null) {
-            view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
-        }
-        return view;
-    }
-
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
         @Override

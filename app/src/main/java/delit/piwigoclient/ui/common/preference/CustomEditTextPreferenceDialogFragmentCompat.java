@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
@@ -17,6 +18,8 @@ import delit.piwigoclient.util.DisplayUtils;
 
 public class CustomEditTextPreferenceDialogFragmentCompat extends EditTextPreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     private EditText editText;
+    private int inputType;
+    private String STATE_INPUT_TYPE = "CustomEditTextPreference.InputType";
 
     @Override
     public Preference findPreference(CharSequence key) {
@@ -25,6 +28,22 @@ public class CustomEditTextPreferenceDialogFragmentCompat extends EditTextPrefer
 
     public CustomEditTextPreference getPreference() {
         return (CustomEditTextPreference)super.getPreference();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState == null) {
+            inputType = getPreference().getInputFieldType();
+        } else {
+            inputType = savedInstanceState.getInt(STATE_INPUT_TYPE);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_INPUT_TYPE, inputType);
     }
 
     public static CustomEditTextPreferenceDialogFragmentCompat newInstance(String key) {
@@ -39,8 +58,7 @@ public class CustomEditTextPreferenceDialogFragmentCompat extends EditTextPrefer
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
-        editText = (EditText) view.findViewById(android.R.id.edit);
-        int inputType = getPreference().getInputFieldType();
+        editText = view.findViewById(android.R.id.edit);
         if (inputType != -1) {
             editText.setInputType(inputType);
         }

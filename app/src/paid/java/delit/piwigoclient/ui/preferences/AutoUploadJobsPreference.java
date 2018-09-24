@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import delit.piwigoclient.R;
@@ -85,7 +86,7 @@ public class AutoUploadJobsPreference extends DialogPreference {
         setValue(mValue);
     }
 
-    public List<Integer> getUploadJobIdsFromValue() {
+    public ArrayList<Integer> getUploadJobIdsFromValue() {
         return CollectionUtils.integersFromCsvList(mValue);
     }
 

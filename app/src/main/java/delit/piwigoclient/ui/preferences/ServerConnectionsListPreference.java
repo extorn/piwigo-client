@@ -7,6 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import com.google.android.gms.common.util.Strings;
@@ -19,7 +20,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
  */
 
 public class ServerConnectionsListPreference extends DialogPreference {
-    private String value;
+    private String currentValue;
 
     public ServerConnectionsListPreference(Context context, AttributeSet attrs, int defStyleAttr,  int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -50,40 +51,30 @@ public class ServerConnectionsListPreference extends DialogPreference {
      * @return The value of the key.
      */
     public String getValue() {
-        return value;
+        return currentValue;
     }
 
-    /**
-     * Sets the value of the key.
-     *
-     * @param value The value to set for the key.
-     */
-    /*public void setValue(String value) {
-        // Always persist/notify the first time.
-        boolean changed = !ObjectUtils.areEqual(this.mValue, value);
-        if (!mValueSet || changed) {
-            this.mValue = value;
-            mValueSet = true;
-            persistString(mValue);
+    public void persistStringValue(String value) {
+        final boolean changed = !TextUtils.equals(currentValue, value);
+        if (changed) {
+            String oldValue = currentValue;
+            currentValue = value;
+            persistString(value);
+
             if (changed) {
                 notifyChanged();
             }
         }
-    }*/
-
-    public void persistStringValue(String value)
-    {
-        persistString(value);
     }
 
     @Override
     public CharSequence getSummary() {
         SharedPreferences prefs = getAppSharedPreferences();
-//        String activeProfile = ConnectionPreferences.getActiveConnectionProfile(prefs, getContext());
+        currentValue = getPersistedString(currentValue);
         ServerConnection activeConnection;
-        if (value != null) {
-            ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(value);
-            activeConnection = new ServerConnection(value,
+        if (currentValue != null) {
+            ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(currentValue);
+            activeConnection = new ServerConnection(currentValue,
                     selectedPref.getPiwigoServerAddress(prefs, getContext()),
                     selectedPref.getPiwigoUsername(prefs, getContext()));
         } else {
@@ -103,18 +94,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        if (restoreValue)
-        {
-            if (defaultValue == null) {
-                value = getPersistedString("");
-            } else {
-                value = getPersistedString(defaultValue.toString());
-            }
-        }
-        else
-        {
-            value = defaultValue.toString();
-        }
+        persistStringValue(restoreValue ? getPersistedString(currentValue) : (String) defaultValue);
     }
 
     @Override

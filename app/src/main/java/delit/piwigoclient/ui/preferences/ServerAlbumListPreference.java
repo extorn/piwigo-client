@@ -1,10 +1,12 @@
 package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v7.preference.DialogPreference;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import delit.piwigoclient.R;
@@ -15,18 +17,16 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
  */
 
 public class ServerAlbumListPreference extends DialogPreference {
-    // state persistant values
-    private long activeServiceCall = -1;
-    private String value;
+
+    private String currentValue;
     // non state persistant values
     private String connectionProfileNamePreferenceKey;
+    private SharedPreferences.OnSharedPreferenceChangeListener listener;
 
     public ServerAlbumListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initPreference(context, attrs);
     }
-
-
 
     public ServerAlbumListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -48,11 +48,41 @@ public class ServerAlbumListPreference extends DialogPreference {
                 R.styleable.ServerAlbumListPreference, 0, 0);
         connectionProfileNamePreferenceKey = a.getString(R.styleable.ServerAlbumListPreference_connectionProfileNameKey);
         a.recycle();
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if(key.equals(connectionProfileNamePreferenceKey)) {
+                    setEnabled(null != sharedPreferences.getString(connectionProfileNamePreferenceKey, null));
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onAttached() {
+        getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
+        listener.onSharedPreferenceChanged(getSharedPreferences(), connectionProfileNamePreferenceKey);
+        super.onAttached();
+    }
+
+    @Override
+    public void onDetached() {
+        getSharedPreferences().unregisterOnSharedPreferenceChangeListener(listener);
+        super.onDetached();
     }
 
     public void persistStringValue(String value)
     {
-        persistString(value);
+        final boolean changed = !TextUtils.equals(currentValue, value);
+        if (changed) {
+            String oldValue = currentValue;
+            currentValue = value;
+            persistString(value);
+
+            if (changed) {
+                notifyChanged();
+            }
+        }
     }
 
 //
@@ -76,10 +106,11 @@ public class ServerAlbumListPreference extends DialogPreference {
 
     @Override
     public CharSequence getSummary() {
+        currentValue = getPersistedString(currentValue);
         if (super.getSummary() == null) {
-            return ServerAlbumPreference.getSelectedAlbumName(value);
+            return ServerAlbumPreference.getSelectedAlbumName(currentValue);
         } else {
-            String albumName = ServerAlbumPreference.getSelectedAlbumName(value);
+            String albumName = ServerAlbumPreference.getSelectedAlbumName(currentValue);
             if (albumName != null) {
                 return String.format(super.getSummary().toString(), albumName);
             } else {
@@ -95,18 +126,7 @@ public class ServerAlbumListPreference extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        if (restoreValue)
-        {
-            if (defaultValue == null) {
-                value = getPersistedString("");
-            } else {
-                value = getPersistedString(defaultValue.toString());
-            }
-        }
-        else
-        {
-            value = defaultValue.toString();
-        }
+        persistStringValue(restoreValue ? getPersistedString(currentValue) : (String) defaultValue);
     }
 
     @Override
@@ -118,8 +138,7 @@ public class ServerAlbumListPreference extends DialogPreference {
         }
 
         final SavedState myState = new SavedState(superState);
-        myState.value = this.value;
-        myState.activeServiceCall = this.activeServiceCall;
+        myState.value = this.currentValue;
         return myState;
     }
 
@@ -133,24 +152,15 @@ public class ServerAlbumListPreference extends DialogPreference {
 
         SavedState myState = (SavedState) state;
         super.onRestoreInstanceState(myState.getSuperState());
-        this.value = myState.value;
-        this.activeServiceCall = myState.activeServiceCall;
+        this.currentValue = myState.value;
     }
 
     public long getSelectedAlbumId() {
-        return ServerAlbumPreference.getSelectedAlbumId(value);
+        return ServerAlbumPreference.getSelectedAlbumId(currentValue);
     }
 
     public String getConnectionProfileNamePreferenceKey() {
         return connectionProfileNamePreferenceKey;
-    }
-
-    public void setActiveServiceCall(long activeServiceCall) {
-        this.activeServiceCall = activeServiceCall;
-    }
-
-    public long getActiveServiceCall() {
-        return activeServiceCall;
     }
 
     public static class ServerAlbumPreference {
@@ -188,12 +198,10 @@ public class ServerAlbumListPreference extends DialogPreference {
                 };
 
         private String value;
-        private long activeServiceCall;
 
         public SavedState(Parcel source) {
             super(source);
             value = source.readString();
-            activeServiceCall = source.readLong();
         }
 
         public SavedState(Parcelable superState) {
@@ -204,7 +212,6 @@ public class ServerAlbumListPreference extends DialogPreference {
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeString(value);
-            dest.writeLong(activeServiceCall);
         }
     }
 

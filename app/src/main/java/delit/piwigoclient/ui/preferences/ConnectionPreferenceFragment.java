@@ -129,8 +129,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     // clone the current working copy of prefs to the previous active selection
                     if (oldSelectionExists) {
                         ConnectionPreferences.clonePreferences(getPrefs(), getContext(), null, oldSelection);
-                    } else {
-                        ConnectionPreferences.deletePreferences(getPrefs(), getContext(), oldSelection);
                     }
                     // copy those profile values to the working app copy of prefs
                     ConnectionPreferences.clonePreferences(getPrefs(), getContext(), newSelection, null);

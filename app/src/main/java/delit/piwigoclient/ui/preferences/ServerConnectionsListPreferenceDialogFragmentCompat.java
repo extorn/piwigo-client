@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
@@ -33,14 +34,31 @@ import delit.piwigoclient.util.DisplayUtils;
 public class ServerConnectionsListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
 
     private ListView listView;
+    private String selectedValue;
+    private String STATE_SELECTED_VALUE = "ServerConnectionsListPreference.SelectedValue";
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState == null) {
+            ServerConnectionsListPreference pref = getPreference();
+            selectedValue = pref.getValue();
+        } else {
+            selectedValue = savedInstanceState.getString(STATE_SELECTED_VALUE);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(STATE_SELECTED_VALUE, selectedValue);
+    }
 
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
 
-        ServerConnectionsListPreference pref = getPreference();
-
-        loadListValues(listView, pref.getValue());
+        loadListValues(listView, selectedValue);
         if (listView.getAdapter().getCount() == 1) {
             // ensure the value gets set.
             ((ServerConnectionProfilesListAdapter) listView.getAdapter()).selectAllItemIds();
@@ -51,9 +69,8 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
     }
 
     @Override
-    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-        builder.setView(buildDialogView());
+    protected View onCreateDialogView(Context context) {
+        return buildDialogView();
     }
 
     private View buildDialogView() {
@@ -91,6 +108,17 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
     private SharedPreferences getAppSharedPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
     }
+
+//    @Override
+//    public void onDialogClosed(boolean positiveResult) {
+//        EditableListPreference pref = getPreference();
+//        if (positiveResult && userSelectedItem != null && pref.getEntryValues() != null) {
+//            String value = userSelectedItem;
+//            if (pref.callChangeListener(value)) {
+//                pref.setValue(value);
+//            }
+//        }
+//    }
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
@@ -196,4 +224,5 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         DisplayUtils.hideKeyboardFrom(getContext(), dialog);
         super.onClick(dialog, which);
     }
+
 }

@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import com.crashlytics.android.Crashlytics;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +28,6 @@ public class EditableListPreference extends DialogPreference {
     // State persistant values
     private String currentValue;
     private HashSet<String> entries;
-    private boolean entriesAltered;
     // Non state persistant values (because they are never altered)
     private int entriesPref;
     private String summary;
@@ -82,7 +82,6 @@ public class EditableListPreference extends DialogPreference {
      *
      */
     public void loadEntries() {
-        entriesAltered = false;
         entries = new HashSet<>(getPreferenceManager().getSharedPreferences().getStringSet(getContext().getString(entriesPref), new HashSet<String>(1)));
     }
 
@@ -109,7 +108,6 @@ public class EditableListPreference extends DialogPreference {
             String oldValue = currentValue;
             currentValue = value;
             persistString(value);
-            persistEntries(entries);
 
             if (changed) {
                 notifyChanged();
@@ -136,7 +134,6 @@ public class EditableListPreference extends DialogPreference {
         final SavedState myState = new SavedState(superState);
         myState.value = getValue();
         myState.entries = entries;
-        myState.entriesAltered = entriesAltered;
         return myState;
     }
 
@@ -152,7 +149,6 @@ public class EditableListPreference extends DialogPreference {
         super.onRestoreInstanceState(myState.getSuperState());
         setValue(myState.value);
         entries = myState.entries;
-        entriesAltered = myState.entriesAltered;
     }
 
     /**
@@ -177,9 +173,6 @@ public class EditableListPreference extends DialogPreference {
         if (!shouldPersist()) {
             return false;
         }
-        if(!entriesAltered) {
-            return false;
-        }
 
         PreferenceManager prefMan = getPreferenceManager();
         SharedPreferences.Editor editor = prefMan.getSharedPreferences().edit();
@@ -196,10 +189,6 @@ public class EditableListPreference extends DialogPreference {
         return true;
     }
 
-    protected String getEntry() {
-        return getValue();
-    }
-
     /**
      * Returns the summary of this ListPreference. If the summary
      * has a {@linkplain java.lang.String#format String formatting}
@@ -210,7 +199,7 @@ public class EditableListPreference extends DialogPreference {
      */
     @Override
     public CharSequence getSummary() {
-        final CharSequence entry = getEntry();
+        final String entry = getValue();
         if (summary == null) {
             return super.getSummary();
         } else {
@@ -223,40 +212,31 @@ public class EditableListPreference extends DialogPreference {
         return a.getString(index);
     }
 
-    /**
-     * Implement to allow deletion of items from the list (called on delete button click)
-     *
-     * @param position
-     * @param entry
-     * @param entryValue
-     */
-    public void deleteItemFromList(int position, String entry, String entryValue) {
-        // clone the entries set so we don't inadvertently change the cached property value
-        entriesAltered = true;
-        // delete the item from the list.
-        entries.remove(entry);
-        if (listener != null) {
-            listener.onItemRemoved(entryValue);
-        }
-    }
-
-    public void replaceValue(String oldValue, String newValue) {
-        entriesAltered = true;
-        entries.remove(oldValue);
-        entries.add(newValue);
-    }
-
-    public void addNewValue(String newItem) {
-        entriesAltered = true;
-        entries.add(newItem);
-    }
-
     public boolean isAllowItemEdit() {
         return allowItemEdit;
     }
 
-    public boolean isEntriesAltered() {
-        return entriesAltered;
+    public void updateEntryValues(ArrayList<EditableListPreferenceDialogFragmentCompat.ListAction> actions) {
+        for(EditableListPreferenceDialogFragmentCompat.ListAction action : actions) {
+            if(action instanceof EditableListPreferenceDialogFragmentCompat.Removal) {
+                if (listener != null) {
+                    listener.onItemRemoved(action.entryValue);
+                }
+                entries.remove(action.entryValue);
+            } else if(action instanceof EditableListPreferenceDialogFragmentCompat.Addition) {
+                if (listener != null) {
+                    listener.onItemAdded(action.entryValue);
+                }
+                entries.add(action.entryValue);
+            } else if(action instanceof EditableListPreferenceDialogFragmentCompat.Replacement) {
+                if (listener != null) {
+                    listener.onItemAltered(this, action.entryValue, ((EditableListPreferenceDialogFragmentCompat.Replacement) action).newEntryValue);
+                }
+                entries.remove(action.entryValue);
+                entries.add(((EditableListPreferenceDialogFragmentCompat.Replacement) action).newEntryValue);
+            }
+        }
+        persistEntries(entries);
     }
 
     public interface EditableListPreferenceChangeListener extends Serializable {

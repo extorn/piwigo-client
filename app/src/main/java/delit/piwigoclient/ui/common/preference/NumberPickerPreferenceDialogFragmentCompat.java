@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.DialogPreference;
@@ -18,7 +19,16 @@ import delit.piwigoclient.util.DisplayUtils;
 
 public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
 
+    private static final String STATE_MIN_VALUE = "NumberPickerPreference.min";
+    private static final String STATE_MAX_VALUE = "NumberPickerPreference.max";
+    private static final String STATE_WRAP_VALUES = "NumberPickerPreference.wrap";
+    private static final String STATE_VALUE = "NumberPickerPreference.currentValue";
     private NumberPicker mPicker;
+    private int minValue;
+    private int maxValue;
+    private boolean wrapSelectionWheel;
+    private int selectedValue;
+
 
     @Override
     public Preference findPreference(CharSequence key) {
@@ -42,18 +52,41 @@ public class NumberPickerPreferenceDialogFragmentCompat extends PreferenceDialog
         }
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState == null) {
+            NumberPickerPreference pref = getPreference();
+            maxValue = pref.getMaxValue();
+            minValue = pref.getMinValue();
+            selectedValue = pref.getValue();
+            wrapSelectionWheel = pref.isWrapPickList();
+        } else {
+            maxValue = savedInstanceState.getInt(STATE_MAX_VALUE);
+            minValue = savedInstanceState.getInt(STATE_MIN_VALUE);
+            selectedValue = savedInstanceState.getInt(STATE_VALUE);
+            wrapSelectionWheel = savedInstanceState.getBoolean(STATE_WRAP_VALUES);
+        }
+    }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(STATE_VALUE,selectedValue);
+        outState.putInt(STATE_MIN_VALUE,minValue);
+        outState.putInt(STATE_MAX_VALUE,maxValue);
+        outState.putBoolean(STATE_WRAP_VALUES, wrapSelectionWheel);
+    }
 
     @Override
     protected View onCreateDialogView(Context context) {
-//        return super.onCreateDialogView(context);
         NumberPickerPreference pref = getPreference();
 
         mPicker = new NumberPicker(getContext());
-        mPicker.setMinValue(pref.getMinValue());
-        mPicker.setMaxValue(pref.getMaxValue());
-        mPicker.setWrapSelectorWheel(pref.isWrapPickList());
-        mPicker.setValue(pref.getValue());
+        mPicker.setMinValue(minValue);
+        mPicker.setMaxValue(maxValue);
+        mPicker.setWrapSelectorWheel(wrapSelectionWheel);
+        mPicker.setValue(selectedValue);
         return mPicker;
     }
 

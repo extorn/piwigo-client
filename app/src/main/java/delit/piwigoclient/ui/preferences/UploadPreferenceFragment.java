@@ -17,7 +17,6 @@ import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 public class UploadPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Upload Settings";
-    private View view;
 
     // Not needed from API v23 and above
     public Context getContext() {

@@ -12,6 +12,8 @@ import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
 
+import java.io.Serializable;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.util.ObjectUtils;
 
@@ -26,7 +28,7 @@ import delit.piwigoclient.util.ObjectUtils;
  * @attr ref android.R.styleable#ListPreference_entries
  * @attr ref android.R.styleable#ListPreference_entryValues
  */
-public abstract class MappedListPreference<T> extends DialogPreference {
+public abstract class MappedListPreference<T extends Serializable> extends DialogPreference {
     private T[] mEntryValues;
     private CharSequence[] mEntries;
     private T currentValue;

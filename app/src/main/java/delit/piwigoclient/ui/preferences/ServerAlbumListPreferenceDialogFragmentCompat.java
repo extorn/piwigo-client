@@ -1,11 +1,13 @@
 package delit.piwigoclient.ui.preferences;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.DialogPreference;
@@ -39,16 +41,34 @@ import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.util.DisplayUtils;
 
 public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
-
+    // state persistant values
+    private long activeServiceCall = -1;
     private CustomPiwigoResponseListener serviceCallHandler;
     private ListView itemListView;
+    private String STATE_ACTIVE_SERVICE_CALL = "ServerAlbumListPreference.ActiveCallId";
+    private CustomUIHelper uiHelper;
 
     @Override
-    protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-        builder.setView(buildDialogView());
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState != null) {
+            savedInstanceState.getLong(STATE_ACTIVE_SERVICE_CALL);
+        }
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(STATE_ACTIVE_SERVICE_CALL, activeServiceCall);
+    }
+
+    @Override
+    protected View onCreateDialogView(Context context) {
+        return buildDialogView();
     }
 
     private View buildDialogView() {
@@ -97,27 +117,24 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
     @Override
     public void onStart() {
         super.onStart();
-        ServerAlbumListPreference pref = getPreference();
-        if (pref.getActiveServiceCall() >= 0) {
-            PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(pref.getActiveServiceCall(), serviceCallHandler);
+        if (activeServiceCall >= 0) {
+            PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(activeServiceCall, serviceCallHandler);
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        ServerAlbumListPreference pref = getPreference();
-        if (pref.getActiveServiceCall() >= 0) {
-            PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(pref.getActiveServiceCall());
+        if (activeServiceCall >= 0) {
+            PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(activeServiceCall);
         }
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        ServerAlbumListPreference pref = getPreference();
-        if (pref.getActiveServiceCall() >= 0) {
-            PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(pref.getActiveServiceCall());
+        if (activeServiceCall >= 0) {
+            PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(activeServiceCall);
         }
     }
 
@@ -158,10 +175,12 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
     private void triggerAlbumsListLoad() {
 
         ServerAlbumListPreference pref = getPreference();
-        pref.setActiveServiceCall(invokeRetrieveSubCategoryNamesCall(getConnectionProfile()));
 
-        CustomUIHelper uiHelper = new CustomUIHelper(this, getSharedPreferences(), getContext());
+        uiHelper = new CustomUIHelper(this, getSharedPreferences(), getContext());
+        uiHelper.setPiwigoResponseListener(serviceCallHandler);
         serviceCallHandler.withUiHelper(this, uiHelper);
+
+        activeServiceCall = invokeRetrieveSubCategoryNamesCall(getConnectionProfile());
     }
 
     private SharedPreferences getSharedPreferences() {
@@ -172,10 +191,6 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         SharedPreferences prefs = getSharedPreferences();
         ServerAlbumListPreference pref = getPreference();
         String connectionProfile = prefs.getString(pref.getConnectionProfileNamePreferenceKey(), null);
-        if (connectionProfile == null) {
-            getDialog().dismiss();
-        }
-
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(connectionProfile);
 
         return connectionPrefs;
@@ -203,8 +218,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
     }
 
     private long addActiveServiceCall(int progress_loading_albums, long messageId) {
-        //TODO display a progress indicator and allow for retry?
-        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, serviceCallHandler);
+        uiHelper.addActiveServiceCall(messageId);
         return messageId;
     }
 
@@ -271,18 +285,13 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
 
         @Override
         protected boolean canShowDialog() {
-            return getDialog() != null;
+            return true;
         }
     }
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        DisplayUtils.hideKeyboardFrom(getContext(), dialog);
         super.onClick(dialog, which);
-    }
-
-    public void hideKeyboardFrom(Context context, IBinder windowToken) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(windowToken, 0);
     }
 }

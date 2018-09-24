@@ -1,16 +1,15 @@
 package delit.piwigoclient.ui.common.preference;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.DialogPreference;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,13 +18,13 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,20 +37,59 @@ import delit.piwigoclient.util.DisplayUtils;
 public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     private RecyclerView listRecyclerView;
     private String userSelectedItem;
+    ArrayList<String> entriesList;
+    ArrayList<ListAction> actions = new ArrayList<>();
     private String STATE_USER_SELECTED_ITEM = "EditableListPreference.userSelectedItem";
+    private String STATE_LIST_ITEMS = "EditableListPreference.listItems";
+    private String STATE_LIST_ACTIONS = "EditableListPreference.pendingListActions";
+    private boolean itemEditingAllowed;
+    private String STATE_ITEM_EDIT_ALLOWED = "EditableListPreference.itemEditAllowed";
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EditableListPreference pref = getPreference();
-        pref.loadEntries();
-        if (savedInstanceState != null) {
-            userSelectedItem = savedInstanceState.getString(STATE_USER_SELECTED_ITEM);
+
+    public class ListAction implements Serializable {
+        public final String entryValue;
+
+        public ListAction(String entryValue) {
+            this.entryValue = entryValue;
+        }
+    }
+    public class Removal extends ListAction{
+        public Removal(String entryValue) {
+            super(entryValue);
+        }
+    }
+    public class Addition extends ListAction{
+        public Addition(String entryValue) {
+            super(entryValue);
+        }
+    }
+    public class Replacement extends ListAction{
+        public final String newEntryValue;
+        public Replacement(String entryValue, String newValue) {
+            super(entryValue);
+            this.newEntryValue = newValue;
         }
     }
 
     @Override
-    public android.support.v7.preference.Preference findPreference(CharSequence key) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            userSelectedItem = savedInstanceState.getString(STATE_USER_SELECTED_ITEM);
+            actions = (ArrayList<ListAction>) savedInstanceState.getSerializable(STATE_LIST_ACTIONS);
+            entriesList = savedInstanceState.getStringArrayList(STATE_LIST_ITEMS);
+            itemEditingAllowed = savedInstanceState.getBoolean(STATE_ITEM_EDIT_ALLOWED);
+        } else {
+            EditableListPreference pref = getPreference();
+            pref.loadEntries();
+            entriesList = new ArrayList<>(pref.getEntryValues());
+            userSelectedItem = pref.getValue();
+            itemEditingAllowed = getPreference().isAllowItemEdit();
+        }
+    }
+
+    @Override
+    public Preference findPreference(CharSequence key) {
         return getPreference();
     }
     
@@ -65,6 +103,10 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         if (positiveResult && userSelectedItem != null && pref.getEntryValues() != null) {
             String value = userSelectedItem;
             if (pref.callChangeListener(value)) {
+                if(actions.size() > 0) {
+                    pref.updateEntryValues(actions);
+                }
+                actions.clear();
                 pref.setValue(value);
             }
         }
@@ -103,17 +145,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         listRecyclerView.setLayoutManager(mLayoutManager);
 
-
-        EditableListPreference pref = getPreference();
-        if (pref.isEntriesAltered()|| pref.getEntryValues() == null || pref.getEntryValues().size() == 0) {
-            pref.loadEntries();
-        }
-        
-        List<String> entriesList = new ArrayList<>(pref.getEntryValues());
         String currentSelection = userSelectedItem;
-        if(currentSelection == null) {
-            currentSelection = pref.getValue();
-        }
         RecyclerView.Adapter<RecyclerView.ViewHolder> adapter = buildNewRecyclerViewAdapter(getContext(), entriesList, entriesList, currentSelection);
         listRecyclerView.setAdapter(adapter);
         listRecyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
@@ -191,9 +223,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
     protected void onChangeItem(String oldValue, String newValue) {
 
-        EditableListPreference pref = getPreference();
-        
-        if (pref.getEntryValues().contains(newValue)) {
+        if (entriesList.contains(newValue)) {
             android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(getContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
@@ -201,19 +231,15 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             b.show();
         } else {
             // clone the entries set so we don't inadvertently change the cached property value
-            pref.replaceValue(oldValue, newValue);
-            List<String> entriesList = new ArrayList<>(pref.getEntryValues());
-            RecyclerView.Adapter<RecyclerView.ViewHolder> adapter = buildNewRecyclerViewAdapter(getContext(), entriesList, entriesList, pref.getValue());
-            listRecyclerView.setAdapter(adapter);
-            if (pref.getListener() != null) {
-                pref.getListener().onItemAltered(pref, oldValue, newValue);
-            }
+            entriesList.remove(oldValue);
+            entriesList.add(newValue);
+            actions.add(new Replacement(oldValue, newValue));
+            listRecyclerView.getAdapter().notifyDataSetChanged();
         }
     }
 
     protected void onAddNewItemToList(String newItem) {
-        EditableListPreference pref = getPreference();
-        if (pref.getEntryValues().contains(newItem)) {
+        if (entriesList.contains(newItem)) {
             android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(getContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
@@ -221,13 +247,9 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             b.show();
         } else {
             // clone the entries set so we don't inadvertently change the cached property value
-            pref.addNewValue(newItem);
-            List<String> entriesList = new ArrayList<>(pref.getEntryValues());
-            RecyclerView.Adapter<RecyclerView.ViewHolder> adapter = buildNewRecyclerViewAdapter(getContext(), entriesList, entriesList, pref.getValue());
-            listRecyclerView.setAdapter(adapter);
-            if (pref.getListener() != null) {
-                pref.getListener().onItemAdded(newItem);
-            }
+            entriesList.add(newItem);
+            actions.add(new Addition(newItem));
+            listRecyclerView.getAdapter().notifyDataSetChanged();
         }
     }
 
@@ -295,11 +317,11 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         }
 
         protected void onDeleteItem(int position, View v) {
-            getPreference().deleteItemFromList(position, entriesList.get(position), entryValues.get(position));
             entriesList.remove(position);
             if (entryValues.size() != entriesList.size()) {
                 // can't delete the value twice! (test needed for identity mapping where same reference used for values as entries)
-                entryValues.remove(position);
+                String item = entryValues.remove(position);
+                actions.add(new Removal(item));
             }
             notifyItemRangeRemoved(position, 1);
         }
@@ -332,7 +354,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
             @Override
             public boolean onLongClick(View v) {
-                if (!getPreference().isAllowItemEdit()) {
+                if (!itemEditingAllowed) {
                     return false;
                 }
                 String itemValue;
@@ -383,6 +405,9 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(STATE_USER_SELECTED_ITEM, userSelectedItem);
+        outState.putStringArrayList(STATE_LIST_ITEMS, entriesList);
+        outState.putSerializable(STATE_LIST_ACTIONS, actions);
+        outState.putBoolean(STATE_ITEM_EDIT_ALLOWED, itemEditingAllowed);
     }
 
     @Override
