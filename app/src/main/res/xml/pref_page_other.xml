@@ -11,7 +11,7 @@
         android:title="@string/preference_other_category_file_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <SwitchPreferenceCompat
+        <android.support.v14.preference.SwitchPreference
             android:defaultValue="@bool/preference_data_file_selector_showFilenames_default"
             android:key="@string/preference_data_file_selector_showFilenames_key"
             android:summary="@string/preference_data_file_selector_showFilenames_summary"

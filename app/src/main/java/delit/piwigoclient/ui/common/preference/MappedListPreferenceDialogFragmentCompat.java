@@ -67,7 +67,7 @@ public class MappedListPreferenceDialogFragmentCompat<T extends Serializable> ex
                          * Clicking on an item simulates the positive button
                          * click, and dismisses the dialog.
                          */
-                        onClick(dialog, DialogInterface.BUTTON_POSITIVE);
+                        MappedListPreferenceDialogFragmentCompat.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
                         dialog.dismiss();
                     }
                 });

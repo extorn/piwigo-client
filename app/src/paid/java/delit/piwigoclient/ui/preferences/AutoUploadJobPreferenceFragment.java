@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.preference.CheckBoxPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -101,11 +102,8 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     private void updateJobValidPreferenceIfNeeded(boolean allPreferencesValid, boolean isFinalValidationCheck) {
         if(isFinalValidationCheck || (!allPreferencesValid && getBooleanPreferenceValue(getString(R.string.preference_data_upload_automatic_job_is_valid_key)))) {
-            SharedPreferences.Editor editor = getPrefs().edit();
-            editor.putBoolean(getString(R.string.preference_data_upload_automatic_job_is_valid_key), allPreferencesValid);
-            editor.commit();
-            Preference pref = findPreference(R.string.preference_data_upload_automatic_job_is_valid_key);
-            PreferenceUtils.refreshDisplayedPreference(pref);
+            ((CheckBoxPreference)findPreference(R.string.preference_data_upload_automatic_job_is_valid_key)).setChecked(allPreferencesValid);
+//            getListView().getAdapter().notifyDataSetChanged();
         }
     }
 
@@ -136,8 +134,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
         editor.commit();
 
-        // update the remote album preference (may have altered name)
-        PreferenceUtils.refreshDisplayedPreference(findPreference(R.string.preference_data_upload_automatic_job_server_album_key));
+        getListView().getAdapter().notifyDataSetChanged();
 
         // update job validity status.
         if(!remoteAlbumExists) {

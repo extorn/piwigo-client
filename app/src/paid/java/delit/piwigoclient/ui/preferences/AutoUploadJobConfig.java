@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.BoolRes;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 
@@ -49,29 +51,16 @@ public class AutoUploadJobConfig {
         return jobId;
     }
 
-    private boolean getBooleanValue(Context c, @StringRes int prefKeyId) {
-        if(!jobPreferences.contains(c.getString(prefKeyId))) {
-            throw new IllegalStateException("Job misconfigured");
-        }
-        return jobPreferences.getBoolean(c.getString(prefKeyId), false);
-    }
-
     private boolean getBooleanValue(Context c, @StringRes int prefKeyId, boolean defaultVal) {
         return jobPreferences.getBoolean(c.getString(prefKeyId), defaultVal);
     }
 
-    private int getIntValue(Context c, @StringRes int prefKeyId) {
-        if(!jobPreferences.contains(c.getString(prefKeyId))) {
-            throw new IllegalStateException("Job misconfigured");
-        }
-        return jobPreferences.getInt(c.getString(prefKeyId), -1);
+    private boolean getBooleanValue(Context c, @StringRes int prefKeyId, @BoolRes int defaultValResId) {
+        return jobPreferences.getBoolean(c.getString(prefKeyId), c.getResources().getBoolean(defaultValResId));
     }
 
-    private int getIntValue(Context c, @StringRes int prefKeyId, int defaultVal) {
-        if(!jobPreferences.contains(c.getString(prefKeyId))) {
-            return defaultVal;
-        }
-        return jobPreferences.getInt(c.getString(prefKeyId), defaultVal);
+    private int getIntValue(Context c, @StringRes int prefKeyId, @IntegerRes int defaultVal) {
+        return jobPreferences.getInt(c.getString(prefKeyId), c.getResources().getInteger(defaultVal));
     }
 
     private @NonNull String getStringValue(Context c, @StringRes int prefKeyId) {
@@ -90,8 +79,8 @@ public class AutoUploadJobConfig {
         return Arrays.asList(values);
     }
 
-    private @NonNull List getCsvListValue(Context c, @StringRes int prefKeyId, String prefDefault) {
-        String value = getStringValue(c, prefKeyId, prefDefault);
+    private @NonNull List getCsvListValue(Context c, @StringRes int prefKeyId, @StringRes int prefDefaultId) {
+        String value = getStringValue(c, prefKeyId, c.getString(prefDefaultId));
         String[] values = value.split(",");
         return Arrays.asList(values);
     }
@@ -130,7 +119,7 @@ public class AutoUploadJobConfig {
     }
 
     public int getUploadedFilePrivacyLevel(Context c) {
-        return getIntValue(c, R.string.preference_data_upload_automatic_job_privacy_level_key);
+        return getIntValue(c, R.string.preference_data_upload_automatic_job_privacy_level_key, R.integer.preference_data_upload_automatic_job_privacy_level_default);
     }
 
     public int getMaxUploadSize(Context c) {
@@ -138,11 +127,11 @@ public class AutoUploadJobConfig {
     }
 
     public boolean isJobEnabled(Context c) {
-        return getBooleanValue(c, R.string.preference_data_upload_automatic_job_enabled_key);
+        return getBooleanValue(c, R.string.preference_data_upload_automatic_job_enabled_key, R.bool.preference_data_upload_automatic_job_enabled_default);
     }
 
     public boolean isDeleteFilesAfterUpload(Context c) {
-        return getBooleanValue(c, R.string.preference_data_upload_automatic_job_delete_uploaded_key);
+        return getBooleanValue(c, R.string.preference_data_upload_automatic_job_delete_uploaded_key, R.bool.preference_data_upload_automatic_job_delete_uploaded_default);
     }
 
     public static class PriorUploads implements Serializable {
@@ -230,7 +219,7 @@ public class AutoUploadJobConfig {
     }
 
     public List<String> getFileExtsToUpload(Context c) {
-        return getCsvListValue(c, R.string.preference_data_upload_automatic_job_file_exts_uploaded_key, c.getString(R.string.preference_data_upload_automatic_job_file_exts_uploaded_default));
+        return getCsvListValue(c, R.string.preference_data_upload_automatic_job_file_exts_uploaded_key, R.string.preference_data_upload_automatic_job_file_exts_uploaded_default);
     }
 
     public CategoryItemStub getUploadToAlbum(Context context) {

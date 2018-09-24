@@ -439,7 +439,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
                 FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, filesForUpload);
-                EventBus.getDefault().post(event);
+                EventBus.getDefault().postSticky(event);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

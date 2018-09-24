@@ -1,12 +1,14 @@
 package delit.piwigoclient.ui.preferences;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
@@ -59,13 +61,17 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         super.onBindDialogView(view);
 
         loadListValues(listView, selectedValue);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         if (listView.getAdapter().getCount() == 1) {
             // ensure the value gets set.
             ((ServerConnectionProfilesListAdapter) listView.getAdapter()).selectAllItemIds();
             onClick(getDialog(), DialogInterface.BUTTON_POSITIVE);
-            getDialog().dismiss();
+            onDismiss(getDialog());
         }
-
     }
 
     @Override

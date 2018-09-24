@@ -121,11 +121,12 @@ public class LocalFoldersListPreference extends Preference {
         EventBus.getDefault().post(fileSelectNeededEvent);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent event) {
         if (event.getActionId() != this.folderSelectActionId) {
             return;
         }
+        EventBus.getDefault().removeStickyEvent(event);
         folderSelectActionId = -1;
         File selectedFile = event.getSelectedFiles().get(0);
         if (selectedFile.isDirectory()) {

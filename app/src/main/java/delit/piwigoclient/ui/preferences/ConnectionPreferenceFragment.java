@@ -10,6 +10,7 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
+import android.widget.BaseAdapter;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -444,6 +445,9 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             if (!initialising) {
                 // clear the existing session - it's not valid any more.
                 forkLogoutIfNeeded();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    getListView().getAdapter().notifyDataSetChanged();
+                }
             }
             return true;
         }
@@ -483,6 +487,9 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                 // clear the existing session - it's not valid any more.
                 forkLogoutIfNeeded();
                 AdsManager.getInstance().updateShowAdvertsSetting(getContext().getApplicationContext());
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    getListView().getAdapter().notifyDataSetChanged();
+                }
             }
 
             return true;

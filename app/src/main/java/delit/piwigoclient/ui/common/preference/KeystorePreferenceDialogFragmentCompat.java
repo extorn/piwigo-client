@@ -643,9 +643,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent event) {
         if (isTrackingRequest(event.getActionId())) {
+            EventBus.getDefault().removeStickyEvent(event);
             onCertificatesSelected(event.getSelectedFiles());
         }
     }

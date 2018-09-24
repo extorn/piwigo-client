@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:capitalize="words"
-            android:inputType="none"
+            android:inputType="textNoSuggestions"
             android:key="@string/preference_piwigo_server_address_key"
             android:maxLines="1"
             android:selectAllOnFocus="true"
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:capitalize="none"
-            android:inputType="none"
+            android:inputType="textNoSuggestions"
             android:key="@string/preference_piwigo_server_username_key"
             android:maxLines="1"
             android:selectAllOnFocus="true"
@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_server_basic_auth">
-        <SwitchPreferenceCompat
+        <android.support.v14.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="@bool/preference_server_use_basic_auth_default"
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:capitalize="none"
             android:dependency="@string/preference_server_use_basic_auth_key"
-            android:inputType="textCapWords"
+            android:inputType="text"
             android:key="@string/preference_server_basic_auth_username_key"
             android:maxLines="1"
             android:selectAllOnFocus="true"
@@ -103,7 +103,7 @@
         android:title="@string/preference_connections_category_trusted_server_ca"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <SwitchPreferenceCompat
+        <android.support.v14.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="false"
@@ -122,7 +122,7 @@
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_client_certificate_auth">
-        <SwitchPreferenceCompat
+        <android.support.v14.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="false"
@@ -142,14 +142,14 @@
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_advanced">
-        <SwitchPreferenceCompat
+        <android.support.v14.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="@bool/preference_server_connection_force_https_default"
             android:key="@string/preference_server_connection_force_https_key"
             android:summary="@string/preference_server_connection_force_https_summary"
             android:title="@string/preference_server_connection_force_https_title" />
-        <SwitchPreferenceCompat
+        <android.support.v14.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="@bool/preference_server_connection_allow_redirects_default"

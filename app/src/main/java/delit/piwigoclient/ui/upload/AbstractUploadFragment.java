@@ -144,7 +144,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent stickyEvent) {
         // Integer.MIN_VALUE is a special flag to allow external apps to call in and their events to always be handled.
         if (getUiHelper().isTrackingRequest(stickyEvent.getActionId()) || stickyEvent.getActionId() == Integer.MIN_VALUE) {
