@@ -41,8 +41,7 @@
         android:layout_margin="5dp"
         android:gravity="fill_horizontal"
         android:layout_height="wrap_content"
-        android:spinnerMode="dropdown"
-        style="@style/Widget.AppCompat.Spinner.Underlined"/>
+        android:spinnerMode="dialog"/>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/add_new_gallery_button"
@@ -94,8 +93,7 @@
         android:layout_above="@+id/upload_files_button"
         android:layout_margin="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Widget.AppCompat.Spinner.Underlined"/>
+        android:layout_height="wrap_content"/>
     <Button
         android:id="@+id/delete_upload_job_button"
         android:layout_width="wrap_content"

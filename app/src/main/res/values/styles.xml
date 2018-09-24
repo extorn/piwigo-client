@@ -52,7 +52,6 @@
         <item name="buttonTint">@color/checkbox_color_tint</item>
     </style>
     <style name="Custom.CheckBox.TextAppearance" parent="TextAppearance.AppCompat.Widget.Button">
-        <!--<item name="android:drawableTint">@color/colorSecondary</item>-->
     </style>
     <style name="Custom.Widget.AppCompat.CompoundButton.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
         <item name="android:textColor">@color/edit_text_color_selector</item>
@@ -71,13 +70,12 @@
     <style name="Custom.Widget.AppCompat.TextView.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
         <item name="android:textColor">@color/edit_text_color_selector</item>
-        <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">0dp</item>
     </style>
-    <!-- no idea what this is used by ! -->
+    <!-- items in the dropdown 'popup' when a spinner is clicked on -->
     <style name="Custom.Widget.AppCompat.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:background">@color/background_floating</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
-        <item name="android:textColor">@color/colorTest4</item>
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingBottom">0dp</item>
         <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>

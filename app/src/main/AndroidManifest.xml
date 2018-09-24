@@ -76,7 +76,7 @@
         </activity>
         <activity
             android:launchMode="singleTop"
-            android:name="delit.piwigoclient.ui.FileSelectActivity"
+            android:name=".ui.FileSelectActivity"
             android:label="@string/app_name"
             android:theme="@style/Custom.Theme"
             android:windowSoftInputMode="stateHidden"/>

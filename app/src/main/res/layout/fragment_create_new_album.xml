@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ScrollView
     android:layout_above="@+id/createGallery_adView"
@@ -28,11 +29,12 @@
             android:layout_margin="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="some gallery name"/>
+            tools:text="some gallery name"/>
 
         <TextView
             android:id="@+id/createGallery_galleryNameTitle"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            android:labelFor="@id/createGallery_galleryName"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,6 +53,7 @@
 
         <TextView
             android:id="@+id/createGallery_galleryDescriptionTitle"
+            android:labelFor="@id/createGallery_galleryDescription"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:layout_margin="5dp"
             android:layout_width="match_parent"
@@ -95,6 +98,7 @@
             <TextView
                 android:id="@+id/createGallery_permissions_allowedGroupsTitle"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:labelFor="@id/createGallery_permissions_allowedGroups"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -106,19 +110,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine|textNoSuggestions"
-                android:textColor="?attr/editTextColor"
                 android:background="?attr/editTextBackground"
                 android:gravity="center_vertical"
-                android:textAppearance="?android:attr/textAppearanceMediumInverse"
-                android:text="@string/none_selected" />
-            <!--<Button
-                android:id="@+id/createGallery_permissions_allowedGroups"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/none_selected"/>-->
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
+                android:text="@string/none_selected"
+                android:maxLines="2"
+                android:ellipsize="end"/>
             <TextView
                 android:id="@+id/createGallery_permissions_allowedUsersTitle"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:labelFor="@id/createGallery_permissions_allowedUsers"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -132,8 +133,10 @@
                 android:inputType="textMultiLine|textNoSuggestions"
                 android:background="?attr/editTextBackground"
                 android:gravity="center_vertical"
-                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body2.Clickable"
-                android:text="@string/none_selected" />
+                android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
+                android:text="@string/none_selected"
+                android:maxLines="2"
+                android:ellipsize="end"/>
         </LinearLayout>
 
         <Button

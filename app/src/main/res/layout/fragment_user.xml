@@ -116,8 +116,7 @@
                 android:id="@+id/user_usertype"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/user_privacy_level_label"
@@ -135,8 +134,7 @@
                 android:id="@+id/user_privacy_level"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:id="@+id/user_email_label"
@@ -184,7 +182,7 @@
                 android:background="?attr/editTextBackground"
                 android:gravity="center_vertical"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:text="some text"/>
+                tools:text="some text"/>
 
             <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
                 android:id="@+id/user_high_definition_field"

@@ -275,7 +275,6 @@
                         android:layout_marginTop="7dp"
                         android:text="@string/gallery_details_status"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                        android:textColor="@color/edit_text_color_selector"
                         app:checkbox_at_end="true" />
 
                     <TextView

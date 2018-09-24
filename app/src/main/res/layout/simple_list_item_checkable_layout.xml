@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:descendantFocusability="blocksDescendants">
 
     <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
@@ -21,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/checked"
         android:layout_alignWithParentIfMissing="true"
-        android:text="dummy text"
+        tools:text="dummy text"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
     <TextView
         android:id="@+id/details"
@@ -32,7 +33,7 @@
         android:layout_below="@id/name"
         android:layout_toEndOf="@id/checked"
         android:layout_alignWithParentIfMissing="true"
-        android:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
+        tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 </RelativeLayout>

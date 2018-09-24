@@ -55,7 +55,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     @Override
     @LayoutRes
     protected int getViewId() {
-        return R.layout.layout_file_selection_recycler_list;
+        return R.layout.fragment_file_selection_recycler_list;
     }
 
     @Override
@@ -247,7 +247,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         rootLabels.add(0, "");
         rootPaths.add(0, null);
 
-        return new MappedArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, rootLabels, rootPaths);
+        return new MappedArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, rootLabels, rootPaths);
     }
 
     @Override

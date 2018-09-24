@@ -143,8 +143,8 @@ public class FileSelectActivity extends MyActivity {
         prefs.selectable(event.isMultiSelectAllowed(), false);
         prefs.setInitialSelection(event.getInitialSelection());
         prefs.withShowFilenames(OtherPreferences.isShowFilenames(getSharedPrefs(), getApplicationContext()));
-        prefs.withColumnsOfFiles(OtherPreferences.getFileSelectorColumnsOfFiles(getSharedPrefs(), getApplicationContext()));
-        prefs.withColumnsOfFolders(OtherPreferences.getFileSelectorColumnsOfFolders(getSharedPrefs(), getApplicationContext()));
+        prefs.withColumnsOfFiles(OtherPreferences.getFileSelectorColumnsOfFiles(getSharedPrefs(), this));
+        prefs.withColumnsOfFolders(OtherPreferences.getFileSelectorColumnsOfFolders(getSharedPrefs(), this));
 
 
         removeFragmentsFromHistory(RecyclerViewFolderItemSelectFragment.class, true);

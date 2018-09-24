@@ -28,6 +28,7 @@ import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.list.MultiSourceListAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.util.DisplayUtils;
 
 public class ServerConnectionsListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
 
@@ -192,12 +193,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        hideKeyboardFrom(getContext(), ((AlertDialog)dialog).getCurrentFocus().getWindowToken());
+        DisplayUtils.hideKeyboardFrom(getContext(), dialog);
         super.onClick(dialog, which);
-    }
-
-    public void hideKeyboardFrom(Context context, IBinder windowToken) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(windowToken, 0);
     }
 }

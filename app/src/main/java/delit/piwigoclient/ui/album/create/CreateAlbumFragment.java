@@ -67,8 +67,8 @@ public class CreateAlbumFragment extends MyFragment {
     private SwitchCompat galleryIsPrivateSwitchField;
     private ArrayList<Group> selectedGroups;
     private ArrayList<Username> selectedUsernames;
-    private AppCompatTextView allowedGroupsTextView;
-    private AppCompatTextView allowedUsernamesTextView;
+    private TextView allowedGroupsTextView;
+    private TextView allowedUsernamesTextView;
 
     private PiwigoGalleryDetails newAlbum;
     private long createGalleryMessageId;
@@ -220,7 +220,7 @@ public class CreateAlbumFragment extends MyFragment {
         // ensure the dialog boxes are setup
         super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_create_new_gallery, container, false);
+        View view = inflater.inflate(R.layout.fragment_create_new_album, container, false);
 
         AdView adView = view.findViewById(R.id.createGallery_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="15dp"
     android:layout_marginBottom="15dp"
     android:paddingLeft="15dp"
@@ -23,7 +24,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
-        android:text="Private RSA"
+        tools:text="Private RSA"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
     <TextView
         android:id="@+id/x509_key_strength"
@@ -34,7 +35,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
-        android:text="Strength: 2048 bits"
+        tools:text="Strength: 2048 bits"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
     <TextView
         android:id="@+id/x509_cert_identity"
@@ -45,7 +46,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
-        android:text="Identity : A certificate name"
+        tools:text="Identity : A certificate name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
     <TextView
         android:id="@+id/x509_cert_verified_by"
@@ -56,7 +57,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
-        android:text="Verified by : A certificate name"
+        tools:text="Verified by : A certificate name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
     <TextView
         android:id="@+id/x509_cert_valid_from"
@@ -67,7 +68,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
-        android:text="Valid From : 12/12/2008"
+        tools:text="Valid From : 12/12/2008"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
     <TextView
         android:id="@+id/x509_cert_valid_to"
@@ -78,7 +79,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/list_item_delete_button"
         android:layout_alignWithParentIfMissing="true"
-        android:text="Valid To : 12/12/2012"
+        tools:text="Valid To : 12/12/2012"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/list_item_delete_button"

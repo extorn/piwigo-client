@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginBottom="15dp"
     android:layout_marginTop="15dp"
     android:descendantFocusability="blocksDescendants"
@@ -17,7 +18,7 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
-        android:text="Identity : A certificate name"
+        tools:text="Identity : A certificate name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
     <TextView
@@ -29,7 +30,7 @@
         android:layout_below="@id/x509_cert_identity"
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
-        android:text="Verified by : A certificate name"
+        tools:text="Verified by : A certificate name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
     <TextView
@@ -41,7 +42,7 @@
         android:layout_below="@id/x509_cert_verified_by"
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
-        android:text="Valid From : 12/12/2008"
+        tools:text="Valid From : 12/12/2008"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
     <TextView
@@ -53,7 +54,7 @@
         android:layout_below="@id/x509_cert_valid_from"
         android:layout_marginStart="5dp"
         android:layout_toStartOf="@+id/list_item_delete_button"
-        android:text="Valid To : 12/12/2012"
+        tools:text="Valid To : 12/12/2012"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton

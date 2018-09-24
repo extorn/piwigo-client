@@ -22,7 +22,7 @@
                 android:id="@+id/tag_details_name_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tag name"
+                tools:text="Tag name"
                 android:layout_alignParentStart="true"
                 android:layout_margin="5dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:padding="5dp"
-            android:text="A Reason that this tag is empty or which calls need repeating"/>
+            tools:text="A Reason that this tag is empty or which calls need repeating"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tag_list"

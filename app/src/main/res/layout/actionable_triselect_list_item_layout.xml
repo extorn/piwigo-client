@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:descendantFocusability="blocksDescendants">
 
     <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
@@ -32,7 +33,7 @@
             android:padding="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="dummy text"
+            tools:text="dummy text"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
         <TextView
             android:id="@+id/details"
@@ -43,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/name"
-            android:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
+            tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
     </LinearLayout>

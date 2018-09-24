@@ -2,7 +2,8 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/slideshow_item_content_layout"
@@ -46,7 +47,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:visibility="visible"
-            android:text="x/y"
+            tools:text="x/y"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
         <RatingBar
@@ -274,8 +275,7 @@
                                 <Spinner
                                     android:id="@+id/privacy_level"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                                    android:layout_height="wrap_content"/>
 
                             </LinearLayout>
 
