@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.preference.CheckBoxPreference;
-import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,6 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
-import delit.piwigoclient.ui.common.util.PreferenceUtils;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 
 public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
@@ -101,7 +99,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     }
 
     private void updateJobValidPreferenceIfNeeded(boolean allPreferencesValid, boolean isFinalValidationCheck) {
-        if(isFinalValidationCheck || (!allPreferencesValid && getBooleanPreferenceValue(getString(R.string.preference_data_upload_automatic_job_is_valid_key)))) {
+        if(isFinalValidationCheck || (!allPreferencesValid && getBooleanPreferenceValue(getString(R.string.preference_data_upload_automatic_job_is_valid_key), false))) {
             ((CheckBoxPreference)findPreference(R.string.preference_data_upload_automatic_job_is_valid_key)).setChecked(allPreferencesValid);
 //            getListView().getAdapter().notifyDataSetChanged();
         }
@@ -192,12 +190,12 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
                     invokeRemoteFolderPreferenceValidation();
                 }
             } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_wireless_only_key))) {
-                boolean wifiOnlyEnabled = getBooleanPreferenceValue(key);
+                boolean wifiOnlyEnabled = getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_wireless_only_default);
                 if(wifiOnlyEnabled) {
                     getUiHelper().runWithExtraPermissions(getActivity(), Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.ACCESS_NETWORK_STATE, getString(R.string.alert_network_monitor_permission_needed_for_wifi_upload));
                 }
-            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_enable_key))) {
-                if(getBooleanPreferenceValue(key)) {
+            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_enabled_key))) {
+                if(getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_enabled_default)) {
                     if(!BackgroundPiwigoUploadService.isStarted()) {
                         BackgroundPiwigoUploadService.startService(getContext(), true);
                     }

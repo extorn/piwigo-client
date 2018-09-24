@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,7 +14,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -41,6 +39,7 @@ import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -343,8 +342,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             privacyLevelSpinner.setSelection(privacyLevelOptionsAdapter.getPosition(privacyLevelWanted));
         }
 
-        boolean showLargeFileThumbnails = prefs.getBoolean(getString(R.string.preference_data_upload_large_thumbnail_key), getResources().getBoolean(R.bool.preference_data_upload_large_thumbnail_default));
-        int columnsToShow = selectBestColumnCountForScreenSize();
+        int columnsToShow = UploadPreferences.getColumnsOfFilesListedForUpload(prefs, getActivity());
 
         GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), columnsToShow);
         filesForUploadView.setLayoutManager(gridLayoutMan);
@@ -399,28 +397,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             final boolean recursive = true;
             subCategoryNamesActionId = addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive).invokeAsync(getContext()));
         }
-    }
-
-    private float getScreenWidth() {
-        DisplayMetrics dm = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.widthPixels / dm.xdpi;
-    }
-
-    private int getDefaultImagesColumnCount() {
-        float screenWidth = getScreenWidth();
-        int columnsToShow = Math.round(screenWidth - (screenWidth % 1)); // allow 1 inch per column
-        return Math.max(1, columnsToShow);
-    }
-
-    private int selectBestColumnCountForScreenSize() {
-        int mColumnCount = getDefaultImagesColumnCount();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mColumnCount = prefs.getInt(getString(R.string.preference_data_upload_preferredColumnsLandscape_key), mColumnCount);
-        } else {
-            mColumnCount = prefs.getInt(getString(R.string.preference_data_upload_preferredColumnsPortrait_key), mColumnCount);
-        }
-        return Math.max(1, mColumnCount);
     }
 
     private void updateUiUploadStatusFromJobIfRun(Context context, FilesToUploadRecyclerViewAdapter filesForUploadAdapter) {
@@ -502,7 +478,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         ArrayList<File> filesForUpload = fileListAdapter.getFiles();
 
-        int maxUploadSizeWantedThresholdMB = prefs.getInt(getString(R.string.preference_data_upload_max_filesize_mb_key), getResources().getInteger(R.integer.preference_data_upload_max_filesize_mb_default));
+        int maxUploadSizeWantedThresholdMB = UploadPreferences.getMaxUploadFilesizeMb(getContext(), prefs);
         final Set<File> filesForReview = new HashSet<>();
         StringBuilder filenameListStrB = new StringBuilder();
         for (File f : filesForUpload) {

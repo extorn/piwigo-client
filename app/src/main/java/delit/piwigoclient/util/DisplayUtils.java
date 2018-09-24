@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Looper;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -158,5 +159,29 @@ public class DisplayUtils {
         imm.hideSoftInputFromWindow(attachedView.getWindowToken(), 0);
         return true;
 
+    }
+
+    private static float getScreenWidthInches(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return (float) dm.widthPixels / dm.xdpi;
+    }
+
+    private static float getScreenHeightInches(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return (float) dm.heightPixels / dm.xdpi;
+    }
+
+    public static int getDefaultColumnCount(Activity activity, int screenOrientation, double minWidthInches) {
+
+        float screenWidth;
+        if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
+            screenWidth = getScreenWidthInches(activity);
+        } else {
+            screenWidth = getScreenHeightInches(activity);
+        }
+        int columnsToShow = (int) Math.max(minWidthInches, Math.round(screenWidth)); // allow a minimum of minWidthInches inches per column
+        return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 }

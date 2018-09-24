@@ -7,13 +7,6 @@
         android:title="@string/preference_connections_category_data_upload_display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <android.support.v14.preference.SwitchPreference
-            android:defaultValue="@bool/preference_data_upload_large_thumbnail_default"
-            android:key="@string/preference_data_upload_large_thumbnail_key"
-            android:summary="@string/preference_data_upload_large_thumbnail_summary"
-            android:title="@string/preference_data_upload_large_thumbnail_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"

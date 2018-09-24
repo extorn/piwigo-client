@@ -170,7 +170,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         super.onStart();
         Preference videoCacheEnabledPref = findPreference(R.string.preference_video_cache_enabled_key);
         videoCacheEnabledPref.setOnPreferenceChangeListener(videoCacheEnabledPrefListener);
-        videoCacheEnabledPrefListener.onPreferenceChange(videoCacheEnabledPref, getBooleanPreferenceValue(videoCacheEnabledPref.getKey()));
+        videoCacheEnabledPrefListener.onPreferenceChange(videoCacheEnabledPref, getBooleanPreferenceValue(videoCacheEnabledPref.getKey(), R.bool.preference_video_cache_enabled_default));
     }
 
     @Override

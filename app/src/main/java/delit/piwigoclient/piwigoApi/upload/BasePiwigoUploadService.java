@@ -44,7 +44,9 @@ import java.util.Set;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.model.UploadFileChunk;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -357,7 +359,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
     protected void runJob(UploadJob thisUploadJob, JobUploadListener listener) {
 
-        int maxChunkUploadAutoRetries = prefs.getInt(getString(R.string.preference_data_upload_chunk_auto_retries_key), getResources().getInteger(R.integer.preference_data_upload_chunk_auto_retries_default));
+        int maxChunkUploadAutoRetries = UploadPreferences.getUploadChunkMaxRetries(getApplicationContext(), prefs);
 
         if (thisUploadJob == null) {
             if (BuildConfig.DEBUG) {
@@ -609,7 +611,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(thisUploadJob.getConnectionPrefs());
 
-        String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+        String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getApplicationContext());
         for (Map.Entry<File, Long> entry : resourcesToRetrieve.entrySet()) {
 
             ImageGetInfoResponseHandler getImageInfoHandler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null, null), multimediaExtensionList);
@@ -887,7 +889,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
     }
 
     private byte[] buildSensibleBuffer() {
-        int wantedUploadSizeInKbB = prefs.getInt(getString(R.string.preference_data_upload_chunkSizeKb_key), getResources().getInteger(R.integer.preference_data_upload_chunkSizeKb_default));
+        int wantedUploadSizeInKbB = UploadPreferences.getMaxUploadChunkSizeMb(getApplicationContext(), prefs);
         int bufferSizeBytes = 1024 * wantedUploadSizeInKbB; // 512Kb chunk size
 //        bufferSizeBytes -= bufferSizeBytes % 3; // ensure 3 byte blocks so base64 encoded pieces fit together again.
         return new byte[bufferSizeBytes];

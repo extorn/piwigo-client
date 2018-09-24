@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.common.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.BoolRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -113,8 +114,12 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
         return findPreference(getContext().getString(preferenceId));
     }
 
-    protected boolean getBooleanPreferenceValue(String preferenceKey) {
-        return getPreferenceManager().getSharedPreferences().getBoolean(preferenceKey, false);
+    protected boolean getBooleanPreferenceValue(String preferenceKey, boolean defaultValue) {
+        return getPreferenceManager().getSharedPreferences().getBoolean(preferenceKey, defaultValue);
+    }
+
+    protected boolean getBooleanPreferenceValue(String preferenceKey, @BoolRes int defaultKey) {
+        return getPreferenceManager().getSharedPreferences().getBoolean(preferenceKey, getResources().getBoolean(defaultKey));
     }
 
     protected String getPreferenceValue(String preferenceKey) {

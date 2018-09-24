@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
@@ -180,7 +181,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
         PictureResourceItem model = getModel();
         if (currentImageUrlDisplayed == null) {
-            String preferredImageSize = prefs.getString(getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key), getContext().getString(R.string.preference_gallery_item_slideshow_image_size_default));
+            String preferredImageSize = AlbumViewPreferences.getPreferredSlideshowImageSize(prefs, getContext());
             for (ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
                 if (rf.getName().equals(preferredImageSize)) {
                     currentImageUrlDisplayed = rf.getUrl();

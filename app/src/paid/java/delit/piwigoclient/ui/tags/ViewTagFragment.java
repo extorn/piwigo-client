@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -167,12 +168,12 @@ public class ViewTagFragment extends MyFragment {
             addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
         }
 
-        boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
+        boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, getContext());
 
 
-        boolean showResourceNames = prefs.getBoolean(getString(R.string.preference_gallery_show_image_name_key), getResources().getBoolean(R.bool.preference_gallery_show_image_name_default));
+        boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, getContext());
 
-        int recentlyAlteredThresholdAge = prefs.getInt(getString(R.string.preference_gallery_recentlyAlteredAgeMillis_key), getResources().getInteger(R.integer.preference_gallery_recentlyAlteredAgeMillis_default));
+        int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, getContext());
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
 
         if(viewPrefs == null) {
@@ -272,7 +273,7 @@ public class ViewTagFragment extends MyFragment {
 
         bulkActionsContainer = view.findViewById(R.id.tag_actions_bulk_container);
 
-        int imagesOnScreen = selectBestColumnCountForScreenSize();
+        int imagesOnScreen = AlbumViewPreferences.getImagesToDisplayPerRow(getActivity(), prefs);
         colsOnScreen = imagesOnScreen;
 
 
@@ -434,7 +435,7 @@ public class ViewTagFragment extends MyFragment {
     private void onDeleteResources(final DeleteActionData deleteActionData) {
 
         if (!deleteActionData.isResourceInfoAvailable()) {
-            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
                 addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext()));
             }
@@ -531,9 +532,9 @@ public class ViewTagFragment extends MyFragment {
                 // already loading this page, ignore the request.
                 return;
             }
-            String sortOrder = prefs.getString(getString(R.string.preference_gallery_sortOrder_key), getString(R.string.preference_gallery_sortOrder_default));
-            String multimediaExtensionList = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
-            int pageSize = prefs.getInt(getString(R.string.preference_album_request_pagesize_key), getResources().getInteger(R.integer.preference_album_request_pagesize_default));
+            String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
+            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
             long loadingMessageId = new TagGetImagesResponseHandler(tag, sortOrder, pageToLoad, pageSize, getContext(), multimediaExtensionList).invokeAsync(getContext());
             loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
             addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
@@ -549,16 +550,6 @@ public class ViewTagFragment extends MyFragment {
         } else {
             bulkActionButtonDelete.setVisibility(GONE);
         }
-    }
-
-    private int selectBestColumnCountForScreenSize() {
-        int mColumnCount = getDefaultImagesColumnCount();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mColumnCount = prefs.getInt(getString(R.string.preference_gallery_images_preferredColumnsLandscape_key), mColumnCount);
-        } else {
-            mColumnCount = prefs.getInt(getString(R.string.preference_gallery_images_preferredColumnsPortrait_key), mColumnCount);
-        }
-        return Math.max(1,mColumnCount);
     }
 
     @Override

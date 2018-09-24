@@ -255,11 +255,6 @@
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     <integer name="preference_data_upload_chunk_auto_retries_default">1</integer>
 
-    <string name="preference_data_upload_large_thumbnail_key" translatable="false">preference_data_upload_large_thumbnail</string>
-    <string name="preference_data_upload_large_thumbnail_title">Display files with large thumbnail</string>
-    <string name="preference_data_upload_large_thumbnail_summary">Image thumbnails fill the column</string>
-    <bool name="preference_data_upload_large_thumbnail_default">true</bool>
-
     <string name="preference_data_upload_preferredColumnsPortrait_key" translatable="false">preference_data_upload_preferredColumnsPortrait</string>
     <string name="preference_data_upload_preferredColumnsPortrait_title">Portrait: Columns of Images to show</string>
     <string name="preference_data_upload_preferredColumnsPortrait_summary">%1$d</string>
@@ -309,7 +304,7 @@
 
     <!-- prefs -->
 
-    <string name="preference_data_upload_automatic_upload_enable_key" translatable="false">preference_data_upload_automatic_upload_enable</string>
+    <string name="preference_data_upload_automatic_upload_enabled_key" translatable="false">preference_data_upload_automatic_upload_enable</string>
     <string name="preference_data_upload_automatic_upload_enable_summary">Enable background uploading</string>
     <string name="preference_data_upload_automatic_upload_enable_title">Automatic Upload</string>
 

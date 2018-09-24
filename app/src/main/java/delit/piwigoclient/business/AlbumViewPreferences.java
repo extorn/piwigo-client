@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.util.DisplayMetrics;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.util.DisplayUtils;
 
 public class AlbumViewPreferences {
 
@@ -19,39 +20,12 @@ public class AlbumViewPreferences {
         }
     }
 
-    private static float getScreenWidthInches(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.widthPixels / dm.xdpi;
-    }
-
-    private static float getScreenHeightInches(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.heightPixels / dm.xdpi;
-    }
-
     public static int getDefaultImagesColumnCount(Activity activity, int screenOrientation) {
-
-        float screenWidth;
-        if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            screenWidth = getScreenWidthInches(activity);
-        } else {
-            screenWidth = getScreenHeightInches(activity);
-        }
-        int columnsToShow = Math.max(1, Math.round(screenWidth)); // allow a minimum of 1 inch per column
-        return Math.max(1, columnsToShow); // never allow less than one column by default.
+        return DisplayUtils.getDefaultColumnCount(activity, screenOrientation, 1);
     }
 
     public static int getDefaultAlbumColumnCount(Activity activity, int screenOrientation) {
-        float screenWidth;
-        if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
-            screenWidth = getScreenWidthInches(activity);
-        } else {
-            screenWidth = getScreenHeightInches(activity);
-        }
-        int columnsToShow = Math.max(1, Math.round(screenWidth / 2)); // allow a minimum of 2 inch per column
-        return Math.max(1, columnsToShow); // never allow less than one column by default.
+        return DisplayUtils.getDefaultColumnCount(activity, screenOrientation, 2);
     }
 
     private static int getPreferredColumnsOfAlbumsLandscape(SharedPreferences prefs, Context context, int defaultColumns) {
@@ -63,13 +37,13 @@ public class AlbumViewPreferences {
     }
 
     public static int getImagesToDisplayPerRow(Activity activity, SharedPreferences prefs) {
-        int mColumnCount = getDefaultImagesColumnCount(activity, activity.getResources().getConfiguration().orientation);
+        int defaultColumns = getDefaultImagesColumnCount(activity, activity.getResources().getConfiguration().orientation);
         if (activity.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mColumnCount = prefs.getInt(activity.getString(R.string.preference_gallery_images_preferredColumnsLandscape_key), mColumnCount);
+            defaultColumns = prefs.getInt(activity.getString(R.string.preference_gallery_images_preferredColumnsLandscape_key), defaultColumns);
         } else {
-            mColumnCount = prefs.getInt(activity.getString(R.string.preference_gallery_images_preferredColumnsPortrait_key), mColumnCount);
+            defaultColumns = prefs.getInt(activity.getString(R.string.preference_gallery_images_preferredColumnsPortrait_key), defaultColumns);
         }
-        return Math.max(1, mColumnCount);
+        return Math.max(1, defaultColumns);
     }
 
     public static boolean isShowAlbumThumbnailsZoomed(SharedPreferences prefs, Context context) {
@@ -102,5 +76,17 @@ public class AlbumViewPreferences {
 
     public static int getResourceRequestPageSize(SharedPreferences prefs, Context context) {
         return prefs.getInt(context.getString(R.string.preference_album_request_pagesize_key), context.getResources().getInteger(R.integer.preference_album_request_pagesize_default));
+    }
+
+    public static boolean isVideoPlaybackEnabled(SharedPreferences prefs, Context context) {
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_enable_video_playback_key), context.getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
+    }
+
+    public static String getPreferredSlideshowImageSize(SharedPreferences prefs, Context context) {
+        return prefs.getString(context.getString(R.string.preference_gallery_item_slideshow_image_size_key), context.getString(R.string.preference_gallery_item_slideshow_image_size_default));
+    }
+
+    public static boolean isIncludeVideosInSlideshow(SharedPreferences prefs, Context context) {
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_include_videos_in_slideshow_key), context.getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
     }
 }

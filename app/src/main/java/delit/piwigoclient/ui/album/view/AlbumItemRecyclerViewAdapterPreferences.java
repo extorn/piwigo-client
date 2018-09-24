@@ -6,10 +6,6 @@ import java.util.Date;
 
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 
-/**
- * SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(parent.getContext().getApplicationContext());
- * preferredThumbnailSize = prefs.getString(parent.getContext().getString(R.string.preference_gallery_item_thumbnail_size_key), parent.getContext().getString(R.string.preference_gallery_item_thumbnail_size_default));
- */
 public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
     public static final int SCALING_QUALITY_PERFECT = Integer.MAX_VALUE;
     public static final int SCALING_QUALITY_VHIGH = 960;

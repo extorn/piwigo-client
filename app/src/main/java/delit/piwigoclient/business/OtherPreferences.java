@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.util.DisplayUtils;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
@@ -35,19 +36,6 @@ public class OtherPreferences {
         } else {
             return prefs.getInt(activity.getString(R.string.preference_data_file_selector_preferredFolderColumnsLandscape_key), defaultColums);
         }
-
-    }
-
-    private static float getScreenHeightInches(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.heightPixels / dm.xdpi;
-    }
-
-    private static float getScreenWidthInches(Activity activity) {
-        DisplayMetrics dm = new DisplayMetrics();
-        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        return (float) dm.widthPixels / dm.xdpi;
     }
 
     /**
@@ -56,14 +44,7 @@ public class OtherPreferences {
      */
     @SuppressWarnings("JavadocReference")
     public static int getDefaultFilesColumnCount(Activity activity, int orientationId) {
-        float screenWidth;
-        if (activity.getResources().getConfiguration().orientation == orientationId) {
-            screenWidth = getScreenWidthInches(activity);
-        } else {
-            screenWidth = getScreenHeightInches(activity);
-        }
-        int columnsToShow = (int) Math.max(1, Math.round(screenWidth / 1)); // allow a minimum of 1 inch per column
-        return Math.max(1, columnsToShow); // never allow less than one column by default.
+        return DisplayUtils.getDefaultColumnCount(activity, orientationId, 1);
     }
 
     /**
@@ -72,13 +53,6 @@ public class OtherPreferences {
      */
     @SuppressWarnings("JavadocReference")
     public static int getDefaultFoldersColumnCount(Activity activity, int orientationId) {
-        float screenWidth;
-        if (activity.getResources().getConfiguration().orientation == orientationId) {
-            screenWidth = getScreenWidthInches(activity);
-        } else {
-            screenWidth = getScreenHeightInches(activity);
-        }
-        int columnsToShow = Math.max(1, Math.round(screenWidth / 2)); // allow a minimum of 2 inch per column
-        return Math.max(1, columnsToShow); // never allow less than one column by default.
+        return DisplayUtils.getDefaultColumnCount(activity, orientationId, 2);
     }
 }

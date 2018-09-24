@@ -117,7 +117,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
         Preference basicAuthPref = findPreference(R.string.preference_server_use_basic_auth_key);
         basicAuthPref.setOnPreferenceChangeListener(simplePreferenceListener);
-        simplePreferenceListener.onPreferenceChange(basicAuthPref, getBooleanPreferenceValue(basicAuthPref.getKey()));
+        simplePreferenceListener.onPreferenceChange(basicAuthPref, getBooleanPreferenceValue(basicAuthPref.getKey(), R.bool.preference_server_use_basic_auth_default));
         findPreference(R.string.preference_server_basic_auth_username_key).setOnPreferenceChangeListener(simplePreferenceListener);
         findPreference(R.string.preference_server_basic_auth_password_key).setOnPreferenceChangeListener(simplePreferenceListener);
 
@@ -167,7 +167,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
         Preference clientCertPref = findPreference(R.string.preference_server_use_client_certs_key);
         clientCertPref.setOnPreferenceChangeListener(simplePreferenceListener);
-        simplePreferenceListener.onPreferenceChange(clientCertPref, getBooleanPreferenceValue(clientCertPref.getKey()));
+        simplePreferenceListener.onPreferenceChange(clientCertPref, getBooleanPreferenceValue(clientCertPref.getKey(), R.bool.preference_server_use_client_certs_default));
 //            ClientCertificatePreference clientCertsPref = (ClientCertificatePreference) findPreference(R.string.preference_select_client_certificate_key);
 
         Preference useCustomTrustedCertsPref = findPreference(R.string.preference_server_use_custom_trusted_ca_certs_key);
