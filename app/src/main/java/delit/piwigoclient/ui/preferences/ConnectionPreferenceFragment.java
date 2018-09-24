@@ -124,7 +124,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         connectionProfilePref.setListener(new EditableListPreference.EditableListPreferenceChangeAdapter() {
 
             @Override
-            public void onItemSelectionChanged(EditableListPreference preference, String oldSelection, String newSelection, boolean oldSelectionExists) {
+            public void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists) {
                 if (oldSelection != null) {
                     // clone the current working copy of prefs to the previous active selection
                     if (oldSelectionExists) {

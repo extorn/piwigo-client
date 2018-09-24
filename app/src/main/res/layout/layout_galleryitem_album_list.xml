@@ -53,7 +53,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:minLines="1"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Medium"
             tools:text="Album Name" />
 
         <TextView

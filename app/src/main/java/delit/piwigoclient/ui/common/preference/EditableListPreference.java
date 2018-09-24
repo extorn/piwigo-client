@@ -112,7 +112,7 @@ public class EditableListPreference extends DialogPreference {
             if (changed) {
                 notifyChanged();
                 if (listener != null) {
-                    listener.onItemSelectionChanged(this, oldValue, value, entries.contains(oldValue));
+                    listener.onItemSelectionChange(oldValue, value, entries.contains(oldValue));
                 }
             }
         }
@@ -246,8 +246,6 @@ public class EditableListPreference extends DialogPreference {
 
         void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists);
 
-        void onItemSelectionChanged(EditableListPreference preference, String oldSelection, String newSelection, boolean oldSelectionExists);
-
         void onItemAltered(EditableListPreference preference, String oldValue, String newValue);
     }
 
@@ -298,10 +296,6 @@ public class EditableListPreference extends DialogPreference {
 
         @Override
         public void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists) {
-        }
-
-        @Override
-        public void onItemSelectionChanged(EditableListPreference preference, String oldSelection, String newSelection, boolean oldSelectionExists) {
         }
 
         @Override

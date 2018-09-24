@@ -84,7 +84,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             pref.loadEntries();
             entriesList = new ArrayList<>(pref.getEntryValues());
             userSelectedItem = pref.getValue();
-            itemEditingAllowed = getPreference().isAllowItemEdit();
+            itemEditingAllowed = pref.isAllowItemEdit();
         }
     }
 
@@ -117,12 +117,6 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         super.onPrepareDialogBuilder(builder);
         View view = buildEditableListView();
         builder.setView(view);
-        /*
-         * The typical interaction for list-based dialogs is to have
-         * click-on-an-item dismiss the dialog instead of the user having to
-         * press 'Ok'.
-         */
-        builder.setPositiveButton(null, null);
     }
 
     private View buildEditableListView() {
@@ -233,6 +227,9 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             // clone the entries set so we don't inadvertently change the cached property value
             entriesList.remove(oldValue);
             entriesList.add(newValue);
+            if(oldValue.equals(userSelectedItem)) {
+                userSelectedItem = newValue;
+            }
             actions.add(new Replacement(oldValue, newValue));
             listRecyclerView.getAdapter().notifyDataSetChanged();
         }
@@ -301,12 +298,12 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
             ActionableListItemViewHolder viewHolder = (ActionableListItemViewHolder) holder;
-            viewHolder.selected.setVisibility(View.GONE);
+//            viewHolder.selected.setVisibility(View.GONE);
             String thisValue = entriesList.get(holder.getAdapterPosition());
             viewHolder.itemName.setText(thisValue);
-            if (thisValue.equals(currentSelectedValue)) {
-                viewHolder.itemName.setTypeface(viewHolder.itemName.getTypeface(), Typeface.BOLD);
-            }
+            viewHolder.itemName.setEnabled(false);
+            viewHolder.itemName.setActivated(thisValue.equals(currentSelectedValue));
+            viewHolder.selected.setChecked(thisValue.equals(currentSelectedValue));
             viewHolder.itemDescription.setVisibility(View.GONE);
             viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -336,6 +333,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             public ActionableListItemViewHolder(View itemView) {
                 super(itemView);
                 selected = itemView.findViewById(R.id.checked);
+                selected.setButtonDrawable(R.drawable.radio_button);
                 itemName = itemView.findViewById(R.id.name);
                 itemDescription = itemView.findViewById(R.id.details);
                 deleteButton = itemView.findViewById(R.id.list_item_delete_button);
@@ -387,15 +385,12 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
                 } else {
                     throw new IllegalStateException("Stable IDs are not supported by default ViewClickListener");
                 }
+
+                userSelectedItem = newValue;
                 // now close the dialog.
                 Dialog dialog = getDialog();
-                EditableListPreference pref = getPreference();
                 EditableListPreferenceDialogFragmentCompat.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
-                userSelectedItem = newValue;
                 dialog.dismiss();
-                if (pref.getListener() != null) {
-                    pref.getListener().onItemSelectionChange(pref.getValue(), newValue, pref.getEntryValues().contains(pref.getValue()));
-                }
             }
 
         }
