@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;

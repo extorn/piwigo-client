@@ -1,7 +1,7 @@
 package delit.piwigoclient.piwigoApi;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.support.v4.app.Fragment;

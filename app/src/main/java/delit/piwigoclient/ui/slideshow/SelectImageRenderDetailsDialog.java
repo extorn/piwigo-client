@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.widget.SwitchCompat;
@@ -34,7 +34,7 @@ class SelectImageRenderDetailsDialog {
     }
 
     public AlertDialog buildDialog(float currentMaxZoom, String currentImageUrlDisplayed, ArrayList<ResourceItem.ResourceFile> availableFiles, final RenderDetailSelectListener listener) {
-        android.app.AlertDialog.Builder builder1 = new android.app.AlertDialog.Builder(context);
+        android.support.v7.app.AlertDialog.Builder builder1 = new android.support.v7.app.AlertDialog.Builder(context);
         builder1.setTitle(R.string.alert_image_show_image_title);
         adapter = new DownloadItemsListAdapter(context, R.layout.select_dialog_singlechoice_compressed, availableFiles);
 

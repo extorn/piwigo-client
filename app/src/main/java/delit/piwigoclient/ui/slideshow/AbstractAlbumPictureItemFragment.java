@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;

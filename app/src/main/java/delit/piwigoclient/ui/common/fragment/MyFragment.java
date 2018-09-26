@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.common.fragment;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;

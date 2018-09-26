@@ -167,7 +167,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
     private void showEditBox(final boolean editingExistingValue, final String initialValue) {
         // popup with text entry field.
-        android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(getContext());
+        android.support.v7.app.AlertDialog.Builder b = new android.support.v7.app.AlertDialog.Builder(getContext());
         if (editingExistingValue) {
             b.setMessage(R.string.title_editing_item);
         } else {
@@ -218,7 +218,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     protected void onChangeItem(String oldValue, String newValue) {
 
         if (entriesList.contains(newValue)) {
-            android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(getContext());
+            android.support.v7.app.AlertDialog.Builder b = new android.support.v7.app.AlertDialog.Builder(getContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
             b.create();
@@ -237,7 +237,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
     protected void onAddNewItemToList(String newItem) {
         if (entriesList.contains(newItem)) {
-            android.app.AlertDialog.Builder b = new android.app.AlertDialog.Builder(getContext());
+            android.support.v7.app.AlertDialog.Builder b = new android.support.v7.app.AlertDialog.Builder(getContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
             b.create();
