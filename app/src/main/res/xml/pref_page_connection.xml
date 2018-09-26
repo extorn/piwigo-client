@@ -194,7 +194,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_caching">
+        android:title="@string/preference_connections_category_connections_caching">
         <ListPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

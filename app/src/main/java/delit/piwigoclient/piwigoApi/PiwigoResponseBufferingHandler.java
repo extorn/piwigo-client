@@ -478,13 +478,15 @@ public class PiwigoResponseBufferingHandler {
         private final int statusCode;
         private final String errorMessage;
         private final String errorDetail;
+        private final byte[] responseBody;
 
-        public UrlErrorResponse(AbstractPiwigoDirectResponseHandler requestHandler, String url, int statusCode, byte[] data, String errorMessage, String errorDetail) {
+        public UrlErrorResponse(AbstractPiwigoDirectResponseHandler requestHandler, String url, int statusCode, byte[] responseBody, String errorMessage, String errorDetail) {
             super(requestHandler.getMessageId(), url);
             this.requestHandler = requestHandler;
             this.statusCode = statusCode;
             this.errorMessage = errorMessage;
             this.errorDetail = errorDetail;
+            this.responseBody = responseBody;
         }
 
         public int getStatusCode() {
@@ -497,6 +499,10 @@ public class PiwigoResponseBufferingHandler {
 
         public String getErrorDetail() {
             return errorDetail;
+        }
+
+        public String getResponseBody() {
+            return responseBody == null ? "" : new String(responseBody);
         }
 
         @Override

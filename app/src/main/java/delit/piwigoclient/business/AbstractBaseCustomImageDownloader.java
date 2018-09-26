@@ -59,7 +59,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
         if (!handler.isSuccess()) {
             PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse) handler.getResponse();
-            final String toastMessage = errorResponse.getUrl() + '\n' + errorResponse.getErrorMessage() + '\n' + errorResponse.getErrorDetail();
+            final String toastMessage = errorResponse.getUrl() + '\n' + errorResponse.getErrorMessage() + '\n' + errorResponse.getErrorDetail() + '\n' + errorResponse.getResponseBody();
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
             if (uri.getScheme().equalsIgnoreCase("http") && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
                 EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs));

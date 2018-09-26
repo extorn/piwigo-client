@@ -2,7 +2,6 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;

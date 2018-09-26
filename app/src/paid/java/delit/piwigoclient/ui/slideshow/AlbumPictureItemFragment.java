@@ -2,31 +2,19 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.TabHost;
 
-import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import delit.piwigoclient.R;
-import delit.piwigoclient.model.piwigo.ExifDataItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.ExifDataRetrievedEvent;
-
-import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_FLAG;
 
 public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
 
@@ -34,7 +22,7 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
 
     public static AlbumPictureItemFragment newInstance(PictureResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         AlbumPictureItemFragment fragment = new AlbumPictureItemFragment();
-        fragment.setArguments(buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount));
+        fragment.setArguments(AbstractSlideshowItemFragment.buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount));
         return fragment;
     }
 

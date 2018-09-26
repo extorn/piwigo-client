@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Automatic Upload Jobs page -->
+
+    <string name="preference_page_auto_upload_jobs">Automatic Upload</string>
+    <string name="preference_data_upload_automatic_title">Automatic Upload</string>
+    <string name="preference_data_upload_automatic_job_title">Auto Upload Job</string>
+
+    <!-- prefs -->
+
+    <string name="preference_data_upload_automatic_upload_enabled_key" translatable="false">preference_data_upload_automatic_upload_enable</string>
+    <string name="preference_data_upload_automatic_upload_enable_summary">Enable background uploading</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Automatic Upload</string>
+    <bool name="preference_data_upload_automatic_upload_enabled_default">false</bool>
+
+    <string name="preference_data_upload_automatic_upload_polling_interval_key" translatable="false">preference_data_upload_automatic_upload_polling_interval</string>
+    <string name="preference_data_upload_automatic_upload_polling_interval_title">Poll Interval</string>
+    <string name="preference_data_upload_automatic_upload_polling_interval_summary">Run upload job every %1$d minutes</string>
+    <integer name="preference_data_upload_automatic_upload_polling_interval_default">15</integer>
+
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Only use Auto Upload on Wireless</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Over Wireless Only</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_key" translatable="false">preference_data_upload_automatic_upload_wireless_only</string>
+    <bool name="preference_data_upload_automatic_upload_wireless_only_default">true</bool>
+
+    <string name="preference_data_upload_automatic_upload_jobs_key" translatable="false">preference_data_upload_automatic_upload_jobs</string>
+    <string name="preference_data_upload_automatic_upload_jobs_title">Auto Upload Jobs</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
+
+    <!-- boolean flag set that if false will stop the job running -->
+
+    <string name="preference_data_upload_automatic_job_is_valid_key" translatable="false">preference_data_upload_automatic_job_is_valid</string>
+    <string name="preference_data_upload_automatic_job_is_valid_title">Job is Valid</string>
+
+    <string name="preference_data_upload_automatic_job_enabled_key" translatable="false">preference_data_upload_automatic_server_enabled</string>
+    <string name="preference_data_upload_automatic_job_enabled_summary">Is this job listening in the background?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Job Enabled</string>
+    <bool name="preference_data_upload_automatic_job_enabled_default">true</bool>
+
+    <string name="preference_data_upload_automatic_job_server_title">Upload to Server</string>
+    <string name="preference_data_upload_automatic_job_server_key" translatable="false">preference_data_upload_automatic_server</string>
+    <string name="preference_data_upload_automatic_job_server_summary">Profile: %1$s</string>
+
+    <string name="preference_data_upload_automatic_job_server_album_key" translatable="false">preference_data_upload_automatic_server_album</string>
+    <string name="preference_data_upload_automatic_job_server_album_title">Upload to Album</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_local_folder_title">Upload from folder</string>
+    <string name="preference_data_upload_automatic_job_local_folder_key" translatable="false">preference_data_upload_automatic_local_folder</string>
+    <string name="preference_data_upload_automatic_job_local_folder_summary">Upload %1$s</string>
+
+    <string name="preference_data_upload_automatic_job_delete_uploaded_key" translatable="false">preference_data_upload_automatic_server_delete_uploaded</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Delete successfully uploaded files</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Auto delete</string>
+    <bool name="preference_data_upload_automatic_job_delete_uploaded_default">true</bool>
+
+    <integer name="preference_data_upload_automatic_job_max_upload_size_mb_default">20</integer>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_key" translatable="false">preference_data_upload_automatic_max_upload_size</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize uploaded</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_key" translatable="false">preference_data_upload_automatic_server_file_exts_uploaded</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">jpg,png,raw</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">File extensions</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Upload files with ext %1$s</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Privacy Level</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Uploaded files visible to %1$s</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_key" translatable="false">preference_data_upload_automatic_job_privacy_level</string>
+    <integer name="preference_data_upload_automatic_job_privacy_level_default">0</integer>
+
+    <string name="preference_data_upload_automatic_job_files_uploaded_already_key" translatable="false">preference_data_upload_automatic_job_files_uploaded_already</string>
+
+</resources>

@@ -65,7 +65,7 @@ android {
             dimension "tier"
         }
         paid {
-            applicationId "delit.piwigoclient.paid"
+            applicationIdSuffix ".paid"
             //.phone when debugging on phone so separate install.
             buildConfigField "boolean", "PAID_VERSION", "true"
             // Assigns this product flavor to the "tier" flavor dimension. Specifying
@@ -73,7 +73,7 @@ android {
             dimension "tier"
         }
         paidphone {
-            applicationId "delit.piwigoclient.paid.phone"
+            applicationIdSuffix ".paid.phone"
             //.phone when debugging on phone so separate install.
             buildConfigField "boolean", "PAID_VERSION", "true"
             // Assigns this product flavor to the "tier" flavor dimension. Specifying
@@ -89,6 +89,7 @@ android {
             aidl.srcDirs = sourceSets.paid.aidl.srcDirs
             renderscript.srcDirs = sourceSets.paid.renderscript.srcDirs
             assets.srcDirs = sourceSets.paid.assets.srcDirs
+            manifest.srcFile(sourceSets.paid.manifest.srcFile)
         }
     }
 }

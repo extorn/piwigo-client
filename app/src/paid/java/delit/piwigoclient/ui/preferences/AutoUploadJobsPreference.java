@@ -8,7 +8,6 @@ import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.util.CollectionUtils;

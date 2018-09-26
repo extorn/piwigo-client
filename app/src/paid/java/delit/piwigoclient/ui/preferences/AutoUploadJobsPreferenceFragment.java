@@ -42,6 +42,8 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
                 onBackgroundServiceEnabled(getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_enabled_default));
             } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_wireless_only_key))) {
                 onUploadWirelessOnlyChanged(getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_wireless_only_default));
+            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_polling_interval_key))) {
+                onUploadIntervalChanged(getIntegerPreferenceValue(key, R.integer.preference_data_upload_automatic_upload_polling_interval_default));
             }
 
         }
@@ -61,6 +63,13 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
             }
         }
     };
+
+    private void onUploadIntervalChanged(int integerPreferenceValue) {
+        if(BackgroundPiwigoUploadService.isStarted()) {
+            // ensure the service knows the change occurred.
+            BackgroundPiwigoUploadService.wakeServiceIfSleeping();
+        }
+    }
 
     @Override
     protected DialogFragment onDisplayCustomPreferenceDialog(Preference preference) {

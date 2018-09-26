@@ -1,6 +1,5 @@
 package delit.piwigoclient.piwigoApi.upload;
 
-import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -12,6 +11,8 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -261,56 +262,48 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return wl;
     }
 
-    protected Notification.Builder getNotificationBuilder() {
+    protected NotificationCompat.Builder getNotificationBuilder() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannelIfNeeded();
-            return new Notification.Builder(getBaseContext(), getDefaultNotificationChannelId());
-        } else {
-            return new Notification.Builder(getBaseContext());
         }
+        return new NotificationCompat.Builder(getBaseContext(), getDefaultNotificationChannelId());
     }
 
     abstract protected int getNotificationId();
 
     abstract protected String getNotificationTitle();
 
-    @SuppressLint("WakelockTimeout")
-    @Override
-    protected void onHandleIntent(Intent intent) {
-
-        PowerManager.WakeLock wl = getWakeLock(intent);
-        try {
-            doBeforeWork(intent);
-            doWork(intent);
-        } finally {
-            releaseWakeLock(wl);
-            stopForeground(true);
-        }
-
-    }
-
     //TODO add determinate progress...
     protected void updateNotificationText(String text, int progress) {
-        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification.Builder notificationBuilder = buildNotification(text);
+//        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notificationBuilder = buildNotification(text);
         notificationBuilder.setProgress(100, progress, false);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getBaseContext());
         notificationManager.notify(getNotificationId(), notificationBuilder.build());
     }
 
     protected void updateNotificationText(String text, boolean showIndeterminateProgress) {
-        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification.Builder notificationBuilder = buildNotification(text);
+//        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notificationBuilder = buildNotification(text);
         if (showIndeterminateProgress) {
             notificationBuilder.setProgress(0, 0, true);
         }
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getBaseContext());
         notificationManager.notify(getNotificationId(), notificationBuilder.build());
     }
 
-    protected Notification.Builder buildNotification(String text) {
-        Notification.Builder notificationBuilder = getNotificationBuilder();
+    protected NotificationCompat.Builder buildNotification(String text) {
+        NotificationCompat.Builder notificationBuilder = getNotificationBuilder();
         notificationBuilder.setContentTitle(getNotificationTitle())
-                .setContentText(text)
-                .setSmallIcon(R.drawable.ic_file_upload_black_24dp);
+                .setContentText(text);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            // this is not a vector graphic
+            notificationBuilder.setSmallIcon(R.drawable.ic_file_upload_black);
+            notificationBuilder.setCategory("service");
+        } else {
+            notificationBuilder.setSmallIcon(R.drawable.ic_file_upload_black_24dp);
+            notificationBuilder.setCategory(Notification.CATEGORY_SERVICE);
+        }
 //        .setTicker(getText(R.string.ticker_text))
         return notificationBuilder;
     }
@@ -332,7 +325,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
     }
 
     protected void doBeforeWork(Intent intent) {
-        Notification.Builder notificationBuilder = buildNotification(getString(R.string.notification_message_upload_service));
+        NotificationCompat.Builder notificationBuilder = buildNotification(getString(R.string.notification_message_upload_service));
         notificationBuilder.setProgress(0, 0, true);
         startForeground(getNotificationId(), notificationBuilder.build());
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -1017,7 +1010,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return new SerializablePair<>(imageChunkUploadHandler.isSuccess(), uploadedResource);
     }
 
-    protected interface JobUploadListener {
+    public interface JobUploadListener {
         void onJobReadyToUpload(Context c, UploadJob thisUploadJob);
     }
 

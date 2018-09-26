@@ -181,7 +181,7 @@ public class DisplayUtils {
         } else {
             screenWidth = getScreenHeightInches(activity);
         }
-        int columnsToShow = (int) Math.max(minWidthInches, Math.round(screenWidth)); // allow a minimum of minWidthInches inches per column
+        int columnsToShow = (int) Math.max(minWidthInches, Math.round(screenWidth) / minWidthInches); // allow a minimum of minWidthInches inches per column
         return Math.max(1, columnsToShow); // never allow less than one column by default.
     }
 }
