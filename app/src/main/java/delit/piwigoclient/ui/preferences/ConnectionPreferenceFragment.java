@@ -10,7 +10,6 @@ import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceManager;
-import android.widget.BaseAdapter;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -186,6 +185,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                         preProcessedCerts.remove(removedThumbprint);
                     }
                     getPrefs().edit().putStringSet(getString(R.string.preference_pre_user_notified_certificates_key), preProcessedCerts).commit();
+                    forceHttpConnectionCleanupAndRebuild();
                 }
                 return true;
             }
@@ -288,14 +288,26 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         super.onSaveInstanceState(outState);
     }
 
+    private boolean forceHttpConnectionCleanupAndRebuild() {
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+        if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
+            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(connectionPrefs, getContext()).start());
+            loginOnLogout = true;
+            return true;
+        }
+        return false;
+    }
+
     private boolean forkLogoutIfNeeded() {
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
             getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler().invokeAsync(getContext()));
+            loginOnLogout = true;
             return true;
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(connectionPrefs, getContext()).start());
+            loginOnLogout = true;
             return true;
         }
         return false;
@@ -306,9 +318,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         if (serverUri == null || serverUri.trim().isEmpty()) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
-            if (forkLogoutIfNeeded()) {
-                loginOnLogout = true;
-            } else {
+            if (!forkLogoutIfNeeded()) {
                 Context context = getContext();
                 HttpClientFactory.getInstance(context).clearCachedClients(connectionPrefs);
                 getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(context));

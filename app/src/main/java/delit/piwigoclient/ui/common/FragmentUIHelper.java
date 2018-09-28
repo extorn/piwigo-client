@@ -19,7 +19,13 @@ public class FragmentUIHelper extends UIHelper<Fragment> {
 
     @Override
     protected boolean canShowDialog() {
-        return (!blockDialogsFromShowing) && getParent().isResumed();
+        boolean canShowDialog = super.canShowDialog();
+        if(canShowDialog) {
+            UIHelper activityUiHelper = ((MyActivity) getParent().getActivity()).getUiHelper();
+            canShowDialog &= !activityUiHelper.isDialogShowing();
+            canShowDialog &= (!blockDialogsFromShowing) && getParent().isResumed();
+        }
+        return canShowDialog;
     }
 
     public void setBlockDialogsFromShowing(boolean blockDialogsFromShowing) {

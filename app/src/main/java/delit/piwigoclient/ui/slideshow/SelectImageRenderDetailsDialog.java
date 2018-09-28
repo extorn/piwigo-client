@@ -36,9 +36,9 @@ class SelectImageRenderDetailsDialog {
     public AlertDialog buildDialog(float currentMaxZoom, String currentImageUrlDisplayed, ArrayList<ResourceItem.ResourceFile> availableFiles, final RenderDetailSelectListener listener) {
         android.support.v7.app.AlertDialog.Builder builder1 = new android.support.v7.app.AlertDialog.Builder(context);
         builder1.setTitle(R.string.alert_image_show_image_title);
-        adapter = new DownloadItemsListAdapter(context, R.layout.select_dialog_singlechoice_compressed, availableFiles);
+        adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, availableFiles);
 
-        View view = LayoutInflater.from(context).inflate(R.layout.zoom_control_dialog_layout, null, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_dialog_zoom_control, null, false);
 
         imageRotation = view.findViewById(R.id.imageRotationField);
 

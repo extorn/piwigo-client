@@ -149,7 +149,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     }
 
     private void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
-        getUiHelper().dismissProgressDialog();
+        getUiHelper().hideProgressIndicator();
 //        if (response.getItemsOnPage() == response.getPageSize()) {
 //            //TODO FEATURE: Support groups paging
 //            getUiHelper().showOrQueueMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));

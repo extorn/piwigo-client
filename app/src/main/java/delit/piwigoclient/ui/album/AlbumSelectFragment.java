@@ -144,7 +144,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     }
 
     private void onAlbumsLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
-        getUiHelper().dismissProgressDialog();
+        getUiHelper().hideProgressIndicator();
         availableAlbums = response.getAlbumNames();
         rerunRetrievalForFailedPages();
     }

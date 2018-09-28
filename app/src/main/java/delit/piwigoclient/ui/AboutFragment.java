@@ -41,10 +41,10 @@ public class AboutFragment extends MyFragment {
         }
 
         ListView plannedReleases = view.findViewById(R.id.about_planned_releases);
-        plannedReleases.setAdapter(new ReleaseListAdapter(getContext(), R.layout.simple_list_item_layout, R.array.planned_releases));
+        plannedReleases.setAdapter(new ReleaseListAdapter(getContext(), R.layout.layout_simple_list_item, R.array.planned_releases));
 
         ListView releaseHistory = view.findViewById(R.id.about_release_history);
-        releaseHistory.setAdapter(new ReleaseListAdapter(getContext(), R.layout.simple_list_item_layout, R.array.release_history));
+        releaseHistory.setAdapter(new ReleaseListAdapter(getContext(), R.layout.layout_simple_list_item, R.array.release_history));
 
         return view;
     }

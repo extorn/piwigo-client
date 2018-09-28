@@ -61,7 +61,15 @@ public class X509Utils {
     }
 
     public static KeyStore loadClientKeystore(Context context) {
-        return loadKeystore(context, "clientKeystore." + KeyStore.getDefaultType(), clientKeystorePass);
+        KeyStore keystore = loadKeystore(context, "clientKeystore." + KeyStore.getDefaultType(), clientKeystorePass);
+        if(keystore == null) {
+            try {
+                keystore = buildEmptyKeystore();
+            } catch (KeyStoreException e) {
+                Crashlytics.log(Log.ERROR, TAG, "Unable to build empty keystore");
+            }
+        }
+        return keystore;
     }
 
     public static void saveClientKeystore(Context context, KeyStore clientKeystore) {
@@ -69,7 +77,15 @@ public class X509Utils {
     }
 
     public static KeyStore loadTrustedCaKeystore(Context context) {
-        return loadKeystore(context, "trustStore." + KeyStore.getDefaultType(), trustStorePass);
+        KeyStore keystore = loadKeystore(context, "trustStore." + KeyStore.getDefaultType(), trustStorePass);
+        if(keystore == null) {
+            try {
+                keystore = buildEmptyKeystore();
+            } catch (KeyStoreException e) {
+                Crashlytics.log(Log.ERROR, TAG, "Unable to build empty keystore");
+            }
+        }
+        return keystore;
     }
 
     public static void saveTrustedCaKeystore(Context context, KeyStore clientKeystore) {
@@ -160,7 +176,7 @@ public class X509Utils {
     }
 
     public static KeyStore buildPopulatedKeystore(Map<Key, X509Certificate[]> keystoreContent) throws KeyStoreException {
-        KeyStore keystore = X509Utils.buildEmptyKeystore();
+        KeyStore keystore = buildEmptyKeystore();
         if (keystoreContent != null) {
             int i = 0;
             for (Map.Entry<Key, X509Certificate[]> entry : keystoreContent.entrySet()) {
@@ -195,7 +211,7 @@ public class X509Utils {
     }
 
     public static KeyStore buildPopulatedKeystore(Collection<X509Certificate> certs) throws KeyStoreException {
-        KeyStore keystore = X509Utils.buildEmptyKeystore();
+        KeyStore keystore = buildEmptyKeystore();
         if (certs != null) {
             int i = 0;
             for (X509Certificate cert : certs) {
@@ -578,7 +594,7 @@ public class X509Utils {
         try {
             List<String> keystoreAliases = extractAliasesFromKeystore(keyStore);
             for (Map.Entry<Key, Certificate[]> newVal : keystoreContent.entrySet()) {
-                String thumbprint = X509Utils.getCertificateThumbprint(newVal.getValue()[0]);
+                String thumbprint = getCertificateThumbprint(newVal.getValue()[0]);
 
                 if (newVal.getKey() instanceof PrivateKey) {
                     if (keystoreAliases.contains(thumbprint)) {

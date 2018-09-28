@@ -31,9 +31,9 @@ class DownloadSelectionDialog {
     public AlertDialog buildDialog(final String resourceName, ArrayList<ResourceItem.ResourceFile> availableFiles, final DownloadSelectionListener listener) {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setTitle(R.string.alert_image_download_title);
-        final DownloadItemsListAdapter adapter = new DownloadItemsListAdapter(context, R.layout.select_dialog_singlechoice_compressed, availableFiles);
+        final DownloadItemsListAdapter adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, availableFiles);
 
-        View view = LayoutInflater.from(context).inflate(R.layout.download_dialog_layout, null, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_dialog_download_file, null, false);
         ((TextView) view.findViewById(R.id.alertMessage)).setText(R.string.alert_image_download_message);
         final ListView fileSelectList = view.findViewById(R.id.fileSelectList);
         fileSelectList.setAdapter(adapter);

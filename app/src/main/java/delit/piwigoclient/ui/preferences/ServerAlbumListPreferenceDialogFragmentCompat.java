@@ -44,7 +44,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.util.DisplayUtils;
 
 public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
-    // state persistant values
+    // state persistent values
     private long activeServiceCall = -1;
     private CustomPiwigoResponseListener serviceCallHandler;
     private ListView itemListView;

@@ -142,10 +142,10 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             case VIEW_TYPE_FILE:
             case VIEW_TYPE_FILE_IMAGE:
                 return LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.actionable_triselect_list_item_large_icon_layout, parent, false);
+                        .inflate(R.layout.layout_actionable_triselect_list_item_large_icon, parent, false);
             case VIEW_TYPE_FOLDER:
                 return LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.actionable_triselect_list_item_icon_layout, parent, false);
+                        .inflate(R.layout.layout_actionable_triselect_list_item_icon, parent, false);
         }
 
     }

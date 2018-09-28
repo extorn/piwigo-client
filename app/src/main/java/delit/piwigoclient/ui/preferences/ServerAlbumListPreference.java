@@ -19,7 +19,7 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 public class ServerAlbumListPreference extends DialogPreference {
 
     private String currentValue;
-    // non state persistant values
+    // non state persistent values
     private String connectionProfileNamePreferenceKey;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
 

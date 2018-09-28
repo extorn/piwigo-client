@@ -1,7 +1,5 @@
 package delit.piwigoclient.ui.common.fragment;
 
-import android.support.v7.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
@@ -13,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +38,6 @@ public class MyFragment extends Fragment {
 
     private static final String STATE_ACTIVE_SESSION_TOKEN = "activeSessionToken";
     private static final String STATE_ACTIVE_SERVER_CONNECTION = "activeServerConnection";
-    protected ProgressDialog determinateProgressDialog;
     protected SharedPreferences prefs;
     // Stored state below here.
     private FragmentUIHelper uiHelper;
@@ -69,6 +67,8 @@ public class MyFragment extends Fragment {
         uiHelper.addActiveServiceCall(R.string.talking_to_server_please_wait, messageId);
     }
 
+
+
     @Override
     public void onDetach() {
         Crashlytics.log("onDetach : " + getClass().getName());
@@ -97,7 +97,6 @@ public class MyFragment extends Fragment {
             uiHelper.setPiwigoResponseListener(listener);
         }
         super.onAttach(context);
-        setupDialogBoxes();
     }
 
     protected FragmentUIHelper buildUIHelper(Context context) {
@@ -219,18 +218,7 @@ public class MyFragment extends Fragment {
         uiHelper.registerToActiveServiceCalls();
     }
 
-    private void setupDialogBoxes() {
-        if (determinateProgressDialog != null) {
-            // don't set them up twice.
-            return;
-        }
-        determinateProgressDialog = new ProgressDialog(getActivity());
-        determinateProgressDialog.setCancelable(false);
-        determinateProgressDialog.setIndeterminate(false);
-        determinateProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-    }
-
-    protected FragmentUIHelper getUiHelper() {
+    public FragmentUIHelper getUiHelper() {
         return uiHelper;
     }
 

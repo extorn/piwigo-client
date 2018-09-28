@@ -25,10 +25,10 @@ import delit.piwigoclient.R;
 
 public class EditableListPreference extends DialogPreference {
 
-    // State persistant values
+    // State persistent values
     private String currentValue;
     private HashSet<String> entries;
-    // Non state persistant values (because they are never altered)
+    // Non state persistent values (because they are never altered)
     private int entriesPref;
     private String summary;
     private EditableListPreferenceChangeListener listener;

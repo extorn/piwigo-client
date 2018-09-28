@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.common.preference;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -54,6 +53,7 @@ import javax.security.auth.x500.X500Principal;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.ProgressIndicator;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
@@ -73,19 +73,19 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
     private String STATE_TRACKED_REQUEST = "KeystorePreference.TrackedRequest";
     private String STATE_LOAD_OP_RESULT = "KeystorePreference.LoadOperationResult";
-    private String STATE_LOAD_IN_PROGRESS = "KeystorePreference.LoadInProgress";
+    private String STATE_LOAD_PROGRESS = "KeystorePreference.LoadProgress";
     private String STATE_KEYSTORE = "KeystorePreference.KeyStore";
     private static final char[] keystorePass = new char[]{'!', 'P', '1', 'r', '!', '4', 't', '3', '5', '!'};
-    // State persistant items
-    private boolean keystoreLoadInProgress;
+    // State persistent items
+    private int keystoreLoadProgress = -1;
     private LoadOperationResult keystoreLoadOperationResult;
     private int trackedRequest = -1;
-    // non state persistant items
+    // non state persistent items
     private RecyclerView certificateList;
-    private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
     private CustomImageButton addListItemButton;
     private KeyStore keystore;
+    private ProgressIndicator progressIndicator;
 
     @Override
     public Preference findPreference(CharSequence key) {
@@ -134,6 +134,12 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             adView.setVisibility(View.GONE);
         }
 
+        progressIndicator = view.findViewById(R.id.list_action_progress_indicator);
+        progressIndicator.setVisibility(View.GONE);
+        if(keystoreLoadProgress >= 0 && keystoreLoadProgress < 100) {
+            progressIndicator.showProgressIndicator(R.string.alert_loading_certificates_from_selected_files, keystoreLoadProgress);
+        }
+
         view.findViewById(R.id.list_action_cancel_button).setVisibility(View.GONE);
         view.findViewById(R.id.list_action_toggle_all_button).setVisibility(View.GONE);
 
@@ -152,7 +158,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         addListItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!keystoreLoadInProgress) {
+                if (keystoreLoadProgress < 0 || keystoreLoadProgress == 100) {
                     addNewCertificate();
                 }
             }
@@ -211,10 +217,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         View v = null;
         if (recoverableError instanceof KeyStoreOperationException) {
             // request keystore password
-            v = layoutInflater.inflate(R.layout.keystore_password_entry_layout, null);
+            v = layoutInflater.inflate(R.layout.layout_keystore_password_entry, null);
         } else if (recoverableError instanceof KeyStoreContentException) {
             // request keystore alias key password
-            v = layoutInflater.inflate(R.layout.keystore_key_password_entry_layout, null);
+            v = layoutInflater.inflate(R.layout.layout_keystore_key_password_entry, null);
 
             KeyStoreContentException e = (KeyStoreContentException) recoverableError;
 
@@ -240,14 +246,6 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
                     }
                 })
                 .show();
-    }
-
-    private void buildProgressDialog(Context context) {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setTitle(R.string.alert_loading_certificates_from_selected_files);
     }
 
     public static DialogFragment newInstance(String key) {
@@ -294,10 +292,10 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view;
             if (viewType == VIEW_TYPE_PRIVATE_KEY) {
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.x509key_actionable_list_item_layout, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_x509key_actionable_list_item, parent, false);
                 return new KeyStorePrivateKeyItemViewHolder(view);
             } else if (viewType == VIEW_TYPE_CERTIFICATE) {
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.x509cert_actionable_list_item_layout, parent, false);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_x509cert_actionable_list_item, parent, false);
                 return new KeyStoreCertificateItemViewHolder(view);
             } else {
                 throw new RuntimeException("Unsupported view type : " + viewType);
@@ -432,13 +430,6 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         }
     }
 
-    private class KeyStoreItemViewHolder extends RecyclerView.ViewHolder {
-
-        public KeyStoreItemViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
-
     private class KeyStoreCertificateItemViewHolder extends RecyclerView.ViewHolder {
 
         protected final TextView certNameField;
@@ -536,7 +527,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             params[i++] = new X509LoadOperation(f);
         }
         keystoreLoadOperationResult = null;
-        keystoreLoadInProgress = true;
+        keystoreLoadProgress = 0;
         new AsyncX509LoaderTask(this).execute(params);
     }
 
@@ -546,19 +537,13 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             KeyStoreContentsAdapter adapter = ((KeyStoreContentsAdapter) certificateList.getAdapter());
             adapter.addData(loadOperationResult.removeSuccessfullyLoadedData());
         }
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
+        progressIndicator.setVisibility(View.GONE);
         showLoadErrors();
-        keystoreLoadInProgress = false;
+        keystoreLoadProgress = 100;
     }
 
     private void onProgressUpdate(Integer i) {
-        if (progressDialog == null || !progressDialog.isShowing()) {
-            buildProgressDialog(getDialog().getContext());
-        }
-        progressDialog.setProgress(i);
-        progressDialog.show();
+        progressIndicator.showProgressIndicator(R.string.alert_loading_certificates_from_selected_files, i);
     }
 
     private void showLoadErrors() {
@@ -668,7 +653,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         super.onSaveInstanceState(outState);
         outState.putInt(STATE_TRACKED_REQUEST, trackedRequest);
         outState.putSerializable(STATE_LOAD_OP_RESULT, keystoreLoadOperationResult);
-        outState.putBoolean(STATE_LOAD_IN_PROGRESS, keystoreLoadInProgress);
+        outState.putInt(STATE_LOAD_PROGRESS, keystoreLoadProgress);
         outState.putByteArray(STATE_KEYSTORE, X509Utils.saveKeystore("byteArray", keystore, keystorePass));
     }
 
@@ -678,7 +663,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         if(savedInstanceState != null) {
             trackedRequest = savedInstanceState.getInt(STATE_TRACKED_REQUEST, -1);
             keystoreLoadOperationResult = (LoadOperationResult) savedInstanceState.getSerializable(STATE_LOAD_OP_RESULT);
-            keystoreLoadInProgress = savedInstanceState.getBoolean(STATE_LOAD_IN_PROGRESS);
+            keystoreLoadProgress = savedInstanceState.getInt(STATE_LOAD_PROGRESS);
             keystore = X509Utils.loadKeystore("byteArray", savedInstanceState.getByteArray(STATE_KEYSTORE), keystorePass) ;
         } else {
             KeyStorePreference pref = getPreference();

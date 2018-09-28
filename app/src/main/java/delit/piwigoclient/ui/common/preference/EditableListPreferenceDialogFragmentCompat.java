@@ -3,7 +3,6 @@ package delit.piwigoclient.ui.common.preference;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -279,7 +278,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_actionable_triselect_list_item, parent, false);
             return buildViewHolder(view);
         }
 

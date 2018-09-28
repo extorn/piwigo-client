@@ -208,10 +208,12 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
                 manualRetries++;
                 getViewHolder().imageLoader.loadNoCache();
             } else {
-                if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
-                    onCategoryClick();
-                } else {
-                    onNonCategoryClick();
+                if(getViewHolder().getItem() != null) {
+                    if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
+                        onCategoryClick();
+                    } else {
+                        onNonCategoryClick();
+                    }
                 }
             }
         }

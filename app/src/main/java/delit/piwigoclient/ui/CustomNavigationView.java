@@ -158,7 +158,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(getContext());
             username = connectionPrefs.getPiwigoUsername(prefs, getContext());
         }
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.password_entry_layout, R.string.button_cancel, R.string.button_unlock, new UIHelper.QuestionResultAdapter() {
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

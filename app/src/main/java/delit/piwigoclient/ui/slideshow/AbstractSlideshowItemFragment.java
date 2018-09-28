@@ -63,6 +63,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
+import delit.piwigoclient.ui.common.ProgressIndicator;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -708,10 +709,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     public final void onGalleryItemActionFinished() {
-
-        if (determinateProgressDialog.isShowing()) {
-            determinateProgressDialog.dismiss();
-        }
+        getUiHelper().hideProgressIndicator();
         EventBus.getDefault().post(new AlbumItemActionFinishedEvent(getUiHelper().getTrackedRequest(), model));
     }
 
@@ -802,26 +800,28 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void onProgressUpdate(final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
+        ProgressIndicator progressIndicator = getUiHelper().getProgressIndicator();
         if (response.getProgress() < 0) {
-            getUiHelper().showProgressDialog();
+            progressIndicator.showProgressIndicator(R.string.progress_downloading, -1);
         } else {
             if (response.getProgress() == 0) {
-                determinateProgressDialog.setTitle(R.string.progress_downloading);
-
-                determinateProgressDialog.setCanceledOnTouchOutside(false);
-                determinateProgressDialog.setCancelable(true);
-                determinateProgressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        activeDownloadActionId = null;
-                        EventBus.getDefault().post(new CancelDownloadEvent(response.getMessageId()));
-                    }
-                });
-                determinateProgressDialog.show();
-                determinateProgressDialog.setProgress(response.getProgress());
-            } else if (determinateProgressDialog.isShowing()) {
-                determinateProgressDialog.setProgress(response.getProgress());
+                progressIndicator.showProgressIndicator(R.string.progress_downloading, response.getProgress(), new CancelDownloadListener(response.getMessageId()));
+            } else if (progressIndicator.getVisibility() == VISIBLE) {
+                progressIndicator.updateProgressIndicator(response.getProgress());
             }
+        }
+    }
+
+    private static class CancelDownloadListener implements View.OnClickListener {
+        private final long downloadMessageId;
+
+        public CancelDownloadListener(long messageId) {
+            downloadMessageId = messageId;
+        }
+
+        @Override
+        public void onClick(View v) {
+            EventBus.getDefault().post(new CancelDownloadEvent(downloadMessageId));
         }
     }
 
@@ -880,6 +880,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     public void onEvent(PiwigoLoginSuccessEvent event) {
         displayItemDetailsControlsBasedOnSessionState();
         setEditItemDetailsControlsStatus();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(CancelDownloadEvent event) {
+        activeDownloadActionId = null;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

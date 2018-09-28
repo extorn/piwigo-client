@@ -78,7 +78,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     @NonNull
     protected View inflateView(@NonNull ViewGroup parent, int viewType) {
         return LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
+                .inflate(R.layout.layout_actionable_triselect_list_item, parent, false);
     }
 
     /**

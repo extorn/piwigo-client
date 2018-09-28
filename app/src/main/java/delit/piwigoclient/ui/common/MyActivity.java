@@ -46,7 +46,7 @@ public abstract class MyActivity extends AppCompatActivity {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (uiHelper == null) {
-            uiHelper = new AppCompatActivityUIHelper(this, prefs);
+            uiHelper = new ActivityUIHelper(this, prefs);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
@@ -125,6 +125,7 @@ public abstract class MyActivity extends AppCompatActivity {
         super.onDetachedFromWindow();
     }
 
+
     protected void addActiveServiceCall(long messageId) {
         uiHelper.addActiveServiceCall(R.string.talking_to_server_please_wait, messageId);
     }
@@ -170,6 +171,9 @@ public abstract class MyActivity extends AppCompatActivity {
         return uiHelper;
     }
 
+    public Fragment getActiveFragment() {
+        return getSupportFragmentManager().findFragmentById(R.id.main_view);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,

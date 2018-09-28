@@ -53,7 +53,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
 
     private static @LayoutRes
     int getLayoutId(AvailableAlbumsListAdapterPreferences prefs) {
-        return prefs.isMultiSelectionEnabled() ? R.layout.actionable_simple_triselect_list_item_layout : R.layout.actionable_simple_select_list_item_layout;
+        return prefs.isMultiSelectionEnabled() ? R.layout.layout_actionable_simple_triselect_list_item : R.layout.layout_actionable_simple_select_list_item;
     }
 
     @Override

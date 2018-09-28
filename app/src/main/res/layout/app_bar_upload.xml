@@ -4,19 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="delit.piwigoclient.ui.UploadActivity">
+    tools:context=".ui.UploadActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="top">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+
+        <delit.piwigoclient.ui.common.ProgressIndicator
+            android:background="@color/primary_dark"
+            android:id="@+id/progressIndicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
     </android.support.design.widget.AppBarLayout>
 
-    <include android:id="@+id/main_view" layout="@layout/content_upload" />
+    <include
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/main_view"
+        layout="@layout/content_main"/>
 
 </android.support.design.widget.CoordinatorLayout>

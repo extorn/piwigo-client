@@ -1680,7 +1680,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private void onAlbumUpdateFinished() {
         updateAlbumDetailsProgress = UPDATE_NOT_RUNNING;
         setGalleryHeadings();
-        getUiHelper().dismissProgressDialog();
+        getUiHelper().hideProgressIndicator();
         if (editingItemDetails) {
             editingItemDetails = false;
             currentUsers = galleryModel.getContainerDetails().getUsers();

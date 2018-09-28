@@ -25,6 +25,7 @@
         <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
         <item name="android:dropDownListViewStyle">@style/Custom.Widget.AppCompat.DropDownItem.Spinner</item>
         <item name="preferenceTheme">@style/Custom.PreferenceThemeOverlay.v14.Material</item>
+        <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
     </style>
 
     <style name="Custom.PreferenceThemeOverlay.v14.Material" parent="PreferenceThemeOverlay.v14.Material">

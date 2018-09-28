@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -79,7 +78,6 @@ public abstract class UIHelper<T> {
     private final Queue<QueuedMessage> messageQueue = new LinkedBlockingQueue<>(100);
     private Context context;
     private DismissListener dismissListener;
-    private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
     private HashSet<Long> activeServiceCalls = new HashSet<>(3);
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
@@ -87,6 +85,7 @@ public abstract class UIHelper<T> {
     private BasicPiwigoResponseListener piwigoResponseListener;
     private int permissionsNeededReason;
     private NotificationManager notificationManager;
+    ProgressIndicator progressIndicator;
 
     public UIHelper(T parent, SharedPreferences prefs, Context context) {
         this.context = context;
@@ -179,17 +178,19 @@ public abstract class UIHelper<T> {
     public void addBackgroundServiceCall(long messageId) {
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
+    
+    private  boolean isProgressIndicatorVisible() {
+        return progressIndicator != null && progressIndicator.getVisibility() == View.VISIBLE;
+    }
 
     /**
      * Called when retrying a failed call.
      */
     public void addActiveServiceCall(long messageId) {
         activeServiceCalls.add(messageId);
-        if (progressDialog != null && !progressDialog.isShowing()) {
+        if (!isProgressIndicatorVisible()) {
             // assume it still has the correct text... (fingers crossed)
-            if (canShowDialog()) {
-                showProgressDialog();
-            }
+            showProgressIndicator();
         }
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
@@ -202,29 +203,37 @@ public abstract class UIHelper<T> {
 
     public void addActiveServiceCall(String titleString, long messageId) {
         activeServiceCalls.add(messageId);
-        if (progressDialog != null && !progressDialog.isShowing()) {
-            progressDialog.setTitle(titleString);
-            if (canShowDialog()) {
-                showProgressDialog();
+        if (!isProgressIndicatorVisible()) {
+            if(progressIndicator == null) {
+                Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
+            } else {
+                progressIndicator.showProgressIndicator(titleString, -1);
             }
         }
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
     private void setupDialogBoxes() {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         buildAlertDialog();
+        try {
+            progressIndicator = ActivityCompat.requireViewById((Activity) context, R.id.progressIndicator);
+        } catch (IllegalArgumentException e) {
+            if(BuildConfig.DEBUG) {
+                Crashlytics.log(Log.ERROR, TAG, "Progress indicator not available in " + ((Activity) context).getLocalClassName());
+            }
+        }
     }
 
     protected void buildAlertDialog() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setCancelable(true);
-        dismissListener = new DismissListener();
+        dismissListener = buildDialogDismissListener();
         builder1.setOnDismissListener(dismissListener);
         alertDialog = builder1.create();
+    }
+
+    protected DismissListener buildDialogDismissListener() {
+        return new DismissListener();
     }
 
     protected void showDialog(final QueuedQuestionMessage nextMessage) {
@@ -347,8 +356,12 @@ public abstract class UIHelper<T> {
         this.permissionsNeededReason = permissionsNeededReason;
     }
 
+    public boolean isDialogShowing() {
+        return alertDialog != null && alertDialog.isShowing();
+    }
+
     public void showNextQueuedMessage() {
-        if (messageQueue.size() > 0 && (alertDialog != null && !alertDialog.isShowing())) {
+        if (messageQueue.size() > 0 && !isDialogShowing()) {
             // show the dialog now we're able.
             QueuedMessage nextMessage = messageQueue.peek();
             if (nextMessage instanceof QueuedQuestionMessage) {
@@ -365,7 +378,7 @@ public abstract class UIHelper<T> {
 
     public void closeAllDialogs() {
         alertDialog.dismiss();
-        dismissProgressDialog();
+        hideProgressIndicator();
     }
 
     public int runWithExtraPermissions(final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String permissionNeeded, String permissionJustificationString) {
@@ -465,26 +478,27 @@ public abstract class UIHelper<T> {
         return messageQueue.size() > 0;
     }
 
-    protected abstract boolean canShowDialog();
-
-    public void showProgressDialog(int titleId) {
-        progressDialog.setTitle(titleId);
-        progressDialog.show();
+    protected boolean canShowDialog() {
+        return alertDialog != null;
     }
 
-    public void showProgressDialog() {
-        progressDialog.show();
+    public void showProgressIndicator() {
+        if(progressIndicator == null) {
+            Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
+        } else {
+            progressIndicator.setVisibility(View.VISIBLE);
+        }
     }
 
-    public void dismissProgressDialog() {
-        progressDialog.dismiss();
+    public void hideProgressIndicator() {
+        if(progressIndicator != null) {
+            progressIndicator.setVisibility(View.GONE);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final NewUnTrustedCaCertificateReceivedEvent event) {
-        if (!canShowDialog()) {
-            return;
-        }
+
         if (event.isHandled()) {
             return;
         }
@@ -588,7 +602,7 @@ public abstract class UIHelper<T> {
     }
 
     public <S extends QueuedMessage> void showOrQueueDialogMessage(S message) {
-        if (alertDialog != null && !alertDialog.isShowing() && canShowDialog()) {
+        if (!isDialogShowing() && canShowDialog()) {
             QueuedMessage nextMessage = messageQueue.peek();
             if (nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage) nextMessage);
@@ -600,7 +614,7 @@ public abstract class UIHelper<T> {
         if (!messageQueue.contains(message)) {
             messageQueue.add(message);
         }
-        if (alertDialog != null && !alertDialog.isShowing() && canShowDialog()) {
+        if (!isDialogShowing() && canShowDialog()) {
             QueuedMessage nextMessage = messageQueue.peek();
             if (nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage) nextMessage);
@@ -622,7 +636,7 @@ public abstract class UIHelper<T> {
     public void onServiceCallComplete(long messageId) {
         activeServiceCalls.remove(messageId);
         if (activeServiceCalls.size() == 0) {
-            progressDialog.dismiss();
+            hideProgressIndicator();
         }
     }
 
@@ -667,6 +681,10 @@ public abstract class UIHelper<T> {
             return true;
         }
         return false;
+    }
+
+    public ProgressIndicator getProgressIndicator() {
+        return progressIndicator;
     }
 
     public static abstract class QuestionResultAdapter implements QuestionResultListener {
@@ -791,7 +809,7 @@ public abstract class UIHelper<T> {
             super(titleId, message, detail, positiveButtonTextId, false, listener);
             this.negativeButtonTextId = negativeButtonTextId;
             if(detail != null && !detail.trim().isEmpty() && layoutId == Integer.MIN_VALUE) {
-                this.layoutId = R.layout.dialog_detailed;
+                this.layoutId = R.layout.layout_dialog_detailed;
             } else {
                 this.layoutId = layoutId;
             }
@@ -816,7 +834,7 @@ public abstract class UIHelper<T> {
 
         @Override
         public void populateCustomView(LinearLayout dialogView) {
-            if(layoutId == R.layout.dialog_detailed) {
+            if(layoutId == R.layout.layout_dialog_detailed) {
                 final TextView detailView = dialogView.findViewById(R.id.details);
                 detailView.setText(getDetail());
 
@@ -849,7 +867,7 @@ public abstract class UIHelper<T> {
         }
     }
 
-    private class DismissListener implements DialogInterface.OnDismissListener {
+    protected class DismissListener implements DialogInterface.OnDismissListener {
 
         private QuestionResultListener listener;
         private boolean buildNewDialogOnDismiss;
@@ -883,7 +901,12 @@ public abstract class UIHelper<T> {
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
+            } else {
+                onNoDialogToShow();
             }
+        }
+
+        protected void onNoDialogToShow() {
         }
 
         public void setBuildNewDialogOnDismiss(boolean buildNewDialogOnDismiss) {
