@@ -9,8 +9,10 @@ import android.support.multidex.MultiDexApplication;
 import android.support.v7.app.AppCompatDelegate;
 
 import java.net.URI;
+import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.util.ProjectUtils;
 
@@ -54,15 +56,26 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                 }
             }
             editor.commit();
-        } else if(prefsVersion <= 146) {
+        } else if(prefsVersion < 147) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.remove(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key));
             editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key));
             editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsPortrait_key));
+            editor.remove(getString(R.string.preference_gallery_images_preferredColumnsLandscape_key));
+            editor.remove(getString(R.string.preference_gallery_images_preferredColumnsPortrait_key));
             editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsLandscape_key));
             editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsPortrait_key));
             editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsLandscape_key));
             editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsPortrait_key));
+            Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
+            for(String profile : connectionProfiles) {
+                ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile);
+                int currentTimeout = connPrefs.getServerConnectTimeout(prefs, getApplicationContext());
+                if(currentTimeout >= 1000) {
+                    currentTimeout = (int) Math.round(Math.ceil((double)currentTimeout / 1000));
+                    editor.putInt(connPrefs.getKey(getApplicationContext(), R.string.preference_server_connection_timeout_secs_key), currentTimeout);
+                }
+            }
             editor.commit();
         }
 

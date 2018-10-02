@@ -208,12 +208,14 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private void populateTabStrip() {
         PagerAdapter adapter = mViewPager.getAdapter();
 
-        if(adapter == null && mViewPager.getChildCount() > 0) {
-            adapter = new InlineViewPagerAdapter(mViewPager);
-            mViewPager.setAdapter(adapter);
-        } else {
-            // unable to set up tab strip at this time as the pageView is not initialised yet.
-            return;
+        if(adapter == null) {
+            if (mViewPager.getChildCount() > 0) {
+                adapter = new InlineViewPagerAdapter(mViewPager);
+                mViewPager.setAdapter(adapter);
+            } else {
+                // unable to set up tab strip at this time as the pageView is not initialised yet.
+                return;
+            }
         }
 
         final View.OnClickListener tabClickListener = new TabClickListener();

@@ -122,7 +122,7 @@ public class LruExifCache implements Cache {
                 if(metadata != null) {
                     String uri = linkMap.get(mapValue);
                     EventBus.getDefault().post(new ExifDataRetrievedEvent(uri, metadata));
-                    Log.d("LruExifCache", "Loading Metadata for : " + uri, new Exception().fillInStackTrace());
+                    Log.d("LruExifCache", "Loading Metadata for : " + uri/*, new Exception().fillInStackTrace()*/);
                 }
                 return mapValue;
             }

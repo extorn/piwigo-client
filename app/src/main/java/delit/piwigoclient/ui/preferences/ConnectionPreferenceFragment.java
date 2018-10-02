@@ -218,7 +218,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             }
         });
 
-        findPreference(R.string.preference_server_socketTimeout_millisecs_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_server_connection_timeout_secs_key).setOnPreferenceChangeListener(simplePreferenceListener);
         findPreference(R.string.preference_server_connection_retries_key).setOnPreferenceChangeListener(simplePreferenceListener);
 
         Preference allowRedirectsPref = findPreference(R.string.preference_server_connection_allow_redirects_key);

@@ -36,6 +36,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewConfigurationCompat;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -53,6 +54,7 @@ import com.wunderlist.slidinglayer.LayerTransformer;
 import java.util.Random;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.InlineViewPagerAdapter;
 
 
 public class CustomSlidingLayer extends FrameLayout {
@@ -1295,10 +1297,13 @@ public class CustomSlidingLayer extends FrameLayout {
         int layerOffset = Math.max(0, state == STATE_CLOSED ? mOffsetDistance : mPreviewOffsetDistance);
 
         if (state == STATE_OPENED) {
-            pos[1] = -((getHeight() - getChildAt(0).getMeasuredHeight()) - mOffsetDistance);
+            int moveTo = (getHeight() - getChildAt(0).getMeasuredHeight()) - mOffsetDistance;
+            if(moveTo < 0) {
+                //TODO the content doesn't fit on the page any more
+            }
+            pos[1] = -Math.max(0, moveTo);
             return pos;
         } else {
-
             switch (mScreenSide) {
                 case STICK_TO_RIGHT:
                     pos[0] = -getWidth() + layerOffset;

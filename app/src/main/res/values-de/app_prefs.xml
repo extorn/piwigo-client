@@ -28,8 +28,8 @@
 
 
 
-    <string name="preference_server_socketTimeout_millisecs_title">Verbindungs-Timeout (Millisekunden)</string>
-    <string name="preference_server_socketTimeout_millisecs_summary">%1$d Millisekunden</string>
+    <string name="preference_server_connection_timeout_secs_title">Verbindungs-Timeout (Sekunden)</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d Sekunden</string>
 
 
     <string name="preference_server_connection_retries_title">Verbindungsversuche vor dem Ausfall</string>

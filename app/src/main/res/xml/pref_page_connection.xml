@@ -171,13 +171,25 @@
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:key="@string/preference_server_socketTimeout_millisecs_key"
-            android:summary="@string/preference_server_socketTimeout_millisecs_summary"
-            android:title="@string/preference_server_socketTimeout_millisecs_title"
-            app:defValue="@integer/preference_server_socketTimeout_millisecs_default"
-            app:maxValue="15000"
-            app:minValue="1000"
+            android:key="@string/preference_server_connection_timeout_secs_key"
+            android:summary="@string/preference_server_connection_timeout_secs_summary"
+            android:title="@string/preference_server_connection_timeout_secs_title"
+            app:defValue="@integer/preference_server_connection_timeout_secs_default"
+            app:maxValue="30"
+            app:minValue="1"
             app:wrapPickList="false" />
+
+        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:key="@string/preference_server_response_timeout_secs_key"
+            android:summary="@string/preference_server_response_timeout_secs_summary"
+            android:title="@string/preference_server_response_timeout_secs_title"
+            app:defValue="@integer/preference_server_response_timeout_secs_default"
+            app:maxValue="30"
+            app:minValue="1"
+            app:wrapPickList="false" />
+
 
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             android:layout_width="match_parent"

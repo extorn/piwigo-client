@@ -205,8 +205,10 @@ public class HttpClientFactory {
         } else {
             client = new CachingSyncHttpClient(sslSocketFactory);
         }
-        int connectTimeoutMillis = connectionPrefs.getServerConnectTimeout(prefs, context);
-        client.setConnectTimeout(connectTimeoutMillis);
+        int connectTimeoutSecs = connectionPrefs.getServerConnectTimeout(prefs, context);
+        int responseTimeoutSecs = connectionPrefs.getServerResponseTimeout(prefs, context);
+        client.setConnectTimeout(connectTimeoutSecs * 1000);
+        client.setResponseTimeout(responseTimeoutSecs * 1000);
         client.setMaxConcurrentConnections(5);
         int connectRetries = connectionPrefs.getMaxServerConnectRetries(prefs, context);
         client.setMaxRetriesAndTimeout(connectRetries, AsyncHttpClient.DEFAULT_RETRY_SLEEP_TIME_MILLIS);

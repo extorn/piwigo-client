@@ -31,10 +31,15 @@
     <string name="preference_server_connection_allow_redirects_summary">Follow http 3xx responses</string>
     <bool name="preference_server_connection_allow_redirects_default">true</bool>
 
-    <string name="preference_server_socketTimeout_millisecs_key" translatable="false">preference_server_socketTimeout_millisecs</string>
-    <string name="preference_server_socketTimeout_millisecs_title">Connection timeout (milliseconds)</string>
-    <string name="preference_server_socketTimeout_millisecs_summary">%1$d millisecs</string>
-    <integer name="preference_server_socketTimeout_millisecs_default">10000</integer>
+    <string name="preference_server_connection_timeout_secs_key" translatable="false">preference_server_connection_timeout_secs</string>
+    <string name="preference_server_connection_timeout_secs_title">Connection timeout (seconds)</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d seconds</string>
+    <integer name="preference_server_connection_timeout_secs_default">10</integer>
+
+    <string name="preference_server_response_timeout_secs_key" translatable="false">preference_server_response_timeout_secs</string>
+    <string name="preference_server_response_timeout_secs_title">Response timeout (seconds)</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d seconds</string>
+    <integer name="preference_server_response_timeout_secs_default">10</integer>
 
     <string name="preference_server_connection_retries_key" translatable="false">preference_server_connection_retries</string>
     <string name="preference_server_connection_retries_title">Connection retries before failure</string>

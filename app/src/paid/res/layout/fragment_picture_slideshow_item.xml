@@ -340,11 +340,10 @@
                     android:layout_height="wrap_content"
                     android:text="@string/slideshow_image_tab_exif_data" />
 
-                <LinearLayout
+                <FrameLayout
                     android:id="@+id/pageContent2"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
                     <delit.piwigoclient.ui.common.CustomExpandableListView
                         android:id="@+id/exifDataList"
@@ -353,7 +352,7 @@
                         android:clickable="true"
                         android:focusable="true"></delit.piwigoclient.ui.common.CustomExpandableListView>
 
-                </LinearLayout>
+                </FrameLayout>
 
             </android.support.v4.view.ViewPager>
 

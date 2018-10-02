@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Looper;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -46,7 +45,7 @@ public class DisplayUtils {
         return display.getRotation();
     }
 
-    public static int getScreenMode(Context context) {
+    public static int getCurrentScreenOrientation(Context context) {
 
         WindowManager windowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
@@ -96,7 +95,7 @@ public class DisplayUtils {
         Point navbarSize = getNavigationBarSize(context);
         return Math.min(navbarSize.x, navbarSize.y);
         //TODO why is this all wrong?
-//        int screenMode = DisplayUtils.getScreenMode(context);
+//        int screenMode = DisplayUtils.getCurrentScreenOrientation(context);
 //        int navBarHeight = 0;
 //        switch(screenMode) {
 //            case Configuration.ORIENTATION_SQUARE:
@@ -176,12 +175,12 @@ public class DisplayUtils {
     public static int getDefaultColumnCount(Activity activity, int screenOrientation, double minWidthInches) {
 
         float screenWidth;
-        if (screenOrientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (screenOrientation == getCurrentScreenOrientation(activity)) {
             screenWidth = getScreenWidthInches(activity);
         } else {
             screenWidth = getScreenHeightInches(activity);
         }
-        int columnsToShow = (int) Math.max(minWidthInches, Math.round(screenWidth) / minWidthInches); // allow a minimum of minWidthInches inches per column
-        return Math.max(1, columnsToShow); // never allow less than one column by default.
+        int columnsToShow = (int) Math.max(1, Math.round(screenWidth) / minWidthInches); // never allow less than one column by default.
+        return columnsToShow;
     }
 }
