@@ -721,15 +721,19 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
-                    String msg = String.format(getString(R.string.alert_confirm_really_really_delete_album_from_server_pattern), album.getName(), album.getPhotoCount(), album.getSubCategories(), album.getTotalPhotos() - album.getPhotoCount());
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
-                        @Override
-                        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                            if (Boolean.TRUE == positiveAnswer) {
-                                addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()).invokeAsync(getContext()));
+                    if(album.getTotalPhotos() > 0 || album.getSubCategories() > 0) {
+                        String msg = String.format(getString(R.string.alert_confirm_really_really_delete_album_from_server_pattern), album.getName(), album.getPhotoCount(), album.getSubCategories(), album.getTotalPhotos() - album.getPhotoCount());
+                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
+                            @Override
+                            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+                                if (Boolean.TRUE == positiveAnswer) {
+                                    addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()).invokeAsync(getContext()));
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()).invokeAsync(getContext()));
+                    }
                 }
             }
         });

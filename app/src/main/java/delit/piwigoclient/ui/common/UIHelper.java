@@ -209,9 +209,10 @@ public abstract class UIHelper<T> {
     }
 
     public void addNonBlockingActiveServiceCall(String titleString, long messageId) {
-        activeServiceCalls.add(messageId);
-        showToast(titleString);
-        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+//        activeServiceCalls.add(messageId);
+//        showToast(titleString);
+//        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        addActiveServiceCall(titleString, messageId);
     }
 
     public void addActiveServiceCall(String titleString, long messageId) {
