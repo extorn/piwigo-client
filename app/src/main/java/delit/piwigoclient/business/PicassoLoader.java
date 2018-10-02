@@ -3,6 +3,7 @@ package delit.piwigoclient.business;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
@@ -54,7 +55,6 @@ public class PicassoLoader implements Callback {
         imageLoading = false;
 
         if (placeholderUri != null && !placeholderLoaded) {
-            placeholderUri = null;
             placeholderLoaded = true;
             load();
             return;
@@ -161,7 +161,7 @@ public class PicassoLoader implements Callback {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 rc.placeholder(R.drawable.ic_file_gray_24dp);
             } else {
-                loadInto.setImageResource(R.drawable.ic_file_gray_24dp);
+                rc.placeholder(ContextCompat.getDrawable(loadInto.getContext(), R.drawable.ic_file_gray_24dp));
             }
         }
 
@@ -173,7 +173,7 @@ public class PicassoLoader implements Callback {
     }
 
     private RequestCreator buildRequestCreator(Picasso picassoSingleton) {
-        if (placeholderUri != null) {
+        if (!placeholderLoaded && placeholderUri != null) {
             return picassoSingleton.load(placeholderUri);
         }
         if (uriToLoad != null) {
@@ -210,6 +210,7 @@ public class PicassoLoader implements Callback {
         retries = 0;
         imageLoaded = false;
         imageUnavailable = false;
+        placeholderLoaded = false;
         cancelImageLoadIfRunning();
     }
 

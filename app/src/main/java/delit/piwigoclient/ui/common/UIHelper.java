@@ -180,7 +180,20 @@ public abstract class UIHelper<T> {
     }
     
     private  boolean isProgressIndicatorVisible() {
+        if(progressIndicator == null) {
+            loadProgressIndicatorIfPossible();
+        }
         return progressIndicator != null && progressIndicator.getVisibility() == View.VISIBLE;
+    }
+
+    private void loadProgressIndicatorIfPossible() {
+        try {
+            progressIndicator = ActivityCompat.requireViewById((Activity) context, R.id.progressIndicator);
+        } catch (IllegalArgumentException e) {
+            if(BuildConfig.DEBUG) {
+                Crashlytics.log(Log.ERROR, TAG, "Progress indicator not available in " + ((Activity) context).getLocalClassName());
+            }
+        }
     }
 
     /**
@@ -215,13 +228,7 @@ public abstract class UIHelper<T> {
 
     private void setupDialogBoxes() {
         buildAlertDialog();
-        try {
-            progressIndicator = ActivityCompat.requireViewById((Activity) context, R.id.progressIndicator);
-        } catch (IllegalArgumentException e) {
-            if(BuildConfig.DEBUG) {
-                Crashlytics.log(Log.ERROR, TAG, "Progress indicator not available in " + ((Activity) context).getLocalClassName());
-            }
-        }
+        loadProgressIndicatorIfPossible();
     }
 
     protected void buildAlertDialog() {

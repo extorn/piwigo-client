@@ -3,6 +3,7 @@ package delit.piwigoclient.ui;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -673,11 +673,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ToolbarEvent event) {
-        if(event.getTitle() != null) {
-            toolbar.setTitle(event.getTitle());
-            toolbar.setVisibility(View.VISIBLE);
-        } else {
-            toolbar.setVisibility(View.GONE);
+        toolbar.setTitle(event.getTitle());
+        if(event.isExpandToolbarView()) {
+            ((AppBarLayout) toolbar.getParent()).setExpanded(true, true);
+        } else if(event.isContractToolbarView()) {
+            ((AppBarLayout) toolbar.getParent()).setExpanded(false, true);
         }
     }
 

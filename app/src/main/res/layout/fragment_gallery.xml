@@ -7,7 +7,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <com.google.android.gms.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -47,7 +47,7 @@
                 android:layout_margin="5dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-            <ImageButton
+            <delit.piwigoclient.ui.common.button.CustomImageButton
                 android:id="@+id/gallery_details_description_dropdown_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -145,21 +145,21 @@
 
     </RelativeLayout>
 
-    <com.wunderlist.slidinglayer.SlidingLayer xmlns:slidingLayer="http://schemas.android.com/apk/res-auto"
+    <com.wunderlist.slidinglayer.CustomSlidingLayer
         android:id="@+id/slidingDetailBottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        slidingLayer:changeStateOnTap="true"
-        slidingLayer:offsetDistance="16dp"
-        slidingLayer:shadowDrawable="@drawable/sidebar_shadow"
-        slidingLayer:shadowSize="20dp"
-        slidingLayer:stickTo="bottom">
+        app:changeStateOnTap="true"
+        app:offsetDistance="30dp"
+        app:shadowDrawable="@drawable/sidebar_shadow"
+        app:shadowSize="30dp"
+        app:stickTo="bottom">
 
         <LinearLayout
             android:id="@+id/gallery_bottom_sheet_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="0dp"
@@ -176,58 +176,67 @@
                     android:id="@+id/gallery_details_edit_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"
+                    app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/gallery_details_save_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/gallery_details_edit_button" />
+                    android:layout_toEndOf="@+id/gallery_details_edit_button"
+                    app:srcCompat="@drawable/ic_save_black_24dp" />
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/gallery_details_discard_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/gallery_details_save_button" />
+                    android:layout_toEndOf="@+id/gallery_details_save_button"
+                    app:srcCompat="@drawable/ic_undo_black_24dp" />
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/album_add_new_album_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toStartOf="@+id/gallery_action_delete" />
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_toStartOf="@+id/gallery_action_delete"
+                    app:srcCompat="@drawable/ic_create_new_folder_black_24dp" />
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/gallery_action_paste"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toStartOf="@+id/gallery_action_delete" />
+                    android:layout_toStartOf="@+id/album_add_new_album_button"
+                    app:srcCompat="@drawable/ic_content_paste_black_24dp" />
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/gallery_action_cut"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toStartOf="@+id/gallery_action_paste" />
+                    android:layout_toStartOf="@+id/gallery_action_paste"
+                    app:srcCompat="@drawable/ic_content_cut_black_24px" />
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/gallery_action_delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignWithParentIfMissing="true" />
+                    android:layout_alignWithParentIfMissing="true"
+                    app:srcCompat="@drawable/ic_delete_black_24px" />
 
 
                 <LinearLayout
                     android:id="@+id/gallery_details_edit_fields"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_alignWithParentIfMissing="true"
                     android:layout_below="@+id/gallery_action_delete"
                     android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/gallery_details_name_label"
-                        android:labelFor="@id/gallery_details_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:labelFor="@id/gallery_details_name"
                         android:text="@string/gallery_details_name_title"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
@@ -236,16 +245,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
+                        android:focusable="true"
                         android:inputType="textMultiLine"
                         android:maxLines="3"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:focusable="true" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
                     <TextView
                         android:id="@+id/gallery_details_description_label"
-                        android:labelFor="@id/gallery_details_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:labelFor="@id/gallery_details_description"
                         android:text="@string/gallery_details_description_title"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
@@ -259,9 +268,9 @@
 
                     <TextView
                         android:id="@+id/gallery_details_status_label"
-                        android:labelFor="@id/gallery_details_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:labelFor="@id/gallery_details_status"
                         android:text="@string/gallery_details_status_title"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
@@ -279,9 +288,9 @@
 
                     <TextView
                         android:id="@+id/gallery_details_allowed_groups_label"
-                        android:labelFor="@id/gallery_details_allowed_groups"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:labelFor="@id/gallery_details_allowed_groups"
                         android:text="@string/gallery_details_allowed_groups_title"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
@@ -296,9 +305,9 @@
 
                     <TextView
                         android:id="@+id/gallery_details_allowed_users_label"
-                        android:labelFor="@id/gallery_details_allowed_users"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:labelFor="@id/gallery_details_allowed_users"
                         android:text="@string/gallery_details_allowed_users_title"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
@@ -317,6 +326,6 @@
             </RelativeLayout>
 
         </LinearLayout>
-    </com.wunderlist.slidinglayer.SlidingLayer>
+    </com.wunderlist.slidinglayer.CustomSlidingLayer>
 </RelativeLayout>
 

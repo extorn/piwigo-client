@@ -22,6 +22,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     private HashSet<Long> linkedAlbums;
     private String fileChecksum;
     private Date creationDate;
+    private float score;
 
     public AbstractBaseResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, lastAltered, thumbnailUrl);
@@ -159,6 +160,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     public void copyFrom(AbstractBaseResourceItem other, boolean copyParentage) {
         super.copyFrom(other, copyParentage);
         yourRating = other.yourRating;
+        score = other.score;
         averageRating = other.averageRating;
         ratingsGiven = other.ratingsGiven;
         privacyLevel = other.privacyLevel;
@@ -166,6 +168,14 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         fullSizeImage = other.fullSizeImage;
         linkedAlbums = other.linkedAlbums;
         fileChecksum = other.fileChecksum;
+    }
+
+    public void setScore(float score) {
+        this.score = score;
+    }
+
+    public float getScore() {
+        return score;
     }
 
     public static class ResourceFile implements Comparable<ResourceFile>, Serializable {

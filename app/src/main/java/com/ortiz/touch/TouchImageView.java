@@ -834,6 +834,7 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
 
     public interface OnTouchImageViewListener {
         void onMove();
+        void onDrag(float deltaX, float deltaY, boolean actionAlteredImageViewState);
     }
 
     /**
@@ -910,7 +911,9 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
             mScaleDetector.onTouchEvent(event);
             mGestureDetector.onTouchEvent(event);
             PointF curr = new PointF(event.getX(), event.getY());
-
+            boolean eventHandled = true;
+            float deltaX = 0;
+            float deltaY = 0;
             if (state == State.NONE || state == State.DRAG || state == State.FLING) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
@@ -922,13 +925,18 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
 
                     case MotionEvent.ACTION_MOVE:
                         if (state == State.DRAG) {
-                            float deltaX = curr.x - last.x;
-                            float deltaY = curr.y - last.y;
+                            deltaX = curr.x - last.x;
+                            deltaY = curr.y - last.y;
                             float fixTransX = getFixDragTrans(deltaX, viewWidth, getImageWidth());
                             float fixTransY = getFixDragTrans(deltaY, viewHeight, getImageHeight());
-                            matrix.postTranslate(fixTransX, fixTransY);
-                            fixTrans();
-                            last.set(curr.x, curr.y);
+                            if(fixTransX == 0 && fixTransY == 0) {
+                                //no change made
+                                eventHandled = false;
+                            } else {
+                                matrix.postTranslate(fixTransX, fixTransY);
+                                fixTrans();
+                                last.set(curr.x, curr.y);
+                            }
                         }
                         break;
 
@@ -953,6 +961,9 @@ public class TouchImageView extends android.support.v7.widget.AppCompatImageView
             //
             if (touchImageViewListener != null) {
                 touchImageViewListener.onMove();
+                if(Math.abs(deltaX) > 0.001 || Math.abs(deltaY) > 0.001) {
+                    touchImageViewListener.onDrag(deltaX, deltaY, eventHandled);
+                }
             }
 
             //

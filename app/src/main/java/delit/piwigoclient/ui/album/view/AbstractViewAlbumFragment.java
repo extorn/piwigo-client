@@ -1,12 +1,12 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.AppCompatTextView;
@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
-import com.wunderlist.slidinglayer.SlidingLayer;
+import com.wunderlist.slidinglayer.CustomSlidingLayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -184,7 +184,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private RecyclerView galleryListView;
     private AlbumViewAdapterListener viewAdapterListener;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
-    private SlidingLayer bottomSheet;
+    private CustomSlidingLayer bottomSheet;
+    private EndlessRecyclerViewScrollListener galleryListViewScrollListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -430,7 +431,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         setGalleryHeadings();
 
-        bottomSheet = (SlidingLayer) view.findViewById(R.id.slidingDetailBottomSheet);
+        bottomSheet = view.findViewById(R.id.slidingDetailBottomSheet);
         setupBottomSheet(bottomSheet);
 
 //        viewInOrientation = getResources().getConfiguration().orientation;
@@ -472,7 +473,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         recyclerView.setAdapter(viewAdapter);
 
 
-        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutMan) {
+        galleryListViewScrollListener = new EndlessRecyclerViewScrollListener(gridLayoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 int pageToLoad = galleryModel.getPagesLoaded();
@@ -483,8 +484,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 loadAlbumResourcesPage(pageToLoad);
             }
         };
-        scrollListener.configure(galleryModel.getPagesLoaded(), galleryModel.getItemCount());
-        recyclerView.addOnScrollListener(scrollListener);
+        galleryListViewScrollListener.configure(galleryModel.getPagesLoaded(), galleryModel.getItemCount());
+        recyclerView.addOnScrollListener(galleryListViewScrollListener);
 
 
         //display bottom sheet if needed
@@ -839,6 +840,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 return;
             }
             galleryModel.clear();
+            galleryListViewScrollListener.resetState();
             galleryListView.swapAdapter(viewAdapter, true);
 //            viewAdapter.notifyDataSetChanged();
 
@@ -922,8 +924,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private void setupBottomSheet(final SlidingLayer bottomSheet) {
-        bottomSheet.setOnInteractListener(new SlidingLayer.OnInteractListener() {
+    private void setupBottomSheet(final CustomSlidingLayer bottomSheet) {
+        bottomSheet.setOnInteractListener(new CustomSlidingLayer.OnInteractListener() {
             @Override
             public void onOpen() {
 
@@ -973,6 +975,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         setupEditFields(editFields);
         if (!galleryModel.getContainerDetails().isRoot()) {
             fillGalleryEditFields();
+        } else {
+            displayControlsBasedOnSessionState();
+            setEditItemDetailsControlsStatus();
         }
 
     }
@@ -980,7 +985,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private void setupBottomSheetButtons(View bottomSheet, int editFieldsVisibility) {
         saveButton = bottomSheet.findViewById(R.id.gallery_details_save_button);
         saveButton.setVisibility(editFieldsVisibility);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_save_black_24dp).into(saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -993,7 +997,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         discardButton = bottomSheet.findViewById(R.id.gallery_details_discard_button);
         discardButton.setVisibility(editFieldsVisibility);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_undo_black_24dp).into(discardButton);
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1007,7 +1010,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         editButton = bottomSheet.findViewById(R.id.gallery_details_edit_button);
         editButton.setVisibility(editFieldsVisibility);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_mode_edit_black_24dp).into(editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1017,7 +1019,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         });
 
         addNewAlbumButton = bottomSheet.findViewById(R.id.album_add_new_album_button);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_create_new_folder_black_24dp).into(addNewAlbumButton);
+        addNewAlbumButton.setVisibility(VISIBLE);
         addNewAlbumButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1030,7 +1032,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         deleteButton = bottomSheet.findViewById(R.id.gallery_action_delete);
         deleteButton.setVisibility(editFieldsVisibility);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1040,7 +1041,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         pasteButton = bottomSheet.findViewById(R.id.gallery_action_paste);
         pasteButton.setVisibility(editFieldsVisibility);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_paste_black_24dp).into(pasteButton);
         pasteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1050,7 +1050,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         cutButton = bottomSheet.findViewById(R.id.gallery_action_cut);
         cutButton.setVisibility(editFieldsVisibility);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_cut_black_24px).into(cutButton);
         cutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1480,7 +1479,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 galleryModel.updateMaxExpectedItemCount(response.getAlbums().size());
             }
             if(response.getAlbums().size() > 1) {
-                galleryModel.addItem(CategoryItem.ALBUM_HEADING);
+                if(!galleryModel.containsItem(CategoryItem.ALBUM_HEADING)) {
+                    galleryModel.addItem(CategoryItem.ALBUM_HEADING);
+                }
             }
             for (CategoryItem item : response.getAlbums()) {
                 if (item.getId() != galleryModel.getContainerDetails().getId()) {
@@ -1501,18 +1502,20 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             galleryModel.updateSpacerAlbumCount(albumsPerRow);
             viewAdapter.notifyDataSetChanged();
         }
-        emptyGalleryLabel.setVisibility(galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
+        emptyGalleryLabel.setVisibility(getUiHelper().getActiveServiceCallCount() == 0 && galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
     }
 
     private void onGetResources(final PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
             if(response.getPage() == 0 && response.getResources().size() > 0) {
-                galleryModel.addItem(CategoryItem.PICTURE_HEADING);
+                if(!galleryModel.containsItem(CategoryItem.PICTURE_HEADING)) {
+                    galleryModel.addItem(CategoryItem.PICTURE_HEADING);
+                }
             }
             galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
             viewAdapter.notifyDataSetChanged();
         }
-        emptyGalleryLabel.setVisibility(galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
+        emptyGalleryLabel.setVisibility(getUiHelper().getActiveServiceCallCount() == 0 && galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
     }
 
     private void onAlbumContentAltered(final PiwigoResponseBufferingHandler.PiwigoUpdateAlbumContentResponse response) {

@@ -118,8 +118,7 @@ public class LruExifCache implements Cache {
             mapValue = map.get(key);
             if (mapValue != null) {
                 hitCount++;
-                LruExifCache cache = PicassoFactory.getInstance().getPicassoSingleton().getCache();
-                Metadata metadata = cache.getMetadata(mapValue);
+                Metadata metadata = getMetadata(mapValue);
                 if(metadata != null) {
                     String uri = linkMap.get(mapValue);
                     EventBus.getDefault().post(new ExifDataRetrievedEvent(uri, metadata));

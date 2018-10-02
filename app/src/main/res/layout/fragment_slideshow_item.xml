@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:slidingLayer="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
@@ -79,21 +78,21 @@
 
     </RelativeLayout>
 
-    <com.wunderlist.slidinglayer.SlidingLayer
+    <com.wunderlist.slidinglayer.CustomSlidingLayer
         android:id="@+id/slideshow_image_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        slidingLayer:changeStateOnTap="true"
-        slidingLayer:offsetDistance="16dp"
-        slidingLayer:shadowDrawable="@drawable/sidebar_shadow"
-        slidingLayer:shadowSize="20dp"
-        slidingLayer:stickTo="bottom">
+        app:changeStateOnTap="true"
+        app:offsetDistance="30dp"
+        app:shadowDrawable="@drawable/sidebar_shadow"
+        app:shadowSize="30dp"
+        app:stickTo="bottom">
 
         <LinearLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
+            android:layout_gravity="center_horizontal"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="0dp"
@@ -104,7 +103,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="14dp">
+                android:paddingTop="16dp">
 
                 <RatingBar
                     android:id="@+id/slideshow_image_ratingBar"
@@ -264,7 +263,7 @@
 
         </LinearLayout>
 
-    </com.wunderlist.slidinglayer.SlidingLayer>
+    </com.wunderlist.slidinglayer.CustomSlidingLayer>
 
 
 </android.support.design.widget.CoordinatorLayout>

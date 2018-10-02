@@ -34,6 +34,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
+import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.DisplayUtils;
 
@@ -85,12 +86,35 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Override
     public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+//        imageView = container.findViewById(R.id.slideshow_image);
         imageView = new TouchImageView(getContext());
         imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
         imageView.setMinimumWidth(DisplayUtils.dpToPx(getContext(), 120));
-        imageView.setScaleType(ImageView.ScaleType.MATRIX);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
+        imageView.setScaleType(ImageView.ScaleType.MATRIX);
+        imageView.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
+            @Override
+            public void onMove() {
+
+            }
+
+            @Override
+            public void onDrag(float deltaX, float deltaY, boolean actionAlteredImageViewState) {
+                if(!actionAlteredImageViewState && Math.abs(deltaX) < 10 && Math.abs(deltaY) > 30) {
+                    ToolbarEvent toolbarEvent = new ToolbarEvent();
+                    if(deltaY > 0) {
+                        toolbarEvent.setTitle(getModel().getName());
+                        toolbarEvent.setExpandToolbarView(true);
+                        EventBus.getDefault().post(toolbarEvent);
+                    } else {
+                        toolbarEvent.setTitle(getModel().getName());
+                        toolbarEvent.setContractToolbarView(true);
+                        EventBus.getDefault().post(toolbarEvent);
+                    }
+                }
+            }
+        });
 
         CustomImageButton directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
         directDownloadButton.setVisibility(View.GONE);
@@ -164,12 +188,16 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             currentImageUrlDisplayed = savedInstanceState.getString(STATE_CURRENT_IMAGE_URL);
         }
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // reset the screen state if we're entering for the first time
         if (currentImageUrlDisplayed == null) {

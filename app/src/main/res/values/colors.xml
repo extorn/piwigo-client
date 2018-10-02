@@ -33,11 +33,14 @@
     <color name="colorTest4">#00FFFF</color>
     <color name="colorTest5">#FF00FF</color>
 
+    <color name="rating_indicator">#FFFFFF00</color>
+
     <color name="accent">@color/accent_material_dark</color>
     <color name="primary">@color/primary_material_dark</color>
     <color name="primary_dark">@color/primary_dark_material_dark</color>
     <color name="colorAlbumItemBackground">@color/primary_material_dark</color>
     <color name="colorAlbumBottomSheet">@color/background_floating_material_dark</color>
+    <color name="colorAlbumBottomSheetShadow">#44000000</color><!--@android:color/transparent-->
     <color name="colorControlNormal">@color/bright_foreground_material_dark</color>
     <color name="background_floating">@color/background_floating_material_dark</color>
     <color name="primary_text_default">@color/primary_text_default_material_dark</color>

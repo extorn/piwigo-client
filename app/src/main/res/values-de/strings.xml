@@ -510,8 +510,11 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_temporary_upload_album_deleted">Temporäres Upload-Album erfolgreich gelöscht</string>
     <string name="alert_deleting_temporary_upload_album">Löschen eines temporären Upload-Albums</string>
     <string name="alert_invalid_uri_pattern">Ungültige URI. %1$s</string>
-    <string name="album_section_heading_albums">albums</string>
-    <string name="album_section_heading_resources">photos in this album</string>
+    <string name="album_section_heading_albums">Alben</string>
+    <string name="album_section_heading_resources">Fotos in diesem Album</string>
     <string name="album_title_home">home</string>
+    <string name="upload_file_rating">Meine Bewertung</string>
+    <string name="slideshow_image_details_rating_score_title">Bewertungspunktzahl</string>
+    <string name="rating_score_pattern">%1$.2f (%2$d raten)</string>
 </resources>
 

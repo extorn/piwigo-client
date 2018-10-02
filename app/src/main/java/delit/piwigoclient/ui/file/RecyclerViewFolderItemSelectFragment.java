@@ -247,7 +247,9 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         rootLabels.add(0, "");
         rootPaths.add(0, null);
 
-        return new MappedArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, rootLabels, rootPaths);
+        MappedArrayAdapter adapter = new MappedArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, rootLabels, rootPaths);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
     }
 
     @Override

@@ -1,6 +1,10 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -34,12 +38,13 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-import com.wunderlist.slidinglayer.SlidingLayer;
+import com.wunderlist.slidinglayer.CustomSlidingLayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -130,8 +135,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private int albumLoadedItemCount;
     private TextView itemPositionTextView;
     private long albumTotalItemCount;
-    private SlidingLayer bottomSheet;
+    private CustomSlidingLayer bottomSheet;
     private View itemContent;
+    private TextView resourceRatingScoreField;
 
     public static <S extends ResourceItem> Bundle buildArgs(S model, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
@@ -237,8 +243,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
 
         updateItemPositionText();
-        onRatingAltered(model);
         setupImageDetailPopup(view, savedInstanceState);
+        // updates the detail popup and main image rating
+        onRatingAltered(model);
         // show information panel if wanted.
         updateInformationShowingStatus();
 
@@ -287,6 +294,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
 
         averageRatingsBar = v.findViewById(R.id.slideshow_image_average_ratingBar);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            LayerDrawable layerDrawable = (LayerDrawable) averageRatingsBar.getProgressDrawable();
+            Drawable progressDrawable = layerDrawable.findDrawableByLayerId(android.R.id.progress).mutate();
+            progressDrawable.setColorFilter(getResources().getColor(R.color.rating_indicator), PorterDuff.Mode.SRC_IN);
+        }
         ratingsBar = v.findViewById(R.id.slideshow_image_ratingBar);
 
         RelativeLayout itemContentLayout = v.findViewById(R.id.slideshow_item_content_layout);
@@ -304,11 +316,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 //                }
 //            });
         bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
-        LinearLayout bottomSheetContent = bottomSheet.findViewById(R.id.slideshow_image_bottom_sheet_content);
-        View itemDetail = createCustomItemDetail(inflater, itemContentLayout, savedInstanceState, model);
-        if (itemDetail != null) {
-            bottomSheetContent.addView(itemDetail, bottomSheetContent.getChildCount());
-        }
+//        LinearLayout bottomSheetContent = bottomSheet.findViewById(R.id.slideshow_image_bottom_sheet_content);
+//        View itemDetail = createCustomItemDetail(inflater, itemContentLayout, savedInstanceState, model);
+//        if (itemDetail != null) {
+//            bottomSheetContent.addView(itemDetail, bottomSheetContent.getChildCount());
+//        }
 
         return v;
     }
@@ -347,7 +359,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             itemPositionTextView.setVisibility(GONE);
         } else {
             itemPositionTextView.setVisibility(VISIBLE);
-            itemPositionTextView.setText(String.format(Locale.getDefault(), "%1$d/%2$d[%3$d]", albumItemIdx + 1, albumLoadedItemCount, albumTotalItemCount));
+            if(albumLoadedItemCount < albumTotalItemCount) {
+                itemPositionTextView.setText(String.format(Locale.getDefault(), "%1$d/%2$d[%3$d]", albumItemIdx + 1, albumLoadedItemCount, albumTotalItemCount));
+            } else {
+                itemPositionTextView.setText(String.format(Locale.getDefault(), "%1$d/%2$d", albumItemIdx + 1, albumTotalItemCount));
+            }
         }
     }
 
@@ -400,6 +416,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 //                return false;
 //            }
 //        });
+        resourceRatingScoreField = v.findViewById(R.id.slideshow_image_details_rating_score);
 
         linkedAlbumsField = v.findViewById(R.id.slideshow_image_details_linked_albums);
         linkedAlbumsField.setOnClickListener(new View.OnClickListener() {
@@ -428,9 +445,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         privacyLevelSpinner = v.findViewById(R.id.privacy_level);
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> privacyLevelOptionsAdapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.privacy_levels_groups_array, R.layout.support_simple_spinner_dropdown_item);
+                R.array.privacy_levels_groups_array, android.R.layout.simple_spinner_item);
 // Specify the layout to use when the list of choices appears
-        privacyLevelOptionsAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        privacyLevelOptionsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
         privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
 
@@ -557,6 +574,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         } else {
             resourceDescriptionView.setText(model.getDescription());
         }
+
+        resourceRatingScoreField.setText(String.format(getString(R.string.rating_score_pattern), model.getScore(), model.getRatingsGiven()));
 
         populateResourceExtraFields();
 
@@ -830,6 +849,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             averageRatingsBar.setRating(resource.getAverageRating());
             averageRatingsBar.setVisibility(VISIBLE);
         }
+        resourceRatingScoreField.setText(String.format(getString(R.string.rating_score_pattern), model.getScore(), model.getRatingsGiven()));
     }
 
     protected void onImageDeleted() {
