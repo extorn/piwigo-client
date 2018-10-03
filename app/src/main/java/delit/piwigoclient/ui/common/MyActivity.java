@@ -9,6 +9,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -19,6 +22,7 @@ import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.MyApplication;
+import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
 /**
@@ -91,11 +95,6 @@ public abstract class MyActivity extends AppCompatActivity {
         int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);
         int currentEulaVersion = getResources().getInteger(R.integer.eula_version);
         return agreedEulaVersion >= currentEulaVersion;
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(UserNotUniqueWarningEvent event) {
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_multiple_users_found_pattern, event.getOtherUsers().size(), event.getUserSelected().getUsername()));
     }
 
     @Override
@@ -186,7 +185,15 @@ public abstract class MyActivity extends AppCompatActivity {
 //        ActivityCompat.requestPermissions(this, event.getPermissionsNeeded(), event.getActionId());
 //    }
 
-    public MyApplication getMyApplication() {
-        return (MyApplication) getApplication();
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(UserNotUniqueWarningEvent event) {
+        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("usernameNotUniqueOnPiwigoServer", null);
+        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_multiple_users_found_pattern, event.getOtherUsers().size(), event.getUserSelected().getUsername()));
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ServerConnectionWarningEvent event) {
+        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("serverKilledConnectionLots", null);
+        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, event.getMessage());
     }
 }

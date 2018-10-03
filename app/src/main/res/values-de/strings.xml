@@ -516,5 +516,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_file_rating">Meine Bewertung</string>
     <string name="slideshow_image_details_rating_score_title">Bewertungspunktzahl</string>
     <string name="rating_score_pattern">%1$.2f (%2$d raten)</string>
+    <string name="connection_reset_warning_pattern">Der Server hat die Verbindung %1$d in den letzten %2$d Minuten mal geschlossen. Dies könnte auf ein Problem mit Ihrer Serverkonfiguration hinweisen.</string>
 </resources>
 

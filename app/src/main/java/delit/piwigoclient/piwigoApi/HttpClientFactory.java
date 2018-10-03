@@ -210,6 +210,7 @@ public class HttpClientFactory {
         client.setConnectTimeout(connectTimeoutSecs * 1000);
         client.setResponseTimeout(responseTimeoutSecs * 1000);
         client.setMaxConcurrentConnections(5);
+//        client.setAuthenticationPreemptive(true);
         int connectRetries = connectionPrefs.getMaxServerConnectRetries(prefs, context);
         client.setMaxRetriesAndTimeout(connectRetries, AsyncHttpClient.DEFAULT_RETRY_SLEEP_TIME_MILLIS);
         boolean allowRedirects = connectionPrefs.getFollowHttpRedirects(prefs, context);

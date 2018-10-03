@@ -200,18 +200,42 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     protected void onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession) {
 
         if (BuildConfig.DEBUG) {
-            String errorBody = null;
+            String errorBody = "<NONE PRESENT>";
             if (responseBody != null) {
                 errorBody = new String(responseBody);
             }
 
+            StringBuilder msgBuilder = new StringBuilder();
+            msgBuilder.append("Method (failed):");
+            msgBuilder.append(piwigoMethod);
+            msgBuilder.append('\n');
             if (getNestedFailureMethod() != null) {
-                Crashlytics.log(Log.ERROR, getTag(), getNestedFailureMethod() + " onFailure: \n" + errorBody);
-                Crashlytics.logException(error);
-            } else {
-                Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onFailure: \n" + getRequestParameters() + '\n' + errorBody);
-                Crashlytics.logException(error);
+                msgBuilder.append("Nested Method (failed):");
+                msgBuilder.append(getNestedFailureMethod());
+                msgBuilder.append('\n');
             }
+            msgBuilder.append("Request Params:");
+            msgBuilder.append('\n');
+            msgBuilder.append(getRequestParameters());
+            msgBuilder.append('\n');
+            msgBuilder.append("Response Headers:");
+            msgBuilder.append('\n');
+            if(headers != null) {
+                for (Header h : headers) {
+                    msgBuilder.append(h.getName());
+                    msgBuilder.append(':');
+                    msgBuilder.append(h.getValue());
+                    msgBuilder.append('\n');
+                }
+            } else {
+                msgBuilder.append("<NONE PRESENT>");
+                msgBuilder.append('\n');
+            }
+            msgBuilder.append("Response Body:");
+            msgBuilder.append('\n');
+            msgBuilder.append(errorBody);
+            Crashlytics.log(Log.ERROR, getTag(),  msgBuilder.toString());
+            Crashlytics.logException(error);
         }
         String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
         if (getNestedFailureMethod() != null) {

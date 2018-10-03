@@ -14,6 +14,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
@@ -29,6 +31,7 @@ import delit.piwigoclient.piwigoApi.Worker;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
+import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 
 /**
  * Created by gareth on 10/10/17.
@@ -54,6 +57,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private ConnectionPreferences.ProfilePreferences connectionPrefs;
     private SharedPreferences sharedPrefs;
     private boolean isPerformingLogin;
+    private static AtomicLong connectionResetOccurredWindowStart = new AtomicLong();
+    private static AtomicLong connectionResetCount = new AtomicLong();
 
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
@@ -187,8 +192,11 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             } else if (error instanceof SocketTimeoutException) {
                 tryingAgain = true;
                 rerunCall();
-            } else if (error instanceof SSLException && error.getMessage() != null && error.getMessage().contains("Connection reset by peer")
-                    || error instanceof SSLHandshakeException && error.getMessage() != null && error.getMessage().contains("I/O error during system call")) {
+            } else if (error instanceof SSLException && error.getMessage() != null && error.getMessage().contains("Connection reset by peer")) {
+                recordConnectionReset();
+                tryingAgain = true;
+                rerunCall();
+            } else if(error instanceof SSLHandshakeException && error.getMessage() != null && error.getMessage().contains("I/O error during system call")) {
                 tryingAgain = true;
                 rerunCall();
             } else if (allowSessionRefreshAttempt
@@ -246,6 +254,24 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 this.error = error;
             }
             onFailure(statusCode, headers, responseBody, this.error, triedLoggingInAgain);
+        }
+    }
+
+    private void recordConnectionReset() {
+        int maxAcceptableServerResetCount = 30;
+        int maxWindowSizeMillis = 1000 * 60 * 10; // 10 minutes
+        long windowStart = connectionResetOccurredWindowStart.get();
+        long currentWindowSizeMillis = System.currentTimeMillis() - windowStart;
+        if(windowStart == 0 || currentWindowSizeMillis > maxWindowSizeMillis) {
+            connectionResetOccurredWindowStart.set(System.currentTimeMillis());
+            connectionResetCount.set(0);
+        } else {
+            long curentWindowResetCount = connectionResetCount.incrementAndGet();
+            if(curentWindowResetCount > maxAcceptableServerResetCount) {
+                connectionResetCount.set(0);
+                connectionResetOccurredWindowStart.set(0);
+                EventBus.getDefault().post(new ServerConnectionWarningEvent(String.format(Locale.getDefault(), context.getString(R.string.connection_reset_warning_pattern), curentWindowResetCount, currentWindowSizeMillis / 1000)));
+            }
         }
     }
 

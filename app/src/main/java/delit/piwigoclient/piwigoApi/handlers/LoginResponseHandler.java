@@ -25,7 +25,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     private boolean haveValidSessionKey;
 
     public LoginResponseHandler() {
-        super(null, TAG);
+        super("n/a", TAG);
         setPerformingLogin();
     }
 
@@ -75,7 +75,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
 
         if (canContinue && isNeedUserDetails(PiwigoSessionDetails.getInstance(connectionPrefs))) {
-            canContinue = loadUserDetails();
+            /*canContinue = */loadUserDetails();
         }
 
         setError(getNestedFailure());
@@ -89,14 +89,14 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     private boolean isCommunityPluginSessionStatusUnknown(PiwigoSessionDetails currentCredentials) {
-        return currentCredentials != null && !currentCredentials.isSessionMayHaveExpired();
+        return currentCredentials != null && !currentCredentials.isSessionMayHaveExpired();/*TODO ?maybe add this? && !currentCredentials.isCommunityPluginStatusAvailable();*/
     }
 
     private boolean retrieveCommunityPluginSession(PiwigoSessionDetails newCredentials) {
         //TODO forcing true will allow thumbnails to be made available (with extra call) for albums hidden to admin users.
         CommunitySessionStatusResponseHandler communitySessionLoadHandler = new CommunitySessionStatusResponseHandler(false);
         communitySessionLoadHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
-        communitySessionLoadHandler.run(getContext(), getConnectionPrefs());
+        communitySessionLoadHandler.invokeAndWait(getContext(), getConnectionPrefs());
         if (!newCredentials.isLoggedInWithFullSessionDetails()) {
             reportNestedFailure(communitySessionLoadHandler);
         }
@@ -106,11 +106,12 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     private boolean getNewSessionKey(String password) {
         GetNewSessionKeyResponseHandler newSessionKeyHandler = new GetNewSessionKeyResponseHandler(password, getContext());
         newSessionKeyHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
-        newSessionKeyHandler.run(getContext(), getConnectionPrefs());
+        newSessionKeyHandler.invokeAndWait(getContext(), getConnectionPrefs());
         if (!newSessionKeyHandler.isSuccess()) {
             reportNestedFailure(newSessionKeyHandler);
+            return false;
         }
-        return newSessionKeyHandler.isSuccess();
+        return true;
     }
 
     private boolean isNeedUserDetails(PiwigoSessionDetails sessionDetails) {
@@ -141,21 +142,19 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     private boolean getNewSessionDetails(PiwigoOnLoginResponse loginResponse) {
         GetSessionStatusResponseHandler sessionLoadHandler = new GetSessionStatusResponseHandler();
         sessionLoadHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
-        sessionLoadHandler.run(getContext(), getConnectionPrefs());
-        PiwigoSessionDetails activeSessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (activeSessionDetails != null && activeSessionDetails.isLoggedInWithBasicSessionDetails() // get new copy (old may be invalid)
-                && sessionLoadHandler.getResponse() instanceof GetSessionStatusResponseHandler.PiwigoSessionStatusRetrievedResponse) {
-        } else {
+        sessionLoadHandler.invokeAndWait(getContext(), getConnectionPrefs());
+        if (!sessionLoadHandler.isSuccess()) {
             reportNestedFailure(sessionLoadHandler);
+            return false;
         }
-        return sessionLoadHandler.isSuccess();
+        return true;
     }
 
     private boolean loadUserDetails() {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         UserGetInfoResponseHandler userInfoHandler = new UserGetInfoResponseHandler(sessionDetails.getUsername(), sessionDetails.getUserType());
         userInfoHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
-        userInfoHandler.run(getContext(), getConnectionPrefs());
+        userInfoHandler.invokeAndWait(getContext(), getConnectionPrefs());
         if (userInfoHandler.isSuccess()) {
             PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse response = (PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse) userInfoHandler.getResponse();
             User userDetails = response.getSelectedUser();
@@ -163,10 +162,11 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
                 EventBus.getDefault().post(new UserNotUniqueWarningEvent(userDetails, response.getUsers()));
             }
             sessionDetails.setUserDetails(userDetails);
+            return true;
         } else {
             reportNestedFailure(userInfoHandler);
+            return false;
         }
-        return userInfoHandler.isSuccess();
     }
 
     public boolean isLoginSuccess() {
