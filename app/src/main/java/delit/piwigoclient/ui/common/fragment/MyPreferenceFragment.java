@@ -79,10 +79,6 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
         uiHelper.addActiveServiceCall(stringId, messageId);
     }
 
-    protected void addActiveServiceCall(long messageId) {
-        uiHelper.addActiveServiceCall(R.string.talking_to_server_please_wait, messageId);
-    }
-
     @Override
     public void onDetach() {
         uiHelper.deregisterFromActiveServiceCalls();

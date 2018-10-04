@@ -171,10 +171,6 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         });
     }
 
-    protected void addActiveServiceCall(long messageId) {
-        uiHelper.addActiveServiceCall(R.string.talking_to_server_please_wait, messageId);
-    }
-
     @Override
     public Parcelable onSaveInstanceState() {
         EventBus.getDefault().unregister(this);

@@ -388,11 +388,11 @@ public class CreateAlbumFragment extends MyFragment {
 
             // don't need the call to be recursive since it is a leaf node already.
             setGalleryPermissionsMessageId = new AlbumAddPermissionsResponseHandler(newAlbum, allowedGroups, allowedUsers, false).invokeAsync(getContext());
-            addActiveServiceCall(setGalleryPermissionsMessageId);
+            addActiveServiceCall(R.string.progress_setting_permissions, setGalleryPermissionsMessageId);
         } else {
             //TODO why are we doing this unnecessary call?
             setGalleryPermissionsMessageId = new AlbumSetStatusResponseHandler(newAlbum).invokeAsync(getContext());
-            addActiveServiceCall(setGalleryPermissionsMessageId);
+            addActiveServiceCall(R.string.progress_setting_permissions, setGalleryPermissionsMessageId);
         }
 
     }

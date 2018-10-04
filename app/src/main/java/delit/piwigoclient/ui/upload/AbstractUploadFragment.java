@@ -401,7 +401,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private void invokeRetrieveSubCategoryNamesCall() {
+        selectedGallerySpinner.setEnabled(false);
         selectedGallerySpinnerRefreshButton.setEnabled(false);
+        newGalleryButton.setEnabled(false);
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
@@ -718,11 +720,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 }
             }
         }
-        selectedGallerySpinner.setEnabled(true);
         subCategoryNamesActionId = -1;
         UploadJob uploadJob = getActiveJob(getContext());
         allowUserUploadConfiguration(uploadJob);
+        selectedGallerySpinner.setEnabled(true);
         selectedGallerySpinnerRefreshButton.setEnabled(true);
+        newGalleryButton.setEnabled(true);
         selectedGallerySpinnerRefreshButton.invalidate();
     }
 
@@ -795,8 +798,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         protected void onErrorResponse(PiwigoResponseBufferingHandler.ErrorResponse response) {
             if (response.getMessageId() == subCategoryNamesActionId) {
                 // the retrieval of the album names failed. Need to allow retry and prevent use of the UI until then.
-                selectedGallerySpinner.setEnabled(false);
-                newGalleryButton.setEnabled(false);
                 selectedGallerySpinnerRefreshButton.setEnabled(true);
             }
         }

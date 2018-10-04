@@ -63,12 +63,6 @@ public class MyFragment extends Fragment {
         return messageId;
     }
 
-    protected void addActiveServiceCall(long messageId) {
-        uiHelper.addActiveServiceCall(R.string.talking_to_server_please_wait, messageId);
-    }
-
-
-
     @Override
     public void onDetach() {
         Crashlytics.log("onDetach : " + getClass().getName());

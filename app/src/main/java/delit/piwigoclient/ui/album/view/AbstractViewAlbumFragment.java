@@ -428,7 +428,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
         descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_more_horiz_black_24px).into(descriptionDropdownButton);
 
         setGalleryHeadings();
 

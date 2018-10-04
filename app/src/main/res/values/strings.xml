@@ -109,7 +109,6 @@
     <string name="alert_really_delete_upload_job">This will delete the job status from this device. You will need to manually cleanup the status on the server. Jobs will often complete successfully if you resume them later. Are you sure you wish to take this drastic step?</string>
     <string name="upload_files_button_title">Upload Files</string>
     <string name="loading_please_wait">Loading, Please wait</string>
-    <string name="talking_to_server_please_wait">Talking to server, Please wait</string>
     <string name="alert_title_server_error">Server Error</string>
     <string name="alert_server_error_pattern">Server returned HTTP error: %1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Error parsing piwigo response</string>
@@ -600,6 +599,7 @@ SOFTWARE.
     <string name="progress_move_resources">Moving resources</string>
     <string name="progress_checking_with_server">Checking credentials with server</string>
     <string name="progress_creating_album">Creating Album</string>
+    <string name="progress_setting_permissions">Setting permissions</string>
     <string name="progress_loading_groups">Retrieving User Groups</string>
     <string name="progress_loading_users">Retrieving Users</string>
     <string name="progress_loading_album_permissions">Retrieving album permissions</string>

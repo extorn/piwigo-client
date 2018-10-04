@@ -24,8 +24,7 @@
             android:id="@+id/album_header_bar"
             android:layout_below="@+id/gallery_adView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/gallery_details_name_header"
@@ -53,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/gallery_details_description_header"
                 android:layout_alignParentEnd="true"
-                android:background="?android:selectableItemBackground"/>
+                app:srcCompat="@drawable/ic_more_horiz_black_24px"/>
 
         </RelativeLayout>
 

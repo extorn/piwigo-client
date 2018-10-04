@@ -124,11 +124,6 @@ public abstract class MyActivity extends AppCompatActivity {
         super.onDetachedFromWindow();
     }
 
-
-    protected void addActiveServiceCall(long messageId) {
-        uiHelper.addActiveServiceCall(R.string.talking_to_server_please_wait, messageId);
-    }
-
     protected void removeFragmentsFromHistory(Class<? extends Fragment> fragmentClass, boolean includeMidSessionLogins) {
         boolean found = false;
         int i = 0;

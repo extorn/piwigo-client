@@ -88,7 +88,6 @@
     <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen den Status auf dem Server manuell bereinigen. Jobs werden oft erfolgreich abgeschlossen, wenn Sie sie später wieder aufnehmen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen wollen?</string>
     <string name="upload_files_button_title">Dateien hochladen</string>
     <string name="loading_please_wait">Laden, bitte warten</string>
-    <string name="talking_to_server_please_wait">Mit dem Server sprechen, bitte warten.</string>
     <string name="alert_title_server_error">Server-Fehler</string>
     <string name="alert_server_error_pattern">Server liefert HTTP-Fehler: %1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Fehler beim Parsen der piwigo-Antwort</string>
@@ -338,6 +337,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="progress_move_resources">Ressourcen bewegen</string>
     <string name="progress_checking_with_server">Überprüfung der Zugangsdaten mit dem Server</string>
     <string name="progress_creating_album">Album erstellen</string>
+    <string name="progress_setting_permissions">Berechtigungen festlegen</string>
     <string name="progress_loading_groups">Benutzergruppen abrufen</string>
     <string name="progress_loading_users">Benutzer abrufen</string>
     <string name="progress_loading_album_permissions">Abrufen von Album-Berechtigungen</string>

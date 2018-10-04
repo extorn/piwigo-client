@@ -42,28 +42,37 @@
 
         <TextView
             android:id="@+id/slideshow_resource_item_x_of_y_text"
+            android:paddingTop="5dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="10dp"
+            android:shadowColor="@color/primary"
+            android:shadowRadius="6"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:layout_toEndOf="@id/slideshow_resource_action_use_for_album_thumbnail"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:textAlignment="viewEnd"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:visibility="visible"
             tools:text="x/y"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
         <RatingBar
             android:id="@+id/slideshow_image_average_ratingBar"
-            style="@style/Widget.AppCompat.RatingBar"
+            style="@style/Widget.AppCompat.RatingBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:visibility="gone"
+            android:layout_below="@+id/slideshow_resource_item_x_of_y_text"
             android:isIndicator="true"
             android:numStars="5"
-            android:stepSize="0.1" />
-            <!--android:layout_alignBottom="@+id/slideshow_image_favorite"-->
-            <!--android:layout_toStartOf="@+id/slideshow_image_favorite"-->
+            android:progressTint="@color/rating_indicator"
+            android:stepSize="0.1"
+            tools:progress="50"
+            android:visibility="gone"
+            tools:visibility="visible" tools:targetApi="lollipop"/>
 
 
         <!-- this is currently unsupported by the Piwigo API 2.9.1 required -->
@@ -98,36 +107,25 @@
             android:layout_marginTop="0dp"
             android:background="@color/colorAlbumBottomSheet"
             android:orientation="vertical"
-            android:padding="5dp">
+            android:padding="5dp"
+            tools:layout_marginTop="-400dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp">
 
-                <RatingBar
-                    android:id="@+id/slideshow_image_ratingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_gravity="end"
-                    android:isIndicator="false"
-                    android:numStars="5"
-                    android:stepSize="1" />
-
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_edit_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/slideshow_image_ratingBar" />
+                    android:layout_alignParentStart="true" />
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_save_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_edit_button"
-                    android:layout_below="@+id/slideshow_image_ratingBar"
                     android:layout_toEndOf="@+id/slideshow_resource_action_edit_button" />
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
@@ -164,7 +162,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_below="@+id/slideshow_image_ratingBar"
                     android:layout_gravity="end" />
 
 
@@ -242,6 +239,44 @@
                         android:maxLines="2"
                         android:text="@string/click_to_view"
                         android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
+
+                    <TextView
+                        android:id="@+id/slideshow_image_details_rating_score_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@+id/slideshow_image_details_rating_score"
+                        android:text="@string/slideshow_image_details_rating_score_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <TextView
+                        android:id="@+id/slideshow_image_details_rating_score"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="viewEnd"
+                        android:text="@string/rating_score_pattern"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+                    <TextView
+                        android:id="@+id/slideshow_image_details_rating_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@+id/slideshow_image_ratingBar"
+                        android:text="@string/upload_file_rating"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <RatingBar
+                        android:id="@+id/slideshow_image_ratingBar"
+                        style="@style/Widget.AppCompat.RatingBar.Small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:isIndicator="false"
+                        android:numStars="5"
+                        android:stepSize="1"
+                        tools:progress="50"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="3dp"/>
 
                     <TextView
                         android:id="@+id/slideshow_image_details_privacy_level"
