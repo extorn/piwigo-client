@@ -64,7 +64,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         AlbumItemRecyclerViewAdapterPreferences prefs = super.updateViewPrefs();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if(sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
-            addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_session_details,new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
         }
         return prefs;
     }
@@ -78,7 +78,6 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     protected void setupBulkActionsControls(Basket basket) {
         super.setupBulkActionsControls(basket);
 
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_add_tag_black_24dp).into(bulkActionButtonTag);
         bulkActionButtonTag.setVisibility(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
         bulkActionButtonTag.setOnTouchListener(new View.OnTouchListener() {
             @Override

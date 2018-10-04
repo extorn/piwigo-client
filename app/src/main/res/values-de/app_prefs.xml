@@ -119,8 +119,8 @@
     <!-- prefs -->
 
 
-    <string name="preference_app_show_toolbar_title">App Toolbar anzeigen</string>
-    <string name="preference_app_show_toolbar_summary">Symbolleiste oben in der Anwendung anzeigen</string>
+    <!--<string name="preference_app_show_toolbar_title">App Toolbar anzeigen</string>
+    <string name="preference_app_show_toolbar_summary">Symbolleiste oben in der Anwendung anzeigen</string>-->
 
 
 
@@ -233,9 +233,9 @@
 
     <string name="preference_data_upload_chunk_auto_retries_title">Max automatische Datei Chunk-Upload-Versuche</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
-
+<!--
     <string name="preference_data_upload_large_thumbnail_title">Dateien mit großer Miniaturansicht anzeigen</string>
-    <string name="preference_data_upload_large_thumbnail_summary">Bildvorschaubilder füllen die Spalte</string>
+    <string name="preference_data_upload_large_thumbnail_summary">Bildvorschaubilder füllen die Spalte</string>-->
 
 
     <string name="preference_data_upload_preferredColumnsPortrait_title">Porträt: Spalten der anzuzeigenden Bilder</string>

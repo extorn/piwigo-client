@@ -161,7 +161,7 @@ public class ViewTagFragment extends MyFragment {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if(sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
-            addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_session_details, new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
         }
 
         boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, getContext());
@@ -252,7 +252,6 @@ public class ViewTagFragment extends MyFragment {
         }
 
         retryActionButton = view.findViewById(R.id.tag_retryAction_actionButton);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_refresh_black_24dp).into(retryActionButton);
 
         retryActionButton.setVisibility(GONE);
         retryActionButton.setOnClickListener(new View.OnClickListener() {
@@ -297,7 +296,6 @@ public class ViewTagFragment extends MyFragment {
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
 
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.tag_action_delete_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(bulkActionButtonDelete);
         bulkActionButtonDelete.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override

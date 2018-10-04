@@ -277,7 +277,7 @@ public class TagsListFragment extends MyFragment {
     }
 
     private void createNewTag(String tagname) {
-        addActiveServiceCall(new TagAddResponseHandler(tagname).invokeAsync(this.getContext()));
+        addActiveServiceCall(R.string.progress_creating_tag, new TagAddResponseHandler(tagname).invokeAsync(this.getContext()));
     }
 
     private void deleteTagNow(Tag thisItem) {

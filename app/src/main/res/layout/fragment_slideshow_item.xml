@@ -119,28 +119,32 @@
                     android:id="@+id/slideshow_resource_action_edit_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true" />
+                    android:layout_alignParentStart="true"
+                    app:srcCompat="@drawable/ic_mode_edit_black_24dp"/>
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_save_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_edit_button"
-                    android:layout_toEndOf="@+id/slideshow_resource_action_edit_button" />
+                    android:layout_toEndOf="@+id/slideshow_resource_action_edit_button"
+                    app:srcCompat="@drawable/ic_save_black_24dp"/>
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_discard_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_save_button"
-                    android:layout_toEndOf="@+id/slideshow_resource_action_save_button" />
+                    android:layout_toEndOf="@+id/slideshow_resource_action_save_button"
+                    app:srcCompat="@drawable/ic_undo_black_24dp"/>
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_move"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_download"
-                    android:layout_toStartOf="@+id/slideshow_resource_action_download" />
+                    android:layout_toStartOf="@+id/slideshow_resource_action_download"
+                    app:srcCompat="@drawable/ic_content_cut_black_24px"/>
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_copy"
@@ -148,21 +152,24 @@
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_move"
                     android:layout_toStartOf="@+id/slideshow_resource_action_move"
-                    android:text="@string/slideshow_resource_action_copy" />
+                    android:text="@string/slideshow_resource_action_copy"
+                    app:srcCompat="@drawable/ic_content_copy_black_24px"/>
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignBottom="@+id/slideshow_resource_action_copy"
-                    android:layout_toStartOf="@+id/slideshow_resource_action_copy" />
+                    android:layout_toStartOf="@+id/slideshow_resource_action_copy"
+                    app:srcCompat="@drawable/ic_delete_black_24px"/>
 
                 <delit.piwigoclient.ui.common.button.CustomImageButton
                     android:id="@+id/slideshow_resource_action_download"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:layout_gravity="end" />
+                    android:layout_gravity="end"
+                    app:srcCompat="@drawable/ic_file_download_black_24px"/>
 
 
                 <LinearLayout

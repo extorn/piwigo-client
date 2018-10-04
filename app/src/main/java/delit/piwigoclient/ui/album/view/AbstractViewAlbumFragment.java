@@ -397,7 +397,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         initialiseBasketView(view);
 
         retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_refresh_black_24dp).into(retryActionButton);
 
         retryActionButton.setVisibility(GONE);
         retryActionButton.setOnClickListener(new View.OnClickListener() {
@@ -520,7 +519,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         bulkActionButtonTag.setVisibility(View.GONE);
 
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(bulkActionButtonDelete);
         bulkActionButtonDelete.setVisibility(showBulkDeleteAction(basket) ? VISIBLE : GONE);
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -533,7 +531,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_copy_black_24px).into(bulkActionButtonCopy);
         bulkActionButtonCopy.setVisibility(showBulkCopyAction(basket) ? VISIBLE : GONE);
         bulkActionButtonCopy.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -547,7 +544,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_cut_black_24px).into(bulkActionButtonCut);
         bulkActionButtonCut.setVisibility(showBulkCutAction(basket) ? VISIBLE : GONE);
         bulkActionButtonCut.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -561,7 +557,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_paste_black_24dp).into(bulkActionButtonPaste);
         bulkActionButtonPaste.setVisibility(showBulkPasteAction(basket) ? VISIBLE : GONE);
         bulkActionButtonPaste.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -639,10 +634,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         });
 
         AppCompatImageView basketImage = basketView.findViewById(R.id.basket_image);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_shopping_basket_black_24dp).into(basketImage);
 
         AppCompatImageView clearButton = basketView.findViewById(R.id.basket_clear_button);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(clearButton);
         clearButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

@@ -519,5 +519,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="connection_reset_warning_pattern">Der Server hat die Verbindung %1$d in den letzten %2$d Minuten mal geschlossen. Dies könnte auf ein Problem mit Ihrer Serverkonfiguration hinweisen.</string>
     <string name="content_description_icon">icon</string>
     <string name="files_already_set_for_upload_skipped_pattern">%1$d Dateien wurden bereits für den Upload ausgewählt und ignoriert, um Doppelarbeit zu vermeiden.</string>
+    <string name="progress_loading_session_details">Laden von Benutzerberechtigungen</string>
 </resources>
 

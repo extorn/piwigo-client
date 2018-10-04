@@ -217,7 +217,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         hideProgressIndicator();
         logStatus("Creating item content");
         directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
 
         simpleExoPlayerView = (PlayerView) inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
 

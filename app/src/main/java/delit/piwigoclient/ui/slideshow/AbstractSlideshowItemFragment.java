@@ -3,6 +3,9 @@ package delit.piwigoclient.ui.slideshow;
 import android.app.Activity;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.BitmapCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -448,7 +451,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
 
         saveButton = v.findViewById(R.id.slideshow_resource_action_save_button);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_save_black_24dp).into(saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -457,7 +459,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             }
         });
         discardButton = v.findViewById(R.id.slideshow_resource_action_discard_button);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_undo_black_24dp).into(discardButton);
         discardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -466,7 +467,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
 
         editButton = v.findViewById(R.id.slideshow_resource_action_edit_button);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_mode_edit_black_24dp).into(editButton);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -477,7 +477,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
 
         downloadButton = v.findViewById(R.id.slideshow_resource_action_download);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_file_download_black_24px).into(downloadButton);
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -485,7 +484,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             }
         });
         deleteButton = v.findViewById(R.id.slideshow_resource_action_delete);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(deleteButton);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -493,7 +491,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             }
         });
         moveButton = v.findViewById(R.id.slideshow_resource_action_move);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_cut_black_24px).into(moveButton);
         moveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -501,7 +498,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             }
         });
         copyButton = v.findViewById(R.id.slideshow_resource_action_copy);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_content_copy_black_24px).into(copyButton);
         copyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
