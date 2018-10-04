@@ -36,10 +36,12 @@ import delit.piwigoclient.util.IOUtils;
 import static android.view.View.NO_ID;
 
 public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
-    private static final String ACTIVE_FOLDER = "activeFolder";
+    private static final String ACTIVE_FOLDER = "RecyclerViewFolderItemSelectFragment.activeFolder";
     private RelativeLayout folderPathView;
     private Spinner spinner;
     private MappedArrayAdapter<String, File> folderRootsAdapter;
+    private long startedActionAtTime;
+    private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
 
     public static RecyclerViewFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
         RecyclerViewFolderItemSelectFragment fragment = new RecyclerViewFolderItemSelectFragment();
@@ -72,6 +74,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(ACTIVE_FOLDER, getListAdapter().getActiveFolder());
+        outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
     }
 
     @Nullable
@@ -83,6 +86,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
+
+        startedActionAtTime = System.currentTimeMillis();
 
         folderRootsAdapter = buildFolderRootsAdapter();
 
@@ -179,6 +184,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         if (savedInstanceState != null) {
             File activeFolder = (File) savedInstanceState.getSerializable(ACTIVE_FOLDER);
             viewAdapter.setActiveFolder(activeFolder);
+            startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
         }
         viewAdapter.setInitiallySelectedItems();
 
@@ -272,7 +278,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<File> selectedItems = listAdapter.getSelectedItems();
-        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems)));
+        long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems), actionTimeMillis));
         // now pop this screen off the stack.
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
@@ -281,7 +288,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
     @Override
     public void onCancelChanges() {
-        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), null));
+        long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), null, actionTimeMillis));
         super.onCancelChanges();
     }
 

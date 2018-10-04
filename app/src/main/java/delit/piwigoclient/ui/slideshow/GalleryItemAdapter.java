@@ -138,7 +138,11 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
     @Override
     public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         super.setPrimaryItem(container, position, object);
-        ((SlideshowItemFragment)getActiveFragment(position)).onPageSelected();
+        SlideshowItemFragment activeFragment = ((SlideshowItemFragment)getActiveFragment(position));
+        if(activeFragment == null) {
+            activeFragment = (SlideshowItemFragment)instantiateItem(container, position);
+        }
+        activeFragment.onPageSelected();
     }
 
     public void onPageSelected(int position) {
@@ -168,14 +172,21 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
     }
 
     public void deleteGalleryItem(int fullGalleryIdx) {
-        int positionToDelete = galleryResourceItems.indexOf(fullGalleryIdx);
-        if (positionToDelete >= 0) {
-            // remove the item from the resource index and the backing gallery model
-            gallery.remove(galleryResourceItems.remove(positionToDelete));
-            // now recalcualate the positions of the remaining slideshow items in the main album
-            for (int i = positionToDelete; i < galleryResourceItems.size(); i++) {
-                galleryResourceItems.set(i, galleryResourceItems.get(i) - 1);
+        int slideshowIdxOfItemToDelete = galleryResourceItems.indexOf(fullGalleryIdx);
+        if (slideshowIdxOfItemToDelete >= 0) {
+            // remove the item from the list of items in the slideshow.
+            galleryResourceItems.remove(slideshowIdxOfItemToDelete);
+
+            // presume that the parent gallery has also been updated and adjust all items down one.
+            for(int i = slideshowIdxOfItemToDelete; i < galleryResourceItems.size(); i++) {
+                galleryResourceItems.set(i, galleryResourceItems.get(i)-1);
             }
+            // now request a rebuild of the slideshow pages
+//            notifyDataSetChanged();
+
+            // the object is not used by this.
+            super.destroyItem(getContainer(),slideshowIdxOfItemToDelete, getActiveFragment(slideshowIdxOfItemToDelete));
+
             notifyDataSetChanged();
         }
     }
@@ -197,10 +208,10 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
 
     @Override
     public void notifyDataSetChanged() {
-        if (galleryResourceItems.size() > 0) {
-            int lastLoadedIdx = galleryResourceItems.get(galleryResourceItems.size() - 1);
-            addResourcesToIndex(1 + lastLoadedIdx, -1);
-        }
+//        if (galleryResourceItems.size() > 0) {
+//            int lastLoadedIdx = galleryResourceItems.get(galleryResourceItems.size() - 1);
+//            addResourcesToIndex(1 + lastLoadedIdx, -1);
+//        }
         EventBus.getDefault().post(new SlideshowSizeUpdateEvent(galleryResourceItems.size(), getTotalSlideshowItems()));
         super.notifyDataSetChanged();
     }

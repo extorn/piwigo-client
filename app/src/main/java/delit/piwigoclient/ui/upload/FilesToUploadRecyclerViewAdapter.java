@@ -223,11 +223,16 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         return currentContent;
     }
 
-    public void addAll(List<File> filesForUpload) {
+    /**
+     * @param filesForUpload
+     * @return List of all files that were not already present
+     */
+    public ArrayList addAll(List<File> filesForUpload) {
         ArrayList newFiles = new ArrayList(filesForUpload);
         newFiles.removeAll(filesToUpload);
         filesToUpload.addAll(newFiles);
         notifyDataSetChanged();
+        return newFiles;
     }
 
     public void clear() {

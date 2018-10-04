@@ -93,6 +93,10 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     public void returnFragmentToPool(Fragment f, int position) {
 
         activeFragments.remove(position);
+        ViewGroup parent = ((ViewGroup)f.getView().getParent());
+        if(parent != null) {
+            parent.removeView(f.getView());
+        }
 
         if (availableFragmentPool.size() == 0) {
             // not using pooling
@@ -208,9 +212,17 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         if (DEBUG) Log.v(TAG, "Removing item #" + position + ": f=" + object
                 + " v=" + fragment.getView());
 
-        recordPageState(fragment, position);
+//        recordPageState(fragment, position);
 
         returnFragmentToPool(fragment, position);
+
+        for(int activeAdapterPosition = position + 1; activeAdapterPosition < activeFragments.size(); activeAdapterPosition++) {
+            activeFragments.put(activeAdapterPosition -1, activeFragments.remove(activeAdapterPosition));
+        }
+
+        if(pageState != null && pageState.size() > position) {
+            pageState.remove(position);
+        }
 
         mCurTransaction.remove(fragment);
     }

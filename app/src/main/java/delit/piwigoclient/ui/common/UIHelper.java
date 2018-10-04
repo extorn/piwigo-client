@@ -18,8 +18,10 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -59,7 +61,9 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.util.ToastUtils;
 import delit.piwigoclient.util.X509Utils;
+import io.fabric.sdk.android.services.common.SafeToast;
 
 /**
  * Created by gareth on 13/10/17.
@@ -151,23 +155,31 @@ public abstract class UIHelper<T> {
         return this.context != context;
     }
 
+    public void showDetailedToast(@StringRes int titleResId, String message) {
+        showDetailedToast(titleResId, message, Toast.LENGTH_SHORT);
+    }
+
+    public void showDetailedToast(@StringRes int titleResId, String message, int duration) {
+        ToastUtils.makeDetailedToast(getContext(), titleResId, message, duration).show();
+    }
+
     public void showToast(@StringRes int messageResId) {
-        Toast toast = Toast.makeText(getContext(), messageResId, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getContext().getApplicationContext(), messageResId, Toast.LENGTH_SHORT);
         toast.show();
     }
 
     public void showToast(String message) {
-        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_SHORT);
         toast.show();
     }
 
     public void showLongToast(String message) {
-        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_LONG);
         toast.show();
     }
 
     public void showLongToast(@StringRes int messageResId) {
-        Toast toast = Toast.makeText(getContext(), messageResId, Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(getContext().getApplicationContext(), messageResId, Toast.LENGTH_LONG);
         toast.show();
     }
 

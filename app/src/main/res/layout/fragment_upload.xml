@@ -35,13 +35,20 @@
     <Spinner
         android:id="@+id/selected_gallery"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/add_new_gallery_button"
+        android:layout_toStartOf="@+id/selected_gallery_refresh_button"
         android:layout_below="@+id/upload_to_label"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_margin="5dp"
-        android:gravity="fill_horizontal"
         android:layout_height="wrap_content"
         android:spinnerMode="dialog"/>
+
+    <delit.piwigoclient.ui.common.button.CustomImageButton
+        android:id="@+id/selected_gallery_refresh_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upload_to_label"
+        android:layout_toStartOf="@id/add_new_gallery_button"
+        app:srcCompat="@drawable/ic_refresh_black_24dp"/>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/add_new_gallery_button"
@@ -127,21 +134,5 @@
         ads:adSize="SMART_BANNER"
         ads:adUnitId="@string/ad_id_uploads_banner">
     </com.google.android.gms.ads.AdView>
-
-    <!--
-    android:layout_below="@id/album_header_bar"
-    android:layout_alignParentEnd="true"
-    -->
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/upload_retryAction_actionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:fabSize="mini"
-        app:srcCompat="@drawable/ic_refresh_black_24dp" />
 
 </RelativeLayout>

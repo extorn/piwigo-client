@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 
@@ -34,6 +35,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -97,11 +99,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private long privacyLevelWanted;
     private Long uploadToAlbumId;
     private Long uploadJobId;
+    private long maxGapBeforeAlbumRefreshMillis = 30000; // 30 secs
+    private boolean blockAlbumListRefresh;
     private ArrayList<File> filesForUpload = new ArrayList<>();
     private long subCategoryNamesActionId = -1;
-    private FloatingActionButton retryRetrieveAlbumNamesButton;
     private CustomImageButton newGalleryButton;
     private FilesToUploadRecyclerViewAdapter filesToUploadAdapter;
+    private CustomImageButton selectedGallerySpinnerRefreshButton;
+
 
     protected Bundle buildArgs(long currentGalleryId, int actionId) {
         Bundle args = new Bundle();
@@ -146,7 +151,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent stickyEvent) {
         // Integer.MIN_VALUE is a special flag to allow external apps to call in and their events to always be handled.
-        if (getUiHelper().isTrackingRequest(stickyEvent.getActionId()) || stickyEvent.getActionId() == Integer.MIN_VALUE) {
+        if (getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
+            // ensure we continue tracking this event in case it is used again by the a non internal event re-starting the activity.
+            getUiHelper().setTrackingRequest(stickyEvent.getActionId());
+            if(stickyEvent.getActionTimeMillis() > 0 && stickyEvent.getActionTimeMillis() < maxGapBeforeAlbumRefreshMillis) {
+                blockAlbumListRefresh = true;
+            }
             EventBus.getDefault().removeStickyEvent(stickyEvent);
             updateFilesForUploadList(stickyEvent.getSelectedFiles());
             AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
@@ -198,6 +208,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         viewPrefs.withShowHierachy();
 
         selectedGallerySpinner = view.findViewById(R.id.selected_gallery);
+        selectedGallerySpinnerRefreshButton = view.findViewById(R.id.selected_gallery_refresh_button);
+        selectedGallerySpinnerRefreshButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                invokeRetrieveSubCategoryNamesCall();
+            }
+        });
         availableGalleries = new AvailableAlbumsListAdapter(viewPrefs, currentGallery, getContext(), android.R.layout.simple_spinner_item);
         availableGalleries.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         selectedGallerySpinner.setEnabled(false);
@@ -223,6 +240,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 } else {
                     FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
                     ArrayList<String> allowedFileTypes = new ArrayList<>(sessionDetails.getAllowedFileTypes());
+                    event.setActionId(getUiHelper().getTrackedRequest());
                     event.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
                     event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
                     getUiHelper().setTrackingRequest(event.getActionId());
@@ -320,19 +338,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             subCategoryNamesActionId = savedInstanceState.getLong(SAVED_SUB_CAT_NAMES_ACTION_ID);
         }
 
-        retryRetrieveAlbumNamesButton = view.findViewById(R.id.upload_retryAction_actionButton);
-        retryRetrieveAlbumNamesButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    invokeRetrieveSubCategoryNamesCall();
-                    retryRetrieveAlbumNamesButton.setVisibility(View.GONE);
-                }
-                return true;
-            }
-        });
-        retryRetrieveAlbumNamesButton.setVisibility(View.GONE);
-
         int position = availableGalleries.getPosition(uploadToAlbumId);
         if (position >= 0) {
             // item may not be found if it has just been deleted from the server or we have changed server we're connected to.
@@ -379,13 +384,24 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             return;
         }
 
-        // don't do this if the activity is finished of finishing.
-        if (subCategoryNamesActionId < 0) {
+        // don't do this if the activity is finished or finishing.
+        if (isAlbumListRefreshNeeded()) {
             invokeRetrieveSubCategoryNamesCall();
         }
     }
 
+    /**
+     * WARNING - NOT idempotent!
+     * @return
+     */
+    private boolean isAlbumListRefreshNeeded() {
+        boolean retVal = subCategoryNamesActionId < 0 && !blockAlbumListRefresh;
+        blockAlbumListRefresh = false;
+        return retVal;
+    }
+
     private void invokeRetrieveSubCategoryNamesCall() {
+        selectedGallerySpinnerRefreshButton.setEnabled(false);
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
@@ -444,7 +460,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     protected void updateFilesForUploadList(ArrayList<File> filesToBeUploaded) {
         FilesToUploadRecyclerViewAdapter adapter = (FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter();
-        adapter.addAll(filesToBeUploaded);
+        List<File> addedFiles = adapter.addAll(filesToBeUploaded);
+        int filesAlreadyPresent = filesToBeUploaded.size() - addedFiles.size();
+        if(filesAlreadyPresent > 0) {
+            getUiHelper().showDetailedToast(R.string.alert_information, getString(R.string.files_already_set_for_upload_skipped_pattern, filesAlreadyPresent));
+        }
         uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
         updateJobDeletionButtonStatus();
     }
@@ -593,7 +613,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (getContext() == null) {
             notifyUserUploadStatus(context.getApplicationContext(), message);
         } else {
-            getUiHelper().showOrQueueDialogMessage(titleId, message);
+            getUiHelper().showDetailedToast(titleId, message, Toast.LENGTH_LONG);
         }
     }
 
@@ -702,6 +722,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         subCategoryNamesActionId = -1;
         UploadJob uploadJob = getActiveJob(getContext());
         allowUserUploadConfiguration(uploadJob);
+        selectedGallerySpinnerRefreshButton.setEnabled(true);
+        selectedGallerySpinnerRefreshButton.invalidate();
     }
 
     @Override
@@ -775,7 +797,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 // the retrieval of the album names failed. Need to allow retry and prevent use of the UI until then.
                 selectedGallerySpinner.setEnabled(false);
                 newGalleryButton.setEnabled(false);
-                retryRetrieveAlbumNamesButton.setVisibility(View.VISIBLE);
+                selectedGallerySpinnerRefreshButton.setEnabled(true);
             }
         }
 

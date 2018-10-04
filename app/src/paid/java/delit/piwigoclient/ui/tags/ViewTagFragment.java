@@ -628,7 +628,7 @@ public class ViewTagFragment extends MyFragment {
     private void onItemRemovedFromServer(ResourceItem r) {
         onItemRemovedFromTag(r);
         for(Long albumId : r.getLinkedAlbums()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(albumId));
+            EventBus.getDefault().post(new AlbumAlteredEvent(albumId, r.getId(), true));
         }
     }
 
@@ -692,7 +692,7 @@ public class ViewTagFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
         // This is needed because a slideshow item currently only fires these events (tag unaware).
-        if (tag != null && tag.getId() == albumAlteredEvent.id) {
+        if (tag != null && tag.getId() == albumAlteredEvent.getAlbumAltered()) {
             tagIsDirty = true;
             if(isResumed()) {
                 reloadAlbumContent();

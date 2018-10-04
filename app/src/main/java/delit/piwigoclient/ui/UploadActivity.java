@@ -90,7 +90,6 @@ public class UploadActivity extends MyActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
         outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
     }
 
@@ -204,7 +203,7 @@ public class UploadActivity extends MyActivity {
                     return handleSendMultipleImages(intent); // Handle multiple images being sent
                 }
             }
-            return new ArrayList<>();
+            return null;
 
         } finally {
             if (errors.size() > 0) {
@@ -297,15 +296,12 @@ public class UploadActivity extends MyActivity {
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
             if (resultCode == RESULT_OK) {
-                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+//                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+                long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
 
                 int eventId = requestCode;
-                if (requestCode != fileSelectionEventId) {
-                    // this is an unexpected event - need to ensure the upload fragment will pick it up.
-                    eventId = Integer.MIN_VALUE;
-                }
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload, actionTimeMillis);
 
                 EventBus.getDefault().postSticky(event);
             }
@@ -341,19 +337,16 @@ public class UploadActivity extends MyActivity {
         showFragmentNow(fragment);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
-            int fileSelectionEventIdToUse = fileSelectionEventId;
-            if (startedWithPermissions) {
-                // already started up. Therefore the fileSelectionEventId is valid and linked to the fragment
-            } else {
-                startedWithPermissions = true;
-                fileSelectionEventIdToUse = Integer.MIN_VALUE;
-            }
             if (event.areAllPermissionsGranted()) {
-                FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventIdToUse, handleSentFiles());
-                EventBus.getDefault().postSticky(evt);
+                ArrayList<File> sentFiles = handleSentFiles();
+                if(sentFiles != null) {
+                    // this activity was invoked from another application
+                    FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, sentFiles, -1);
+                    EventBus.getDefault().postSticky(evt);
+                }
             } else {
                 createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
             }

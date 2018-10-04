@@ -401,20 +401,22 @@ public class CreateAlbumFragment extends MyFragment {
 
         newAlbum.setAllowedUsers(response.getUserIdsAffected());
         newAlbum.setAllowedGroups(response.getGroupIdsAffected());
-
-        showDialogBox(R.string.alert_success, getString(R.string.alert_album_created));
-        EventBus.getDefault().post(new AlbumCreatedEvent(actionId, parentGallery.getId(), newAlbum.getGalleryId()));
-        for (Long parentId : newAlbum.getParentageChain()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(parentId));
-        }
+        informInterestedParties();
     }
 
     public void onAlbumStatusAltered(PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse response) {
+        informInterestedParties();
+    }
 
+    private void informInterestedParties() {
         showDialogBox(R.string.alert_success, getString(R.string.alert_album_created));
         EventBus.getDefault().post(new AlbumCreatedEvent(actionId, parentGallery.getId(), newAlbum.getGalleryId()));
-        for (Long parentId : newAlbum.getParentageChain()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(parentId));
+        List<Long> parentageChain = newAlbum.getParentageChain();
+        if(!parentageChain.isEmpty()) {
+            EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(0), newAlbum.getGalleryId()));
+            for (int i = 1; i < parentageChain.size(); i++) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(i), parentageChain.get(i - 1)));
+            }
         }
     }
 

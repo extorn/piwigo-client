@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -177,6 +178,17 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         galleryItemAdapter.setContainer(viewPager);
         viewPager.setAdapter(galleryItemAdapter);
+        /*viewPager.setObser(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                viewPager.removeViews(viewPager.getCurrentItem(), viewPager.getChildCount());
+            }
+
+            @Override
+            public void onInvalidated() {
+                viewPager.removeAllViews();
+            }
+        });*/
 
         ViewPager.OnPageChangeListener slideshowPageChangeListener = new ViewPager.OnPageChangeListener() {
 
@@ -292,23 +304,17 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemDeletedEvent event) {
-//        int fullGalleryIdx = gallery.getItemIdx(event.item);
-//        viewPager.setCurrentItem(PagerAdapter.POSITION_NONE);
-//        ((GalleryItemAdapter) viewPager.getAdapter()).deleteGalleryItem(fullGalleryIdx);
-//        if(viewPager.getAdapter().getCount() == 0) {
-//            EventBus.getDefault().post(new SlideshowEmptyEvent());
-//        } else {
-//            int displayedIdx = viewPager.getCurrentItem();
-//            viewPager.setCurrentItem(Math.min(viewPager.getAdapter().getCount() - 1, displayedIdx));
-//        }
-        // force the slideshow to end.
-        EventBus.getDefault().post(new SlideshowEmptyEvent());
+        if(gallery.getId() == event.item.getParentId()) {
+            GalleryItemAdapter adapter = ((GalleryItemAdapter) viewPager.getAdapter());
+            int fullGalleryIdx = adapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
+            adapter.deleteGalleryItem(fullGalleryIdx);
+        }
     }
 
     @Subscribe
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        if (gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.id) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_album));
+        if (gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.getAlbumAltered()) {
+//            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_album));
         }
     }
 /*

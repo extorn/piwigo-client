@@ -780,4 +780,6 @@ SOFTWARE.
     <string name="slideshow_image_details_rating_score_title">Rating score</string>
     <string name="rating_score_pattern">%1$.2f (%2$d rates)</string>
     <string name="connection_reset_warning_pattern">The server has closed the connection %1$d times in the past %2$d minutes. This could indicate an issue with your server configuration.</string>
+    <string name="content_description_icon">icon</string>
+    <string name="files_already_set_for_upload_skipped_pattern">%1$d files were already selected for upload and have been ignored to avoid duplication.</string>
 </resources>

@@ -689,14 +689,20 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoAlbumThumbnailUpdatedResponse extends BasePiwigoResponse {
         private final Long albumParentId;
+        private long albumIdAltered;
 
-        public PiwigoAlbumThumbnailUpdatedResponse(long messageId, String piwigoMethod, Long albumParentId) {
+        public PiwigoAlbumThumbnailUpdatedResponse(long messageId, String piwigoMethod, Long albumParentId, long albumIdAltered) {
             super(messageId, piwigoMethod, true);
             this.albumParentId = albumParentId;
+            this.albumIdAltered = albumIdAltered;
         }
 
         public Long getAlbumParentIdAltered() {
             return albumParentId;
+        }
+
+        public long getAlbumIdAltered() {
+            return albumIdAltered;
         }
     }
 

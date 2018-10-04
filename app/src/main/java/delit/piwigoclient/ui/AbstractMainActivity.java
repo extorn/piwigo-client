@@ -375,14 +375,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(AlbumDeletedEvent event) {
-        for (Long itemParent : event.getItem().getParentageChain()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
-        }
-        getSupportFragmentManager().popBackStackImmediate();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemSelectedEvent event) {
 
         Fragment newFragment = null;
@@ -436,9 +428,10 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
             if (resultCode == RESULT_OK && data.getExtras() != null) {
-                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+//                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+                long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, filesForUpload);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, filesForUpload, actionTimeMillis);
                 EventBus.getDefault().postSticky(event);
             }
         } else {

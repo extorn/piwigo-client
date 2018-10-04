@@ -1,10 +1,8 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -30,7 +28,6 @@ import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -44,7 +41,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -783,7 +779,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void onAlbumThumbnailUpdated(PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse response) {
-        EventBus.getDefault().post(new AlbumAlteredEvent(response.getAlbumParentIdAltered()));
+        EventBus.getDefault().post(new AlbumAlteredEvent(response.getAlbumParentIdAltered(), response.getAlbumIdAltered()));
     }
 
     private void onGetSubAlbumNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
@@ -852,11 +848,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         resourceRatingScoreField.setText(String.format(getString(R.string.rating_score_pattern), model.getScore(), model.getRatingsGiven()));
     }
 
-    protected void onImageDeleted() {
-        for (Long itemParent : model.getParentageChain()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
-        }
+    protected void onImageDeleted(HashSet<Long> deletedItemIds) {
+        List<Long> resourceItemParentChain = model.getParentageChain();
         EventBus.getDefault().post(new AlbumItemDeletedEvent(model, albumItemIdx, albumLoadedItemCount));
+        for (int i = 1; i < resourceItemParentChain.size(); i++) {
+            EventBus.getDefault().post(new AlbumAlteredEvent(resourceItemParentChain.get(i), resourceItemParentChain.get(i-1)));
+        }
     }
 
     private void onGetResourceCancelled(PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
@@ -889,9 +886,26 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
         if (albumsRequiringReload != null) {
             // ensure all necessary albums are updated.
-            for (Long albumsAltered : albumsRequiringReload) {
-                EventBus.getDefault().post(new AlbumAlteredEvent(albumsAltered));
+            List<Long> notifiedAlbums = new ArrayList<>(albumsRequiringReload.size() + model.getParentageChain().size());
+            for (Long albumAltered : albumsRequiringReload) {
+                if(!notifiedAlbums.contains(albumAltered)) {
+                    notifiedAlbums.add(albumAltered);
+                    EventBus.getDefault().post(new AlbumAlteredEvent(albumAltered, resourceItem.getId()));
+                    List<Long> parentageChain = model.getParentageChain();
+                    int parentChainIdx = parentageChain.indexOf(albumAltered);
+                    if (parentChainIdx >= 0) {
+                        for(int i = parentChainIdx + 1; i < parentageChain.size(); i++) {
+                            long notifyAlbum = parentageChain.get(parentChainIdx);
+                            if(!notifiedAlbums.contains(notifyAlbum)) {
+                                notifiedAlbums.add(notifyAlbum);
+                                EventBus.getDefault().post(new AlbumAlteredEvent(notifyAlbum, parentageChain.get(parentChainIdx - 1)));
+                            }
+                        }
+                    }
+                }
             }
+            notifiedAlbums.clear();
+            albumsRequiringReload.clear();
             albumsRequiringReload = null;
         }
     }
@@ -958,13 +972,13 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             HashSet<Long> newAlbums = updatedLinkedAlbumSet;
 
             // check the original and new set aren't the same before updating the server.
-            HashSet<Long> albumsRemoved = new HashSet<>(currentAlbums);
-            albumsRemoved.removeAll(newAlbums); // to give those status altered in the old set (removed).
-            HashSet<Long> albumsAdded = new HashSet<>(newAlbums);
-            albumsAdded.removeAll(currentAlbums); // to give those status altered in the new set (added).
+            HashSet<Long> albumsResourceRemovedFrom = new HashSet<>(currentAlbums);
+            albumsResourceRemovedFrom.removeAll(newAlbums); // to give those status altered in the old set (removed).
+            HashSet<Long> albumsResourceAddedTo = new HashSet<>(newAlbums);
+            albumsResourceAddedTo.removeAll(currentAlbums); // to give those status altered in the new set (added).
             HashSet<Long> changedAlbums = new HashSet<>();
-            changedAlbums.addAll(albumsAdded);
-            changedAlbums.addAll(albumsRemoved);
+            changedAlbums.addAll(albumsResourceAddedTo);
+            changedAlbums.addAll(albumsResourceRemovedFrom);
 
             if (changedAlbums.size() == 0) {
                 // no changes
@@ -977,24 +991,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 }
                 // add all the changed albums
                 albumsRequiringReload.addAll(changedAlbums);
-                // now add the parentage for all changed albums (sadly won't include the deselected ones).
-                for (CategoryItemStub selectedItem : event.getSelectedItems()) {
-                    if (changedAlbums.contains(selectedItem.getId())) {
-                        albumsRequiringReload.addAll(selectedItem.getParentageChain());
-                    }
-                }
-                // If we remove an album, update the parent chain from here (to ensure things are in-sync if inefficiently)
-                if (albumsRemoved.size() > 0) {
-                    List<Long> parentageOfItem = model.getParentageChain();
-                    HashSet<Long> albumsToNotify = new HashSet<>();
-                    for (int i = parentageOfItem.size() - 1; i >= 0; i--) {
-                        if (albumsRemoved.contains(parentageOfItem.get(i))) {
-                            albumsToNotify.addAll(parentageOfItem.subList(0, i));
-                            break;
-                        }
-                    }
-                    albumsRequiringReload.addAll(albumsToNotify);
-                }
             }
         }
 
@@ -1019,7 +1015,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoRatingAlteredResponse) {
                 onRatingAltered(((PiwigoResponseBufferingHandler.PiwigoRatingAlteredResponse) response).getPiwigoResource());
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse) {
-                onImageDeleted();
+                onImageDeleted(((PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse) response).getDeletedItemIds());
             } else if (response instanceof PiwigoResponseBufferingHandler.UrlCancelledResponse) {
                 onGetResourceCancelled((PiwigoResponseBufferingHandler.UrlCancelledResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse) {

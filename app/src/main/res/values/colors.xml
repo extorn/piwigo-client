@@ -34,6 +34,7 @@
     <color name="colorTest5">#FF00FF</color>
 
     <color name="rating_indicator">#FFFFFF00</color>
+    <color name="toastFrameBackground">@color/primary_material_light</color>
 
     <color name="accent">@color/accent_material_dark</color>
     <color name="primary">@color/primary_material_dark</color>
@@ -45,6 +46,8 @@
     <color name="background_floating">@color/background_floating_material_dark</color>
     <color name="primary_text_default">@color/primary_text_default_material_dark</color>
     <color name="primary_text_disabled">@color/primary_text_disabled_material_dark</color>
+    <color name="primary_text_default_light">@color/primary_text_default_material_light</color>
+    <color name="primary_text_disabled_light">@color/primary_text_disabled_material_light</color>
     <color name="text_color_clickable">@color/accent_material_dark</color>
 
     <!-- default material colors -->

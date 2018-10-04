@@ -35,7 +35,7 @@ public class AlbumThumbnailUpdatedResponseHandler extends AbstractPiwigoWsRespon
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse r = new PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse(getMessageId(), getPiwigoMethod(), albumParentId);
+        PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse r = new PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse(getMessageId(), getPiwigoMethod(), albumParentId, albumId);
         storeResponse(r);
     }
 

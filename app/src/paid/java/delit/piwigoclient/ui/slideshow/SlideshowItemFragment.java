@@ -150,11 +150,11 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     }
 
     @Override
-    public void onImageDeleted() {
+    public void onImageDeleted(HashSet<Long> deletedItemIds) {
         for (Tag tag : getModel().getTags()) {
             EventBus.getDefault().post(new TagContentAlteredEvent(tag.getId(), -1));
         }
-        super.onImageDeleted();
+        super.onImageDeleted(deletedItemIds);
     }
 
     @Override

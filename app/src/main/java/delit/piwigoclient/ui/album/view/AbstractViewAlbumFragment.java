@@ -88,6 +88,7 @@ import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListe
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumDeletedEvent;
+import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.AlbumSelectedEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
@@ -101,6 +102,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.slideshow.GalleryItemAdapter;
 import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
@@ -412,8 +414,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         bulkActionsContainer = view.findViewById(R.id.gallery_actions_bulk_container);
 
-        AlbumSelectedEvent event = new AlbumSelectedEvent(galleryModel.getContainerDetails());
-        EventBus.getDefault().post(event);
+        EventBus.getDefault().post(new AlbumSelectedEvent(galleryModel.getContainerDetails()));
 
         AdView adView = view.findViewById(R.id.gallery_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {
@@ -1406,8 +1407,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         updateBasketDisplay(basket);
 
 
-        for (Long itemParent : galleryModel.getContainerDetails().getParentageChain()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
+        List<Long> parentageChain = galleryModel.getContainerDetails().getParentageChain();
+        if(!parentageChain.isEmpty()) {
+            EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(0), galleryModel.getContainerDetails().getId()));
+            for (int i = 1; i < parentageChain.size(); i++) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(i), parentageChain.get(i - 1)));
+            }
         }
         //we've altered the album content (now update this album view to reflect the server content)
         galleryIsDirty = true;
@@ -1425,8 +1430,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
         reloadAlbumContent();
         // Now ensure any parents are also updated when next shown
-        for (Long itemParent : galleryModel.getContainerDetails().getParentageChain()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
+        List<Long> parentageChain = galleryModel.getContainerDetails().getParentageChain();
+        if(!parentageChain.isEmpty()) {
+            EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(0), galleryModel.getContainerDetails().getId()));
+            for (int i = 1; i < parentageChain.size(); i++) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(i), parentageChain.get(i - 1)));
+            }
         }
     }
 
@@ -1523,8 +1532,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void onAlbumContentAltered(final PiwigoResponseBufferingHandler.PiwigoUpdateAlbumContentResponse response) {
-        for (Long itemParent : galleryModel.getContainerDetails().getParentageChain()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
+        List<Long> parentageChain = galleryModel.getContainerDetails().getParentageChain();
+        if(!parentageChain.isEmpty()) {
+            EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(0), galleryModel.getContainerDetails().getId()));
+            for (int i = 1; i < parentageChain.size(); i++) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(i), parentageChain.get(i - 1)));
+            }
         }
         galleryIsDirty = true;
         //we've altered the album content (now update this album view to reflect the server content)
@@ -1710,11 +1723,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void onAlbumDeleted(PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse response) {
+        boolean exitFragment = false;
         CategoryItem galleryDetails = galleryModel.getContainerDetails();
         if (galleryDetails.getId() == response.getAlbumId()) {
             // we've deleted the current album.
             AlbumDeletedEvent event = new AlbumDeletedEvent(galleryDetails);
             EventBus.getDefault().post(event);
+            exitFragment = true;
         } else {
             if (albumAdminList != null) {
                 CategoryItem adminCopyOfCurrentGallery = albumAdminList.getAlbum(galleryDetails);
@@ -1724,12 +1739,19 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 }
                 galleryDetails.removeChildAlbum(response.getAlbumId()); // will return false if it was the admin copy (unlikely but do after to be sure).
             }
-            for (Long itemParent : galleryDetails.getParentageChain()) {
-                EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
-            }
             //we've deleted a child album (now update this album view to reflect the server content)
             galleryIsDirty = true;
             reloadAlbumContent();
+        }
+        List<Long> parentageChain = galleryDetails.getParentageChain();
+        if(!parentageChain.isEmpty()) {
+            EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(0), galleryDetails.getId()));
+            for (int i = 1; i < parentageChain.size(); i++) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(i), parentageChain.get(i - 1)));
+            }
+        }
+        if(exitFragment) {
+            getFragmentManager().popBackStack();
         }
     }
 
@@ -1770,9 +1792,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             galleryIsDirty = true;
             if (isResumed()) {
                 reloadAlbumContent();
-            }
-            for (Long itemParent : galleryModel.getContainerDetails().getParentageChain()) {
-                EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
             }
         }
     }
@@ -1879,11 +1898,29 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        if (galleryModel != null && (galleryModel.getContainerDetails().getId() == albumAlteredEvent.id || albumAlteredEvent.id < 0)) {
+        if (galleryModel != null && albumAlteredEvent.isRelevant(galleryModel.getContainerDetails().getId())) {
             galleryIsDirty = true;
             if (isResumed()) {
                 reloadAlbumContent();
             }
+            if(albumAlteredEvent.isCascadeToParents()) {
+                List<Long> parentageChain = galleryModel.getContainerDetails().getParentageChain();
+                if(!parentageChain.isEmpty()) {
+                    EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(0), galleryModel.getContainerDetails().getId()));
+                    for (int i = 1; i < parentageChain.size(); i++) {
+                        EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(i), parentageChain.get(i - 1)));
+                    }
+                }
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(AlbumItemDeletedEvent event) {
+        if(event.item.getParentId() == galleryModel.getId()) {
+            int fullGalleryIdx = galleryModel.getItemIdx(event.item);
+            // now removed from the backing gallery too.
+            galleryModel.remove(fullGalleryIdx);
         }
     }
 
