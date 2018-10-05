@@ -210,7 +210,7 @@
                         android:id="@+id/slideshow_image_details_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textMultiLine"
+                        android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="3"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:layout_marginStart="5dp"

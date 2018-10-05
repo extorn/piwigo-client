@@ -102,7 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginBottom="30dp">
 
             <android.support.design.widget.FloatingActionButton
@@ -169,7 +169,8 @@
             android:layout_marginTop="0dp"
             android:background="@color/colorAlbumBottomSheet"
             android:orientation="vertical"
-            android:padding="5dp">
+            android:padding="5dp"
+            tools:layout_marginTop="-400dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -232,6 +233,7 @@
                     android:id="@+id/gallery_details_edit_fields"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:layout_alignWithParentIfMissing="true"
                     android:layout_below="@+id/gallery_action_delete"
                     android:orientation="vertical">
@@ -248,9 +250,12 @@
                         android:id="@+id/gallery_details_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
                         android:clickable="true"
                         android:focusable="true"
-                        android:inputType="textMultiLine"
+                        android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="3"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
@@ -266,7 +271,10 @@
                         android:id="@+id/gallery_details_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textMultiLine"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
+                        android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="10"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
@@ -283,9 +291,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="3dp"
-                        android:layout_marginEnd="5dp"
                         android:layout_marginStart="5dp"
-                        android:layout_marginTop="7dp"
+                        android:layout_marginTop="2dp"
                         android:text="@string/gallery_details_status"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                         app:checkbox_at_end="true" />
@@ -302,10 +309,14 @@
                         android:id="@+id/gallery_details_allowed_groups"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textAlignment="viewEnd"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"
-                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="3dp"/>
 
                     <TextView
                         android:id="@+id/gallery_details_allowed_users_label"
@@ -319,10 +330,14 @@
                         android:id="@+id/gallery_details_allowed_users"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textAlignment="viewEnd"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"
-                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="3dp"/>
 
                 </LinearLayout>
 

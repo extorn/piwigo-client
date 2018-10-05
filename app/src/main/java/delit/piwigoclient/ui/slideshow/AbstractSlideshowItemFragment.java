@@ -545,12 +545,13 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         setControlVisible(moveButton, false);
 
         ratingBar.setEnabled(!isAppInReadOnlyMode());
-        if (allowDownload) {
-            downloadButton.setVisibility(VISIBLE);
-        } else {
-            // can't use gone as this button is an anchor for other ui components
-            downloadButton.setVisibility(View.INVISIBLE);
-        }
+        downloadButton.setEnabled(allowDownload);
+//        if (allowDownload) {
+//            downloadButton.setVisibility(VISIBLE);
+//        } else {
+//            // can't use gone as this button is an anchor for other ui components
+//            downloadButton.setVisibility(View.INVISIBLE);
+//        }
     }
 
     private void fillResourceEditFields() {
