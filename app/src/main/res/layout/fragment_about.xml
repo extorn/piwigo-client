@@ -20,10 +20,10 @@
             <TextView
                 android:id="@+id/about_text"
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:text="@string/about_content"
-                tools:text="lots of text goes in here"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:autoLink="web"/>
 
             <TextView
                 android:id="@+id/about_planned_releases_header"

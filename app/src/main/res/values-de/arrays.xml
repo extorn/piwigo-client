@@ -113,7 +113,8 @@
     <string-array name="release_history">
         <item>1.3.95</item>
         <item>"Änderungen:
-            - Umfassende Überarbeitung des Themas und Vereinfachung der Einstellungen, einschließlich einiger Layout- und Designideen, die in einer Serie von Mockup-Screens vorgeschlagen wurden David Klement (weitere folgen).
+            - Die Albumansicht wurde nach einem Entwurf von David Klement neu gestaltet.
+            - Das Materialthema wurde aufgenommen.
             - Korrigierter Verbindungsabbruch (bitte korrigieren Sie Ihre Einstellung, wenn sie zurückgesetzt wurde).
             - Antwort-Timeout-Einstellung zusätzlich zum Verbindungs-Timeout hinzugefügt.
             - Viele Bugfixes speziell für Android-Versionen vor Lollipop
