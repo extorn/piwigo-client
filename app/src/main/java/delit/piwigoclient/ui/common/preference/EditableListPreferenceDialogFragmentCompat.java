@@ -223,7 +223,6 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             b.create();
             b.show();
         } else {
-            // clone the entries set so we don't inadvertently change the cached property value
             entriesList.remove(oldValue);
             entriesList.add(newValue);
             if(oldValue.equals(userSelectedItem)) {
@@ -242,7 +241,6 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
             b.create();
             b.show();
         } else {
-            // clone the entries set so we don't inadvertently change the cached property value
             entriesList.add(newItem);
             actions.add(new Addition(newItem));
             listRecyclerView.getAdapter().notifyDataSetChanged();
@@ -313,12 +311,12 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         }
 
         protected void onDeleteItem(int position, View v) {
-            entriesList.remove(position);
+            String item = entriesList.remove(position);
             if (entryValues.size() != entriesList.size()) {
                 // can't delete the value twice! (test needed for identity mapping where same reference used for values as entries)
-                String item = entryValues.remove(position);
-                actions.add(new Removal(item));
+                item = entryValues.remove(position);
             }
+            actions.add(new Removal(item));
             notifyItemRangeRemoved(position, 1);
         }
 

@@ -180,24 +180,6 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/slideshow_image_details_name_label"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:labelFor="@+id/slideshow_image_details_name"
-                        android:text="@string/slideshow_image_details_name_title"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-                    <EditText
-                        android:id="@+id/slideshow_image_details_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:inputType="textMultiLine"
-                        android:maxLines="3"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-                    <TextView
                         android:id="@+id/slideshow_image_details_description_label"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -209,9 +191,31 @@
                         android:id="@+id/slideshow_image_details_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textMultiLine"
+                        android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="10"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="3dp"/>
+
+                    <TextView
+                        android:id="@+id/slideshow_image_details_name_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:labelFor="@+id/slideshow_image_details_name"
+                        android:text="@string/slideshow_image_details_name_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <EditText
+                        android:id="@+id/slideshow_image_details_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:maxLines="3"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="3dp"/>
 
                     <TextView
                         android:id="@+id/slideshow_image_details_linked_albums_label"
@@ -224,11 +228,15 @@
                     <TextView
                         android:id="@+id/slideshow_image_details_linked_albums"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"
-                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
+                        android:textAlignment="viewEnd"
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="3dp"/>
 
                     <TextView
                         android:id="@+id/slideshow_image_details_tags_label"
@@ -241,11 +249,15 @@
                     <TextView
                         android:id="@+id/slideshow_image_details_tags"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:ellipsize="end"
-                        android:maxLines="2"
+                        android:maxLines="1"
+                        android:textAlignment="viewEnd"
                         android:text="@string/click_to_view"
-                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
+                        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="3dp"/>
 
                     <TextView
                         android:id="@+id/slideshow_image_details_rating_score_label"
@@ -259,9 +271,13 @@
                         android:id="@+id/slideshow_image_details_rating_score"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAlignment="viewEnd"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
                         android:text="@string/rating_score_pattern"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                        android:textAlignment="viewEnd"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        tools:text="1.2 (5 rates)" />
 
                     <TextView
                         android:id="@+id/slideshow_image_details_rating_label"
@@ -296,7 +312,10 @@
                     <Spinner
                         android:id="@+id/privacy_level"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="3dp"/>
 
                 </LinearLayout>
 

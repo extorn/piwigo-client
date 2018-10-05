@@ -6,6 +6,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.BitmapCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -872,6 +873,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         linkedAlbumsField.setText((currentLinkedAlbumsSet == null ? '?' : currentLinkedAlbumsSet.size()) + " (" + getString(R.string.click_to_view) + ')');
 
         tagsField.setText(R.string.paid_feature_only);
+        TextViewCompat.setTextAppearance(tagsField, R.style.Custom_TextAppearance_AppCompat_Body1);
     }
 
     protected void onResourceInfoAltered(final T resourceItem) {

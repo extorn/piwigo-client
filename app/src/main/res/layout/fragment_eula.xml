@@ -4,29 +4,39 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
-        android:id="@+id/eula_text"
-        android:layout_alignParentTop="true"
-        android:layout_above="@+id/eula_action_bar"
-        android:layout_width="fill_parent"
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/eula_adView"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/ad_id_app_eula_banner">
+    </com.google.android.gms.ads.AdView>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/eula_text"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_below="@+id/eula_adView"
+        android:layout_above="@+id/eula_action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:scrollbars="vertical"
         android:fillViewport="true">
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/eula"
             tools:text="EULA contents goes in here"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <RelativeLayout
         android:id="@+id/eula_action_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/eula_adView"
-        android:layout_alignWithParentIfMissing="true">
+        android:layout_alignParentBottom="true">
 
     <TextView
         android:id="@+id/eula_admin_email"
@@ -56,16 +66,5 @@
         android:text="@string/button_agree"/>
 
     </RelativeLayout>
-
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/eula_adView"
-        android:layout_centerHorizontal="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        ads:adSize="SMART_BANNER"
-        ads:adUnitId="@string/ad_id_app_eula_banner">
-    </com.google.android.gms.ads.AdView>
 
 </RelativeLayout>

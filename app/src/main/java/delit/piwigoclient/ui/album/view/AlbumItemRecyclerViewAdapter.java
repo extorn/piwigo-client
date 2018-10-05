@@ -242,12 +242,16 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
         @Override
         public boolean onLongClick(View v) {
-            if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
-                onCategoryLongClick();
-            } else {
-                onNonCategoryLongClick();
+            GalleryItem item = getViewHolder().getItem();
+            if(item != null) {
+                if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
+                    onCategoryLongClick();
+                } else {
+                    onNonCategoryLongClick();
+                }
+                return true;
             }
-            return true;
+            return false;
         }
     }
 }

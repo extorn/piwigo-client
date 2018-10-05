@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
@@ -47,6 +48,8 @@ public class EulaFragment extends MyFragment {
         } else {
             adView.setVisibility(View.GONE);
         }
+
+//        ScrollView eulaScrollingTextView = view.findViewById(R.id.eula_text);
 
         int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);
         int currentEulaVersion = getResources().getInteger(R.integer.eula_version);

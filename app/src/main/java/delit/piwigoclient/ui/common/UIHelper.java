@@ -18,10 +18,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -44,12 +42,14 @@ import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import delit.piwigoclient.BuildConfig;
@@ -61,9 +61,9 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.ui.preferences.ConnectionPreferenceFragment;
 import delit.piwigoclient.util.ToastUtils;
 import delit.piwigoclient.util.X509Utils;
-import io.fabric.sdk.android.services.common.SafeToast;
 
 /**
  * Created by gareth on 13/10/17.
@@ -73,23 +73,25 @@ public abstract class UIHelper<T> {
 
     private static final String TAG = "UiHelper";
     private static final String STATE_UIHELPER = "uiHelperState";
-    private static final String ACTIVE_SERVICE_CALLS = "activeServiceCalls";
-    private static final String STATE_TRACKED_REQUESTS = "trackedRequests";
-    private static final String STATE_RUN_WITH_PERMS_LIST = "runWithPermsList";
-    private static final String STATE_PERMS_FOR_REASON = "reasonForPermissionsRequired";
+    private static final String ACTIVE_SERVICE_CALLS = "UIHelper.activeServiceCalls";
+    private static final String STATE_TRACKED_REQUESTS = "UIHelper.trackedRequests";
+    private static final String STATE_ACTIONS_ON_RESPONSES = "UIHelper.actionOnResponse";
+    private static final String STATE_RUN_WITH_PERMS_LIST = "UIHelper.runWithPermsList";
+    private static final String STATE_PERMS_FOR_REASON = "UIHelper.reasonForPermissionsRequired";
     private final T parent;
     private final SharedPreferences prefs;
     private final Queue<QueuedMessage> messageQueue = new LinkedBlockingQueue<>(100);
     private Context context;
     private DismissListener dismissListener;
     private AlertDialog alertDialog;
-    private HashSet<Long> activeServiceCalls = new HashSet<>(3);
+    private Set<Long> activeServiceCalls = Collections.synchronizedSet(new HashSet<Long>(3));
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;
     private BasicPiwigoResponseListener piwigoResponseListener;
     private int permissionsNeededReason;
     private NotificationManager notificationManager;
     ProgressIndicator progressIndicator;
+    private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap<Long, Action>();
 
     public UIHelper(T parent, SharedPreferences prefs, Context context) {
         this.context = context;
@@ -136,6 +138,10 @@ public abstract class UIHelper<T> {
             }
         }
 
+    }
+
+    public SharedPreferences getPrefs() {
+        return prefs;
     }
 
     public void clearNotification(String source, int notificationId) {
@@ -347,9 +353,10 @@ public abstract class UIHelper<T> {
 
     public void onSaveInstanceState(Bundle outState) {
         Bundle thisBundle = new Bundle();
-        thisBundle.putSerializable(ACTIVE_SERVICE_CALLS, activeServiceCalls);
+        thisBundle.putSerializable(ACTIVE_SERVICE_CALLS, new HashSet<>(activeServiceCalls));
         thisBundle.putInt(STATE_TRACKED_REQUESTS, trackedRequest);
         thisBundle.putSerializable(STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
+        thisBundle.putSerializable(STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
         thisBundle.putInt(STATE_PERMS_FOR_REASON, permissionsNeededReason);
         piwigoResponseListener.onSaveInstanceState(thisBundle);
         outState.putBundle(STATE_UIHELPER, thisBundle);
@@ -359,9 +366,10 @@ public abstract class UIHelper<T> {
         if (savedInstanceState != null) {
             Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
             if (thisBundle != null) {
-                activeServiceCalls = (HashSet<Long>) thisBundle.getSerializable(ACTIVE_SERVICE_CALLS);
+                activeServiceCalls = Collections.synchronizedSet((HashSet<Long>) thisBundle.getSerializable(ACTIVE_SERVICE_CALLS));
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
                 runWithPermissions = (HashMap<Integer, PermissionsWantedRequestEvent>) thisBundle.getSerializable(STATE_RUN_WITH_PERMS_LIST);
+                actionOnServerCallComplete = (ConcurrentHashMap<Long, Action>) thisBundle.getSerializable(STATE_ACTIONS_ON_RESPONSES);
                 permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
                 piwigoResponseListener.onRestoreInstanceState(thisBundle);
             }
@@ -654,6 +662,7 @@ public abstract class UIHelper<T> {
     }
 
     public void onServiceCallComplete(long messageId) {
+        actionOnServerCallComplete.remove(messageId);
         activeServiceCalls.remove(messageId);
         if (activeServiceCalls.size() == 0) {
             hideProgressIndicator();
@@ -705,6 +714,14 @@ public abstract class UIHelper<T> {
 
     public ProgressIndicator getProgressIndicator() {
         return progressIndicator;
+    }
+
+    public Action getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
+        return actionOnServerCallComplete.get(response.getMessageId());
+    }
+
+    public void addActionOnResponse(long msgId, Action loginAction) {
+        actionOnServerCallComplete.put(msgId, loginAction);
     }
 
     public static abstract class QuestionResultAdapter implements QuestionResultListener {
@@ -932,5 +949,14 @@ public abstract class UIHelper<T> {
         public void setBuildNewDialogOnDismiss(boolean buildNewDialogOnDismiss) {
             this.buildNewDialogOnDismiss = buildNewDialogOnDismiss;
         }
+    }
+
+    public static class Action implements Serializable {
+        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response){
+            return true;
+        };
+        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response){
+            return true;
+        };
     }
 }

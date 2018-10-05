@@ -217,8 +217,8 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         }
     }
 
-    private long addActiveServiceCall(int progress_loading_albums, long messageId) {
-        uiHelper.addActiveServiceCall(messageId);
+    private long addActiveServiceCall(int loadingMsgId, long messageId) {
+        uiHelper.addActiveServiceCall(loadingMsgId, messageId);
         return messageId;
     }
 

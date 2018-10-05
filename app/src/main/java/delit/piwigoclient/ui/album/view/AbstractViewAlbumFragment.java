@@ -1120,7 +1120,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         });
 
         galleryPrivacyStatusField = editFields.findViewById(R.id.gallery_details_status);
-        galleryPrivacyStatusField.setChecked(galleryModel.getContainerDetails().isPrivate());
         checkedListener = new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -1129,10 +1128,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                         loadAlbumPermissions();
                     }
                 }
-                allowedGroupsFieldLabel.setVisibility(isChecked ? VISIBLE : GONE);
-                allowedGroupsField.setVisibility(isChecked ? VISIBLE : GONE);
-                allowedUsersFieldLabel.setVisibility(isChecked ? VISIBLE : GONE);
-                allowedUsersField.setVisibility(isChecked ? VISIBLE : GONE);
+                allowedGroupsFieldLabel.setVisibility(isChecked ? VISIBLE : INVISIBLE);
+                allowedGroupsField.setVisibility(isChecked ? VISIBLE : INVISIBLE);
+                allowedUsersFieldLabel.setVisibility(isChecked ? VISIBLE : INVISIBLE);
+                allowedUsersField.setVisibility(isChecked ? VISIBLE : INVISIBLE);
             }
         };
         galleryPrivacyStatusField.setOnCheckedChangeListener(checkedListener);

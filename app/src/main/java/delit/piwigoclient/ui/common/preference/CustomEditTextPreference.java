@@ -88,10 +88,16 @@ public class CustomEditTextPreference extends EditTextPreference {
     @Override
     public CharSequence getSummary() {
         CharSequence summary = super.getSummary();
-        if (summary != null) {
-            return String.format(summary.toString(), getText());
+        String value = getText();
+        if(value == null) {
+            value = "";
         }
-        return null;
+        if (summary != null) {
+            return String.format(summary.toString(), value);
+        } else {
+            summary = value;
+        }
+        return summary;
     }
 
     public static class SavedState extends BaseSavedState {
@@ -121,5 +127,11 @@ public class CustomEditTextPreference extends EditTextPreference {
             super.writeToParcel(dest, flags);
             dest.writeInt(inputFieldType);
         }
+    }
+
+    @Override
+    public void setText(String text) {
+        super.setText(text);
+        notifyChanged();
     }
 }

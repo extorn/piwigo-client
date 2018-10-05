@@ -235,8 +235,6 @@
                             android:id="@+id/slideshow_image_details_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:focusable="true"
                             android:inputType="textMultiLine|textNoSuggestions"
                             android:maxLines="3"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
@@ -300,7 +298,10 @@
                             android:layout_height="wrap_content"
                             android:textAlignment="viewEnd"
                             android:text="@string/rating_score_pattern"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginBottom="3dp"/>
 
                         <TextView
                             android:id="@+id/slideshow_image_details_rating_label"
