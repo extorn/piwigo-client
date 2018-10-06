@@ -2,14 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/list_action_add_item_button"
         android:visibility="gone"
+        tools:visibility="visible"
         android:layout_alignParentEnd="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="5dp"
         app:srcCompat="@drawable/ic_add_circle_black_24px" />
 
     <TextView
@@ -66,6 +69,7 @@
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone"
+        tools:visibility="visible"
         app:fabSize="mini" />
 
     <Button
