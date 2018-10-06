@@ -7,7 +7,7 @@ import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
-import com.squareup.picasso.LruExifCache;
+import com.squareup.picasso.BaseLruExifCache;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -43,7 +43,7 @@ public class CustomImageDownloader extends AbstractBaseCustomImageDownloader {
             // Load EXIF data.
             try {
                 Metadata metadata = ImageMetadataReader.readMetadata(new ByteArrayInputStream(imageData));
-                LruExifCache cache = PicassoFactory.getInstance().getPicassoSingleton().getCache();
+                BaseLruExifCache cache = PicassoFactory.getInstance().getPicassoSingleton().getCache();
                 String uriStr = uri.toString();
                 cache.setMetadata(uriStr, metadata);
                 EventBus.getDefault().post(new ExifDataRetrievedEvent(uriStr, metadata));

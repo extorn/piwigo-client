@@ -10,14 +10,15 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * Created by gareth on 26/03/18.
+ * The purpose of this is to remove the first request handler from the list (this loads resources but cannot load vector versions).
+ * It also makes the cache available.
  */
-
 public class MyPicasso extends Picasso {
 
     private List<RequestHandler> myRequestHandlers;
-    private LruExifCache cache;
+    private BaseLruExifCache cache;
 
-    MyPicasso(Context context, Dispatcher dispatcher, LruExifCache cache, Listener listener, RequestTransformer requestTransformer, List<RequestHandler> extraRequestHandlers, Stats stats, Bitmap.Config defaultBitmapConfig, boolean indicatorsEnabled, boolean loggingEnabled) {
+    MyPicasso(Context context, Dispatcher dispatcher, BaseLruExifCache cache, Listener listener, RequestTransformer requestTransformer, List<RequestHandler> extraRequestHandlers, Stats stats, Bitmap.Config defaultBitmapConfig, boolean indicatorsEnabled, boolean loggingEnabled) {
         super(context, dispatcher, cache, listener, requestTransformer, extraRequestHandlers, stats, defaultBitmapConfig, indicatorsEnabled, loggingEnabled);
         this.cache = cache;
     }
@@ -43,7 +44,7 @@ public class MyPicasso extends Picasso {
         private final Context context;
         private Downloader downloader;
         private ExecutorService service;
-        private LruExifCache cache;
+        private BaseLruExifCache cache;
         private Listener listener;
         private RequestTransformer transformer;
         private List<RequestHandler> requestHandlers;
@@ -222,7 +223,7 @@ public class MyPicasso extends Picasso {
         }
     }
 
-    public LruExifCache getCache() {
+    public BaseLruExifCache getCache() {
         return cache;
     }
 }
