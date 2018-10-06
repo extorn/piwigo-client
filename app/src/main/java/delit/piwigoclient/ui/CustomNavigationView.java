@@ -1,10 +1,9 @@
 package delit.piwigoclient.ui;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
@@ -67,11 +66,6 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     public View inflateHeaderView(@LayoutRes int res) {
 
         headerView = (ViewGroup) super.inflateHeaderView(res);
-
-        boolean useDarkMode = prefs.getBoolean(getResources().getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
-        if (useDarkMode) {
-            headerView.setBackgroundColor(Color.BLACK);
-        }
 
         String appVersion;
         if (isInEditMode()) {
@@ -164,7 +158,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(getContext());
             username = connectionPrefs.getPiwigoUsername(prefs, getContext());
         }
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.password_entry_layout, R.string.button_cancel, R.string.button_unlock, new UIHelper.QuestionResultAdapter() {
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -175,10 +169,6 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
                 }
             }
         });
-    }
-
-    protected void addActiveServiceCall(long messageId) {
-        uiHelper.addActiveServiceCall(R.string.talking_to_server_please_wait, messageId);
     }
 
     @Override
@@ -263,12 +253,6 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     }
 
     public void updateTheme() {
-        boolean useDarkMode = prefs.getBoolean(getResources().getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
-        if (useDarkMode) {
-            headerView.setBackgroundColor(Color.BLACK);
-        } else {
-            headerView.setBackgroundResource(R.drawable.side_nav_bar);
-        }
     }
 
     class CustomPiwigoListener extends BasicPiwigoResponseListener {

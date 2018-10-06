@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.tags;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -140,7 +140,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     private void createNewTag(String tagname) {
-        addActiveServiceCall(new TagAddResponseHandler(tagname).invokeAsync(this.getContext()));
+        addActiveServiceCall(R.string.progress_creating_tag,new TagAddResponseHandler(tagname).invokeAsync(this.getContext()));
     }
 
     private void addNewTag() {
@@ -246,9 +246,13 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     @Override
+    protected String buildPageHeading() {
+        return getString(R.string.tags_heading);
+    }
+
+    @Override
     protected void setPageHeading(TextView headingField) {
-        headingField.setText(R.string.tags_heading);
-        headingField.setVisibility(View.VISIBLE);
+        headingField.setVisibility(View.GONE);
     }
 
     @Override

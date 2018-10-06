@@ -43,8 +43,8 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
         if (rates != null && !rates.isJsonNull()) {
             JsonElement scoreJsonElem = rates.get("score");
             if (scoreJsonElem != null && !scoreJsonElem.isJsonNull()) {
-                float rating = scoreJsonElem.getAsFloat();
-                loadedResourceItem.setYourRating(rating);
+                float score = scoreJsonElem.getAsFloat();
+                loadedResourceItem.setScore(score);
             }
 
             JsonElement ratesElem = rates.get("count");
@@ -59,6 +59,8 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
             float averageRating = averageJsonElem.getAsFloat();
             loadedResourceItem.setAverageRating(averageRating);
         }
+
+        //TODO set your rating when this is made available via API!
 
         JsonElement checksumJsonElem = resourceItemElem.get("md5sum");
         String fileChecksum = null;

@@ -38,11 +38,23 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int CORE_POOL_SIZE = 6;
     private static final int MAXIMUM_POOL_SIZE = Math.max(6, CPU_COUNT * 2 + 1);
-    private static final int KEEP_ALIVE_SECONDS = 30;
+    private static final int KEEP_ALIVE_SECONDS = 60;
     private static final BlockingQueue<Runnable> sPoolWorkQueue =
-            new LinkedBlockingQueue<>(128);
+            new LinkedBlockingQueue<Runnable>(128) {
+                @Override
+                public void put(Runnable o) throws InterruptedException {
+                    Log.d("StandardQueue", "New Queue Size : " + size());
+                    super.put(o);
+                }
+            };
     private static final BlockingQueue<Runnable> loginPoolWorkQueue =
-            new LinkedBlockingQueue<>(20);
+            new LinkedBlockingQueue<Runnable>(20) {
+                @Override
+                public void put(Runnable o) throws InterruptedException {
+                    Log.d("LoginQueue", "New Queue Size : " + size());
+                    super.put(o);
+                }
+            };
 
     private static final ThreadFactory sThreadFactory = new ThreadFactory() {
         private final AtomicInteger mCount = new AtomicInteger(1);
@@ -67,9 +79,9 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         HTTP_THREAD_POOL_EXECUTOR = threadPoolExecutor;
 
         ThreadPoolExecutor loginThreadPoolExecutor = new ThreadPoolExecutor(
-                2, 3, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
+                CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_SECONDS, TimeUnit.SECONDS,
                 loginPoolWorkQueue, loginThreadFactory);
-        threadPoolExecutor.allowCoreThreadTimeOut(false);
+        threadPoolExecutor.allowCoreThreadTimeOut(true);
 
         HTTP_LOGIN_THREAD_POOL_EXECUTOR = loginThreadPoolExecutor;
     }

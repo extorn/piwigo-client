@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -20,7 +19,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     private transient Comparator<GalleryItem> itemComparator = new AlbumComparator();
     private int subAlbumCount;
     private int spacerAlbums;
-    private int advertCount;
+    private int bannerCount;
 
     private static class AlbumComparator implements Comparator<GalleryItem> {
         @Override
@@ -28,17 +27,17 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
             boolean firstIsCategory = o1 instanceof CategoryItem;
             boolean secondIsCategory = o2 instanceof CategoryItem;
             if (firstIsCategory && secondIsCategory) {
-                if (o1 == CategoryItem.ADVERT) {
+                if (o1 == CategoryItem.ALBUM_HEADING) {
                     return -1;
-                } else if (o2 == CategoryItem.ADVERT) {
+                } else if (o2 == CategoryItem.ALBUM_HEADING) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else if (!firstIsCategory && !secondIsCategory) {
-                if (o1 == GalleryItem.ADVERT) {
+                if (o1 == GalleryItem.PICTURE_HEADING) {
                     return -1;
-                } else if (o2 == GalleryItem.ADVERT) {
+                } else if (o2 == GalleryItem.PICTURE_HEADING) {
                     return 1;
                 } else {
                     return 0;
@@ -65,30 +64,42 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));
     }
 
+    @Override
+    public void addItem(GalleryItem item) {
+        super.addItem(item);
+        if(item == GalleryItem.PICTURE_HEADING) {
+            bannerCount++;
+        }
+        // ensure these are always placed above other resources.
+        Collections.sort(getItems(), itemComparator);
+//        Log.d("Order", getItems().toString());
+    }
+
     public void addItem(CategoryItem item) {
-        if (item != CategoryItem.ADVERT) {
+        if (item != CategoryItem.ADVERT && item != CategoryItem.ALBUM_HEADING) {
             subAlbumCount++;
         } else {
-            advertCount++;
+            bannerCount++;
         }
         super.addItem(item);
         // ensure these are always placed first.
         Collections.sort(getItems(), itemComparator);
+//        Log.d("Order", getItems().toString());
     }
 
     protected int getPageInsertPosition(int page, int pageSize) {
         int insertPosition = super.getPageInsertPosition(page, pageSize);
         insertPosition += subAlbumCount;
         insertPosition += spacerAlbums;
-        insertPosition += advertCount;
+        insertPosition += bannerCount;
         return insertPosition;
     }
 
     public void addItemPage(int page, int pageSize, List<GalleryItem> newItems) {
         super.addItemPage(page, pageSize, newItems);
         for (GalleryItem item : newItems) {
-            if (item == GalleryItem.ADVERT) {
-                advertCount++;
+            if (item == CategoryItem.ALBUM_HEADING || item == GalleryItem.PICTURE_HEADING) {
+                bannerCount++;
             }
         }
     }
@@ -97,12 +108,12 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         super.clear();
         subAlbumCount = 0;
         spacerAlbums = 0;
-        advertCount = 0;
+        bannerCount = 0;
     }
 
     @Override
     public int getResourcesCount() {
-        return super.getItemCount() - subAlbumCount - spacerAlbums - advertCount;
+        return super.getItemCount() - subAlbumCount - spacerAlbums - bannerCount;
     }
 
     public int getSubAlbumCount() {
@@ -140,8 +151,8 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     public GalleryItem remove(int idx) {
         GalleryItem removedItem = super.remove(idx);
         if (removedItem instanceof CategoryItem) {
-            if (removedItem == CategoryItem.ADVERT) {
-                advertCount--;
+            if (removedItem == CategoryItem.ADVERT || removedItem == GalleryItem.PICTURE_HEADING || removedItem == CategoryItem.ALBUM_HEADING) {
+                bannerCount--;
             } else if (removedItem == CategoryItem.BLANK) {
                 subAlbumCount--;
             }

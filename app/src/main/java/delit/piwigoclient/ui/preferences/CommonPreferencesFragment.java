@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,6 +110,11 @@ public class CommonPreferencesFragment extends MyFragment {
         return view;
     }
 
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.preferences_overall_heading);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
@@ -149,7 +155,7 @@ public class CommonPreferencesFragment extends MyFragment {
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public PreferenceFragmentCompat getItem(int position) {
             switch (position) {
                 case 0:
                     return new ConnectionPreferenceFragment();

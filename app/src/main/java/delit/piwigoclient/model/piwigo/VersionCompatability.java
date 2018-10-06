@@ -1,5 +1,6 @@
 package delit.piwigoclient.model.piwigo;
 
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -71,15 +72,19 @@ public enum VersionCompatability {
     private int[] getServerVersion() {
         if (serverVersion == null) {
             String serverVersionStr = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getPiwigoVersion();
-            StringTokenizer st = new StringTokenizer(serverVersionStr, ".");
             int[] version = new int[3];
-            int i = 0;
-            while (st.hasMoreTokens()) {
-                int versionNum = Integer.valueOf(st.nextToken());
-                if (i < version.length) {
-                    version[i] = versionNum;
+            if(serverVersionStr.equals(PiwigoSessionDetails.UNKNOWN_VERSION)) {
+                Arrays.fill(version, 0);
+            } else {
+                StringTokenizer st = new StringTokenizer(serverVersionStr, ".");
+                int i = 0;
+                while (st.hasMoreTokens()) {
+                    int versionNum = Integer.valueOf(st.nextToken());
+                    if (i < version.length) {
+                        version[i] = versionNum;
+                    }
+                    i++;
                 }
-                i++;
             }
             serverVersion = version;
         }

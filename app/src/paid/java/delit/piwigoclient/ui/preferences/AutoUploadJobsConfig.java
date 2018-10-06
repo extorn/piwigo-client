@@ -57,7 +57,7 @@ public class AutoUploadJobsConfig {
     }
 
     public boolean isBackgroundUploadEnabled(Context c) {
-        return getBooleanValue(c, R.string.preference_data_upload_automatic_upload_enable_key, false);
+        return getBooleanValue(c, R.string.preference_data_upload_automatic_upload_enabled_key, c.getResources().getBoolean(R.bool.preference_data_upload_automatic_upload_enabled_default));
     }
 
     public boolean isUploadOnWirelessOnly(Context c) {

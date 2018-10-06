@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -63,7 +64,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         AlbumItemRecyclerViewAdapterPreferences prefs = super.updateViewPrefs();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if(sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
-            addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_session_details,new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
         }
         return prefs;
     }
@@ -77,7 +78,6 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     protected void setupBulkActionsControls(Basket basket) {
         super.setupBulkActionsControls(basket);
 
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_add_tag_black_24dp).into(bulkActionButtonTag);
         bulkActionButtonTag.setVisibility(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
         bulkActionButtonTag.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -171,7 +171,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     private void getResourceInfo(HashSet<ResourceItem> selectedResources) {
-        String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+        String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
         for(ResourceItem item : selectedResources) {
             addActiveServiceCall(R.string.progress_resource_details_updating,new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext()));
         }

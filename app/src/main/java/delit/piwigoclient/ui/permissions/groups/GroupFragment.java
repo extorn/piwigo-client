@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.permissions.groups;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -118,6 +118,11 @@ public class GroupFragment extends MyFragment {
         if (getArguments() != null) {
             currentGroup = (Group) getArguments().getSerializable(CURRENT_GROUP);
         }
+    }
+
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.group_heading);
     }
 
     @Override

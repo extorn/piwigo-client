@@ -1,6 +1,5 @@
 package delit.piwigoclient.piwigoApi.upload;
 
-import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -8,11 +7,12 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.ExifInterface;
 import android.os.Build;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -20,7 +20,6 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
 
@@ -32,8 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.SecureRandom;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +45,9 @@ import java.util.Set;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.model.UploadFileChunk;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -263,56 +262,48 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return wl;
     }
 
-    protected Notification.Builder getNotificationBuilder() {
+    protected NotificationCompat.Builder getNotificationBuilder() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannelIfNeeded();
-            return new Notification.Builder(getBaseContext(), getDefaultNotificationChannelId());
-        } else {
-            return new Notification.Builder(getBaseContext());
         }
+        return new NotificationCompat.Builder(getBaseContext(), getDefaultNotificationChannelId());
     }
 
     abstract protected int getNotificationId();
 
     abstract protected String getNotificationTitle();
 
-    @SuppressLint("WakelockTimeout")
-    @Override
-    protected void onHandleIntent(Intent intent) {
-
-        PowerManager.WakeLock wl = getWakeLock(intent);
-        try {
-            doBeforeWork(intent);
-            doWork(intent);
-        } finally {
-            releaseWakeLock(wl);
-            stopForeground(true);
-        }
-
-    }
-
     //TODO add determinate progress...
     protected void updateNotificationText(String text, int progress) {
-        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification.Builder notificationBuilder = buildNotification(text);
+//        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notificationBuilder = buildNotification(text);
         notificationBuilder.setProgress(100, progress, false);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getBaseContext());
         notificationManager.notify(getNotificationId(), notificationBuilder.build());
     }
 
     protected void updateNotificationText(String text, boolean showIndeterminateProgress) {
-        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification.Builder notificationBuilder = buildNotification(text);
+//        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notificationBuilder = buildNotification(text);
         if (showIndeterminateProgress) {
             notificationBuilder.setProgress(0, 0, true);
         }
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getBaseContext());
         notificationManager.notify(getNotificationId(), notificationBuilder.build());
     }
 
-    protected Notification.Builder buildNotification(String text) {
-        Notification.Builder notificationBuilder = getNotificationBuilder();
+    protected NotificationCompat.Builder buildNotification(String text) {
+        NotificationCompat.Builder notificationBuilder = getNotificationBuilder();
         notificationBuilder.setContentTitle(getNotificationTitle())
-                .setContentText(text)
-                .setSmallIcon(R.drawable.ic_file_upload_black_24dp);
+                .setContentText(text);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            // this is not a vector graphic
+            notificationBuilder.setSmallIcon(R.drawable.ic_file_upload_black);
+            notificationBuilder.setCategory("service");
+        } else {
+            notificationBuilder.setSmallIcon(R.drawable.ic_file_upload_black_24dp);
+            notificationBuilder.setCategory(Notification.CATEGORY_SERVICE);
+        }
 //        .setTicker(getText(R.string.ticker_text))
         return notificationBuilder;
     }
@@ -334,7 +325,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
     }
 
     protected void doBeforeWork(Intent intent) {
-        Notification.Builder notificationBuilder = buildNotification(getString(R.string.notification_message_upload_service));
+        NotificationCompat.Builder notificationBuilder = buildNotification(getString(R.string.notification_message_upload_service));
         notificationBuilder.setProgress(0, 0, true);
         startForeground(getNotificationId(), notificationBuilder.build());
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -361,7 +352,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
     protected void runJob(UploadJob thisUploadJob, JobUploadListener listener) {
 
-        int maxChunkUploadAutoRetries = prefs.getInt(getString(R.string.preference_data_upload_chunk_auto_retries_key), getResources().getInteger(R.integer.preference_data_upload_chunk_auto_retries_default));
+        int maxChunkUploadAutoRetries = UploadPreferences.getUploadChunkMaxRetries(getApplicationContext(), prefs);
 
         if (thisUploadJob == null) {
             if (BuildConfig.DEBUG) {
@@ -613,7 +604,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(thisUploadJob.getConnectionPrefs());
 
-        String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+        String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getApplicationContext());
         for (Map.Entry<File, Long> entry : resourcesToRetrieve.entrySet()) {
 
             ImageGetInfoResponseHandler getImageInfoHandler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null, null), multimediaExtensionList);
@@ -891,7 +882,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
     }
 
     private byte[] buildSensibleBuffer() {
-        int wantedUploadSizeInKbB = prefs.getInt(getString(R.string.preference_data_upload_chunkSizeKb_key), getResources().getInteger(R.integer.preference_data_upload_chunkSizeKb_default));
+        int wantedUploadSizeInKbB = UploadPreferences.getMaxUploadChunkSizeMb(getApplicationContext(), prefs);
         int bufferSizeBytes = 1024 * wantedUploadSizeInKbB; // 512Kb chunk size
 //        bufferSizeBytes -= bufferSizeBytes % 3; // ensure 3 byte blocks so base64 encoded pieces fit together again.
         return new byte[bufferSizeBytes];
@@ -1019,7 +1010,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return new SerializablePair<>(imageChunkUploadHandler.isSuccess(), uploadedResource);
     }
 
-    protected interface JobUploadListener {
+    public interface JobUploadListener {
         void onJobReadyToUpload(Context c, UploadJob thisUploadJob);
     }
 

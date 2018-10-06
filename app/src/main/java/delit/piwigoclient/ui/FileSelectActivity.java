@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
@@ -18,9 +20,11 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.MyActivity;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
 import delit.piwigoclient.ui.file.FolderItemViewAdapterPreferences;
 import delit.piwigoclient.ui.file.RecyclerViewFolderItemSelectFragment;
@@ -30,9 +34,10 @@ import delit.piwigoclient.ui.file.RecyclerViewFolderItemSelectFragment;
  */
 
 public class FileSelectActivity extends MyActivity {
-    public static final String INTENT_SELECTED_FILES = "selectedFiles";
-    public static final String INTENT_SOURCE_EVENT_ID = "sourceEventId";
-    private static final String STATE_STARTED_ALREADY = "startedAlready";
+    public static final String INTENT_SELECTED_FILES = "FileSelectActivity.selectedFiles";
+//    public static final String INTENT_SOURCE_EVENT_ID = "FileSelectActivity.sourceEventId";
+    private static final String STATE_STARTED_ALREADY = "FileSelectActivity.startedAlready";
+    public static final String ACTION_TIME_MILLIS = "FileSelectActivity.actionTimeMillis";
     public static String INTENT_DATA = "configData";
     private boolean startedWithPermissions;
 
@@ -103,7 +108,8 @@ public class FileSelectActivity extends MyActivity {
         int sourceEventId = getTrackedIntentType(event.getActionId());
         if (sourceEventId >= 0) {
             Intent result = this.getIntent();
-            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
+//            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
+            result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
             if (event.getSelectedFiles() != null) {
                 result.putExtra(INTENT_SELECTED_FILES, event.getSelectedFiles());
                 setResult(Activity.RESULT_OK, result);
@@ -124,6 +130,9 @@ public class FileSelectActivity extends MyActivity {
     private void showFileSelectFragment() {
 
         FileSelectionNeededEvent event = (FileSelectionNeededEvent) getIntent().getSerializableExtra(INTENT_DATA);
+        if(event == null) {
+            event = new FileSelectionNeededEvent(true,true, true);
+        }
         String initialFolder = event.getInitialFolder();
 
         File f = new File(initialFolder);
@@ -140,8 +149,8 @@ public class FileSelectActivity extends MyActivity {
         prefs.selectable(event.isMultiSelectAllowed(), false);
         prefs.setInitialSelection(event.getInitialSelection());
         prefs.withShowFilenames(OtherPreferences.isShowFilenames(getSharedPrefs(), getApplicationContext()));
-        prefs.withColumnsOfFiles(OtherPreferences.getFileSelectorColumnsOfFiles(getSharedPrefs(), getApplicationContext()));
-        prefs.withColumnsOfFolders(OtherPreferences.getFileSelectorColumnsOfFolders(getSharedPrefs(), getApplicationContext()));
+        prefs.withColumnsOfFiles(OtherPreferences.getFileSelectorColumnsOfFiles(getSharedPrefs(), this));
+        prefs.withColumnsOfFolders(OtherPreferences.getFileSelectorColumnsOfFolders(getSharedPrefs(), this));
 
 
         removeFragmentsFromHistory(RecyclerViewFolderItemSelectFragment.class, true);
@@ -176,5 +185,33 @@ public class FileSelectActivity extends MyActivity {
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         tx.addToBackStack(f.getClass().getName());
         tx.replace(R.id.app_content, f, f.getClass().getName()).commit();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PermissionsWantedResponse event) {
+        if (getUiHelper().completePermissionsWantedRequest(event)) {
+            if (startedWithPermissions) {
+                // already started up. Therefore the fileSelectionEventId is valid and linked to the fragment
+            } else {
+                startedWithPermissions = true;
+            }
+            if (!event.areAllPermissionsGranted()) {
+                createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
+            }
+        }
+    }
+
+    private void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
+
+        final int trackingRequestId = TrackableRequestEvent.getNextEventId();
+        getUiHelper().setTrackingRequest(trackingRequestId);
+
+        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultAdapter() {
+            @Override
+            public void onDismiss(AlertDialog dialog) {
+                //exit the app.
+                EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
+            }
+        });
     }
 }

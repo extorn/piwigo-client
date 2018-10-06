@@ -1,8 +1,14 @@
 package delit.piwigoclient.piwigoApi.upload;
 
+import android.annotation.SuppressLint;
 import android.app.IntentService;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.PowerManager;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -29,9 +35,26 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
         intent.setAction(ACTION_UPLOAD_FILES);
         intent.putExtra(INTENT_ARG_JOB_ID, uploadJob.getJobId());
         intent.putExtra(INTENT_ARG_KEEP_DEVICE_AWAKE, keepDeviceAwake);
-        context.startService(intent);
+        ComponentName name = context.startService(intent);
+        if(name == null) {
+            Crashlytics.log(Log.ERROR, TAG, "Unable to start background service. Service does not exist");
+        }
         uploadJob.setSubmitted(true);
         return uploadJob.getJobId();
+    }
+
+    @SuppressLint("WakelockTimeout")
+    @Override
+    protected void onHandleIntent(Intent intent) {
+
+        PowerManager.WakeLock wl = getWakeLock(intent);
+        try {
+            doBeforeWork(intent);
+            doWork(intent);
+        } finally {
+            releaseWakeLock(wl);
+            stopForeground(true);
+        }
     }
 
     @Override

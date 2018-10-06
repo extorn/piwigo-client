@@ -149,21 +149,26 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     private void processJsonResponse(long messageId, String piwigoMethod, PiwigoJsonResponse jsonResponse, byte[] rawData) {
         try {
-            switch (jsonResponse.getStat()) {
-                case "fail":
-                    onPiwigoFailure(jsonResponse);
-                    break;
-                case "ok":
-                    onPiwigoSuccess(jsonResponse.getResult());
-                    break;
-                default:
-                    throw new JSONException("Unexpected piwigo response code");
+            if(jsonResponse != null && jsonResponse.getStat() != null) {
+                switch (jsonResponse.getStat()) {
+                    case "fail":
+                        onPiwigoFailure(jsonResponse);
+                        break;
+                    case "ok":
+                        onPiwigoSuccess(jsonResponse.getResult());
+                        break;
+                    default:
+                        throw new JSONException("Unexpected piwigo response code");
+                }
+            } else {
+                Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
+                String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
+                PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
+                storeResponse(r);
             }
         } catch (JSONException e) {
+            Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
             Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n', e);
-            }
             String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
             PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
             storeResponse(r);
@@ -195,18 +200,42 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     protected void onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession) {
 
         if (BuildConfig.DEBUG) {
-            String errorBody = null;
+            String errorBody = "<NONE PRESENT>";
             if (responseBody != null) {
                 errorBody = new String(responseBody);
             }
 
+            StringBuilder msgBuilder = new StringBuilder();
+            msgBuilder.append("Method (failed):");
+            msgBuilder.append(piwigoMethod);
+            msgBuilder.append('\n');
             if (getNestedFailureMethod() != null) {
-                Crashlytics.log(Log.ERROR, getTag(), getNestedFailureMethod() + " onFailure: \n" + errorBody);
-                Crashlytics.logException(error);
-            } else {
-                Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onFailure: \n" + getRequestParameters() + '\n' + errorBody);
-                Crashlytics.logException(error);
+                msgBuilder.append("Nested Method (failed):");
+                msgBuilder.append(getNestedFailureMethod());
+                msgBuilder.append('\n');
             }
+            msgBuilder.append("Request Params:");
+            msgBuilder.append('\n');
+            msgBuilder.append(getRequestParameters());
+            msgBuilder.append('\n');
+            msgBuilder.append("Response Headers:");
+            msgBuilder.append('\n');
+            if(headers != null) {
+                for (Header h : headers) {
+                    msgBuilder.append(h.getName());
+                    msgBuilder.append(':');
+                    msgBuilder.append(h.getValue());
+                    msgBuilder.append('\n');
+                }
+            } else {
+                msgBuilder.append("<NONE PRESENT>");
+                msgBuilder.append('\n');
+            }
+            msgBuilder.append("Response Body:");
+            msgBuilder.append('\n');
+            msgBuilder.append(errorBody);
+            Crashlytics.log(Log.ERROR, getTag(),  msgBuilder.toString());
+            Crashlytics.logException(error);
         }
         String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
         if (getNestedFailureMethod() != null) {

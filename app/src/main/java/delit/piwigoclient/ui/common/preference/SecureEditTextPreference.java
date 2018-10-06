@@ -2,7 +2,7 @@ package delit.piwigoclient.ui.common.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.PreferenceManager;
+import android.support.v7.preference.PreferenceManager;
 import android.util.AttributeSet;
 
 import delit.piwigoclient.R;
@@ -12,25 +12,31 @@ import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
  * Created by gareth on 04/11/17.
  */
 
-public class SecureEditTextPreference extends EditTextPreference implements SecurePreference<String> {
-//    public SecureEditTextPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-//        super(context, attrs, defStyleAttr, defStyleRes);
-//    }
+public class SecureEditTextPreference extends CustomEditTextPreference implements SecurePreference<String> {
+    public SecureEditTextPreference(Context context, AttributeSet attrs, int defStyle, int defStyleRes) {
+        super(context, attrs, defStyle, defStyleRes);
+        initPreference(context, attrs);
+    }
 
-    public SecureEditTextPreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-
-        TypedArray a = context.obtainStyledAttributes(
-                attrs, R.styleable.SecureEditTextPreference, defStyleAttr, 0);
-        a.recycle();
+    public SecureEditTextPreference(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        initPreference(context, attrs);
     }
 
     public SecureEditTextPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initPreference(context, attrs);
     }
 
     public SecureEditTextPreference(Context context) {
         super(context);
+        initPreference(context, null);
+    }
+
+    private void initPreference(Context context, AttributeSet attrs) {
+        TypedArray a = context.obtainStyledAttributes(
+                attrs, R.styleable.SecureEditTextPreference, 0, 0);
+        a.recycle();
     }
 
     /**

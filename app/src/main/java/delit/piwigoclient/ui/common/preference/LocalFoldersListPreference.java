@@ -1,13 +1,12 @@
 package delit.piwigoclient.ui.common.preference;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.Preference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
-import android.view.View;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,6 +23,10 @@ public class LocalFoldersListPreference extends Preference {
 
     private int folderSelectActionId = -1;
     private String value;
+
+    public LocalFoldersListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+    }
 
     public LocalFoldersListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -52,11 +55,11 @@ public class LocalFoldersListPreference extends Preference {
     }
 
     @Override
-    protected void onAttachedToActivity() {
+    public void onAttached() {
+        super.onAttached();
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        super.onAttachedToActivity();
     }
 
     @Override
@@ -66,8 +69,8 @@ public class LocalFoldersListPreference extends Preference {
     }
 
     @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
         setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
             @Override
@@ -90,9 +93,7 @@ public class LocalFoldersListPreference extends Preference {
 
     protected void setValue(String newValue) {
         this.value = newValue;
-        SharedPreferences.Editor e = getEditor();
-        e.putString(getKey(), newValue);
-        e.commit();
+        super.persistString(newValue);
     }
 
     private void requestFolderSelection() {
@@ -120,11 +121,12 @@ public class LocalFoldersListPreference extends Preference {
         EventBus.getDefault().post(fileSelectNeededEvent);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent event) {
         if (event.getActionId() != this.folderSelectActionId) {
             return;
         }
+        EventBus.getDefault().removeStickyEvent(event);
         folderSelectActionId = -1;
         File selectedFile = event.getSelectedFiles().get(0);
         if (selectedFile.isDirectory()) {

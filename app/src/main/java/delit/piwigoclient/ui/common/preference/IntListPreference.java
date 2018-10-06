@@ -24,11 +24,11 @@ public class IntListPreference extends MappedListPreference<Integer> {
     }
 
     public IntListPreference(Context context, AttributeSet attrs) {
-        super(context, attrs, android.R.attr.dialogPreferenceStyle);
+        super(context, attrs);
     }
 
     public IntListPreference(Context context) {
-        super(context, null);
+        super(context);
     }
 
     @Override
@@ -38,6 +38,19 @@ public class IntListPreference extends MappedListPreference<Integer> {
         }
         if (obj instanceof Integer) {
             return (Integer) obj;
+        }
+        if(obj instanceof String) {
+            String resIdStr = (String)obj;
+            if(resIdStr.startsWith("@int/")) {
+                //may be a reference to an int.
+                int resId = getContext().getResources().getIdentifier(resIdStr.substring(5), "integer", getContext().getPackageName());
+                if(resId != 0) {
+                    return getContext().getResources().getInteger(resId);
+                } else {
+                    throw new IllegalArgumentException("integer resource id does not exist : " + resIdStr.substring(5));
+                }
+            }
+
         }
         return Integer.valueOf(obj.toString());
     }

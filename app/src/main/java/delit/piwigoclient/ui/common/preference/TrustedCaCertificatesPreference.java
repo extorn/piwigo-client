@@ -12,18 +12,21 @@ import delit.piwigoclient.util.X509Utils;
  */
 
 public class TrustedCaCertificatesPreference extends KeyStorePreference {
-    private static final String TAG = "trustedCaCertPref";
+
+    public TrustedCaCertificatesPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr,defStyleRes);
+    }
 
     public TrustedCaCertificatesPreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(TAG, context, attrs, defStyleAttr);
+        super(context, attrs, defStyleAttr);
     }
 
     public TrustedCaCertificatesPreference(Context context, AttributeSet attrs) {
-        this(context, attrs, android.R.attr.dialogPreferenceStyle);
+        super(context, attrs);
     }
 
     public TrustedCaCertificatesPreference(Context context) {
-        this(context, null);
+        super(context);
     }
 
     @Override

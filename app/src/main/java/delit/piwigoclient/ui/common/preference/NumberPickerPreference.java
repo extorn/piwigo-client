@@ -19,13 +19,11 @@ package delit.piwigoclient.ui.common.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.preference.DialogPreference;
-import android.preference.Preference;
-import android.preference.PreferenceManager;
+import android.support.v7.preference.DialogPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceManager;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 
 import delit.piwigoclient.R;
 
@@ -43,20 +41,34 @@ import delit.piwigoclient.R;
  * See android.R.styleable#EditText EditText Attributes.
  */
 public class NumberPickerPreference extends DialogPreference {
-    private final int maxValue;
-    private final int minValue;
-    private final boolean setDefaultOnAttach;
-    private final boolean wrapPickList;
-    private final int multiplier;
-    private NumberPicker mPicker;
-    private int mNumber = 0;
+    private int maxValue;
+    private int minValue;
+    private boolean setDefaultOnAttach;
+    private boolean wrapPickList;
+    private int multiplier;
+    private int value = 0;
 
-    public NumberPickerPreference(Context context, AttributeSet attrs) {
-        this(context, attrs, android.R.attr.dialogPreferenceStyle);
+    public NumberPickerPreference(Context context, AttributeSet attrs, int defStyle, int defStyleRes) {
+        super(context, attrs, defStyle, defStyleRes);
+        initPreference(context, attrs);
     }
 
     public NumberPickerPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        initPreference(context, attrs);
+    }
+
+    public NumberPickerPreference(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        initPreference(context, attrs);
+    }
+
+    public NumberPickerPreference(Context context) {
+        super(context);
+        initPreference(context, null);
+    }
+
+    private void initPreference(Context context, AttributeSet attrs) {
         setPositiveButtonText(android.R.string.ok);
         setNegativeButtonText(android.R.string.cancel);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.NumberPickerPreference);
@@ -66,36 +78,16 @@ public class NumberPickerPreference extends DialogPreference {
         minValue = a.getInt(R.styleable.NumberPickerPreference_minValue, DEFAULT_minValue);
         int DEFAULT_multiplier = 1;
         multiplier = a.getInt(R.styleable.NumberPickerPreference_multiplier, DEFAULT_multiplier);
-        mNumber = a.getInt(R.styleable.NumberPickerPreference_defValue, 0);
+        value = a.getInt(R.styleable.NumberPickerPreference_defValue, 0);
         setDefaultOnAttach = a.getBoolean(R.styleable.NumberPickerPreference_setDefaultOnAttach, true);
         wrapPickList = a.getBoolean(R.styleable.NumberPickerPreference_wrapPickList, false);
         a.recycle();
     }
 
-    @Override
-    protected View onCreateDialogView() {
-        mPicker = new NumberPicker(getContext());
-        mPicker.setMinValue(minValue);
-        mPicker.setMaxValue(maxValue);
-        mPicker.setValue(mNumber);
-        mPicker.setWrapSelectorWheel(wrapPickList);
-        return mPicker;
-    }
+
 
     public int getMultiplier() {
         return multiplier;
-    }
-
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        int pickerValue = mPicker.getValue();
-        if (positiveResult) {
-            mPicker.clearFocus();
-            setValue(pickerValue);
-        }
-        if (getOnPreferenceChangeListener() != null) {
-            getOnPreferenceChangeListener().onPreferenceChange(this, pickerValue);
-        }
     }
 
     public void updateDefaultValue(int newDefault) {
@@ -107,7 +99,7 @@ public class NumberPickerPreference extends DialogPreference {
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
         if (setDefaultOnAttach) {
-            setValue(restoreValue ? getAdjustedPersistedInt(getPersistedInt(mNumber * multiplier)) : (Integer) defaultValue);
+            setValue(restoreValue ? getAdjustedPersistedInt(getPersistedInt(value * multiplier)) : (Integer) defaultValue);
         }
     }
 
@@ -133,11 +125,8 @@ public class NumberPickerPreference extends DialogPreference {
             persistInt(value);
         }
 
-        if (value != mNumber) {
-            mNumber = value;
-            if (mPicker != null) {
-                mPicker.setValue(mNumber);
-            }
+        if (value != this.value) {
+            this.value = value;
             notifyChanged();
         }
     }
@@ -162,11 +151,28 @@ public class NumberPickerPreference extends DialogPreference {
      */
     @Override
     public CharSequence getSummary() {
-//        int adjustedValue = (int) Math.round((double) mNumber / getMultiplier());
+//        int adjustedValue = (int) Math.round((double) value / getMultiplier());
         CharSequence summary = super.getSummary();
         if (summary != null) {
-            return String.format(summary.toString(), mNumber);
+            return String.format(summary.toString(), value);
         }
         return null;
+    }
+
+
+    public int getMinValue() {
+        return minValue;
+    }
+
+    public int getMaxValue() {
+        return maxValue;
+    }
+
+    public boolean isWrapPickList() {
+        return wrapPickList;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

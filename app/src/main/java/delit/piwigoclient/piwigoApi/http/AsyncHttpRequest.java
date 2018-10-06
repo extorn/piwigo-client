@@ -22,6 +22,7 @@ import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.BuildConfig;
 import com.loopj.android.http.RangeFileAsyncHttpResponseHandler;
 import com.loopj.android.http.ResponseHandlerInterface;
 
@@ -30,8 +31,6 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
@@ -208,7 +207,9 @@ public class AsyncHttpRequest implements Runnable {
                         Crashlytics.log(Log.DEBUG, "AsyncRequest", "Error - " + e.getClass().getName());
                     } else {
                         Crashlytics.log(Log.DEBUG, "AsyncRequest", "Error - " + e.getClass().getName());
-//                        Crashlytics.logException(e);
+                        if(BuildConfig.DEBUG) {
+                            Crashlytics.logException(e);
+                        }
                     }
                     if (isCancelled()) {
                         // Eating exception, as the request was cancelled

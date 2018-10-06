@@ -14,13 +14,13 @@ import delit.piwigoclient.BuildConfig;
  */
 public class CategoryItem extends GalleryItem {
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
-    public static final CategoryItem ADVERT = new CategoryItem(Long.MIN_VALUE + 1, null, null, true, null, 0, 0, 0, null) {
+    public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
+    public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 1, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
         @Override
         public int getType() {
-            return GalleryItem.CATEGORY_ADVERT_TYPE;
+            return GalleryItem.ALBUM_HEADING_TYPE;
         }
     };
-    public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
     private List<CategoryItem> childAlbums;
     private int photoCount;
     private long totalPhotoCount;

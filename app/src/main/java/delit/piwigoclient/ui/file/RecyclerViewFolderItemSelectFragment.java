@@ -5,12 +5,13 @@ import android.os.Environment;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -32,11 +33,15 @@ import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.util.IOUtils;
 
+import static android.view.View.NO_ID;
+
 public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
-    private static final String ACTIVE_FOLDER = "activeFolder";
-    private LinearLayout folderPathView;
+    private static final String ACTIVE_FOLDER = "RecyclerViewFolderItemSelectFragment.activeFolder";
+    private RelativeLayout folderPathView;
     private Spinner spinner;
     private MappedArrayAdapter<String, File> folderRootsAdapter;
+    private long startedActionAtTime;
+    private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
 
     public static RecyclerViewFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
         RecyclerViewFolderItemSelectFragment fragment = new RecyclerViewFolderItemSelectFragment();
@@ -52,7 +57,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     @Override
     @LayoutRes
     protected int getViewId() {
-        return R.layout.layout_file_selection_recycler_list;
+        return R.layout.fragment_file_selection_recycler_list;
     }
 
     @Override
@@ -69,6 +74,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(ACTIVE_FOLDER, getListAdapter().getActiveFolder());
+        outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
     }
 
     @Nullable
@@ -80,6 +86,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
+
+        startedActionAtTime = System.currentTimeMillis();
 
         folderRootsAdapter = buildFolderRootsAdapter();
 
@@ -119,21 +127,50 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                 File f = newFolder;
                 folderPathView.removeAllViews();
 
-                while (!f.getName().isEmpty()) {
-                    TextView pathItem = new TextView(getContext());
 
-                    folderPathView.addView(pathItem, 0);
-                    pathItem.setText('/' + f.getName());
-                    final File thisFile = f;
+                ArrayList<File> pathItems = new ArrayList<>();
+                while (!f.getName().isEmpty()) {
+                    pathItems.add(0, f);
+                    f = f.getParentFile();
+                }
+                TextView pathItem = null;
+                int idx = 0;
+                for(final File pathItemFile : pathItems) {
+                    idx++;
+                    int lastId = NO_ID;
+                    if(pathItem != null) {
+                        lastId = pathItem.getId();
+                    }
+                    pathItem = new TextView(getContext());
+                    pathItem.setId(View.generateViewId());
+                    TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_AppCompat_Body2_Clickable);
+                    pathItem.setText(pathItemFile.getName());
+                    RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(
+                            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    if(lastId > NO_ID) {
+                        relativeParams.addRule(RelativeLayout.RIGHT_OF, lastId);
+                    }
+                    folderPathView.addView(pathItem,relativeParams);
 
                     pathItem.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             TextView tv = (TextView) v;
-                            getListAdapter().updateContent(thisFile);
+                            getListAdapter().updateContent(pathItemFile);
                         }
                     });
-                    f = f.getParentFile();
+
+                    if(idx < pathItems.size()) {
+                        TextView pathItemSeperator = new TextView(getContext());
+                        TextViewCompat.setTextAppearance(pathItemSeperator, R.style.TextAppearance_AppCompat_Body2);
+                        pathItemSeperator.setText("/");
+                        pathItemSeperator.setId(View.generateViewId());
+                        relativeParams = new RelativeLayout.LayoutParams(
+                                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                        relativeParams.addRule(RelativeLayout.RIGHT_OF, pathItem.getId());
+                        folderPathView.addView(pathItemSeperator,relativeParams);
+                        pathItem = pathItemSeperator;
+                    }
                 }
             }
         };
@@ -147,6 +184,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         if (savedInstanceState != null) {
             File activeFolder = (File) savedInstanceState.getSerializable(ACTIVE_FOLDER);
             viewAdapter.setActiveFolder(activeFolder);
+            startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
         }
         viewAdapter.setInitiallySelectedItems();
 
@@ -189,14 +227,16 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                 File[] locations = f.listFiles();
                 if(locations != null && locations.length > 0) {
                     for (File location : locations) {
-                        if (location.isDirectory() && !rootPaths.contains(location)) {
+                        File[] folderContent = location.listFiles();
+                        if (location.isDirectory() && !rootPaths.contains(location) && folderContent != null && folderContent.length > 0) {
                             rootLabels.add(getString(R.string.folder_extstorage_device_pattern, extStorageDeviceId));
                             rootPaths.add(location);
                             extStorageDeviceId++;
                         }
                     }
                 } else {
-                    if (!rootPaths.contains(f)) {
+                    File[] folderContent = f.listFiles();
+                    if (!rootPaths.contains(f)  && folderContent != null && folderContent.length > 0) {
                         rootLabels.add(getString(R.string.folder_extstorage_device_pattern, extStorageDeviceId));
                         rootPaths.add(f);
                         extStorageDeviceId++;
@@ -213,7 +253,9 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         rootLabels.add(0, "");
         rootPaths.add(0, null);
 
-        return new MappedArrayAdapter<>(getContext(), R.layout.support_simple_spinner_dropdown_item, rootLabels, rootPaths);
+        MappedArrayAdapter adapter = new MappedArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, rootLabels, rootPaths);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        return adapter;
     }
 
     @Override
@@ -236,7 +278,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<File> selectedItems = listAdapter.getSelectedItems();
-        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems)));
+        long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems), actionTimeMillis));
         // now pop this screen off the stack.
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
@@ -245,7 +288,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
     @Override
     public void onCancelChanges() {
-        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), null));
+        long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), null, actionTimeMillis));
         super.onCancelChanges();
     }
 

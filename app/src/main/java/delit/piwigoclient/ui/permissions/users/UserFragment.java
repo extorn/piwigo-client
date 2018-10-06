@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.permissions.users;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -233,6 +233,7 @@ public class UserFragment extends MyFragment {
 
         usertypeField.setEnabled(editable);
         userPrivacyLevelField.setEnabled(editable);
+        lastVisitedField.setEnabled(editable);
 
         emailField.setEnabled(editable);
         highDefinitionEnabled.setEnabled(editable);
@@ -240,6 +241,11 @@ public class UserFragment extends MyFragment {
         discardButton.setEnabled(editable);
         saveButton.setEnabled(editable);
 
+    }
+
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.user_user_heading);
     }
 
     @Nullable

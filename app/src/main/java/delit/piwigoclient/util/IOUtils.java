@@ -4,8 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
-import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.os.EnvironmentCompat;
 import android.util.Log;
@@ -116,9 +114,32 @@ public class IOUtils {
                 canContinue = false;
             }
         }
+        if(canContinue && !destinationFile.getParentFile().isDirectory()) {
+            if (!destinationFile.getParentFile().mkdir()) {
+                if (BuildConfig.DEBUG) {
+                    Log.d("IOUtils", "Error writing job to disk - unable to create parent folder");
+                }
+                canContinue = false;
+            }
+        }
+        try {
+            if (canContinue && !tmpFile.createNewFile()) {
+                if (BuildConfig.DEBUG) {
+                    Log.d("IOUtils", "Error writing job to disk - unable to create new temporary file");
+                }
+                canContinue = false;
+            }
+        } catch (IOException e) {
+            Crashlytics.logException(e);
+            if (BuildConfig.DEBUG) {
+                Log.d("IOUtils", "Error writing Object to disk (creating new file)", e);
+            }
+        }
+
         if (!canContinue) {
             return;
         }
+
         ObjectOutputStream oos = null;
         try {
             oos = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(tmpFile)));

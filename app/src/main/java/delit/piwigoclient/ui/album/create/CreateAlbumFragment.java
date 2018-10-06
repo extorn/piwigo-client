@@ -5,12 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
@@ -63,12 +63,12 @@ public class CreateAlbumFragment extends MyFragment {
     private CategoryItemStub parentGallery;
     private TextView galleryNameEditField;
     private TextView galleryDescriptionEditField;
-    private Switch galleryCommentsAllowedSwitchField;
-    private Switch galleryIsPrivateSwitchField;
+    private SwitchCompat galleryCommentsAllowedSwitchField;
+    private SwitchCompat galleryIsPrivateSwitchField;
     private ArrayList<Group> selectedGroups;
     private ArrayList<Username> selectedUsernames;
-    private AppCompatTextView allowedGroupsTextView;
-    private AppCompatTextView allowedUsernamesTextView;
+    private TextView allowedGroupsTextView;
+    private TextView allowedUsernamesTextView;
 
     private PiwigoGalleryDetails newAlbum;
     private long createGalleryMessageId;
@@ -92,6 +92,11 @@ public class CreateAlbumFragment extends MyFragment {
         args.putInt(STATE_ACTION_ID, actionId);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.createGallery_pageTitle);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -215,7 +220,7 @@ public class CreateAlbumFragment extends MyFragment {
         // ensure the dialog boxes are setup
         super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_create_new_gallery, container, false);
+        View view = inflater.inflate(R.layout.fragment_create_new_album, container, false);
 
         AdView adView = view.findViewById(R.id.createGallery_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {
@@ -383,11 +388,11 @@ public class CreateAlbumFragment extends MyFragment {
 
             // don't need the call to be recursive since it is a leaf node already.
             setGalleryPermissionsMessageId = new AlbumAddPermissionsResponseHandler(newAlbum, allowedGroups, allowedUsers, false).invokeAsync(getContext());
-            addActiveServiceCall(setGalleryPermissionsMessageId);
+            addActiveServiceCall(R.string.progress_setting_permissions, setGalleryPermissionsMessageId);
         } else {
             //TODO why are we doing this unnecessary call?
             setGalleryPermissionsMessageId = new AlbumSetStatusResponseHandler(newAlbum).invokeAsync(getContext());
-            addActiveServiceCall(setGalleryPermissionsMessageId);
+            addActiveServiceCall(R.string.progress_setting_permissions, setGalleryPermissionsMessageId);
         }
 
     }
@@ -396,20 +401,22 @@ public class CreateAlbumFragment extends MyFragment {
 
         newAlbum.setAllowedUsers(response.getUserIdsAffected());
         newAlbum.setAllowedGroups(response.getGroupIdsAffected());
-
-        showDialogBox(R.string.alert_success, getString(R.string.alert_album_created));
-        EventBus.getDefault().post(new AlbumCreatedEvent(actionId, parentGallery.getId(), newAlbum.getGalleryId()));
-        for (Long parentId : newAlbum.getParentageChain()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(parentId));
-        }
+        informInterestedParties();
     }
 
     public void onAlbumStatusAltered(PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse response) {
+        informInterestedParties();
+    }
 
+    private void informInterestedParties() {
         showDialogBox(R.string.alert_success, getString(R.string.alert_album_created));
         EventBus.getDefault().post(new AlbumCreatedEvent(actionId, parentGallery.getId(), newAlbum.getGalleryId()));
-        for (Long parentId : newAlbum.getParentageChain()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(parentId));
+        List<Long> parentageChain = newAlbum.getParentageChain();
+        if(!parentageChain.isEmpty()) {
+            EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(0), newAlbum.getGalleryId()));
+            for (int i = 1; i < parentageChain.size(); i++) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(i), parentageChain.get(i - 1)));
+            }
         }
     }
 

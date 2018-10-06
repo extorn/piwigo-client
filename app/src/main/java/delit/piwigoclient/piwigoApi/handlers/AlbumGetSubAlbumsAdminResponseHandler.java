@@ -1,5 +1,8 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -53,7 +56,11 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
                 description = commentElem.getAsString();
             }
 
-            boolean isPublic = "public".equals(category.get("status").getAsString());
+            boolean isPublic = false;
+            JsonElement statusElem = category.get("status");
+            if(statusElem != null) {
+                isPublic = "public".equals(statusElem.getAsString());
+            }
 
             CategoryItem item = new CategoryItem(id, name, description, !isPublic, null, photos, photos, 0, null);
 
@@ -62,7 +69,11 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
             // Add root category first (all are children of root)
             parentageChain.add(0L);
             for (String parentId : parentage) {
-                parentageChain.add(Long.valueOf(parentId));
+                try {
+                    parentageChain.add(Long.valueOf(parentId));
+                } catch(NumberFormatException e) {
+                    Crashlytics.log(Log.ERROR, "getAdminAlbums", "parentId is invalid in response : " + rsp.toString());
+                }
             }
             // remove this album from parentage list
             parentageChain.remove(parentageChain.size() - 1);

@@ -1,6 +1,5 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

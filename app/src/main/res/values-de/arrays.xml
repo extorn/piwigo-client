@@ -76,38 +76,50 @@
         <item>Langer Klick auf die Löschen-Schaltfläche einer \'Datei zum Hochladen\', um alle Dateien zu löschen, die hochgeladen werden sollen (wenn der Auftrag nicht ausgeführt wird).</item>
     </string-array>
     <string-array name="planned_releases">
-        <item>Veröffentlichung 1.3.x</item>
+        <item>Die Zukunft</item>
         <item>"Änderungen:
-         - ? Französisch / andere Übersetzungen für die App?"
-        </item>
+         - Möglicherweise - Unterstützung für Favoriten - abhängig von der PIWIGO API-Erweiterung
+         - Möglicherweise - erlauben Sie die Verknüpfung des Upload-Prozesses mit einer Kompressionsroutine für Videos.
+         - Möglicherweise - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Waisenkinder erstellen).
+         - Möglicherweise - Orphan File Management
+         - Möglicherweise - erweitern Sie die Piwigo Server-API, damit Benutzer ihre Bewertung für eine bestimmte Ressource sehen können.
+         - Möglicherweise: Erlaubt es dem Benutzer, in der Diashow herauszuzoomen (Ansicht kleiner als Vollbild).
+         - Möglicherweise: Untersuchung der Hinzufügung von Unterstützung für farbiges Tag-Plugin
+         - Möglicherweise: Merken Sie sich das zuvor geöffnete Foto oder Album, wenn der Benutzer die App öffnet.
+         - Möglicherweise: Nur kostenpflichtige App: Die Idee der Zufallsfotos, die auf der Piwigo-Weboberfläche umgesetzt wurde.
+         - Möglicherweise: Nur kostenpflichtige App: Unterstützung für Benutzerkommentare
+         - Möglicherweise: Nur kostenpflichtige App: Benachrichtigen Sie den Benutzer über verfügbare Server-Updates.
+         - Möglicherweise: Nur kostenpflichtige App: Unterstützung für die Bearbeitung von EXIF und anderen Metadatenformaten für Bilder.
+         - Möglicherweise: Nur kostenpflichtige App: Fügen Sie eine Präferenz hinzu, um das Ein- und Ausblenden der EXIF- und anderen Felder von Interesse oder nicht von Interesse zu ermöglichen.
+         - Möglicherweise: ? Französisch / andere Übersetzungen für die App?
+         - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann."</item>
         <item>1.3.97</item>
-        <item>"Änderungen:
-            - Möglicherweise - Verfeinerungen der Benutzeroberfläche
-            - Möglicherweise - Unterstützung für Favoriten - abhängig von der PIWIGO-API-Erweiterung
-            - Möglicherweise - den Upload-Prozess mit einer Komprimierungsroutine für Videos verknüpfen.
-            - Möglicherweise - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Erstellen von Waisenkindern).
-            - Möglicherweise - Verwaltung verwaister Dateien
-            - Möglicherweise Erlaubt das Verkleinern der Diashow (Ansicht kleiner als Vollbild)
-            - Möglicherweise Unterstützung für farbiges Tag-Plugin untersuchen
-            - Möglicherweise Speichern Sie das zuvor geöffnete Foto oder Album, wenn der Benutzer die Anwendung öffnet.
-            - Paid App Only : (Maybe) : Die Idee der Zufallsfotos auf der piwigo web UI umgesetzt
-            - Paid App Only : (Maybe) : Unterstützung für Benutzerkommentare
-            - Nur kostenpflichtige Anwendung: (Vielleicht): Benachrichtigen Sie den Benutzer über verfügbare Server-Updates.
-            - Paid App Only : (Maybe) : Möglicherweise Unterstützung für die Bearbeitung von EXIF und anderen Bildmetadatenformaten.
-            - Nur bezahlte Anwendung : (Vielleicht) : Präferenz hinzufügen, um das Ein-/Ausblenden der EXIF usw. Felder zu erlauben
-            - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder wünschen, dass diese Anwendung noch nicht funktioniert"</item>
-        <item>1.3.96</item>
-        <item>"Änderungen:
-            - Überarbeitung der Darstellung von Popup-Meldungen und Fortschrittsanzeigen - Untersuchung mit weiteren Toastmeldungen".
+        <item>"Erwartete Lieferung:
+         - Ende November 2018
+         Änderungen:
+         - Füge eine Art Hilfe hinzu, um dem Benutzer zu helfen, die Funktionen zu kennen."
         </item>
-        <item>1.3.95</item>
-        <item>"Änderungen:
-            - Erlaubt dem Benutzer, nach dem Löschen eines Elements in der Diashow zu bleiben.
-            - Fügen Sie eine Art Hilfe hinzu, um den Benutzer bei der Kenntnis der Funktionen zu unterstützen.
-            - Korrekte Merkwürdigkeit bei Korbware (Kopierpaste)".
+        <item>1.3.96</item>
+        <item>"Erwartete Lieferung:
+         - Ende Oktober oder Mitte November 2018
+         Änderungen:
+         - Weitere Verfeinerungen der Benutzeroberfläche mit weiteren Layout- und Gestaltungsideen eines Benutzers - Danke David Klement
+         - Weitere Überarbeitung der Darstellung von Popup-Meldungen und Fortschrittsanzeigen - Untersuchung mit mehr Toast- oder Snackbar-Meldungen, Minimierung der Verwendung von Dialog-Popup-Fenstern.
+         - Zusammenklappbare Alben in den Auswahllisten der Alben, wo dies praktisch möglich ist.
+         - Überprüfung und Verbesserung der Korbaktionen (Massenausschnitt oder Kopieren und Einfügen)
+         - Aktualisieren Sie die Liste der wichtigsten Tipps."
         </item>
     </string-array>
     <string-array name="release_history">
+        <item>1.3.95</item>
+        <item>"Änderungen:
+            - Die Albumansicht wurde nach einem Entwurf von David Klement neu gestaltet.
+            - Das Materialthema wurde aufgenommen.
+            - Korrigierter Verbindungsabbruch (bitte korrigieren Sie Ihre Einstellung, wenn sie zurückgesetzt wurde).
+            - Antwort-Timeout-Einstellung zusätzlich zum Verbindungs-Timeout hinzugefügt.
+            - Viele Bugfixes speziell für Android-Versionen vor Lollipop
+            - Ermöglicht es dem Benutzer, nach dem Löschen eines Elements in der Diashow zu bleiben."
+        </item>
         <item>1.3.94.7</item>
         <item>"Bugfix:
             - Absturz beim Wiederherstellen der Diashow nach dem Minimieren der Anwendung

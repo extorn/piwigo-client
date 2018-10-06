@@ -172,6 +172,10 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
 
     public abstract Long getItemId(T item);
 
+    public boolean containsItem(T item) {
+        return items.contains(item);
+    }
+
     @Override
     public T getItemById(long selectedItemId) {
         for (T item : items) {

@@ -24,6 +24,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 
@@ -98,6 +99,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(viewAdapter);
+        getList().addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
 
 
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
@@ -122,9 +124,13 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     }
 
     @Override
+    protected String buildPageHeading() {
+        return getString(R.string.users_heading);
+    }
+
+    @Override
     protected void setPageHeading(TextView headingField) {
-        headingField.setText(R.string.users_heading);
-        headingField.setVisibility(View.VISIBLE);
+        headingField.setVisibility(View.GONE);
     }
 
     @Override

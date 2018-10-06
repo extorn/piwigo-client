@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="16dp"
+    android:background="@color/colorAlbumItemBackground"
+    tools:layout_height="120dp">
+
+    <delit.piwigoclient.ui.common.SquareLinearLayout
+        android:id="@+id/image_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        tools:layout_height="120dp"
+        tools:layout_width="120dp">
+
+        <ImageView
+            android:id="@+id/resource_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:scaleType="fitCenter"
+            tools:layout_height="120dp"
+            tools:layout_width="120dp"
+            tools:src="@drawable/ic_broken_image_black_240dp" />
+    </delit.piwigoclient.ui.common.SquareLinearLayout>
+
+    <ImageView
+        android:id="@+id/newly_altered_marker_image"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentStart="true"
+        app:srcCompat="@drawable/ic_star_yellow_24dp" />
+
+    <LinearLayout
+        android:id="@+id/album_details_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/image_container"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/resource_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:minLines="1"
+            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Medium"
+            tools:text="Album Name" />
+
+        <TextView
+            android:id="@+id/resource_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:minLines="2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            tools:text="A very interesting gallery with a great deal of nothing in it. Maybe we should add more for an even bigger description" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/album_photoCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/album_details_container"
+        android:layout_marginTop="3dp"
+        android:layout_toEndOf="@id/image_container"
+        android:background="@color/black_overlay"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:minLines="1"
+        android:paddingEnd="0dp"
+        android:paddingStart="10dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        tools:text="215 photos" />
+
+</RelativeLayout>

@@ -31,10 +31,15 @@
     <string name="preference_server_connection_allow_redirects_summary">Follow http 3xx responses</string>
     <bool name="preference_server_connection_allow_redirects_default">true</bool>
 
-    <string name="preference_server_socketTimeout_millisecs_key" translatable="false">preference_server_socketTimeout_millisecs</string>
-    <string name="preference_server_socketTimeout_millisecs_title">Connection timeout (milliseconds)</string>
-    <string name="preference_server_socketTimeout_millisecs_summary">%1$d millisecs</string>
-    <integer name="preference_server_socketTimeout_millisecs_default">10000</integer>
+    <string name="preference_server_connection_timeout_secs_key" translatable="false">preference_server_connection_timeout_secs</string>
+    <string name="preference_server_connection_timeout_secs_title">Connection timeout (seconds)</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d seconds</string>
+    <integer name="preference_server_connection_timeout_secs_default">10</integer>
+
+    <string name="preference_server_response_timeout_secs_key" translatable="false">preference_server_response_timeout_secs</string>
+    <string name="preference_server_response_timeout_secs_title">Response timeout (seconds)</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d seconds</string>
+    <integer name="preference_server_response_timeout_secs_default">10</integer>
 
     <string name="preference_server_connection_retries_key" translatable="false">preference_server_connection_retries</string>
     <string name="preference_server_connection_retries_title">Connection retries before failure</string>
@@ -129,12 +134,6 @@
 
     <!-- prefs -->
 
-    <string name="preference_app_show_toolbar_key" translatable="false">preference_app_show_toolbar</string>
-    <string name="preference_app_show_toolbar_title">Show App Toolbar</string>
-    <string name="preference_app_show_toolbar_summary">Show the toolbar at the top of the application</string>
-    <bool name="preference_app_show_toolbar_default">true</bool>
-
-
     <string name="preference_gallery_albums_preferredColumnsLandscape_key" translatable="false">preference_gallery_albums_preferredColumnsLandscape</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_title">Landscape: Columns of Albums to show</string>
     <string name="preference_gallery_albums_preferredColumnsLandscape_summary">%1$d</string>
@@ -148,15 +147,10 @@
     <string name="preference_gallery_images_preferredColumnsLandscape_title">Landscape: Columns of Images to show</string>
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_gallery_use_dark_mode_key" translatable="false">preference_gallery_use_dark_mode</string>
-    <string name="preference_gallery_use_dark_mode_title">Use Dark Theme</string>
-    <string name="preference_gallery_use_dark_mode_summary">Select app theme</string>
-    <bool name="preference_gallery_use_dark_mode_default">true</bool>
-
     <string name="preference_gallery_show_album_thumbnail_zoomed_key" translatable="false">preference_gallery_show_album_thumbnail_zoomed</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">Show Zoomed Album Thumbnail</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Album thumbnails are center cropped</string>
-    <bool name="preference_gallery_show_album_thumbnail_zoomed_default">false</bool>
+    <bool name="preference_gallery_show_album_thumbnail_zoomed_default">true</bool>
 
     <string name="preference_gallery_albums_preferredColumnsPortrait_key" translatable="false">preference_gallery_albums_preferredColumnsPortrait</string>
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrait: Columns of Albums to show</string>
@@ -165,11 +159,6 @@
     <string name="preference_gallery_images_preferredColumnsPortrait_key" translatable="false">preference_gallery_images_preferredColumnsPortrait</string>
     <string name="preference_gallery_images_preferredColumnsPortrait_title">Portrait: Columns of Images to show</string>
     <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
-
-    <string name="preference_gallery_show_large_thumbnail_key" translatable="false">preference_gallery_show_large_thumbnail</string>
-    <string name="preference_gallery_show_large_thumbnail_title">Display albums with large thumbnail</string>
-    <string name="preference_gallery_show_large_thumbnail_summary">Image thumbnails fill the column</string>
-    <bool name="preference_gallery_show_large_thumbnail_default">true</bool>
 
     <string name="preference_gallery_include_videos_in_slideshow_key" translatable="false">preference_gallery_include_videos_in_slideshow</string>
     <string name="preference_gallery_include_videos_in_slideshow_title">Show videos in Slideshow</string>
@@ -252,10 +241,6 @@
     <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
     <string name="preference_gallery_item_slideshow_image_size_default" translatable="false">best-fit</string>
 
-    <string name="preference_gallery_masonry_view_title">Use Masonry Style Layout (experimental)</string>
-    <string name="preference_gallery_masonry_view_summary">Best fit album content in a tapestry effect</string>
-    <string name="preference_gallery_masonry_view_key" translatable="false">preference_gallery_masonry_view</string>
-    <bool name="preference_gallery_masonry_view_default">false</bool>
 
     <!-- Data Upload page -->
 
@@ -274,11 +259,6 @@
     <string name="preference_data_upload_chunk_auto_retries_title">Max automatic file chunk upload retries</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
     <integer name="preference_data_upload_chunk_auto_retries_default">1</integer>
-
-    <string name="preference_data_upload_large_thumbnail_key" translatable="false">preference_data_upload_large_thumbnail</string>
-    <string name="preference_data_upload_large_thumbnail_title">Display files with large thumbnail</string>
-    <string name="preference_data_upload_large_thumbnail_summary">Image thumbnails fill the column</string>
-    <bool name="preference_data_upload_large_thumbnail_default">true</bool>
 
     <string name="preference_data_upload_preferredColumnsPortrait_key" translatable="false">preference_data_upload_preferredColumnsPortrait</string>
     <string name="preference_data_upload_preferredColumnsPortrait_title">Portrait: Columns of Images to show</string>
@@ -320,66 +300,4 @@
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_key">preference_data_file_selector_preferredFolderColumnsPortrait</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Portrait: Columns of Folders to show</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
-
-    <!-- Automatic Upload Jobs page -->
-
-    <string name="preference_page_auto_upload_jobs">Automatic Upload</string>
-    <string name="preference_data_upload_automatic_title">Automatic Upload</string>
-    <string name="preference_data_upload_automatic_job_title">Auto Upload Job</string>
-
-    <!-- prefs -->
-
-    <string name="preference_data_upload_automatic_upload_enable_key" translatable="false">preference_data_upload_automatic_upload_enable</string>
-    <string name="preference_data_upload_automatic_upload_enable_summary">Enable background uploading</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Automatic Upload</string>
-
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Only use Auto Upload on Wireless</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Over Wireless Only</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_key" translatable="false">preference_data_upload_automatic_upload_wireless_only</string>
-
-    <string name="preference_data_upload_automatic_upload_jobs_key" translatable="false">preference_data_upload_automatic_upload_jobs</string>
-    <string name="preference_data_upload_automatic_upload_jobs_title">Auto Upload Jobs</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
-
-    <!-- boolean flag set that if false will stop the job running -->
-
-    <string name="preference_data_upload_automatic_job_is_valid_key" translatable="false">preference_data_upload_automatic_job_is_valid</string>
-    <string name="preference_data_upload_automatic_job_is_valid_title">Job is Valid</string>
-
-    <string name="preference_data_upload_automatic_job_enabled_key" translatable="false">preference_data_upload_automatic_server_enabled</string>
-    <string name="preference_data_upload_automatic_job_enabled_summary">Is this job listening in the background?</string>
-    <string name="preference_data_upload_automatic_job_enabled_title">Job Enabled</string>
-
-    <string name="preference_data_upload_automatic_job_server_title">Upload to Server</string>
-    <string name="preference_data_upload_automatic_job_server_key" translatable="false">preference_data_upload_automatic_server</string>
-    <string name="preference_data_upload_automatic_job_server_summary">Profile: %1$s</string>
-    
-    <string name="preference_data_upload_automatic_job_server_album_key" translatable="false">preference_data_upload_automatic_server_album</string>
-    <string name="preference_data_upload_automatic_job_server_album_title">Upload to Album</string>
-    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
-
-
-    <string name="preference_data_upload_automatic_job_local_folder_title">Upload from folder</string>
-    <string name="preference_data_upload_automatic_job_local_folder_key" translatable="false">preference_data_upload_automatic_local_folder</string>
-    <string name="preference_data_upload_automatic_job_local_folder_summary">Upload %1$s</string>
-
-    <string name="preference_data_upload_automatic_job_delete_uploaded_key" translatable="false">preference_data_upload_automatic_server_delete_uploaded</string>
-    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Delete successfully uploaded files</string>
-    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Auto delete</string>
-
-    <integer name="preference_data_upload_automatic_job_max_upload_size_mb_default">20</integer>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_key" translatable="false">preference_data_upload_automatic_max_upload_size</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize uploaded</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
-
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_key" translatable="false">preference_data_upload_automatic_server_file_exts_uploaded</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">jpg,png,raw</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">File extensions</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Upload files with ext %1$s</string>
-
-    <string name="preference_data_upload_automatic_job_privacy_level_title">Privacy Level</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">Uploaded files visible to %1$s</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_key" translatable="false">preference_data_upload_automatic_job_privacy_level</string>
-
-    <string name="preference_data_upload_automatic_job_files_uploaded_already_key" translatable="false">preference_data_upload_automatic_job_files_uploaded_already</string>
 </resources>

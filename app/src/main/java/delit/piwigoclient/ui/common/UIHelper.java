@@ -1,11 +1,9 @@
 package delit.piwigoclient.ui.common;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -18,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,12 +42,14 @@ import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import delit.piwigoclient.BuildConfig;
@@ -60,6 +61,8 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.ui.preferences.ConnectionPreferenceFragment;
+import delit.piwigoclient.util.ToastUtils;
 import delit.piwigoclient.util.X509Utils;
 
 /**
@@ -70,23 +73,25 @@ public abstract class UIHelper<T> {
 
     private static final String TAG = "UiHelper";
     private static final String STATE_UIHELPER = "uiHelperState";
-    private static final String ACTIVE_SERVICE_CALLS = "activeServiceCalls";
-    private static final String STATE_TRACKED_REQUESTS = "trackedRequests";
-    private static final String STATE_RUN_WITH_PERMS_LIST = "runWithPermsList";
-    private static final String STATE_PERMS_FOR_REASON = "reasonForPermissionsRequired";
+    private static final String ACTIVE_SERVICE_CALLS = "UIHelper.activeServiceCalls";
+    private static final String STATE_TRACKED_REQUESTS = "UIHelper.trackedRequests";
+    private static final String STATE_ACTIONS_ON_RESPONSES = "UIHelper.actionOnResponse";
+    private static final String STATE_RUN_WITH_PERMS_LIST = "UIHelper.runWithPermsList";
+    private static final String STATE_PERMS_FOR_REASON = "UIHelper.reasonForPermissionsRequired";
     private final T parent;
     private final SharedPreferences prefs;
     private final Queue<QueuedMessage> messageQueue = new LinkedBlockingQueue<>(100);
     private Context context;
     private DismissListener dismissListener;
-    private ProgressDialog progressDialog;
     private AlertDialog alertDialog;
-    private HashSet<Long> activeServiceCalls = new HashSet<>(3);
+    private Set<Long> activeServiceCalls = Collections.synchronizedSet(new HashSet<Long>(3));
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;
     private BasicPiwigoResponseListener piwigoResponseListener;
     private int permissionsNeededReason;
     private NotificationManager notificationManager;
+    ProgressIndicator progressIndicator;
+    private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap<Long, Action>();
 
     public UIHelper(T parent, SharedPreferences prefs, Context context) {
         this.context = context;
@@ -135,6 +140,10 @@ public abstract class UIHelper<T> {
 
     }
 
+    public SharedPreferences getPrefs() {
+        return prefs;
+    }
+
     public void clearNotification(String source, int notificationId) {
         notificationManager.cancel(source, notificationId);
     }
@@ -152,23 +161,31 @@ public abstract class UIHelper<T> {
         return this.context != context;
     }
 
+    public void showDetailedToast(@StringRes int titleResId, String message) {
+        showDetailedToast(titleResId, message, Toast.LENGTH_SHORT);
+    }
+
+    public void showDetailedToast(@StringRes int titleResId, String message, int duration) {
+        ToastUtils.makeDetailedToast(getContext(), titleResId, message, duration).show();
+    }
+
     public void showToast(@StringRes int messageResId) {
-        Toast toast = Toast.makeText(getContext(), messageResId, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getContext().getApplicationContext(), messageResId, Toast.LENGTH_SHORT);
         toast.show();
     }
 
     public void showToast(String message) {
-        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_SHORT);
         toast.show();
     }
 
     public void showLongToast(String message) {
-        Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_LONG);
         toast.show();
     }
 
     public void showLongToast(@StringRes int messageResId) {
-        Toast toast = Toast.makeText(getContext(), messageResId, Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(getContext().getApplicationContext(), messageResId, Toast.LENGTH_LONG);
         toast.show();
     }
 
@@ -179,52 +196,70 @@ public abstract class UIHelper<T> {
     public void addBackgroundServiceCall(long messageId) {
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
+    
+    private  boolean isProgressIndicatorVisible() {
+        if(progressIndicator == null) {
+            loadProgressIndicatorIfPossible();
+        }
+        return progressIndicator != null && progressIndicator.getVisibility() == View.VISIBLE;
+    }
+
+    private void loadProgressIndicatorIfPossible() {
+        try {
+            progressIndicator = ActivityCompat.requireViewById((Activity) context, R.id.progressIndicator);
+        } catch (IllegalArgumentException e) {
+            if(BuildConfig.DEBUG) {
+                Crashlytics.log(Log.ERROR, TAG, "Progress indicator not available in " + ((Activity) context).getLocalClassName());
+            }
+        }
+    }
 
     /**
      * Called when retrying a failed call.
      */
     public void addActiveServiceCall(long messageId) {
         activeServiceCalls.add(messageId);
-        if (progressDialog != null && !progressDialog.isShowing()) {
+        if (!isProgressIndicatorVisible()) {
             // assume it still has the correct text... (fingers crossed)
-            if (canShowDialog()) {
-                showProgressDialog();
-            }
+            showProgressIndicator();
         }
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
     public void addNonBlockingActiveServiceCall(String titleString, long messageId) {
-        activeServiceCalls.add(messageId);
-        showToast(titleString);
-        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+//        activeServiceCalls.add(messageId);
+//        showToast(titleString);
+//        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        addActiveServiceCall(titleString, messageId);
     }
 
     public void addActiveServiceCall(String titleString, long messageId) {
         activeServiceCalls.add(messageId);
-        if (progressDialog != null && !progressDialog.isShowing()) {
-            progressDialog.setTitle(titleString);
-            if (canShowDialog()) {
-                showProgressDialog();
+        if (!isProgressIndicatorVisible()) {
+            if(progressIndicator == null) {
+                Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
+            } else {
+                progressIndicator.showProgressIndicator(titleString, -1);
             }
         }
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
 
     private void setupDialogBoxes() {
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         buildAlertDialog();
+        loadProgressIndicatorIfPossible();
     }
 
     protected void buildAlertDialog() {
         AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setCancelable(true);
-        dismissListener = new DismissListener();
+        dismissListener = buildDialogDismissListener();
         builder1.setOnDismissListener(dismissListener);
         alertDialog = builder1.create();
+    }
+
+    protected DismissListener buildDialogDismissListener() {
+        return new DismissListener();
     }
 
     protected void showDialog(final QueuedQuestionMessage nextMessage) {
@@ -318,9 +353,10 @@ public abstract class UIHelper<T> {
 
     public void onSaveInstanceState(Bundle outState) {
         Bundle thisBundle = new Bundle();
-        thisBundle.putSerializable(ACTIVE_SERVICE_CALLS, activeServiceCalls);
+        thisBundle.putSerializable(ACTIVE_SERVICE_CALLS, new HashSet<>(activeServiceCalls));
         thisBundle.putInt(STATE_TRACKED_REQUESTS, trackedRequest);
         thisBundle.putSerializable(STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
+        thisBundle.putSerializable(STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
         thisBundle.putInt(STATE_PERMS_FOR_REASON, permissionsNeededReason);
         piwigoResponseListener.onSaveInstanceState(thisBundle);
         outState.putBundle(STATE_UIHELPER, thisBundle);
@@ -330,9 +366,10 @@ public abstract class UIHelper<T> {
         if (savedInstanceState != null) {
             Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
             if (thisBundle != null) {
-                activeServiceCalls = (HashSet<Long>) thisBundle.getSerializable(ACTIVE_SERVICE_CALLS);
+                activeServiceCalls = Collections.synchronizedSet((HashSet<Long>) thisBundle.getSerializable(ACTIVE_SERVICE_CALLS));
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
                 runWithPermissions = (HashMap<Integer, PermissionsWantedRequestEvent>) thisBundle.getSerializable(STATE_RUN_WITH_PERMS_LIST);
+                actionOnServerCallComplete = (ConcurrentHashMap<Long, Action>) thisBundle.getSerializable(STATE_ACTIONS_ON_RESPONSES);
                 permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
                 piwigoResponseListener.onRestoreInstanceState(thisBundle);
             }
@@ -347,8 +384,12 @@ public abstract class UIHelper<T> {
         this.permissionsNeededReason = permissionsNeededReason;
     }
 
+    public boolean isDialogShowing() {
+        return alertDialog != null && alertDialog.isShowing();
+    }
+
     public void showNextQueuedMessage() {
-        if (messageQueue.size() > 0 && (alertDialog != null && !alertDialog.isShowing())) {
+        if (messageQueue.size() > 0 && !isDialogShowing()) {
             // show the dialog now we're able.
             QueuedMessage nextMessage = messageQueue.peek();
             if (nextMessage instanceof QueuedQuestionMessage) {
@@ -365,7 +406,7 @@ public abstract class UIHelper<T> {
 
     public void closeAllDialogs() {
         alertDialog.dismiss();
-        dismissProgressDialog();
+        hideProgressIndicator();
     }
 
     public int runWithExtraPermissions(final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String permissionNeeded, String permissionJustificationString) {
@@ -465,26 +506,27 @@ public abstract class UIHelper<T> {
         return messageQueue.size() > 0;
     }
 
-    protected abstract boolean canShowDialog();
-
-    public void showProgressDialog(int titleId) {
-        progressDialog.setTitle(titleId);
-        progressDialog.show();
+    protected boolean canShowDialog() {
+        return alertDialog != null;
     }
 
-    public void showProgressDialog() {
-        progressDialog.show();
+    public void showProgressIndicator() {
+        if(progressIndicator == null) {
+            Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
+        } else {
+            progressIndicator.setVisibility(View.VISIBLE);
+        }
     }
 
-    public void dismissProgressDialog() {
-        progressDialog.dismiss();
+    public void hideProgressIndicator() {
+        if(progressIndicator != null) {
+            progressIndicator.setVisibility(View.GONE);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final NewUnTrustedCaCertificateReceivedEvent event) {
-        if (!canShowDialog()) {
-            return;
-        }
+
         if (event.isHandled()) {
             return;
         }
@@ -588,7 +630,7 @@ public abstract class UIHelper<T> {
     }
 
     public <S extends QueuedMessage> void showOrQueueDialogMessage(S message) {
-        if (alertDialog != null && !alertDialog.isShowing() && canShowDialog()) {
+        if (!isDialogShowing() && canShowDialog()) {
             QueuedMessage nextMessage = messageQueue.peek();
             if (nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage) nextMessage);
@@ -600,7 +642,7 @@ public abstract class UIHelper<T> {
         if (!messageQueue.contains(message)) {
             messageQueue.add(message);
         }
-        if (alertDialog != null && !alertDialog.isShowing() && canShowDialog()) {
+        if (!isDialogShowing() && canShowDialog()) {
             QueuedMessage nextMessage = messageQueue.peek();
             if (nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage) nextMessage);
@@ -620,9 +662,10 @@ public abstract class UIHelper<T> {
     }
 
     public void onServiceCallComplete(long messageId) {
+        actionOnServerCallComplete.remove(messageId);
         activeServiceCalls.remove(messageId);
         if (activeServiceCalls.size() == 0) {
-            progressDialog.dismiss();
+            hideProgressIndicator();
         }
     }
 
@@ -667,6 +710,18 @@ public abstract class UIHelper<T> {
             return true;
         }
         return false;
+    }
+
+    public ProgressIndicator getProgressIndicator() {
+        return progressIndicator;
+    }
+
+    public Action getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
+        return actionOnServerCallComplete.get(response.getMessageId());
+    }
+
+    public void addActionOnResponse(long msgId, Action loginAction) {
+        actionOnServerCallComplete.put(msgId, loginAction);
     }
 
     public static abstract class QuestionResultAdapter implements QuestionResultListener {
@@ -791,7 +846,7 @@ public abstract class UIHelper<T> {
             super(titleId, message, detail, positiveButtonTextId, false, listener);
             this.negativeButtonTextId = negativeButtonTextId;
             if(detail != null && !detail.trim().isEmpty() && layoutId == Integer.MIN_VALUE) {
-                this.layoutId = R.layout.dialog_detailed;
+                this.layoutId = R.layout.layout_dialog_detailed;
             } else {
                 this.layoutId = layoutId;
             }
@@ -816,7 +871,7 @@ public abstract class UIHelper<T> {
 
         @Override
         public void populateCustomView(LinearLayout dialogView) {
-            if(layoutId == R.layout.dialog_detailed) {
+            if(layoutId == R.layout.layout_dialog_detailed) {
                 final TextView detailView = dialogView.findViewById(R.id.details);
                 detailView.setText(getDetail());
 
@@ -849,7 +904,7 @@ public abstract class UIHelper<T> {
         }
     }
 
-    private class DismissListener implements DialogInterface.OnDismissListener {
+    protected class DismissListener implements DialogInterface.OnDismissListener {
 
         private QuestionResultListener listener;
         private boolean buildNewDialogOnDismiss;
@@ -883,11 +938,25 @@ public abstract class UIHelper<T> {
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
                 }
+            } else {
+                onNoDialogToShow();
             }
+        }
+
+        protected void onNoDialogToShow() {
         }
 
         public void setBuildNewDialogOnDismiss(boolean buildNewDialogOnDismiss) {
             this.buildNewDialogOnDismiss = buildNewDialogOnDismiss;
         }
+    }
+
+    public static class Action implements Serializable {
+        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response){
+            return true;
+        };
+        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response){
+            return true;
+        };
     }
 }

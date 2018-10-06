@@ -1,18 +1,14 @@
 package delit.piwigoclient.ui.tags;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -34,6 +30,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -83,7 +80,6 @@ public class ViewTagFragment extends MyFragment {
 
     private AlbumItemRecyclerViewAdapter viewAdapter;
     private FloatingActionButton retryActionButton;
-    private TextView tagNameHeader;
     private RelativeLayout bulkActionsContainer;
     private FloatingActionButton bulkActionButtonDelete;
     // Start fields maintained in saved session state.
@@ -146,6 +142,11 @@ public class ViewTagFragment extends MyFragment {
     }
 
     @Override
+    protected String buildPageHeading() {
+        return getString(R.string.tag_heading_pattern, tag.getName());
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
@@ -160,19 +161,15 @@ public class ViewTagFragment extends MyFragment {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if(sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
-            addActiveServiceCall(new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_session_details, new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
         }
 
-        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), getResources().getBoolean(R.bool.preference_gallery_use_dark_mode_default));
-        boolean showAlbumThumbnailsZoomed = prefs.getBoolean(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key), getResources().getBoolean(R.bool.preference_gallery_show_album_thumbnail_zoomed_default));
+        boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, getContext());
 
-        boolean showLargeAlbumThumbnails = prefs.getBoolean(getString(R.string.preference_gallery_show_large_thumbnail_key), getResources().getBoolean(R.bool.preference_gallery_show_large_thumbnail_default));
 
-        boolean useMasonryStyle = prefs.getBoolean(getString(R.string.preference_gallery_masonry_view_key), getResources().getBoolean(R.bool.preference_gallery_masonry_view_default));
+        boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, getContext());
 
-        boolean showResourceNames = prefs.getBoolean(getString(R.string.preference_gallery_show_image_name_key), getResources().getBoolean(R.bool.preference_gallery_show_image_name_default));
-
-        int recentlyAlteredThresholdAge = prefs.getInt(getString(R.string.preference_gallery_recentlyAlteredAgeMillis_key), getResources().getInteger(R.integer.preference_gallery_recentlyAlteredAgeMillis_default));
+        int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, getContext());
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
 
         if(viewPrefs == null) {
@@ -181,9 +178,6 @@ public class ViewTagFragment extends MyFragment {
 
         viewPrefs.selectable(getMultiSelectionAllowed(), false);
         viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
-        viewPrefs.withDarkMode(useDarkMode);
-        viewPrefs.withLargeAlbumThumbnails(showLargeAlbumThumbnails);
-        viewPrefs.withMasonryStyle(useMasonryStyle);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
 //        viewPrefs.withAlbumWidth(getScreenWidth() / albumsPerRow);
@@ -257,12 +251,7 @@ public class ViewTagFragment extends MyFragment {
             return;
         }
 
-        if(viewPrefs.isUseDarkMode()) {
-            view.setBackgroundColor(Color.BLACK);
-        }
-
         retryActionButton = view.findViewById(R.id.tag_retryAction_actionButton);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_refresh_black_24dp).into(retryActionButton);
 
         retryActionButton.setVisibility(GONE);
         retryActionButton.setOnClickListener(new View.OnClickListener() {
@@ -279,11 +268,7 @@ public class ViewTagFragment extends MyFragment {
 
         bulkActionsContainer = view.findViewById(R.id.tag_actions_bulk_container);
 
-        tagNameHeader = view.findViewById(R.id.tag_details_name_header);
-
-        setTagHeadings();
-
-        int imagesOnScreen = selectBestColumnCountForScreenSize();
+        int imagesOnScreen = AlbumViewPreferences.getImagesToDisplayPerRow(getActivity(), prefs);
         colsOnScreen = imagesOnScreen;
 
 
@@ -299,26 +284,18 @@ public class ViewTagFragment extends MyFragment {
         }
 
         // need to wait for the tag model to be initialised.
-        RecyclerView.LayoutManager gridLayoutMan;
-        if(viewPrefs.isUseMasonryStyle()) {
-            gridLayoutMan = new StaggeredGridLayoutManager(colsOnScreen, StaggeredGridLayoutManager.VERTICAL);
-        } else {
-            gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
-        }
+        GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
+        int colsPerImage = colsOnScreen / imagesOnScreen;
+        gridLayoutMan.setSpanSizeLookup(new SpanSizeLookup(tagModel, colsPerImage));
 
         recyclerView.setLayoutManager(gridLayoutMan);
 
-        if(!viewPrefs.isUseMasonryStyle()) {
-            int colsPerImage = colsOnScreen / imagesOnScreen;
-            ((GridLayoutManager)gridLayoutMan).setSpanSizeLookup(new SpanSizeLookup(tagModel, colsPerImage));
-        }
 
         viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), tagModel, new AlbumViewAdapterListener(), viewPrefs);
 
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
 
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.tag_action_delete_bulk);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_delete_black_24px).into(bulkActionButtonDelete);
         bulkActionButtonDelete.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -452,7 +429,7 @@ public class ViewTagFragment extends MyFragment {
     private void onDeleteResources(final DeleteActionData deleteActionData) {
 
         if (!deleteActionData.isResourceInfoAvailable()) {
-            String multimediaExtensionList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
+            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
                 addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext()));
             }
@@ -549,9 +526,9 @@ public class ViewTagFragment extends MyFragment {
                 // already loading this page, ignore the request.
                 return;
             }
-            String sortOrder = prefs.getString(getString(R.string.preference_gallery_sortOrder_key), getString(R.string.preference_gallery_sortOrder_default));
-            String multimediaExtensionList = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
-            int pageSize = prefs.getInt(getString(R.string.preference_album_request_pagesize_key), getResources().getInteger(R.integer.preference_album_request_pagesize_default));
+            String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
+            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
             long loadingMessageId = new TagGetImagesResponseHandler(tag, sortOrder, pageToLoad, pageSize, getContext(), multimediaExtensionList).invokeAsync(getContext());
             loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
             addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
@@ -567,21 +544,6 @@ public class ViewTagFragment extends MyFragment {
         } else {
             bulkActionButtonDelete.setVisibility(GONE);
         }
-    }
-
-    private void setTagHeadings() {
-        tagNameHeader.setText(getString(R.string.tag_heading_pattern, tag.getName()));
-        tagNameHeader.setVisibility(View.VISIBLE);
-    }
-
-    private int selectBestColumnCountForScreenSize() {
-        int mColumnCount = getDefaultImagesColumnCount();
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mColumnCount = prefs.getInt(getString(R.string.preference_gallery_images_preferredColumnsLandscape_key), mColumnCount);
-        } else {
-            mColumnCount = prefs.getInt(getString(R.string.preference_gallery_images_preferredColumnsPortrait_key), mColumnCount);
-        }
-        return Math.max(1,mColumnCount);
     }
 
     @Override
@@ -664,7 +626,7 @@ public class ViewTagFragment extends MyFragment {
     private void onItemRemovedFromServer(ResourceItem r) {
         onItemRemovedFromTag(r);
         for(Long albumId : r.getLinkedAlbums()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(albumId));
+            EventBus.getDefault().post(new AlbumAlteredEvent(albumId, r.getId(), true));
         }
     }
 
@@ -728,7 +690,7 @@ public class ViewTagFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
         // This is needed because a slideshow item currently only fires these events (tag unaware).
-        if (tag != null && tag.getId() == albumAlteredEvent.id) {
+        if (tag != null && tag.getId() == albumAlteredEvent.getAlbumAltered()) {
             tagIsDirty = true;
             if(isResumed()) {
                 reloadAlbumContent();

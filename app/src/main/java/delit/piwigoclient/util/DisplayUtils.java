@@ -1,16 +1,22 @@
 package delit.piwigoclient.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Looper;
+import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 /**
  * Created by gareth on 30/05/17.
@@ -39,7 +45,7 @@ public class DisplayUtils {
         return display.getRotation();
     }
 
-    public static int getScreenMode(Context context) {
+    public static int getCurrentScreenOrientation(Context context) {
 
         WindowManager windowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
@@ -89,7 +95,7 @@ public class DisplayUtils {
         Point navbarSize = getNavigationBarSize(context);
         return Math.min(navbarSize.x, navbarSize.y);
         //TODO why is this all wrong?
-//        int screenMode = DisplayUtils.getScreenMode(context);
+//        int screenMode = DisplayUtils.getCurrentScreenOrientation(context);
 //        int navBarHeight = 0;
 //        switch(screenMode) {
 //            case Configuration.ORIENTATION_SQUARE:
@@ -133,5 +139,48 @@ public class DisplayUtils {
         display.getRealSize(size);
 
         return size;
+    }
+
+    public static boolean hideKeyboardFrom(Context context, DialogInterface dialog) {
+        if(dialog == null) {
+            return false;
+        }
+        Window window = ((AlertDialog)dialog).getWindow();
+        if(window == null) {
+            return false;
+        }
+        View attachedView = window.getDecorView();
+        if(attachedView == null) {
+            return false;
+        }
+
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(attachedView.getWindowToken(), 0);
+        return true;
+
+    }
+
+    private static float getScreenWidthInches(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return (float) dm.widthPixels / dm.xdpi;
+    }
+
+    private static float getScreenHeightInches(Activity activity) {
+        DisplayMetrics dm = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        return (float) dm.heightPixels / dm.xdpi;
+    }
+
+    public static int getDefaultColumnCount(Activity activity, int screenOrientation, double minWidthInches) {
+
+        float screenWidth;
+        if (screenOrientation == getCurrentScreenOrientation(activity)) {
+            screenWidth = getScreenWidthInches(activity);
+        } else {
+            screenWidth = getScreenHeightInches(activity);
+        }
+        int columnsToShow = (int) Math.max(1, Math.round(screenWidth) / minWidthInches); // never allow less than one column by default.
+        return columnsToShow;
     }
 }

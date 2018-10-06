@@ -3,6 +3,7 @@ package delit.piwigoclient.ui;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -13,10 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -59,6 +58,7 @@ import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
 import delit.piwigoclient.ui.events.ThemeAlteredEvent;
+import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
 import delit.piwigoclient.ui.events.ViewUserEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
@@ -91,6 +91,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     private String onLoginActionMethodName = null;
     private ArrayList<Serializable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
+    private Toolbar toolbar;
 
     public static void performNoBackStackTransaction(final FragmentManager fragmentManager, String tag, Fragment fragment) {
         final int newBackStackLength = fragmentManager.getBackStackEntryCount() + 1;
@@ -132,10 +133,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         }
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        toolbar.setVisibility(prefs.getBoolean(getString(R.string.preference_app_show_toolbar_key), true) ? View.VISIBLE : View.GONE);
 
         /*
         Floating action button (all screens!) - if wanted
@@ -211,32 +210,10 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             drawer.closeDrawer(GravityCompat.START);
         } else if (preferencesShowing) {
 
-            Toolbar toolbar = findViewById(R.id.toolbar);
-            toolbar.setVisibility(prefs.getBoolean(getString(R.string.preference_app_show_toolbar_key), true) ? View.VISIBLE : View.GONE);
-
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
 
             if (!"".equals(connectionPrefs.getTrimmedNonNullPiwigoServerAddress(prefs, getApplicationContext()))) {
-                // Can and need to login to the server, so lets do that.
-                boolean haveBeenLoggedIn = null != getSupportFragmentManager().findFragmentByTag(LoginFragment.class.getName());
-
-                if (haveBeenLoggedIn && !PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
-
-                    // clear the backstack - its for an old session (clear stack back to first session login).
-                    for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                        FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(i);
-                        if (LoginFragment.class.getName().equals(entry.getName())) {
-                            int popToFragmentId = entry.getId();
-                            getSupportFragmentManager().popBackStack(popToFragmentId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                            break;
-                        }
-                    }
-                    // we have been logged in before, and are now not logged in - need a new session.
-                    showGallery(CategoryItem.ROOT_ALBUM);
-                } else {
-                    // pop the current fragment off, close app if it is the last one
-                    doDefaultBackOperation();
-                }
+                doDefaultBackOperation();
             } else {
                 // pop the current fragment off, close app if it is the last one
                 doDefaultBackOperation();
@@ -253,17 +230,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             getSupportFragmentManager().popBackStack();
             // get the next fragment
             int i = getSupportFragmentManager().getBackStackEntryCount() - 2;
-            if (i >= 0) {
-                FragmentManager.BackStackEntry entry = getSupportFragmentManager().getBackStackEntryAt(i);
-                // while we have another fragment in history and the next fragment is a Login fragment, pop it off and go to the previous one.
-                while (LoginFragment.class.getName().equals(entry.getName()) && i >= 0) {
-                    getSupportFragmentManager().popBackStack();
-                    i--;
-                    if (i >= 0) {
-                        entry = getSupportFragmentManager().getBackStackEntryAt(i);
-                    }
-                }
-            }
             // if there are no fragments left, do default back operation (i.e. close app)
             if (i < 0) {
                 super.onBackPressed();
@@ -296,6 +262,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void showPreferences() {
+//        Intent i = new Intent(this, PreferencesActivity.class);
+//        startActivity(i);
         PreferencesFragment fragment = new PreferencesFragment();
         showFragmentNow(fragment);
     }
@@ -356,11 +324,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         drawer.closeDrawer(GravityCompat.START);
     }
 
-    protected void showLoginFragment() {
-        LoginFragment fragment = LoginFragment.newInstance();
-        showFragmentNow(fragment);
-    }
-
     private void showTopTips() {
         TopTipsFragment fragment = TopTipsFragment.newInstance();
         showFragmentNow(fragment);
@@ -409,14 +372,6 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumSelectedEvent event) {
         currentAlbum = event.getAlbum();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(AlbumDeletedEvent event) {
-        for (Long itemParent : event.getItem().getParentageChain()) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(itemParent));
-        }
-        getSupportFragmentManager().popBackStackImmediate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -473,10 +428,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
             if (resultCode == RESULT_OK && data.getExtras() != null) {
-                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+//                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+                long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, filesForUpload);
-                EventBus.getDefault().post(event);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, filesForUpload, actionTimeMillis);
+                EventBus.getDefault().postSticky(event);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -709,6 +665,16 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ToolbarEvent event) {
+        toolbar.setTitle(event.getTitle());
+        if(event.isExpandToolbarView()) {
+            ((AppBarLayout) toolbar.getParent()).setExpanded(true, true);
+        } else if(event.isContractToolbarView()) {
+            ((AppBarLayout) toolbar.getParent()).setExpanded(false, true);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(ThemeAlteredEvent event) {
         CustomNavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.updateTheme();
@@ -716,6 +682,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PiwigoLoginSuccessEvent event) {
+
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        Crashlytics.setString("ServerVersion", sessionDetails.getPiwigoVersion() /* string value */);
+
+
         CustomNavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setMenuVisibilityToMatchSessionState();
         if (event.isChangePage() && !invokeStoredActionIfAvailable()) {

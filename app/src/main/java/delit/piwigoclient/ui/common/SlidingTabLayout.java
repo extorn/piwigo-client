@@ -17,8 +17,13 @@
 package delit.piwigoclient.ui.common;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.support.annotation.IdRes;
+import android.support.annotation.IntRange;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -26,8 +31,11 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.TextView;
+
+import delit.piwigoclient.R;
 
 /**
  * To be used with ViewPager to provide a tab indicator component which give constant feedback as to
@@ -50,14 +58,17 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private static final int TITLE_OFFSET_DIPS = 24;
     private static final int TAB_VIEW_PADDING_DIPS = 16;
     private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
-    private final SlidingTabStrip mTabStrip;
-    private final int mTitleOffset;
+    private SlidingTabStrip mTabStrip;
+    private int mTitleOffset;
 
     private int mTabViewLayoutId;
     private int mTabViewTextViewId;
 
     private ViewPager mViewPager;
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
+    @IdRes private int viewPagerId;
+    @IntRange(from = 0)
+    private int initialTabIdx;
 
     public SlidingTabLayout(Context context) {
         this(context, null);
@@ -67,8 +78,27 @@ public class SlidingTabLayout extends HorizontalScrollView {
         this(context, attrs, 0);
     }
 
-    public SlidingTabLayout(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    public SlidingTabLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr, 0);
+    }
+
+    @RequiresApi(21)
+    public SlidingTabLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs, defStyleAttr, defStyleRes);
+
+    }
+
+    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        final TypedArray a = context.obtainStyledAttributes(
+                attrs, R.styleable.SlidingTabLayout, defStyleAttr, defStyleRes);
+
+        viewPagerId = a.getResourceId(R.styleable.SlidingTabLayout_viewPager, -1);
+
+        initialTabIdx = a.getInt(R.styleable.SlidingTabLayout_initialTabIdx, 0);
+
+        a.recycle();
 
         // Disable the Scroll Bar
         setHorizontalScrollBarEnabled(false);
@@ -150,6 +180,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
      */
     protected TextView createDefaultTabView(Context context) {
         TextView textView = new TextView(context);
+        textView.setTextColor(ContextCompat.getColor(context, R.color.primary_text_default));
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
@@ -175,7 +206,18 @@ public class SlidingTabLayout extends HorizontalScrollView {
     }
 
     private void populateTabStrip() {
-        final PagerAdapter adapter = mViewPager.getAdapter();
+        PagerAdapter adapter = mViewPager.getAdapter();
+
+        if(adapter == null) {
+            if (mViewPager.getChildCount() > 0) {
+                adapter = new InlineViewPagerAdapter(mViewPager);
+                mViewPager.setAdapter(adapter);
+            } else {
+                // unable to set up tab strip at this time as the pageView is not initialised yet.
+                return;
+            }
+        }
+
         final View.OnClickListener tabClickListener = new TabClickListener();
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
@@ -205,12 +247,22 @@ public class SlidingTabLayout extends HorizontalScrollView {
         }
     }
 
+
     @Override
     protected void onAttachedToWindow() {
+
+        if(viewPagerId > 0 && mViewPager == null) {
+            setViewPager((ViewPager)((ViewGroup)getParent()).findViewById(viewPagerId));
+        }
+
         super.onAttachedToWindow();
 
         if (mViewPager != null) {
-            scrollToTab(mViewPager.getCurrentItem(), 0);
+            int tabIdx = mViewPager.getCurrentItem();
+            if(initialTabIdx >= 0 && initialTabIdx < mViewPager.getAdapter().getCount()) {
+                tabIdx = initialTabIdx;
+            }
+            mViewPager.setCurrentItem(tabIdx);
         }
     }
 

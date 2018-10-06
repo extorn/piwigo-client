@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,9 +12,8 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -60,6 +59,7 @@ public class UploadActivity extends MyActivity {
     private final HashMap<String, String> errors = new HashMap<>();
     private int fileSelectionEventId;
     private boolean startedWithPermissions;
+    private Toolbar toolbar;
 
     @Override
     public void onStart() {
@@ -90,7 +90,6 @@ public class UploadActivity extends MyActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
         outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
     }
 
@@ -112,28 +111,16 @@ public class UploadActivity extends MyActivity {
             createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_app_not_yet_configured);
         } else {
             setContentView(R.layout.activity_upload);
-            addUploadingAsFieldsIfAppropriate();
+            toolbar = findViewById(R.id.toolbar);
+            toolbar.setTitle(R.string.upload_page_title);
+            setSupportActionBar(toolbar);
             showUploadFragment(true, connectionPrefs);
-        }
-    }
-
-    private void addUploadingAsFieldsIfAppropriate() {
-        TextView uploadingAsLabelField = findViewById(R.id.upload_username_label);
-        TextView uploadingAsField = findViewById(R.id.upload_username);
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            uploadingAsField.setText(sessionDetails.getUsername());
-            uploadingAsField.setVisibility(View.VISIBLE);
-            uploadingAsLabelField.setVisibility(View.VISIBLE);
-        } else {
-            uploadingAsField.setVisibility(View.GONE);
-            uploadingAsLabelField.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onBackPressed() {
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.upload_details);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
         if (fragment instanceof UploadFragment && fragment.isAdded()) {
             finish();
         } else {
@@ -216,7 +203,7 @@ public class UploadActivity extends MyActivity {
                     return handleSendMultipleImages(intent); // Handle multiple images being sent
                 }
             }
-            return new ArrayList<>();
+            return null;
 
         } finally {
             if (errors.size() > 0) {
@@ -309,15 +296,12 @@ public class UploadActivity extends MyActivity {
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
             if (resultCode == RESULT_OK) {
-                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+//                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
+                long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
                 ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
 
                 int eventId = requestCode;
-                if (requestCode != fileSelectionEventId) {
-                    // this is an unexpected event - need to ensure the upload fragment will pick it up.
-                    eventId = Integer.MIN_VALUE;
-                }
-                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload);
+                FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload, actionTimeMillis);
 
                 EventBus.getDefault().postSticky(event);
             }
@@ -353,19 +337,16 @@ public class UploadActivity extends MyActivity {
         showFragmentNow(fragment);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
-            int fileSelectionEventIdToUse = fileSelectionEventId;
-            if (startedWithPermissions) {
-                // already started up. Therefore the fileSelectionEventId is valid and linked to the fragment
-            } else {
-                startedWithPermissions = true;
-                fileSelectionEventIdToUse = Integer.MIN_VALUE;
-            }
             if (event.areAllPermissionsGranted()) {
-                FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventIdToUse, handleSentFiles());
-                EventBus.getDefault().postSticky(evt);
+                ArrayList<File> sentFiles = handleSentFiles();
+                if(sentFiles != null) {
+                    // this activity was invoked from another application
+                    FileSelectionCompleteEvent evt = new FileSelectionCompleteEvent(fileSelectionEventId, sentFiles, -1);
+                    EventBus.getDefault().postSticky(evt);
+                }
             } else {
                 createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_unable_to_access_local_filesystem);
             }
@@ -394,7 +375,7 @@ public class UploadActivity extends MyActivity {
 
         checkLicenceIfNeeded();
 
-        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.upload_details);
+        Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
         String lastFragmentName = "";
         if (lastFragment != null) {
             lastFragmentName = lastFragment.getTag();
@@ -407,9 +388,7 @@ public class UploadActivity extends MyActivity {
 //        TODO maybe should be using current fragment classname when adding to backstack rather than one being replaced... hmmmm
         FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
         tx.addToBackStack(f.getClass().getName());
-        tx.replace(R.id.upload_details, f, f.getClass().getName()).commit();
-
-        addUploadingAsFieldsIfAppropriate();
+        tx.replace(R.id.main_view, f, f.getClass().getName()).commit();
     }
 
     @Override

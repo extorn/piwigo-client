@@ -28,8 +28,8 @@
 
 
 
-    <string name="preference_server_socketTimeout_millisecs_title">Verbindungs-Timeout (Millisekunden)</string>
-    <string name="preference_server_socketTimeout_millisecs_summary">%1$d Millisekunden</string>
+    <string name="preference_server_connection_timeout_secs_title">Verbindungs-Timeout (Sekunden)</string>
+    <string name="preference_server_connection_timeout_secs_summary">%1$d Sekunden</string>
 
 
     <string name="preference_server_connection_retries_title">Verbindungsversuche vor dem Ausfall</string>
@@ -119,8 +119,8 @@
     <!-- prefs -->
 
 
-    <string name="preference_app_show_toolbar_title">App Toolbar anzeigen</string>
-    <string name="preference_app_show_toolbar_summary">Symbolleiste oben in der Anwendung anzeigen</string>
+    <!--<string name="preference_app_show_toolbar_title">App Toolbar anzeigen</string>
+    <string name="preference_app_show_toolbar_summary">Symbolleiste oben in der Anwendung anzeigen</string>-->
 
 
 
@@ -136,10 +136,6 @@
     <string name="preference_gallery_images_preferredColumnsLandscape_summary">%1$d</string>
 
 
-    <string name="preference_gallery_use_dark_mode_title">Dunkles Thema verwenden</string>
-    <string name="preference_gallery_use_dark_mode_summary">App-Thema auswählen</string>
-
-
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">Zeige gezoomtes Album Thumbnail</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Album-Thumbnails sind in der Mitte abgeschnitten</string>
 
@@ -150,10 +146,6 @@
 
     <string name="preference_gallery_images_preferredColumnsPortrait_title">Porträt: Spalten der anzuzeigenden Bilder</string>
     <string name="preference_gallery_images_preferredColumnsPortrait_summary">%1$d</string>
-
-
-    <string name="preference_gallery_show_large_thumbnail_title">Alben mit großer Miniaturansicht anzeigen</string>
-    <string name="preference_gallery_show_large_thumbnail_summary">Bild-Miniaturansichten füllen die Spalte</string>
 
 
     <string name="preference_gallery_include_videos_in_slideshow_title">Videos in Diashow anzeigen</string>
@@ -226,10 +218,6 @@
 
     <string name="preference_gallery_item_slideshow_image_size_summary">%1$s</string>
 
-
-    <string name="preference_gallery_masonry_view_title">Mauerwerksstil verwenden (experimentell)</string>
-    <string name="preference_gallery_masonry_view_summary">Bestens passender Albuminhalt in einem Tapisserie-Effekt</string>
-
     <!-- Data Upload page -->
 
     <string name="preference_page_upload">Hochladen</string>
@@ -245,9 +233,9 @@
 
     <string name="preference_data_upload_chunk_auto_retries_title">Max automatische Datei Chunk-Upload-Versuche</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
-
+<!--
     <string name="preference_data_upload_large_thumbnail_title">Dateien mit großer Miniaturansicht anzeigen</string>
-    <string name="preference_data_upload_large_thumbnail_summary">Bildvorschaubilder füllen die Spalte</string>
+    <string name="preference_data_upload_large_thumbnail_summary">Bildvorschaubilder füllen die Spalte</string>-->
 
 
     <string name="preference_data_upload_preferredColumnsPortrait_title">Porträt: Spalten der anzuzeigenden Bilder</string>
@@ -282,65 +270,5 @@
 
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Porträt: Spalten von Ordnern, die angezeigt werden sollen</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
-
-    <!-- Automatic Upload Jobs page -->
-
-    <string name="preference_page_auto_upload_jobs">Automatischer Upload</string>
-    <string name="preference_data_upload_automatic_title">Automatischer Upload</string>
-    <string name="preference_data_upload_automatic_job_title">Auto Upload Auftrag</string>
-
-    <!-- prefs -->
-
-
-    <string name="preference_data_upload_automatic_upload_enable_summary">Hintergrund-Upload aktivieren</string>
-    <string name="preference_data_upload_automatic_upload_enable_title">Automatischer Upload</string>
-
-    <string name="preference_data_upload_automatic_upload_wireless_only_summary">Nur Auto Upload auf Wireless verwenden</string>
-    <string name="preference_data_upload_automatic_upload_wireless_only_title">Nur über Funk</string>
-
-
-
-    <string name="preference_data_upload_automatic_upload_jobs_title">Auto Upload Aufträge</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
-
-    <!-- boolean flag set that if false will stop the job running -->
-
-
-    <string name="preference_data_upload_automatic_job_is_valid_title">Auftrag ist gültig</string>
-
-
-    <string name="preference_data_upload_automatic_job_enabled_summary">Hört dieser Job im Hintergrund zu?</string>
-    <string name="preference_data_upload_automatic_job_enabled_title">Job aktiviert</string>
-
-    <string name="preference_data_upload_automatic_job_server_title">Auf den Server hochladen</string>
-
-    <string name="preference_data_upload_automatic_job_server_summary">Profil: %1$s</string>
-
-
-    <string name="preference_data_upload_automatic_job_server_album_title">Zum Album hochladen</string>
-    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
-
-
-    <string name="preference_data_upload_automatic_job_local_folder_title">Aus Ordner hochladen</string>
-
-    <string name="preference_data_upload_automatic_job_local_folder_summary">Hochladen %1$s</string>
-
-
-    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Erfolgreich hochgeladene Dateien löschen</string>
-    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Automatisches Löschen</string>
-
-
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Dateigröße hochgeladen</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
-
-
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">jpg,png,roh</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Dateierweiterungen</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Dateien mit ext %1$s hochladen</string>
-
-    <string name="preference_data_upload_automatic_job_privacy_level_title">Datenschutzstufe</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">Hochgeladene Dateien sichtbar für %1$s</string>
-
-
 
 </resources>

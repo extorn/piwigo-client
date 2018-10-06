@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/basket"
+    android:background="@drawable/border"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/basket_image"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:scaleType="fitCenter"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="30dp"
+        android:background="@drawable/border"
+        app:srcCompat="@drawable/ic_shopping_basket_black_24dp"/>
+
+    <TextView
+        android:id="@+id/basket_item_count"
+        android:layout_alignEnd="@+id/basket_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="15"
+        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"/>
+
+    <ImageView
+        android:id="@+id/basket_action_indicator"
+        android:layout_alignEnd="@+id/basket_image"
+        android:layout_alignBottom="@+id/basket_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        tools:srcCompat="@drawable/ic_content_copy_black_24px"/>
+
+    <ImageView
+        android:id="@+id/basket_clear_button"
+        android:layout_toEndOf="@+id/basket_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:srcCompat="@drawable/ic_delete_black_24px"/>
+
+</RelativeLayout>

@@ -158,38 +158,50 @@
         <item>Long click delete button on a \'file for upload\' to delete all files to be uploaded (when job is not in progress)</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
-        <item>Release 1.3.x</item>
+        <item>The future</item>
         <item>"Changes:
-         - ? French / other translations for the app ?"
-        </item>
-        <item>1.3.97</item>
-        <item>"Changes:
-         - Possibly - User interface refinements
          - Possibly - Support for favorites - depends on PIWIGO API enhancement
          - Possibly - allow linking the upload process to a compression routine for videos
          - Possibly - The ability to delete an album, but not its contents (creating orphans)
          - Possibly - Orphan file management
+         - Possibly - enhance the Piwigo Server API to allow users to see their rating given for a given resource
          - Possibly: Allow user to zoom out in slideshow (view smaller than fullscreen)
          - Possibly: Investigate adding support for coloured tag plugin
          - Possibly: Remember the previously opened photo or album when the user opens the app.
-         - Paid App Only : (Maybe) : The random photos idea implemented on the piwigo web UI
-         - Paid App Only : (Maybe) : Support for user comments
-         - Paid App Only : (Maybe) : Notify user of server updates that are available
-         - Paid App Only : (Maybe) : Possibly support for editing EXIF and other image metadata formats
-         - Paid App Only : (Maybe) : Add preference to allow showing/hiding the EXIF etc fields
+         - Possibly: Paid App Only : The random photos idea implemented on the piwigo web UI
+         - Possibly: Paid App Only : Support for user comments
+         - Possibly: Paid App Only : Notify user of server updates that are available
+         - Possibly: Paid App Only : Support for editing EXIF and other image metadata formats
+         - Possibly: Paid App Only : Add preference to allow showing/hiding the EXIF etc fields of or not of interest
+         - Possibly: ? French / other translations for the app ?
          - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
-        <item>1.3.96</item>
-        <item>"Changes:
-         - Rework of the way popup messages and progress indicators are shown - investigate using more Toast messages"
+        <item>1.3.97</item>
+        <item>"Expected Delivery:
+         - End November 2018
+         Changes:
+         - Add some sort of help to assist user in knowing the features"
         </item>
-        <item>1.3.95</item>
-        <item>"Changes:
-         - Allow user to stay in slideshow after deleting an item
-         - Add some sort of help to assist user in knowing the features
-         - Correct weirdness with basket stuff (copy paste)"
+        <item>1.3.96</item>
+        <item>"Expected Delivery:
+         - End of October or Mid November 2018
+         Changes:
+         - Further user interface refinements
+         - Further rework of the way popup messages and progress indicators are shown - investigate using more Toast or Snackbar messages, minimising use of dialog popup windows
+         - Collapsible albums in album selection lists where practical
+         - Review and improve basket actions (bulk cut or copy and paste)
+         - Update the list of top tips"
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.95</item>
+        <item>"Changes:
+            - The album view has been redesigned following a design proposed by David Klement
+            - The material theme has been embraced
+            - Corrected connection timeout (please correct your setting if it has been reset)
+            - Added response timeout setting in addition to the connection timeout
+            - Lots of bug fixes especially for android versions earlier than Lollipop
+            - Allow user to stay in slideshow after deleting an item"
+        </item>
         <item>1.3.94.7</item>
         <item>"Bugfix:
             - Crash restoring slideshow after app minimise
