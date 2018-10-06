@@ -13,10 +13,22 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<com.google.android.exoplayer2.ui.PlayerView xmlns:app="http://schemas.android.com/apk/res-auto"
+<android.support.v4.widget.NestedScrollView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="fill"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    app:player_layout_id="@layout/exo_player_view_custom"
-    app:controller_layout_id="@layout/exo_player_control_view_custom">
-</com.google.android.exoplayer2.ui.PlayerView>
+    android:scrollbars="vertical"
+    android:fillViewport="true"
+    android:layout_marginBottom="20dp">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/slideshow_video_player"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        app:player_layout_id="@layout/exo_player_view_custom"
+        app:controller_layout_id="@layout/exo_player_control_view_custom">
+    </com.google.android.exoplayer2.ui.PlayerView>
+
+</android.support.v4.widget.NestedScrollView>

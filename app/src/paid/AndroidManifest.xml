@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="delit.piwigoclient"
-    android:installLocation="internalOnly">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="delit.piwigoclient">
 
-    <application>
+    <application
+        android:name="delit.piwigoclient.ui.MyApplication"
+        tools:node="merge">
+
         <service
             android:name=".piwigoApi.upload.BackgroundPiwigoUploadService"
             android:exported="false"/>
+
     </application>
 
 </manifest>

@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.permissions.groups;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,6 +36,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -101,6 +102,11 @@ public class GroupsListFragment extends MyFragment {
         viewPrefs.storeToBundle(outState);
     }
 
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.groups_heading);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -128,8 +134,7 @@ public class GroupsListFragment extends MyFragment {
         }
 
         TextView heading = view.findViewById(R.id.heading);
-        heading.setText(R.string.groups_heading);
-        heading.setVisibility(View.VISIBLE);
+        heading.setVisibility(View.INVISIBLE);
 
         Button cancelButton = view.findViewById(R.id.list_action_cancel_button);
         cancelButton.setVisibility(View.GONE);
@@ -180,6 +185,7 @@ public class GroupsListFragment extends MyFragment {
         }, viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
+        recyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
 
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
@@ -210,7 +216,7 @@ public class GroupsListFragment extends MyFragment {
     private void loadGroupsPage(int pageToLoad) {
         this.pageToLoadNow = pageToLoad;
         int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
-        addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
+        groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
     }
 
     private void addNewGroup() {
@@ -224,10 +230,7 @@ public class GroupsListFragment extends MyFragment {
 
     private void onDeleteGroup(final Group thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_group);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-            }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -250,12 +253,15 @@ public class GroupsListFragment extends MyFragment {
     }
 
     private void onGroupsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
-        synchronized (this) {
+        groupsModel.acquirePageLoadLock();
+        try {
+            groupsModel.recordPageLoadSucceeded(response.getMessageId());
             pageToLoadNow = -1;
             retryActionButton.setVisibility(View.GONE);
             int firstIdxAdded = groupsModel.addItemPage(response.getPage(), response.getPageSize(), response.getGroups());
             viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());
-
+        } finally {
+            groupsModel.releasePageLoadLock();
         }
     }
 
@@ -305,7 +311,9 @@ public class GroupsListFragment extends MyFragment {
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
                 onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
-                if (deleteActionsPending.size() == 0) {
+                if(groupsModel.isTrackingPageLoaderWithId(response.getMessageId())) {
+                    onGroupsLoadFailed(response);
+                } else if (deleteActionsPending.size() == 0) {
                     // assume this to be a list reload that's required.
                     retryActionButton.setVisibility(View.VISIBLE);
                 }
@@ -337,6 +345,16 @@ public class GroupsListFragment extends MyFragment {
             } else {
                 super.handlePiwigoUnexpectedReplyErrorResponse(msg);
             }
+        }
+    }
+
+    private void onGroupsLoadFailed(PiwigoResponseBufferingHandler.Response response) {
+        groupsModel.acquirePageLoadLock();
+        try {
+            groupsModel.recordPageLoadFailed(response.getMessageId());
+//            onListItemLoadFailed();
+        } finally {
+            groupsModel.releasePageLoadLock();
         }
     }
 }

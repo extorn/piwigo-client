@@ -1,6 +1,4 @@
-package delit.piwigoclient.ui.events;
-
-import delit.piwigoclient.ui.events.trackable.TrackableRequestEvent;
+package delit.piwigoclient.ui.events.trackable;
 
 public class ViewAutoUploadJobEvent extends TrackableRequestEvent {
     private int jobId;

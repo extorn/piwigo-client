@@ -3,8 +3,8 @@
     <string name="checking_license">Lizenz prüfen....</string>
     <string name="button_quit">Beenden</string>
     <string name="button_buy">App kaufen</string>
-    <string name="unlicensed_dialog_retry_body">Lizenz kann nicht validiert werden. Prüfen Sie, ob eine Netzwerkverbindung verfügbar ist.</string>
-    <string name="unlicensed_dialog_body">Diese Anwendung ist nicht lizenziert. Bitte kaufen Sie es im Android Market.</string>
+    <string name="unlicensed_dialog_retry_body">Kann nicht bestätigen, dass die Anwendung lizenziert ist. Bitte kaufen Sie es im Android Market. Wenn ja, überprüfen Sie bitte, ob eine Netzwerkverbindung vorhanden ist, und versuchen Sie es erneut mit dieser Lizenzprüfung.</string>
+    <string name="unlicensed_dialog_body">Lizenz kann nicht validiert werden. Überprüfen Sie, ob eine Netzwerkverbindung verfügbar ist.</string>
     <string name="unlicensed_dialog_title">Anwendung nicht lizenziert</string>
     <string name="application_error">Anwendungsfehler: %1$d</string>
 
@@ -17,7 +17,7 @@
     <string name="piwigo_title_testConnection">Testverbindung</string>
     <string name="piwigo_title_testConnectionSummary">Verbindung zum Server testen</string>
     <string name="gallery_photos_summary_text_pattern">%1$d Fotos</string>
-    <string name="gallery_subcategory_summary_text_pattern">%2$d in %1$d Unteralben</string>
+    <string name="gallery_subcategory_summary_text_pattern">%1$d Unteralben und %2$d Fotos</string>
     <string name="alert_title_connectionTest">Verbindungstest</string>
     <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Warning\nServer hat keine verfügbaren Bildgrößen gemeldet.</string>
@@ -36,6 +36,7 @@
     <string name="settings_menu_title">App Einstellungen</string>
     <string name="gallery_menu_title">Galerie</string>
     <string name="upload_menu_title">Hochladen</string>
+    <string name="upload_page_title">Piwigo Hochladen</string>
     <string name="gallery_to_alter_title">Hochladen auf</string>
     <string name="login_button_title">Anmeldung</string>
 
@@ -87,7 +88,6 @@
     <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen den Status auf dem Server manuell bereinigen. Jobs werden oft erfolgreich abgeschlossen, wenn Sie sie später wieder aufnehmen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen wollen?</string>
     <string name="upload_files_button_title">Dateien hochladen</string>
     <string name="loading_please_wait">Laden, bitte warten</string>
-    <string name="talking_to_server_please_wait">Mit dem Server sprechen, bitte warten.</string>
     <string name="alert_title_server_error">Server-Fehler</string>
     <string name="alert_server_error_pattern">Server liefert HTTP-Fehler: %1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Fehler beim Parsen der piwigo-Antwort</string>
@@ -165,7 +165,7 @@ Du stimmst zu, und du wirst es anderen nicht erlauben:
 a) lizenzieren, verkaufen, vermieten, verpachten, abtreten, verteilen, übertragen, hosten, outsourcen, offenlegen oder auf andere Weise
 die Anwendung kommerziell zu verwerten oder Dritten zur Verfügung zu stellen.
 b) den Quellcode oder Bytecode der Anwendung entweder manuell oder mit einem Tool dekompilieren oder anderweitig anzeigen lassen
-c) diese Anwendung auf einem anderen als einem physischen Gerät vom Typ Telefon oder Tablett auszuführen oder zu versuchen, und das das Android-Betriebssystem als Hauptbetriebssystem verwendet.
+c) diese Anwendung auf einem anderen als einem physischen Gerät vom Typ Telefon oder Tablett auszuführen oder zu versuchen, und das Android-Betriebssystem als Hauptbetriebssystem verwendet.
 d) diese Anwendung in einem Emulator oder einer anderen Sandbox-Umgebung auszuführen oder zu versuchen, um ihr Verhalten zu untersuchen.
 e) abgeleitete Werke auf der Grundlage dieser Anwendung zu erstellen.
 
@@ -227,7 +227,10 @@ Kontakt-Informationen
 Wenn Sie Fragen zu dieser Vereinbarung haben, kontaktieren Sie uns bitte."</string>
     <string name="about_content"> "Diese App wurde geschrieben, um mir unterwegs den Zugriff auf meine Fotogalerie zu erleichtern.
 
-Es wird regelmäßig aktualisiert, um weitere Funktionen hinzuzufügen.
+Es wird regelmäßig aktualisiert, um weitere Funktionen hinzuzufügen, einige, an die ich gedacht habe, andere, die von den Benutzern gewünscht werden.
+
+Im August 2018 kam ein Benutzer, David Klement, mit Screen-Mock-ups für ein professionelleres Design zu mir zurück. Seit dem Release 1.3.95 habe ich diese Ideen übernommen, angefangen bei der Albumansicht.
+Diese vollständige Liste der vorgeschlagenen Screendesigns ist auf der App-Website einsehbar.
 
 HINWEIS: Sprachübersetzungen werden mit Hilfe von www.Deepl.com oder google translate websites durchgeführt. Wenn Sie offensichtliche Fehler entdecken, lassen Sie es mich bitte wissen, damit ich sie korrigieren kann.
 
@@ -337,6 +340,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="progress_move_resources">Ressourcen bewegen</string>
     <string name="progress_checking_with_server">Überprüfung der Zugangsdaten mit dem Server</string>
     <string name="progress_creating_album">Album erstellen</string>
+    <string name="progress_setting_permissions">Berechtigungen festlegen</string>
     <string name="progress_loading_groups">Benutzergruppen abrufen</string>
     <string name="progress_loading_users">Benutzer abrufen</string>
     <string name="progress_loading_album_permissions">Abrufen von Album-Berechtigungen</string>
@@ -401,7 +405,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_message_file_upload_cancelled_pattern">Upload der Datei (%1$s) abgebrochen.</string>
     <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen gewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild in der Größe der nächsten Übereinstimmung zurück.</string>
     <string name="logging_out_of_piwigo_pattern">Abmelden von %1$s</string>
-    <string name="preference_connections_caching">Web-Antwort-Caching</string>
+    <string name="preference_connections_category_connections_caching">Web-Antwort-Caching</string>
     <string name="loading_new_server_configuration">Neue Serververbindungskonfiguration laden</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">Um das Caching auf der Festplatte zu ermöglichen, muss Schreibzugriff auf das Dateisystem gewährt werden. Wenn verweigert, wird das Caching im Speicher sein.</string>
     <string name="error_request_timed_out">Anruf zum Server abgebrochen, da es zu lange gedauert hat.</string>
@@ -483,6 +487,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="folder_root_root">Gerätewurzel</string>
     <string name="folder_root_userdata">Benutzerdaten</string>
     <string name="folder_extstorage">Externer Speicher</string>
+    <string name="folder_extstorage_device_pattern">Externer Speicher %1$d</string>
     <string name="folder_default">Standard</string>
     <string name="button_all">Alles prüfen</string>
     <string name="button_none">Keine prüfen</string>
@@ -490,20 +495,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="inaccessible_remote_folder">** privat **</string>
     <string name="error_unable_to_acquire_valid_session">Es ist nicht möglich, eine gültige Sitzung mit dem Server zu erhalten.</string>
     <string name="upload_job_is_enabled_label">Ist gültig und aktiviert?</string>
-    <string name="alert_auto_upload_service_stopped">Hintergrund-Upload-Dienst gestoppt</string>
-    <string name="alert_auto_upload_service_started">Hintergrund-Upload-Dienst gestartet</string>
-    <string name="alert_auto_upload_service_job_restarted">Startet das Hochladen eines zuvor unvollständigen Jobs auf den Server %1$s mit %2$d-Dateien.</string>
-    <string name="alert_auto_upload_service_job_started">Starten des Upload-Jobs zum Server %1$s mit %2$d-Dateien</string>
-    <string name="alert_auto_upload_service_job_finished_success">Abgeschlossener Hintergrund-Upload-Job zum Server %1$s.</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">Abgeschlossener Hintergrund-Upload-Job zum Server %1$s. Einige Dateien konnten nicht hochgeladen werden und werden später erneut versucht.</string>
-    <string name="alert_auto_upload_service_job_finished_failure">Abgeschlossener Hintergrund-Upload-Job zum Server %1$s. Es konnten keine Dateien hochgeladen werden. Job wird später erneut versucht.</string>
-    <string name="alert_auto_upload_service_checking_for_tasks">Hintergrund-Upload-Service zur Überprüfung von Aufgaben</string>
     <string name="alert_unable_to_show_image_image_missing">Dieses Bild fehlt. Kann nicht angezeigt werden.</string>
     <string name="notification_title_foreground_upload_service">Piwigo Upload Dienst</string>
-    <string name="notification_title_background_upload_service">Hintergrund Piwigo Upload Service</string>
     <string name="notification_message_upload_service">Laufen</string>
-    <string name="notification_text_bakcground_upload_running">Laufender Upload-Job</string>
-    <string name="notification_text_bakcground_upload_sleeping">Schlafen. Nächster Lauf bei %1$tR</string>
     <string name="slideshow_image_tab_basic_info">Basic Info</string>
     <string name="slideshow_image_tab_exif_data">EXIF-Daten</string>
     <string name="alert_bad_request_http_to_https">Schlechte Anfrage an Ressource über HTTP. Möchten Sie alle HTTP-URIs für dieses Verbindungsprofil auf HTTPS umschreiben? Kann später in den App-Voreinstellungen geändert werden.</string>
@@ -514,4 +508,20 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_error_album_no_longer_on_server">Dieses Album konnte nicht vom Server geladen werden. Wechsel zum übergeordneten Album.</string>
     <string name="button_show_details">Detail anzeigen</string>
     <string name="button_hide_details">Detail ausblenden</string>
+    <string name="alert_message_max_upload_file_count_reached">Die maximale Anzahl der hochzuladenden Dateien ist erreicht. Um mehrere Dateien auf einmal hochzuladen, kaufen und verwenden Sie bitte die kostenpflichtige Version dieser App.</string>
+    <string name="alert_message_advert_load_error">Die Anzeigen haben immer wieder Probleme beim Laden. Bitte melden Sie mir dies, da diese eine wichtige, wenn auch sehr kleine Einnahmequelle für mich darstellen. Bitte denken Sie daran, die kostenpflichtige Version zu kaufen, um Anzeigen vollständig zu entfernen. Die App friert nun für 5 Sekunden ein, während derer dieser Bildschirm sichtbar bleiben muss. Der Countdown wird neu gestartet, wenn die Nachricht versteckt ist. Nach 5 Sekunden können Sie diese Meldung schließen und die App wie gewohnt weiter verwenden.</string>
+    <string name="alert_temporary_upload_album_deleted">Temporäres Upload-Album erfolgreich gelöscht</string>
+    <string name="alert_deleting_temporary_upload_album">Löschen eines temporären Upload-Albums</string>
+    <string name="alert_invalid_uri_pattern">Ungültige URI. %1$s</string>
+    <string name="album_section_heading_albums">Alben</string>
+    <string name="album_section_heading_resources">Fotos in diesem Album</string>
+    <string name="album_title_home">home</string>
+    <string name="upload_file_rating">Meine Bewertung</string>
+    <string name="slideshow_image_details_rating_score_title">Bewertungspunktzahl</string>
+    <string name="rating_score_pattern">%1$.2f (%2$d raten)</string>
+    <string name="connection_reset_warning_pattern">Der Server hat die Verbindung %1$d in den letzten %2$d Minuten mal geschlossen. Dies könnte auf ein Problem mit Ihrer Serverkonfiguration hinweisen.</string>
+    <string name="content_description_icon">icon</string>
+    <string name="files_already_set_for_upload_skipped_pattern">%1$d Dateien wurden bereits für den Upload ausgewählt und ignoriert, um Doppelarbeit zu vermeiden.</string>
+    <string name="progress_loading_session_details">Laden von Benutzerberechtigungen</string>
 </resources>
+

@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.permissions.groups;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -118,6 +118,11 @@ public class GroupFragment extends MyFragment {
         if (getArguments() != null) {
             currentGroup = (Group) getArguments().getSerializable(CURRENT_GROUP);
         }
+    }
+
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.group_heading);
     }
 
     @Override
@@ -353,11 +358,7 @@ public class GroupFragment extends MyFragment {
 
     private void deleteGroup(final Group group) {
         String message = getString(R.string.alert_confirm_really_delete_group);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-
-            }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

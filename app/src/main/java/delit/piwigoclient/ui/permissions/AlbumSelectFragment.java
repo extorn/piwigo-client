@@ -97,9 +97,13 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     }
 
     @Override
+    protected String buildPageHeading() {
+        return getString(R.string.access_rights_heading);
+    }
+
+    @Override
     protected void setPageHeading(TextView headingField) {
-        headingField.setText(R.string.access_rights_heading);
-        headingField.setVisibility(View.VISIBLE);
+        headingField.setVisibility(View.GONE);
     }
 
     @Override
@@ -145,7 +149,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     }
 
     private void onSubGalleriesLoaded(final AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
-        getUiHelper().dismissProgressDialog();
+        getUiHelper().hideProgressIndicator();
 //        if (response.getItemsOnPage() == response.getPageSize()) {
 //            //TODO FEATURE: Support groups paging
 //            getUiHelper().showOrQueueMessage(R.string.alert_title_error_too_many_users, getString(R.string.alert_error_too_many_users_message));

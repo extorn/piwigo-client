@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -428,6 +429,8 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
                             return 0;
                         }
                         bytesRead = cachedDataReadChannel.read(buff, readFromFilePosition);
+                    } catch(ClosedByInterruptException e) {
+                        Crashlytics.log(Log.DEBUG, TAG, "Read failed - request cancelled by user");
                     } catch (Throwable th) {
                         Crashlytics.logException(th);
                         if (logEnabled && BuildConfig.DEBUG) {

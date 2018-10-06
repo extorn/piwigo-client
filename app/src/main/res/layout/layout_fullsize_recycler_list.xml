@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <delit.piwigoclient.ui.common.ProgressIndicator
+        android:id="@+id/list_action_progress_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"></delit.piwigoclient.ui.common.ProgressIndicator>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/list_action_add_item_button"
         android:visibility="visible"
         android:layout_alignParentEnd="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_below="@id/list_action_progress_indicator"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="5dp"
         app:srcCompat="@drawable/ic_add_circle_black_24px" />
 
     <TextView
@@ -20,8 +32,10 @@
         android:layout_marginBottom="20dp"
         android:layout_marginTop="5dp"
         android:layout_marginStart="5dp"
-        android:text="Some Heading"
-        style="@style/Base.TextAppearance.AppCompat.Headline"/>
+        android:layout_below="@id/list_action_progress_indicator"
+        android:layout_alignWithParentIfMissing="true"
+        tools:text="Some Heading"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
 
     <Button
         android:id="@+id/list_action_cancel_button"
@@ -85,6 +99,7 @@
         android:layout_margin="10dp"
         android:clickable="true"
         android:visibility="gone"
+        tools:visibility="visible"
         app:fabSize="mini" />
 
 </RelativeLayout>

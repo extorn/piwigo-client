@@ -43,7 +43,9 @@ public class HttpUtils {
                             errorMessage = "\nCertificate : " + certName + "\n\n";
                         }
                     }
-                    errorMessage += cause.getMessage();
+                    if(cause != null) {
+                        errorMessage += cause.getMessage();
+                    }
                 }
             }
         }

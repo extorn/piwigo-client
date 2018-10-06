@@ -1,18 +1,18 @@
 package delit.piwigoclient.ui.common.preference;
 
-import android.app.AlertDialog.Builder;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.DialogPreference;
-import android.preference.Preference;
 import android.support.annotation.ArrayRes;
 import android.support.annotation.RequiresApi;
+import android.support.v7.preference.DialogPreference;
+import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
+
+import java.io.Serializable;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.util.ObjectUtils;
@@ -28,18 +28,17 @@ import delit.piwigoclient.util.ObjectUtils;
  * @attr ref android.R.styleable#ListPreference_entries
  * @attr ref android.R.styleable#ListPreference_entryValues
  */
-public abstract class MappedListPreference<T> extends DialogPreference {
+public abstract class MappedListPreference<T extends Serializable> extends DialogPreference {
     private T[] mEntryValues;
     private CharSequence[] mEntries;
-    private T mValue;
+    private T currentValue;
     private String mSummary;
-    private int mClickedDialogEntryIndex;
-    private boolean mValueSet;
+    private boolean valueHasBeenPersisted;
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public MappedListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        configurePreference(context, attrs, defStyleAttr, 0);
+        configurePreference(context, attrs, defStyleAttr, defStyleRes);
     }
 
     public MappedListPreference(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -48,11 +47,13 @@ public abstract class MappedListPreference<T> extends DialogPreference {
     }
 
     public MappedListPreference(Context context, AttributeSet attrs) {
-        this(context, attrs, android.R.attr.dialogPreferenceStyle);
+        super(context, attrs);
+        configurePreference(context, attrs, 0, 0);
     }
 
     public MappedListPreference(Context context) {
-        this(context, null);
+        super(context);
+        configurePreference(context, null, 0, 0);
     }
 
     protected T[] loadEntryValues(TypedArray a, int typedArrayIdx) {
@@ -192,7 +193,7 @@ public abstract class MappedListPreference<T> extends DialogPreference {
      * @return The value of the key.
      */
     public T getValue() {
-        return mValue;
+        return currentValue;
     }
 
     /**
@@ -203,10 +204,10 @@ public abstract class MappedListPreference<T> extends DialogPreference {
      */
     public void setValue(T value) {
         // Always persist/notify the first time.
-        final boolean changed = !ObjectUtils.areEqual(mValue, value);
-        if (changed || !mValueSet) {
-            mValue = value;
-            mValueSet = true;
+        final boolean changed = !ObjectUtils.areEqual(currentValue, value);
+        if (changed || !valueHasBeenPersisted) {
+            currentValue = value;
+            valueHasBeenPersisted = true;
             persistValue(value);
             if (changed) {
                 notifyChanged();
@@ -241,8 +242,8 @@ public abstract class MappedListPreference<T> extends DialogPreference {
         return -1;
     }
 
-    private int getValueIndex() {
-        return findIndexOfValue(mValue);
+    protected int getValueIndex() {
+        return findIndexOfValue(currentValue);
     }
 
     /**
@@ -257,57 +258,13 @@ public abstract class MappedListPreference<T> extends DialogPreference {
     }
 
     @Override
-    protected void onPrepareDialogBuilder(Builder builder) {
-        super.onPrepareDialogBuilder(builder);
-
-        if (mEntries == null || mEntryValues == null) {
-            throw new IllegalStateException(
-                    "ListPreference requires an entries array and an entryValues array.");
-        }
-
-        mClickedDialogEntryIndex = getValueIndex();
-        builder.setSingleChoiceItems(mEntries, mClickedDialogEntryIndex,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        mClickedDialogEntryIndex = which;
-
-                        /*
-                         * Clicking on an item simulates the positive button
-                         * click, and dismisses the dialog.
-                         */
-                        MappedListPreference.this.onClick(dialog, DialogInterface.BUTTON_POSITIVE);
-                        dialog.dismiss();
-                    }
-                });
-
-        /*
-         * The typical interaction for list-based dialogs is to have
-         * click-on-an-item dismiss the dialog instead of the user having to
-         * press 'Ok'.
-         */
-        builder.setPositiveButton(null, null);
-    }
-
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        super.onDialogClosed(positiveResult);
-
-        if (positiveResult && mClickedDialogEntryIndex >= 0 && mEntryValues != null) {
-            T value = mEntryValues[mClickedDialogEntryIndex];
-            if (callChangeListener(value)) {
-                setValue(value);
-            }
-        }
-    }
-
-    @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
         return a.getString(index);
     }
 
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        setValue(restoreValue ? getPersistedValue(mValue) : transform(defaultValue));
+        setValue(restoreValue ? getPersistedValue(currentValue) : transform(defaultValue));
     }
 
     @Override

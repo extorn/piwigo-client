@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -25,6 +25,7 @@ import java.util.HashSet;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
@@ -81,6 +82,11 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     }
 
     @Override
+    protected void updatePageTitle() {
+        // Do nothing. This is handled by the items in the slideshow.
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(gallery));
@@ -105,12 +111,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
-        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
-        if (useDarkMode) {
-            view.setBackgroundColor(Color.BLACK);
-        } else {
-            view.setBackgroundColor(Color.WHITE);
-        }
+//        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
+//        if (useDarkMode) {
+//            view.setBackgroundColor(Color.BLACK);
+//        } else {
+//            view.setBackgroundColor(Color.WHITE);
+//        }
 
         progressIndicator = view.findViewById(R.id.slideshow_page_loadingIndicator);
         hideProgressIndicator();
@@ -159,8 +165,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
         }
 
         viewPager = view.findViewById(R.id.slideshow_viewpager);
-        boolean shouldShowVideos = prefs.getBoolean(getString(R.string.preference_gallery_include_videos_in_slideshow_key), getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
-        shouldShowVideos &= prefs.getBoolean(getString(R.string.preference_gallery_enable_video_playback_key), getResources().getBoolean(R.bool.preference_gallery_enable_video_playback_default));
+        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, getContext());
+        shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
         if (galleryItemAdapter == null) {
             galleryItemAdapter = new GalleryItemAdapter(gallery, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(1);
@@ -172,6 +178,17 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
         galleryItemAdapter.setContainer(viewPager);
         viewPager.setAdapter(galleryItemAdapter);
+        /*viewPager.setObser(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                viewPager.removeViews(viewPager.getCurrentItem(), viewPager.getChildCount());
+            }
+
+            @Override
+            public void onInvalidated() {
+                viewPager.removeAllViews();
+            }
+        });*/
 
         ViewPager.OnPageChangeListener slideshowPageChangeListener = new ViewPager.OnPageChangeListener() {
 
@@ -287,23 +304,17 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(AlbumItemDeletedEvent event) {
-//        int fullGalleryIdx = gallery.getItemIdx(event.item);
-//        viewPager.setCurrentItem(PagerAdapter.POSITION_NONE);
-//        ((GalleryItemAdapter) viewPager.getAdapter()).deleteGalleryItem(fullGalleryIdx);
-//        if(viewPager.getAdapter().getCount() == 0) {
-//            EventBus.getDefault().post(new SlideshowEmptyEvent());
-//        } else {
-//            int displayedIdx = viewPager.getCurrentItem();
-//            viewPager.setCurrentItem(Math.min(viewPager.getAdapter().getCount() - 1, displayedIdx));
-//        }
-        // force the slideshow to end.
-        EventBus.getDefault().post(new SlideshowEmptyEvent());
+        if(gallery.getId() == event.item.getParentId()) {
+            GalleryItemAdapter adapter = ((GalleryItemAdapter) viewPager.getAdapter());
+            int fullGalleryIdx = adapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
+            adapter.deleteGalleryItem(fullGalleryIdx);
+        }
     }
 
     @Subscribe
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        if (gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.id) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_album));
+        if (gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.getAlbumAltered()) {
+//            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_album));
         }
     }
 /*
@@ -327,9 +338,9 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
                 return;
             }
             pagesBeingLoaded.add(pageToLoad);
-            String sortOrder = prefs.getString(getString(R.string.preference_gallery_sortOrder_key), getString(R.string.preference_gallery_sortOrder_default));
-            String multimediaExtensionList = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(getString(R.string.preference_piwigo_playable_media_extensions_key), getString(R.string.preference_piwigo_playable_media_extensions_default));
-            int pageSize = prefs.getInt(getString(R.string.preference_album_request_pagesize_key), getResources().getInteger(R.integer.preference_album_request_pagesize_default));
+            String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
+            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
 
             long loadingMessageId;
             loadingMessageId = invokeResourcePageLoader(gallery, sortOrder, pageToLoad, pageSize, multimediaExtensionList);

@@ -1,32 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_data_upload_automatic_job_title">
+        android:title="@string/preference_data_upload_automatic_job_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <CheckBoxPreference
             android:key="@string/preference_data_upload_automatic_job_is_valid_key"
             android:title="@string/preference_data_upload_automatic_job_is_valid_title"
-            android:enabled="false"/>
+            android:enabled="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-        <SwitchPreference
+        <android.support.v14.preference.SwitchPreference
             android:defaultValue="@bool/preference_data_upload_automatic_job_enabled_default"
             android:key="@string/preference_data_upload_automatic_job_enabled_key"
             android:summary="@string/preference_data_upload_automatic_job_enabled_summary"
-            android:title="@string/preference_data_upload_automatic_job_enabled_title" />
+            android:title="@string/preference_data_upload_automatic_job_enabled_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <delit.piwigoclient.ui.preferences.ServerConnectionsListPreference
             android:title="@string/preference_data_upload_automatic_job_server_title"
             android:key="@string/preference_data_upload_automatic_job_server_key"
             android:summary="@string/preference_data_upload_automatic_job_server_summary"
-            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"/>
+            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <delit.piwigoclient.ui.preferences.ServerAlbumListPreference
             app:connectionProfileNameKey="@string/preference_data_upload_automatic_job_server_key"
             android:title="@string/preference_data_upload_automatic_job_server_album_title"
             android:key="@string/preference_data_upload_automatic_job_server_album_key"
             android:summary="@string/preference_data_upload_automatic_job_server_album_summary"
-            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"/>
+            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <delit.piwigoclient.ui.common.preference.IntListPreference
             android:key="@string/preference_data_upload_automatic_job_privacy_level_key"
@@ -34,25 +46,31 @@
             android:summary="@string/preference_data_upload_automatic_job_privacy_level_summary"
             app:entryValues="@array/privacy_levels_values_array"
             app:entries="@array/privacy_levels_groups_array"
-            android:defaultValue="@string/preference_server_ssl_certificate_hostname_verification_default"
-            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"/>
+            android:defaultValue="@int/preference_data_upload_automatic_job_privacy_level_default"
+            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <delit.piwigoclient.ui.common.preference.LocalFoldersListPreference
             android:title="@string/preference_data_upload_automatic_job_local_folder_title"
             android:key="@string/preference_data_upload_automatic_job_local_folder_key"
             android:summary="@string/preference_data_upload_automatic_job_local_folder_summary"
-            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"/>
+            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-        <SwitchPreference
-            android:defaultValue="@bool/preference_data_upload_automatic_server_delete_uploaded_default"
+        <android.support.v14.preference.SwitchPreference
+            android:defaultValue="@bool/preference_data_upload_automatic_job_delete_uploaded_default"
             android:key="@string/preference_data_upload_automatic_job_delete_uploaded_key"
             android:summary="@string/preference_data_upload_automatic_job_delete_uploaded_summary"
             android:title="@string/preference_data_upload_automatic_job_delete_uploaded_title"
-            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"/>
+            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-        <delit.piwigoclient.ui.common.preference.EditTextPreference
+        <delit.piwigoclient.ui.common.preference.CustomEditTextPreference
             android:capitalize="none"
-            android:inputType="none"
+            android:inputType="textNoSuggestions"
             android:key="@string/preference_data_upload_automatic_job_file_exts_uploaded_key"
             android:maxLines="1"
             android:selectAllOnFocus="true"
@@ -60,7 +78,9 @@
             android:defaultValue="@string/preference_data_upload_automatic_job_file_exts_uploaded_default"
             android:title="@string/preference_data_upload_automatic_job_file_exts_uploaded_title"
             android:summary="@string/preference_data_upload_automatic_job_file_exts_uploaded_summary"
-            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"/>
+            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_data_upload_automatic_job_max_upload_size_mb_default"
@@ -69,6 +89,8 @@
             android:key="@string/preference_data_upload_automatic_job_max_upload_size_mb_key"
             android:title="@string/preference_data_upload_automatic_job_max_upload_size_mb_title"
             android:summary="@string/preference_data_upload_automatic_job_max_upload_size_mb_summary"
-            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"/>
+            android:dependency="@string/preference_data_upload_automatic_job_enabled_key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </PreferenceCategory>
 </PreferenceScreen>

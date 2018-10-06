@@ -79,4 +79,8 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent {
     public ArrayList<String> getInitialSelection() {
         return initialSelection;
     }
+
+    public void setActionId(int actionId) {
+        super.setActionId(actionId);
+    }
 }

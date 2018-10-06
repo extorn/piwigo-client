@@ -25,10 +25,10 @@ public class TrackableEventManager {
      * @return
      */
     public boolean wasTrackingEvent(TrackableResponseEvent event) {
-        EventBus.getDefault().removeStickyEvent(event);
         if (trackedEventId != event.getActionId()) {
             return false;
         }
+        EventBus.getDefault().removeStickyEvent(event);
         trackedEventId = -1;
         return true;
     }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_title_background_upload_service">Background Piwigo Upload Service</string>
+    <string name="notification_text_background_upload_running">Running upload job</string>
+    <string name="notification_text_background_upload_sleeping">Sleeping. Next run at %1$tR</string>
+    <string name="notification_text_background_upload_polling">Polling for files to upload.</string>
+
+    <string name="alert_auto_upload_service_stopped">Background upload service stopped</string>
+    <string name="alert_auto_upload_service_started">Background upload service started</string>
+    <string name="alert_auto_upload_service_job_restarted">Started uploading a previously incomplete job to server %1$s with %2$d files</string>
+    <string name="alert_auto_upload_service_job_started">Starting uploading job to server %1$s with %2$d files</string>
+    <string name="alert_auto_upload_service_job_finished_success">Finished running background upload job to server %1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Finished running background upload job to server %1$s. Some files failed to upload and will be retried later.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Finished running background upload job to server %1$s. No files could be uploaded. Job will be retried later.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Background upload service checking for tasks</string>
+    <string name="progress_creating_tag">Creating Tag</string>
+</resources>

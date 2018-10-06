@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class KeystoreLoadOperationResult implements Serializable {
+    private static final long serialVersionUID = 5558406670099938929L;
     private final KeystoreLoadOperation loadOperation;
     private final Map<Key, Certificate[]> keystoreContent;
     private final List<SecurityOperationException> exceptionList;

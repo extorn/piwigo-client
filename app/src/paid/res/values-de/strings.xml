@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_title_background_upload_service">Hintergrund Piwigo Upload Service</string>
+    <string name="notification_text_background_upload_running">Laufender Upload-Job</string>
+    <string name="notification_text_background_upload_sleeping">Schlafen. Nächster Lauf bei %1$tR</string>
+    <string name="notification_text_background_upload_polling">Abfrage nach Dateien zum Hochladen.</string>
+
+    <string name="alert_auto_upload_service_stopped">Hintergrund-Upload-Dienst gestoppt</string>
+    <string name="alert_auto_upload_service_started">Hintergrund-Upload-Dienst gestartet</string>
+    <string name="alert_auto_upload_service_job_restarted">Startet das Hochladen eines zuvor unvollständigen Jobs auf den Server %1$s mit %2$d-Dateien.</string>
+    <string name="alert_auto_upload_service_job_started">Starten des Upload-Jobs zum Server %1$s mit %2$d-Dateien</string>
+    <string name="alert_auto_upload_service_job_finished_success">Abgeschlossener Hintergrund-Upload-Job zum Server %1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Abgeschlossener Hintergrund-Upload-Job zum Server %1$s. Einige Dateien konnten nicht hochgeladen werden und werden später erneut versucht.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Abgeschlossener Hintergrund-Upload-Job zum Server %1$s. Es konnten keine Dateien hochgeladen werden. Job wird später erneut versucht.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Hintergrund-Upload-Service zur Überprüfung von Aufgaben</string>
+    <string name="progress_creating_tag">Tag erstellen</string>
+</resources>

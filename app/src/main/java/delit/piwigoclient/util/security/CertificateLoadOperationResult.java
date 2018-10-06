@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CertificateLoadOperationResult implements Serializable {
+    private static final long serialVersionUID = -7558414097661292429L;
     private final X509LoadOperation loadOperation;
     private final List<X509Certificate> certs;
     private CertificateLoadException exception;

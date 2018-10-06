@@ -7,7 +7,7 @@
     <delit.piwigoclient.ui.common.SlidingTabLayout
         android:id="@+id/sliding_tabs"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
@@ -15,8 +15,7 @@
         android:layout_above="@+id/prefs_adView"
         android:layout_alignWithParentIfMissing="true"
         android:layout_width="match_parent"
-        android:layout_height="0px"
-        android:background="@android:color/white"/>
+        android:layout_height="0px"/>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

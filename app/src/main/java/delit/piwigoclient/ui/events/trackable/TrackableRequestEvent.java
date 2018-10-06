@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TrackableRequestEvent implements Serializable {
     private static final AtomicInteger actionIdGenerator = new AtomicInteger(0);
+    private static final long serialVersionUID = 8955893506818711893L;
     private int actionId;
 
     public TrackableRequestEvent() {

@@ -158,37 +158,86 @@
         <item>Long click delete button on a \'file for upload\' to delete all files to be uploaded (when job is not in progress)</item>
     </string-array>
     <string-array name="planned_releases" translatable="true">
-        <item>Release 1.3.x</item>
+        <item>The future</item>
         <item>"Changes:
-         - ? French / other translations for the app ?"
-        </item>
-        <item>1.3.96</item>
-        <item>"Changes:
-         - User interface refinements
-         - Support for favorites - depends on PIWIGO API enhancement
-         - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"
-        </item>
-        <item>1.3.95</item>
-        <item>"Changes:
+         - Possibly - Support for favorites - depends on PIWIGO API enhancement
          - Possibly - allow linking the upload process to a compression routine for videos
-         - Rework of the way popup messages and progress indicators are shown - investigate using more Toast messages
          - Possibly - The ability to delete an album, but not its contents (creating orphans)
          - Possibly - Orphan file management
+         - Possibly - enhance the Piwigo Server API to allow users to see their rating given for a given resource
          - Possibly: Allow user to zoom out in slideshow (view smaller than fullscreen)
          - Possibly: Investigate adding support for coloured tag plugin
-         - Paid App Only : The random photos idea implemented on the piwigo web UI
-         - Paid App Only : (Maybe) : Support for user comments
-         - Paid App Only : (Maybe) : Notify user of server updates that are available
-         - Paid App Only : Possibly support for editing EXIF and other image metadata formats
-         - Maybe: Remember the previously opened photo or album when the user opens the app.
-         - Allow user to stay in slideshow after deleting an item
-         - Add some sort of help to assist user in knowing the features
-         - Paid App Only : Add preference to allow showing/hiding the EXIF etc fields
-         - Correct weirdness with basket stuff (copy paste delete)
-         - Allow user to stay in slideshow after deleting an item"
+         - Possibly: Remember the previously opened photo or album when the user opens the app.
+         - Possibly: Paid App Only : The random photos idea implemented on the piwigo web UI
+         - Possibly: Paid App Only : Support for user comments
+         - Possibly: Paid App Only : Notify user of server updates that are available
+         - Possibly: Paid App Only : Support for editing EXIF and other image metadata formats
+         - Possibly: Paid App Only : Add preference to allow showing/hiding the EXIF etc fields of or not of interest
+         - Possibly: ? French / other translations for the app ?
+         - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
+        <item>1.3.97</item>
+        <item>"Expected Delivery:
+         - End November 2018
+         Changes:
+         - Add some sort of help to assist user in knowing the features"
+        </item>
+        <item>1.3.96</item>
+        <item>"Expected Delivery:
+         - End of October or Mid November 2018
+         Changes:
+         - Further user interface refinements
+         - Further rework of the way popup messages and progress indicators are shown - investigate using more Toast or Snackbar messages, minimising use of dialog popup windows
+         - Collapsible albums in album selection lists where practical
+         - Review and improve basket actions (bulk cut or copy and paste)
+         - Update the list of top tips"
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.95</item>
+        <item>"Changes:
+            - The album view has been redesigned following a design proposed by David Klement
+            - The material theme has been embraced
+            - Corrected connection timeout (please correct your setting if it has been reset)
+            - Added response timeout setting in addition to the connection timeout
+            - Lots of bug fixes especially for android versions earlier than Lollipop
+            - Allow user to stay in slideshow after deleting an item"
+        </item>
+        <item>1.3.94.7</item>
+        <item>"Bugfix:
+            - Crash restoring slideshow after app minimise
+            - Vector graphics cause crashes android earlier than 5 (Lollipop)"</item>
+        <item>1.3.94.6</item>
+        <item>"Bugfix:
+            - Crash restoring slideshow after app minimise
+            - Crash uploading using android earlier than 5 (Lollipop)
+            "</item>
+        <item>1.3.94.5</item>
+        <item>"Notes:
+            - Cached data for e.g. videos will require redownload after this update (side effect of bugfix)
+            Bugfix:
+            - Build configuration errors causing number of errors starting and running app
+            - Incorrect details showing for slideshow item until edit button pressed"</item>
+        <item>1.3.94.3</item>
+        <item>"Bugfix:
+            - Crash on app open (1.3.94.2) - strange Multidex issue
+            - Intermittent crash on user and group list pages when loading results
+            - Crash using unlock after locking app to read only
+            - Crash after reopening app to browse album page after a long time
+            - Crash closing Upload page immediately and while server request still in progress
+            - Several other bugs identified but not causing crashes
+            - Upload - temporary upload album - move rather than copy items to destination album
+            - Upload - temporary upload album - delete if job deleted after failure"
+        </item>
+        <item>1.3.94.2</item>
+        <item>"Bugfix:
+            - Intermittent crash on user and group list pages when loading results
+            - Crash using unlock after locking app to read only
+            - Crash after reopening app to browse album page after a long time
+            - Crash closing Upload page immediately and while server request still in progress
+            - Several other bugs identified but not causing crashes
+            - Upload - temporary upload album - move rather than copy items to destination album
+            - Upload - temporary upload album - delete if job deleted after failure"
+        </item>
         <item>1.3.94.1</item>
         <item>"Changes:
             - Corrected advert on slideshow page

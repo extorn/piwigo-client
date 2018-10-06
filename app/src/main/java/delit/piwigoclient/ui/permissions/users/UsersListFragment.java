@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.permissions.users;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,6 +36,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -101,6 +102,12 @@ public class UsersListFragment extends MyFragment {
         viewPrefs.storeToBundle(outState);
     }
 
+
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.users_heading);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -129,8 +136,7 @@ public class UsersListFragment extends MyFragment {
         }
 
         TextView heading = view.findViewById(R.id.heading);
-        heading.setText(R.string.users_heading);
-        heading.setVisibility(View.VISIBLE);
+        heading.setVisibility(View.INVISIBLE);
 
         Button cancelButton = view.findViewById(R.id.list_action_cancel_button);
         cancelButton.setVisibility(View.GONE);
@@ -180,6 +186,7 @@ public class UsersListFragment extends MyFragment {
         }, viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
+        recyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
 
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
@@ -211,7 +218,7 @@ public class UsersListFragment extends MyFragment {
         if (!usersModel.isPageLoaded(pageToLoad)) {
             this.pageToLoadNow = pageToLoad;
             int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-            addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext()));
+            usersModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
         }
     }
 
@@ -231,10 +238,7 @@ public class UsersListFragment extends MyFragment {
         } else {
 
             String message = getString(R.string.alert_confirm_really_delete_user);
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-                @Override
-                public void onDismiss(AlertDialog dialog) {
-                }
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
 
                 @Override
                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -258,12 +262,15 @@ public class UsersListFragment extends MyFragment {
     }
 
     private void onUsersLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse response) {
-        synchronized (this) {
+        usersModel.acquirePageLoadLock();
+        try {
+            usersModel.recordPageLoadSucceeded(response.getMessageId());
             pageToLoadNow = -1;
             retryActionButton.setVisibility(View.GONE);
             int firstIdxAdded = usersModel.addItemPage(response.getPage(), response.getPageSize(), response.getUsers());
             viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getUsers().size());
-
+        } finally {
+            usersModel.releasePageLoadLock();
         }
     }
 
@@ -313,10 +320,22 @@ public class UsersListFragment extends MyFragment {
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) {
                 onUserDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
-                if (deleteActionsPending.size() == 0) {
+                if(usersModel.isTrackingPageLoaderWithId(response.getMessageId())) {
+                    onUsersLoadFailed(response);
+                } else if (deleteActionsPending.size() == 0) {
                     // assume this to be a list reload that's required.
                     retryActionButton.setVisibility(View.VISIBLE);
                 }
+            }
+        }
+
+        protected void onUsersLoadFailed(PiwigoResponseBufferingHandler.Response response) {
+            usersModel.acquirePageLoadLock();
+            try {
+                usersModel.recordPageLoadFailed(response.getMessageId());
+//                onListItemLoadFailed();
+            } finally {
+                usersModel.releasePageLoadLock();
             }
         }
 

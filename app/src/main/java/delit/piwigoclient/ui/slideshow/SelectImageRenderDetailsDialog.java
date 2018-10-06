@@ -1,15 +1,15 @@
 package delit.piwigoclient.ui.slideshow;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Switch;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ class SelectImageRenderDetailsDialog {
     private final Context context;
     private int[] rotationValues;
     private Spinner imageRotation;
-    private Switch maxZoomPicker;
+    private SwitchCompat maxZoomPicker;
     private DownloadItemsListAdapter adapter;
     private ListView fileSelectList;
 
@@ -34,15 +34,15 @@ class SelectImageRenderDetailsDialog {
     }
 
     public AlertDialog buildDialog(float currentMaxZoom, String currentImageUrlDisplayed, ArrayList<ResourceItem.ResourceFile> availableFiles, final RenderDetailSelectListener listener) {
-        android.app.AlertDialog.Builder builder1 = new android.app.AlertDialog.Builder(context);
+        android.support.v7.app.AlertDialog.Builder builder1 = new android.support.v7.app.AlertDialog.Builder(context);
         builder1.setTitle(R.string.alert_image_show_image_title);
-        adapter = new DownloadItemsListAdapter(context, R.layout.select_dialog_singlechoice_compressed, availableFiles);
+        adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, availableFiles);
 
-        View view = LayoutInflater.from(context).inflate(R.layout.zoom_control_dialog_layout, null, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_dialog_zoom_control, null, false);
 
         imageRotation = view.findViewById(R.id.imageRotationField);
 
-        imageRotation.setAdapter(ArrayAdapter.createFromResource(context, R.array.rotation_array, R.layout.dark_spinner_item));
+        imageRotation.setAdapter(ArrayAdapter.createFromResource(context, R.array.rotation_array, R.layout.support_simple_spinner_dropdown_item));
         rotationValues = context.getResources().getIntArray(R.array.rotation_values_array);
         for (int i = 0; i < rotationValues.length; i++) {
             if (rotationValues[i] == 0) {
@@ -80,9 +80,9 @@ class SelectImageRenderDetailsDialog {
                             boolean newIsLandscape = selectedItem.getWidth() > selectedItem.getHeight();
 
                             if (newIsLandscape && !oldIsLandscape) {
-                                rotateDegrees = -90f;
-                            } else if (!newIsLandscape && oldIsLandscape) {
                                 rotateDegrees = 90f;
+                            } else if (!newIsLandscape && oldIsLandscape) {
+                                rotateDegrees = -90f;
                             }
                         }
                     }
@@ -99,7 +99,9 @@ class SelectImageRenderDetailsDialog {
         };
         fileSelectList.setOnItemClickListener(itemClickListener);
         int defaultFileSelectionPos = adapter.getPosition(currentImageUrlDisplayed);
-        fileSelectList.setItemChecked(defaultFileSelectionPos, true);
+        if(defaultFileSelectionPos >= 0) {
+            fileSelectList.setItemChecked(defaultFileSelectionPos, true);
+        }
         itemClickListener.onItemClick(fileSelectList, null, defaultFileSelectionPos, -1);
         builder1.setView(view);
         builder1.setNegativeButton(R.string.button_cancel, null);

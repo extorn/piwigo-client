@@ -24,6 +24,11 @@ public class LicencesFragment extends MyFragment {
         return new LicencesFragment();
     }
 
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.licences_heading);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

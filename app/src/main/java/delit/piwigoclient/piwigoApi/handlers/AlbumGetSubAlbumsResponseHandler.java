@@ -96,7 +96,10 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             boolean isPublic = false;
             //TODO No support in community plugin for anything except private albums for PIWIGO API.
             if (!PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs()) || PiwigoSessionDetails.isAdminUser(getConnectionPrefs())) {
-                isPublic = "public".equals(category.get("status").getAsString());
+                JsonElement statusElem = category.get("status");
+                if(statusElem != null) {
+                    isPublic = "public".equals(statusElem.getAsString());
+                }
             }
 
             JsonElement maxDateLastJsonElem = category.get("max_date_last");

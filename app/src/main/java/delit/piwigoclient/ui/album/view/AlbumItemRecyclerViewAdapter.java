@@ -1,15 +1,11 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -18,6 +14,7 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
+import delit.piwigoclient.ui.common.recyclerview.AlbumHeadingViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
@@ -36,58 +33,45 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
     @NonNull
     protected View inflateView(@NonNull ViewGroup parent, int viewType) {
         View view;
-        if (getAdapterPrefs().isUseMasonryStyle()) {
-            view = inflateMasonryView(parent, viewType);
-        } else if (viewType == GalleryItem.CATEGORY_TYPE) {
-            view = inflateNonMasonryAlbumView(parent);
-        } else if (viewType == GalleryItem.PICTURE_RESOURCE_TYPE || viewType == GalleryItem.VIDEO_RESOURCE_TYPE) {
-            view = inflateNonMasonryResourceItemView(parent);
-        } else {
-            view = inflateAdvertView(parent, viewType);
+        switch(viewType) {
+            case GalleryItem.CATEGORY_TYPE:
+                view = inflateNonMasonryAlbumView(parent);
+                break;
+            case GalleryItem.PICTURE_RESOURCE_TYPE:
+            case GalleryItem.VIDEO_RESOURCE_TYPE:
+                view = inflateNonMasonryResourceItemView(parent);
+                break;
+            case GalleryItem.ALBUM_HEADING_TYPE:
+                view = inflateAlbumsHeadingView(parent);
+                break;
+            case GalleryItem.PICTURE_HEADING_TYPE:
+                view = inflateResourcesHeadingView(parent);
+                break;
+            default:
+                throw new RuntimeException("viewType not found ("+viewType+")");
         }
         return view;
     }
 
-    private View inflateAdvertView(ViewGroup parent, int viewType) {
-        // if (viewType == GalleryItem.CATEGORY_ADVERT_TYPE || viewType == GalleryItem.RESOURCE_ADVERT_TYPE) {
-        AdView adView = new AdView(getContext());
-        adView.setAdSize(AdSize.SMART_BANNER);
-        adView.setAdUnitId(getContext().getString(R.string.ad_id_album_banner));
-        return adView;
+    private View inflateAlbumsHeadingView(ViewGroup parent) {
+        return LayoutInflater.from(getContext())
+                .inflate(R.layout.layout_galleryitem_albums_heading, parent, false);
+    }
+
+    private View inflateResourcesHeadingView(ViewGroup parent) {
+        return LayoutInflater.from(getContext())
+                .inflate(R.layout.layout_galleryitem_resources_heading, parent, false);
     }
 
     private View inflateNonMasonryResourceItemView(ViewGroup parent) {
         return LayoutInflater.from(getContext())
-                .inflate(R.layout.fragment_galleryitem_resource, parent, false);
+                .inflate(R.layout.layout_galleryitem_resource, parent, false);
     }
 
     private View inflateNonMasonryAlbumView(ViewGroup parent) {
         View view;
-        if (getAdapterPrefs().isShowLargeAlbumThumbnails()) {
-            view = LayoutInflater.from(getContext())
-                    .inflate(R.layout.fragment_galleryitem_album_grid, parent, false);
-        } else {
-            view = LayoutInflater.from(getContext())
-                    .inflate(R.layout.fragment_galleryitem_album_list, parent, false);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            view.setClipToOutline(true);
-        }
-        return view;
-    }
-
-    private View inflateMasonryView(ViewGroup parent, int viewType) {
-        View view;
-        if (viewType == GalleryItem.CATEGORY_TYPE) {
-            view = LayoutInflater.from(getContext())
-                    .inflate(R.layout.fragment_galleryitem_album_masonry, parent, false);
-        } else {
-            view = LayoutInflater.from(getContext())
-                    .inflate(R.layout.fragment_galleryitem_resource_masonry, parent, false);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            view.setClipToOutline(true);
-        }
+        view = LayoutInflater.from(getContext())
+                .inflate(R.layout.layout_galleryitem_album_list, parent, false);
         return view;
     }
 
@@ -100,8 +84,9 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
             case GalleryItem.VIDEO_RESOURCE_TYPE:
             case GalleryItem.PICTURE_RESOURCE_TYPE:
                 return new ResourceItemViewHolder(view, this, viewType);
-            case GalleryItem.CATEGORY_ADVERT_TYPE:
-            case GalleryItem.RESOURCE_ADVERT_TYPE:
+            case GalleryItem.ALBUM_HEADING_TYPE:
+            case GalleryItem.PICTURE_HEADING_TYPE:
+                return new AlbumHeadingViewHolder(view, this, viewType);
             default:
                 return null;
         }
@@ -223,10 +208,12 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
                 manualRetries++;
                 getViewHolder().imageLoader.loadNoCache();
             } else {
-                if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
-                    onCategoryClick();
-                } else {
-                    onNonCategoryClick();
+                if(getViewHolder().getItem() != null) {
+                    if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
+                        onCategoryClick();
+                    } else {
+                        onNonCategoryClick();
+                    }
                 }
             }
         }
@@ -255,12 +242,16 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
         @Override
         public boolean onLongClick(View v) {
-            if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
-                onCategoryLongClick();
-            } else {
-                onNonCategoryLongClick();
+            GalleryItem item = getViewHolder().getItem();
+            if(item != null) {
+                if (getViewHolder().getItem().getType() == GalleryItem.CATEGORY_TYPE) {
+                    onCategoryLongClick();
+                } else {
+                    onNonCategoryLongClick();
+                }
+                return true;
             }
-            return true;
+            return false;
         }
     }
 }

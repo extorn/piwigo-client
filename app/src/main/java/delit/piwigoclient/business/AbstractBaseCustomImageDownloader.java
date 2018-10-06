@@ -8,17 +8,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.DrawableRes;
-import android.util.Log;
 import android.util.SparseIntArray;
 import android.widget.Toast;
 
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
 import com.squareup.picasso.Downloader;
-import com.squareup.picasso.LruExifCache;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -26,11 +19,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import cz.msebera.android.httpclient.HttpStatus;
+import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.events.BadRequestUsesRedirectionServerEvent;
 import delit.piwigoclient.ui.events.BadRequestUsingHttpToHttpsServerEvent;
+import delit.piwigoclient.util.ToastUtils;
 
 /**
  * Created by gareth on 18/05/17.
@@ -66,7 +61,17 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
         if (!handler.isSuccess()) {
             PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse) handler.getResponse();
-            final String toastMessage = errorResponse.getUrl() + '\n' + errorResponse.getErrorMessage() + '\n' + errorResponse.getErrorDetail();
+
+            StringBuilder msgBuilder= new StringBuilder();
+            msgBuilder.append(errorResponse.getUrl());
+            msgBuilder.append('\n');
+            msgBuilder.append(errorResponse.getErrorMessage());
+            msgBuilder.append('\n');
+            msgBuilder.append(errorResponse.getErrorDetail());
+            msgBuilder.append('\n');
+            msgBuilder.append(errorResponse.getResponseBody());
+
+            final String toastMessage = msgBuilder.toString();
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
             if (uri.getScheme().equalsIgnoreCase("http") && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
                 EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs));
@@ -77,7 +82,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(context, toastMessage, Toast.LENGTH_LONG).show();
+                    ToastUtils.makeDetailedToast(context, R.string.alert_error, toastMessage, Toast.LENGTH_LONG).show();
                 }
             });
             Integer drawableId = errorDrawables.get(errorResponse.getStatusCode());

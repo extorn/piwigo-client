@@ -1,7 +1,7 @@
 package delit.piwigoclient.piwigoApi;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.support.v4.app.Fragment;
@@ -100,11 +100,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg, String detail) {
         final AbstractPiwigoDirectResponseHandler handler = errorResponse.getHttpResponseHandler();
 
-        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-                // don't care
-            }
+        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -140,19 +136,30 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
 
         onBeforeHandlePiwigoResponse(response);
 
-        uiHelper.onServiceCallComplete(response);
-
-        if (response instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
-            handlePiwigoHttpErrorResponse((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) response);
-        } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {
-            handlePiwigoUnexpectedReplyErrorResponse((PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) response);
-        } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) {
-            handlePiwigoServerErrorResponse((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) response);
+        UIHelper.Action action = uiHelper.getActionOnResponse(response);
+        boolean runListenerHandlerCode = true;
+        if(action != null) {
+            if(response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
+                runListenerHandlerCode = action.onFailure(uiHelper, (PiwigoResponseBufferingHandler.ErrorResponse) response);
+            } else {
+                runListenerHandlerCode = action.onSuccess(uiHelper, response);
+            }
         }
 
-        if (!(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse)) {
-            // don't call user code if we may be re-trying. The outcome is not yet know.
-            onAfterHandlePiwigoResponse(response);
+        uiHelper.onServiceCallComplete(response);
+
+        if(runListenerHandlerCode) {
+            if (response instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
+                handlePiwigoHttpErrorResponse((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {
+                handlePiwigoUnexpectedReplyErrorResponse((PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) response);
+            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) {
+                handlePiwigoServerErrorResponse((PiwigoResponseBufferingHandler.PiwigoServerErrorResponse) response);
+            }
+            if (!(response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse)) {
+                // don't call user code if we may be re-trying. The outcome is not yet know.
+                onAfterHandlePiwigoResponse(response);
+            }
         }
     }
 

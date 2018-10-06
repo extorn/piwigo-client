@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 public class PiwigoTag extends ResourceContainer<Tag, GalleryItem> implements Serializable {
 
+    private static final long serialVersionUID = -876734985280043291L;
+
     public PiwigoTag(Tag tag) {
         super(tag, "ResourceItem", tag.getUsageCount());
     }

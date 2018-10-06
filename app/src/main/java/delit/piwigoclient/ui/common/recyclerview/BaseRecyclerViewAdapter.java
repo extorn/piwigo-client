@@ -78,7 +78,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     @NonNull
     protected View inflateView(@NonNull ViewGroup parent, int viewType) {
         return LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.actionable_triselect_list_item_layout, parent, false);
+                .inflate(R.layout.layout_actionable_triselect_list_item, parent, false);
     }
 
     /**
@@ -96,9 +96,10 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         View view = inflateView(parent, viewType);
 
         final S viewHolder = buildViewHolder(view, viewType);
-        CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
-        viewHolder.internalCacheViewFieldsAndConfigure(clickListener);
-
+        if(viewHolder != null) {
+            CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
+            viewHolder.internalCacheViewFieldsAndConfigure(clickListener);
+        }
         return viewHolder;
     }
 

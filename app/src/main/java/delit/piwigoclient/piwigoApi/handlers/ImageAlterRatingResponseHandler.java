@@ -32,11 +32,12 @@ public class ImageAlterRatingResponseHandler extends AbstractPiwigoWsResponseHan
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
-        float rating = (float) result.get("score").getAsDouble();
+        float score = (float) result.get("score").getAsDouble();
         float averageRating = (float) result.get("average").getAsDouble();
         int usersRated = result.get("count").getAsInt();
-        piwigoResource.setYourRating(rating);
+        piwigoResource.setYourRating(newRating);
         piwigoResource.setAverageRating(averageRating);
+        piwigoResource.setScore(score);
         piwigoResource.setRatingsGiven(usersRated);
 
         PiwigoResponseBufferingHandler.PiwigoRatingAlteredResponse r = new PiwigoResponseBufferingHandler.PiwigoRatingAlteredResponse(getMessageId(), getPiwigoMethod(), piwigoResource);

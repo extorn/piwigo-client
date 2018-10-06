@@ -8,7 +8,11 @@ import android.preference.PreferenceManager;
 import android.support.multidex.MultiDexApplication;
 import android.support.v7.app.AppCompatDelegate;
 
+import java.net.URI;
+import java.util.Set;
+
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.util.ProjectUtils;
 
@@ -40,7 +44,42 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_password_key, null);
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             editor.commit();
-        } else if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
+        } else if(prefsVersion <= 144) {
+            // Fix any addresses with a space character.
+            SharedPreferences.Editor editor = prefs.edit();
+            String serverName = prefs.getString(getString(R.string.preference_piwigo_server_address_key), null);
+            if(serverName != null) {
+                try {
+                    URI.create(serverName);
+                } catch (IllegalArgumentException e) {
+                    editor.putString(getString(R.string.preference_piwigo_server_address_key), serverName.replaceAll(" ", ""));
+                }
+            }
+            editor.commit();
+        } else if(prefsVersion < 147) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.remove(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key));
+            editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key));
+            editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsPortrait_key));
+            editor.remove(getString(R.string.preference_gallery_images_preferredColumnsLandscape_key));
+            editor.remove(getString(R.string.preference_gallery_images_preferredColumnsPortrait_key));
+            editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsLandscape_key));
+            editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsPortrait_key));
+            editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsLandscape_key));
+            editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsPortrait_key));
+            Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
+            for(String profile : connectionProfiles) {
+                ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile);
+                int currentTimeout = connPrefs.getServerConnectTimeout(prefs, getApplicationContext());
+                if(currentTimeout >= 1000) {
+                    currentTimeout = (int) Math.round(Math.ceil((double)currentTimeout / 1000));
+                    editor.putInt(connPrefs.getKey(getApplicationContext(), R.string.preference_server_connection_timeout_secs_key), currentTimeout);
+                }
+            }
+            editor.commit();
+        }
+
+        if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             editor.commit();

@@ -2,7 +2,8 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/slideshow_item_content_layout"
@@ -20,6 +21,7 @@
 
         <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/slideshow_resource_action_direct_download"
+            app:srcCompat="@drawable/ic_file_download_black_24px"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
@@ -29,41 +31,51 @@
 
         <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
-            android:layout_toEndOf="@id/slideshow_resource_action_direct_download"
-            android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:visibility="visible"/>
+            android:layout_alignParentTop="true"
+            android:layout_gravity="start"
+            android:layout_toEndOf="@id/slideshow_resource_action_direct_download"
+            android:visibility="visible"
+            app:srcCompat="@drawable/ic_wallpaper_black_24dp" />
 
         <TextView
             android:id="@+id/slideshow_resource_item_x_of_y_text"
+            android:paddingTop="5dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="10dp"
+            android:shadowColor="@color/primary"
+            android:shadowRadius="6"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:layout_toEndOf="@id/slideshow_resource_action_use_for_album_thumbnail"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:textAlignment="viewEnd"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:visibility="visible"
-            android:text="x/y"
+            tools:text="x/y"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
         <RatingBar
             android:id="@+id/slideshow_image_average_ratingBar"
-            style="@style/Widget.AppCompat.RatingBar"
+            style="@style/Widget.AppCompat.RatingBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:visibility="gone"
+            android:layout_below="@+id/slideshow_resource_item_x_of_y_text"
             android:isIndicator="true"
             android:numStars="5"
-            android:stepSize="0.1" />
-            <!--android:layout_alignBottom="@+id/slideshow_image_favorite"-->
-            <!--android:layout_toStartOf="@+id/slideshow_image_favorite"-->
+            android:progressTint="@color/rating_indicator"
+            android:stepSize="0.1"
+            tools:progress="50"
+            android:visibility="gone"
+            tools:visibility="visible" tools:targetApi="lollipop"/>
 
 
         <!-- this is currently unsupported by the Piwigo API 2.9.1 required -->
-        <!--<CheckBox
+        <!--<delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
             android:id="@+id/slideshow_image_favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,228 +84,295 @@
             android:layout_alignParentTop="true"
             android:layout_margin="16sp"/>-->
 
+        <!--<com.ortiz.touch.TouchImageView
+            android:id="@+id/slideshow_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minWidth="120dp"
+            android:minHeight="120dp"
+            android:scaleType="centerInside"/>-->
+
     </RelativeLayout>
 
-    <com.wunderlist.slidinglayer.SlidingLayer
-        xmlns:slidingLayer="http://schemas.android.com/apk/res-auto"
+    <com.wunderlist.slidinglayer.CustomSlidingLayer
         android:id="@+id/slideshow_image_bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        slidingLayer:shadowSize="20dp"
-        slidingLayer:shadowDrawable="@drawable/sidebar_shadow"
-        slidingLayer:offsetDistance="16dp"
-        slidingLayer:stickTo="bottom"
-        slidingLayer:changeStateOnTap="true">
+        app:changeStateOnTap="true"
+        app:offsetDistance="30dp"
+        app:shadowDrawable="@drawable/sidebar_shadow"
+        app:shadowSize="30dp"
+        app:stickTo="bottom">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"
-            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginStart="5dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginEnd="5dp"
-            android:layout_gravity="bottom|center_horizontal">
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="0dp"
+            android:background="@color/colorAlbumBottomSheet"
+            android:padding="5dp"
+            tools:layout_marginTop="-480dp">
 
-            <RelativeLayout
+            <delit.piwigoclient.ui.common.button.CustomImageButton
+                android:id="@+id/slideshow_resource_action_edit_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
+
+            <delit.piwigoclient.ui.common.button.CustomImageButton
+                android:id="@+id/slideshow_resource_action_save_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/slideshow_resource_action_edit_button"
+                android:layout_toEndOf="@+id/slideshow_resource_action_edit_button"
+                app:srcCompat="@drawable/ic_save_black_24dp" />
+
+            <delit.piwigoclient.ui.common.button.CustomImageButton
+                android:id="@+id/slideshow_resource_action_discard_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/slideshow_resource_action_save_button"
+                android:layout_toEndOf="@+id/slideshow_resource_action_save_button"
+                app:srcCompat="@drawable/ic_undo_black_24dp" />
+
+            <delit.piwigoclient.ui.common.button.CustomImageButton
+                android:id="@+id/slideshow_resource_action_move"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/slideshow_resource_action_download"
+                android:layout_toStartOf="@+id/slideshow_resource_action_download"
+                app:srcCompat="@drawable/ic_content_cut_black_24px" />
+
+            <delit.piwigoclient.ui.common.button.CustomImageButton
+                android:id="@+id/slideshow_resource_action_copy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/slideshow_resource_action_move"
+                android:layout_toStartOf="@+id/slideshow_resource_action_move"
+                android:text="@string/slideshow_resource_action_copy"
+                app:srcCompat="@drawable/ic_content_copy_black_24px" />
+
+            <delit.piwigoclient.ui.common.button.CustomImageButton
+                android:id="@+id/slideshow_resource_action_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/slideshow_resource_action_copy"
+                android:layout_toStartOf="@+id/slideshow_resource_action_copy"
+                app:srcCompat="@drawable/ic_delete_black_24px" />
+
+            <delit.piwigoclient.ui.common.button.CustomImageButton
+                android:id="@+id/slideshow_resource_action_download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end"
+                app:srcCompat="@drawable/ic_file_download_black_24px" />
+
+            <delit.piwigoclient.ui.common.SlidingTabLayout
+                android:id="@+id/slideshow_resource_details_tabs_headings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="14dp">
+                android:layout_below="@+id/slideshow_resource_action_download"
+                app:initialTabIdx="0"
+                app:viewPager="@+id/slideshow_resource_details_tabs_content" />
 
-                <RatingBar
-                    android:id="@+id/slideshow_image_ratingBar"
-                    style="@style/Widget.AppCompat.RatingBar"
+            <android.support.v4.view.ViewPager
+                android:id="@+id/slideshow_resource_details_tabs_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/slideshow_resource_details_tabs_headings">
+
+                <TextView
+                    android:id="@+id/pageTitle1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:isIndicator="false"
-                    android:layout_alignParentEnd="true"
-                    android:numStars="5"
-                    android:stepSize="1" />
+                    android:text="@string/slideshow_image_tab_basic_info" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
-                    android:id="@+id/slideshow_resource_action_edit_button"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/slideshow_image_ratingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <delit.piwigoclient.ui.common.button.CustomImageButton
-                    android:id="@+id/slideshow_resource_action_save_button"
-                    android:layout_toEndOf="@+id/slideshow_resource_action_edit_button"
-                    android:layout_below="@+id/slideshow_image_ratingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/slideshow_resource_action_edit_button" />
-
-                <delit.piwigoclient.ui.common.button.CustomImageButton
-                    android:id="@+id/slideshow_resource_action_discard_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/slideshow_resource_action_save_button"
-                    android:layout_alignBottom="@+id/slideshow_resource_action_save_button"/>
-
-                <delit.piwigoclient.ui.common.button.CustomImageButton
-                    android:id="@+id/slideshow_resource_action_move"
-                    android:layout_toStartOf="@+id/slideshow_resource_action_download"
-                    android:layout_alignBottom="@+id/slideshow_resource_action_download"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <delit.piwigoclient.ui.common.button.CustomImageButton
-                    android:id="@+id/slideshow_resource_action_copy"
-                    android:layout_toStartOf="@+id/slideshow_resource_action_move"
-                    android:layout_alignBottom="@+id/slideshow_resource_action_move"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/slideshow_resource_action_copy"/>
-
-                <delit.piwigoclient.ui.common.button.CustomImageButton
-                    android:id="@+id/slideshow_resource_action_delete"
-                    android:layout_toStartOf="@+id/slideshow_resource_action_copy"
-                    android:layout_alignBottom="@+id/slideshow_resource_action_copy"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <delit.piwigoclient.ui.common.button.CustomImageButton
-                    android:id="@+id/slideshow_resource_action_download"
-                    android:layout_alignParentEnd="true"
-                    android:layout_below="@+id/slideshow_image_ratingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"/>
-
-               <TabHost
-                   android:id="@+id/slideshow_image_tab_panels"
-                   android:layout_width="match_parent"
-                   android:layout_height="wrap_content"
-                   android:layout_below="@+id/slideshow_resource_action_download">
+                <android.support.v4.widget.NestedScrollView
+                    android:id="@+id/pageContent1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                     <LinearLayout
+                        android:id="@+id/picture_resource_basic_fields"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="10dp">
 
-                        <TabWidget
-                            android:id="@android:id/tabs"
+                        <TextView
+                            android:id="@+id/slideshow_image_details_description_label"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:visibility="visible" />
+                            android:labelFor="@+id/slideshow_image_details_description"
+                            android:text="@string/slideshow_image_details_description_title"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                        <FrameLayout
-                            android:id="@android:id/tabcontent"
+                        <EditText
+                            android:id="@+id/slideshow_image_details_description"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="2dp"
+                            android:inputType="textMultiLine|textNoSuggestions"
+                            android:maxLines="10"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
-                            <LinearLayout
-                                android:id="@+id/gallery_details_edit_fields"
-                                android:orientation="vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/slideshow_image_details_name_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:labelFor="@+id/slideshow_image_details_name"
+                            android:text="@string/slideshow_image_details_name_title"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                                <TextView
-                                    android:id="@+id/slideshow_image_details_name_label"
-                                    android:labelFor="@+id/slideshow_image_details_name"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/slideshow_image_details_name_title" />
+                        <EditText
+                            android:id="@+id/slideshow_image_details_name"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="2dp"
+                            android:inputType="textMultiLine|textNoSuggestions"
+                            android:maxLines="3"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
-                                <EditText
-                                    android:id="@+id/slideshow_image_details_name"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:inputType="textMultiLine"
-                                    android:clickable="true"
-                                    android:maxLines="3"
-                                    android:textColor="@drawable/edit_text_color_selector"
-                                    android:focusable="true" />
+                        <TextView
+                            android:id="@+id/slideshow_image_details_linked_albums_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:labelFor="@+id/slideshow_image_details_linked_albums"
+                            android:text="@string/slideshow_image_details_linked_albums_title"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                                <TextView
-                                    android:id="@+id/slideshow_image_details_description_label"
-                                    android:labelFor="@+id/slideshow_image_details_description"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/slideshow_image_details_description_title" />
+                        <TextView
+                            android:id="@+id/slideshow_image_details_linked_albums"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="2dp"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="@string/click_to_view"
+                            android:textAlignment="viewEnd"
+                            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
 
-                                <EditText
-                                    android:id="@+id/slideshow_image_details_description"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:inputType="textMultiLine"
-                                    android:maxLines="10"
-                                    android:textColor="@drawable/edit_text_color_selector"/>
+                        <TextView
+                            android:id="@+id/slideshow_image_details_tags_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:labelFor="@+id/slideshow_image_details_tags"
+                            android:text="@string/slideshow_image_details_tags_title"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                                <TextView
-                                    android:id="@+id/slideshow_image_details_linked_albums_label"
-                                    android:labelFor="@+id/slideshow_image_details_linked_albums"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/slideshow_image_details_linked_albums_title" />
+                        <TextView
+                            android:id="@+id/slideshow_image_details_tags"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="2dp"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="@string/click_to_view"
+                            android:textAlignment="viewEnd"
+                            android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
 
-                                <TextView
-                                    android:id="@+id/slideshow_image_details_linked_albums"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/click_to_view"
-                                    android:textColor="@drawable/edit_text_color_selector"/>
+                        <TextView
+                            android:id="@+id/slideshow_image_details_rating_score_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:labelFor="@+id/slideshow_image_details_rating_score"
+                            android:text="@string/slideshow_image_details_rating_score_title"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                                <TextView
-                                    android:id="@+id/slideshow_image_details_tags_label"
-                                    android:labelFor="@+id/slideshow_image_details_tags"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/slideshow_image_details_tags_title" />
+                        <TextView
+                            android:id="@+id/slideshow_image_details_rating_score"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/rating_score_pattern"
+                            android:textAlignment="viewEnd"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                            tools:text="1.2 (5 rates)"/>
 
-                                <TextView
-                                    android:id="@+id/slideshow_image_details_tags"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/click_to_view"
-                                    android:textColor="@drawable/edit_text_color_selector"/>
+                        <TextView
+                            android:id="@+id/slideshow_image_details_rating_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:labelFor="@+id/slideshow_image_ratingBar"
+                            android:text="@string/upload_file_rating"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                                <TextView
-                                    android:id="@+id/slideshow_image_details_privacy_level"
-                                    android:labelFor="@+id/privacy_level"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/upload_file_privacy_level_title"
-                                    />
+                        <RatingBar
+                            android:id="@+id/slideshow_image_ratingBar"
+                            style="@style/Widget.AppCompat.RatingBar.Small"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_marginBottom="3dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="2dp"
+                            android:isIndicator="false"
+                            android:numStars="5"
+                            android:stepSize="1"
+                            tools:progress="50" />
 
-                                <Spinner
-                                    android:id="@+id/privacy_level"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@drawable/edit_text_color_selector"/>
+                        <TextView
+                            android:id="@+id/slideshow_image_details_privacy_level"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:labelFor="@+id/privacy_level"
+                            android:text="@string/upload_file_privacy_level_title"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                            </LinearLayout>
+                        <Spinner
+                            android:id="@+id/privacy_level"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="3dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="2dp" />
 
-                            <LinearLayout
-                                android:id="@+id/picture_resource_exif_data"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:minHeight="200dp"
-                                android:orientation="vertical">
-                                
-                                <android.support.v7.widget.RecyclerView
-                                    android:clickable="true"
-                                    android:focusable="true"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:id="@+id/exifDataList">
-
-                                </android.support.v7.widget.RecyclerView>
-                            </LinearLayout>
-
-                        </FrameLayout>
                     </LinearLayout>
-                </TabHost>
 
-            </RelativeLayout>
+                </android.support.v4.widget.NestedScrollView>
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/pageTitle2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/slideshow_image_tab_exif_data" />
 
-    </com.wunderlist.slidinglayer.SlidingLayer>
+                <FrameLayout
+                    android:id="@+id/pageContent2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <delit.piwigoclient.ui.common.CustomExpandableListView
+                        android:id="@+id/exifDataList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"></delit.piwigoclient.ui.common.CustomExpandableListView>
+
+                </FrameLayout>
+
+            </android.support.v4.view.ViewPager>
+
+        </RelativeLayout>
+
+    </com.wunderlist.slidinglayer.CustomSlidingLayer>
+
 
 </android.support.design.widget.CoordinatorLayout>

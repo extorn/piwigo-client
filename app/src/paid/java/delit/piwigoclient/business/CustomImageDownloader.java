@@ -2,7 +2,6 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
@@ -48,7 +47,6 @@ public class CustomImageDownloader extends AbstractBaseCustomImageDownloader {
                 String uriStr = uri.toString();
                 cache.setMetadata(uriStr, metadata);
                 EventBus.getDefault().post(new ExifDataRetrievedEvent(uriStr, metadata));
-                Log.d("CustomImageLoader", "Loading Metadata for : " + uriStr, new Exception().fillInStackTrace());
             } catch (ImageProcessingException e) {
                 Crashlytics.logException(e);
             } catch (IOException e) {

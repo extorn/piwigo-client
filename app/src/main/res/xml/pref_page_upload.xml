@@ -1,51 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_data_upload_display">
-        <SwitchPreference
-            android:defaultValue="@bool/preference_data_upload_large_thumbnail_default"
-            android:key="@string/preference_data_upload_large_thumbnail_key"
-            android:summary="@string/preference_data_upload_large_thumbnail_summary"
-            android:title="@string/preference_data_upload_large_thumbnail_title" />
+        android:title="@string/preference_connections_category_data_upload_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
             app:setDefaultOnAttach="false"
             android:key="@string/preference_data_upload_preferredColumnsPortrait_key"
             android:title="@string/preference_data_upload_preferredColumnsPortrait_title"
-            android:summary="@string/preference_data_upload_preferredColumnsPortrait_summary"/>
+            android:summary="@string/preference_data_upload_preferredColumnsPortrait_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
             app:setDefaultOnAttach="false"
             android:key="@string/preference_data_upload_preferredColumnsLandscape_key"
             android:title="@string/preference_data_upload_preferredColumnsLandscape_title"
-            android:summary="@string/preference_data_upload_preferredColumnsLandscape_summary"/>
+            android:summary="@string/preference_data_upload_preferredColumnsLandscape_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:layout="@android:layout/preference_category"
-        android:title="@string/preference_connections_category_data_upload">
+        android:title="@string/preference_connections_category_data_upload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_data_upload_chunkSizeKb_default"
             app:minValue="256"
             app:maxValue="10240"
             android:key="@string/preference_data_upload_chunkSizeKb_key"
             android:title="@string/preference_data_upload_chunkSizeKb_title"
-            android:summary="@string/preference_data_upload_chunkSizeKb_summary"/>
+            android:summary="@string/preference_data_upload_chunkSizeKb_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_data_upload_chunk_auto_retries_default"
             app:minValue="0"
             app:maxValue="5"
             android:key="@string/preference_data_upload_chunk_auto_retries_key"
             android:title="@string/preference_data_upload_chunk_auto_retries_title"
-            android:summary="@string/preference_data_upload_chunk_auto_retries_summary"/>
+            android:summary="@string/preference_data_upload_chunk_auto_retries_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:defValue="@integer/preference_data_upload_max_filesize_mb_default"
             app:minValue="0"
             app:maxValue="150"
             android:key="@string/preference_data_upload_max_filesize_mb_key"
             android:title="@string/preference_data_upload_max_filesize_mb_title"
-            android:summary="@string/preference_data_upload_max_filesize_mb_summary"/>
+            android:summary="@string/preference_data_upload_max_filesize_mb_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </PreferenceCategory>
 </PreferenceScreen>

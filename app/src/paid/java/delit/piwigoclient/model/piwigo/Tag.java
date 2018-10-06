@@ -7,6 +7,7 @@ import java.util.Date;
  * Created by gareth on 26/06/17.
  */
 public class Tag implements Identifiable, Serializable {
+    private static final long serialVersionUID = -1146223606759760399L;
     private long id = -1;
     private String name;
     private int usageCount;

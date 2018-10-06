@@ -15,6 +15,7 @@ import delit.piwigoclient.piwigoApi.HttpClientFactory;
  */
 
 public class PiwigoSessionDetails {
+    public static final String UNKNOWN_VERSION = "Unknown";
     public static final int NOT_LOGGED_IN = 0;
     public static final int LOGGED_IN = 1;
     public static final int LOGGED_IN_WITH_SESSION_DETAILS = 2;

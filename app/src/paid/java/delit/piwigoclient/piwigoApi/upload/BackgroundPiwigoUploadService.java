@@ -25,6 +25,7 @@ import java.util.List;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AutoUploadPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
@@ -67,10 +68,14 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
         terminateUploadServiceThreadAsap = false;
         starting = true;
-        Intent intent = new Intent(context, BackgroundPiwigoUploadService.class);
+        Intent intent = new Intent(context.getApplicationContext(), BackgroundPiwigoUploadService.class);
         intent.setAction(ACTION_BACKGROUND_UPLOAD_FILES);
         intent.putExtra(INTENT_ARG_KEEP_DEVICE_AWAKE, keepDeviceAwake);
-        ComponentName name = context.startService(intent);
+        ComponentName name = context.getApplicationContext().startService(intent);
+        if(name == null) {
+            starting = false;
+            Crashlytics.log(Log.ERROR, TAG, "Unable to start background service. Service does not exist");
+        }
     }
 
     public static boolean isStarted() {
@@ -118,7 +123,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         } finally {
             stopForeground(true);
         }
-
     }
 
     @Override
@@ -133,7 +137,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
         try {
 
-            long pollDurationMillis = 1000 * 60 * 15; // every 15 minutes
+            long pollDurationMillis = 1000 * 60 * AutoUploadPreferences.getPollIntervalMins(getApplicationContext(), getPrefs()); // every 15 minutes
 
             BackgroundPiwigoFileUploadResponseListener jobListener = new BackgroundPiwigoFileUploadResponseListener(context);
             while (!terminateUploadServiceThreadAsap) {
@@ -148,6 +152,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 }
 
                 if(canUpload) {
+                    updateNotificationText(getString(R.string.notification_text_background_upload_polling), false);
                     PowerManager.WakeLock wl = getWakeLock(intent);
                     try {
                         UploadJob unfinishedJob;
@@ -200,7 +205,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                     Date wakeAt = new Date(pauseThreadUntilSysTime);
                     while (System.currentTimeMillis() < pauseThreadUntilSysTime && !terminateUploadServiceThreadAsap) {
                         try {
-                            updateNotificationText(getString(R.string.notification_text_bakcground_upload_sleeping, wakeAt), false);
+                            updateNotificationText(getString(R.string.notification_text_background_upload_sleeping, wakeAt), false);
                             wait(pollDurationMillis);
                         } catch (InterruptedException e) {
                             Log.d(TAG, "Ignoring interrupt");
@@ -239,7 +244,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             synchronized (BackgroundPiwigoUploadService.class) {
                 runningUploadJob = thisUploadJob;
             }
-            updateNotificationText(getString(R.string.notification_text_bakcground_upload_running), true);
+            updateNotificationText(getString(R.string.notification_text_background_upload_running), true);
             EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob, thisUploadJob.hasBeenRunBefore()));
             super.runJob(thisUploadJob, listener);
         } finally {

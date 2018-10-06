@@ -1,6 +1,9 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
+import android.util.Log;
 import android.view.View;
+
+import com.crashlytics.android.Crashlytics;
 
 public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T, S extends CustomViewHolder<V, T>> implements View.OnClickListener, View.OnLongClickListener {
 
@@ -19,7 +22,11 @@ public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T
     @Override
     public void onClick(View v) {
         if (!parentAdapter.isEnabled()) {
-            parentAdapter.getMultiSelectStatusListener().onDisabledItemClick(parentAdapter, viewHolder.getItem());
+            if(parentAdapter.getMultiSelectStatusListener() != null) {
+                parentAdapter.getMultiSelectStatusListener().onDisabledItemClick(parentAdapter, viewHolder.getItem());
+            } else {
+                Crashlytics.log(Log.ERROR, "CustomClickListener", "Adapter of type "+parentAdapter.getClass().getName()+" does not have a mulit select status listener");
+            }
             return;
         }
         //TODO Note - the way this works, click event is sunk if item selection is enabled... allow override?

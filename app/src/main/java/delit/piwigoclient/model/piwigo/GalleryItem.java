@@ -16,14 +16,27 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Seria
     public static final int CATEGORY_TYPE = 0;
     public static final int PICTURE_RESOURCE_TYPE = 1;
     public static final int VIDEO_RESOURCE_TYPE = 2;
-    public static final int CATEGORY_ADVERT_TYPE = 3;
-    public static final int RESOURCE_ADVERT_TYPE = 4;
-    public static final GalleryItem ADVERT = new GalleryItem(Long.MIN_VALUE + 1, null, null, null, null) {
+    public static final int ALBUM_HEADING_TYPE = 3;
+    public static final int PICTURE_HEADING_TYPE = 4;
+    public static final int ADVERT_TYPE = 5;
+    public static final CategoryItem ADVERT = new CategoryItem(Long.MIN_VALUE + 1, null, null, true, null, 0, 0, 0, null) {
         @Override
         public int getType() {
-            return GalleryItem.RESOURCE_ADVERT_TYPE;
+            return GalleryItem.ADVERT_TYPE;
         }
     };
+    public static final GalleryItem PICTURE_HEADING = new GalleryItem(Long.MIN_VALUE + 2, null, null, null, null) {
+        @Override
+        public int getType() {
+            return GalleryItem.PICTURE_HEADING_TYPE;
+        }
+
+        @Override
+        public String toString() {
+            return "PicturesHeading";
+        }
+    };
+    private static final long serialVersionUID = 7684159305897923971L;
     private final long id;
     private String thumbnailUrl;
     private String name;
@@ -90,9 +103,9 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Seria
         }
         // both are categories
         if (isCategory) {
-            if (this == CategoryItem.BLANK || o == CategoryItem.ADVERT) {
+            if (this == CategoryItem.BLANK || o == CategoryItem.ALBUM_HEADING) {
                 return 1;
-            } else if (o == CategoryItem.BLANK || this == CategoryItem.ADVERT) {
+            } else if (o == CategoryItem.BLANK || this == CategoryItem.ALBUM_HEADING) {
                 return -1;
             }
             return -this.name.compareTo(o.name);

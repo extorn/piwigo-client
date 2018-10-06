@@ -57,6 +57,8 @@ public class ConnectionPreferences {
     }
 
     public static class ProfilePreferences implements Serializable, Comparable<ProfilePreferences> {
+
+        private static final long serialVersionUID = -839430660180276975L;
         private final String prefix;
         private boolean asGuest;
 
@@ -129,7 +131,7 @@ public class ConnectionPreferences {
             }
         }
 
-        private String getKey(Context context, @StringRes int keyId) {
+        public String getKey(Context context, @StringRes int keyId) {
             if (this.prefix != null && this.prefix.length() > 0) {
                 return prefix + ':' + context.getString(keyId);
             }
@@ -228,8 +230,13 @@ public class ConnectionPreferences {
         }
 
         public int getServerConnectTimeout(SharedPreferences prefs, Context context) {
-            int defaultConnectTimeoutMillis = context.getResources().getInteger(R.integer.preference_server_socketTimeout_millisecs_default);
-            return prefs.getInt(getKey(context, R.string.preference_server_socketTimeout_millisecs_key), defaultConnectTimeoutMillis);
+            int defaultConnectTimeoutMillis = context.getResources().getInteger(R.integer.preference_server_connection_timeout_secs_default);
+            return prefs.getInt(getKey(context, R.string.preference_server_connection_timeout_secs_key), defaultConnectTimeoutMillis);
+        }
+
+        public int getServerResponseTimeout(SharedPreferences prefs, Context context) {
+            int defaultConnectTimeoutMillis = context.getResources().getInteger(R.integer.preference_server_response_timeout_secs_default);
+            return prefs.getInt(getKey(context, R.string.preference_server_response_timeout_secs_key), defaultConnectTimeoutMillis);
         }
 
         public void copyFrom(SharedPreferences prefs, Context context, ProfilePreferences fromPrefs) {
@@ -244,7 +251,8 @@ public class ConnectionPreferences {
             writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_piwigo_server_password_key), fromPrefs.getPiwigoPassword(prefs, context));
 
             // fine grained http connection configuration bits and bobs
-            writeIntPref(editor, getKey(context, R.string.preference_server_socketTimeout_millisecs_key), fromPrefs.getServerConnectTimeout(prefs, context));
+            writeIntPref(editor, getKey(context, R.string.preference_server_connection_timeout_secs_key), fromPrefs.getServerConnectTimeout(prefs, context));
+            writeIntPref(editor, getKey(context, R.string.preference_server_response_timeout_secs_key), fromPrefs.getServerResponseTimeout(prefs, context));
             writeIntPref(editor, getKey(context, R.string.preference_server_connection_retries_key), fromPrefs.getMaxServerConnectRetries(prefs, context));
             writeIntPref(editor, getKey(context, R.string.preference_server_connection_max_redirects_key), fromPrefs.getMaxHttpRedirects(prefs, context));
             writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_allow_redirects_key), fromPrefs.getFollowHttpRedirects(prefs, context));
@@ -264,7 +272,7 @@ public class ConnectionPreferences {
             writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_server_basic_auth_username_key), fromPrefs.getBasicAuthenticationUsername(prefs, context));
             writeSecurePref(editor, prefUtil, getKey(context, R.string.preference_server_basic_auth_password_key), fromPrefs.getBasicAuthenticationPassword(prefs, context));
 
-            editor.apply();
+//            editor.apply();
             editor.commit();
         }
 
@@ -294,7 +302,7 @@ public class ConnectionPreferences {
             editor.remove(getKey(context, R.string.preference_piwigo_server_address_key));
             editor.remove(getKey(context, R.string.preference_piwigo_server_username_key));
             editor.remove(getKey(context, R.string.preference_piwigo_server_password_key));
-            editor.remove(getKey(context, R.string.preference_server_socketTimeout_millisecs_key));
+            editor.remove(getKey(context, R.string.preference_server_connection_timeout_secs_key));
             editor.remove(getKey(context, R.string.preference_server_connection_retries_key));
             editor.remove(getKey(context, R.string.preference_server_connection_max_redirects_key));
             editor.remove(getKey(context, R.string.preference_server_connection_allow_redirects_key));

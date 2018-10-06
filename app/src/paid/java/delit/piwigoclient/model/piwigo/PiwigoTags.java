@@ -1,6 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
 
+    private static final long serialVersionUID = 5861064490986171049L;
     private final ArrayList<Tag> items = new ArrayList<>();
     private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
     private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
@@ -25,6 +27,10 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     private transient Comparator<Tag> tagComparator = new TagComparator();
 
     public PiwigoTags() {
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
     }
 
     private void readObject(java.io.ObjectInputStream in)

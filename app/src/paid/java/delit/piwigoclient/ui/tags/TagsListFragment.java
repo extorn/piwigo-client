@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.tags;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -41,6 +41,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
+import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -101,15 +102,22 @@ public class TagsListFragment extends MyFragment {
         viewPrefs.storeToBundle(outState);
     }
 
+    @Override
+    protected String buildPageHeading() {
+        return getString(R.string.tags_heading);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if (savedInstanceState != null && !isSessionDetailsChanged()) {
-            tagsModel = (PiwigoTags) savedInstanceState.getSerializable(GROUPS_MODEL);
-            pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
+        if (savedInstanceState != null) {
+            if(!isSessionDetailsChanged()) {
+                tagsModel = (PiwigoTags) savedInstanceState.getSerializable(GROUPS_MODEL);
+                pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
+            }
             viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
 
@@ -123,8 +131,7 @@ public class TagsListFragment extends MyFragment {
         }
 
         TextView heading = view.findViewById(R.id.heading);
-        heading.setText(R.string.tags_heading);
-        heading.setVisibility(View.VISIBLE);
+        heading.setVisibility(View.INVISIBLE);
 
         Button cancelButton = view.findViewById(R.id.list_action_cancel_button);
         cancelButton.setVisibility(View.GONE);
@@ -162,6 +169,7 @@ public class TagsListFragment extends MyFragment {
         viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagListSelectListener(), viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
+        recyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
 
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
@@ -257,10 +265,7 @@ public class TagsListFragment extends MyFragment {
 
     public void onDeleteTag(final Tag thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_tag);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-            }
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -272,7 +277,7 @@ public class TagsListFragment extends MyFragment {
     }
 
     private void createNewTag(String tagname) {
-        addActiveServiceCall(new TagAddResponseHandler(tagname).invokeAsync(this.getContext()));
+        addActiveServiceCall(R.string.progress_creating_tag, new TagAddResponseHandler(tagname).invokeAsync(this.getContext()));
     }
 
     private void deleteTagNow(Tag thisItem) {

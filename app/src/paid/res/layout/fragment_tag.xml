@@ -11,24 +11,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+       <!-- <RelativeLayout
             android:id="@+id/tag_header_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@color/colorAccent">
+            android:background="@color/accent">
 
             <TextView
                 android:id="@+id/tag_details_name_header"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tag name"
+                tools:text="Tag name"
                 android:layout_alignParentStart="true"
                 android:layout_margin="5dp"
-                style="@style/Base.TextAppearance.AppCompat.Body1"
-                />
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-        </RelativeLayout>
+        </RelativeLayout>-->
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/tag_retryAction_actionButton"
@@ -38,20 +37,19 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:clickable="true"
-            app:fabSize="mini" />
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_refresh_black_24dp"/>
 
 
         <TextView
             android:id="@+id/tag_empty_content"
-            android:layout_below="@id/tag_header_bar"
             android:visibility="visible"
-            style="@style/Base.TextAppearance.AppCompat.Headline"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/white"
             android:layout_margin="5dp"
             android:padding="5dp"
-            android:text="A Reason that this tag is empty or which calls need repeating"/>
+            tools:text="A Reason that this tag is empty or which calls need repeating"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tag_list"
@@ -77,7 +75,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginEnd="10dp"
+                app:srcCompat="@drawable/ic_delete_black_24px"/>
 
         </RelativeLayout>
 

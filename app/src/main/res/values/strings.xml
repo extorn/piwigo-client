@@ -4,8 +4,8 @@
     <string name="checking_license">Checking license…</string>
     <string name="button_quit">Exit</string>
     <string name="button_buy">Buy App</string>
-    <string name="unlicensed_dialog_retry_body">Unable to validate license. Check to see if a network connection is available.</string>
-    <string name="unlicensed_dialog_body">This application is not licensed. Please purchase it from Android Market.</string>
+    <string name="unlicensed_dialog_retry_body">Unable to confirm that the application is licensed. Please purchase it from Android Market. If you have, please check that there is a network connection available, and retry this licence check.</string>
+    <string name="unlicensed_dialog_body">Unable to validate license. Check to see if a network connection is available.</string>
     <string name="unlicensed_dialog_title">Application not licensed</string>
     <string name="application_error">Application error: %1$d</string>
 
@@ -37,7 +37,7 @@
     <string name="piwigo_title_testConnection">Test Connection</string>
     <string name="piwigo_title_testConnectionSummary">Test connection to the server</string>
     <string name="gallery_photos_summary_text_pattern">%1$d photos</string>
-    <string name="gallery_subcategory_summary_text_pattern">%2$d in %1$d sub-albums</string>
+    <string name="gallery_subcategory_summary_text_pattern">%1$d sub-albums and %2$d photos</string>
     <string name="admin_email" translatable="false"><a href="mailto:gd_apps-piwigoclient@yahoo.co.uk">gd_apps-piwigoclient@yahoo.co.uk</a></string>
     <string name="alert_title_connectionTest">Connection Test</string>
     <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>
@@ -57,6 +57,7 @@
     <string name="settings_menu_title">App Settings</string>
     <string name="gallery_menu_title">Gallery</string>
     <string name="upload_menu_title">Upload</string>
+    <string name="upload_page_title">Piwigo Upload</string>
     <string name="gallery_to_alter_title">Upload to</string>
     <string name="login_button_title">Login</string>
 
@@ -108,7 +109,6 @@
     <string name="alert_really_delete_upload_job">This will delete the job status from this device. You will need to manually cleanup the status on the server. Jobs will often complete successfully if you resume them later. Are you sure you wish to take this drastic step?</string>
     <string name="upload_files_button_title">Upload Files</string>
     <string name="loading_please_wait">Loading, Please wait</string>
-    <string name="talking_to_server_please_wait">Talking to server, Please wait</string>
     <string name="alert_title_server_error">Server Error</string>
     <string name="alert_server_error_pattern">Server returned HTTP error: %1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Error parsing piwigo response</string>
@@ -252,7 +252,10 @@ If you have any questions about this Agreement, please contact us."
 </string>
     <string name="about_content">"This app was written to allow me easier access to my photo gallery while on the move.
 
-It will be updated regularly to add more features.
+It will be updated regularly to add more features, some that I've thought of, others requested by users.
+
+In August 2018, a user, David Klement, came back to me with screen mock-ups for a more professional design. Starting with release 1.3.95, I have been incorporating those ideas, starting with the album view screen.
+These full list of proposed screen designs are available to view on the app website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals.html).
 
 NOTE: Language translations are performed using www.Deepl.com or google translate websites. If you spot any obvious errors, please let me know so I can correct them.
 
@@ -336,7 +339,6 @@ SOFTWARE.
 
 *** GSON - https://github.com/google/gson - Apache License 2.0
 *** Picasso - http://square.github.io/picasso/ - Copyright 2013 Square, Inc. - Apache License 2.0
-*** PreferenceFragment-Compat - com.github.machinarius - Apache License 2.0
 *** Material Icons - https://material.io/icons - Apache License 2.0
 *** EXO Player - Apache License 2.0
 *** EventBus - http://greenrobot.org - Apache License 2.0
@@ -600,6 +602,7 @@ SOFTWARE.
     <string name="progress_move_resources">Moving resources</string>
     <string name="progress_checking_with_server">Checking credentials with server</string>
     <string name="progress_creating_album">Creating Album</string>
+    <string name="progress_setting_permissions">Setting permissions</string>
     <string name="progress_loading_groups">Retrieving User Groups</string>
     <string name="progress_loading_users">Retrieving Users</string>
     <string name="progress_loading_album_permissions">Retrieving album permissions</string>
@@ -664,7 +667,6 @@ SOFTWARE.
     <string name="alert_message_file_upload_cancelled_pattern">Upload of file (%1$s) cancelled.</string>
     <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">The image size you have selected is not natively supported by the server you are connected to. The server will return the \"nearest match\" sized image.</string>
     <string name="logging_out_of_piwigo_pattern">Logging out of %1$s</string>
-    <string name="preference_connections_caching">Web Response Caching</string>
     <string name="loading_new_server_configuration">Loading new server connection configuration</string>
     <string name="alert_write_permission_needed_for_caching_to_disk">To allow caching to disk, write access to the file system must be granted. If denied, caching will be in memory.</string>
     <string name="error_request_timed_out">Call to server cancelled as it took too long to complete.</string>
@@ -734,6 +736,7 @@ SOFTWARE.
     <string name="paid_feature_only">paid app only</string>
     <string name="slideshow_image_details_tags_title">Tags</string>
     <string name="button_search">Search</string>
+    <string name="preference_connections_category_connections_caching">Web Response Caching</string>
     <string name="server_connection_preference_summary_default">Please select a value</string>
     <string name="server_album_preference_summary_default">Please select a value</string>
     <string name="local_folder_preference_summary_default">Please select a value</string>
@@ -747,27 +750,17 @@ SOFTWARE.
     <string name="folder_root_root">Device Root</string>
     <string name="folder_root_userdata">User Data</string>
     <string name="folder_extstorage">External Storage</string>
+    <string name="folder_extstorage_device_pattern">External Storage %1$d</string>
     <string name="folder_default">Default</string>
     <string name="button_all">Check All</string>
     <string name="button_none">Check None</string>
-    <string name="alert_network_monitor_permission_needed_for_wifi_upload">Network monitoring should be allowed for efficeint use of WIFI only uploading</string>
+    <string name="alert_network_monitor_permission_needed_for_wifi_upload">Network monitoring should be allowed for efficient use of WIFI only uploading</string>
     <string name="inaccessible_remote_folder">** private **</string>
     <string name="error_unable_to_acquire_valid_session">Unable to acquire valid session with server</string>
     <string name="upload_job_is_enabled_label">Is Valid and Enabled?</string>
-    <string name="alert_auto_upload_service_stopped">Background upload service stopped</string>
-    <string name="alert_auto_upload_service_started">Background upload service started</string>
-    <string name="alert_auto_upload_service_job_restarted">Started uploading a previously incomplete job to server %1$s with %2$d files</string>
-    <string name="alert_auto_upload_service_job_started">Starting uploading job to server %1$s with %2$d files</string>
-    <string name="alert_auto_upload_service_job_finished_success">Finished running background upload job to server %1$s.</string>
-    <string name="alert_auto_upload_service_job_finished_partial_success">Finished running background upload job to server %1$s. Some files failed to upload and will be retried later.</string>
-    <string name="alert_auto_upload_service_job_finished_failure">Finished running background upload job to server %1$s. No files could be uploaded. Job will be retried later.</string>
-    <string name="alert_auto_upload_service_checking_for_tasks">Background upload service checking for tasks</string>
     <string name="alert_unable_to_show_image_image_missing">This image is missing. Unable to display.</string>
     <string name="notification_title_foreground_upload_service">Piwigo Upload Service</string>
-    <string name="notification_title_background_upload_service">Background Piwigo Upload Service</string>
     <string name="notification_message_upload_service">Running</string>
-    <string name="notification_text_bakcground_upload_running">Running upload job</string>
-    <string name="notification_text_bakcground_upload_sleeping">Sleeping. Next run at %1$tR</string>
     <string name="slideshow_image_tab_basic_info">Basic Info</string>
     <string name="slideshow_image_tab_exif_data">EXIF data</string>
     <string name="alert_bad_request_http_to_https">Bad request to resource using HTTP. Do you want to rewrite all HTTP URIs to HTTPS for this connection profile? Can be altered later in app prefs.</string>
@@ -778,4 +771,19 @@ SOFTWARE.
     <string name="alert_error_album_no_longer_on_server">This Album could not be loaded from the server. Moving to parent album.</string>
     <string name="button_show_details">Show Detail</string>
     <string name="button_hide_details">Hide Detail</string>
+    <string name="alert_message_max_upload_file_count_reached">Maximum number of files to be uploaded reached. To upload more at one time, please purchase and use the paid version of this app.</string>
+    <string name="alert_message_advert_load_error">Adverts are persistently having problems loading. Please report this to me, as these form an important though very small source of revenue to me. Please consider purchasing the paid version to remove adverts entirely. The app will now freeze for 5 seconds during which this screen must remain visible. The countdown will restart if the message is hidden. After 5 seconds you can close this message and continue using the app as normal.</string>
+    <string name="alert_temporary_upload_album_deleted">Temporary upload album deleted successfully</string>
+    <string name="alert_deleting_temporary_upload_album">Deleting temporary upload album</string>
+    <string name="alert_invalid_uri_pattern">Invalid URI. %1$s</string>
+    <string name="album_section_heading_albums">albums</string>
+    <string name="album_section_heading_resources">photos in this album</string>
+    <string name="album_title_home">home</string>
+    <string name="upload_file_rating">My rating</string>
+    <string name="slideshow_image_details_rating_score_title">Rating score</string>
+    <string name="rating_score_pattern">%1$.2f (%2$d rates)</string>
+    <string name="connection_reset_warning_pattern">The server has closed the connection %1$d times in the past %2$d minutes. This could indicate an issue with your server configuration.</string>
+    <string name="content_description_icon">icon</string>
+    <string name="files_already_set_for_upload_skipped_pattern">%1$d files were already selected for upload and have been ignored to avoid duplication.</string>
+    <string name="progress_loading_session_details">Loading session details</string>
 </resources>

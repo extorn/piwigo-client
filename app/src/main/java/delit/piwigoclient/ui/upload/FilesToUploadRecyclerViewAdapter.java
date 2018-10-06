@@ -25,7 +25,6 @@ import java.util.List;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.ui.PicassoFactory;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
@@ -76,11 +75,11 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         View view;
         if (viewType == VIEW_TYPE_LIST) {
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_files_for_upload, parent, false);
+                    .inflate(R.layout.layout_upload_list_item_list_format, parent, false);
 
         } else if (viewType == VIEW_TYPE_GRID) {
             view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.grid_files_for_upload, parent, false);
+                    .inflate(R.layout.layout_upload_list_item_grid_format, parent, false);
         } else {
             throw new IllegalStateException("viewType not supported" + viewType);
         }
@@ -224,11 +223,16 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         return currentContent;
     }
 
-    public void addAll(List<File> filesForUpload) {
+    /**
+     * @param filesForUpload
+     * @return List of all files that were not already present
+     */
+    public ArrayList addAll(List<File> filesForUpload) {
         ArrayList newFiles = new ArrayList(filesForUpload);
         newFiles.removeAll(filesToUpload);
         filesToUpload.addAll(newFiles);
         notifyDataSetChanged();
+        return newFiles;
     }
 
     public void clear() {
@@ -261,7 +265,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             if (context == null) {
                 throw new IllegalStateException("Context is not available in the view at this time");
             }
-            PicassoFactory.getInstance().getPicassoSingleton(context).load(R.drawable.ic_delete_black_24px).into(deleteButton);
             fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
 
             imageLoader = new ResizingPicassoLoader(fileForUploadImageView, 0, 0);

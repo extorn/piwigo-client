@@ -4,9 +4,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.preference.Preference;
 import android.view.View;
-import android.view.ViewGroup;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
@@ -18,19 +18,17 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
 
     public AutoUploadJobsPreferenceFragment(){}
 
+    @Override
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        // Load the preferences from an XML resource
+        setPreferencesFromResource(R.xml.pref_auto_upload_jobs, rootKey);
+    }
+
     public static AutoUploadJobsPreferenceFragment newInstance() {
         AutoUploadJobsPreferenceFragment fragment = new AutoUploadJobsPreferenceFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater paramLayoutInflater, ViewGroup paramViewGroup, Bundle paramBundle) {
-        if(view == null) {
-            view = super.onCreateView(paramLayoutInflater, paramViewGroup, paramBundle);
-        }
-        return view;
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -40,10 +38,12 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
             if(getActivity() == null) {
                 return;
             }
-            if(key.equals(getString(R.string.preference_data_upload_automatic_upload_enable_key))) {
-                onBackgroundServiceEnabled(getBooleanPreferenceValue(key));
+            if(key.equals(getString(R.string.preference_data_upload_automatic_upload_enabled_key))) {
+                onBackgroundServiceEnabled(getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_enabled_default));
             } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_wireless_only_key))) {
-                onUploadWirelessOnlyChanged(getBooleanPreferenceValue(key));
+                onUploadWirelessOnlyChanged(getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_wireless_only_default));
+            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_polling_interval_key))) {
+                onUploadIntervalChanged(getIntegerPreferenceValue(key, R.integer.preference_data_upload_automatic_upload_polling_interval_default));
             }
 
         }
@@ -64,23 +64,36 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
         }
     };
 
+    private void onUploadIntervalChanged(int integerPreferenceValue) {
+        if(BackgroundPiwigoUploadService.isStarted()) {
+            // ensure the service knows the change occurred.
+            BackgroundPiwigoUploadService.wakeServiceIfSleeping();
+        }
+    }
+
+    @Override
+    protected DialogFragment onDisplayCustomPreferenceDialog(Preference preference) {
+        if(preference instanceof AutoUploadJobsPreference) {
+            return AutoUploadJobsPreferenceDialogFragmentCompat.newInstance(preference.getKey());
+        }
+        return super.onDisplayCustomPreferenceDialog(preference);
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(getPreferenceScreen() == null) {
-            addPreferencesFromResource(R.xml.pref_auto_upload_jobs);
-            getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(prefChangeListener);
-        }
         setHasOptionsMenu(true);
     }
 
     @Override
     public void onPause() {
+        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(prefChangeListener);
         super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(prefChangeListener);
     }
 }

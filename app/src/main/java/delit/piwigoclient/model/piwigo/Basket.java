@@ -11,6 +11,7 @@ public class Basket implements Serializable {
 
     public static final int ACTION_COPY = 1;
     public static final int ACTION_CUT = 2;
+    private static final long serialVersionUID = 2631502523589715511L;
     private final HashSet<ResourceItem> contents = new HashSet<>();
     private int action;
     private CategoryItem contentParent;

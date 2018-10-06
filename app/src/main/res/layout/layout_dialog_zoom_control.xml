@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp">
+
+    <TextView
+        android:text="@string/alert_image_show_image_select_rotation"
+        android:labelFor="@id/imageRotationField"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="15dp"/>
+
+    <Spinner
+        android:id="@+id/imageRotationField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"/>
+
+    <!--<TextView
+        android:text="@string/alert_image_show_image_select_max_zoom"
+        android:labelFor="@id/allowFreeZoom"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="7dp"/>-->
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/allowFreeZoom"
+        android:text="@string/alert_image_show_image_select_max_zoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"/>
+
+    <TextView
+        android:labelFor="@id/fileSelectList"
+        android:text="@string/alert_image_show_image_message"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="7dp"/>
+
+    <ListView
+        android:id="@+id/fileSelectList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:choiceMode="singleChoice"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"/>
+
+</LinearLayout>

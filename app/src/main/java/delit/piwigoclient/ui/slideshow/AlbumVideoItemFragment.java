@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
@@ -217,10 +217,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         hideProgressIndicator();
         logStatus("Creating item content");
         directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
 
-        simpleExoPlayerView = (PlayerView) inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
-
+        View view = inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
+        simpleExoPlayerView = view.findViewById(R.id.slideshow_video_player);
 
         downloadedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_downloaded);
         cachedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_cached_summary);
@@ -229,7 +228,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         CustomExoPlayerTouchListener customTouchListener = new CustomExoPlayerTouchListener(simpleExoPlayerView);
         simpleExoPlayerView.setOnTouchListener(customTouchListener);
         logStatus("finished created item content");
-        return simpleExoPlayerView;
+        return view;
     }
 
     @Override
@@ -247,7 +246,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
 
-        ((PlayerView) itemContentView).setPlayer(player);
+        simpleExoPlayerView.setPlayer(player);
     }
 
     @Override
@@ -543,11 +542,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 videoPlaybackPosition = 0; // ensure it starts at the beginning again
                 configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
             }
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultListener() {
-                @Override
-                public void onDismiss(AlertDialog dialog) {
-
-                }
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
 
                 @Override
                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

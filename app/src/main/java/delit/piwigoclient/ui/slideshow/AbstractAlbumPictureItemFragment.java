@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
@@ -30,10 +31,10 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
-import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
+import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.DisplayUtils;
 
@@ -85,15 +86,37 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Override
     public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+//        imageView = container.findViewById(R.id.slideshow_image);
         imageView = new TouchImageView(getContext());
         imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
         imageView.setMinimumWidth(DisplayUtils.dpToPx(getContext(), 120));
-        imageView.setScaleType(ImageView.ScaleType.MATRIX);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
+        imageView.setScaleType(ImageView.ScaleType.MATRIX);
+        imageView.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
+            @Override
+            public void onMove() {
+
+            }
+
+            @Override
+            public void onDrag(float deltaX, float deltaY, boolean actionAlteredImageViewState) {
+                if(!actionAlteredImageViewState && Math.abs(deltaX) < 10 && Math.abs(deltaY) > 30) {
+                    ToolbarEvent toolbarEvent = new ToolbarEvent();
+                    if(deltaY > 0) {
+                        toolbarEvent.setTitle(getModel().getName());
+                        toolbarEvent.setExpandToolbarView(true);
+                        EventBus.getDefault().post(toolbarEvent);
+                    } else {
+                        toolbarEvent.setTitle(getModel().getName());
+                        toolbarEvent.setContractToolbarView(true);
+                        EventBus.getDefault().post(toolbarEvent);
+                    }
+                }
+            }
+        });
 
         CustomImageButton directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
-        PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_file_download_black_24px).into(directDownloadButton);
         directDownloadButton.setVisibility(View.GONE);
 
         loader = new PicassoLoader(imageView) {
@@ -165,12 +188,16 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             currentImageUrlDisplayed = savedInstanceState.getString(STATE_CURRENT_IMAGE_URL);
         }
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         // reset the screen state if we're entering for the first time
         if (currentImageUrlDisplayed == null) {
@@ -182,7 +209,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
         PictureResourceItem model = getModel();
         if (currentImageUrlDisplayed == null) {
-            String preferredImageSize = prefs.getString(getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key), getContext().getString(R.string.preference_gallery_item_slideshow_image_size_default));
+            String preferredImageSize = AlbumViewPreferences.getPreferredSlideshowImageSize(prefs, getContext());
             for (ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
                 if (rf.getName().equals(preferredImageSize)) {
                     currentImageUrlDisplayed = rf.getUrl();
@@ -222,6 +249,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 //Granted
                 DownloadSelectionDialog dialogFactory = new DownloadSelectionDialog(getContext());
                 AlertDialog dialog = dialogFactory.buildDialog(getModel().getName(), getModel().getAvailableFiles(), new DownloadSelectionDialog.DownloadSelectionListener() {
+
                     @Override
                     public void onSelection(ResourceItem.ResourceFile selectedItem) {
                         File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);

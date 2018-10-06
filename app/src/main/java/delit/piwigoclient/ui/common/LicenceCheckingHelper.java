@@ -65,14 +65,10 @@ public class LicenceCheckingHelper {
 
     private void showDialog(final boolean showRetryButton) {
         String msg = activity.getString(showRetryButton ? R.string.unlicensed_dialog_retry_body : R.string.unlicensed_dialog_body);
-        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new UIHelper.QuestionResultListener() {
-            @Override
-            public void onDismiss(android.app.AlertDialog dialog) {
-
-            }
+        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new UIHelper.QuestionResultAdapter() {
 
             @Override
-            public void onResult(android.app.AlertDialog dialog, Boolean positiveAnswer) {
+            public void onResult(android.support.v7.app.AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
                     if (showRetryButton) {
                         doCheck();
@@ -93,7 +89,7 @@ public class LicenceCheckingHelper {
     }
 
     private void doVisualCheck() {
-        activity.getUiHelper().showProgressDialog(R.string.checking_license);
+        activity.getUiHelper().showToast(R.string.checking_license);
         doCheck();
     }
 
@@ -121,7 +117,6 @@ public class LicenceCheckingHelper {
     private void displayResult(final String result) {
         mHandler.post(new Runnable() {
             public void run() {
-                activity.getUiHelper().dismissProgressDialog();
                 activity.getUiHelper().showOrQueueDialogMessage(R.string.alert_information, result);
             }
         });
@@ -130,7 +125,6 @@ public class LicenceCheckingHelper {
     private void displayDialog(final boolean showRetry) {
         mHandler.post(new Runnable() {
             public void run() {
-                activity.getUiHelper().dismissProgressDialog();
                 showDialog(showRetry);
             }
         });
@@ -154,7 +148,6 @@ public class LicenceCheckingHelper {
                 // Don't update UI if Activity is finishing.
                 return;
             }
-            activity.getUiHelper().dismissProgressDialog();
             AdsManager.getInstance().setAppLicensed(true);
             // Should allow user access.
 //            displayResult(activity.getString(R.string.allow));
@@ -165,7 +158,6 @@ public class LicenceCheckingHelper {
                 // Don't update UI if Activity is finishing.
                 return;
             }
-            activity.getUiHelper().dismissProgressDialog();
             AdsManager.getInstance().setAppLicensed(false);
             if (policyReason == Policy.NOT_LICENSED) {
                 PreferenceUtils.wipeAppPreferences(activity);

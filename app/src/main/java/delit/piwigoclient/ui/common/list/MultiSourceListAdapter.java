@@ -137,9 +137,9 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
         imageView.setVisibility(showItemSelectedMarker(imageView) ? View.VISIBLE : View.GONE);
 
         if (getAdapterPrefs().isMultiSelectionEnabled()) {
-            imageView.setButtonDrawable(R.drawable.always_clear_checkbox);
+            imageView.setButtonDrawable(R.drawable.checkbox);
         } else {
-            imageView.setButtonDrawable(R.drawable.always_clear_radio);
+            imageView.setButtonDrawable(R.drawable.radio_button);
         }
 
         imageView.setEnabled(adapterPrefs.isEnabled());
@@ -180,12 +180,11 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
      * @param levelInTreeOfItem level within the tree of the item (root is 0)
      */
     protected void setViewContentForItemDisplay(View view, T item, int levelInTreeOfItem) {
-        int px = DisplayUtils.dpToPx(view.getContext(), levelInTreeOfItem * 15);
-
-        TextView textField = view.findViewById(R.id.permission_text);
-        textField.setPadding(px, 0, 0, 0);
-
-        textField.setText(item.toString());
+        TextView textView = view.findViewById(R.id.permission_text);
+        int defaultPaddingStartDp = 8;
+        int paddingStartPx = DisplayUtils.dpToPx(view.getContext(), defaultPaddingStartDp + (levelInTreeOfItem * 15));
+        textView.setPaddingRelative(paddingStartPx, textView.getPaddingTop(), textView.getPaddingEnd(), textView.getPaddingBottom());
+        textView.setText(item.toString());
     }
 
     @Override
@@ -255,9 +254,12 @@ public abstract class MultiSourceListAdapter<T, S extends BaseRecyclerViewAdapte
             throw new IllegalStateException("initially selected items should never be null at this point");
         }
         parentList.clearChoices();
-        HashSet<Long> resourcesToSelect = selectedResourceIds != null ? new HashSet<>(selectedResourceIds) : new HashSet<>(initialSelectedResourceIds);
+        HashSet<Long> resourcesToSelect = selectedResourceIds != null ? selectedResourceIds : new HashSet<>(initialSelectedResourceIds);
         for (Long resourceId : resourcesToSelect) {
-            parentList.setItemChecked(getPosition(resourceId), true);
+            int position = getPosition(resourceId);
+            if(position >= 0) {
+                parentList.setItemChecked(position, true);
+            }
         }
 
     }

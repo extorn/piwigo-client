@@ -60,10 +60,7 @@ public class SecurePrefsUtil {
         try {
             return obfuscator.unobfuscate(encryptedVal, key);
         } catch (ValidationException e) {
-            Crashlytics.logException(e);
-            if (delit.piwigoclient.BuildConfig.DEBUG) {
-                Log.e(TAG, "Preference has been corrupted or is otherwise irretrievable. Returning default.", e);
-            }
+            Crashlytics.log(Log.DEBUG, TAG, "Preference ("+key+") has been corrupted or is otherwise irretrievable. Returning default ("+defaultValue+").");
             return defaultValue;
         }
     }

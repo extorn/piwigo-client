@@ -403,6 +403,7 @@ public class UploadJob implements Serializable {
     }
 
     protected static class PartialUploadData implements Serializable {
+        private static final long serialVersionUID = 3574283238335920169L;
         private final String uploadName;
         private long bytesUploaded;
         private long countChunksUploaded;

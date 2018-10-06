@@ -1,6 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializable {
 
+    private static final long serialVersionUID = 6459233465655813249L;
     public static int MISSING_ITEMS_PAGE = -1;
     private final String itemType;
     private final SortedSet<Integer> pagesLoaded = new TreeSet<>();
@@ -35,6 +37,10 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
         this.itemType = itemType;
         this.items = new ArrayList<>(maxExpectedItemCount);
         this.pageLoadLock = new ReentrantLock();
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
     }
 
     private void readObject(java.io.ObjectInputStream in)
@@ -79,6 +85,10 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
 
     public void recordPageLoadSucceeded(long loaderId) {
         pagesBeingLoaded.remove(loaderId);
+    }
+
+    public boolean isTrackingPageLoaderWithId(long loaderId) {
+        return pagesBeingLoaded.containsKey(loaderId);
     }
 
     public void recordPageLoadFailed(long loaderId) {
@@ -161,6 +171,10 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     }
 
     public abstract Long getItemId(T item);
+
+    public boolean containsItem(T item) {
+        return items.contains(item);
+    }
 
     @Override
     public T getItemById(long selectedItemId) {

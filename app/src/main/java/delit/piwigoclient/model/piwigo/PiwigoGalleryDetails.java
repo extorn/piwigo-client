@@ -12,6 +12,7 @@ import java.util.Set;
 
 public class PiwigoGalleryDetails implements Serializable {
 
+    private static final long serialVersionUID = -5754083671359840095L;
     private final ArrayList<Long> parentageChain;
     private final CategoryItemStub parentGallery;
     private final String galleryName;
