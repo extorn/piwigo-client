@@ -37,7 +37,7 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
     }
 
     @Override
-    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
+    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
         String response = null;
         try {
             GsonBuilder gsonBuilder = new GsonBuilder();
@@ -52,6 +52,7 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
         } catch (JSONException e) {
             super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession);
         }
+        return triedToGetNewSession;
     }
 
     @Override

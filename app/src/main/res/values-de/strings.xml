@@ -523,5 +523,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="content_description_icon">icon</string>
     <string name="files_already_set_for_upload_skipped_pattern">%1$d Dateien wurden bereits für den Upload ausgewählt und ignoriert, um Doppelarbeit zu vermeiden.</string>
     <string name="progress_loading_session_details">Laden von Benutzerberechtigungen</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">Die Piwigo WS-Methode %1$s ist auf diesem Server nicht mehr verfügbar, und der Fallback %2$s wurde verwendet. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">Die Piwigo WS-Methode %1$s ist auf diesem Server nicht mehr verfügbar. Deaktivieren der betroffenen Funktionen in der App. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
+    <string name="removing_favorite">Removing favorite</string>
+    <string name="adding_favorite">Adding Favorite</string>
 </resources>
 

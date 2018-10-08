@@ -21,9 +21,15 @@ public class FragmentUIHelper extends UIHelper<Fragment> {
     protected boolean canShowDialog() {
         boolean canShowDialog = super.canShowDialog();
         if(canShowDialog) {
-            UIHelper activityUiHelper = ((MyActivity) getParent().getActivity()).getUiHelper();
-            canShowDialog &= !activityUiHelper.isDialogShowing();
-            canShowDialog &= (!blockDialogsFromShowing) && getParent().isResumed();
+            Fragment f = getParent();
+            if(f != null) {
+                MyActivity activity = (MyActivity) f.getActivity();
+                if(activity != null) {
+                    UIHelper activityUiHelper = activity.getUiHelper();
+                    canShowDialog &= !activityUiHelper.isDialogShowing();
+                    canShowDialog &= (!blockDialogsFromShowing) && getParent().isResumed();
+                }
+            }
         }
         return canShowDialog;
     }

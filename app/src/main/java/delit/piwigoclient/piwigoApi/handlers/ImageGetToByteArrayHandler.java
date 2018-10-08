@@ -39,9 +39,10 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
     }
 
     @Override
-    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
+    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
         PiwigoResponseBufferingHandler.UrlErrorResponse r = new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, statusCode, responseBody, HttpUtils.getHttpErrorMessage(statusCode, error), error.getMessage());
         storeResponse(r);
+        return triedToGetNewSession;
     }
 
     @Override

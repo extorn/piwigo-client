@@ -786,4 +786,8 @@ SOFTWARE.
     <string name="content_description_icon">icon</string>
     <string name="files_already_set_for_upload_skipped_pattern">%1$d files were already selected for upload and have been ignored to avoid duplication.</string>
     <string name="progress_loading_session_details">Loading session details</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">The Piwigo WS method %1$s is no longer available on this server, and the fallback %2$s has been used. Have you just deactived or deleted a server plugin?</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">The Piwigo WS method %1$s no longer available on this server. Disabling affected functionality in the app. Have you just deactived or deleted a server plugin?</string>
+    <string name="removing_favorite">Removing favorite</string>
+    <string name="adding_favorite">Adding Favorite</string>
 </resources>

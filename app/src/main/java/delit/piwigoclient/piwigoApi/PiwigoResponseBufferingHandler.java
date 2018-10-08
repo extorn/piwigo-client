@@ -615,12 +615,6 @@ public class PiwigoResponseBufferingHandler {
         }
     }
 
-    public static class PiwigoFavoriteStatusResponse extends PiwigoResourceItemResponse {
-        public PiwigoFavoriteStatusResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
-            super(messageId, piwigoMethod, piwigoResource);
-        }
-    }
-
     public static class PiwigoRatingAlteredResponse extends PiwigoResourceItemResponse {
         public PiwigoRatingAlteredResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
             super(messageId, piwigoMethod, piwigoResource);

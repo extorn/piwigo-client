@@ -141,7 +141,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
     }
 
     @Override
-    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
+    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
         if (statusCode != -1) {
             PiwigoResponseBufferingHandler.UrlErrorResponse r = new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, statusCode, responseBody, HttpUtils.getHttpErrorMessage(statusCode, error), error.getMessage());
             storeResponse(r);
@@ -150,6 +150,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
             PiwigoResponseBufferingHandler.UrlCancelledResponse r = new PiwigoResponseBufferingHandler.UrlCancelledResponse(getMessageId(), resourceUrl);
             storeResponse(r);
         }
+        return triedToGetNewSession;
     }
 
     @Override

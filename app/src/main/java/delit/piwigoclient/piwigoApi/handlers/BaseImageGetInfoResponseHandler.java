@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
@@ -14,11 +15,23 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
     private static final String TAG = "GetResourceInfoRspHdlr";
     private final T resourceItem;
     private final String multimediaExtensionList;
+    private boolean usingPiwigoClientOveride;
 
     public BaseImageGetInfoResponseHandler(T piwigoResource, String multimediaExtensionList) {
         super("pwg.images.getInfo", TAG);
         this.resourceItem = piwigoResource;
         this.multimediaExtensionList = multimediaExtensionList;
+    }
+
+    @Override
+    public String getPiwigoMethod() {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if(sessionDetails.isMethodAvailable("piwigo_client.images.getInfo")) {
+            usingPiwigoClientOveride = true;
+            return "piwigo_client.images.getInfo";
+        } else {
+            return super.getPiwigoMethod();
+        }
     }
 
     @Override
@@ -60,7 +73,13 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
             loadedResourceItem.setAverageRating(averageRating);
         }
 
-        //TODO set your rating when this is made available via API!
+        if(usingPiwigoClientOveride) {
+            JsonElement yourRateElem = rates.get("my_rating");
+            if (yourRateElem != null && !yourRateElem.isJsonNull()) {
+                float yourRating = yourRateElem.getAsFloat();
+                loadedResourceItem.setMyRating(yourRating);
+            }
+        }
 
         JsonElement checksumJsonElem = resourceItemElem.get("md5sum");
         String fileChecksum = null;

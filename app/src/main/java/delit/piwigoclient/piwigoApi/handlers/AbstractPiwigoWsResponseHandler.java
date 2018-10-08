@@ -11,6 +11,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
 import java.io.ByteArrayInputStream;
@@ -21,11 +22,13 @@ import java.util.Arrays;
 import cz.msebera.android.httpclient.Header;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 
 /**
  * Created by gareth on 25/06/17.
@@ -37,6 +40,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     private String nestedFailureMethod;
     private Throwable nestedFailure;
     private Gson gson;
+    private String failedOriginalMethod;
 
     protected AbstractPiwigoWsResponseHandler(String piwigoMethod, String tag) {
         super(tag);
@@ -51,6 +55,9 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     private RequestParams getRequestParameters() {
         if (requestParams == null) {
             requestParams = buildRequestParameters();
+        } else {
+            requestParams.remove("method");
+            requestParams.put("method", getPiwigoMethod());
         }
         return requestParams;
     }
@@ -61,6 +68,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     public void clearCallDetails() {
         nestedFailureMethod = null;
         nestedFailure = null;
+        gson = null;
         super.clearCallDetails();
     }
 
@@ -89,6 +97,10 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     @Override
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
+        if(failedOriginalMethod != null) {
+            EventBus.getDefault().post(new PiwigoMethodNowUnavailableUsingFallback(failedOriginalMethod, getPiwigoMethod()));
+            failedOriginalMethod = null;
+        }
         String response = null;
         try {
             int idx = -1;
@@ -104,7 +116,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 jsonBis.skip(jsonStartsAt - 1);
             }
             PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(jsonBis), PiwigoJsonResponse.class);
-            processJsonResponse(getMessageId(), piwigoMethod, piwigoResponse, responseBody);
+            processJsonResponse(getMessageId(), getPiwigoMethod(), piwigoResponse, responseBody);
 
         } catch (JsonSyntaxException e) {
             String responseBodyStr = new String(responseBody);
@@ -191,14 +203,13 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoSuccessResponse r = new PiwigoResponseBufferingHandler.PiwigoSuccessResponse(getMessageId(), piwigoMethod, rsp);
+        PiwigoResponseBufferingHandler.PiwigoSuccessResponse r = new PiwigoResponseBufferingHandler.PiwigoSuccessResponse(getMessageId(), getPiwigoMethod(), rsp);
         storeResponse(r);
     }
 
     // When the response returned by REST has Http response code other than '200'
     @Override
-    protected void onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession) {
-
+    protected boolean onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession) {
         if (BuildConfig.DEBUG) {
             String errorBody = "<NONE PRESENT>";
             if (responseBody != null) {
@@ -207,7 +218,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
             StringBuilder msgBuilder = new StringBuilder();
             msgBuilder.append("Method (failed):");
-            msgBuilder.append(piwigoMethod);
+            msgBuilder.append(getPiwigoMethod());
             msgBuilder.append('\n');
             if (getNestedFailureMethod() != null) {
                 msgBuilder.append("Nested Method (failed):");
@@ -237,16 +248,35 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             Crashlytics.log(Log.ERROR, getTag(),  msgBuilder.toString());
             Crashlytics.logException(error);
         }
-        String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
-        if (getNestedFailureMethod() != null) {
-            errorMsg = getNestedFailureMethod() + " : " + errorMsg;
-        } else {
-            errorMsg = getPiwigoMethod() + " : " + errorMsg;
+
+        boolean canRetryCall = false;
+        if (statusCode == 501 && "Method name is not valid".equals(error.getMessage())) {
+            failedOriginalMethod = getPiwigoMethod();
+            if(!failedOriginalMethod.startsWith("pwg.")) {
+                PiwigoSessionDetails.getInstance(getConnectionPrefs()).onMethodNotAvailable(getPiwigoMethod());
+                // allow retry if there is a fallback method (otherwise report it!).
+                canRetryCall = !failedOriginalMethod.equals(getPiwigoMethod());
+                if(!canRetryCall) {
+                    EventBus.getDefault().post(new PiwigoMethodNowUnavailableUsingFallback(failedOriginalMethod, null));
+                }
+            } else {
+                failedOriginalMethod = null;
+            }
         }
-        String errorDetail = error != null ? error.getMessage() : "";
-        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, errorDetail);
-        r.setResponse(responseBody != null ? new String(responseBody) : "");
-        storeResponse(r);
+
+        if(!canRetryCall) {
+            String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
+            if (getNestedFailureMethod() != null) {
+                errorMsg = getNestedFailureMethod() + " : " + errorMsg;
+            } else {
+                errorMsg = getPiwigoMethod() + " : " + errorMsg;
+            }
+            String errorDetail = error != null ? error.getMessage() : "";
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, errorDetail);
+            r.setResponse(responseBody != null ? new String(responseBody) : "");
+            storeResponse(r);
+        }
+        return canRetryCall;
     }
 
     @Override

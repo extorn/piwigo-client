@@ -29,11 +29,9 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateTagsResponseHandler;
-import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
@@ -62,10 +60,6 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     @Override
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
         AlbumItemRecyclerViewAdapterPreferences prefs = super.updateViewPrefs();
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if(sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
-            addActiveServiceCall(R.string.progress_loading_session_details,new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
-        }
         return prefs;
     }
 
@@ -112,7 +106,9 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
     private void onShowTagsSelection() {
         //disable tag deselection if user tags plugin is not present but allow editing if is admin user. (bug in PIWIGO API)
-        TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, isTagSelectionAllowed(), false, null);
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean tagsCanBeDeselected = !sessionDetails.isUseUserTagPluginForUpdate();
+        TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, isTagSelectionAllowed(), tagsCanBeDeselected, null);
         getUiHelper().setTrackingRequest(tagSelectEvent.getActionId());
         EventBus.getDefault().post(tagSelectEvent);
     }
@@ -185,13 +181,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     protected class ViewAlbumPiwigoResponseListener extends CustomPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
-                //FIXME - this is not how to prevent item selection mode from being enabled! See all uses of preventItemSelection!!!! All wrong wrong wrong
-                boolean itemSelectionModeEnabled = !isPreventItemSelection();
-                getViewPrefs().withAllowMultiSelect(itemSelectionModeEnabled);
-            } else {
-                super.onAfterHandlePiwigoResponse(response);
-            }
+            super.onAfterHandlePiwigoResponse(response);
         }
     }
 

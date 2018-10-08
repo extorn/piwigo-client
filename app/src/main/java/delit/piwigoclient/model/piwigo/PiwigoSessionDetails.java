@@ -255,7 +255,7 @@ public class PiwigoSessionDetails {
         return methodsAvailable != null;
     }
 
-    private boolean isMethodAvailable(String methodName) {
+    public boolean isMethodAvailable(String methodName) {
         return methodsAvailable != null && methodsAvailable.contains(methodName);
     }
 
@@ -270,5 +270,13 @@ public class PiwigoSessionDetails {
     public boolean isOlderThanSeconds(int i) {
         long ageMillis = System.currentTimeMillis() - retrievedAt.getTime();
         return ageMillis > (1000 * i);
+    }
+
+    public void onMethodNotAvailable(String unavailablePiwigoMethod) {
+        methodsAvailable.remove(unavailablePiwigoMethod);
+    }
+
+    public boolean isFavoritesSupported() {
+        return isMethodAvailable("piwigo_client.favorites.addImage");
     }
 }

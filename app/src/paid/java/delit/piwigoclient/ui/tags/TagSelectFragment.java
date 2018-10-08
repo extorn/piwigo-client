@@ -278,9 +278,6 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
             //NOTE: Paging not supported by API yet - so don't bother doing any. Note that the PiwigoTags object has been hacked to this effect.
 //        int pageSize = prefs.getInt(getString(R.string.preference_tags_request_pagesize_key), getResources().getInteger(R.integer.preference_tags_request_pagesize_default));
-            if(sessionDetails != null && sessionDetails.isLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
-                tagsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_tags, new GetMethodsAvailableResponseHandler().invokeAsync(getContext())), 0);
-            }
             addActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
             if(PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
                 tagsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext())), 0);
@@ -326,15 +323,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if(response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
-                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                getViewPrefs().setInitialSelectionLocked(getViewPrefs().isAllowItemSelection() && (sessionDetails == null || !sessionDetails.isUseUserTagPluginForUpdate()));
-                if(getListAdapter() != null && getListAdapter().getItemCount() > 0) {
-                    getListAdapter().notifyDataSetChanged();
-                    // force redraw of either list.
-                    getList().invalidate();
-                }
-            } else if(response instanceof TagAddResponseHandler.PiwigoAddTagResponse) {
+            if(response instanceof TagAddResponseHandler.PiwigoAddTagResponse) {
                 onTagCreated((TagAddResponseHandler.PiwigoAddTagResponse)response);
             } else if (response instanceof TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) {
                 onTagsLoaded((TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse) response);
@@ -374,7 +363,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             tagsModel.recordPageLoadSucceeded(response.getMessageId());
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
             boolean isUserTagPluginSearchResult = response instanceof PluginUserTagsGetListResponseHandler.PiwigoUserTagsPluginGetTagsListRetrievedResponse;
-            int firstIndexInsertedAt = tagsModel.addItemPage(isAdminPage || isUserTagPluginSearchResult, response.getTags());
+            tagsModel.addItemPage(isAdminPage || isUserTagPluginSearchResult, response.getTags());
             HashSet<Long> selectedItemIds = getListAdapter().getSelectedItemIds();
             for (Long selectedItemId : selectedItemIds) {
                 getListAdapter().setItemSelected(selectedItemId);

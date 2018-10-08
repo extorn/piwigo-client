@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * Created by gareth on 12/07/17.
  */
 public abstract class AbstractBaseResourceItem extends GalleryItem {
-    private float yourRating = 0;
+    private float myRating = 0;
     private float averageRating = 0;
     private int ratingsGiven = 0;
     private int privacyLevel = 0;
@@ -125,12 +125,12 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         this.linkedAlbums = linkedAlbums;
     }
 
-    public float getYourRating() {
-        return yourRating;
+    public float getMyRating() {
+        return myRating;
     }
 
-    public void setYourRating(float yourRating) {
-        this.yourRating = yourRating;
+    public void setMyRating(float myRating) {
+        this.myRating = myRating;
     }
 
     public float getAverageRating() {
@@ -159,7 +159,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
 
     public void copyFrom(AbstractBaseResourceItem other, boolean copyParentage) {
         super.copyFrom(other, copyParentage);
-        yourRating = other.yourRating;
+        myRating = other.myRating;
         score = other.score;
         averageRating = other.averageRating;
         ratingsGiven = other.ratingsGiven;

@@ -129,6 +129,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
     private static final String STATE_RECYCLER_LAYOUT = "recyclerLayout";
+    private static final String STATE_ALBUMS_PER_ROW = "albumsPerRow";
 
     private static final int UPDATE_IN_PROGRESS = 1;
     private static final int UPDATE_SETTING_ADDING_PERMISSIONS = 2;
@@ -166,8 +167,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private static transient PiwigoAlbumAdminList albumAdminList;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
-    private int albumsPerRow; // calculated each time view created.
     // Start fields maintained in saved session state.
+    private int albumsPerRow; // calculated each time view created.
     private PiwigoAlbum galleryModel;
     private boolean editingItemDetails;
     private boolean informationShowing;
@@ -264,6 +265,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         outState.putSerializable(STATE_DELETE_ACTION_DATA, deleteActionData);
         outState.putLong(STATE_USER_GUID, userGuid);
         outState.putParcelable(STATE_RECYCLER_LAYOUT, galleryListView.getLayoutManager().onSaveInstanceState());
+        outState.putInt(STATE_ALBUMS_PER_ROW, albumsPerRow);
     }
 
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
@@ -322,6 +324,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         if (!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
             // force a reload of the gallery if the session has been destroyed.
             galleryIsDirty = true;
+            // reset albums per row to get it recalculated on next use
+            albumsPerRow = 0;
         } else if (savedInstanceState != null) {
             //restore saved state
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
@@ -354,6 +358,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             if(galleryListView != null) {
                 galleryListView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(STATE_RECYCLER_LAYOUT));
             }
+            albumsPerRow = savedInstanceState.getInt(STATE_ALBUMS_PER_ROW);
         } else {
             // fresh view of the root of the gallery - reset the admin list
             if (galleryModel.getContainerDetails() == CategoryItem.ROOT_ALBUM) {
@@ -361,8 +366,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
 
-        // reset albums per row to get it recalculated on next use
-        albumsPerRow = 0;
+
 
         updateViewPrefs();
 

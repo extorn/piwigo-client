@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -47,6 +48,16 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
         this.page = page;
         this.pageSize = pageSize;
         this.multimediaExtensionList = multimediaExtensionList;
+    }
+
+    @Override
+    public String getPiwigoMethod() {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if(sessionDetails.isMethodAvailable("piwigo_client.categories.getImages")) {
+            return "piwigo_client.categories.getImages";
+        } else {
+            return super.getPiwigoMethod();
+        }
     }
 
     @Override
@@ -147,6 +158,12 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
             JsonElement descJsonElem = image.get("comment");
             if (descJsonElem != null && !descJsonElem.isJsonNull()) {
                 description = descJsonElem.getAsString();
+            }
+
+            boolean isFavorite = false;
+            JsonElement favoriteJsonElem = image.get("isFavorite");
+            if (favoriteJsonElem != null && !favoriteJsonElem.isJsonNull()) {
+                isFavorite = favoriteJsonElem.getAsBoolean();
             }
 
             String originalResourceUrl = image.get("element_url").getAsString();
@@ -261,6 +278,8 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                 picItem.setFullScreenImage(fullScreenImage);
                 item = picItem;
             }
+
+            item.setFavorite(isFavorite);
 
             item.setLinkedAlbums(linkedAlbums);
 

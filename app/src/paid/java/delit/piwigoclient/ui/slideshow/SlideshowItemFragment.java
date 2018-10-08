@@ -4,7 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -23,8 +27,11 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.FavoritesAddImageResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.FavoritesRemoveImageResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
@@ -38,6 +45,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     private static final String STATE_CHANGED_TAGS_SET = "changedTagSet";
     private HashSet<Tag> updatedTagsSet;
     private HashSet<TagContentAlteredEvent> changedTagsEvents;
+    private CheckBox favoriteButton;
 
     @Override
     protected void setupImageDetailPopup(View v, Bundle savedInstanceState) {
@@ -57,7 +65,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
         boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate());
         allowTagEdit &= isEditingItemDetails();
-        boolean lockInitialSelection = allowTagEdit && !sessionDetails.isUseUserTagPluginForUpdate();
+        boolean lockInitialSelection = !sessionDetails.isUseUserTagPluginForUpdate();
         //disable tag deselection if user tags plugin is not present but allow editing if is admin user. (bug in PIWIGO API)
         TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, allowTagEdit, lockInitialSelection, PiwigoUtils.toSetOfIds(currentSelection));
         getUiHelper().setTrackingRequest(tagSelectEvent.getActionId());
@@ -86,6 +94,8 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     protected void populateResourceExtraFields() {
 
         super.populateResourceExtraFields();
+
+        favoriteButton.setChecked(getModel().isFavorite());
 
         if (getModel().getTags() == null) {
             tagsField.setText(R.string.paid_feature_only);
@@ -157,6 +167,38 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         super.onImageDeleted(deletedItemIds);
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        favoriteButton = v.findViewById(R.id.slideshow_image_favorite);
+        favoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                buttonView.setEnabled(false);
+                if(!getModel().isFavorite()) {
+                    FavoritesAddImageResponseHandler handler = new FavoritesAddImageResponseHandler(getModel());
+                    getUiHelper().addActionOnResponse(handler.getMessageId(), new FavoriteUpdateAction());
+                    getUiHelper().addActiveServiceCall(R.string.adding_favorite, handler.invokeAsync(getContext()));
+                } else {
+                    FavoritesRemoveImageResponseHandler handler = new FavoritesRemoveImageResponseHandler(getModel());
+                    getUiHelper().addActionOnResponse(handler.getMessageId(), new FavoriteUpdateAction());
+                    getUiHelper().addActiveServiceCall(R.string.removing_favorite, handler.invokeAsync(getContext()));
+                }
+            }
+        });
+        return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        boolean favoritesSupported = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isFavoritesSupported();
+        if(favoritesSupported) {
+            favoriteButton.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
@@ -190,6 +232,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
+
     @Override
     protected void onResourceInfoAltered(final T resourceItem) {
         if (BuildConfig.PAID_VERSION && PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isUseUserTagPluginForUpdate() && getUiHelper().getActiveServiceCallCount() == 0) {
@@ -197,6 +240,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             resourceItem.setTags(getModel().getTags());
         }
         super.onResourceInfoAltered(resourceItem);
+
         if (changedTagsEvents != null) {
             // ensure all necessary tags are updated.
             for (TagContentAlteredEvent tagEvent : changedTagsEvents) {
@@ -241,6 +285,21 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }
+        }
+    }
+
+    private class FavoriteUpdateAction extends UIHelper.Action {
+        @Override
+        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            favoriteButton.setChecked(!favoriteButton.isChecked());
+            favoriteButton.setEnabled(true);
+            return super.onFailure(uiHelper, response);
+        }
+
+        @Override
+        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response) {
+            favoriteButton.setEnabled(true);
+            return super.onSuccess(uiHelper, response);
         }
     }
 }

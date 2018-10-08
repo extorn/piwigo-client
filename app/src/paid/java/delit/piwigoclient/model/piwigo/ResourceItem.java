@@ -8,6 +8,7 @@ import java.util.HashSet;
  */
 public class ResourceItem extends AbstractBaseResourceItem {
     private HashSet<Tag> tags;
+    private boolean isFavorite;
 
     public ResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, creationDate, lastAltered, thumbnailUrl);
@@ -23,8 +24,17 @@ public class ResourceItem extends AbstractBaseResourceItem {
     }
 
 
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
     public void copyFrom(ResourceItem other, boolean copyParentage) {
         super.copyFrom(other, copyParentage);
         tags = other.tags;
+        isFavorite = other.isFavorite;
     }
 }

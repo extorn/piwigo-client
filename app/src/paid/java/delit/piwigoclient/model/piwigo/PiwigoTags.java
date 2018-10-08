@@ -78,23 +78,22 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
         throw new IllegalArgumentException("No Tag present with id : " + selectedItemId);
     }
 
-    public int addItemPage(boolean isAdminPage, HashSet<Tag> tags) {
+    public void addItemPage(boolean isAdminPage, HashSet<Tag> tags) {
         pagesLoaded++;
         if (items.size() == 0) {
             items.addAll(tags);
-            return 0;
-        }
-        if (isAdminPage) {
-            // remove any already present in the store.
-            tags.removeAll(getItems());
         } else {
-            // overwrite those already in the store.
-            getItems().removeAll(tags);
+            if (isAdminPage) {
+                // remove any already present in the store.
+                tags.removeAll(getItems());
+            } else {
+                // overwrite those already in the store.
+                getItems().removeAll(tags);
+            }
+
+            items.addAll(tags);
         }
-        int insertAt = items.size();
-        items.addAll(tags);
         sort();
-        return insertAt;
     }
 
     public int getPagesLoaded() {

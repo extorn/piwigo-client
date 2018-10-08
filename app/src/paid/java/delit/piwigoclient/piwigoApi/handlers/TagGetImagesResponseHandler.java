@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
@@ -48,6 +49,16 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
         this.page = page;
         this.pageSize = pageSize;
         this.multimediaExtensionList = multimediaExtensionList;
+    }
+
+    @Override
+    public String getPiwigoMethod() {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if(sessionDetails.isMethodAvailable("piwigo_client.tags.getImages")) {
+            return "piwigo_client.tags.getImages";
+        } else {
+            return super.getPiwigoMethod();
+        }
     }
 
     @Override

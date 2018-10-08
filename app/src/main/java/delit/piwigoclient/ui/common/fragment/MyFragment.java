@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.common.fragment;
 
+import android.app.Activity;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
@@ -11,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -179,8 +181,11 @@ public class MyFragment extends Fragment {
                 dialog.show();
 //                uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, this);
             } else {
-                getActivity().getLifecycle().removeObserver(observer);
-                prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 0).commit();
+                FragmentActivity a = getActivity();
+                if(a != null) {
+                    a.getLifecycle().removeObserver(observer);
+                    prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 0).commit();
+                }
             }
         }
     }

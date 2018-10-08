@@ -3,9 +3,6 @@ package delit.piwigoclient.ui.slideshow;
 import android.app.Activity;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.LayerDrawable;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.BitmapCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.app.Notification;
@@ -30,6 +27,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -63,6 +62,7 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumThumbnailUpdatedResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.FavoritesAddImageResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageAlterRatingResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
@@ -232,7 +232,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 }
             }
         });
-        ratingsBar.setRating(model.getYourRating());
+        ratingsBar.setRating(model.getMyRating());
         ratingsBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
@@ -308,13 +308,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             int children = itemContentLayout.getChildCount();
             itemContentLayout.addView(itemContent, 0);
         }
-        //            CheckBox favoriteButton = (CheckBox)v.findViewById(R.id.slideshow_image_favorite);
-//            favoriteButton.setOnCheckedChangeListener(pkg CompoundButton.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                    PiwigoAccessService.startActionSetIsFavorite(model, isChecked, this);
-//                }
-//            });
+
         bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
 //        LinearLayout bottomSheetContent = bottomSheet.findViewById(R.id.slideshow_image_bottom_sheet_content);
 //        View itemDetail = createCustomItemDetail(inflater, itemContentLayout, savedInstanceState, model);
@@ -866,7 +860,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     protected void populateResourceExtraFields() {
         onRatingAltered(model);
 
-        ratingsBar.setRating(model.getYourRating());
+        ratingsBar.setRating(model.getMyRating());
 
         privacyLevelSpinner.setSelection(getPrivacyLevelIndexPositionFromValue(model.getPrivacyLevel()));
 

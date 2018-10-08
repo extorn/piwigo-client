@@ -15,7 +15,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -122,7 +121,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
     }
 
-    protected void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
+    protected boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
+        return false;
     }
 
     public void setCallDetails(Context parentContext, ConnectionPreferences.ProfilePreferences connectionPrefs, boolean useAsyncMode) {
@@ -247,16 +247,18 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             }
         }
         if (!tryingAgain) {
-            if (BuildConfig.DEBUG && error != null && !"Method name is not valid".equals(error.getMessage())) {
-                Log.e(getTag(), "Tracking piwigo failure class: " + error.getClass() + " message: " + error.getMessage(), error);
+            tryingAgain = onFailure(statusCode, headers, responseBody, error, triedLoggingInAgain);
+            if(!tryingAgain) {
+                this.statusCode = statusCode;
+                this.headers = headers;
+                this.responseBody = responseBody;
+                if (this.error == null) {
+                    this.error = error;
+                }
+            } else {
+                // just run the original call again (some action has been taken such that it may succeed this time)
+                rerunCall();
             }
-            this.statusCode = statusCode;
-            this.headers = headers;
-            this.responseBody = responseBody;
-            if (this.error == null) {
-                this.error = error;
-            }
-            onFailure(statusCode, headers, responseBody, this.error, triedLoggingInAgain);
         }
     }
 
@@ -264,7 +266,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         try {
             connectionResetLock.lock();
 
-            int maxAcceptableServerResetCount = 30;
+            int maxAcceptableServerResetCount = 100;
             int maxWindowSizeMillis = 1000 * 60 * 10; // 10 minutes
             long windowStart = connectionResetOccurredWindowStart;
             long currentWindowSizeMillis = System.currentTimeMillis() - windowStart;

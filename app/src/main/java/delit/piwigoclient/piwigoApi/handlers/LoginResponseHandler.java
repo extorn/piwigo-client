@@ -75,7 +75,15 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
 
         if (canContinue && isNeedUserDetails(PiwigoSessionDetails.getInstance(connectionPrefs))) {
-            /*canContinue = */loadUserDetails();
+            canContinue = loadUserDetails();
+        }
+
+        if(canContinue && !PiwigoSessionDetails.getInstance(connectionPrefs).isMethodsAvailableListAvailable()) {
+            loadMethodsAvailable();
+        }
+
+        if(canContinue && !PiwigoSessionDetails.getInstance(connectionPrefs).isFavoritesSupported()) {
+            loadFavoritesList();
         }
 
         setError(getNestedFailure());
@@ -86,6 +94,20 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         resetFailureAsASuccess();
 
         return null;
+    }
+
+    private void loadFavoritesList() {
+    }
+
+    private boolean loadMethodsAvailable() {
+        GetMethodsAvailableResponseHandler methodsHandler = new GetMethodsAvailableResponseHandler();
+        methodsHandler.setPerformingLogin();
+        methodsHandler.invokeAndWait(getContext(), getConnectionPrefs());
+        if (!methodsHandler.isSuccess()) {
+            reportNestedFailure(methodsHandler);
+            return false;
+        }
+        return true;
     }
 
     private boolean isCommunityPluginSessionStatusUnknown(PiwigoSessionDetails currentCredentials) {

@@ -8,14 +8,14 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
-public class ImageAlterFavoriteStatusResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class FavoritesRemoveImageResponseHandler extends AbstractPiwigoWsResponseHandler {
 
-    private static final String TAG = "AlterResFavStatusRspHdlr";
+    private static final String TAG = "UnmarkResAsFavRspHdlr";
 
     private final ResourceItem piwigoResource;
 
-    public ImageAlterFavoriteStatusResponseHandler(ResourceItem piwigoResource) {
-        super("?????????", TAG);
+    public FavoritesRemoveImageResponseHandler(ResourceItem piwigoResource) {
+        super("piwigo_client.favorites.removeImage", TAG);
         this.piwigoResource = piwigoResource;
     }
 
@@ -29,9 +29,15 @@ public class ImageAlterFavoriteStatusResponseHandler extends AbstractPiwigoWsRes
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        //TODO implement this
-        PiwigoResponseBufferingHandler.PiwigoFavoriteStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoFavoriteStatusResponse(getMessageId(), getPiwigoMethod(), piwigoResource);
+        piwigoResource.setFavorite(false);
+        PiwigoRemoveFavoriteResponse r = new PiwigoRemoveFavoriteResponse(getMessageId(), getPiwigoMethod(), piwigoResource);
         storeResponse(r);
+    }
+
+    public static class PiwigoRemoveFavoriteResponse extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
+        public PiwigoRemoveFavoriteResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
+            super(messageId, piwigoMethod, piwigoResource);
+        }
     }
 
 }

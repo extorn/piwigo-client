@@ -74,15 +74,17 @@
             tools:visibility="visible" tools:targetApi="lollipop"/>
 
 
-        <!-- this is currently unsupported by the Piwigo API 2.9.1 required -->
-        <!--<delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+        <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
             android:id="@+id/slideshow_image_favorite"
+            android:layout_below="@+id/slideshow_image_average_ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/favorite_checkbox"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="16sp"/>-->
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="10dp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
         <!--<com.ortiz.touch.TouchImageView
             android:id="@+id/slideshow_image"

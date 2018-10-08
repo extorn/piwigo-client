@@ -359,8 +359,7 @@ public class TagsListFragment extends MyFragment {
             pageToLoadNow = -1;
             retryActionButton.setVisibility(View.GONE);
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
-            int firstIdxAdded = tagsModel.addItemPage(isAdminPage, response.getTags());
-            // can't do an incremental refresh as we sort the data and it could cause interleaving.
+            tagsModel.addItemPage(isAdminPage, response.getTags());
             viewAdapter.notifyDataSetChanged();
         }
     }

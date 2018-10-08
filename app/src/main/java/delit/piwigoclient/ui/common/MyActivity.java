@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -22,6 +23,7 @@ import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.MyApplication;
+import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
@@ -180,15 +182,24 @@ public abstract class MyActivity extends AppCompatActivity {
 //        ActivityCompat.requestPermissions(this, event.getPermissionsNeeded(), event.getActionId());
 //    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(UserNotUniqueWarningEvent event) {
         FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("usernameNotUniqueOnPiwigoServer", null);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_multiple_users_found_pattern, event.getOtherUsers().size(), event.getUserSelected().getUsername()));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ServerConnectionWarningEvent event) {
         FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("serverKilledConnectionLots", null);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, event.getMessage());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(PiwigoMethodNowUnavailableUsingFallback event) {
+        if(event.getFallbackMethod() != null) {
+            getUiHelper().showDetailedToast(R.string.alert_warning, getString(R.string.alert_msg_using_fallback_piwigo_method_pattern, event.getFailedOriginalMethod(), event.getFallbackMethod()), Toast.LENGTH_LONG);
+        } else {
+            getUiHelper().showDetailedToast(R.string.alert_warning, getString(R.string.alert_msg_piwigo_method_not_available_pattern, event.getFailedOriginalMethod()), Toast.LENGTH_LONG);
+        }
     }
 }

@@ -35,7 +35,7 @@ public class ImageAlterRatingResponseHandler extends AbstractPiwigoWsResponseHan
         float score = (float) result.get("score").getAsDouble();
         float averageRating = (float) result.get("average").getAsDouble();
         int usersRated = result.get("count").getAsInt();
-        piwigoResource.setYourRating(newRating);
+        piwigoResource.setMyRating(newRating);
         piwigoResource.setAverageRating(averageRating);
         piwigoResource.setScore(score);
         piwigoResource.setRatingsGiven(usersRated);
