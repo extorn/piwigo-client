@@ -1,9 +1,9 @@
 package delit.piwigoclient.model.piwigo;
 
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.util.VersionUtils;
 
 /**
  * Created by gareth on 15/06/17.
@@ -26,29 +26,27 @@ public enum VersionCompatability {
     }
 
     public void runTests() {
-        int[] serverVersion = getServerVersion();
+        serverVersion = getServerVersion();
         supportedVersion = versionExceedsMinimum(getMinimumTestedVersion());
-        favoritesEnabled = versionExceedsMinimum(getMinimumVersionForFavorites());
+        favoritesEnabled = isFavoritesSupported();
+    }
+
+    private boolean isFavoritesSupported() {
+        boolean nativeSupport = versionExceedsMinimum(getMinimumVersionForFavorites());
+        if(!nativeSupport) {
+            nativeSupport = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isPiwigoClientPluginInstalled();
+        }
+        return nativeSupport;
     }
 
     private int[] getMinimumVersionForFavorites() {
-        return new int[]{2, 9, 2};
+        //TODO add this in when it is known
+        //return new int[]{2, 9, 5};
+        return new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
     }
 
     private boolean versionExceedsMinimum(int[] minimumVersion) {
-        int[] serverVersion = getServerVersion();
-
-        if (serverVersion[0] < minimumVersion[0]) {
-            return false;
-        }
-        if (serverVersion[0] == minimumVersion[0]) {
-            if (serverVersion[1] < minimumVersion[1]) {
-                return false;
-            }
-            return serverVersion[1] != minimumVersion[1]
-                    || serverVersion[2] >= minimumVersion[2];
-        }
-        return true;
+        return VersionUtils.versionExceeds(minimumVersion, serverVersion);
     }
 
     private int[] getMinimumTestedVersion() {
@@ -72,21 +70,13 @@ public enum VersionCompatability {
     private int[] getServerVersion() {
         if (serverVersion == null) {
             String serverVersionStr = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getPiwigoVersion();
-            int[] version = new int[3];
             if(serverVersionStr.equals(PiwigoSessionDetails.UNKNOWN_VERSION)) {
+                int[] version = new int[3];
                 Arrays.fill(version, 0);
+                serverVersion = version;
             } else {
-                StringTokenizer st = new StringTokenizer(serverVersionStr, ".");
-                int i = 0;
-                while (st.hasMoreTokens()) {
-                    int versionNum = Integer.valueOf(st.nextToken());
-                    if (i < version.length) {
-                        version[i] = versionNum;
-                    }
-                    i++;
-                }
+                serverVersion = VersionUtils.parseVersionString(serverVersionStr);
             }
-            serverVersion = version;
         }
         return serverVersion;
     }

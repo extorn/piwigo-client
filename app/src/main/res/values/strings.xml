@@ -790,4 +790,5 @@ SOFTWARE.
     <string name="alert_msg_piwigo_method_not_available_pattern">The Piwigo WS method %1$s no longer available on this server. Disabling affected functionality in the app. Have you just deactived or deleted a server plugin?</string>
     <string name="removing_favorite">Removing favorite</string>
     <string name="adding_favorite">Adding Favorite</string>
+    <string name="alert_error_unsupported_features_pattern">Some features this app supports are not available on your server. To enable:\n1. Install the PiwigoClientWsExts plugin\n2.Log out and back in on this app.\n\nYou'll be reminded in a week.</string>
 </resources>

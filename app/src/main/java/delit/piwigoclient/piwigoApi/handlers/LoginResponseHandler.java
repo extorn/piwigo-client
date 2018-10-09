@@ -12,6 +12,7 @@ import org.json.JSONException;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.User;
+import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
@@ -82,7 +83,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             loadMethodsAvailable();
         }
 
-        if(canContinue && !PiwigoSessionDetails.getInstance(connectionPrefs).isFavoritesSupported()) {
+        if(canContinue && VersionCompatability.INSTANCE.isFavoritesEnabled()) {
             loadFavoritesList();
         }
 

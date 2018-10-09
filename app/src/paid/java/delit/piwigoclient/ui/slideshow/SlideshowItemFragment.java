@@ -25,6 +25,7 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
+import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesAddImageResponseHandler;
@@ -177,13 +178,9 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 buttonView.setEnabled(false);
                 if(!getModel().isFavorite()) {
-                    FavoritesAddImageResponseHandler handler = new FavoritesAddImageResponseHandler(getModel());
-                    getUiHelper().addActionOnResponse(handler.getMessageId(), new FavoriteUpdateAction());
-                    getUiHelper().addActiveServiceCall(R.string.adding_favorite, handler.invokeAsync(getContext()));
+                    getUiHelper().invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(getModel()), new FavoriteUpdateAction());
                 } else {
-                    FavoritesRemoveImageResponseHandler handler = new FavoritesRemoveImageResponseHandler(getModel());
-                    getUiHelper().addActionOnResponse(handler.getMessageId(), new FavoriteUpdateAction());
-                    getUiHelper().addActiveServiceCall(R.string.removing_favorite, handler.invokeAsync(getContext()));
+                    getUiHelper().invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(getModel()), new FavoriteUpdateAction());
                 }
             }
         });
@@ -193,8 +190,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     @Override
     public void onResume() {
         super.onResume();
-        boolean favoritesSupported = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isFavoritesSupported();
-        if(favoritesSupported) {
+        if(VersionCompatability.INSTANCE.isFavoritesEnabled()) {
             favoriteButton.setVisibility(View.VISIBLE);
         }
     }
@@ -288,18 +284,26 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private class FavoriteUpdateAction extends UIHelper.Action {
+    private static class FavoriteUpdateAction<T extends ResourceItem> extends UIHelper.Action<SlideshowItemFragment<T>> {
         @Override
-        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            favoriteButton.setChecked(!favoriteButton.isChecked());
-            favoriteButton.setEnabled(true);
+        public boolean onFailure(UIHelper<SlideshowItemFragment<T>> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            getActionParent(uiHelper).onFavoriteUpdateFailed();
             return super.onFailure(uiHelper, response);
         }
 
         @Override
-        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response) {
-            favoriteButton.setEnabled(true);
+        public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, PiwigoResponseBufferingHandler.Response response) {
+            getActionParent(uiHelper).onFavoriteUpdateSucceeded();
             return super.onSuccess(uiHelper, response);
         }
+    }
+
+    private void onFavoriteUpdateSucceeded() {
+        favoriteButton.setEnabled(true);
+    }
+
+    private void onFavoriteUpdateFailed() {
+        favoriteButton.setChecked(!favoriteButton.isChecked());
+        favoriteButton.setEnabled(true);
     }
 }

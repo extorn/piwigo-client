@@ -276,7 +276,7 @@ public class PiwigoSessionDetails {
         methodsAvailable.remove(unavailablePiwigoMethod);
     }
 
-    public boolean isFavoritesSupported() {
+    public boolean isPiwigoClientPluginInstalled() {
         return isMethodAvailable("piwigo_client.favorites.addImage");
     }
 }

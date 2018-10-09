@@ -280,9 +280,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
-            long msgId = new LogoutResponseHandler().invokeAsync(getContext());
-            getUiHelper().addActionOnResponse(msgId, new OnLogoutAction(loginAsProfileAfterLogout));
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), msgId);
+            getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction(loginAsProfileAfterLogout));
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
             getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction(loginAsProfileAfterLogout));
@@ -305,9 +303,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
-            long msgId = new LogoutResponseHandler().invokeAsync(getContext());
-            getUiHelper().addActionOnResponse(msgId, new OnLogoutAction(false));
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), msgId);
+            getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction(false));
             return true;
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
@@ -470,7 +466,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private static class OnLogoutAction extends UIHelper.Action {
+    private static class OnLogoutAction extends UIHelper.Action<ConnectionPreferenceFragment> {
         private String loginAsProfileAfterLogout;
         private Boolean loginAgain;
 
@@ -483,7 +479,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
 
         @Override
-        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response) {
+        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.Response response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getContext()).start();
             if(loginAgain != null && !loginAgain) {
@@ -496,7 +492,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
 
         @Override
-        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(UIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getContext());
             onSuccess(uiHelper, null);
@@ -504,9 +500,9 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action {
+    private static class OnLoginAction extends UIHelper.Action<ConnectionPreferenceFragment> {
         @Override
-        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response) {
+        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.Response response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
@@ -524,7 +520,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private static class OnHttpClientShutdownAction extends UIHelper.Action {
+    private static class OnHttpClientShutdownAction extends UIHelper.Action<ConnectionPreferenceFragment> {
         private String loginAsProfileAfterLogout;
         private boolean loginAgain = true;
 
@@ -537,7 +533,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
 
         @Override
-        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response) {
+        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.Response response) {
             boolean retVal = false;
             if(loginAsProfileAfterLogout != null) {
                 // copy those profile values to the working app copy of prefs
@@ -555,9 +551,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     }
                 } else {
                     HttpClientFactory.getInstance(uiHelper.getContext()).clearCachedClients(connectionPrefs);
-                    long msgId = new LoginResponseHandler().invokeAsync(uiHelper.getContext());
-                    uiHelper.addActionOnResponse(msgId, new OnLoginAction());
-                    uiHelper.addActiveServiceCall(String.format(uiHelper.getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), msgId);
+                    uiHelper.invokeActiveServiceCall(String.format(uiHelper.getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
                 }
             }
             return retVal;

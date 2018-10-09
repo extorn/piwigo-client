@@ -58,6 +58,8 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AbstractBasicPiwigoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
@@ -325,6 +327,16 @@ public abstract class UIHelper<T> {
         if (l != null) {
             l.onShow(alertDialog);
         }
+    }
+
+    public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+        addActionOnResponse(worker.getMessageId(), actionOnResponse);
+        addActiveServiceCall(progressMsg, worker.getMessageId());
+        worker.invokeAsync(context);
+    }
+
+    public void invokeActiveServiceCall(int progressMsgId, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+        invokeActiveServiceCall(context.getString(progressMsgId), worker, actionOnResponse);
     }
 
     public void addActiveServiceCall(int titleStringId, long messageId) {
@@ -951,11 +963,16 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static class Action implements Serializable {
-        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response){
+    public static class Action<T> implements Serializable {
+
+        protected T getActionParent(UIHelper uiHelper) {
+            return (T)uiHelper.getParent();
+        }
+
+        public boolean onSuccess(UIHelper<T> uiHelper, PiwigoResponseBufferingHandler.Response response){
             return true;
         };
-        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response){
+        public boolean onFailure(UIHelper<T> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response){
             return true;
         };
     }

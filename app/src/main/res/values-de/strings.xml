@@ -527,5 +527,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_msg_piwigo_method_not_available_pattern">Die Piwigo WS-Methode %1$s ist auf diesem Server nicht mehr verfügbar. Deaktivieren der betroffenen Funktionen in der App. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
     <string name="removing_favorite">Removing favorite</string>
     <string name="adding_favorite">Adding Favorite</string>
+    <string name="alert_error_unsupported_features_pattern">Einige Funktionen, die diese App unterstützt, sind auf Ihrem Server nicht verfügbar. Um:\n1 zu aktivieren. Installieren Sie das Plugin PiwigoClientWsExts\n2.Loggen Sie sich aus und wieder ein in dieser App.\n\n\nSie werden in einer Woche erinnert.</string>
 </resources>
 
