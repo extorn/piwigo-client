@@ -45,7 +45,7 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
     }
 
     protected ResourceItem parseResourceItemFromJson(JsonObject resourceItemElem) throws JSONException {
-        ImagesGetResponseHandler.ResourceParser resourceParser = new ImagesGetResponseHandler.ResourceParser(getContext(), multimediaExtensionList);
+        ImagesGetResponseHandler.ResourceParser resourceParser = new ImagesGetResponseHandler.ResourceParser(multimediaExtensionList);
 
         ResourceItem loadedResourceItem = resourceParser.parseAndProcessResourceData(resourceItemElem);
 

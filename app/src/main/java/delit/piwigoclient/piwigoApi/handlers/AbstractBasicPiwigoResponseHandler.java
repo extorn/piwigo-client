@@ -61,6 +61,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private static Lock connectionResetLock = new ReentrantLock();
     private static long connectionResetOccurredWindowStart = 0;
     private static long connectionResetCount = 0;
+    private double lastProgressReportAtPercent;
 
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
@@ -88,11 +89,13 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                         rerunningCall = false;
                     }
                     isRunning = false;
-                    break;
                 default:
                     if (BuildConfig.DEBUG) {
-                        Log.i(tag, "rx " + message.what);
+                        Log.v(tag, "rx message type : " + message.what);
                     }
+                    break;
+                case PROGRESS_MESSAGE:
+                    break;
             }
         } finally {
             synchronized (this) {
@@ -106,6 +109,23 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 }
             }
         }
+    }
+
+    @Override
+    public void onProgress(long bytesWritten, long totalSize) {
+        if(BuildConfig.DEBUG) {
+            double currentProgressPercent = Math.floor((totalSize > 0) ? (bytesWritten * 1.0 / totalSize) * 100 : -1);
+            if(currentProgressPercent < 0 || currentProgressPercent > lastProgressReportAtPercent) {
+                lastProgressReportAtPercent = currentProgressPercent;
+                super.onProgress(bytesWritten, totalSize);
+            }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        lastProgressReportAtPercent = -1;
     }
 
     protected void postCall(boolean success) {

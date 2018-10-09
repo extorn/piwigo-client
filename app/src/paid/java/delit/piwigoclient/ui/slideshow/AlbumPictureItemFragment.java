@@ -16,10 +16,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.ui.common.InlineViewPagerAdapter;
-import delit.piwigoclient.ui.common.SlidingTabLayout;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.ExifDataRetrievedEvent;
-import delit.piwigoclient.util.DisplayUtils;
 
 public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
 

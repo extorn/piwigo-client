@@ -165,7 +165,7 @@ public class PicassoLoader implements Callback {
             }
         }
 
-        if (Math.abs(rotation) > Float.MIN_NORMAL) {
+        if (placeholderLoaded && Math.abs(rotation) > Float.MIN_NORMAL) {
             rc.rotate(rotation);
         }
         rc.tag(PICASSO_REQUEST_TAG);

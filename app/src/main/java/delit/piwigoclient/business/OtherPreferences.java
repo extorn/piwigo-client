@@ -4,10 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.util.DisplayMetrics;
 
-import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -75,8 +72,8 @@ public class OtherPreferences {
         boolean showWarning = lastWarnedAt.before(warnIfLastWarnedBeforeDateTime);
         if(showWarning) {
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putLong(activity.getString(R.string.preference_functions_missing_app_version_warned_key), lastWarnedAt.getTimeInMillis());
-            editor.apply();
+            editor.putLong(activity.getString(R.string.preference_functions_missing_app_version_warned_key), System.currentTimeMillis());
+            editor.commit();
         }
         return showWarning;
     }

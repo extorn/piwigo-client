@@ -25,7 +25,6 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
-import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesAddImageResponseHandler;
@@ -96,7 +95,9 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
         super.populateResourceExtraFields();
 
-        favoriteButton.setChecked(getModel().isFavorite());
+        if(getModel().hasFavoriteInfo()) {
+            favoriteButton.setChecked(getModel().isFavorite());
+        }
 
         if (getModel().getTags() == null) {
             tagsField.setText(R.string.paid_feature_only);
@@ -190,9 +191,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     @Override
     public void onResume() {
         super.onResume();
-        if(VersionCompatability.INSTANCE.isFavoritesEnabled()) {
-            favoriteButton.setVisibility(View.VISIBLE);
-        }
+        favoriteButton.setVisibility(getModel().hasFavoriteInfo()?View.VISIBLE:View.GONE);
     }
 
     @Override

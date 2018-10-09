@@ -1,11 +1,11 @@
 package delit.piwigoclient.ui.tags;
 
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,7 +47,6 @@ import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
 import delit.piwigoclient.ui.MainActivity;
-import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -525,7 +524,7 @@ public class ViewTagFragment extends MyFragment {
             String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
             String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
             int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
-            long loadingMessageId = new TagGetImagesResponseHandler(tag, sortOrder, pageToLoad, pageSize, getContext(), multimediaExtensionList).invokeAsync(getContext());
+            long loadingMessageId = new TagGetImagesResponseHandler(tag, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
             loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
             addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
         }

@@ -11,12 +11,19 @@ import android.support.annotation.DrawableRes;
 import android.util.SparseIntArray;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.squareup.picasso.CustomNetworkRequestHandler;
 import com.squareup.picasso.Downloader;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.R;
@@ -34,6 +41,8 @@ import delit.piwigoclient.util.ToastUtils;
 public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
     private static final String TAG = "CustomImageDwnldr";
+    public static final String EXIF_WANTED_URI_PARAM = "pwgCliEW";
+    public static final String EXIF_WANTED_URI_FLAG = EXIF_WANTED_URI_PARAM + "=true";
     private final Context context;
     private final SparseIntArray errorDrawables = new SparseIntArray();
     private final ConnectionPreferences.ProfilePreferences connectionPrefs;
@@ -53,11 +62,12 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
     }
 
     @Override
-    public Response load(Uri uri, int networkPolicy) throws IOException {
+    public Downloader.Response load(Uri uri, int networkPolicy) throws IOException {
 
         ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriString(uri));
         handler.setCallDetails(context, connectionPrefs, false);
         handler.runCall();
+//        handler.invokeAndWait(context, connectionPrefs);
 
         if (!handler.isSuccess()) {
             PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse) handler.getResponse();
@@ -96,16 +106,64 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         }
         byte[] imageData = ((PiwigoResponseBufferingHandler.UrlSuccessResponse) handler.getResponse()).getData();
 
-        processImageData(uri, imageData);
+        ByteArrayInputStream imageDataStream = new ByteArrayInputStream(imageData);
+        Metadata exifMetadata = loadExifMetadata(uri, imageDataStream);
+        imageDataStream.reset();
+        int exitRotationDegrees = getExifRotationDegrees(exifMetadata);
+        return new CustomNetworkRequestHandler.DownloaderResponse(imageDataStream, false, imageData.length, exitRotationDegrees);
+    }
 
-        return new Downloader.Response(new ByteArrayInputStream(imageData), false, imageData.length);
+    protected Metadata loadExifMetadata(Uri uri, InputStream imageDataStream) {
+        Metadata metadata = null;
+        if(imageDataStream != null) {
+
+            // Load EXIF data.
+            try {
+                metadata = ImageMetadataReader.readMetadata(imageDataStream);
+            } catch (ImageProcessingException e) {
+                Crashlytics.logException(e);
+            } catch (IOException e) {
+                Crashlytics.logException(e);
+            }
+        }
+        return metadata;
+    }
+
+    private int getExifRotationDegrees(Metadata metadata) {
+
+        Integer orientation = null;
+
+        if(metadata != null) {
+            ExifIFD0Directory dir = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+            if (dir != null) {
+                orientation = dir.getInteger(ExifIFD0Directory.TAG_ORIENTATION);
+            }
+        }
+
+        if(orientation == null) {
+            orientation = 0;
+        }
+        switch (orientation) {
+            default:
+            case 1:
+                return 0;
+            case 3:
+                return 180;
+            case 6:
+                return 90;
+            case 8:
+                return 270;
+        }
     }
 
     protected String getUriString(Uri uri) {
-        return uri.toString();
+        String uriStr = uri.toString();
+        int idx = uriStr.indexOf(EXIF_WANTED_URI_FLAG) - 1;
+        if(idx > 0) {
+            uriStr = uriStr.substring(0, idx);
+        }
+        return uriStr;
     }
-
-    protected abstract void processImageData(Uri uri, byte[] imageData);
 
     @Override
     public void shutdown() {

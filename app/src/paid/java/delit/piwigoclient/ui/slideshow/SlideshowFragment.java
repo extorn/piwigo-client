@@ -47,7 +47,7 @@ public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshow
         if(containerDetails instanceof CategoryItem) {
             loadingMessageId = new ImagesGetResponseHandler((CategoryItem) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
         } else if(containerDetails instanceof Tag) {
-            loadingMessageId = new TagGetImagesResponseHandler((Tag) containerDetails, sortOrder, pageToLoad, pageSize, getContext(), multimediaExtensionList).invokeAsync(getContext());
+            loadingMessageId = new TagGetImagesResponseHandler((Tag) containerDetails, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
         } else {
             throw new IllegalArgumentException("unsupported container type : " + container);
         }

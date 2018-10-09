@@ -72,5 +72,4 @@
 
     <string name="preference_data_upload_automatic_job_files_uploaded_already_key" translatable="false">preference_data_upload_automatic_job_files_uploaded_already</string>
 
-    <string name="preference_functions_missing_app_version_warned_key" translatable="false">preference_functions_missing_app_version_warned</string>
 </resources>

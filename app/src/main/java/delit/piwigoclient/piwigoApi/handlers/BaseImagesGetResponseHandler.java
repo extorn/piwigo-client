@@ -1,10 +1,5 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import android.content.Context;
-import android.graphics.Point;
-import android.view.Display;
-import android.view.WindowManager;
-
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -32,7 +27,7 @@ import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
-public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetResourcesRspHdlr";
     private final String multimediaExtensionList;
@@ -41,7 +36,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
     private final int pageSize;
     private final int page;
 
-    public ImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, String multimediaExtensionList) {
+    public BaseImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, String multimediaExtensionList) {
         super("pwg.categories.getImages", TAG);
         this.parentAlbum = parentAlbum;
         this.sortOrder = sortOrder;
@@ -86,7 +81,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
             images = null;
         }
 
-        ResourceParser resourceParser = new ResourceParser(getContext(), multimediaExtensionList);
+        BasicResourceParser resourceParser = buildResourceParser(multimediaExtensionList);
 
         if(images != null) {
             for (int i = 0; i < images.size(); i++) {
@@ -103,28 +98,17 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
         storeResponse(r);
     }
 
-    protected static class ResourceParser {
+    protected BasicResourceParser buildResourceParser(String multimediaExtensionList) {
+        return new BasicResourceParser(multimediaExtensionList);
+    }
+
+    public static class BasicResourceParser {
 
         private final Pattern p;
         private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
-        private final int screenWidth;
         private Matcher m;
 
-        public ResourceParser(Context context, String multimediaExtensionList) {
-            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            Point point = new Point();
-            display.getSize(point);
-            int screenWidth = point.x;
-            int screenHeight = point.y;
-            if (screenHeight < screenWidth) {
-                //Assume portrait mode
-                //noinspection SuspiciousNameCombination
-                screenHeight = point.x;
-                //noinspection SuspiciousNameCombination
-                screenWidth = point.y;
-            }
-            this.screenWidth = screenWidth;
+        public BasicResourceParser(String multimediaExtensionList) {
 
             StringTokenizer st = new StringTokenizer(multimediaExtensionList, ",");
             StringBuilder multimediaRegexpBuilder = new StringBuilder(".*\\.(");
@@ -160,21 +144,22 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                 description = descJsonElem.getAsString();
             }
 
-            boolean isFavorite = false;
-            JsonElement favoriteJsonElem = image.get("isFavorite");
-            if (favoriteJsonElem != null && !favoriteJsonElem.isJsonNull()) {
-                isFavorite = favoriteJsonElem.getAsBoolean();
+            String originalResourceUrl = null;
+            JsonElement origUrlElem = image.get("element_url");
+            if (origUrlElem != null && !origUrlElem.isJsonNull()) {
+                originalResourceUrl = origUrlElem.getAsString();
             }
-
-            String originalResourceUrl = image.get("element_url").getAsString();
             JsonObject derivatives = image.get("derivatives").getAsJsonObject();
             String thumbnail;
+
             ResourceItem item;
 
-            if (m == null) {
-                m = p.matcher(originalResourceUrl);
-            } else {
-                m.reset(originalResourceUrl);
+            if(originalResourceUrl != null) {
+                if (m == null) {
+                    m = p.matcher(originalResourceUrl);
+                } else {
+                    m.reset(originalResourceUrl);
+                }
             }
 
             Date dateLastAltered = null;
@@ -203,10 +188,13 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
 
             HashSet<Long> linkedAlbums = new HashSet<>();
-            JsonArray linkedAlbumsJsonArr = image.get("categories").getAsJsonArray();
-            for (int j = 0; j < linkedAlbumsJsonArr.size(); j++) {
-                JsonObject catJsonObj = linkedAlbumsJsonArr.get(j).getAsJsonObject();
-                linkedAlbums.add(catJsonObj.get("id").getAsLong());
+            JsonElement elem = image.get("categories");
+            if(elem != null && elem.isJsonArray()) {
+                JsonArray linkedAlbumsJsonArr = image.get("categories").getAsJsonArray();
+                for (int j = 0; j < linkedAlbumsJsonArr.size(); j++) {
+                    JsonObject catJsonObj = linkedAlbumsJsonArr.get(j).getAsJsonObject();
+                    linkedAlbums.add(catJsonObj.get("id").getAsLong());
+                }
             }
 
             int originalResourceUrlWidth = 0;
@@ -219,7 +207,7 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
                 originalResourceUrlHeight = image.get("height").getAsInt();
             }
 
-            if (m.matches()) {
+            if (originalResourceUrl != null && m.matches()) {
                 //TODO why must we do something special for the privacy plugin?
                 // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
                 String mediaFile = originalResourceUrl.replaceFirst("^.*(/upload/.*)", "$1");
@@ -234,52 +222,47 @@ public class ImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
             } else {
 
-                ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", originalResourceUrl, originalResourceUrlWidth, originalResourceUrlHeight);
-
-                ResourceItem.ResourceFile fullScreenImage = null;
+                ResourceItem.ResourceFile originalImage = null;
+                if(originalResourceUrl != null) {
+                    originalImage = new ResourceItem.ResourceFile("original", originalResourceUrl, originalResourceUrlWidth, originalResourceUrlHeight);
+                }
 
                 Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
                 thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
 
                 PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateCreated, dateLastAltered, thumbnail);
 
-                long bestWidth = 0;
-
                 while (imageSizeKeys.hasNext()) {
                     String imageSizeKey = imageSizeKeys.next();
                     JsonObject imageSizeObj = derivatives.get(imageSizeKey).getAsJsonObject();
                     JsonElement jsonElem = imageSizeObj.get("url");
-                    if (jsonElem.isJsonNull()) {
+                    if (jsonElem == null || jsonElem.isJsonNull()) {
                         continue;
                     }
                     String url = jsonElem.getAsString();
+
                     jsonElem = imageSizeObj.get("width");
-                    if (jsonElem.isJsonNull()) {
+                    if (jsonElem == null || jsonElem.isJsonNull()) {
                         continue;
                     }
-                    int thisWidth = jsonElem.getAsInt();
+                    int thisImageWidth = jsonElem.getAsInt();
+
                     jsonElem = imageSizeObj.get("height");
-                    if (jsonElem.isJsonNull()) {
+                    if (jsonElem == null || jsonElem.isJsonNull()) {
                         continue;
                     }
-                    int thisHeight = jsonElem.getAsInt();
-                    ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(imageSizeKey, url, thisWidth, thisHeight);
+                    int thisImageHeight = jsonElem.getAsInt();
+
+                    ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(imageSizeKey, url, thisImageWidth, thisImageHeight);
                     picItem.addResourceFile(img);
 
-                    if ((thisWidth < bestWidth && thisWidth > screenWidth)
-                            || (thisWidth > bestWidth && bestWidth < screenWidth)) {
-
-                        bestWidth = thisWidth;
-                        fullScreenImage = img;
-                    }
                 }
-                picItem.addResourceFile(originalImage);
-                picItem.setFullSizeImage(originalImage);
-                picItem.setFullScreenImage(fullScreenImage);
+                if(originalImage != null) {
+                    picItem.addResourceFile(originalImage);
+                    picItem.setFullSizeImage(originalImage);
+                }
                 item = picItem;
             }
-
-            item.setFavorite(isFavorite);
 
             item.setLinkedAlbums(linkedAlbums);
 

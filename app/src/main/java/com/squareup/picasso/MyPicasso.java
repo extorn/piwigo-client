@@ -218,6 +218,8 @@ public class MyPicasso extends Picasso {
 
             Dispatcher dispatcher = new Dispatcher(context, service, HANDLER, downloader, cache, stats);
 
+            requestHandlers.add(new CustomNetworkRequestHandler(dispatcher.downloader, stats));
+
             return new MyPicasso(context, dispatcher, cache, listener, transformer, requestHandlers, stats,
                     defaultBitmapConfig, indicatorsEnabled, loggingEnabled);
         }

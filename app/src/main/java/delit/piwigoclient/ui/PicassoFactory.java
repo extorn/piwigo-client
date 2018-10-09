@@ -58,7 +58,10 @@ public class PicassoFactory {
             if (picasso == null) {
                 errorHandler = new PicassoErrorHandler();
                 // request handler would work but it cant because it doesnt get in before the broken one!
-                picasso = new MyPicasso.Builder(context).addRequestHandler(new ResourceRequestHandler(context)).addRequestHandler(new VideoRequestHandler()).listener(errorHandler).downloader(getDownloader(context)).build();
+                picasso = new MyPicasso.Builder(context)
+                        .addRequestHandler(new ResourceRequestHandler(context))
+                        .addRequestHandler(new VideoRequestHandler())
+                        .listener(errorHandler).downloader(getDownloader(context)).build();
             }
             return picasso;
         }
