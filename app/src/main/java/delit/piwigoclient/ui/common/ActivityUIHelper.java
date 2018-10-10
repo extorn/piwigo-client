@@ -30,7 +30,10 @@ public class ActivityUIHelper extends UIHelper<MyActivity> {
         protected void onNoDialogToShow() {
             Fragment f = getParent().getActiveFragment();
             if(f instanceof MyFragment) {
-                ((MyFragment)f).getUiHelper().showNextQueuedMessage();
+                UIHelper helper = ((MyFragment)f).getUiHelper();
+                if(helper != null) {
+                    helper.showNextQueuedMessage();
+                }
             }
         }
     }
