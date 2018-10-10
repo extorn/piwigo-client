@@ -69,7 +69,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
                 }
             }
             if (album.getParentageChain() == null) {
-                if (category.has("uppercats")) {
+                if (category.has("uppercats") && !category.get("uppercats").isJsonNull()) {
                     String parentCatsCsv = category.get("uppercats").getAsString();
                     List<Long> parentage = toParentageChain(id, parentCatsCsv);
                     album.setParentageChain(parentage);

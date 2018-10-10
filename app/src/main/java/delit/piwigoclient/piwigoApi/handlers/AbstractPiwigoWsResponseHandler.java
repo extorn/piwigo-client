@@ -184,6 +184,12 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
             PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
             storeResponse(r);
+        } catch (NullPointerException e) {
+            Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
+            Crashlytics.logException(e);
+            String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
+            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
+            storeResponse(r);
         }
     }
 

@@ -97,7 +97,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             //TODO No support in community plugin for anything except private albums for PIWIGO API.
             if (!PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs()) || PiwigoSessionDetails.isAdminUser(getConnectionPrefs())) {
                 JsonElement statusElem = category.get("status");
-                if(statusElem != null) {
+                if(statusElem != null && !statusElem.isJsonNull()) {
                     isPublic = "public".equals(statusElem.getAsString());
                 }
             }

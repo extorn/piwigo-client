@@ -58,12 +58,10 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AbstractBasicPiwigoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.ui.preferences.ConnectionPreferenceFragment;
 import delit.piwigoclient.util.ToastUtils;
 import delit.piwigoclient.util.X509Utils;
 
@@ -93,7 +91,7 @@ public abstract class UIHelper<T> {
     private int permissionsNeededReason;
     private NotificationManager notificationManager;
     ProgressIndicator progressIndicator;
-    private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap<Long, Action>();
+    private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap();
 
     public UIHelper(T parent, SharedPreferences prefs, Context context) {
         this.context = context;
@@ -381,7 +379,12 @@ public abstract class UIHelper<T> {
                 activeServiceCalls = Collections.synchronizedSet((HashSet<Long>) thisBundle.getSerializable(ACTIVE_SERVICE_CALLS));
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
                 runWithPermissions = (HashMap<Integer, PermissionsWantedRequestEvent>) thisBundle.getSerializable(STATE_RUN_WITH_PERMS_LIST);
-                actionOnServerCallComplete = (ConcurrentHashMap<Long, Action>) thisBundle.getSerializable(STATE_ACTIONS_ON_RESPONSES);
+                Map<Long, Action> map = (Map<Long, Action>) thisBundle.getSerializable(STATE_ACTIONS_ON_RESPONSES);
+                if(map instanceof ConcurrentHashMap) {
+                    actionOnServerCallComplete = (ConcurrentHashMap<Long, Action>) map;
+                } else {
+                    actionOnServerCallComplete = new ConcurrentHashMap<>(map);
+                }
                 permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
                 piwigoResponseListener.onRestoreInstanceState(thisBundle);
             }
