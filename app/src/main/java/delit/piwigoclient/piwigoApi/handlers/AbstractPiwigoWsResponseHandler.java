@@ -124,7 +124,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
                 Crashlytics.logException(e);
             }
-            boolean handled = handleLogLoginFailurePluginResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
+            boolean handled = handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
             if (!handled) {
                 PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
                 r.setResponse(responseBodyStr);
@@ -140,7 +140,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         }
     }
 
-    private boolean handleLogLoginFailurePluginResponse(int statusCode, Header[] headers, byte[] responseBody, JsonSyntaxException e, boolean hasBrandNewSession) {
+    private boolean handleCombinedJsonAndHtmlResponse(int statusCode, Header[] headers, byte[] responseBody, JsonSyntaxException e, boolean hasBrandNewSession) {
         if (e.getMessage().equals("java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $")) {
             int idx = 0;
             for (int i = responseBody.length - 1; i > 0; i--) {
@@ -178,13 +178,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
                 storeResponse(r);
             }
-        } catch (JSONException e) {
-            Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
-            Crashlytics.logException(e);
-            String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
-            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
-            storeResponse(r);
-        } catch (NullPointerException e) {
+        } catch (JSONException|JsonIOException|NullPointerException|NumberFormatException e) {
             Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
             Crashlytics.logException(e);
             String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));

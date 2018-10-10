@@ -135,7 +135,12 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     @Override
     public final void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
         this.isSuccess = true;
-        onSuccess(statusCode, headers, responseBody, triedLoggingInAgain);
+        try {
+            onSuccess(statusCode, headers, responseBody, triedLoggingInAgain);
+        } catch(RuntimeException e) {
+            Crashlytics.logException(e);
+            throw e;
+        }
     }
 
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
@@ -267,7 +272,12 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             }
         }
         if (!tryingAgain) {
-            tryingAgain = onFailure(statusCode, headers, responseBody, error, triedLoggingInAgain);
+            try {
+                tryingAgain = onFailure(statusCode, headers, responseBody, error, triedLoggingInAgain);
+            } catch(RuntimeException e) {
+                Crashlytics.logException(e);
+                throw e;
+            }
             if(!tryingAgain) {
                 this.statusCode = statusCode;
                 this.headers = headers;
