@@ -53,8 +53,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Connection Settings";
     private transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
-    private transient Preference.OnPreferenceChangeListener trustedCertsAuthPreferenceListener = new TrustedCertsPrefListener();
-    private transient Preference.OnPreferenceChangeListener simplePreferenceListener = new SimplePrefListener();
+    private transient Preference.OnPreferenceChangeListener sessionInvalidationPrefListener = new SessionInvalidatingPrefListener();
     private transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
     private boolean initialising = false;
     private String preferencesKey;
@@ -95,14 +94,14 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         Preference serverAddressPref = findPreference(R.string.preference_piwigo_server_address_key);
         serverAddressPref.setOnPreferenceChangeListener(serverAddressPrefListener);
         serverAddressPrefListener.onPreferenceChange(serverAddressPref, getPrefs().getString(serverAddressPref.getKey(), ""));
-        findPreference(R.string.preference_piwigo_server_username_key).setOnPreferenceChangeListener(simplePreferenceListener);
-        findPreference(R.string.preference_piwigo_server_password_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_piwigo_server_username_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        findPreference(R.string.preference_piwigo_server_password_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
         Preference basicAuthPref = findPreference(R.string.preference_server_use_basic_auth_key);
-        basicAuthPref.setOnPreferenceChangeListener(simplePreferenceListener);
-        simplePreferenceListener.onPreferenceChange(basicAuthPref, getBooleanPreferenceValue(basicAuthPref.getKey(), R.bool.preference_server_use_basic_auth_default));
-        findPreference(R.string.preference_server_basic_auth_username_key).setOnPreferenceChangeListener(simplePreferenceListener);
-        findPreference(R.string.preference_server_basic_auth_password_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        basicAuthPref.setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        sessionInvalidationPrefListener.onPreferenceChange(basicAuthPref, getBooleanPreferenceValue(basicAuthPref.getKey(), R.bool.preference_server_use_basic_auth_default));
+        findPreference(R.string.preference_server_basic_auth_username_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        findPreference(R.string.preference_server_basic_auth_password_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
         EditableListPreference connectionProfilePref = (EditableListPreference) findPreference(R.string.preference_piwigo_connection_profile_key);
         connectionProfilePref.setListener(new EditableListPreference.EditableListPreferenceChangeAdapter() {
@@ -143,12 +142,13 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         });
 
         Preference clientCertPref = findPreference(R.string.preference_server_use_client_certs_key);
-        clientCertPref.setOnPreferenceChangeListener(simplePreferenceListener);
-        simplePreferenceListener.onPreferenceChange(clientCertPref, getBooleanPreferenceValue(clientCertPref.getKey(), R.bool.preference_server_use_client_certs_default));
+        clientCertPref.setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        sessionInvalidationPrefListener.onPreferenceChange(clientCertPref, getBooleanPreferenceValue(clientCertPref.getKey(), R.bool.preference_server_use_client_certs_default));
 //            ClientCertificatePreference clientCertsPref = (ClientCertificatePreference) findPreference(R.string.preference_select_client_certificate_key);
 
         Preference useCustomTrustedCertsPref = findPreference(R.string.preference_server_use_custom_trusted_ca_certs_key);
-        useCustomTrustedCertsPref.setOnPreferenceChangeListener(trustedCertsAuthPreferenceListener);
+        useCustomTrustedCertsPref.setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+
         TrustedCaCertificatesPreference trustedCertsPref = (TrustedCaCertificatesPreference) findPreference(R.string.preference_select_trusted_certificate_key);
         trustedCertsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -169,12 +169,12 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             }
         });
         ClientCertificatePreference clientCertificatePreference = (ClientCertificatePreference) findPreference(R.string.preference_select_client_certificate_key);
-        clientCertificatePreference.setOnPreferenceChangeListener(simplePreferenceListener);
+        clientCertificatePreference.setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
-        findPreference(R.string.preference_server_ssl_certificate_hostname_verification_key).setOnPreferenceChangeListener(simplePreferenceListener);
-        findPreference(R.string.preference_caching_level_key).setOnPreferenceChangeListener(simplePreferenceListener);
-        findPreference(R.string.preference_caching_max_cache_entries_key).setOnPreferenceChangeListener(simplePreferenceListener);
-        findPreference(R.string.preference_caching_max_cache_entry_size_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_server_ssl_certificate_hostname_verification_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        findPreference(R.string.preference_caching_level_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        findPreference(R.string.preference_caching_max_cache_entries_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        findPreference(R.string.preference_caching_max_cache_entry_size_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
         Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
         setResponseCacheButtonText(responseCacheFlushButton);
@@ -196,13 +196,13 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
             }
         });
 
-        findPreference(R.string.preference_server_connection_timeout_secs_key).setOnPreferenceChangeListener(simplePreferenceListener);
-        findPreference(R.string.preference_server_connection_retries_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_server_connection_timeout_secs_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        findPreference(R.string.preference_server_connection_retries_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
         Preference allowRedirectsPref = findPreference(R.string.preference_server_connection_allow_redirects_key);
-        allowRedirectsPref.setOnPreferenceChangeListener(simplePreferenceListener);
+        allowRedirectsPref.setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
-        findPreference(R.string.preference_server_connection_max_redirects_key).setOnPreferenceChangeListener(simplePreferenceListener);
+        findPreference(R.string.preference_server_connection_max_redirects_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
         Preference button = findPreference("piwigo_connection");
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -386,29 +386,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private class TrustedCertsPrefListener implements Preference.OnPreferenceChangeListener {
-        AsyncTask<Context, Object, Set<String>> runningTask = null;
-
-        @Override
-        public boolean onPreferenceChange(final Preference preference, Object value) {
-            final Boolean val = (Boolean) value;
-            if (runningTask != null && !runningTask.getStatus().equals(AsyncTask.Status.FINISHED)) {
-                runningTask.cancel(true);
-            }
-
-            if (val && !initialising) {
-                // If we're enabling this feature, flush the list.
-
-                runningTask = new LoadCertificatesTask(getUiHelper(), preference.getPreferenceManager());
-                runningTask.execute(getContext());
-            } else {
-                preference.getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_select_trusted_certificate_key)).setEnabled(val);
-            }
-            return true;
-        }
-    }
-
-    private class SimplePrefListener implements Preference.OnPreferenceChangeListener {
+    private class SessionInvalidatingPrefListener implements Preference.OnPreferenceChangeListener {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
 

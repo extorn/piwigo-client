@@ -35,6 +35,7 @@ import delit.piwigoclient.piwigoApi.handlers.FavoritesRemoveImageResponseHandler
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
@@ -130,7 +131,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(STATE_UPDATED_TAGS_SET, new ArrayList<Tag>(updatedTagsSet));
+        BundleUtils.putHashSet(outState, STATE_UPDATED_TAGS_SET, updatedTagsSet);
         outState.putSerializable(STATE_CHANGED_TAGS_SET, changedTagsEvents);
     }
 
@@ -202,7 +203,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             //restore saved state
-            updatedTagsSet = new HashSet<>(savedInstanceState.<Tag>getParcelableArrayList(STATE_UPDATED_TAGS_SET));
+            updatedTagsSet = BundleUtils.getHashSet(savedInstanceState, STATE_UPDATED_TAGS_SET);
             changedTagsEvents = (HashSet<TagContentAlteredEvent>) savedInstanceState.getSerializable(STATE_CHANGED_TAGS_SET);
         }
         super.onViewCreated(view, savedInstanceState);
