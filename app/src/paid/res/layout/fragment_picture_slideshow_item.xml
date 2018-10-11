@@ -264,7 +264,6 @@
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="@string/click_to_view"
-                            android:textAlignment="viewEnd"
                             android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
 
                         <TextView
@@ -285,7 +284,6 @@
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="@string/click_to_view"
-                            android:textAlignment="viewEnd"
                             android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
 
                         <TextView
@@ -304,7 +302,6 @@
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="2dp"
                             android:text="@string/rating_score_pattern"
-                            android:textAlignment="viewEnd"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                             tools:text="1.2 (5 rates)"/>
 

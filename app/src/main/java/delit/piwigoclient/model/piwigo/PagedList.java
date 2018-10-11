@@ -42,6 +42,19 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         this.pageLoadLock = new ReentrantLock();
     }
 
+    public Integer getAMissingPage() {
+        if(!pagesFailedToLoad.isEmpty()) {
+            return getNextPageToReload();
+        }
+        if(!fullyLoaded) {
+            int page = pagesLoaded.last() + 1;
+            if(!pagesBeingLoaded.containsValue(page)) {
+                return page;
+            }
+        }
+        return null;
+    }
+
     public PagedList(Parcel in) {
         itemType = in.readString();
         ParcelUtils.readIntSet(in, pagesLoaded);
@@ -50,7 +63,9 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         ParcelUtils.readIntSet(in, pagesFailedToLoad);
         fullyLoaded = (boolean) in.readValue(null);
 
-        this.pageLoadLock = new ReentrantLock();
+        if(pageLoadLock == null) {
+            this.pageLoadLock = new ReentrantLock();
+        }
     }
 
     @Override
@@ -61,16 +76,6 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         dest.writeMap(pagesBeingLoaded);
         ParcelUtils.writeIntSet(dest, pagesFailedToLoad);
         dest.writeValue(fullyLoaded);
-    }
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-    }
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        this.pageLoadLock = new ReentrantLock();
     }
 
     public void updateMaxExpectedItemCount(int newCount) {

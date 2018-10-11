@@ -104,9 +104,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             favoriteButton.setChecked(getModel().isFavorite());
         }
 
-        if (getModel().getTags() == null) {
-            tagsField.setText(R.string.paid_feature_only);
-        } else {
+        if (getModel().getTags() != null) {
             HashSet<Tag> currentTagsSet = getLatestTagListForResource();
             if (currentTagsSet.size() == 0) {
                 String sb = "0 (" + getString(R.string.click_to_view) +
@@ -120,9 +118,6 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
                     sb.append(", ");
                     sb.append(iter.next().getName());
                 }
-                sb.append(" (");
-                sb.append(getString(R.string.click_to_view));
-                sb.append(')');
                 tagsField.setText(sb.toString());
             }
         }

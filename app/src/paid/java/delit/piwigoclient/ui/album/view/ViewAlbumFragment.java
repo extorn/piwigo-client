@@ -50,27 +50,6 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING, tagMembershipChangesAction);
-
-        if(BuildConfig.DEBUG) {
-            for(String stateItemKey : outState.keySet()) {
-                Parcel parcel = Parcel.obtain();
-                Bundle b = (Bundle)outState.clone();
-                for(String key : new HashSet<>(b.keySet())) {
-                    if(!key.equals(stateItemKey)) {
-                        b.remove(key);
-                    }
-                }
-                parcel.writeBundle(b);
-                int sizeInBytes = parcel.dataSize(); // This is what you want to check
-                Log.v(getTag(), String.format("ViewAlbumFragment (%1$s) %2$.02fKb %3$s",getGalleryModel().getContainerDetails().getName(),((double)sizeInBytes) / 1024, stateItemKey));
-                parcel.recycle();
-            }
-            Parcel parcel = Parcel.obtain();
-            parcel.writeBundle(outState);
-            int sizeInBytes = parcel.dataSize(); // This is what you want to check
-            Log.v(getTag(), String.format("ViewAlbumFragment TOTAL (%1$s) %2$.02fKb",getGalleryModel().getContainerDetails().getName(),((double)sizeInBytes) / 1024));
-            parcel.recycle();
-        }
     }
 
     @Override

@@ -864,9 +864,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         HashSet<Long> currentLinkedAlbumsSet = updatedLinkedAlbumSet != null ? updatedLinkedAlbumSet : model.getLinkedAlbums();
         linkedAlbumsField.setText((currentLinkedAlbumsSet == null ? '?' : currentLinkedAlbumsSet.size()) + " (" + getString(R.string.click_to_view) + ')');
-
-        tagsField.setText(R.string.paid_feature_only);
-        TextViewCompat.setTextAppearance(tagsField, R.style.Custom_TextAppearance_AppCompat_Body1);
     }
 
     protected void onResourceInfoAltered(final T resourceItem) {

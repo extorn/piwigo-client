@@ -55,13 +55,11 @@ import delit.piwigoclient.ui.events.ViewTagEvent;
  */
 public class TagsListFragment extends MyFragment {
 
-    private static final String GROUPS_MODEL = "tagsModel";
-    private static final String GROUPS_PAGE_BEING_LOADED = "tagsPageBeingLoaded";
+    private static final String TAGS_MODEL = "tagsModel";
     private ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
-    private PiwigoTags tagsModel = new PiwigoTags();
+    private PiwigoTags tagsModel;
     private TagRecyclerViewAdapter viewAdapter;
-    private int pageToLoadNow = -1;
     private CustomImageButton addListItemButton;
     private AlertDialog addNewTagDialog;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
@@ -97,8 +95,7 @@ public class TagsListFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(GROUPS_MODEL, tagsModel);
-        outState.putInt(GROUPS_PAGE_BEING_LOADED, pageToLoadNow);
+        outState.putParcelable(TAGS_MODEL, tagsModel);
         viewPrefs.storeToBundle(outState);
     }
 
@@ -115,10 +112,17 @@ public class TagsListFragment extends MyFragment {
 
         if (savedInstanceState != null) {
             if(!isSessionDetailsChanged()) {
-                tagsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
-                pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
+                tagsModel = savedInstanceState.getParcelable(TAGS_MODEL);
             }
             viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
+        }
+
+        if(tagsModel == null) {
+            int pageSources = 1;
+            if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+                pageSources = 2;
+            }
+            tagsModel = new PiwigoTags(pageSources);
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
@@ -156,7 +160,7 @@ public class TagsListFragment extends MyFragment {
             @Override
             public void onClick(View v) {
                 retryActionButton.setVisibility(View.GONE);
-                loadTagsPage(pageToLoadNow);
+                loadTagsPage(tagsModel.getNextPageToReload());
             }
         });
 
@@ -174,10 +178,15 @@ public class TagsListFragment extends MyFragment {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = tagsModel.getPagesLoaded();
-                if (pageToLoad == 0 || tagsModel.isFullyLoaded()) {
-                    // already load this one by default so lets not double load it (or we've already loaded all items).
-                    return;
+                int pageToLoad = page * 2;
+                if (tagsModel.isPageLoadedOrBeingLoaded(pageToLoad) || tagsModel.isFullyLoaded()) {
+                    Integer missingPage = tagsModel.getAMissingPage();
+                    if(missingPage != null) {
+                        pageToLoad = missingPage;
+                    } else {
+                        // already load this one by default so lets not double load it (or we've already loaded all items).
+                        return;
+                    }
                 }
                 loadTagsPage(pageToLoad);
             }
@@ -207,11 +216,19 @@ public class TagsListFragment extends MyFragment {
     }
 
     private void loadTagsPage(int pageToLoad) {
-        this.pageToLoadNow = pageToLoad;
-//        int pageSize = prefs.getInt(getString(R.string.preference_tags_request_pagesize_key), getResources().getInteger(R.integer.preference_tags_request_pagesize_default));
-        addActiveServiceCall(R.string.progress_loading_tags,new TagsGetListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
-        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-            addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(pageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
+        tagsModel.acquirePageLoadLock();
+        int basePageToLoad = pageToLoad % 2 == 0 ? pageToLoad : pageToLoad -1;
+        try {
+            if(!tagsModel.isPageLoadedOrBeingLoaded(basePageToLoad)) {
+                addActiveServiceCall(R.string.progress_loading_tags,new TagsGetListResponseHandler(basePageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
+            }
+            if(!tagsModel.isPageLoadedOrBeingLoaded(basePageToLoad + 1)) {
+                if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+                    addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(basePageToLoad+1, Integer.MAX_VALUE).invokeAsync(getContext()));
+                }
+            }
+        } finally {
+            tagsModel.releasePageLoadLock();
         }
     }
 
@@ -355,12 +372,14 @@ public class TagsListFragment extends MyFragment {
     }
 
     public void onTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
-        synchronized (this) {
-            pageToLoadNow = -1;
+        tagsModel.acquirePageLoadLock();
+        try {
             retryActionButton.setVisibility(View.GONE);
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
-            tagsModel.addItemPage(isAdminPage, response.getTags());
+            tagsModel.addItemPage(isAdminPage?1:0, isAdminPage, response.getPage(), response.getPageSize(), response.getTags());
             viewAdapter.notifyDataSetChanged();
+        } finally {
+            tagsModel.releasePageLoadLock();
         }
     }
 

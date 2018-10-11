@@ -40,7 +40,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String GROUPS_MODEL = "groupsModel";
-    private PiwigoGroups groupsModel = new PiwigoGroups();
+    private PiwigoGroups groupsModel;
 
     public static GroupSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         GroupSelectFragment fragment = new GroupSelectFragment();
@@ -64,6 +64,16 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
+
+        if (savedInstanceState != null) {
+            if(!isSessionDetailsChanged()) {
+                groupsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
+            }
+        }
+
+        if(groupsModel == null) {
+            groupsModel = new PiwigoGroups();
+        }
 
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
@@ -103,20 +113,21 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = groupsModel.getPagesLoaded();
-                if (pageToLoad == 0 || groupsModel.isFullyLoaded()) {
-                    // already load this one by default so lets not double load it (or we've already loaded all items).
-                    return;
+                int pageToLoad = page;
+                if (groupsModel.isPageLoadedOrBeingLoaded(page) || groupsModel.isFullyLoaded()) {
+                    Integer missingPage = groupsModel.getAMissingPage();
+                    if(missingPage != null) {
+                        pageToLoad = missingPage;
+                    } else {
+                        // already load this one by default so lets not double load it (or we've already loaded all items).
+                        return;
+                    }
                 }
                 loadGroupsPage(pageToLoad);
             }
         };
         scrollListener.configure(groupsModel.getPagesLoaded(), groupsModel.getItemCount());
         getList().addOnScrollListener(scrollListener);
-
-        if (savedInstanceState != null) {
-            groupsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
-        }
 
         return v;
     }
@@ -139,7 +150,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             return;
         }
 
-        if (groupsModel.getPagesLoaded() == 0) {
+        if (!groupsModel.isPageLoadedOrBeingLoaded(0)) {
             getListAdapter().notifyDataSetChanged();
             loadGroupsPage(0);
         }

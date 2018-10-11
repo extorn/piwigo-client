@@ -37,7 +37,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
 
     private static final String USER_NAMES_MODEL = "usernamesModel";
     private static final String STATE_INDIRECT_SELECTION = "indirectlySelectedUsernames";
-    private PiwigoUsernames usernamesModel = new PiwigoUsernames();
+    private PiwigoUsernames usernamesModel;
     private HashSet<Long> indirectSelection;
 
     public static UsernameSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> indirectSelection, HashSet<Long> initialSelection) {
@@ -90,6 +90,17 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
             getViewPrefs().readonly();
         }
 
+        if (savedInstanceState != null) {
+            indirectSelection = BundleUtils.getLongHashSet(savedInstanceState, STATE_INDIRECT_SELECTION);
+            if(!isSessionDetailsChanged()) {
+                usernamesModel = savedInstanceState.getParcelable(USER_NAMES_MODEL);
+            }
+        }
+
+        if(usernamesModel == null) {
+            usernamesModel = new PiwigoUsernames();
+        }
+
         UsernameRecyclerViewAdapter viewAdapter = new UsernameRecyclerViewAdapter(getContext(), usernamesModel, indirectSelection, new UsernameRecyclerViewAdapter.MultiSelectStatusAdapter<Username>() {
         }, getViewPrefs());
 
@@ -106,21 +117,21 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = usernamesModel.getPagesLoaded();
-                if (pageToLoad == 0 || usernamesModel.isFullyLoaded()) {
-                    // already load this one by default so lets not double load it (or we've already loaded all items).
-                    return;
+                int pageToLoad = page;
+                if (usernamesModel.isPageLoadedOrBeingLoaded(page) || usernamesModel.isFullyLoaded()) {
+                    Integer missingPage = usernamesModel.getAMissingPage();
+                    if(missingPage != null) {
+                        pageToLoad = missingPage;
+                    } else {
+                        // already load this one by default so lets not double load it (or we've already loaded all items).
+                        return;
+                    }
                 }
                 loadUsernamesPage(pageToLoad);
             }
         };
         scrollListener.configure(usernamesModel.getPagesLoaded(), usernamesModel.getItemCount());
         getList().addOnScrollListener(scrollListener);
-
-        if (savedInstanceState != null) {
-            usernamesModel = savedInstanceState.getParcelable(USER_NAMES_MODEL);
-            indirectSelection = BundleUtils.getLongHashSet(savedInstanceState, STATE_INDIRECT_SELECTION);
-        }
 
         return v;
     }
@@ -143,7 +154,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
             return;
         }
 
-        if (usernamesModel.getPagesLoaded() == 0) {
+        if (!usernamesModel.isPageLoadedOrBeingLoaded(0)) {
             getListAdapter().notifyDataSetChanged();
             loadUsernamesPage(0);
         }

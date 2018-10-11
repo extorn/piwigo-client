@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        tools:visibility="visible"></delit.piwigoclient.ui.common.ProgressIndicator>
+        tools:visibility="visible"/>
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/list_action_add_item_button"

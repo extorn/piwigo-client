@@ -51,12 +51,10 @@ import delit.piwigoclient.ui.events.ViewGroupEvent;
 public class GroupsListFragment extends MyFragment {
 
     private static final String GROUPS_MODEL = "groupsModel";
-    private static final String GROUPS_PAGE_BEING_LOADED = "groupsPageBeingLoaded";
     private final ConcurrentHashMap<Long, Group> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
     private PiwigoGroups groupsModel = new PiwigoGroups();
     private GroupRecyclerViewAdapter viewAdapter;
-    private int pageToLoadNow = -1;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
 
     public static GroupsListFragment newInstance() {
@@ -98,7 +96,6 @@ public class GroupsListFragment extends MyFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(GROUPS_MODEL, groupsModel);
-        outState.putInt(GROUPS_PAGE_BEING_LOADED, pageToLoadNow);
         viewPrefs.storeToBundle(outState);
     }
 
@@ -121,7 +118,6 @@ public class GroupsListFragment extends MyFragment {
 
         if (savedInstanceState != null && !isSessionDetailsChanged()) {
             groupsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
-            pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
@@ -160,7 +156,7 @@ public class GroupsListFragment extends MyFragment {
             @Override
             public void onClick(View v) {
                 retryActionButton.setVisibility(View.GONE);
-                loadGroupsPage(pageToLoadNow);
+                loadGroupsPage(groupsModel.getNextPageToReload());
             }
         });
 
@@ -190,10 +186,15 @@ public class GroupsListFragment extends MyFragment {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = groupsModel.getPagesLoaded();
-                if (pageToLoad == 0 || groupsModel.isFullyLoaded()) {
-                    // already load this one by default so lets not double load it (or we've already loaded all items).
-                    return;
+                int pageToLoad = page;
+                if (groupsModel.isPageLoadedOrBeingLoaded(page) || groupsModel.isFullyLoaded()) {
+                    Integer missingPage = groupsModel.getAMissingPage();
+                    if(missingPage != null) {
+                        pageToLoad = missingPage;
+                    } else {
+                        // already load this one by default so lets not double load it (or we've already loaded all items).
+                        return;
+                    }
                 }
                 loadGroupsPage(pageToLoad);
             }
@@ -214,7 +215,6 @@ public class GroupsListFragment extends MyFragment {
     }
 
     private void loadGroupsPage(int pageToLoad) {
-        this.pageToLoadNow = pageToLoad;
         int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
         groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
     }
@@ -256,7 +256,6 @@ public class GroupsListFragment extends MyFragment {
         groupsModel.acquirePageLoadLock();
         try {
             groupsModel.recordPageLoadSucceeded(response.getMessageId());
-            pageToLoadNow = -1;
             retryActionButton.setVisibility(View.GONE);
             int firstIdxAdded = groupsModel.addItemPage(response.getPage(), response.getPageSize(), response.getGroups());
             viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());

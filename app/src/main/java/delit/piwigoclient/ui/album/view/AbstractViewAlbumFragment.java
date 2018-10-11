@@ -478,10 +478,15 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         galleryListViewScrollListener = new EndlessRecyclerViewScrollListener(gridLayoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = galleryModel.getPagesLoaded();
-                if (pageToLoad == 0 || galleryModel.isFullyLoaded()) {
-                    // already load this one by default so lets not double load it (or we've already loaded all items).
-                    return;
+                int pageToLoad = page;
+                if (galleryModel.isPageLoadedOrBeingLoaded(pageToLoad) || galleryModel.isFullyLoaded()) {
+                    Integer missingPage = galleryModel.getAMissingPage();
+                    if(missingPage != null) {
+                        pageToLoad = missingPage;
+                    } else {
+                        // already load this one by default so lets not double load it (or we've already loaded all items).
+                        return;
+                    }
                 }
                 loadAlbumResourcesPage(pageToLoad);
             }

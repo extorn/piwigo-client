@@ -51,12 +51,10 @@ import delit.piwigoclient.ui.events.ViewUserEvent;
 public class UsersListFragment extends MyFragment {
 
     private static final String USERS_MODEL = "usersModel";
-    private static final String USERS_PAGE_BEING_LOADED = "usersPageBeingLoaded";
     private final ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
     private PiwigoUsers usersModel = new PiwigoUsers();
     private UserRecyclerViewAdapter viewAdapter;
-    private int pageToLoadNow = -1;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
 
     public static UsersListFragment newInstance() {
@@ -98,7 +96,6 @@ public class UsersListFragment extends MyFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(USERS_MODEL, usersModel);
-        outState.putInt(USERS_PAGE_BEING_LOADED, pageToLoadNow);
         viewPrefs.storeToBundle(outState);
     }
 
@@ -122,7 +119,6 @@ public class UsersListFragment extends MyFragment {
 
         if (savedInstanceState != null && !isSessionDetailsChanged()) {
             usersModel = savedInstanceState.getParcelable(USERS_MODEL);
-            pageToLoadNow = savedInstanceState.getInt(USERS_PAGE_BEING_LOADED);
             viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
 
@@ -162,7 +158,7 @@ public class UsersListFragment extends MyFragment {
             @Override
             public void onClick(View v) {
                 retryActionButton.setVisibility(View.GONE);
-                loadUsersPage(pageToLoadNow);
+                loadUsersPage(usersModel.getNextPageToReload());
             }
         });
 
@@ -191,10 +187,15 @@ public class UsersListFragment extends MyFragment {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = usersModel.getPagesLoaded();
-                if (pageToLoad == 0 || usersModel.isFullyLoaded()) {
-                    // already load this one by default so lets not double load it (or we've already loaded all items).
-                    return;
+                int pageToLoad = page;
+                if (usersModel.isPageLoadedOrBeingLoaded(page) || usersModel.isFullyLoaded()) {
+                    Integer missingPage = usersModel.getAMissingPage();
+                    if(missingPage != null) {
+                        pageToLoad = missingPage;
+                    } else {
+                        // already load this one by default so lets not double load it (or we've already loaded all items).
+                        return;
+                    }
                 }
                 loadUsersPage(pageToLoad);
             }
@@ -216,7 +217,6 @@ public class UsersListFragment extends MyFragment {
 
     private void loadUsersPage(int pageToLoad) {
         if (!usersModel.isPageLoaded(pageToLoad)) {
-            this.pageToLoadNow = pageToLoad;
             int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
             usersModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
         }
@@ -265,7 +265,6 @@ public class UsersListFragment extends MyFragment {
         usersModel.acquirePageLoadLock();
         try {
             usersModel.recordPageLoadSucceeded(response.getMessageId());
-            pageToLoadNow = -1;
             retryActionButton.setVisibility(View.GONE);
             int firstIdxAdded = usersModel.addItemPage(response.getPage(), response.getPageSize(), response.getUsers());
             viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getUsers().size());

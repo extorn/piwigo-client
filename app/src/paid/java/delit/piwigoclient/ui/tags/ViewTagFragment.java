@@ -308,10 +308,15 @@ public class ViewTagFragment extends MyFragment {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(gridLayoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = tagModel.getPagesLoaded();
-                if (pageToLoad == 0 || tagModel.isFullyLoaded()) {
-                    // already load this one by default so lets not double load it (or we've already loaded all items).
-                    return;
+                int pageToLoad = page;
+                if (tagModel.isPageLoadedOrBeingLoaded(page) || tagModel.isFullyLoaded()) {
+                    Integer missingPage = tagModel.getAMissingPage();
+                    if(missingPage != null) {
+                        pageToLoad = missingPage;
+                    } else {
+                        // already load this one by default so lets not double load it (or we've already loaded all items).
+                        return;
+                    }
                 }
                 loadAlbumResourcesPage(pageToLoad);
             }
