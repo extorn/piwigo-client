@@ -97,7 +97,7 @@ public class UsersListFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(USERS_MODEL, usersModel);
+        outState.putParcelable(USERS_MODEL, usersModel);
         outState.putInt(USERS_PAGE_BEING_LOADED, pageToLoadNow);
         viewPrefs.storeToBundle(outState);
     }
@@ -121,7 +121,7 @@ public class UsersListFragment extends MyFragment {
         }
 
         if (savedInstanceState != null && !isSessionDetailsChanged()) {
-            usersModel = (PiwigoUsers) savedInstanceState.getSerializable(USERS_MODEL);
+            usersModel = savedInstanceState.getParcelable(USERS_MODEL);
             pageToLoadNow = savedInstanceState.getInt(USERS_PAGE_BEING_LOADED);
             viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }

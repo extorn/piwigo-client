@@ -12,8 +12,8 @@ public class ArrayUtils {
         return retVal;
     }
 
-    public static List<Long> toList(long[] values) {
-        List<Long> retVal = new ArrayList<>(values.length);
+    public static ArrayList<Long> toList(long[] values) {
+        ArrayList<Long> retVal = new ArrayList<>(values.length);
         for (int i = 0; i < values.length; i++) {
             retVal.add(values[i]);
         }

@@ -14,7 +14,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
  * Created by gareth on 14/05/17.
  */
 
-public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshowFragment<T> {
+public class SlideshowFragment<T extends Identifiable&Parcelable> extends AbstractSlideshowFragment<T> {
 
     @Override
     public void onAttach(Context context) {

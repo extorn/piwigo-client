@@ -14,6 +14,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
+import android.util.Pair;
 
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
@@ -68,7 +69,6 @@ import delit.piwigoclient.piwigoApi.upload.handlers.ImageCheckFilesResponseHandl
 import delit.piwigoclient.piwigoApi.upload.handlers.NewImageUploadFileChunkResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.UploadAlbumCreateResponseHandler;
 import delit.piwigoclient.util.IOUtils;
-import delit.piwigoclient.util.SerializablePair;
 
 import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler.getNextMessageId;
 
@@ -921,7 +921,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         String fileMimeType = null;
 
         BufferedInputStream bis = null;
-        SerializablePair<Boolean, ResourceItem> lastChunkUploadResult = null;
+        Pair<Boolean, ResourceItem> lastChunkUploadResult = null;
 
         try {
             bis = new BufferedInputStream(new FileInputStream(fileForUpload));
@@ -987,7 +987,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return lastChunkUploadResult == null ? null : lastChunkUploadResult.second;
     }
 
-    private SerializablePair<Boolean, ResourceItem> uploadStreamChunk(UploadJob thisUploadJob, UploadFileChunk currentUploadFileChunk, int maxChunkUploadAutoRetries) {
+    private Pair<Boolean, ResourceItem> uploadStreamChunk(UploadJob thisUploadJob, UploadFileChunk currentUploadFileChunk, int maxChunkUploadAutoRetries) {
 
         // Attempt to upload this chunk of the file
         NewImageUploadFileChunkResponseHandler imageChunkUploadHandler = new NewImageUploadFileChunkResponseHandler(currentUploadFileChunk);
@@ -1007,7 +1007,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
             }
         }
 
-        return new SerializablePair<>(imageChunkUploadHandler.isSuccess(), uploadedResource);
+        return new Pair<>(imageChunkUploadHandler.isSuccess(), uploadedResource);
     }
 
     public interface JobUploadListener {

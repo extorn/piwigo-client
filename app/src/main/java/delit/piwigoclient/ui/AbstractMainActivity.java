@@ -3,6 +3,7 @@ package delit.piwigoclient.ui;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,10 +27,9 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
@@ -120,17 +120,25 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(STATE_CURRENT_ALBUM, currentAlbum);
-        outState.putSerializable(STATE_BASKET, basket);
+        outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
+        outState.putParcelable(STATE_BASKET, basket);
         super.onSaveInstanceState(outState);
+
+        if(BuildConfig.DEBUG) {
+            Parcel parcel = Parcel.obtain();
+            parcel.writeBundle(outState);
+            int sizeInBytes = parcel.dataSize(); // This is what you want to check
+            Log.v(TAG, "Current Activity parcel size = " + (sizeInBytes/1024) + "Kb");
+            parcel.recycle();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            currentAlbum = (CategoryItem) savedInstanceState.getSerializable(STATE_CURRENT_ALBUM);
-            basket = (Basket) savedInstanceState.getSerializable(STATE_BASKET);
+            currentAlbum = savedInstanceState.getParcelable(STATE_CURRENT_ALBUM);
+            basket = savedInstanceState.getParcelable(STATE_BASKET);
         }
 
         setContentView(R.layout.activity_main);

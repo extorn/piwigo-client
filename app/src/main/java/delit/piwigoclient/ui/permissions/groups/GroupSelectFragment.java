@@ -56,7 +56,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(GROUPS_MODEL, groupsModel);
+        outState.putParcelable(GROUPS_MODEL, groupsModel);
     }
 
     @Nullable
@@ -115,7 +115,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         getList().addOnScrollListener(scrollListener);
 
         if (savedInstanceState != null) {
-            groupsModel = (PiwigoGroups) savedInstanceState.getSerializable(GROUPS_MODEL);
+            groupsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
         }
 
         return v;

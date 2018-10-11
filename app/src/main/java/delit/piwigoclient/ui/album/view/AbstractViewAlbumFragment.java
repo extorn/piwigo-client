@@ -102,7 +102,6 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
-import delit.piwigoclient.ui.slideshow.GalleryItemAdapter;
 import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
@@ -200,7 +199,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     public static AbstractViewAlbumFragment newInstance(CategoryItem gallery) {
         AbstractViewAlbumFragment fragment = new ViewAlbumFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_GALLERY, gallery);
+        args.putParcelable(ARG_GALLERY, gallery);
         fragment.setArguments(args);
         return fragment;
     }
@@ -211,7 +210,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         if (getArguments() != null) {
             if (getArguments().containsKey(ARG_GALLERY)) {
-                galleryModel = new PiwigoAlbum((CategoryItem) getArguments().getSerializable(ARG_GALLERY));
+                galleryModel = new PiwigoAlbum((CategoryItem) getArguments().getParcelable(ARG_GALLERY));
                 galleryIsDirty = true;
             }
         }
@@ -251,14 +250,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
-        outState.putSerializable(STATE_GALLERY_MODEL, galleryModel);
+        outState.putParcelable(STATE_GALLERY_MODEL, galleryModel);
         outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
         outState.putBoolean(STATE_INFORMATION_SHOWING, informationShowing);
         outState.putLongArray(STATE_CURRENT_GROUPS, currentGroups);
         outState.putLongArray(STATE_CURRENT_USERS, currentUsers);
         outState.putBoolean(STATE_GALLERY_DIRTY, galleryIsDirty);
         outState.putSerializable(STATE_GALLERY_ACTIVE_LOAD_THREADS, loadingMessageIds);
-        outState.putSerializable(STATE_GALLERY_LOADS_TO_RETRY, itemsToLoad);
+        outState.putStringArrayList(STATE_GALLERY_LOADS_TO_RETRY, itemsToLoad);
         outState.putBoolean(STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED, movedResourceParentUpdateRequired);
         outState.putInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS, updateAlbumDetailsProgress);
         outState.putBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT, usernameSelectionWantedNext);
@@ -334,7 +333,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
             currentGroups = savedInstanceState.getLongArray(STATE_CURRENT_GROUPS);
-            galleryModel = (PiwigoAlbum) savedInstanceState.getSerializable(STATE_GALLERY_MODEL);
+            galleryModel = savedInstanceState.getParcelable(STATE_GALLERY_MODEL);
             // if galleryIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
@@ -346,7 +345,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     loadingMessageIds.remove(messageId);
                 }
             }
-            SetUtils.setNotNull(itemsToLoad, (ArrayList<String>) savedInstanceState.getSerializable(STATE_GALLERY_LOADS_TO_RETRY));
+            SetUtils.setNotNull(itemsToLoad, savedInstanceState.getStringArrayList(STATE_GALLERY_LOADS_TO_RETRY));
             movedResourceParentUpdateRequired = savedInstanceState.getBoolean(STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED);
             updateAlbumDetailsProgress = savedInstanceState.getInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS);
             usernameSelectionWantedNext = savedInstanceState.getBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT);
@@ -1547,10 +1546,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private void onAlbumPermissionsAdded(PiwigoResponseBufferingHandler.PiwigoAddAlbumPermissionsResponse response) {
         HashSet<Long> newGroupsSet = SetUtils.asSet(galleryModel.getContainerDetails().getGroups());
         newGroupsSet.addAll(response.getGroupIdsAffected());
-        galleryModel.getContainerDetails().setGroups(SetUtils.asArray(newGroupsSet));
+        galleryModel.getContainerDetails().setGroups(SetUtils.asLongArray(newGroupsSet));
         HashSet<Long> newUsersSet = SetUtils.asSet(galleryModel.getContainerDetails().getUsers());
         newUsersSet.addAll(response.getUserIdsAffected());
-        galleryModel.getContainerDetails().setUsers(SetUtils.asArray(newUsersSet));
+        galleryModel.getContainerDetails().setUsers(SetUtils.asLongArray(newUsersSet));
 
         if (!removeAlbumPermissions()) {
             onAlbumUpdateFinished();
@@ -1560,10 +1559,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private void onAlbumPermissionsRemoved(PiwigoResponseBufferingHandler.PiwigoRemoveAlbumPermissionsResponse response) {
         HashSet<Long> newGroupsSet = SetUtils.asSet(galleryModel.getContainerDetails().getGroups());
         newGroupsSet.removeAll(response.getGroupIdsAffected());
-        galleryModel.getContainerDetails().setGroups(SetUtils.asArray(newGroupsSet));
+        galleryModel.getContainerDetails().setGroups(SetUtils.asLongArray(newGroupsSet));
         HashSet<Long> newUsersSet = SetUtils.asSet(galleryModel.getContainerDetails().getUsers());
         newUsersSet.removeAll(response.getUserIdsAffected());
-        galleryModel.getContainerDetails().setUsers(SetUtils.asArray(newUsersSet));
+        galleryModel.getContainerDetails().setUsers(SetUtils.asLongArray(newUsersSet));
 
         onAlbumUpdateFinished();
     }
@@ -2182,5 +2181,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
             return true;
         }
+    }
+
+    protected PiwigoAlbum getGalleryModel() {
+        return galleryModel;
     }
 }

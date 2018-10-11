@@ -32,11 +32,10 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.VelocityTrackerCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewConfigurationCompat;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -49,12 +48,9 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 
-import com.wunderlist.slidinglayer.LayerTransformer;
-
 import java.util.Random;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.common.InlineViewPagerAdapter;
 
 
 public class CustomSlidingLayer extends FrameLayout {
@@ -418,7 +414,7 @@ public class CustomSlidingLayer extends FrameLayout {
      * @param resId Resource ID of a drawable
      */
     public void setShadowDrawable(int resId) {
-        setShadowDrawable(getContext().getResources().getDrawable(resId));
+        setShadowDrawable(ContextCompat.getDrawable(getContext(),resId));
     }
 
     /**
@@ -769,14 +765,12 @@ public class CustomSlidingLayer extends FrameLayout {
                 if (mIsDragging) {
                     final VelocityTracker velocityTracker = mVelocityTracker;
                     velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                    final int initialVelocityX = (int) VelocityTrackerCompat.getXVelocity(velocityTracker,
-                            mActivePointerId);
-                    final int initialVelocityY = (int) VelocityTrackerCompat.getYVelocity(velocityTracker,
-                            mActivePointerId);
+                    final int initialVelocityX = (int) velocityTracker.getXVelocity(mActivePointerId);
+                    final int initialVelocityY = (int) velocityTracker.getYVelocity(mActivePointerId);
                     final int scrollX = getScrollX();
                     final int scrollY = getScrollY();
 
-                    final int pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
+                    final int pointerIndex = ev.findPointerIndex(mActivePointerId);
                     final float x = getViewX(ev);
                     final float y = getViewY(ev);
 

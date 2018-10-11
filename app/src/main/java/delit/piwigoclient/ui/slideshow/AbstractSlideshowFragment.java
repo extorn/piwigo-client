@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.slideshow;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,6 +36,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomViewPager;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
@@ -52,7 +54,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 14/05/17.
  */
 
-public abstract class AbstractSlideshowFragment<T extends Identifiable> extends MyFragment {
+public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelable> extends MyFragment {
 
     //    private static final String TAG = "SlideshowFragment";
     private static final String STATE_GALLERY = "gallery";
@@ -68,7 +70,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
 
     public static Bundle buildArgs(ResourceContainer gallery, GalleryItem currentGalleryItem) {
         Bundle args = new Bundle();
-        args.putSerializable(STATE_GALLERY, gallery);
+        args.putParcelable(STATE_GALLERY, gallery);
         args.putInt(STATE_GALLERY_ITEM_DISPLAYED, gallery.getItemIdx(currentGalleryItem));
         return args;
     }
@@ -76,9 +78,9 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_GALLERY, gallery);
+        outState.putParcelable(STATE_GALLERY, gallery);
         outState.putInt(STATE_GALLERY_ITEM_DISPLAYED, rawCurrentGalleryItemPosition);
-        outState.putSerializable(STATE_ACTIVE_LOAD_THREADS, pagesBeingLoaded);
+        BundleUtils.putIntHashSet(outState, STATE_ACTIVE_LOAD_THREADS, pagesBeingLoaded);
     }
 
     @Override
@@ -152,10 +154,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable> extends 
             configurationBundle = getArguments();
         }
         if (configurationBundle != null) {
-            gallery = (ResourceContainer) configurationBundle.getSerializable(STATE_GALLERY);
+            gallery = configurationBundle.getParcelable(STATE_GALLERY);
             rawCurrentGalleryItemPosition = configurationBundle.getInt(STATE_GALLERY_ITEM_DISPLAYED);
             pagesBeingLoaded.clear();
-            SetUtils.setNotNull(pagesBeingLoaded, (HashSet<Integer>) configurationBundle.getSerializable(STATE_ACTIVE_LOAD_THREADS));
+            SetUtils.setNotNull(pagesBeingLoaded, BundleUtils.getIntHashSet(configurationBundle, STATE_ACTIVE_LOAD_THREADS));
         }
 
         if (viewPager != null && isSessionDetailsChanged()) {

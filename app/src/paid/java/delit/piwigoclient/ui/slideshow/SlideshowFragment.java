@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
+import android.os.Parcelable;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -20,9 +21,9 @@ import delit.piwigoclient.ui.events.TagContentAlteredEvent;
  * Created by gareth on 14/05/17.
  */
 
-public class SlideshowFragment<T extends Identifiable> extends AbstractSlideshowFragment<T> {
+public class SlideshowFragment<T extends Identifiable&Parcelable> extends AbstractSlideshowFragment<T> {
 
-    public static <S extends Identifiable> SlideshowFragment<S> newInstance(ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
+    public static <S extends Identifiable&Parcelable> SlideshowFragment<S> newInstance(ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         SlideshowFragment<S> fragment = new SlideshowFragment<>();
         fragment.setArguments(buildArgs(gallery, currentGalleryItem));
         return fragment;

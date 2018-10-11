@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
  * Created by gareth on 23/01/18.
@@ -267,8 +268,8 @@ public class EditableListPreference extends DialogPreference {
         public SavedState(Parcel source) {
             super(source);
             value = source.readString();
-            entries = (HashSet<String>) source.readSerializable();
-            entriesAltered = source.readInt() != 0;
+            entries = ParcelUtils.readStringSet(source);
+            entriesAltered = (boolean) source.readValue(null);
         }
 
         public SavedState(Parcelable superState) {
@@ -279,8 +280,8 @@ public class EditableListPreference extends DialogPreference {
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeString(value);
-            dest.writeSerializable(entries);
-            dest.writeInt(entriesAltered ? 1 : 0);
+            ParcelUtils.writeStringSet(dest, entries);
+            dest.writeValue(entriesAltered);
         }
     }
 

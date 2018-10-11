@@ -1,5 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -40,6 +42,31 @@ public class CategoryItem extends GalleryItem {
         this.isPrivate = isPrivate;
         this.totalPhotoCount = totalPhotoCount;
         this.subCategories = subCategories;
+    }
+
+    public CategoryItem(Parcel in) {
+        super(in);
+        in.readTypedList(childAlbums, CREATOR);
+        photoCount = in.readInt();
+        totalPhotoCount = in.readInt();
+        subCategories = in.readLong();
+        isPrivate = (boolean) in.readValue(null);
+        representativePictureId = (Long) in.readValue(null);
+        users = (long[]) in.readValue(null);
+        groups = (long[]) in.readValue(null);
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        super.writeToParcel(out, flags);
+        out.writeTypedList(childAlbums);
+        out.writeInt(photoCount);
+        out.writeLong(totalPhotoCount);
+        out.writeLong(subCategories);
+        out.writeValue(isPrivate);
+        out.writeValue(representativePictureId);
+        out.writeLongArray(users);
+        out.writeLongArray(groups);
     }
 
     /**
@@ -213,4 +240,15 @@ public class CategoryItem extends GalleryItem {
         }
         return removed;
     }
+
+    public static final Parcelable.Creator<CategoryItem> CREATOR
+            = new Parcelable.Creator<CategoryItem>() {
+        public CategoryItem createFromParcel(Parcel in) {
+            return new CategoryItem(in);
+        }
+
+        public CategoryItem[] newArray(int size) {
+            return new CategoryItem[size];
+        }
+    };
 }

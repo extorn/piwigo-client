@@ -59,6 +59,7 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
@@ -363,7 +364,7 @@ public abstract class UIHelper<T> {
 
     public void onSaveInstanceState(Bundle outState) {
         Bundle thisBundle = new Bundle();
-        thisBundle.putSerializable(ACTIVE_SERVICE_CALLS, new HashSet<>(activeServiceCalls));
+        BundleUtils.putLongHashSet(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls);
         thisBundle.putInt(STATE_TRACKED_REQUESTS, trackedRequest);
         thisBundle.putSerializable(STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
         thisBundle.putSerializable(STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
@@ -376,7 +377,7 @@ public abstract class UIHelper<T> {
         if (savedInstanceState != null) {
             Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
             if (thisBundle != null) {
-                activeServiceCalls = Collections.synchronizedSet((HashSet<Long>) thisBundle.getSerializable(ACTIVE_SERVICE_CALLS));
+                activeServiceCalls = Collections.synchronizedSet(BundleUtils.getLongHashSet(thisBundle, ACTIVE_SERVICE_CALLS));
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
                 runWithPermissions = (HashMap<Integer, PermissionsWantedRequestEvent>) thisBundle.getSerializable(STATE_RUN_WITH_PERMS_LIST);
                 Map<Long, Action> map = (Map<Long, Action>) thisBundle.getSerializable(STATE_ACTIONS_ON_RESPONSES);

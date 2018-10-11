@@ -58,6 +58,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.common.util.ViewListUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.UserDeletedEvent;
@@ -127,7 +128,7 @@ public class UserFragment extends MyFragment {
     public static UserFragment newInstance(User user) {
         UserFragment fragment = new UserFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_USER, user);
+        args.putParcelable(ARG_USER, user);
         fragment.setArguments(args);
         return fragment;
     }
@@ -136,7 +137,7 @@ public class UserFragment extends MyFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            user = (User) getArguments().getSerializable(ARG_USER);
+            user = getArguments().getParcelable(ARG_USER);
         }
     }
 
@@ -167,17 +168,17 @@ public class UserFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(CURRENT_GROUP_MEMBERSHIPS, currentGroupMembership);
-        outState.putSerializable(CURRENT_DIRECT_ALBUM_PERMISSIONS, currentDirectAlbumPermissions);
-        outState.putSerializable(CURRENT_INDIRECT_ALBUM_PERMISSIONS, currentIndirectAlbumPermissions);
-        outState.putSerializable(NEW_DIRECT_ALBUM_PERMISSIONS, newDirectAlbumPermissions);
-        outState.putSerializable(NEW_INDIRECT_ALBUM_PERMISSIONS, newIndirectAlbumPermissions);
-        outState.putSerializable(AVAILABLE_ALBUMS, availableGalleries);
-        outState.putSerializable(ARG_USER, user);
-        outState.putSerializable(NEW_USER, newUser);
+        BundleUtils.putHashSet(outState, CURRENT_GROUP_MEMBERSHIPS, currentGroupMembership);
+        BundleUtils.putLongHashSet(outState, CURRENT_DIRECT_ALBUM_PERMISSIONS, currentDirectAlbumPermissions);
+        BundleUtils.putLongHashSet(outState, CURRENT_INDIRECT_ALBUM_PERMISSIONS, currentIndirectAlbumPermissions);
+        BundleUtils.putLongHashSet(outState, NEW_DIRECT_ALBUM_PERMISSIONS, newDirectAlbumPermissions);
+        BundleUtils.putLongHashSet(outState, NEW_INDIRECT_ALBUM_PERMISSIONS, newIndirectAlbumPermissions);
+        outState.putParcelableArrayList(AVAILABLE_ALBUMS, availableGalleries);
+        outState.putParcelable(ARG_USER, user);
+        outState.putParcelable(NEW_USER, newUser);
         outState.putBoolean(STATE_FIELDS_EDITABLE, fieldsEditable);
-        outState.putSerializable(STATE_NEW_GROUP_MEMBERSHIP, newGroupMembership);
-        outState.putSerializable(IN_FLIGHT_SAVE_ACTION_IDS, saveActionIds);
+        BundleUtils.putHashSet(outState, STATE_NEW_GROUP_MEMBERSHIP, newGroupMembership);
+        BundleUtils.putLongHashSet(outState, IN_FLIGHT_SAVE_ACTION_IDS, saveActionIds);
         outState.putInt(STATE_SELECT_GROUPS_ACTION_ID, selectGroupsActionId);
 
     }
@@ -270,17 +271,17 @@ public class UserFragment extends MyFragment {
         }
 
         if (savedInstanceState != null) {
-            currentGroupMembership = (HashSet<Group>) savedInstanceState.getSerializable(CURRENT_GROUP_MEMBERSHIPS);
-            currentDirectAlbumPermissions = (HashSet<Long>) savedInstanceState.getSerializable(CURRENT_DIRECT_ALBUM_PERMISSIONS);
-            currentIndirectAlbumPermissions = (HashSet<Long>) savedInstanceState.getSerializable(CURRENT_INDIRECT_ALBUM_PERMISSIONS);
-            newDirectAlbumPermissions = (HashSet<Long>) savedInstanceState.getSerializable(NEW_DIRECT_ALBUM_PERMISSIONS);
-            newIndirectAlbumPermissions = (HashSet<Long>) savedInstanceState.getSerializable(NEW_INDIRECT_ALBUM_PERMISSIONS);
-            user = (User) savedInstanceState.getSerializable(ARG_USER);
-            availableGalleries = (ArrayList<CategoryItemStub>) savedInstanceState.getSerializable(AVAILABLE_ALBUMS);
-            newUser = (User) savedInstanceState.getSerializable(NEW_USER);
+            currentGroupMembership = BundleUtils.getHashSet(savedInstanceState, CURRENT_GROUP_MEMBERSHIPS);
+            currentDirectAlbumPermissions = BundleUtils.getLongHashSet(savedInstanceState, CURRENT_DIRECT_ALBUM_PERMISSIONS);
+            currentIndirectAlbumPermissions = BundleUtils.getLongHashSet(savedInstanceState, CURRENT_INDIRECT_ALBUM_PERMISSIONS);
+            newDirectAlbumPermissions = BundleUtils.getLongHashSet(savedInstanceState, NEW_DIRECT_ALBUM_PERMISSIONS);
+            newIndirectAlbumPermissions = BundleUtils.getLongHashSet(savedInstanceState, NEW_INDIRECT_ALBUM_PERMISSIONS);
+            user = savedInstanceState.getParcelable(ARG_USER);
+            availableGalleries = savedInstanceState.getParcelableArrayList(AVAILABLE_ALBUMS);
+            newUser = savedInstanceState.getParcelable(NEW_USER);
             fieldsEditable = savedInstanceState.getBoolean(STATE_FIELDS_EDITABLE);
-            newGroupMembership = (HashSet<Group>) savedInstanceState.getSerializable(STATE_NEW_GROUP_MEMBERSHIP);
-            SetUtils.setNotNull(saveActionIds, (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_SAVE_ACTION_IDS));
+            newGroupMembership = BundleUtils.getHashSet(savedInstanceState, STATE_NEW_GROUP_MEMBERSHIP);
+            SetUtils.setNotNull(saveActionIds, BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_SAVE_ACTION_IDS));
             selectGroupsActionId = savedInstanceState.getInt(STATE_SELECT_GROUPS_ACTION_ID);
         }
 

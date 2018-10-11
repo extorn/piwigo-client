@@ -1,8 +1,10 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,13 +15,14 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.locks.ReentrantLock;
 
+import delit.piwigoclient.ui.common.util.ParcelUtils;
+
 /**
  * Created by gareth on 02/01/18.
  */
 
-public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializable {
+public abstract class PagedList<T extends Parcelable> implements IdentifiableItemStore<T>, Parcelable {
 
-    private static final long serialVersionUID = 6459233465655813249L;
     public static int MISSING_ITEMS_PAGE = -1;
     private final String itemType;
     private final SortedSet<Integer> pagesLoaded = new TreeSet<>();
@@ -37,6 +40,27 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
         this.itemType = itemType;
         this.items = new ArrayList<>(maxExpectedItemCount);
         this.pageLoadLock = new ReentrantLock();
+    }
+
+    public PagedList(Parcel in) {
+        itemType = in.readString();
+        ParcelUtils.readIntSet(in, pagesLoaded);
+        items = in.readArrayList(null);
+        in.readMap(pagesBeingLoaded, getClass().getClassLoader());
+        ParcelUtils.readIntSet(in, pagesFailedToLoad);
+        fullyLoaded = (boolean) in.readValue(null);
+
+        this.pageLoadLock = new ReentrantLock();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(itemType);
+        ParcelUtils.writeIntSet(dest, pagesLoaded);
+        dest.writeList(items);
+        dest.writeMap(pagesBeingLoaded);
+        ParcelUtils.writeIntSet(dest, pagesFailedToLoad);
+        dest.writeValue(fullyLoaded);
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -232,5 +256,10 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
 
     public boolean isPageLoaded(int pageNum) {
         return pagesLoaded.contains(pageNum);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 }

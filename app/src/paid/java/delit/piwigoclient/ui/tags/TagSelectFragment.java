@@ -61,7 +61,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(TAGS_MODEL, tagsModel);
+        outState.putParcelable(TAGS_MODEL, tagsModel);
     }
 
     private boolean isTagSelectionAllowed() {
@@ -133,7 +133,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         getList().addOnScrollListener(scrollListener);
 
         if (savedInstanceState != null) {
-            tagsModel = (PiwigoTags) savedInstanceState.getSerializable(TAGS_MODEL);
+            tagsModel = savedInstanceState.getParcelable(TAGS_MODEL);
         }
 
         return v;

@@ -26,6 +26,7 @@ import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 
 /**
@@ -43,9 +44,9 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         UsernameSelectFragment fragment = new UsernameSelectFragment();
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if (indirectSelection != null) {
-            args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
+            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
         } else {
-            args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>());
+            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<Long>());
         }
         fragment.setArguments(args);
         return fragment;
@@ -56,7 +57,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            indirectSelection = (HashSet<Long>) args.getSerializable(STATE_INDIRECT_SELECTION);
+            indirectSelection = BundleUtils.getLongHashSet(args, STATE_INDIRECT_SELECTION);
         }
     }
 
@@ -68,8 +69,8 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(USER_NAMES_MODEL, usernamesModel);
-        outState.putSerializable(STATE_INDIRECT_SELECTION, indirectSelection);
+        outState.putParcelable(USER_NAMES_MODEL, usernamesModel);
+        BundleUtils.putLongHashSet(outState, STATE_INDIRECT_SELECTION, indirectSelection);
     }
 
 
@@ -117,7 +118,8 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         getList().addOnScrollListener(scrollListener);
 
         if (savedInstanceState != null) {
-            usernamesModel = (PiwigoUsernames) savedInstanceState.getSerializable(USER_NAMES_MODEL);
+            usernamesModel = savedInstanceState.getParcelable(USER_NAMES_MODEL);
+            indirectSelection = BundleUtils.getLongHashSet(savedInstanceState, STATE_INDIRECT_SELECTION);
         }
 
         return v;

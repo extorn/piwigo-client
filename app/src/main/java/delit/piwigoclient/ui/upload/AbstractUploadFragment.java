@@ -60,6 +60,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.BiArrayAdapter;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
@@ -118,10 +119,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(SAVED_STATE_CURRENT_GALLERY, currentGallery);
+        outState.putParcelable(SAVED_STATE_CURRENT_GALLERY, currentGallery);
         outState.putLong(SAVED_STATE_PRIVACY_LEVEL_WANTED, privacyLevelWanted);
         outState.putLong(SAVED_STATE_UPLOAD_ALBUM_ID, uploadToAlbumId);
-        outState.putSerializable(SAVED_STATE_FILES_BEING_UPLOADED, filesForUpload);
+        BundleUtils.putFileArrayList(outState, SAVED_STATE_FILES_BEING_UPLOADED, filesForUpload);
         outState.putLong(SAVED_SUB_CAT_NAMES_ACTION_ID, subCategoryNamesActionId);
         if (uploadJobId != null) {
             outState.putLong(SAVED_STATE_UPLOAD_JOB_ID, uploadJobId);
@@ -328,13 +329,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         if (savedInstanceState != null) {
             // update view with saved data
-            currentGallery = (CategoryItem) savedInstanceState.getSerializable(SAVED_STATE_CURRENT_GALLERY);
+            currentGallery = savedInstanceState.getParcelable(SAVED_STATE_CURRENT_GALLERY);
             privacyLevelWanted = savedInstanceState.getLong(SAVED_STATE_PRIVACY_LEVEL_WANTED);
             uploadToAlbumId = savedInstanceState.getLong(SAVED_STATE_UPLOAD_ALBUM_ID);
             if (savedInstanceState.containsKey(SAVED_STATE_UPLOAD_JOB_ID)) {
                 uploadJobId = savedInstanceState.getLong(SAVED_STATE_UPLOAD_JOB_ID);
             }
-            filesForUpload = (ArrayList) savedInstanceState.getSerializable(SAVED_STATE_FILES_BEING_UPLOADED);
+            filesForUpload = BundleUtils.getFileArrayList(savedInstanceState, SAVED_STATE_FILES_BEING_UPLOADED);
             subCategoryNamesActionId = savedInstanceState.getLong(SAVED_SUB_CAT_NAMES_ACTION_ID);
         }
 

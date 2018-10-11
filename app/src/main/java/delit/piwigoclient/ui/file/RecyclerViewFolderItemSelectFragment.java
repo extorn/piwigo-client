@@ -30,6 +30,7 @@ import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.util.IOUtils;
 
@@ -73,7 +74,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(ACTIVE_FOLDER, getListAdapter().getActiveFolder());
+        BundleUtils.putFile(outState, ACTIVE_FOLDER, getListAdapter().getActiveFolder());
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
     }
 
@@ -182,7 +183,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         }
 
         if (savedInstanceState != null) {
-            File activeFolder = (File) savedInstanceState.getSerializable(ACTIVE_FOLDER);
+            File activeFolder = BundleUtils.getFile(savedInstanceState, ACTIVE_FOLDER);
             viewAdapter.setActiveFolder(activeFolder);
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
         }

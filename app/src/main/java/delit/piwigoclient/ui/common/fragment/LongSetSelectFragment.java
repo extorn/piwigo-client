@@ -31,6 +31,7 @@ import delit.piwigoclient.ui.common.Enableable;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 
@@ -61,7 +62,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
         args.putInt(STATE_ACTION_ID, actionId);
-        args.putSerializable(STATE_INITIAL_SELECTION, initialSelection);
+        BundleUtils.putLongHashSet(args, STATE_INITIAL_SELECTION, initialSelection);
         return args;
     }
 
@@ -108,8 +109,8 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         viewPrefs = createEmptyPrefs();
         viewPrefs.loadFromBundle(bundle);
         actionId = bundle.getInt(STATE_ACTION_ID);
-        currentSelection = (HashSet<Long>) bundle.getSerializable(STATE_CURRENT_SELECTION);
-        initialSelection = (HashSet<Long>) bundle.getSerializable(STATE_INITIAL_SELECTION);
+        currentSelection = BundleUtils.getLongHashSet(bundle, STATE_CURRENT_SELECTION);
+        initialSelection = BundleUtils.getLongHashSet(bundle, STATE_INITIAL_SELECTION);
         if (currentSelection == null) {
             currentSelection = initialSelection;
         }
@@ -121,7 +122,8 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
         outState.putInt(STATE_ACTION_ID, actionId);
-        outState.putSerializable(STATE_CURRENT_SELECTION, getCurrentSelection());
+        BundleUtils.putLongHashSet(outState, STATE_CURRENT_SELECTION, getCurrentSelection());
+        BundleUtils.putLongHashSet(outState, STATE_INITIAL_SELECTION, getInitialSelection());
         outState.putBoolean(STATE_SELECT_TOGGLE, selectToggle);
     }
 

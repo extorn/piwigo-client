@@ -72,10 +72,19 @@ public class SetUtils {
         return arr;
     }
 
-    public static long[] asArray(Collection<Long> items) {
+    public static long[] asLongArray(Collection<Long> items) {
         long[] arr = new long[items.size()];
         int i = 0;
         for (Long id : items) {
+            arr[i++] = id;
+        }
+        return arr;
+    }
+
+    public static int[] asIntArray(Collection<Integer> items) {
+        int[] arr = new int[items.size()];
+        int i = 0;
+        for (Integer id : items) {
             arr[i++] = id;
         }
         return arr;

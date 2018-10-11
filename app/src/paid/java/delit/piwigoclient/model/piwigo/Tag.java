@@ -1,13 +1,16 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
+
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
  * Created by gareth on 26/06/17.
  */
-public class Tag implements Identifiable, Serializable {
-    private static final long serialVersionUID = -1146223606759760399L;
+public class Tag implements Identifiable, Parcelable {
     private long id = -1;
     private String name;
     private int usageCount;
@@ -27,6 +30,21 @@ public class Tag implements Identifiable, Serializable {
         this.name = name;
         this.usageCount = usageCount;
         this.lastModified = lastModified;
+    }
+
+    public Tag(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        usageCount = in.readInt();
+        lastModified = ParcelUtils.readDate(in);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeInt(usageCount);
+        ParcelUtils.writeDate(dest, lastModified);
     }
 
     public long getId() {
@@ -68,4 +86,20 @@ public class Tag implements Identifiable, Serializable {
     public int hashCode() {
         return (int) id;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<Tag> CREATOR
+            = new Parcelable.Creator<Tag>() {
+        public Tag createFromParcel(Parcel in) {
+            return new Tag(in);
+        }
+
+        public Tag[] newArray(int size) {
+            return new Tag[size];
+        }
+    };
 }

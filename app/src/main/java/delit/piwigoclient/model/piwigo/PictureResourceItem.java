@@ -1,5 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.IntRange;
 
 import java.util.Date;
@@ -8,10 +10,13 @@ import java.util.Date;
  * Created by gareth on 12/07/17.
  */
 public class PictureResourceItem extends ResourceItem {
-    private ResourceFile fullScreenImage;
 
     public PictureResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, dateCreated, lastAltered, thumbnailUrl);
+    }
+
+    public PictureResourceItem(Parcel in) {
+        super(in);
     }
 
     public ResourceFile getBestFitFile(@IntRange(from = 1) int availableWidth, @IntRange(from = 1) int availableHeight) {
@@ -52,6 +57,16 @@ public class PictureResourceItem extends ResourceItem {
 
     public void copyFrom(PictureResourceItem other, boolean copyParentage) {
         super.copyFrom(other, copyParentage);
-        fullScreenImage = other.fullScreenImage;
     }
+
+    public static final Parcelable.Creator<PictureResourceItem> CREATOR
+            = new Parcelable.Creator<PictureResourceItem>() {
+        public PictureResourceItem createFromParcel(Parcel in) {
+            return new PictureResourceItem(in);
+        }
+
+        public PictureResourceItem[] newArray(int size) {
+            return new PictureResourceItem[size];
+        }
+    };
 }

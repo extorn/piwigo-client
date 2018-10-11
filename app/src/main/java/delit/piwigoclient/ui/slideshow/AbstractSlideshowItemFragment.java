@@ -70,6 +70,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.dialogs.SelectAlbumDialog;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
@@ -138,7 +139,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     public static <S extends ResourceItem> Bundle buildArgs(S model, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
-        b.putSerializable(ARG_GALLERY_ITEM, model);
+        b.putParcelable(ARG_GALLERY_ITEM, model);
         b.putInt(ARG_ALBUM_ITEM_IDX, albumResourceItemIdx);
         b.putInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumResourceItemCount);
         b.putLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, totalResourceItemCount);
@@ -173,10 +174,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
         outState.putBoolean(STATE_INFORMATION_SHOWING, informationShowing);
-        outState.putSerializable(ARG_GALLERY_ITEM, model);
+        outState.putParcelable(ARG_GALLERY_ITEM, model);
         outState.putBoolean(ALLOW_DOWNLOAD, isAllowDownload());
-        outState.putSerializable(STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
-        outState.putSerializable(STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
+        BundleUtils.putLongHashSet(outState, STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
+        BundleUtils.putLongHashSet(outState, STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
         outState.putInt(ARG_ALBUM_ITEM_IDX, albumItemIdx);
         outState.putInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
         outState.putLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, albumTotalItemCount);
@@ -188,7 +189,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void loadArgsFromBundle(Bundle b) {
-        model = (T) b.getSerializable(ARG_GALLERY_ITEM);
+        model = (T) b.getParcelable(ARG_GALLERY_ITEM);
         albumItemIdx = b.getInt(ARG_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
         albumTotalItemCount = b.getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
@@ -198,8 +199,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         editingItemDetails = b.getBoolean(STATE_EDITING_ITEM_DETAILS);
         informationShowing = b.getBoolean(STATE_INFORMATION_SHOWING);
         allowDownload = b.getBoolean(ALLOW_DOWNLOAD);
-        updatedLinkedAlbumSet = (HashSet<Long>) b.getSerializable(STATE_UPDATED_LINKED_ALBUM_SET);
-        albumsRequiringReload = (HashSet<Long>) b.getSerializable(STATE_ALBUMS_REQUIRING_UPDATE);
+        updatedLinkedAlbumSet = BundleUtils.getLongHashSet(b, STATE_UPDATED_LINKED_ALBUM_SET);
+        albumsRequiringReload = BundleUtils.getLongHashSet(b, STATE_ALBUMS_REQUIRING_UPDATE);
     }
 
     @Override

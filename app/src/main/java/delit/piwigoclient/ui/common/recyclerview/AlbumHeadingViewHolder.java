@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,7 +11,7 @@ import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemViewHolder;
 
-public class AlbumHeadingViewHolder<S extends Identifiable> extends AlbumItemViewHolder<S> {
+public class AlbumHeadingViewHolder<S extends Identifiable&Parcelable> extends AlbumItemViewHolder<S> {
 
     private TextView headingView;
 

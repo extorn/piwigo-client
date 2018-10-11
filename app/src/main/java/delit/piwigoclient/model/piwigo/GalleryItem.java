@@ -1,17 +1,22 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.piwigoclient.util.ArrayUtils;
+import delit.piwigoclient.util.SetUtils;
+
 /**
  * An item representing a piece of content.
  */
-public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Serializable {
+public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parcelable {
 
     public static final int CATEGORY_TYPE = 0;
     public static final int PICTURE_RESOURCE_TYPE = 1;
@@ -52,6 +57,26 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Seria
         this.thumbnailUrl = thumbnailUrl;
         this.lastAltered = lastAltered;
         parentageChain = new ArrayList<>();
+    }
+
+    public GalleryItem(Parcel in) {
+        id = in.readLong();
+        thumbnailUrl = in.readString();
+        name = in.readString();
+        description = in.readString();
+        lastAltered = ParcelUtils.readDate(in);
+        parentageChain = ParcelUtils.readLongArrayList(in);
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeLong(id);
+        out.writeString(thumbnailUrl);
+        out.writeString(name);
+        out.writeString(description);
+        ParcelUtils.writeDate(out, lastAltered);
+        out.writeInt(parentageChain.size());
+        ParcelUtils.writeLongArrayList(out, parentageChain);
     }
 
     public long getId() {
@@ -158,4 +183,20 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Seria
             parentageChain = other.parentageChain;
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<GalleryItem> CREATOR
+            = new Parcelable.Creator<GalleryItem>() {
+        public GalleryItem createFromParcel(Parcel in) {
+            return new GalleryItem(in);
+        }
+
+        public GalleryItem[] newArray(int size) {
+            return new GalleryItem[size];
+        }
+    };
 }

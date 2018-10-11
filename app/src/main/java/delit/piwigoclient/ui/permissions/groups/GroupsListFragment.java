@@ -97,7 +97,7 @@ public class GroupsListFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(GROUPS_MODEL, groupsModel);
+        outState.putParcelable(GROUPS_MODEL, groupsModel);
         outState.putInt(GROUPS_PAGE_BEING_LOADED, pageToLoadNow);
         viewPrefs.storeToBundle(outState);
     }
@@ -120,7 +120,7 @@ public class GroupsListFragment extends MyFragment {
         }
 
         if (savedInstanceState != null && !isSessionDetailsChanged()) {
-            groupsModel = (PiwigoGroups) savedInstanceState.getSerializable(GROUPS_MODEL);
+            groupsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
             pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
         }
 

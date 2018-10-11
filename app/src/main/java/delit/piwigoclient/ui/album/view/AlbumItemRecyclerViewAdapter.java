@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,7 +25,7 @@ import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
  * FIXME This is broken. swap for a new class based upon IdentifiableListViewAdapter
  */
-public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends IdentifiableListViewAdapter<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, ResourceContainer<T, GalleryItem>, AlbumItemViewHolder<T>> {
+public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> extends IdentifiableListViewAdapter<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, ResourceContainer<T, GalleryItem>, AlbumItemViewHolder<T>> {
 
     public AlbumItemRecyclerViewAdapter(final Context context, final ResourceContainer<T, GalleryItem> gallery, MultiSelectStatusListener multiSelectStatusListener, AlbumItemRecyclerViewAdapterPreferences prefs) {
         super(gallery, multiSelectStatusListener, prefs);
@@ -161,7 +162,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
         }
     }
 
-    private static class AlbumItemCustomClickListener<T extends Identifiable> extends CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<T>> {
+    private static class AlbumItemCustomClickListener<T extends Identifiable&Parcelable> extends CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<T>> {
 
         private final int maxManualRetries = 2;
         private int manualRetries = 0;

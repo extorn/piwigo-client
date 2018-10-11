@@ -105,7 +105,7 @@ public class ViewTagFragment extends MyFragment {
     public static ViewTagFragment newInstance(Tag tag) {
         ViewTagFragment fragment = new ViewTagFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_TAG, tag);
+        args.putParcelable(ARG_TAG, tag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -116,7 +116,7 @@ public class ViewTagFragment extends MyFragment {
 
         if (getArguments() != null) {
             if (getArguments().containsKey(ARG_TAG)) {
-                tag = (Tag) getArguments().getSerializable(ARG_TAG);
+                tag = getArguments().getParcelable(ARG_TAG);
             }
         }
     }
@@ -148,10 +148,10 @@ public class ViewTagFragment extends MyFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
-        outState.putSerializable(ARG_TAG, tag);
-        outState.putSerializable(STATE_TAG_MODEL, tagModel);
+        outState.putParcelable(ARG_TAG, tag);
+        outState.putParcelable(STATE_TAG_MODEL, tagModel);
         outState.putSerializable(STATE_TAG_ACTIVE_LOAD_THREADS, loadingMessageIds);
-        outState.putSerializable(STATE_TAG_LOADS_TO_RETRY, itemsToLoad);
+        outState.putStringArrayList(STATE_TAG_LOADS_TO_RETRY, itemsToLoad);
         outState.putSerializable(STATE_DELETE_ACTION_DATA, deleteActionData);
     }
 
@@ -210,14 +210,14 @@ public class ViewTagFragment extends MyFragment {
             //restore saved state
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
             viewPrefs.loadFromBundle(savedInstanceState);
-            tagModel = (PiwigoTag) savedInstanceState.getSerializable(STATE_TAG_MODEL);
-            tag = (Tag) savedInstanceState.getSerializable(ARG_TAG);
+            tagModel = savedInstanceState.getParcelable(STATE_TAG_MODEL);
+            tag = savedInstanceState.getParcelable(ARG_TAG);
             // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
             tagIsDirty = tagIsDirty || savedInstanceState.getBoolean(STATE_TAG_DIRTY);
             SetUtils.setNotNull(loadingMessageIds,(HashMap<Long,String>)savedInstanceState.getSerializable(STATE_TAG_ACTIVE_LOAD_THREADS));
-            SetUtils.setNotNull(itemsToLoad,(ArrayList<String>)savedInstanceState.getSerializable(STATE_TAG_LOADS_TO_RETRY));
+            SetUtils.setNotNull(itemsToLoad,savedInstanceState.getStringArrayList(STATE_TAG_LOADS_TO_RETRY));
             if(deleteActionData != null && deleteActionData.isEmpty()) {
                 deleteActionData = null;
             } else {

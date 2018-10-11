@@ -1,7 +1,13 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
  * Created by gareth on 12/07/17.
@@ -12,6 +18,19 @@ public class ResourceItem extends AbstractBaseResourceItem {
 
     public ResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, creationDate, lastAltered, thumbnailUrl);
+    }
+
+    public ResourceItem(Parcel in) {
+        super(in);
+        tags = ParcelUtils.readHashSet(in);
+        isFavorite = (Boolean)in.readValue(null);
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        super.writeToParcel(out, flags);
+        ParcelUtils.writeSet(out, tags);
+        out.writeValue(isFavorite);
     }
 
 
@@ -41,4 +60,15 @@ public class ResourceItem extends AbstractBaseResourceItem {
         tags = other.tags;
         isFavorite = other.isFavorite;
     }
+
+    public static final Parcelable.Creator<ResourceItem> CREATOR
+            = new Parcelable.Creator<ResourceItem>() {
+        public ResourceItem createFromParcel(Parcel in) {
+            return new ResourceItem(in);
+        }
+
+        public ResourceItem[] newArray(int size) {
+            return new ResourceItem[size];
+        }
+    };
 }

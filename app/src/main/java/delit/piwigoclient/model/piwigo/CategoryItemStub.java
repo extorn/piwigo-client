@@ -1,17 +1,23 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CategoryItemStub implements Serializable {
+import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.piwigoclient.util.ArrayUtils;
+import delit.piwigoclient.util.SetUtils;
+
+public class CategoryItemStub implements Parcelable {
 
     public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId());
     private static final CategoryItemStub ROOT_GALLERY_NON_SELECTABLE = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId()).markNonUserSelectable();
     private static final long serialVersionUID = -825032789826191701L;
-    private final String name;
     private final long id;
+    private final String name;
     private ArrayList<Long> parentageChain;
     private boolean isUserSelectable = true;
 
@@ -23,6 +29,21 @@ public class CategoryItemStub implements Serializable {
 
     public CategoryItemStub(String name, long id) {
         this(name, id, new ArrayList<Long>());
+    }
+
+    public CategoryItemStub(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        parentageChain = ParcelUtils.readLongArrayList(in);
+        isUserSelectable = (boolean)in.readValue(null);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        ParcelUtils.writeLongArrayList(dest,parentageChain);
+        dest.writeValue(isUserSelectable);
     }
 
     public Long getParentId() {
@@ -79,4 +100,20 @@ public class CategoryItemStub implements Serializable {
     public boolean isUserSelectable() {
         return isUserSelectable;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<CategoryItemStub> CREATOR
+            = new Parcelable.Creator<CategoryItemStub>() {
+        public CategoryItemStub createFromParcel(Parcel in) {
+            return new CategoryItemStub(in);
+        }
+
+        public CategoryItemStub[] newArray(int size) {
+            return new CategoryItemStub[size];
+        }
+    };
 }

@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,7 +22,7 @@ import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 
-public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> extends MyFragmentRecyclerPagerAdapter {
+public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends ViewPager> extends MyFragmentRecyclerPagerAdapter {
 
     private final List<Integer> galleryResourceItems;
     private boolean shouldShowVideos;

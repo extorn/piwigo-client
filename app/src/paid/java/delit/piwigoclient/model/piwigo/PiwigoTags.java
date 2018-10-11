@@ -1,8 +1,8 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,13 +12,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.locks.ReentrantLock;
 
+import delit.piwigoclient.ui.common.util.ParcelUtils;
+
 /**
  * Created by gareth on 02/01/18.
  */
 
-public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
+public class PiwigoTags implements Parcelable, IdentifiableItemStore<Tag> {
 
-    private static final long serialVersionUID = 5861064490986171049L;
     private final ArrayList<Tag> items = new ArrayList<>();
     private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
     private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
@@ -29,15 +30,23 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
     public PiwigoTags() {
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
+    public PiwigoTags(Parcel in) {
+        in.readTypedList(items, Tag.CREATOR);
+        in.readMap(pagesBeingLoaded, getClass().getClassLoader());
+        ParcelUtils.readIntSet(in, pagesFailedToLoad);
+        pagesLoaded = in.readInt();
+        if(pageLoadLock == null) {
+            pageLoadLock = new ReentrantLock();
+            tagComparator = new TagComparator();
+        }
     }
 
-    private void readObject(java.io.ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        this.tagComparator = new TagComparator();
-        this.pageLoadLock = new ReentrantLock();
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedList(items);
+        dest.writeMap(pagesBeingLoaded);
+        ParcelUtils.writeIntSet(dest,pagesFailedToLoad);
+        dest.writeInt(pagesLoaded);
     }
 
     public void sort() {
@@ -180,4 +189,20 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
             return o1.getName().compareTo(o2.getName());
         }
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<PiwigoTags> CREATOR
+            = new Parcelable.Creator<PiwigoTags>() {
+        public PiwigoTags createFromParcel(Parcel in) {
+            return new PiwigoTags(in);
+        }
+
+        public PiwigoTags[] newArray(int size) {
+            return new PiwigoTags[size];
+        }
+    };
 }

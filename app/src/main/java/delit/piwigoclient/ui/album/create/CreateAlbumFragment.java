@@ -88,7 +88,7 @@ public class CreateAlbumFragment extends MyFragment {
     public static CreateAlbumFragment newInstance(int actionId, CategoryItemStub uploadToGallery) {
         CreateAlbumFragment fragment = new CreateAlbumFragment();
         Bundle args = new Bundle();
-        args.putSerializable(STATE_UPLOAD_TO_GALLERY, uploadToGallery);
+        args.putParcelable(STATE_UPLOAD_TO_GALLERY, uploadToGallery);
         args.putInt(STATE_ACTION_ID, actionId);
         fragment.setArguments(args);
         return fragment;
@@ -173,7 +173,7 @@ public class CreateAlbumFragment extends MyFragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            parentGallery = (CategoryItemStub) args.getSerializable(STATE_UPLOAD_TO_GALLERY);
+            parentGallery = args.getParcelable(STATE_UPLOAD_TO_GALLERY);
             actionId = args.getInt(STATE_ACTION_ID);
         }
     }
@@ -192,8 +192,8 @@ public class CreateAlbumFragment extends MyFragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putSerializable(STATE_UPLOAD_TO_GALLERY, parentGallery);
-        outState.putSerializable(STATE_NEW_GALLERY, newAlbum);
+        outState.putParcelable(STATE_UPLOAD_TO_GALLERY, parentGallery);
+        outState.putParcelable(STATE_NEW_GALLERY, newAlbum);
         outState.putLong(STATE_CREATE_GALLERY_CALL_ID, createGalleryMessageId);
         outState.putLong(STATE_SET_GALLERY_PERMISSIONS_CALL_ID, setGalleryPermissionsMessageId);
         outState.putLong(STATE_DELETE_GALLERY_CALL_ID, deleteGalleryMessageId);
@@ -210,8 +210,8 @@ public class CreateAlbumFragment extends MyFragment {
             return null;
         }
         if (savedInstanceState != null) {
-            parentGallery = (CategoryItemStub) savedInstanceState.getSerializable(STATE_UPLOAD_TO_GALLERY);
-            newAlbum = (PiwigoGalleryDetails) savedInstanceState.getSerializable(STATE_NEW_GALLERY);
+            parentGallery = savedInstanceState.getParcelable(STATE_UPLOAD_TO_GALLERY);
+            newAlbum = savedInstanceState.getParcelable(STATE_NEW_GALLERY);
             createGalleryMessageId = savedInstanceState.getLong(STATE_CREATE_GALLERY_CALL_ID);
             setGalleryPermissionsMessageId = savedInstanceState.getLong(STATE_SET_GALLERY_PERMISSIONS_CALL_ID);
             deleteGalleryMessageId = savedInstanceState.getLong(STATE_DELETE_GALLERY_CALL_ID);

@@ -1,5 +1,8 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 
 /**
@@ -11,6 +14,10 @@ public class VideoResourceItem extends ResourceItem {
         super(id, name, description, dateCreated, lastAltered, thumbnailUrl);
     }
 
+    public VideoResourceItem(Parcel in) {
+        super(in);
+    }
+
     public int getType() {
         return VIDEO_RESOURCE_TYPE;
     }
@@ -18,4 +25,15 @@ public class VideoResourceItem extends ResourceItem {
     public void copyFrom(VideoResourceItem other, boolean copyParentage) {
         super.copyFrom(other, copyParentage);
     }
+
+    public static final Parcelable.Creator<VideoResourceItem> CREATOR
+            = new Parcelable.Creator<VideoResourceItem>() {
+        public VideoResourceItem createFromParcel(Parcel in) {
+            return new VideoResourceItem(in);
+        }
+
+        public VideoResourceItem[] newArray(int size) {
+            return new VideoResourceItem[size];
+        }
+    };
 }

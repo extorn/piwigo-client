@@ -48,7 +48,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         getViewPrefs().storeToBundle(outState);
-        outState.putSerializable(STATE_AVAILABLE_ITEMS, availableAlbums);
+        outState.putParcelableArrayList(STATE_AVAILABLE_ITEMS, availableAlbums);
     }
 
     @Nullable
@@ -64,7 +64,7 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         }
 
         if (savedInstanceState != null) {
-            availableAlbums = (ArrayList<CategoryItemStub>) savedInstanceState.getSerializable(STATE_AVAILABLE_ITEMS);
+            availableAlbums = savedInstanceState.getParcelableArrayList(STATE_AVAILABLE_ITEMS);
             createEmptyPrefs().loadFromBundle(savedInstanceState);
         }
 

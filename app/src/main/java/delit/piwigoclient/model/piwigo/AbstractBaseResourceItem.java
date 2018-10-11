@@ -1,5 +1,7 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;
@@ -8,6 +10,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
  * Created by gareth on 12/07/17.
@@ -27,6 +31,34 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     public AbstractBaseResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, lastAltered, thumbnailUrl);
         this.creationDate = creationDate;
+    }
+
+    public AbstractBaseResourceItem(Parcel in) {
+        super(in);
+        myRating = in.readFloat();
+        averageRating = in.readFloat();
+        ratingsGiven = in.readInt();
+        privacyLevel = in.readInt();
+        in.readList(availableFiles, getClass().getClassLoader());
+        fullSizeImage = in.readParcelable(null);
+        linkedAlbums = ParcelUtils.readLongSet(in);
+        fileChecksum = in.readString();
+        creationDate = ParcelUtils.readDate(in);
+        score = in.readFloat();
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        super.writeToParcel(out, flags);
+        out.writeFloat(myRating);
+        out.writeFloat(averageRating);
+        out.writeInt(ratingsGiven);
+        out.writeList(availableFiles);
+        out.writeParcelable(fullSizeImage, flags);
+        ParcelUtils.writeLongSet(out, linkedAlbums);
+        out.writeString(fileChecksum);
+        ParcelUtils.writeDate(out, creationDate);
+        out.writeFloat(score);
     }
 
     public String getFileChecksum() {
@@ -178,8 +210,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         return score;
     }
 
-    public static class ResourceFile implements Comparable<ResourceFile>, Serializable {
-        private static final long serialVersionUID = 2807336261739692481L;
+    public static class ResourceFile implements Comparable<ResourceFile>, Parcelable {
         private final String name;
         private final String url;
         private final int width;
@@ -190,6 +221,21 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             this.url = url;
             this.width = width;
             this.height = height;
+        }
+
+        public ResourceFile(Parcel in) {
+            name = in.readString();
+            url = in.readString();
+            width = in.readInt();
+            height = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(name);
+            dest.writeString(url);
+            dest.writeInt(width);
+            dest.writeInt(height);
         }
 
         public String getUrl() {
@@ -223,5 +269,21 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             }
             return this.name.compareTo(o.name);
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Parcelable.Creator<ResourceFile> CREATOR
+                = new Parcelable.Creator<ResourceFile>() {
+            public ResourceFile createFromParcel(Parcel in) {
+                return new ResourceFile(in);
+            }
+
+            public ResourceFile[] newArray(int size) {
+                return new ResourceFile[size];
+            }
+        };
     }
 }

@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -15,7 +16,7 @@ import delit.piwigoclient.model.piwigo.Identifiable;
 
 import static android.view.View.INVISIBLE;
 
-public class CategoryItemViewHolder<S extends Identifiable> extends AlbumItemViewHolder<S> {
+public class CategoryItemViewHolder<S extends Identifiable&Parcelable> extends AlbumItemViewHolder<S> {
     public TextView mPhotoCountView;
 
     public CategoryItemViewHolder(View view, AlbumItemRecyclerViewAdapter<S> parentAdapter, int viewType) {

@@ -23,6 +23,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.ui.common.fragment.ListViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
 
 /**
@@ -40,11 +41,11 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         AlbumSelectFragment fragment = new AlbumSelectFragment();
         Bundle args = buildArgsBundle(prefs, actionId, initialSelection);
         if (indirectSelection != null) {
-            args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>(indirectSelection));
+            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<Long>(indirectSelection));
         } else {
-            args.putSerializable(STATE_INDIRECT_SELECTION, new HashSet<>());
+            BundleUtils.putLongHashSet(args, STATE_INDIRECT_SELECTION, new HashSet<Long>());
         }
-        args.putSerializable(STATE_AVAILABLE_ITEMS, availableAlbums);
+        args.putParcelableArrayList(STATE_AVAILABLE_ITEMS, availableAlbums);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,8 +55,8 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            indirectSelection = (HashSet<Long>) args.getSerializable(STATE_INDIRECT_SELECTION);
-            availableItems = (ArrayList<CategoryItemStub>) args.getSerializable(STATE_AVAILABLE_ITEMS);
+            indirectSelection = BundleUtils.getLongHashSet(args, STATE_INDIRECT_SELECTION);
+            availableItems = args.getParcelableArrayList(STATE_AVAILABLE_ITEMS);
         }
     }
 
@@ -67,8 +68,8 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_AVAILABLE_ITEMS, availableItems);
-        outState.putSerializable(STATE_INDIRECT_SELECTION, indirectSelection);
+        outState.putParcelableArrayList(STATE_AVAILABLE_ITEMS, availableItems);
+        BundleUtils.putLongHashSet(outState, STATE_INDIRECT_SELECTION, indirectSelection);
     }
 
 
@@ -89,8 +90,8 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         }
 
         if (savedInstanceState != null) {
-            availableItems = (ArrayList) savedInstanceState.getSerializable(STATE_AVAILABLE_ITEMS);
-            indirectSelection = (HashSet<Long>) savedInstanceState.getSerializable(STATE_INDIRECT_SELECTION);
+            availableItems = savedInstanceState.getParcelableArrayList(STATE_AVAILABLE_ITEMS);
+            indirectSelection = BundleUtils.getLongHashSet(savedInstanceState, STATE_INDIRECT_SELECTION);
         }
 
         return v;

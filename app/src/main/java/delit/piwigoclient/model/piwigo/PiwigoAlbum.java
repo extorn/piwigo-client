@@ -1,8 +1,8 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,13 +13,39 @@ import java.util.List;
  * Android template wizards.
  * <p>
  */
-public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> implements Serializable {
+public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> implements Parcelable {
 
-    private static final long serialVersionUID = 919642836918692590L;
     private transient Comparator<GalleryItem> itemComparator = new AlbumComparator();
     private int subAlbumCount;
     private int spacerAlbums;
     private int bannerCount;
+
+    public PiwigoAlbum(CategoryItem albumDetails) {
+        super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));
+    }
+    
+    public PiwigoAlbum(Parcel in) {
+        super(in);
+        subAlbumCount = in.readInt();
+        spacerAlbums = in.readInt();
+        bannerCount = in.readInt();
+        if(itemComparator == null) {
+            itemComparator = new AlbumComparator();
+        }
+    }
+    
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeInt(subAlbumCount);
+        dest.writeInt(spacerAlbums);
+        dest.writeInt(bannerCount);
+    }
 
     private static class AlbumComparator implements Comparator<GalleryItem> {
         @Override
@@ -49,20 +75,6 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
             }
         }
     };
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-    }
-
-    private void readObject(java.io.ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        itemComparator = new AlbumComparator();
-    }
-
-    public PiwigoAlbum(CategoryItem albumDetails) {
-        super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));
-    }
 
     @Override
     public void addItem(GalleryItem item) {
@@ -178,4 +190,14 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         }
         return null;
     }
+    public static final Parcelable.Creator<PiwigoAlbum> CREATOR
+            = new Parcelable.Creator<PiwigoAlbum>() {
+        public PiwigoAlbum createFromParcel(Parcel in) {
+            return new PiwigoAlbum(in);
+        }
+
+        public PiwigoAlbum[] newArray(int size) {
+            return new PiwigoAlbum[size];
+        }
+    };
 }

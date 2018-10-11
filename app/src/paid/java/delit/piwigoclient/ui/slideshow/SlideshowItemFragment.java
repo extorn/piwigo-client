@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,8 +15,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import delit.piwigoclient.BuildConfig;
@@ -36,6 +39,7 @@ import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
+import delit.piwigoclient.util.ArrayUtils;
 import delit.piwigoclient.util.SetUtils;
 
 
@@ -126,7 +130,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_UPDATED_TAGS_SET, updatedTagsSet);
+        outState.putParcelableArrayList(STATE_UPDATED_TAGS_SET, new ArrayList<Tag>(updatedTagsSet));
         outState.putSerializable(STATE_CHANGED_TAGS_SET, changedTagsEvents);
     }
 
@@ -198,7 +202,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             //restore saved state
-            updatedTagsSet = (HashSet<Tag>) savedInstanceState.getSerializable(STATE_UPDATED_TAGS_SET);
+            updatedTagsSet = new HashSet<>(savedInstanceState.<Tag>getParcelableArrayList(STATE_UPDATED_TAGS_SET));
             changedTagsEvents = (HashSet<TagContentAlteredEvent>) savedInstanceState.getSerializable(STATE_CHANGED_TAGS_SET);
         }
         super.onViewCreated(view, savedInstanceState);

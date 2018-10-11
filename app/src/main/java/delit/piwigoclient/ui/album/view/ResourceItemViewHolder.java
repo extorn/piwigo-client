@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
@@ -15,7 +16,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 
 import static android.view.View.GONE;
 
-public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemViewHolder<S> {
+public class ResourceItemViewHolder<S extends Identifiable&Parcelable> extends AlbumItemViewHolder<S> {
     public AppCompatImageView mTypeIndicatorImg;
     public AppCompatCheckBox checkBox;
 

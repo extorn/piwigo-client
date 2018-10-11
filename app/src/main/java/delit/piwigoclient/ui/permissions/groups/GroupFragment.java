@@ -54,6 +54,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.common.util.ViewListUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.GroupDeletedEvent;
@@ -107,7 +108,7 @@ public class GroupFragment extends MyFragment {
     public static GroupFragment newInstance(Group group) {
         GroupFragment fragment = new GroupFragment();
         Bundle args = new Bundle();
-        args.putSerializable(CURRENT_GROUP, group);
+        args.putParcelable(CURRENT_GROUP, group);
         fragment.setArguments(args);
         return fragment;
     }
@@ -116,7 +117,7 @@ public class GroupFragment extends MyFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            currentGroup = (Group) getArguments().getSerializable(CURRENT_GROUP);
+            currentGroup = getArguments().getParcelable(CURRENT_GROUP);
         }
     }
 
@@ -150,16 +151,16 @@ public class GroupFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(CURRENT_GROUP_MEMBERS, currentGroupMembers);
-        outState.putSerializable(CURRENT_ACCESSIBLE_ALBUM_IDS, currentAccessibleAlbumIds);
-        outState.putSerializable(CURRENT_GROUP, currentGroup);
-        outState.putSerializable(NEW_GROUP_MEMBERS, newGroupMembers);
-        outState.putSerializable(NEW_ACCESSIBLE_ALBUM_IDS, newAccessibleAlbumIds);
-        outState.putSerializable(NEW_GROUP, newGroup);
-        outState.putSerializable(AVAILABLE_ALBUMS, availableGalleries);
+        outState.putParcelableArrayList(CURRENT_GROUP_MEMBERS, currentGroupMembers);
+        BundleUtils.putLongHashSet(outState, CURRENT_ACCESSIBLE_ALBUM_IDS, currentAccessibleAlbumIds);
+        outState.putParcelable(CURRENT_GROUP, currentGroup);
+        outState.putParcelableArrayList(NEW_GROUP_MEMBERS, newGroupMembers);
+        BundleUtils.putLongHashSet(outState, NEW_ACCESSIBLE_ALBUM_IDS, newAccessibleAlbumIds);
+        outState.putParcelable(NEW_GROUP, newGroup);
+        outState.putParcelableArrayList(AVAILABLE_ALBUMS, availableGalleries);
         outState.putBoolean(STATE_FIELDS_EDITABLE, fieldsEditable);
-        outState.putSerializable(IN_FLIGHT_MEMBER_SAVE_ACTION_IDS, memberSaveActionIds);
-        outState.putSerializable(IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS, permissionsSaveActionIds);
+        BundleUtils.putLongHashSet(outState, IN_FLIGHT_MEMBER_SAVE_ACTION_IDS, memberSaveActionIds);
+        BundleUtils.putLongHashSet(outState, IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS, permissionsSaveActionIds);
         outState.putInt(STATE_SELECT_USERS_ACTION_ID, selectUsersActionId);
     }
 
@@ -185,18 +186,18 @@ public class GroupFragment extends MyFragment {
         }
 
         if (savedInstanceState != null) {
-            currentGroupMembers = (ArrayList) savedInstanceState.getSerializable(CURRENT_GROUP_MEMBERS);
-            currentGroup = (Group) savedInstanceState.getSerializable(CURRENT_GROUP);
-            currentAccessibleAlbumIds = (HashSet<Long>) savedInstanceState.getSerializable(CURRENT_ACCESSIBLE_ALBUM_IDS);
-            newGroupMembers = (ArrayList) savedInstanceState.getSerializable(NEW_GROUP_MEMBERS);
-            newGroup = (Group) savedInstanceState.getSerializable(NEW_GROUP);
-            newAccessibleAlbumIds = (HashSet<Long>) savedInstanceState.getSerializable(NEW_ACCESSIBLE_ALBUM_IDS);
-            availableGalleries = (ArrayList<CategoryItemStub>) savedInstanceState.getSerializable(AVAILABLE_ALBUMS);
+            currentGroupMembers =savedInstanceState.getParcelableArrayList(CURRENT_GROUP_MEMBERS);
+            currentGroup = savedInstanceState.getParcelable(CURRENT_GROUP);
+            currentAccessibleAlbumIds = BundleUtils.getLongHashSet(savedInstanceState, CURRENT_ACCESSIBLE_ALBUM_IDS);
+            newGroupMembers = savedInstanceState.getParcelableArrayList(NEW_GROUP_MEMBERS);
+            newGroup = savedInstanceState.getParcelable(NEW_GROUP);
+            newAccessibleAlbumIds = BundleUtils.getLongHashSet(savedInstanceState, NEW_ACCESSIBLE_ALBUM_IDS);
+            availableGalleries = savedInstanceState.getParcelableArrayList(AVAILABLE_ALBUMS);
             fieldsEditable = savedInstanceState.getBoolean(STATE_FIELDS_EDITABLE);
-            SetUtils.setNotNull(memberSaveActionIds, (HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_MEMBER_SAVE_ACTION_IDS));
+            SetUtils.setNotNull(memberSaveActionIds, BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_MEMBER_SAVE_ACTION_IDS));
 
             permissionsSaveActionIds.clear();
-            permissionsSaveActionIds.addAll((HashSet<Long>) savedInstanceState.getSerializable(IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS));
+            permissionsSaveActionIds.addAll(BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_PERMISSIONS_SAVE_ACTION_IDS));
             selectUsersActionId = savedInstanceState.getInt(STATE_SELECT_USERS_ACTION_ID);
         }
 

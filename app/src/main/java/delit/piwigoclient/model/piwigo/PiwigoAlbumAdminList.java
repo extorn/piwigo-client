@@ -1,5 +1,8 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,11 +14,20 @@ import static delit.piwigoclient.model.piwigo.CategoryItem.ROOT_ALBUM;
  * Created by gareth on 10/12/17.
  */
 
-public class PiwigoAlbumAdminList implements Serializable {
+public class PiwigoAlbumAdminList implements Parcelable {
 
-    private static final long serialVersionUID = 5263416921276570075L;
     private final ArrayList<CategoryItem> rootAlbums = new ArrayList<>();
 
+    public PiwigoAlbumAdminList() {}
+
+    public PiwigoAlbumAdminList(Parcel in) {
+        in.readList(rootAlbums, null);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeList(rootAlbums);
+    }
 
     public List<CategoryItem> getDirectChildrenOfAlbum(List<Long> parentageChain, long albumId) {
         if (ROOT_ALBUM.getParentageChain().equals(parentageChain)) {
@@ -142,4 +154,20 @@ public class PiwigoAlbumAdminList implements Serializable {
     public List<CategoryItem> getAlbums() {
         return rootAlbums;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<PiwigoAlbumAdminList> CREATOR
+            = new Parcelable.Creator<PiwigoAlbumAdminList>() {
+        public PiwigoAlbumAdminList createFromParcel(Parcel in) {
+            return new PiwigoAlbumAdminList(in);
+        }
+
+        public PiwigoAlbumAdminList[] newArray(int size) {
+            return new PiwigoAlbumAdminList[size];
+        }
+    };
 }
