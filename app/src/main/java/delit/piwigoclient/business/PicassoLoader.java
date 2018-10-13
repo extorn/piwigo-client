@@ -194,6 +194,7 @@ public class PicassoLoader implements Callback {
         fileToLoad = null;
         resourceToLoad = Integer.MIN_VALUE;
         uriToLoad = null;
+        rotation = 0;
     }
 
     public void resetAll() {

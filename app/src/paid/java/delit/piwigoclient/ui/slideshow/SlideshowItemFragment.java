@@ -2,7 +2,6 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,10 +14,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import delit.piwigoclient.BuildConfig;
@@ -30,6 +26,7 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesAddImageResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.FavoritesRemoveImageResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
@@ -40,7 +37,6 @@ import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
-import delit.piwigoclient.util.ArrayUtils;
 import delit.piwigoclient.util.SetUtils;
 
 
@@ -72,7 +68,15 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         allowTagEdit &= isEditingItemDetails();
         boolean lockInitialSelection = !sessionDetails.isUseUserTagPluginForUpdate();
         //disable tag deselection if user tags plugin is not present but allow editing if is admin user. (bug in PIWIGO API)
-        TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, allowTagEdit, lockInitialSelection, PiwigoUtils.toSetOfIds(currentSelection));
+        HashSet<Long> selectedTagIds = PiwigoUtils.toSetOfIds(currentSelection);
+        HashSet<Tag> customTags = new HashSet<>();
+        for(Tag t : currentSelection) {
+            if(t.getId() < 0) {
+                customTags.add(t);
+            }
+        }
+        TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, allowTagEdit, lockInitialSelection, selectedTagIds);
+        tagSelectEvent.setNewUnsavedTags(customTags);
         getUiHelper().setTrackingRequest(tagSelectEvent.getActionId());
         EventBus.getDefault().post(tagSelectEvent);
     }
@@ -104,30 +108,14 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             favoriteButton.setChecked(getModel().isFavorite());
         }
 
-        if (getModel().getTags() != null) {
-            HashSet<Tag> currentTagsSet = getLatestTagListForResource();
-            if (currentTagsSet.size() == 0) {
-                String sb = "0 (" + getString(R.string.click_to_view) +
-                        ')';
-                tagsField.setText(sb);
-            } else {
-                StringBuilder sb = new StringBuilder();
-                Iterator<Tag> iter = currentTagsSet.iterator();
-                sb.append(iter.next().getName());
-                while (iter.hasNext()) {
-                    sb.append(", ");
-                    sb.append(iter.next().getName());
-                }
-                tagsField.setText(sb.toString());
-            }
-        }
+        setLinkedAlbumFieldText(tagsField, getLatestTagListForResource());
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         BundleUtils.putHashSet(outState, STATE_UPDATED_TAGS_SET, updatedTagsSet);
-        outState.putSerializable(STATE_CHANGED_TAGS_SET, changedTagsEvents);
+        BundleUtils.putHashSet(outState, STATE_CHANGED_TAGS_SET, changedTagsEvents);
     }
 
     @Override
@@ -140,7 +128,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(model).invokeAsync(getContext()));
         }
         if(allowFullEdit) {
-            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(model).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(model, !allowTagEdit).invokeAsync(getContext()));
         }
     }
 
@@ -199,12 +187,12 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         if (savedInstanceState != null) {
             //restore saved state
             updatedTagsSet = BundleUtils.getHashSet(savedInstanceState, STATE_UPDATED_TAGS_SET);
-            changedTagsEvents = (HashSet<TagContentAlteredEvent>) savedInstanceState.getSerializable(STATE_CHANGED_TAGS_SET);
+            changedTagsEvents = BundleUtils.getHashSet(savedInstanceState, STATE_CHANGED_TAGS_SET);
         }
         super.onViewCreated(view, savedInstanceState);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(TagSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             updatedTagsSet = event.getSelectedItems();
@@ -224,6 +212,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
                     changedTagsEvents.add(new TagContentAlteredEvent(newTag.getId(), -1));
                 }
             }
+            setLinkedAlbumFieldText(tagsField, updatedTagsSet == null ? currentTags : updatedTagsSet);
         }
     }
 
@@ -268,8 +257,6 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            boolean finishedOperation = true;
-
             if (response instanceof PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) {
                 if(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).hasError()) {
                     showOrQueueMessage(R.string.alert_error, ((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).getError());
@@ -277,6 +264,8 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
                     onResourceTagsUpdated(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response).getPiwigoResource());
                 }
                 onGalleryItemActionFinished();
+            } else if(response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
+                getUiHelper().showToast(R.string.resource_details_updated_message);
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }

@@ -301,7 +301,7 @@ public class TagsListFragment extends MyFragment {
         throw new UnsupportedOperationException("Not supported in Piwigo API");
 //        long deleteActionId = PiwigoAccessService.startActionDeleteTag(thisItem.getId(), this.getContext());
 //        this.deleteActionsPending.put(deleteActionId, thisItem);
-//        addActiveServiceCall(R.string.progress_delete_tag,deleteActionId);
+//        callServer(R.string.progress_delete_tag,deleteActionId);
     }
 
     @Override
@@ -383,19 +383,19 @@ public class TagsListFragment extends MyFragment {
         }
     }
 
-//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
 //    public void onEvent(TagDeletedEvent event) {
 //        viewAdapter.remove(event.getTag());
 //        getUiHelper().showOrQueueMessage(R.string.alert_information, String.format(getString(R.string.alert_tag_delete_success_pattern), event.getTag().getName()));
 //    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(TagUpdatedEvent event) {
         viewAdapter.replaceOrAddItem(event.getTag());
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(TagContentAlteredEvent event) {
         Tag item = viewAdapter.getItemById(event.getId());
         item.setUsageCount(item.getUsageCount() + event.getContentChange());
@@ -413,12 +413,12 @@ public class TagsListFragment extends MyFragment {
 //        getUiHelper().showOrQueueMessage(R.string.alert_information, String.format(getString(R.string.alert_tag_delete_failed_pattern), tag.getName()));
 //    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         setViewControlStatusBasedOnSessionState();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppUnlockedEvent event) {
         setViewControlStatusBasedOnSessionState();
     }

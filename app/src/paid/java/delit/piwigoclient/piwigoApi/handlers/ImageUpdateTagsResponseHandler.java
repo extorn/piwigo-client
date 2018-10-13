@@ -63,7 +63,7 @@ public class ImageUpdateTagsResponseHandler<T extends ResourceItem> extends Abst
             resultMsg = rspObj.get("info").getAsString();
         }
         if("Tags updated".equals(resultMsg)) {
-            responseForUser = new PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource);
+            responseForUser = new BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource);
         } else {
             responseForUser = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, 0, ERROR_IMAGE_NOT_FOUND);
         }

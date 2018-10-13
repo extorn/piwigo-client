@@ -188,6 +188,14 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         }
     }
 
+
+    @Override
+    protected void onCancelChanges() {
+        // reset the selection to default.
+        getListAdapter().setSelectedItems(null);
+        onSelectActionComplete(getListAdapter().getSelectedItemIds());
+    }
+
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         UsernameRecyclerViewAdapter listAdapter = getListAdapter();
@@ -230,7 +238,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         }
     }
 
-    private void onUsernamesLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse response) {
+    private void onUsernamesLoaded(final UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse response) {
         usernamesModel.acquirePageLoadLock();
         try {
             usernamesModel.recordPageLoadSucceeded(response.getMessageId());
@@ -259,8 +267,8 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) {
-                onUsernamesLoaded((PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse) response);
+            if (response instanceof UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) {
+                onUsernamesLoaded((UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) response);
             } else {
                 onUsernamesLoadFailed(response);
             }

@@ -181,6 +181,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
                 onToggleAllSelection();
             }
         });
+        setToggleSelectionButtonText();
 
         saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.VISIBLE);
@@ -220,10 +221,21 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     protected abstract void selectOnlyListItems(Set<Long> selectionIds);
 
+    private void setToggleSelectionButtonText() {
+        if (selectToggle) {
+            if (initialSelection != null) {
+                toggleAllSelectionButton.setText(getString(R.string.button_reset));
+            } else {
+                toggleAllSelectionButton.setText(getString(R.string.button_none));
+            }
+        } else {
+            toggleAllSelectionButton.setText(getString(R.string.button_all));
+        }
+    }
+
     private void onToggleAllSelection() {
         if (!selectToggle) {
             selectAllListItems();
-            toggleAllSelectionButton.setText(getString(R.string.button_none));
             selectToggle = true;
         } else {
             if (viewPrefs.isInitialSelectionLocked() && initialSelection != null) {
@@ -231,9 +243,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             } else {
                 selectNoneListItems();
             }
-            toggleAllSelectionButton.setText(getString(R.string.button_all));
             selectToggle = false;
         }
+        setToggleSelectionButtonText();
     }
 
     public X getListAdapter() {
@@ -279,12 +291,12 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         setAppropriateComponentState();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppUnlockedEvent(AppUnlockedEvent event) {
         setAppropriateComponentState();
     }
@@ -308,6 +320,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             listAdapter.setEnabled(enabled);
         }
         addListItemButton.setVisibility(!isNotAuthorisedToAlterState() && viewPrefs.isAllowItemAddition() ? View.VISIBLE : View.GONE);
+        setToggleSelectionButtonText();
     }
 
     public boolean isEditingEnabled() {

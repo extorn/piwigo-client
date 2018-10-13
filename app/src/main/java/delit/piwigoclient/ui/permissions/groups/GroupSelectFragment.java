@@ -185,6 +185,13 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     }
 
     @Override
+    protected void onCancelChanges() {
+        // reset the selection to default.
+        getListAdapter().setSelectedItems(null);
+        onSelectActionComplete(getListAdapter().getSelectedItemIds());
+    }
+
+    @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         GroupRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<Long> groupsNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
@@ -226,7 +233,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         }
     }
 
-    private void onGroupsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    private void onGroupsLoaded(final GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         groupsModel.acquirePageLoadLock();
         try {
             groupsModel.recordPageLoadSucceeded(response.getMessageId());
@@ -252,7 +259,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(GroupUpdatedEvent event) {
         getListAdapter().replaceOrAddItem(event.getGroup());
     }
@@ -260,8 +267,8 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
+            if (response instanceof GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) {
+                onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else {
                 onGroupsLoadFailed(response);
             }

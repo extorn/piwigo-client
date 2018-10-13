@@ -74,8 +74,14 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource);
+        piwigoResource.markResourceDetailUpdated();
+        PiwigoUpdateResourceInfoResponse<T> r = new PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource);
         storeResponse(r);
     }
 
+    public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
+        public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
+            super(messageId, piwigoMethod, piwigoResource);
+        }
+    }
 }

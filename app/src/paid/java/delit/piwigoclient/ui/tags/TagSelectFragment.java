@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.tags;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -36,7 +38,9 @@ import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
+import delit.piwigoclient.util.DisplayUtils;
 
 /**
  * Created by gareth on 26/05/17.
@@ -45,11 +49,14 @@ import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String TAGS_MODEL = "tagsModel";
+    private static final String ARGS_UNSAVED_TAGS = "unsavedTags";
     private PiwigoTags tagsModel;
 
-    public static TagSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
+    public static TagSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection, HashSet<Tag> unsavedNewTags) {
         TagSelectFragment fragment = new TagSelectFragment();
-        fragment.setArguments(buildArgsBundle(prefs, actionId, initialSelection));
+        Bundle b = buildArgsBundle(prefs, actionId, initialSelection);
+        BundleUtils.putHashSet(b, ARGS_UNSAVED_TAGS, unsavedNewTags);
+        fragment.setArguments(b);
         return fragment;
     }
 
@@ -85,9 +92,15 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
+        HashSet<Tag> unsavedTags = null;
         if (savedInstanceState != null) {
             if(!isSessionDetailsChanged()) {
                 tagsModel = savedInstanceState.getParcelable(TAGS_MODEL);
+            }
+        } else {
+            Bundle args = getArguments();
+            if (args != null) {
+                unsavedTags = BundleUtils.getHashSet(args, ARGS_UNSAVED_TAGS);
             }
         }
 
@@ -97,6 +110,12 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
                 pageSources = 2;
             }
             tagsModel = new PiwigoTags(pageSources);
+        }
+
+        if(unsavedTags != null) {
+            for (Tag unsavedTag : unsavedTags) {
+                tagsModel.addItem(unsavedTag);
+            }
         }
 
         getAddListItemButton().setVisibility(View.VISIBLE);
@@ -184,14 +203,20 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
                         EditText tagNameEdit = alert.findViewById(R.id.tag_tagname);
                         String tagName = tagNameEdit.getText().toString();
                         if(tagName.length() == 0) {
-                            //do nothing.
+                            //just close the window.
+                            DisplayUtils.hideKeyboardFrom(getContext(), dialog);
+                            dialog.dismiss();
                             return;
                         }
 
                         if(v == alert.getButton(AlertDialog.BUTTON_POSITIVE)) {
                             onPositiveButton(tagName);
+                            DisplayUtils.hideKeyboardFrom(getContext(), dialog);
+                            dialog.dismiss();
                         } else if(v == alert.getButton(AlertDialog.BUTTON_NEUTRAL)) {
                             onNeutralButton(tagName);
+                            DisplayUtils.hideKeyboardFrom(getContext(), dialog);
+                            dialog.dismiss();
                         }
                     }
                     private void onNeutralButton(String tagName) {
@@ -205,11 +230,11 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
                     private void onPositiveButton(String tagName) {
                         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                        if(sessionDetails != null && sessionDetails.isLoggedIn() && sessionDetails.isUseUserTagPluginForUpdate()) {
+                        if(sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate()) {
                             addNewTagForSelection(tagName);
                         } else if(sessionDetails != null && sessionDetails.isAdminUser()) {
                             createNewTag(tagName);
-                        } else if(sessionDetails != null && sessionDetails.isLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()){
+                        } else if(sessionDetails != null && !sessionDetails.isMethodsAvailableListAvailable()){
                             // sink this click - the user is trying to rush ahead before the UI has finished loading.
                         }
                     }
@@ -258,7 +283,10 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     private void addNewTagForSelection(String tagName) {
-        insertNewTagToList(new Tag(tagName));
+
+        Tag t = new Tag(tagsModel.findAnIdNotYetPresentInTheList(), tagName);
+        insertNewTagToList(t);
+        getUiHelper().showShortDetailedToast(R.string.alert_warning, R.string.tag_will_be_created_when_resource_is_saved);
     }
 
     @Override
@@ -315,6 +343,13 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     @Override
+    protected void onCancelChanges() {
+        // reset the selection to default.
+        getListAdapter().setSelectedItems(null);
+        onSelectActionComplete(getListAdapter().getSelectedItemIds());
+    }
+
+    @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         TagRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<Long> tagsNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
@@ -366,6 +401,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         tagsModel.addItem(newTag);
         tagsModel.sort();
         int firstIndexChanged = tagsModel.getItemIdx(newTag);
+        getListAdapter().setItemSelected(newTag.getId());
         getListAdapter().notifyItemRangeInserted(firstIndexChanged, 1);
         onListItemLoadSuccess();
         setAppropriateComponentState();
@@ -388,6 +424,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             }
             // can't do an incremental refresh as we sort the data and it could cause interleaving.
             getListAdapter().notifyDataSetChanged();
+            getList().requestLayout();
             if(tagsModel.hasNoFailedPageLoads()) {
                 onListItemLoadSuccess();
             }

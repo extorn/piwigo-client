@@ -9,6 +9,8 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
+import java.util.ArrayList;
+
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.User;
@@ -179,7 +181,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         userInfoHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         userInfoHandler.invokeAndWait(getContext(), getConnectionPrefs());
         if (userInfoHandler.isSuccess()) {
-            PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse response = (PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse) userInfoHandler.getResponse();
+            PiwigoGetUserDetailsResponse response = (PiwigoGetUserDetailsResponse) userInfoHandler.getResponse();
             User userDetails = response.getSelectedUser();
             if (response.getUsers().size() > 0) {
                 EventBus.getDefault().post(new UserNotUniqueWarningEvent(userDetails, response.getUsers()));
@@ -218,6 +220,20 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
 
         public void setNewSessionDetails(PiwigoSessionDetails sessionDetails) {
             this.sessionDetails = sessionDetails;
+        }
+    }
+
+    public static class PiwigoGetUserDetailsResponse extends UsersGetListResponseHandler.PiwigoGetUsersListResponse {
+
+        private final User selectedUser;
+
+        public PiwigoGetUserDetailsResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<User> users) {
+            super(messageId, piwigoMethod, page, pageSize, itemsOnPage, users);
+            selectedUser = getUsers().remove(0);
+        }
+
+        public User getSelectedUser() {
+            return selectedUser;
         }
     }
 }

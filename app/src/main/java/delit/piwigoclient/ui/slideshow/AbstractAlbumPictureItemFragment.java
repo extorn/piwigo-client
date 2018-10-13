@@ -252,7 +252,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
 
         if (getUiHelper().completePermissionsWantedRequest(event)) {
@@ -300,6 +300,5 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         currentImageUrlDisplayed = null;
         //Enable the next line to cancel download of the image if not yet complete. This is very wasteful of network traffic though possibly essential for memory.
         loader.cancelImageLoadIfRunning();
-        loader = null;
     }
 }

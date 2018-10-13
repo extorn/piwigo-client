@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,6 +26,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     private String fileChecksum;
     private Date creationDate;
     private float score;
+    private long resourceDetailsLoadedAt;
 
     public AbstractBaseResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, lastAltered, thumbnailUrl);
@@ -41,10 +41,11 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         privacyLevel = in.readInt();
         in.readList(availableFiles, getClass().getClassLoader());
         fullSizeImage = in.readParcelable(null);
-        linkedAlbums = ParcelUtils.readLongSet(in);
+        linkedAlbums = ParcelUtils.readLongSet(in, null);
         fileChecksum = in.readString();
         creationDate = ParcelUtils.readDate(in);
         score = in.readFloat();
+        resourceDetailsLoadedAt = in.readLong();
     }
 
     @Override
@@ -59,6 +60,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         out.writeString(fileChecksum);
         ParcelUtils.writeDate(out, creationDate);
         out.writeFloat(score);
+        out.writeLong(resourceDetailsLoadedAt);
     }
 
     public String getFileChecksum() {
@@ -200,6 +202,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         fullSizeImage = other.fullSizeImage;
         linkedAlbums = other.linkedAlbums;
         fileChecksum = other.fileChecksum;
+        resourceDetailsLoadedAt = other.resourceDetailsLoadedAt;
     }
 
     public void setScore(float score) {
@@ -208,6 +211,10 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
 
     public float getScore() {
         return score;
+    }
+
+    public void markResourceDetailUpdated() {
+        resourceDetailsLoadedAt = System.currentTimeMillis();
     }
 
     public static class ResourceFile implements Comparable<ResourceFile>, Parcelable {
@@ -285,5 +292,9 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
                 return new ResourceFile[size];
             }
         };
+    }
+
+    public boolean isResourceDetailsLikelyOutdated() {
+        return isLikelyOutdated(resourceDetailsLoadedAt);
     }
 }

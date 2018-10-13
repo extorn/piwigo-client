@@ -206,7 +206,6 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
             int idx = getItemPosition(item);
             notifyItemChanged(idx);
         } catch (IllegalArgumentException e) {
-            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Item not available to select (probably not loaded yet)", e);
             }

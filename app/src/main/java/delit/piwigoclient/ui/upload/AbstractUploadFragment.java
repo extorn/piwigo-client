@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.AppCompatSpinner;
@@ -16,7 +15,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -50,6 +48,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
@@ -466,7 +465,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         List<File> addedFiles = adapter.addAll(filesToBeUploaded);
         int filesAlreadyPresent = filesToBeUploaded.size() - addedFiles.size();
         if(filesAlreadyPresent > 0) {
-            getUiHelper().showDetailedToast(R.string.alert_information, getString(R.string.files_already_set_for_upload_skipped_pattern, filesAlreadyPresent));
+            getUiHelper().showShortDetailedToast(R.string.alert_information, getString(R.string.files_already_set_for_upload_skipped_pattern, filesAlreadyPresent));
         }
         uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
         updateJobDeletionButtonStatus();
@@ -575,14 +574,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onNewGalleryCreated(AlbumCreatedEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             uploadToAlbumId = event.getNewAlbumId();
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             UploadJob activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
@@ -616,7 +615,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (getContext() == null) {
             notifyUserUploadStatus(context.getApplicationContext(), message);
         } else {
-            getUiHelper().showDetailedToast(titleId, message, Toast.LENGTH_LONG);
+            getUiHelper().showDetailedToast(titleId, message);
         }
     }
 
@@ -774,7 +773,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return uploadJob;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
@@ -954,10 +953,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
                 onGetSubGalleryNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
-                onGetSubGalleries((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse) {
-                onAlbumDeleted((PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse)response);
+            } else if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
+                onGetSubGalleries((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) response);
+            } else if (response instanceof AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) {
+                onAlbumDeleted((AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse)response);
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }
@@ -994,7 +993,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         }
 
-        protected void onGetSubGalleries(PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse response) {
+        protected void onGetSubGalleries(AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
             updateSpinnerWithNewAlbumsList(response.getAdminList().flattenTree());
         }
 
@@ -1003,7 +1002,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private void onAlbumDeleted(PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse response) {
+    private void onAlbumDeleted(AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse response) {
         getUiHelper().showToast(R.string.alert_temporary_upload_album_deleted);
     }
 }

@@ -1,10 +1,8 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -33,6 +31,7 @@ import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomViewPager;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -41,7 +40,6 @@ import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
-import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
 import delit.piwigoclient.util.SetUtils;
@@ -103,6 +101,17 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        Bundle configurationBundle = savedInstanceState;
+        if (configurationBundle == null) {
+            configurationBundle = getArguments();
+        }
+        if (configurationBundle != null) {
+            gallery = configurationBundle.getParcelable(STATE_GALLERY);
+            rawCurrentGalleryItemPosition = configurationBundle.getInt(STATE_GALLERY_ITEM_DISPLAYED);
+            pagesBeingLoaded.clear();
+            SetUtils.setNotNull(pagesBeingLoaded, BundleUtils.getIntHashSet(configurationBundle, STATE_ACTIVE_LOAD_THREADS));
+        }
+
         super.onCreateView(inflater, container, savedInstanceState);
 
         if (isServerConnectionChanged()) {
@@ -142,40 +151,16 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
             adView.setVisibility(GONE);
         }
 
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-
-        super.onViewCreated(view, savedInstanceState);
-        Bundle configurationBundle = savedInstanceState;
-        if (configurationBundle == null) {
-            configurationBundle = getArguments();
-        }
-        if (configurationBundle != null) {
-            gallery = configurationBundle.getParcelable(STATE_GALLERY);
-            rawCurrentGalleryItemPosition = configurationBundle.getInt(STATE_GALLERY_ITEM_DISPLAYED);
-            pagesBeingLoaded.clear();
-            SetUtils.setNotNull(pagesBeingLoaded, BundleUtils.getIntHashSet(configurationBundle, STATE_ACTIVE_LOAD_THREADS));
-        }
-
-        if (viewPager != null && isSessionDetailsChanged()) {
-            // If the page has been initialised already (not first visit), and the session token has changed, force reload.
-            getFragmentManager().popBackStack();
-            return;
-        }
-
         viewPager = view.findViewById(R.id.slideshow_viewpager);
         boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, getContext());
         shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
         if (galleryItemAdapter == null) {
             galleryItemAdapter = new GalleryItemAdapter(gallery, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
-            galleryItemAdapter.setMaxFragmentsToSaveInState(1);
+            galleryItemAdapter.setMaxFragmentsToSaveInState(40);
         } else {
             // update settings.
             galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
-            galleryItemAdapter.setFragmentManager(getChildFragmentManager());
+//            galleryItemAdapter.setFragmentManager(getChildFragmentManager());
         }
 
         galleryItemAdapter.setContainer(viewPager);
@@ -230,6 +215,19 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         viewPager.clearOnPageChangeListeners();
         viewPager.addOnPageChangeListener(slideshowPageChangeListener);
 
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+
+        super.onViewCreated(view, savedInstanceState);
+
+        if (viewPager != null && isSessionDetailsChanged()) {
+            // If the page has been initialised already (not first visit), and the session token has changed, force reload.
+            getFragmentManager().popBackStack();
+            return;
+        }
     }
 
     @Override
@@ -281,12 +279,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         super.onDestroy();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PiwigoSessionTokenUseNotificationEvent event) {
         updateActiveSessionDetails();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemActionStartedEvent event) {
         if (event.getItem().getParentId().equals(gallery.getId())) {
             getUiHelper().setTrackingRequest(event.getActionId());
@@ -294,7 +292,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemActionFinishedEvent event) {
         //TODO this is rubbish, store a reference to the parent in the resource items so we can test if this screen is relevant.
         // parentId will be null if the parent is a Tag not an Album (viewing contents of a Tag).
@@ -304,7 +302,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemDeletedEvent event) {
         if(gallery.getId() == event.item.getParentId()) {
             GalleryItemAdapter adapter = ((GalleryItemAdapter) viewPager.getAdapter());
@@ -371,14 +369,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             synchronized (pagesBeingLoaded) {
 
-                if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) {
-                    onGetResources((PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) response);
-                    pagesBeingLoaded.remove(((PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse) response).getPage());
+                if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
+                    onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
+                    pagesBeingLoaded.remove(((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response).getPage());
                 }
             }
         }
 
-        public void onGetResources(final PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse response) {
+        public void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
             synchronized (this) {
                 gallery.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
                 pagesBeingLoaded.remove(response.getPage());

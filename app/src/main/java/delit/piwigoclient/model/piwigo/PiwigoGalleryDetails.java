@@ -46,8 +46,8 @@ public class PiwigoGalleryDetails implements Parcelable {
         userCommentsAllowed = (boolean)in.readValue(null);
         isPrivate = (boolean)in.readValue(null);
         galleryId = (Long)in.readValue(null);
-        allowedGroups = ParcelUtils.readLongSet(in);
-        allowedUsers = ParcelUtils.readLongSet(in);
+        allowedGroups = ParcelUtils.readLongSet(in, null);
+        allowedUsers = ParcelUtils.readLongSet(in, null);
     }
 
     @Override

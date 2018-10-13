@@ -115,7 +115,7 @@ public class CommonPreferencesFragment extends MyFragment {
         return getString(R.string.preferences_overall_heading);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();

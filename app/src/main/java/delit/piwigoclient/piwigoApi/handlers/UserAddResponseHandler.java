@@ -50,8 +50,20 @@ public class UserAddResponseHandler<T extends ResourceItem> extends AbstractPiwi
         if (users.size() != 1) {
             throw new JSONException("Expected one user to be returned, but there were " + users.size());
         }
-        PiwigoResponseBufferingHandler.PiwigoAddUserResponse r = new PiwigoResponseBufferingHandler.PiwigoAddUserResponse(getMessageId(), getPiwigoMethod(), users.get(0));
+        PiwigoAddUserResponse r = new PiwigoAddUserResponse(getMessageId(), getPiwigoMethod(), users.get(0));
         storeResponse(r);
     }
 
+    public static class PiwigoAddUserResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final User user;
+
+        public PiwigoAddUserResponse(long messageId, String piwigoMethod, User user) {
+            super(messageId, piwigoMethod, true);
+            this.user = user;
+        }
+
+        public User getUser() {
+            return user;
+        }
+    }
 }

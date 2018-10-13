@@ -41,9 +41,11 @@ public class TagRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecy
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(isMultiSelectionAllowed() ? View.VISIBLE : View.GONE);
-            getCheckBox().setChecked(getSelectedItemIds().contains(newItem.getId()));
+            boolean isChecked = getSelectedItemIds().contains(newItem.getId());
+            boolean alwaysChecked = !isAllowItemDeselection(getItemId());
+            getCheckBox().setChecked(isChecked);
             getCheckBox().setEnabled(isEnabled());
-            getCheckBox().setAlwaysChecked(!isAllowItemDeselection(getItemId()));
+            getCheckBox().setAlwaysChecked(alwaysChecked);
         }
     }
 

@@ -123,6 +123,10 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         }
     }
 
+    @Override
+    protected void onCancelChanges() {
+        onSelectActionComplete(getInitialSelection());
+    }
 
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {

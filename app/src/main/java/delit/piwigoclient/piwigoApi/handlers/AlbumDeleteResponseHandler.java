@@ -37,8 +37,20 @@ public class AlbumDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse r = new PiwigoResponseBufferingHandler.PiwigoAlbumDeletedResponse(getMessageId(), getPiwigoMethod(), galleryId);
+        PiwigoAlbumDeletedResponse r = new PiwigoAlbumDeletedResponse(getMessageId(), getPiwigoMethod(), galleryId);
         storeResponse(r);
     }
 
+    public static class PiwigoAlbumDeletedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final long albumId;
+
+        public PiwigoAlbumDeletedResponse(long messageId, String piwigoMethod, long albumId) {
+            super(messageId, piwigoMethod, true);
+            this.albumId = albumId;
+        }
+
+        public long getAlbumId() {
+            return albumId;
+        }
+    }
 }

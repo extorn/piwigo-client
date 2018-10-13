@@ -82,7 +82,38 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         if (this.page == PagedList.MISSING_ITEMS_PAGE) {
             page = this.page;
         }
-        PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, groups);
+        PiwigoGetGroupsListRetrievedResponse r = new PiwigoGetGroupsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, groups);
         storeResponse(r);
+    }
+
+    public static class PiwigoGetGroupsListRetrievedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final HashSet<Group> groups;
+        private final int itemsOnPage;
+        private final int pageSize;
+        private final int page;
+
+        public PiwigoGetGroupsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Group> groups) {
+            super(messageId, piwigoMethod, true);
+            this.page = page;
+            this.pageSize = pageSize;
+            this.itemsOnPage = itemsOnPage;
+            this.groups = groups;
+        }
+
+        public int getItemsOnPage() {
+            return itemsOnPage;
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public int getPageSize() {
+            return pageSize;
+        }
+
+        public HashSet<Group> getGroups() {
+            return groups;
+        }
     }
 }

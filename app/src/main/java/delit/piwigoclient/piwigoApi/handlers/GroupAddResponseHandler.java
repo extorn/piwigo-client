@@ -41,8 +41,20 @@ public class GroupAddResponseHandler<T extends ResourceItem> extends AbstractPiw
         if (groups.size() != 1) {
             throw new JSONException("Expected one group to be returned, but there were " + groups.size());
         }
-        PiwigoResponseBufferingHandler.PiwigoAddGroupResponse r = new PiwigoResponseBufferingHandler.PiwigoAddGroupResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
+        PiwigoAddGroupResponse r = new PiwigoAddGroupResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
         storeResponse(r);
     }
 
+    public static class PiwigoAddGroupResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final Group group;
+
+        public PiwigoAddGroupResponse(long messageId, String piwigoMethod, Group group) {
+            super(messageId, piwigoMethod, true);
+            this.group = group;
+        }
+
+        public Group getGroup() {
+            return group;
+        }
+    }
 }

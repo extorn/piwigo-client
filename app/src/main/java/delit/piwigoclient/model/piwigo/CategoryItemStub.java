@@ -8,10 +8,8 @@ import java.util.Collections;
 import java.util.List;
 
 import delit.piwigoclient.ui.common.util.ParcelUtils;
-import delit.piwigoclient.util.ArrayUtils;
-import delit.piwigoclient.util.SetUtils;
 
-public class CategoryItemStub implements Parcelable {
+public class CategoryItemStub implements Parcelable, Identifiable {
 
     public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId());
     private static final CategoryItemStub ROOT_GALLERY_NON_SELECTABLE = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId()).markNonUserSelectable();
@@ -34,7 +32,7 @@ public class CategoryItemStub implements Parcelable {
     public CategoryItemStub(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        parentageChain = ParcelUtils.readLongArrayList(in);
+        parentageChain = ParcelUtils.readLongArrayList(in, null);
         isUserSelectable = (boolean)in.readValue(null);
     }
 

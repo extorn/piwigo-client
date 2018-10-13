@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.common.util;
 
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -7,13 +8,15 @@ import android.support.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ParcelUtils {
-    public static <T extends Parcelable> HashSet<T> readHashSet(@NonNull Parcel in) {
-        ArrayList<T> store = (ArrayList<T>) in.readValue(null);
+    public static <T extends Parcelable> HashSet<T> readHashSet(@NonNull Parcel in, ClassLoader loader) {
+        ArrayList<T> store = (ArrayList<T>) in.readValue(loader);
         if(store != null) {
             HashSet retVal = new HashSet<T>(store);
             retVal.addAll(store);
@@ -38,8 +41,8 @@ public class ParcelUtils {
         dest.writeIntArray(rawData);
     }
     
-    public static HashSet<Integer> readIntHashSet(@NonNull Parcel in) {
-        int[] data = (int[]) in.readValue(null);
+    public static HashSet<Integer> readIntHashSet(@NonNull Parcel in, ClassLoader loader) {
+        int[] data = (int[]) in.readValue(loader);
         HashSet<Integer> wrapper = null;
         if(data != null) {
             Collections.addAll(wrapper, com.google.android.gms.common.util.ArrayUtils.toWrapperArray(data));
@@ -47,8 +50,8 @@ public class ParcelUtils {
         return wrapper;
     }
 
-    public static Set<Integer> readIntSet(@NonNull Parcel in, @NonNull Set<Integer> destSet) {
-        int[] data = (int[]) in.readValue(null);
+    public static Set<Integer> readIntSet(@NonNull Parcel in, @NonNull Set<Integer> destSet, ClassLoader loader) {
+        int[] data = (int[]) in.readValue(loader);
         if(destSet == null) {
             throw new IllegalArgumentException("destination set may not be null");
         }
@@ -67,8 +70,8 @@ public class ParcelUtils {
         dest.writeLongArray(rawData);
     }
 
-    public static HashSet<Long> readLongSet(Parcel in) {
-        long[] data = (long[]) in.readValue(null);
+    public static HashSet<Long> readLongSet(Parcel in, ClassLoader loader) {
+        long[] data = (long[]) in.readValue(loader);
         HashSet<Long> wrapper = null;
         if(data != null) {
             Collections.addAll(wrapper, com.google.android.gms.common.util.ArrayUtils.toWrapperArray(data));
@@ -77,8 +80,8 @@ public class ParcelUtils {
     }
 
 
-    public static Set<Long> readlongSet(@NonNull Parcel in, @NonNull Set<Long> destSet) {
-        long[] data = (long[]) in.readValue(null);
+    public static Set<Long> readlongSet(@NonNull Parcel in, @NonNull Set<Long> destSet, ClassLoader loader) {
+        long[] data = (long[]) in.readValue(loader);
         if(destSet == null) {
             throw new IllegalArgumentException("destination set may not be null");
         }
@@ -88,9 +91,9 @@ public class ParcelUtils {
         return destSet;
     }
 
-    public static ArrayList<Long> readLongArrayList(Parcel in) {
+    public static ArrayList<Long> readLongArrayList(Parcel in, ClassLoader loader) {
         ArrayList<Long> data = null;
-        Long[] rawData = (Long[]) in.readValue(null);
+        Long[] rawData = (Long[]) in.readValue(loader);
         if(rawData != null) {
             data = new ArrayList<>();
             Collections.addAll(data, rawData);
@@ -123,12 +126,46 @@ public class ParcelUtils {
         dest.writeList(new ArrayList<>(entries));
     }
 
-    public static HashSet<String> readStringSet(Parcel source) {
-        List<String> rawData = (List<String>) source.readValue(null);
+    public static HashSet<String> readStringSet(Parcel source, ClassLoader loader) {
+        List<String> rawData = (List<String>) source.readValue(loader);
         HashSet<String> data = null;
         if(rawData != null) {
             data = new HashSet<>(rawData);
         }
         return data;
+    }
+
+    public static <T extends Parcelable,S extends Parcelable> void writeMap(Parcel dest, HashMap<T ,ArrayList<S>> data) {
+        if(data == null) {
+            dest.writeBundle(null);
+            return;
+        }
+        Bundle b = new Bundle();
+        ArrayList<Parcelable> keys = new ArrayList<>(data.size());
+        ArrayList<ArrayList<? extends Parcelable>> values = new ArrayList<>(data.size());
+        for(Map.Entry<T,ArrayList<S>> entry : data.entrySet()) {
+            keys.add(entry.getKey());
+            values.add(entry.getValue());
+        }
+        b.putParcelableArrayList("keys", keys);
+        int i = 0;
+        for(ArrayList al : values) {
+            b.putParcelableArrayList("values_"+(i++), al);
+        }
+        dest.writeBundle(b);
+    }
+
+    public static <T extends Parcelable,S extends Parcelable> HashMap<T ,ArrayList<S>> readMap(Parcel in) {
+        Bundle b = in.readBundle();
+        if(b == null) {
+            return null;
+        }
+        ArrayList<T> keys = b.getParcelableArrayList("keys");
+        HashMap<T, ArrayList<S>> retVal = new HashMap<>(keys.size());
+        int i = 0;
+        for(Parcelable key : keys) {
+            retVal.put(keys.get(i), (ArrayList<S>) b.get("values_"+(i++)));
+        }
+        return retVal;
     }
 }

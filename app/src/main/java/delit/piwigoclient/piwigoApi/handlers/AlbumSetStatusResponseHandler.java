@@ -31,9 +31,14 @@ public class AlbumSetStatusResponseHandler extends AbstractPiwigoWsResponseHandl
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse(getMessageId(), getPiwigoMethod());
+        PiwigoSetAlbumStatusResponse r = new PiwigoSetAlbumStatusResponse(getMessageId(), getPiwigoMethod());
         storeResponse(r);
     }
 
 
+    public static class PiwigoSetAlbumStatusResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        public PiwigoSetAlbumStatusResponse(long messageId, String piwigoMethod) {
+            super(messageId, piwigoMethod, true);
+        }
+    }
 }

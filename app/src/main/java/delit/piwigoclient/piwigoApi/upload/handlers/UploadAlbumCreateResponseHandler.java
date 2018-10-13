@@ -7,8 +7,8 @@ import org.json.JSONException;
 
 import java.security.SecureRandom;
 
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class UploadAlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -40,7 +40,7 @@ public class UploadAlbumCreateResponseHandler extends AbstractPiwigoWsResponseHa
 
         JsonObject result = rsp.getAsJsonObject();
         long newAlbumnId = result.get("id").getAsLong();
-        PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse r = new PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse(getMessageId(), getPiwigoMethod(), newAlbumnId);
+        AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse r = new AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse(getMessageId(), getPiwigoMethod(), newAlbumnId);
         storeResponse(r);
     }
 }

@@ -302,7 +302,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
 
         if (getUiHelper().completePermissionsWantedRequest(event)) {

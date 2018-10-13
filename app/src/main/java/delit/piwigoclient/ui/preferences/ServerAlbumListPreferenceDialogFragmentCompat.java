@@ -1,22 +1,17 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -36,6 +31,7 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
@@ -165,8 +161,8 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
                 } else {
                     addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
                 }
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) {
-                addAlbumsToUI(true, ((PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
+            } else if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
+                addAlbumsToUI(true, ((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
             }
             super.onAfterHandlePiwigoResponse(response);
         }

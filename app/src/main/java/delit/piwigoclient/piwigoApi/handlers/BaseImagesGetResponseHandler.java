@@ -81,7 +81,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             images = null;
         }
 
-        BasicResourceParser resourceParser = buildResourceParser(multimediaExtensionList);
+        BasicCategoryImageResourceParser resourceParser = buildResourceParser(multimediaExtensionList);
 
         if(images != null) {
             for (int i = 0; i < images.size(); i++) {
@@ -94,21 +94,21 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             }
         }
 
-        PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse r = new PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources);
+        PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources);
         storeResponse(r);
     }
 
-    protected BasicResourceParser buildResourceParser(String multimediaExtensionList) {
-        return new BasicResourceParser(multimediaExtensionList);
+    protected BasicCategoryImageResourceParser buildResourceParser(String multimediaExtensionList) {
+        return new BasicCategoryImageResourceParser(multimediaExtensionList);
     }
 
-    public static class BasicResourceParser {
+    public static class BasicCategoryImageResourceParser {
 
         private final Pattern p;
         private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         private Matcher m;
 
-        public BasicResourceParser(String multimediaExtensionList) {
+        public BasicCategoryImageResourceParser(String multimediaExtensionList) {
 
             StringTokenizer st = new StringTokenizer(multimediaExtensionList, ",");
             StringBuilder multimediaRegexpBuilder = new StringBuilder(".*\\.(");
@@ -138,6 +138,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 name = nameJsonElem.getAsString();
             }
 
+            //TODO check if this is the community plugin only... not available in standard response
             String description = null;
             JsonElement descJsonElem = image.get("comment");
             if (descJsonElem != null && !descJsonElem.isJsonNull()) {
@@ -174,6 +175,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 }
             }
 
+            // not available in standard response. Available in the community plugin response?
             Date dateCreated = null;
             JsonElement dateCreationElem = image.get("date_creation");
             if (!dateCreationElem.isJsonNull()) {
@@ -270,4 +272,29 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         }
     }
 
+    public static class PiwigoGetResourcesResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final int page;
+        private final int pageSize;
+        private final ArrayList<GalleryItem> resources;
+
+        public PiwigoGetResourcesResponse(long messageId, String piwigoMethod, int page, int pageSize, ArrayList<GalleryItem> resources) {
+            super(messageId, piwigoMethod, true);
+            this.page = page;
+            this.pageSize = pageSize;
+            this.resources = resources;
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public int getPageSize() {
+            return pageSize;
+        }
+
+        public ArrayList<GalleryItem> getResources() {
+            return resources;
+        }
+    }
 }

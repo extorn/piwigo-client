@@ -5,6 +5,9 @@ import java.util.List;
 
 public class ArrayUtils {
     public static long[] getLongArray(String[] values) {
+        if(values == null) {
+            return null;
+        }
         long[] retVal = new long[values.length];
         for (int i = 0; i < values.length; i++) {
             retVal[i] = Long.valueOf(values[i]);
@@ -13,6 +16,9 @@ public class ArrayUtils {
     }
 
     public static ArrayList<Long> toList(long[] values) {
+        if(values == null) {
+            return null;
+        }
         ArrayList<Long> retVal = new ArrayList<>(values.length);
         for (int i = 0; i < values.length; i++) {
             retVal.add(values[i]);
@@ -32,6 +38,9 @@ public class ArrayUtils {
     }
 
     public static long[] getLongArray(int[] intArray) {
+        if(intArray == null) {
+            return null;
+        }
         long[] retVal = new long[intArray.length];
         for (int i = 0; i < intArray.length; i++) {
             retVal[i] = intArray[i];

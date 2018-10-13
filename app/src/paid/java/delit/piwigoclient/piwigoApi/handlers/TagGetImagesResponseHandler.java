@@ -12,7 +12,6 @@ import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -73,7 +72,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
             }
         }
 
-        PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse r = new PiwigoResponseBufferingHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources);
+        BaseImagesGetResponseHandler.PiwigoGetResourcesResponse r = new BaseImagesGetResponseHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources);
         storeResponse(r);
     }
 }

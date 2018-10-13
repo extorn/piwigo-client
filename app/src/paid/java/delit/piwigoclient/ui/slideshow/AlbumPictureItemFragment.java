@@ -56,7 +56,7 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
         setupExifDataTab(resourceDetailsViewPager, null);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ExifDataRetrievedEvent event) {
         if(event.getUri() == null) {
             Crashlytics.log(Log.ERROR, getTag(), "invalid event received");

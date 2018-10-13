@@ -76,7 +76,7 @@ public class Tag implements Identifiable, Parcelable {
         if (!(other instanceof Tag)) {
             return false;
         }
-        if(((Tag) other).id == -1 && this.id == -1) {
+        if(((Tag) other).id < 0 || this.id < 0) {
             return ((Tag) other).name.equals(this.name);
         }
         return ((Tag) other).id == this.id;

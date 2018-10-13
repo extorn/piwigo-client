@@ -31,7 +31,26 @@ public class AlbumRemovePermissionsResponseHandler extends AlbumAlterPermissions
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoRemoveAlbumPermissionsResponse r = new PiwigoResponseBufferingHandler.PiwigoRemoveAlbumPermissionsResponse(getMessageId(), getPiwigoMethod(), getNewAllowedGroups(), getNewAllowedUsers());
+        PiwigoRemoveAlbumPermissionsResponse r = new PiwigoRemoveAlbumPermissionsResponse(getMessageId(), getPiwigoMethod(), getNewAllowedGroups(), getNewAllowedUsers());
         storeResponse(r);
+    }
+
+    public static class PiwigoRemoveAlbumPermissionsResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final HashSet<Long> groupIdsAffected;
+        private final HashSet<Long> userIdsAffected;
+
+        public PiwigoRemoveAlbumPermissionsResponse(long messageId, String piwigoMethod, HashSet<Long> groupIdsAffected, HashSet<Long> userIdsAffected) {
+            super(messageId, piwigoMethod, true);
+            this.groupIdsAffected = groupIdsAffected;
+            this.userIdsAffected = userIdsAffected;
+        }
+
+        public HashSet<Long> getGroupIdsAffected() {
+            return groupIdsAffected;
+        }
+
+        public HashSet<Long> getUserIdsAffected() {
+            return userIdsAffected;
+        }
     }
 }

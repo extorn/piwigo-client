@@ -62,7 +62,7 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
         if (errorCode == 501 && "Method name is not valid".equals(errorMessage)) {
             resetFailureAsASuccess();
             PiwigoSessionDetails.getInstance(getConnectionPrefs()).setUseCommunityPlugin(false);
-            PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), null);
+            PiwigoCommunitySessionStatusResponse r = new PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), null);
             storeResponse(r);
         } else {
             super.onPiwigoFailure(rsp);
@@ -84,7 +84,25 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
             sessionDetails.setUseCommunityPlugin(false);
         }
         sessionDetails.updateUserType(realUserStatus);
-        PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), uploadToAlbumsList);
+        PiwigoCommunitySessionStatusResponse r = new PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), uploadToAlbumsList);
         storeResponse(r);
+    }
+
+    public static class PiwigoCommunitySessionStatusResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final String categoryListMethod;
+
+        public PiwigoCommunitySessionStatusResponse(long messageId, String piwigoMethod, String categoryListMethod) {
+            super(messageId, piwigoMethod, true);
+            this.categoryListMethod = categoryListMethod;
+        }
+
+        public String getCategoryListMethod() {
+            return categoryListMethod;
+        }
+
+        public boolean isAvailable() {
+            return categoryListMethod != null;
+        }
     }
 }

@@ -261,7 +261,7 @@ public class UsersListFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onUsersLoaded(final PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse response) {
+    private void onUsersLoaded(final UsersGetListResponseHandler.PiwigoGetUsersListResponse response) {
         usersModel.acquirePageLoadLock();
         try {
             usersModel.recordPageLoadSucceeded(response.getMessageId());
@@ -273,18 +273,18 @@ public class UsersListFragment extends MyFragment {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(UserDeletedEvent event) {
         viewAdapter.remove(event.getUser());
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), event.getUser().getUsername()));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(UserUpdatedEvent event) {
         viewAdapter.replaceOrAddItem(event.getUser());
     }
 
-    private void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
+    private void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
         User user = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(user);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), user.getUsername()));
@@ -295,7 +295,7 @@ public class UsersListFragment extends MyFragment {
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_failed_pattern), user.getUsername()));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
@@ -314,10 +314,10 @@ public class UsersListFragment extends MyFragment {
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse) {
-                onUsersLoaded((PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) {
-                onUserDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) response);
+            if (response instanceof UsersGetListResponseHandler.PiwigoGetUsersListResponse) {
+                onUsersLoaded((UsersGetListResponseHandler.PiwigoGetUsersListResponse) response);
+            } else if (response instanceof UserDeleteResponseHandler.PiwigoDeleteUserResponse) {
+                onUserDeleted((UserDeleteResponseHandler.PiwigoDeleteUserResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
                 if(usersModel.isTrackingPageLoaderWithId(response.getMessageId())) {
                     onUsersLoadFailed(response);

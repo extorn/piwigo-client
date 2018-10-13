@@ -24,7 +24,7 @@ public class Basket implements Parcelable {
     }
 
     public Basket(Parcel in) {
-        contents = ParcelUtils.readHashSet(in);
+        contents = ParcelUtils.readHashSet(in, null);
         action = in.readInt();
         contentParent = in.readParcelable(null);
     }

@@ -252,7 +252,7 @@ public class GroupsListFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onGroupsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    private void onGroupsLoaded(final GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         groupsModel.acquirePageLoadLock();
         try {
             groupsModel.recordPageLoadSucceeded(response.getMessageId());
@@ -264,18 +264,18 @@ public class GroupsListFragment extends MyFragment {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(GroupDeletedEvent event) {
         viewAdapter.remove(event.getGroup());
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), event.getGroup().getName()));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(GroupUpdatedEvent event) {
         viewAdapter.replaceOrAddItem(event.getGroup());
     }
 
-    private void onGroupDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse response) {
+    private void onGroupDeleted(final GroupDeleteResponseHandler.PiwigoDeleteGroupResponse response) {
         Group group = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(group);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), group.getName()));
@@ -286,7 +286,7 @@ public class GroupsListFragment extends MyFragment {
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_failed_pattern), group.getName()));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
@@ -305,10 +305,10 @@ public class GroupsListFragment extends MyFragment {
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) {
-                onGroupDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
+            if (response instanceof GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) {
+                onGroupDeleted((GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) response);
+            } else if (response instanceof GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) {
+                onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
                 if(groupsModel.isTrackingPageLoaderWithId(response.getMessageId())) {
                     onGroupsLoadFailed(response);

@@ -66,8 +66,21 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
                 }
             }
         }
-        PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse r = new PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse(getMessageId(), getPiwigoMethod(), preexistingItems);
+        PiwigoFindExistingImagesResponse r = new PiwigoFindExistingImagesResponse(getMessageId(), getPiwigoMethod(), preexistingItems);
         storeResponse(r);
     }
 
+    public static class PiwigoFindExistingImagesResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final HashMap<String, Long> existingImages;
+
+        public PiwigoFindExistingImagesResponse(long messageId, String piwigoMethod, HashMap<String, Long> existingImages) {
+            super(messageId, piwigoMethod, true);
+            this.existingImages = existingImages;
+        }
+
+        public HashMap<String, Long> getExistingImages() {
+            return existingImages;
+        }
+    }
 }

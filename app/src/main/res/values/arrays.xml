@@ -146,6 +146,7 @@
     </integer-array>
 
     <string-array name="top_tips" translatable="true">
+        <item>Error always occurs when trying to update tags - \"You are not allowed to delete tags\" - Ensure users can both add and delete tags (server plugin setting)</item>
         <item>Share files from a different app with this app to add them to the upload screen ready to go to your current server</item>
         <item>Long click on an image (either thumbnail or slideshow item) that has failed to load in order to retrieve it again</item>
         <item>Long click on an album to delete that album and all content</item>

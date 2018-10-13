@@ -49,8 +49,26 @@ public class UserPermissionsAddResponseHandler extends AbstractPiwigoWsResponseH
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
 
-        PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse r = new PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse(getMessageId(), getPiwigoMethod(), userId, newAlbumsAllowedAccessTo);
+        PiwigoUserPermissionsAddedResponse r = new PiwigoUserPermissionsAddedResponse(getMessageId(), getPiwigoMethod(), userId, newAlbumsAllowedAccessTo);
         storeResponse(r);
     }
 
+    public static class PiwigoUserPermissionsAddedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final HashSet<Long> albumsForWhichPermissionAdded;
+        private final long userId;
+
+        public PiwigoUserPermissionsAddedResponse(long messageId, String piwigoMethod, long userId, HashSet<Long> albumsForWhichPermissionAdded) {
+            super(messageId, piwigoMethod, true);
+            this.userId = userId;
+            this.albumsForWhichPermissionAdded = albumsForWhichPermissionAdded;
+        }
+
+        public long getUserId() {
+            return userId;
+        }
+
+        public HashSet<Long> getAlbumsForWhichPermissionAdded() {
+            return albumsForWhichPermissionAdded;
+        }
+    }
 }

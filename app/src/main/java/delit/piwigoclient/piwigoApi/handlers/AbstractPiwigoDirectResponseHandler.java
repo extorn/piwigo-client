@@ -97,14 +97,19 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
         w.startAndWait(messageId);
     }
 
-    public void run(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
-        runAsync = false;
-        setPublishResponses(false);
-        Worker w = buildWorker(context);
-        setWorker(w);
-        w.setConnectionPreferences(connectionPrefs);
-        w.run(messageId);
-    }
+    /**
+     * Run in same thread.
+     * @param context
+     * @param connectionPrefs
+     */
+//    public void run(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+//        runAsync = false;
+//        setPublishResponses(false);
+//        Worker w = buildWorker(context);
+//        setWorker(w);
+//        w.setConnectionPreferences(connectionPrefs);
+//        w.run(messageId);
+//    }
 
     public long invokeAsync(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         runAsync = true;
@@ -121,21 +126,29 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
         return w.start(messageId);
     }
 
-    public boolean invokeAgain(Context context) {
+    public void rerun(Context context) {
+        if (isRunAsync()) {
+            invokeAsyncAgain(context);
+        } else {
+            invokeAgain(context);
+        }
+    }
+
+    protected boolean invokeAgain(Context context) {
         Worker w = buildWorker(context);
         w.setConnectionPreferences(worker.getConnectionPreferences());
         setWorker(w);
         return w.run(messageId);
     }
 
-    public long invokeAsyncAgain(Context context) {
+    protected long invokeAsyncAgain(Context context) {
         Worker w = buildWorker(context);
         w.setConnectionPreferences(worker.getConnectionPreferences());
         setWorker(w);
         return w.start(messageId);
     }
 
-    public boolean isRunAsync() {
+    protected boolean isRunAsync() {
         return runAsync;
     }
 }

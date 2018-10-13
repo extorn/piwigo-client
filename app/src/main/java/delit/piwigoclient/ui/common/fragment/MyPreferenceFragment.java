@@ -17,6 +17,9 @@ import com.crashlytics.android.Crashlytics;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.piwigoApi.handlers.AbstractBasicPiwigoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.preference.ClientCertificatePreference;
@@ -75,8 +78,8 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
         return new BasicPiwigoResponseListener();
     }
 
-    protected void addActiveServiceCall(@StringRes int stringId, long messageId) {
-        uiHelper.addActiveServiceCall(stringId, messageId);
+    protected void callServer(@StringRes int callDescriptionResId, AbstractPiwigoDirectResponseHandler handler) {
+        uiHelper.addActiveServiceCall(callDescriptionResId, handler.invokeAsync(getContext()));
     }
 
     @Override

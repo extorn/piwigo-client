@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.Locale;
 
 import delit.piwigoclient.model.piwigo.User;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -106,7 +105,7 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
         int itemsOnPage = pagingObj.get("count").getAsInt();
         JsonArray usersObj = result.get("users").getAsJsonArray();
         ArrayList<User> users = parseUsersFromJson(usersObj);
-        PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse r = new PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
+        LoginResponseHandler.PiwigoGetUserDetailsResponse r = new LoginResponseHandler.PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
         storeResponse(r);
     }
 

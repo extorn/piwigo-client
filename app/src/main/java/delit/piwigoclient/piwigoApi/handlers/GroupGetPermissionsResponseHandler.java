@@ -64,9 +64,34 @@ public class GroupGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
             }
         }
 
-        PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse(getMessageId(), getPiwigoMethod(), groupIds, allowedAlbums);
+        PiwigoGroupPermissionsRetrievedResponse r = new PiwigoGroupPermissionsRetrievedResponse(getMessageId(), getPiwigoMethod(), groupIds, allowedAlbums);
         storeResponse(r);
     }
 
 
+    public static class PiwigoGroupPermissionsRetrievedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final HashSet<Long> allowedAlbums;
+        private final HashSet<Long> groupIds;
+
+        public PiwigoGroupPermissionsRetrievedResponse(long messageId, String piwigoMethod, HashSet<Long> groupIds, HashSet<Long> allowedAlbums) {
+            super(messageId, piwigoMethod, true);
+            this.groupIds = groupIds;
+            this.allowedAlbums = allowedAlbums;
+        }
+
+        public long getGroupId() {
+            if (groupIds.size() != 1) {
+                throw new IllegalStateException("Can only use this method when there is known to be a single group id");
+            }
+            return groupIds.iterator().next();
+        }
+
+        public HashSet<Long> getGroupIds() {
+            return groupIds;
+        }
+
+        public HashSet<Long> getAllowedAlbums() {
+            return allowedAlbums;
+        }
+    }
 }

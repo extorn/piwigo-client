@@ -38,6 +38,7 @@ public class PluginUserTagsUpdateResourceTagsListResponseHandler<T extends Resou
                 sb.append(',');
             }
         }
+        params.put("tags", sb.toString());
 
         return params;
     }
@@ -51,9 +52,12 @@ public class PluginUserTagsUpdateResourceTagsListResponseHandler<T extends Resou
             if(rspObj.has("error")) {
                 JsonArray errors = rspObj.getAsJsonArray("error");
                 StringBuilder sb = new StringBuilder();
-                for(JsonElement error: errors) {
+                for(int i = 0; i < errors.size(); i++) {
+                    JsonElement error = errors.get(i);
                     sb.append(error.getAsString());
-                    sb.append('\n');
+                    if(i < errors.size() - 1) {
+                        sb.append('\n');
+                    }
                 }
                 errorStr = sb.toString();
             }

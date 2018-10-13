@@ -71,7 +71,25 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
             linkedAlbums.add(albumId);
             uploadedResource.setLinkedAlbums(linkedAlbums);
         }
-        PiwigoResponseBufferingHandler.PiwigoUploadFileChunkResponse r = new PiwigoResponseBufferingHandler.PiwigoUploadFileChunkResponse(getMessageId(), getPiwigoMethod(), uploadedResource);
+        PiwigoUploadFileChunkResponse r = new PiwigoUploadFileChunkResponse(getMessageId(), getPiwigoMethod(), uploadedResource);
         storeResponse(r);
+    }
+
+    public static class PiwigoUploadFileChunkResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final ResourceItem uploadedResource;
+
+        public PiwigoUploadFileChunkResponse(long messageId, String piwigoMethod) {
+            super(messageId, piwigoMethod, true);
+            uploadedResource = null;
+        }
+
+        public PiwigoUploadFileChunkResponse(long messageId, String piwigoMethod, ResourceItem uploadedResource) {
+            super(messageId, piwigoMethod, true);
+            this.uploadedResource = uploadedResource;
+        }
+
+        public ResourceItem getUploadedResource() {
+            return uploadedResource;
+        }
     }
 }

@@ -1,7 +1,9 @@
 package delit.piwigoclient.ui.common.util;
 
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.android.gms.common.util.ArrayUtils;
 
@@ -9,7 +11,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class BundleUtils {
@@ -74,8 +78,8 @@ public class BundleUtils {
 
     public static void putIntHashSet(Bundle bundle, String key, HashSet<Integer> data) {
         if(data != null) {
-            long[] dataArr2 = ArrayUtils.toLongArray(data.toArray(new Long[data.size()]));
-            bundle.putLongArray(key, dataArr2);
+            int[] dataArr2 = ArrayUtils.toPrimitiveArray(data.toArray(new Integer[data.size()]));
+            bundle.putIntArray(key, dataArr2);
         }
     }
 
@@ -116,5 +120,59 @@ public class BundleUtils {
             return null;
         }
         return new Date(timeMillis);
+    }
+
+    public static <S,T> HashMap<S, T> readMap(Bundle bundle, String key, ClassLoader loader) {
+        Bundle b = bundle.getBundle(key);
+        if(b == null) {
+            return null;
+        }
+        int len = b.getInt("bytes");
+        byte[] dataBytes = b.getByteArray("data");
+        Parcel p = Parcel.obtain();
+        p.unmarshall(dataBytes,0,len);
+        ArrayList<S> keys = (ArrayList<S>) p.readValue(loader);
+        ArrayList<T> values = (ArrayList<T>) p.readValue(loader);
+        HashMap<S,T> map = new HashMap<>(keys.size());
+        for(int i = 0; i < values.size(); i++) {
+            map.put(keys.get(i), values.get(i));
+        }
+        return map;
+    }
+
+    /**
+     * S and T must be supported by Parcel - writeValue / readValue
+     * @param bundle
+     * @param key
+     * @param data
+     * @param <S>
+     * @param <T>
+     */
+    public static <S,T> void writeMap(Bundle bundle, String key, Map<S, T> data) {
+        if(data == null) {
+            return;
+        }
+        ArrayList<S> keys = new ArrayList<>(data.size());
+        ArrayList<T> values = new ArrayList<>(data.size());
+        for(Map.Entry<S,T> entry : data.entrySet()) {
+            keys.add(entry.getKey());
+            values.add(entry.getValue());
+        }
+        Parcel p = Parcel.obtain();
+        p.writeValue(keys);
+        p.writeValue(values);
+        byte[] bytes = p.marshall();
+        Bundle b = new Bundle();
+        b.putInt("bytes", bytes.length);
+        b.putByteArray("data", bytes);
+        bundle.putBundle(key, b);
+    }
+
+    public static void logSize(String key, Bundle bundle) {
+        Parcel parcel = Parcel.obtain();
+        parcel.writeBundle(bundle);
+        int sizeInBytes = parcel.dataSize(); // This is what you want to check
+        Log.v("BundleUtils", String.format("BundleSize(%1$s) %2$.02fKb",key,((double)sizeInBytes) / 1024));
+        parcel.recycle();
     }
 }

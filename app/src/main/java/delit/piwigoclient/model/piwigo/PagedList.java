@@ -3,8 +3,6 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -57,10 +55,10 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
 
     public PagedList(Parcel in) {
         itemType = in.readString();
-        ParcelUtils.readIntSet(in, pagesLoaded);
+        ParcelUtils.readIntSet(in, pagesLoaded, null);
         items = in.readArrayList(null);
         in.readMap(pagesBeingLoaded, getClass().getClassLoader());
-        ParcelUtils.readIntSet(in, pagesFailedToLoad);
+        ParcelUtils.readIntSet(in, pagesFailedToLoad, null);
         fullyLoaded = (boolean) in.readValue(null);
 
         if(pageLoadLock == null) {
@@ -149,7 +147,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
 
         int firstInsertPos = 0;
         if (newItems.size() > 0) {
-            firstInsertPos = Math.min(getPageInsertPosition(page, pageSize), items.size());
+            firstInsertPos = Math.min(Math.max(0, getPageInsertPosition(page, pageSize)), items.size());
             items.addAll(firstInsertPos, newItems);
         }
         pagesLoaded.add(page);

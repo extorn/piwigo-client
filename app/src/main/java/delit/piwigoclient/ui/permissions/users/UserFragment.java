@@ -511,7 +511,7 @@ public class UserFragment extends MyFragment {
         addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId()).invokeAsync(getContext()));
     }
 
-    private void onUserSaved(PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse response) {
+    private void onUserSaved(UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse response) {
         // copy across album permissions as they aren't normally retrieved.
         synchronized (saveActionIds) {
             saveActionIds.remove(response.getMessageId());
@@ -598,10 +598,10 @@ public class UserFragment extends MyFragment {
         return indirectAlbumPermissions;
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumPermissionsSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
-            newDirectAlbumPermissions = event.getSelectedAlbums();
+            newDirectAlbumPermissions = event.getSelectedAlbumIds();
         }
     }
 
@@ -636,7 +636,7 @@ public class UserFragment extends MyFragment {
         }
     }
 
-    private void onUserPermissionsRemoved(PiwigoResponseBufferingHandler.PiwigoUserPermissionsRemovedResponse response) {
+    private void onUserPermissionsRemoved(UserPermissionsRemovedResponseHandler.PiwigoUserPermissionsRemovedResponse response) {
         synchronized (saveActionIds) {
             saveActionIds.remove(response.getMessageId());
             currentDirectAlbumPermissions.removeAll(response.getAlbumsForWhichPermissionRemoved());
@@ -648,7 +648,7 @@ public class UserFragment extends MyFragment {
         }
     }
 
-    private void onUserPermissionsAdded(PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse response) {
+    private void onUserPermissionsAdded(UserPermissionsAddResponseHandler.PiwigoUserPermissionsAddedResponse response) {
         synchronized (saveActionIds) {
             saveActionIds.remove(response.getMessageId());
             currentDirectAlbumPermissions.addAll(response.getAlbumsForWhichPermissionAdded());
@@ -665,7 +665,7 @@ public class UserFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onUserCreated(PiwigoResponseBufferingHandler.PiwigoAddUserResponse response) {
+    private void onUserCreated(UserAddResponseHandler.PiwigoAddUserResponse response) {
         saveActionIds.remove(response.getMessageId());
         User savedUser = response.getUser();
         newUser.setId(savedUser.getId());
@@ -675,18 +675,18 @@ public class UserFragment extends MyFragment {
         saveUserPermissionsChangesIfRequired();
     }
 
-    private void onGroupsLoaded(PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    private void onGroupsLoaded(GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         currentGroupMembership = response.getGroups();
         fillGroupMembershipField();
     }
 
-    private void onGroupMembershipAlbumPermissionsRetrieved(PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse response) {
+    private void onGroupMembershipAlbumPermissionsRetrieved(GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse response) {
         // retrieve all those albums indirectly accessibly by this user.
         newIndirectAlbumPermissions = response.getAllowedAlbums();
         populateAlbumPermissionsList(getLatestDirectAlbumPermissions(), getLatestIndirectAlbumPermissions());
     }
 
-    private void onUserPermissionsRetrieved(PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse response) {
+    private void onUserPermissionsRetrieved(UserGetPermissionsResponseHandler.PiwigoUserPermissionsResponse response) {
         // We're retrieving the current configuration
         currentDirectAlbumPermissions = response.getDirectlyAccessibleAlbumIds();
         currentIndirectAlbumPermissions = response.getIndirectlyAccessibleAlbumIds();
@@ -702,7 +702,7 @@ public class UserFragment extends MyFragment {
         }
     }
 
-    private void onUserDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse response) {
+    private void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
         EventBus.getDefault().post(new UserDeletedEvent(user));
         // return to previous screen
         if (isVisible()) {
@@ -724,7 +724,7 @@ public class UserFragment extends MyFragment {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(GroupSelectionCompleteEvent groupSelectionCompleteEvent) {
 
         if (selectGroupsActionId == groupSelectionCompleteEvent.getActionId()) {
@@ -741,7 +741,7 @@ public class UserFragment extends MyFragment {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
@@ -751,24 +751,24 @@ public class UserFragment extends MyFragment {
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserPermissionsRemovedResponse) {
-                onUserPermissionsRemoved((PiwigoResponseBufferingHandler.PiwigoUserPermissionsRemovedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse) {
-                onUserPermissionsAdded((PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoAddUserResponse) {
-                onUserCreated((PiwigoResponseBufferingHandler.PiwigoAddUserResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse) {
-                onUserSaved((PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse) {
-                onUserPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse) response);
+            if (response instanceof UserPermissionsRemovedResponseHandler.PiwigoUserPermissionsRemovedResponse) {
+                onUserPermissionsRemoved((UserPermissionsRemovedResponseHandler.PiwigoUserPermissionsRemovedResponse) response);
+            } else if (response instanceof UserPermissionsAddResponseHandler.PiwigoUserPermissionsAddedResponse) {
+                onUserPermissionsAdded((UserPermissionsAddResponseHandler.PiwigoUserPermissionsAddedResponse) response);
+            } else if (response instanceof UserAddResponseHandler.PiwigoAddUserResponse) {
+                onUserCreated((UserAddResponseHandler.PiwigoAddUserResponse) response);
+            } else if (response instanceof UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse) {
+                onUserSaved((UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse) response);
+            } else if (response instanceof GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) {
+                onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
+            } else if (response instanceof UserGetPermissionsResponseHandler.PiwigoUserPermissionsResponse) {
+                onUserPermissionsRetrieved((UserGetPermissionsResponseHandler.PiwigoUserPermissionsResponse) response);
             } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
                 onGetSubGalleries((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) {
-                onUserDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteUserResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) {
-                onGroupMembershipAlbumPermissionsRetrieved((PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRetrievedResponse) response);
+            } else if (response instanceof UserDeleteResponseHandler.PiwigoDeleteUserResponse) {
+                onUserDeleted((UserDeleteResponseHandler.PiwigoDeleteUserResponse) response);
+            } else if (response instanceof GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) {
+                onGroupMembershipAlbumPermissionsRetrieved((GroupGetPermissionsResponseHandler.PiwigoGroupPermissionsRetrievedResponse) response);
             }
         }
     }

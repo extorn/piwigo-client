@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
+import delit.piwigoclient.model.piwigo.PiwigoAlbumAdminList;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
@@ -140,8 +141,20 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             }
             availableGalleries.add(item);
         }
-        PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsResponse r = new PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
+        AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsResponse r = new AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
         storeResponse(r);
     }
 
+    public static class PiwigoGetSubAlbumsAdminResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        final PiwigoAlbumAdminList adminList;
+
+        public PiwigoGetSubAlbumsAdminResponse(long messageId, String piwigoMethod, PiwigoAlbumAdminList adminList) {
+            super(messageId, piwigoMethod, true);
+            this.adminList = adminList;
+        }
+
+        public PiwigoAlbumAdminList getAdminList() {
+            return adminList;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -90,18 +91,6 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     }
 
     @Override
-    protected void bindDataToFragment(Fragment fragment, int position) {
-        GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
-        int totalSlideshowItems = getTotalSlideshowItems();
-
-        if (galleryItem instanceof PictureResourceItem) {
-            fragment.setArguments(SlideshowItemFragment.buildArgs((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems));
-        } else if (galleryItem instanceof VideoResourceItem) {
-            fragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, false));
-        }
-    }
-
-    @Override
     public Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
 
         GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
@@ -128,7 +117,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         SlideshowItemFragment fragment = (SlideshowItemFragment) super.instantiateItem(container, position);
         if (fragment != null && position == ((ViewPager) container).getCurrentItem()) {
-            if (lastPosition >= 0) {
+            if (lastPosition >= 0 && lastPosition != position) {
                 onPageDeselected(lastPosition);
             }
             lastPosition = position;
@@ -185,8 +174,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
             // now request a rebuild of the slideshow pages
 //            notifyDataSetChanged();
 
-            // the object is not used by this.
-            super.destroyItem(getContainer(),slideshowIdxOfItemToDelete, getActiveFragment(slideshowIdxOfItemToDelete));
+            super.onDeleteItem(getContainer(), slideshowIdxOfItemToDelete);
 
             notifyDataSetChanged();
         }

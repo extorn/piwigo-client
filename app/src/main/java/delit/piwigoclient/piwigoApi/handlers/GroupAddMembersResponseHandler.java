@@ -64,8 +64,20 @@ public class GroupAddMembersResponseHandler<T extends ResourceItem> extends Abst
             HashSet<Long> currentUsersGroupMemberships = sessionDetails.getGroupMemberships();
             currentUsersGroupMemberships.add(groupId);
         }
-        PiwigoResponseBufferingHandler.PiwigoGroupAddMembersResponse r = new PiwigoResponseBufferingHandler.PiwigoGroupAddMembersResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
+        PiwigoGroupAddMembersResponse r = new PiwigoGroupAddMembersResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
         storeResponse(r);
     }
 
+    public static class PiwigoGroupAddMembersResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final Group group;
+
+        public PiwigoGroupAddMembersResponse(long messageId, String piwigoMethod, Group group) {
+            super(messageId, piwigoMethod, true);
+            this.group = group;
+        }
+
+        public Group getGroup() {
+            return group;
+        }
+    }
 }

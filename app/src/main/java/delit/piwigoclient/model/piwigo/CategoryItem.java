@@ -31,6 +31,7 @@ public class CategoryItem extends GalleryItem {
     private Long representativePictureId;
     private long[] users;
     private long[] groups;
+    private long permissionLoadedAt;
 
     public CategoryItem(long id) {
         super(id, null, null, null, null);
@@ -54,6 +55,7 @@ public class CategoryItem extends GalleryItem {
         representativePictureId = (Long) in.readValue(null);
         users = (long[]) in.readValue(null);
         groups = (long[]) in.readValue(null);
+        permissionLoadedAt = in.readLong();
     }
 
     @Override
@@ -67,6 +69,7 @@ public class CategoryItem extends GalleryItem {
         out.writeValue(representativePictureId);
         out.writeLongArray(users);
         out.writeLongArray(groups);
+        out.writeLong(permissionLoadedAt);
     }
 
     /**
@@ -141,6 +144,7 @@ public class CategoryItem extends GalleryItem {
 
     public void setUsers(long[] users) {
         this.users = users;
+        permissionLoadedAt = System.currentTimeMillis();
     }
 
     public long[] getGroups() {
@@ -149,6 +153,7 @@ public class CategoryItem extends GalleryItem {
 
     public void setGroups(long[] groups) {
         this.groups = groups;
+        permissionLoadedAt = System.currentTimeMillis();
     }
 
     public long getTotalPhotos() {
@@ -251,4 +256,13 @@ public class CategoryItem extends GalleryItem {
             return new CategoryItem[size];
         }
     };
+
+    public void forcePermissionsReload() {
+        permissionLoadedAt = 0;
+    }
+
+    public boolean isPermissionsLoaded() {
+        return !isLikelyOutdated(permissionLoadedAt) && groups != null && users != null;
+    }
+
 }

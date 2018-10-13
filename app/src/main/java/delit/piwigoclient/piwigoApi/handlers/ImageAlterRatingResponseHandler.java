@@ -40,8 +40,13 @@ public class ImageAlterRatingResponseHandler extends AbstractPiwigoWsResponseHan
         piwigoResource.setScore(score);
         piwigoResource.setRatingsGiven(usersRated);
 
-        PiwigoResponseBufferingHandler.PiwigoRatingAlteredResponse r = new PiwigoResponseBufferingHandler.PiwigoRatingAlteredResponse(getMessageId(), getPiwigoMethod(), piwigoResource);
+        PiwigoRatingAlteredResponse r = new PiwigoRatingAlteredResponse(getMessageId(), getPiwigoMethod(), piwigoResource);
         storeResponse(r);
     }
 
+    public static class PiwigoRatingAlteredResponse extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
+        public PiwigoRatingAlteredResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
+            super(messageId, piwigoMethod, piwigoResource);
+        }
+    }
 }

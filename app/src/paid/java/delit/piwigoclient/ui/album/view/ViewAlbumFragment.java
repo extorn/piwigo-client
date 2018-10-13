@@ -3,9 +3,9 @@ package delit.piwigoclient.ui.album.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -15,14 +15,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -32,9 +30,12 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImageUpdateTagsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
@@ -49,13 +50,13 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING, tagMembershipChangesAction);
+        outState.putParcelable(STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING, tagMembershipChangesAction);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            tagMembershipChangesAction = (AddTagsToResourcesAction) savedInstanceState.getSerializable(STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING);
+            tagMembershipChangesAction = savedInstanceState.getParcelable(STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING);
         }
         super.onViewCreated(view, savedInstanceState);
     }
@@ -121,7 +122,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         super.onResume();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(TagSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             viewAdapter.toggleItemSelection();
@@ -131,7 +132,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     @Override
-    protected void onPiwigoUpdateResourceInfoResponse(PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse response) {
+    protected void onPiwigoUpdateResourceInfoResponse(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {
         if(tagMembershipChangesAction != null) {
         tagMembershipChangesAction.recordTagListUpdated(response.getPiwigoResource());
             // changes made.
@@ -152,16 +153,19 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     @Override
-    protected void onResourceInfoRetrieved(PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse response) {
+    protected void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
         if(tagMembershipChangesAction != null) {
             if(tagMembershipChangesAction.addResourceReadyToProcess(response.getResource())) {
                 // action is ready for the next step.
                 tagMembershipChangesAction.makeChangesToLocalResources();
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
+
                 for(ResourceItem item : tagMembershipChangesAction.resourcesReadyToProcess) {
-                    if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                        addActiveServiceCall(R.string.progress_resource_details_updating,new ImageUpdateInfoResponseHandler(item).invokeAsync(getContext()));
+                    if (allowTagEdit) {
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(item).invokeAsync(getContext()));
                     } else {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateTagsResponseHandler(item).invokeAsync(getContext()));
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
                     }
                 }
             }
@@ -188,8 +192,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         }
     }
 
-    private class AddTagsToResourcesAction implements Serializable {
-        private static final long serialVersionUID = -6944626147044296967L;
+    private static class AddTagsToResourcesAction implements Parcelable {
         private final HashSet<ResourceItem> selectedResources;
         private final HashSet<ResourceItem> resourcesReadyToProcess;
         private HashMap<ResourceItem,ArrayList<Tag>> tagMembershipChangesPending;
@@ -199,6 +202,35 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         public AddTagsToResourcesAction(Set<ResourceItem> selectedItems) {
             selectedResources = new HashSet<>(selectedItems);
             resourcesReadyToProcess = new HashSet<>(selectedItems.size());
+        }
+
+        public AddTagsToResourcesAction(Parcel in) {
+            selectedResources = ParcelUtils.readHashSet(in, null);
+            resourcesReadyToProcess = ParcelUtils.readHashSet(in, null);
+            tagMembershipChangesPending = ParcelUtils.readMap(in);
+            tagUpdateEvents = (ArrayList<Tag>) in.readValue(null);
+            tagsToAdd = ParcelUtils.readHashSet(in, null);
+        }
+
+        public static final Creator<AddTagsToResourcesAction> CREATOR = new Creator<AddTagsToResourcesAction>() {
+            @Override
+            public AddTagsToResourcesAction createFromParcel(Parcel in) {
+                return new AddTagsToResourcesAction(in);
+            }
+
+            @Override
+            public AddTagsToResourcesAction[] newArray(int size) {
+                return new AddTagsToResourcesAction[size];
+            }
+        };
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            ParcelUtils.writeSet(dest, selectedResources);
+            ParcelUtils.writeSet(dest,resourcesReadyToProcess);
+            ParcelUtils.writeMap(dest, tagMembershipChangesPending);
+            dest.writeValue(tagUpdateEvents);
+            ParcelUtils.writeSet(dest, tagsToAdd);
         }
 
         public void setTagsToAdd(HashSet<Tag> tagsToAdd) {
@@ -264,5 +296,11 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
             tagUpdateEvents.clear();
             tagsToAdd.clear();
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
     }
 }

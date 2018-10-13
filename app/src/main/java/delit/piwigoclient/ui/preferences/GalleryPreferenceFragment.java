@@ -81,7 +81,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         return getActivity().getApplicationContext();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (event.areAllPermissionsGranted()) {

@@ -102,8 +102,38 @@ public class UsersGetListResponseHandler extends AbstractPiwigoWsResponseHandler
         int itemsOnPage = pagingObj.get("count").getAsInt();
         JsonArray usersObj = result.get("users").getAsJsonArray();
         ArrayList<User> users = parseUsersFromJson(usersObj);
-        PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse r = new PiwigoResponseBufferingHandler.PiwigoGetUsersListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
+        PiwigoGetUsersListResponse r = new PiwigoGetUsersListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
         storeResponse(r);
     }
 
+    public static class PiwigoGetUsersListResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final ArrayList<User> users;
+        private final int itemsOnPage;
+        private final int pageSize;
+        private final int page;
+
+        public PiwigoGetUsersListResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<User> users) {
+            super(messageId, piwigoMethod, true);
+            this.page = page;
+            this.pageSize = pageSize;
+            this.itemsOnPage = itemsOnPage;
+            this.users = users;
+        }
+
+        public int getItemsOnPage() {
+            return itemsOnPage;
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public int getPageSize() {
+            return pageSize;
+        }
+
+        public ArrayList<User> getUsers() {
+            return users;
+        }
+    }
 }

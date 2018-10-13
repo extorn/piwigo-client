@@ -208,7 +208,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final UnlockAppEvent event) {
         String savedPassword = ConnectionPreferences.getActiveProfile().getPiwigoPasswordNotNull(prefs, getContext());
         if (savedPassword.equals(event.getPassword())) {
@@ -221,7 +221,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final LockAppEvent event) {
         lockAppInReadOnlyMode(true);
         EventBus.getDefault().post(new AppLockedEvent());

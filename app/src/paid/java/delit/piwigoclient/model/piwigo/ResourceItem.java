@@ -3,7 +3,6 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -22,7 +21,7 @@ public class ResourceItem extends AbstractBaseResourceItem {
 
     public ResourceItem(Parcel in) {
         super(in);
-        tags = ParcelUtils.readHashSet(in);
+        tags = ParcelUtils.readHashSet(in, null);
         isFavorite = (Boolean)in.readValue(null);
     }
 

@@ -65,7 +65,21 @@ public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
         album.setUsers(users);
         album.setGroups(groups);
 
-        PiwigoResponseBufferingHandler.PiwigoAlbumPermissionsRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoAlbumPermissionsRetrievedResponse(getMessageId(), getPiwigoMethod(), album);
+        PiwigoAlbumPermissionsRetrievedResponse r = new PiwigoAlbumPermissionsRetrievedResponse(getMessageId(), getPiwigoMethod(), album);
         storeResponse(r);
+    }
+
+    public static class PiwigoAlbumPermissionsRetrievedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final CategoryItem album;
+
+        public PiwigoAlbumPermissionsRetrievedResponse(long messageId, String piwigoMethod, CategoryItem album) {
+            super(messageId, piwigoMethod, true);
+            this.album = album;
+        }
+
+        public CategoryItem getAlbum() {
+            return album;
+        }
     }
 }

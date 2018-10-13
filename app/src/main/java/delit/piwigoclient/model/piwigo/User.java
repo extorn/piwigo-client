@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashSet;
 
 import delit.piwigoclient.ui.common.util.ParcelUtils;
-import delit.piwigoclient.util.SetUtils;
 
 public class User implements Identifiable, Parcelable {
     private long id = -1;
@@ -30,7 +29,7 @@ public class User implements Identifiable, Parcelable {
         userType = in.readString();
         highDefinitionEnabled = (boolean)in.readValue(null);
         lastVisit = ParcelUtils.readDate(in);
-        groups = ParcelUtils.readLongSet(in);
+        groups = ParcelUtils.readLongSet(in, null);
         privacyLevel = in.readInt();
         password = in.readString();
     }

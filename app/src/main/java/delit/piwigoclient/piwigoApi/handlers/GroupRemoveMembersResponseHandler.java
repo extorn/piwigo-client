@@ -64,8 +64,20 @@ public class GroupRemoveMembersResponseHandler<T extends ResourceItem> extends A
             HashSet<Long> currentUsersGroupMemberships = sessionDetails.getGroupMemberships();
             currentUsersGroupMemberships.remove(groupId);
         }
-        PiwigoResponseBufferingHandler.PiwigoGroupRemoveMembersResponse r = new PiwigoResponseBufferingHandler.PiwigoGroupRemoveMembersResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
+        PiwigoGroupRemoveMembersResponse r = new PiwigoGroupRemoveMembersResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
         storeResponse(r);
     }
 
+    public static class PiwigoGroupRemoveMembersResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final Group group;
+
+        public PiwigoGroupRemoveMembersResponse(long messageId, String piwigoMethod, Group group) {
+            super(messageId, piwigoMethod, true);
+            this.group = group;
+        }
+
+        public Group getGroup() {
+            return group;
+        }
+    }
 }

@@ -162,8 +162,20 @@ public abstract class UIHelper<T> {
         return this.context != context;
     }
 
-    public void showDetailedToast(@StringRes int titleResId, String message) {
+    public void showShortDetailedToast(@StringRes int titleResId, @StringRes int messageResId) {
+        showDetailedToast(titleResId, getContext().getString(messageResId), Toast.LENGTH_SHORT);
+    }
+
+    public void showDetailedToast(@StringRes int titleResId, @StringRes int messageResId) {
+        showDetailedToast(titleResId, getContext().getString(messageResId), Toast.LENGTH_LONG);
+    }
+
+    public void showShortDetailedToast(@StringRes int titleResId, String message) {
         showDetailedToast(titleResId, message, Toast.LENGTH_SHORT);
+    }
+
+    public void showDetailedToast(@StringRes int titleResId, String message) {
+        showDetailedToast(titleResId, message, Toast.LENGTH_LONG);
     }
 
     public void showDetailedToast(@StringRes int titleResId, String message, int duration) {

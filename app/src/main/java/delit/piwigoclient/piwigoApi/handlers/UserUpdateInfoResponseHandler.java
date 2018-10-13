@@ -59,8 +59,20 @@ public class UserUpdateInfoResponseHandler<T extends ResourceItem> extends Abstr
         if (user.getGroups() == null) {
             user.setGroups(new HashSet<Long>(0));
         }
-        PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse r = new PiwigoResponseBufferingHandler.PiwigoUpdateUserInfoResponse(getMessageId(), getPiwigoMethod(), user);
+        PiwigoUpdateUserInfoResponse r = new PiwigoUpdateUserInfoResponse(getMessageId(), getPiwigoMethod(), user);
         storeResponse(r);
     }
 
+    public static class PiwigoUpdateUserInfoResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final User user;
+
+        public PiwigoUpdateUserInfoResponse(long messageId, String piwigoMethod, User user) {
+            super(messageId, piwigoMethod, true);
+            this.user = user;
+        }
+
+        public User getUser() {
+            return user;
+        }
+    }
 }

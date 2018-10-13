@@ -64,6 +64,7 @@
         <item>Rechts 180 Grad</item>
     </string-array>
     <string-array name="top_tips">
+        <item>Fehler tritt immer auf, wenn versucht wird, Tags zu aktualisieren. - \"You are not allowed to delete tags\" - Sicherstellen, dass Benutzer sowohl Tags hinzufügen als auch löschen können (Server-Plugin-Einstellung).</item>
         <item>Teilen Sie Dateien aus einer anderen Anwendung mit dieser Anwendung, um sie zum Upload-Bildschirm hinzuzufügen, der bereit ist, auf Ihren aktuellen Server zu gehen.</item>
         <item>Langer Klick auf ein Bild (entweder Thumbnail oder Diashow), das nicht geladen wurde, um es wiederherzustellen.</item>
         <item>Langer Klick auf ein Album, um dieses Album und alle Inhalte zu löschen.</item>

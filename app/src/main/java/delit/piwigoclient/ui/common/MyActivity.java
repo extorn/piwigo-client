@@ -200,7 +200,7 @@ public abstract class MyActivity extends AppCompatActivity {
         if(event.getFallbackMethod() != null) {
             getUiHelper().showDetailedToast(R.string.alert_warning, getString(R.string.alert_msg_using_fallback_piwigo_method_pattern, event.getFailedOriginalMethod(), event.getFallbackMethod()), Toast.LENGTH_LONG);
         } else {
-            getUiHelper().showDetailedToast(R.string.alert_warning, getString(R.string.alert_msg_piwigo_method_not_available_pattern, event.getFailedOriginalMethod()), Toast.LENGTH_LONG);
+            getUiHelper().showDetailedToast(R.string.alert_warning, getString(R.string.alert_msg_piwigo_method_not_available_pattern, event.getFailedOriginalMethod()));
         }
     }
 }

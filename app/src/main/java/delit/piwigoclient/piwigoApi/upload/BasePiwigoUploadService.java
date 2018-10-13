@@ -56,9 +56,12 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageFindExistingImagesResponseHandler;
@@ -424,7 +427,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 ImageFindExistingImagesResponseHandler imageFindExistingHandler = new ImageFindExistingImagesResponseHandler(uniqueIdsList, nameUnique);
                 invokeWithRetries(thisUploadJob, imageFindExistingHandler, 2);
                 if (imageFindExistingHandler.isSuccess()) {
-                    processFindPreexistingImagesResponse(thisUploadJob, (PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse) imageFindExistingHandler.getResponse());
+                    processFindPreexistingImagesResponse(thisUploadJob, (ImageFindExistingImagesResponseHandler.PiwigoFindExistingImagesResponse) imageFindExistingHandler.getResponse());
                 }
                 if (!imageFindExistingHandler.isSuccess()) {
                     // notify the listener of the final error we received from the server
@@ -484,7 +487,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
             AlbumGetSubAlbumsAdminResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
             invokeWithRetries(thisUploadJob, handler, 2);
             if (handler.isSuccess()) {
-                PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse rsp = (PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse) handler.getResponse();
+                AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse rsp = (AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) handler.getResponse();
                 return rsp.getAdminList().flattenTree();
             } else {
                 postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
@@ -544,7 +547,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
             UploadAlbumCreateResponseHandler albumGenHandler = new UploadAlbumCreateResponseHandler(thisUploadJob.getUploadToCategory());
             invokeWithRetries(thisUploadJob, albumGenHandler, 2);
             if (albumGenHandler.isSuccess()) {
-                uploadAlbumId = ((PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse) albumGenHandler.getResponse()).getNewAlbumId();
+                uploadAlbumId = ((AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse) albumGenHandler.getResponse()).getNewAlbumId();
             }
             if (!albumGenHandler.isSuccess() || uploadAlbumId < 0) {
                 // notify the listener of the final error we received from the server
@@ -557,7 +560,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return true;
     }
 
-    private void processFindPreexistingImagesResponse(UploadJob thisUploadJob, PiwigoResponseBufferingHandler.PiwigoFindExistingImagesResponse response) {
+    private void processFindPreexistingImagesResponse(UploadJob thisUploadJob, ImageFindExistingImagesResponseHandler.PiwigoFindExistingImagesResponse response) {
         HashMap<String, Long> preexistingItemsMap = response.getExistingImages();
         ArrayList<File> filesExistingOnServerAlready = new ArrayList<>();
         HashMap<File, Long> resourcesToRetrieve = new HashMap<>();
@@ -616,7 +619,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 getImageInfoHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
                 if (getImageInfoHandler.isSuccess()) {
                     success = true;
-                    PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse rsp = (PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse) getImageInfoHandler.getResponse();
+                    BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse rsp = (BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) getImageInfoHandler.getResponse();
                     thisUploadJob.addFileUploaded(entry.getKey(), rsp.getResource());
                 } else if (sessionDetails.isUseCommunityPlugin() && getImageInfoHandler.getResponse() instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
                     PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse rsp = (PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) getImageInfoHandler.getResponse();
@@ -844,7 +847,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
     private boolean deleteUploadedResourceFromServer(UploadJob uploadJob, ResourceItem uploadedResource) {
 
-        ImageDeleteResponseHandler imageDeleteHandler = new ImageDeleteResponseHandler(uploadedResource.getId());
+        ImageDeleteResponseHandler imageDeleteHandler = new ImageDeleteResponseHandler(uploadedResource);
         invokeWithRetries(uploadJob, imageDeleteHandler, 2);
         return imageDeleteHandler.isSuccess();
     }
@@ -861,7 +864,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         if(thisUploadJob.getTemporaryUploadAlbum() > 0) {
             uploadedResource.getLinkedAlbums().remove(thisUploadJob.getTemporaryUploadAlbum());
         }
-        ImageUpdateInfoResponseHandler imageInfoUpdateHandler = new ImageUpdateInfoResponseHandler(uploadedResource);
+        ImageUpdateInfoResponseHandler imageInfoUpdateHandler = new ImageUpdateInfoResponseHandler(uploadedResource, true);
         invokeWithRetries(thisUploadJob, imageInfoUpdateHandler, 2);
         if (!imageInfoUpdateHandler.isSuccess()) {
             Iterator<Long> iter = uploadedResource.getLinkedAlbums().iterator();
@@ -995,7 +998,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
         ResourceItem uploadedResource = null;
         if (imageChunkUploadHandler.isSuccess()) {
-            uploadedResource = ((PiwigoResponseBufferingHandler.PiwigoUploadFileChunkResponse) imageChunkUploadHandler.getResponse()).getUploadedResource();
+            uploadedResource = ((NewImageUploadFileChunkResponseHandler.PiwigoUploadFileChunkResponse) imageChunkUploadHandler.getResponse()).getUploadedResource();
         }
 
         if (!imageChunkUploadHandler.isSuccess()) {

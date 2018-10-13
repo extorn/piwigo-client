@@ -753,7 +753,8 @@ SOFTWARE.
     <string name="folder_extstorage_device_pattern">External Storage %1$d</string>
     <string name="folder_default">Default</string>
     <string name="button_all">Check All</string>
-    <string name="button_none">Check None</string>
+    <string name="button_none">UnCheck All</string>
+    <string name="button_reset">Reset</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Network monitoring should be allowed for efficient use of WIFI only uploading</string>
     <string name="inaccessible_remote_folder">** private **</string>
     <string name="error_unable_to_acquire_valid_session">Unable to acquire valid session with server</string>
@@ -791,4 +792,7 @@ SOFTWARE.
     <string name="removing_favorite">Removing favorite</string>
     <string name="adding_favorite">Adding Favorite</string>
     <string name="alert_error_unsupported_features_pattern">Some features this app supports are not available on your server. To enable:\n1. Install the PiwigoClientWsExts plugin.\n2.Log out and back in on this app.\n\nYou\'ll be reminded in a week.</string>
+    <string name="tag_will_be_created_when_resource_is_saved">Using User Tags plugin to add new Tag. Tag will only be created once the resource is saved.</string>
+    <string name="resource_details_updated_message">Resource details updated</string>
+    <string name="alert_server_call_in_progress_please_wait">Server call in progress. Please wait for this to complete before trying again.</string>
 </resources>

@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.List;
 
 import delit.piwigoclient.ui.common.util.ParcelUtils;
-import delit.piwigoclient.util.ArrayUtils;
-import delit.piwigoclient.util.SetUtils;
 
 /**
  * An item representing a piece of content.
@@ -48,6 +46,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     private String description;
     private Date lastAltered;
     private ArrayList<Long> parentageChain;
+    private long loadedAt;
 
 
     public GalleryItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
@@ -57,6 +56,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         this.thumbnailUrl = thumbnailUrl;
         this.lastAltered = lastAltered;
         parentageChain = new ArrayList<>();
+        this.loadedAt = System.currentTimeMillis();
     }
 
     public GalleryItem(Parcel in) {
@@ -65,7 +65,8 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         name = in.readString();
         description = in.readString();
         lastAltered = ParcelUtils.readDate(in);
-        parentageChain = ParcelUtils.readLongArrayList(in);
+        parentageChain = ParcelUtils.readLongArrayList(in, null);
+        loadedAt = in.readLong();
     }
 
     @Override
@@ -77,6 +78,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         ParcelUtils.writeDate(out, lastAltered);
         out.writeInt(parentageChain.size());
         ParcelUtils.writeLongArrayList(out, parentageChain);
+        out.writeLong(loadedAt);
     }
 
     public long getId() {
@@ -182,6 +184,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         if (copyParentage) {
             parentageChain = other.parentageChain;
         }
+        this.loadedAt = other.loadedAt;
     }
 
     @Override
@@ -199,4 +202,12 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
             return new GalleryItem[size];
         }
     };
+
+    protected boolean isLikelyOutdated(long flagTime) {
+        return System.currentTimeMillis() - flagTime > 5 * 60 * 1000; // older than 5 minutes.
+    }
+
+    public boolean isLikelyOutdated() {
+        return isLikelyOutdated(loadedAt);
+    }
 }

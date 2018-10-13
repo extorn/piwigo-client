@@ -58,7 +58,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     private boolean initialising = false;
     private String preferencesKey;
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             if (event.areAllPermissionsGranted()) {
@@ -317,47 +317,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
-    }
-
-    private static class LoadCertificatesTask extends AsyncTask<Context, Object, Set<String>> {
-
-        final long actionId = PiwigoResponseBufferingHandler.getNextHandlerId();
-        private final UIHelper uiHelper;
-        private final PreferenceManager preferenceManager;
-
-        public LoadCertificatesTask(UIHelper uiHelper, PreferenceManager preferenceManager) {
-            this.uiHelper = uiHelper;
-            this.preferenceManager = preferenceManager;
-        }
-
-        public UIHelper getUiHelper() {
-            return uiHelper;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            getUiHelper().addActiveServiceCall(R.string.alert_clearing_certificate_use_history, actionId);
-        }
-
-        @Override
-        protected Set<String> doInBackground(Context... context) {
-            KeyStore truststore = X509Utils.loadTrustedCaKeystore(context[0]);
-            if (isCancelled()) {
-                return null;
-            }
-            return X509Utils.listAliasesInStore(truststore);
-        }
-
-        @Override
-        protected void onPostExecute(Set<String> aliases) {
-            if (!isCancelled()) {
-                uiHelper.getPrefs().edit().putStringSet(uiHelper.getContext().getString(R.string.preference_pre_user_notified_certificates_key), aliases).commit();
-                preferenceManager.findPreference(uiHelper.getContext().getString(R.string.preference_select_trusted_certificate_key)).setEnabled(true);
-            }
-            getUiHelper().onServiceCallComplete(actionId);
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, uiHelper.getContext().getString(R.string.alert_trusted_certificates_polling));
-        }
     }
 
     private class CacheLevelPreferenceListener implements Preference.OnPreferenceChangeListener {

@@ -20,7 +20,7 @@ public class PiwigoTags extends IdentifiablePagedList<Tag> {
     private Comparator<Tag> tagComparator = new TagComparator();
 
     public PiwigoTags(int pageSources) {
-        super("Username");
+        super("Tag");
         this.pageSources = pageSources;
     }
 

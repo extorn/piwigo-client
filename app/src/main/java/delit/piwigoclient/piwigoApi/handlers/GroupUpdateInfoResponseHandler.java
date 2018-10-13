@@ -56,8 +56,20 @@ public class GroupUpdateInfoResponseHandler<T extends ResourceItem> extends Abst
         if (groups.size() != 1) {
             throw new JSONException("Expected one group to be returned, but there were " + groups.size());
         }
-        PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse r = new PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
+        PiwigoGroupUpdateInfoResponse r = new PiwigoGroupUpdateInfoResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
         storeResponse(r);
     }
 
+    public static class PiwigoGroupUpdateInfoResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final Group group;
+
+        public PiwigoGroupUpdateInfoResponse(long messageId, String piwigoMethod, Group group) {
+            super(messageId, piwigoMethod, true);
+            this.group = group;
+        }
+
+        public Group getGroup() {
+            return group;
+        }
+    }
 }

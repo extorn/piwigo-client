@@ -36,7 +36,13 @@ public class GroupDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse r = new PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse(getMessageId(), getPiwigoMethod());
+        PiwigoDeleteGroupResponse r = new PiwigoDeleteGroupResponse(getMessageId(), getPiwigoMethod());
         storeResponse(r);
+    }
+
+    public static class PiwigoDeleteGroupResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        public PiwigoDeleteGroupResponse(long messageId, String piwigoMethod) {
+            super(messageId, piwigoMethod, true);
+        }
     }
 }

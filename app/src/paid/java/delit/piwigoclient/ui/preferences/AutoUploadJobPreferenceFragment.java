@@ -113,7 +113,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
             AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
             albumHandler.withConnectionPreferences(profilePrefs);
-            addActiveServiceCall(R.string.progress_loading_albums,albumHandler.invokeAsync(getContext()));
+            callServer(R.string.progress_loading_albums,albumHandler);
         } else {
             updateJobValidPreferenceIfNeeded(false, false);
         }

@@ -57,8 +57,32 @@ public class UserGetPermissionsResponseHandler extends AbstractPiwigoWsResponseH
                 }
             }
         }
-        PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse r = new PiwigoResponseBufferingHandler.PiwigoUserPermissionsResponse(getMessageId(), getPiwigoMethod(), userId, allowedDirectAlbums, allowedIndirectAlbums);
+        PiwigoUserPermissionsResponse r = new PiwigoUserPermissionsResponse(getMessageId(), getPiwigoMethod(), userId, allowedDirectAlbums, allowedIndirectAlbums);
         storeResponse(r);
     }
 
+    public static class PiwigoUserPermissionsResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final HashSet<Long> indirectlyAccessibleAlbumIds;
+        private final HashSet<Long> directlyAccessibleAlbumIds;
+        private final long userId;
+
+        public PiwigoUserPermissionsResponse(long messageId, String piwigoMethod, long userId, HashSet<Long> directlyAccessibleAlbumIds, HashSet<Long> indirectlyAccessibleAlbumIds) {
+            super(messageId, piwigoMethod, true);
+            this.userId = userId;
+            this.directlyAccessibleAlbumIds = directlyAccessibleAlbumIds;
+            this.indirectlyAccessibleAlbumIds = indirectlyAccessibleAlbumIds;
+        }
+
+        public long getUserId() {
+            return userId;
+        }
+
+        public HashSet<Long> getDirectlyAccessibleAlbumIds() {
+            return directlyAccessibleAlbumIds;
+        }
+
+        public HashSet<Long> getIndirectlyAccessibleAlbumIds() {
+            return indirectlyAccessibleAlbumIds;
+        }
+    }
 }

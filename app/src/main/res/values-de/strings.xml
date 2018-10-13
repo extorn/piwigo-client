@@ -491,6 +491,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="folder_default">Standard</string>
     <string name="button_all">Alles prüfen</string>
     <string name="button_none">Keine prüfen</string>
+    <string name="button_reset">Zurücksetzen</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Netzwerküberwachung sollte nur für die effiziente Nutzung von WIFI erlaubt sein.</string>
     <string name="inaccessible_remote_folder">** privat **</string>
     <string name="error_unable_to_acquire_valid_session">Es ist nicht möglich, eine gültige Sitzung mit dem Server zu erhalten.</string>
@@ -528,5 +529,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="removing_favorite">Removing favorite</string>
     <string name="adding_favorite">Adding Favorite</string>
     <string name="alert_error_unsupported_features_pattern">Einige Funktionen, die diese App unterstützt, sind auf Ihrem Server nicht verfügbar. Um:\n1 zu aktivieren. Installieren Sie das Plugin PiwigoClientWsExts.\n2.Loggen Sie sich aus und wieder ein in dieser App.\n\n\nSie werden in einer Woche erinnert.</string>
+    <string name="tag_will_be_created_when_resource_is_saved">Mit dem User Tags Plugin können Sie neue Tags hinzufügen. Das Tag wird erst erstellt, wenn die Ressource gespeichert ist.</string>
+    <string name="resource_details_updated_message">Ressourcendetails aktualisiert</string>
+    <string name="alert_server_call_in_progress_please_wait">Server call in progress. Please wait for this to complete before trying again.</string>
 </resources>
 

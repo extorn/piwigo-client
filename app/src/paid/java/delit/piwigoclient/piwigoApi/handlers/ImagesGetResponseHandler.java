@@ -19,7 +19,7 @@ public class ImagesGetResponseHandler extends BaseImagesGetResponseHandler {
         return new ResourceParser(multimediaExtensionList);
     }
 
-    public static class ResourceParser extends BasicResourceParser {
+    public static class ResourceParser extends BasicCategoryImageResourceParser {
 
         public ResourceParser(String multimediaExtensionList) {
             super(multimediaExtensionList);
