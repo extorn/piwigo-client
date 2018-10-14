@@ -14,9 +14,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways|snap"/>
-        <!--app:layout_scrollFlags="scroll|enterAlways"-->
+            android:layout_height="?attr/actionBarSize" />
 
         <delit.piwigoclient.ui.common.ProgressIndicator
             android:background="@color/primary_dark"
