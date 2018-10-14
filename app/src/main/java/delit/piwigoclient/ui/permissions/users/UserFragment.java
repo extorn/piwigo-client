@@ -1,10 +1,11 @@
 package delit.piwigoclient.ui.permissions.users;
 
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +14,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -59,7 +59,6 @@ import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.util.BundleUtils;
-import delit.piwigoclient.ui.common.util.ViewListUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.UserDeletedEvent;
 import delit.piwigoclient.ui.events.UserUpdatedEvent;
@@ -369,7 +368,7 @@ public class UserFragment extends MyFragment {
                 onExpandPermissions();
                 return true;
             }
-        }.withScrollingWhenNested());
+        });
 
         setFieldsEditable(fieldsEditable);
         if (newUser != null) {
@@ -400,8 +399,14 @@ public class UserFragment extends MyFragment {
             }
         }
 
-        ScrollView scrollview = v.findViewById(R.id.user_edit_scrollview);
-        scrollview.fullScroll(View.FOCUS_UP);
+        NestedScrollView scrollview = v.findViewById(R.id.user_edit_scrollview);
+        scrollview.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                ((NestedScrollView)v).fullScroll(View.FOCUS_UP);
+            }
+        });
+
 
         return v;
     }
@@ -718,7 +723,7 @@ public class UserFragment extends MyFragment {
             adapterPreferences.readonly();
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, indirectAlbumPermissions, adapterPreferences);
             availableItemsAdapter.linkToListView(albumPermissionsField, initialSelection, initialSelection);
-            ViewListUtils.setListViewHeightBasedOnChildren(albumPermissionsField, 6);
+            //            ViewListUtils.setListViewHeightBasedOnChildren(albumPermissionsField, 6);
         } else if (!SetUtils.equals(adapter.getSelectedItems(), initialSelection)) {
             adapter.setSelectedItems(initialSelection);
         }

@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
@@ -9,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,7 +49,6 @@ import delit.piwigoclient.business.video.RemoteDirectHttpClientBasedHttpDataSour
 import delit.piwigoclient.business.video.RemoteFileCachingDataSourceFactory;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;

@@ -1,16 +1,16 @@
 package delit.piwigoclient.ui.permissions.groups;
 
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
@@ -55,7 +55,6 @@ import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.util.BundleUtils;
-import delit.piwigoclient.ui.common.util.ViewListUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.GroupDeletedEvent;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
@@ -218,7 +217,7 @@ public class GroupFragment extends MyFragment {
                 onExpandPermissions();
                 return true;
             }
-        }.withScrollingWhenNested());
+        });
 
         editButton = v.findViewById(R.id.group_action_edit_button);
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -268,8 +267,13 @@ public class GroupFragment extends MyFragment {
             setFieldsFromModel(currentGroup);
         }
 
-        ScrollView scrollview = v.findViewById(R.id.group_edit_scrollview);
-        scrollview.fullScroll(View.FOCUS_UP);
+        NestedScrollView scrollview = v.findViewById(R.id.group_edit_scrollview);
+        scrollview.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                ((NestedScrollView)v).fullScroll(View.FOCUS_UP);
+            }
+        });
 
         return v;
     }
@@ -615,7 +619,6 @@ public class GroupFragment extends MyFragment {
             adapterPreferences.readonly();
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, adapterPreferences);
             availableItemsAdapter.linkToListView(albumAccessRightsField, getLatestAlbumPermissions(), getLatestAlbumPermissions());
-            ViewListUtils.setListViewHeightBasedOnChildren(albumAccessRightsField, 6);
         } else {
             adapter.setSelectedItems(getLatestAlbumPermissions());
         }
