@@ -79,11 +79,9 @@
     <string-array name="planned_releases">
         <item>Die Zukunft</item>
         <item>"Änderungen:
-         - Möglicherweise - Unterstützung für Favoriten - abhängig von der PIWIGO API-Erweiterung
          - Möglicherweise - erlauben Sie die Verknüpfung des Upload-Prozesses mit einer Kompressionsroutine für Videos.
          - Möglicherweise - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Waisenkinder erstellen).
          - Möglicherweise - Orphan File Management
-         - Möglicherweise - erweitern Sie die Piwigo Server-API, damit Benutzer ihre Bewertung für eine bestimmte Ressource sehen können.
          - Möglicherweise: Erlaubt es dem Benutzer, in der Diashow herauszuzoomen (Ansicht kleiner als Vollbild).
          - Möglicherweise: Untersuchung der Hinzufügung von Unterstützung für farbiges Tag-Plugin
          - Möglicherweise: Merken Sie sich das zuvor geöffnete Foto oder Album, wenn der Benutzer die App öffnet.
@@ -94,13 +92,13 @@
          - Möglicherweise: Nur kostenpflichtige App: Fügen Sie eine Präferenz hinzu, um das Ein- und Ausblenden der EXIF- und anderen Felder von Interesse oder nicht von Interesse zu ermöglichen.
          - Möglicherweise: ? Französisch / andere Übersetzungen für die App?
          - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann."</item>
-        <item>1.3.97</item>
+        <item>1.3.98</item>
         <item>"Erwartete Lieferung:
          - Ende November 2018
          Änderungen:
          - Füge eine Art Hilfe hinzu, um dem Benutzer zu helfen, die Funktionen zu kennen."
         </item>
-        <item>1.3.96</item>
+        <item>1.3.97</item>
         <item>"Erwartete Lieferung:
          - Ende Oktober oder Mitte November 2018
          Änderungen:
@@ -112,6 +110,20 @@
         </item>
     </string-array>
     <string-array name="release_history">
+        <item>1.3.96</item>
+        <item>"Änderungen:
+            - Unterstützung für Benutzer ohne Highdef (Originalbild) Berechtigung hinzugefügt
+            - Unterstützung hinzugefügt, um Ihre Bewertung für ein Bild anzuzeigen.
+            - Bessere Auswahl des am besten geeigneten Bildes für die Darstellung
+            - Verwenden Sie EXIF-Daten, um Diashow-Bilder in Originalgröße automatisch nach Bedarf zu drehen.
+            - Bezahlte App: Unterstützung für das Markieren von Bildern als Favorit
+            - Zusätzliche Funktionen mit Hilfe eines benutzerdefinierten Server-Plugins
+            Fehlerbehebung:
+            - Drehen von Diashow-Bildern
+            - Fehler bei der Diashow
+            - Einige Fehler, die App-Abstürze verursachen
+            - Deutlich verbesserte Speicherauslastung
+            - Verwaiste Dateien verhindern nicht mehr, dass der Upload funktioniert."</item>
         <item>1.3.95</item>
         <item>"Änderungen:
             - Die Albumansicht wurde nach einem Entwurf von David Klement neu gestaltet.

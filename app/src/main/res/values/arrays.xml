@@ -161,11 +161,9 @@
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
         <item>"Changes:
-         - Possibly - Support for favorites - depends on PIWIGO API enhancement
          - Possibly - allow linking the upload process to a compression routine for videos
          - Possibly - The ability to delete an album, but not its contents (creating orphans)
          - Possibly - Orphan file management
-         - Possibly - enhance the Piwigo Server API to allow users to see their rating given for a given resource
          - Possibly: Allow user to zoom out in slideshow (view smaller than fullscreen)
          - Possibly: Investigate adding support for coloured tag plugin
          - Possibly: Remember the previously opened photo or album when the user opens the app.
