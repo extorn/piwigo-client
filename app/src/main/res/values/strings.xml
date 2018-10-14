@@ -795,4 +795,6 @@ SOFTWARE.
     <string name="tag_will_be_created_when_resource_is_saved">Using User Tags plugin to add new Tag. Tag will only be created once the resource is saved.</string>
     <string name="resource_details_updated_message">Resource details updated</string>
     <string name="alert_server_call_in_progress_please_wait">Server call in progress. Please wait for this to complete before trying again.</string>
+    <string name="upload_error_too_many_orphaned_files_exist_on_server">Too many orphaned images exist on the server for the upload to proceed. Please tidy these up before retrying.</string>
+    <string name="upload_error_orphaned_file_retrieval_failed">Unable to retrieve orphaned images list. Please retry.</string>
 </resources>

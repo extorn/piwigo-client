@@ -123,6 +123,10 @@ public class ConnectionPreferences {
             return getProfileId(prefs, context) + ':' + asGuest;
         }
 
+        public boolean isDefaultProfile() {
+            return prefix == null;
+        }
+
         public String getProfileId(SharedPreferences prefs, Context context) {
             if (prefix != null) {
                 return prefix;

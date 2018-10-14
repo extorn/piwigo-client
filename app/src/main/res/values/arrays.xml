@@ -201,9 +201,13 @@
             - Better selection of best-fit image to show
             - Use EXIF data to auto rotate original sized slideshow images as required
             - Paid App: Support for tagging images as a favorite
+            - Added features using custom server plugin
             Bugfix:
             - Slideshow image rotation
-            - A few errors causing app crashes"</item>
+            - Slideshow errors
+            - A few errors causing app crashes
+            - Much improved memory footprint
+            - Orphaned files no longer prevent upload working"</item>
         <item>1.3.95</item>
         <item>"Changes:
             - The album view has been redesigned following a design proposed by David Klement

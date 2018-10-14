@@ -532,5 +532,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="tag_will_be_created_when_resource_is_saved">Mit dem User Tags Plugin können Sie neue Tags hinzufügen. Das Tag wird erst erstellt, wenn die Ressource gespeichert ist.</string>
     <string name="resource_details_updated_message">Ressourcendetails aktualisiert</string>
     <string name="alert_server_call_in_progress_please_wait">Server call in progress. Please wait for this to complete before trying again.</string>
+    <string name="upload_error_too_many_orphaned_files_exist_on_server">Auf dem Server befinden sich zu viele verwaiste Bilder, als dass der Upload fortgesetzt werden könnte. Bitte räumt diese auf, bevor ihr es erneut versucht.</string>
+    <string name="upload_error_orphaned_file_retrieval_failed">Die Liste der verwaisten Bilder kann nicht abgerufen werden. Bitte versuchen Sie es erneut.</string>
 </resources>
 

@@ -122,13 +122,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
-//        boolean useDarkMode = prefs.getBoolean(getString(R.string.preference_gallery_use_dark_mode_key), false);
-//        if (useDarkMode) {
-//            view.setBackgroundColor(Color.BLACK);
-//        } else {
-//            view.setBackgroundColor(Color.WHITE);
-//        }
-
         progressIndicator = view.findViewById(R.id.slideshow_page_loadingIndicator);
         hideProgressIndicator();
 
@@ -160,22 +153,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         } else {
             // update settings.
             galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
-//            galleryItemAdapter.setFragmentManager(getChildFragmentManager());
         }
 
         galleryItemAdapter.setContainer(viewPager);
         viewPager.setAdapter(galleryItemAdapter);
-        /*viewPager.setObser(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                viewPager.removeViews(viewPager.getCurrentItem(), viewPager.getChildCount());
-            }
-
-            @Override
-            public void onInvalidated() {
-                viewPager.removeAllViews();
-            }
-        });*/
 
         ViewPager.OnPageChangeListener slideshowPageChangeListener = new ViewPager.OnPageChangeListener() {
 

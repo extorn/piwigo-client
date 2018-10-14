@@ -97,6 +97,46 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     @Override
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
+        if (BuildConfig.DEBUG) {
+            String responseBodyStr = "<NONE PRESENT>";
+            if (responseBody != null) {
+                responseBodyStr = new String(responseBody);
+            }
+
+            StringBuilder msgBuilder = new StringBuilder();
+            msgBuilder.append("Connection Profile:");
+            msgBuilder.append(getConnectionPrefs());
+            msgBuilder.append('\n');
+            msgBuilder.append("Method (succeeded):");
+            msgBuilder.append(getPiwigoMethod());
+            msgBuilder.append('\n');
+            if (getNestedFailureMethod() != null) {
+                msgBuilder.append("Nested Method (failed):");
+                msgBuilder.append(getNestedFailureMethod());
+                msgBuilder.append('\n');
+            }
+            msgBuilder.append("Request Params:");
+            msgBuilder.append('\n');
+            msgBuilder.append(getRequestParameters());
+            msgBuilder.append('\n');
+            msgBuilder.append("Response Headers:");
+            msgBuilder.append('\n');
+            if(headers != null) {
+                for (Header h : headers) {
+                    msgBuilder.append(h.getName());
+                    msgBuilder.append(':');
+                    msgBuilder.append(h.getValue());
+                    msgBuilder.append('\n');
+                }
+            } else {
+                msgBuilder.append("<NONE PRESENT>");
+                msgBuilder.append('\n');
+            }
+            msgBuilder.append("Response Body:");
+            msgBuilder.append('\n');
+            msgBuilder.append(responseBodyStr);
+            Crashlytics.log(Log.VERBOSE, getTag(),  msgBuilder.toString());
+        }
         if(failedOriginalMethod != null) {
             EventBus.getDefault().post(new PiwigoMethodNowUnavailableUsingFallback(failedOriginalMethod, getPiwigoMethod()));
             failedOriginalMethod = null;
@@ -217,6 +257,9 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
 
             StringBuilder msgBuilder = new StringBuilder();
+            msgBuilder.append("Connection Profile:");
+            msgBuilder.append(getConnectionPrefs());
+            msgBuilder.append('\n');
             msgBuilder.append("Method (failed):");
             msgBuilder.append(getPiwigoMethod());
             msgBuilder.append('\n');

@@ -67,6 +67,8 @@ import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageFindExistingImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.ImagesListOrphansResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.ImageCheckFilesResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.NewImageUploadFileChunkResponseHandler;
@@ -427,7 +429,12 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 ImageFindExistingImagesResponseHandler imageFindExistingHandler = new ImageFindExistingImagesResponseHandler(uniqueIdsList, nameUnique);
                 invokeWithRetries(thisUploadJob, imageFindExistingHandler, 2);
                 if (imageFindExistingHandler.isSuccess()) {
-                    processFindPreexistingImagesResponse(thisUploadJob, (ImageFindExistingImagesResponseHandler.PiwigoFindExistingImagesResponse) imageFindExistingHandler.getResponse());
+                    ArrayList<Long> orphans = getOrphanImagesOnServer(thisUploadJob);
+                    if(orphans == null) {
+                        // there has been an error which is reported within the getOrphanImagesOnServer method.
+                        return;
+                    }
+                    processFindPreexistingImagesResponse(thisUploadJob, (ImageFindExistingImagesResponseHandler.PiwigoFindExistingImagesResponse) imageFindExistingHandler.getResponse(), orphans);
                 }
                 if (!imageFindExistingHandler.isSuccess()) {
                     // notify the listener of the final error we received from the server
@@ -560,7 +567,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return true;
     }
 
-    private void processFindPreexistingImagesResponse(UploadJob thisUploadJob, ImageFindExistingImagesResponseHandler.PiwigoFindExistingImagesResponse response) {
+    private void processFindPreexistingImagesResponse(UploadJob thisUploadJob, ImageFindExistingImagesResponseHandler.PiwigoFindExistingImagesResponse response, List<Long> orphans) {
         HashMap<String, Long> preexistingItemsMap = response.getExistingImages();
         ArrayList<File> filesExistingOnServerAlready = new ArrayList<>();
         HashMap<File, Long> resourcesToRetrieve = new HashMap<>();
@@ -610,27 +617,59 @@ public abstract class BasePiwigoUploadService extends IntentService {
         String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getApplicationContext());
         for (Map.Entry<File, Long> entry : resourcesToRetrieve.entrySet()) {
 
-            ImageGetInfoResponseHandler getImageInfoHandler = new ImageGetInfoResponseHandler(new ResourceItem(entry.getValue(), null, null, null, null, null), multimediaExtensionList);
-            int allowedAttempts = 2;
-            boolean success = false;
-            while (!success && allowedAttempts > 0) {
-                allowedAttempts--;
-                // this is blocking
-                getImageInfoHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
-                if (getImageInfoHandler.isSuccess()) {
-                    success = true;
-                    BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse rsp = (BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) getImageInfoHandler.getResponse();
-                    thisUploadJob.addFileUploaded(entry.getKey(), rsp.getResource());
-                } else if (sessionDetails.isUseCommunityPlugin() && getImageInfoHandler.getResponse() instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
-                    PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse rsp = (PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) getImageInfoHandler.getResponse();
-                    if (rsp.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-                        success = true; // image is on the server, but not yet approved.
-                        thisUploadJob.addFileUploaded(entry.getKey(), null);
-                        postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse(getNextMessageId(), entry.getKey(), thisUploadJob.getUploadProgress(entry.getKey())));
+            long imageId = entry.getValue();
+            if(orphans.contains(imageId)) {
+                ResourceItem item = new ResourceItem(imageId, null, null, null, null, null);
+                item.setFileChecksum(uniqueIdsSet.get(entry.getKey()));
+                item.setLinkedAlbums(new HashSet<Long>(1));
+                thisUploadJob.addFileUploaded(entry.getKey(), item);
+            } else {
+                ImageGetInfoResponseHandler getImageInfoHandler = new ImageGetInfoResponseHandler(new ResourceItem(imageId, null, null, null, null, null), multimediaExtensionList);
+                int allowedAttempts = 2;
+                boolean success = false;
+                while (!success && allowedAttempts > 0) {
+                    allowedAttempts--;
+                    // this is blocking
+                    getImageInfoHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
+                    if (getImageInfoHandler.isSuccess()) {
+                        success = true;
+                        BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse rsp = (BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) getImageInfoHandler.getResponse();
+                        thisUploadJob.addFileUploaded(entry.getKey(), rsp.getResource());
+                    } else if (sessionDetails.isUseCommunityPlugin() && getImageInfoHandler.getResponse() instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
+                        PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse rsp = (PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) getImageInfoHandler.getResponse();
+                        if (rsp.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+                            success = true; // image is on the server, but not yet approved.
+                            thisUploadJob.addFileUploaded(entry.getKey(), null);
+                            postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse(getNextMessageId(), entry.getKey(), thisUploadJob.getUploadProgress(entry.getKey())));
+                        }
                     }
                 }
             }
         }
+    }
+
+    private ArrayList<Long> getOrphanImagesOnServer(UploadJob thisUploadJob) {
+
+        ImagesListOrphansResponseHandler orphanListHandler = new ImagesListOrphansResponseHandler(0, 100);
+        int allowedAttempts = 2;
+        boolean success = false;
+        ArrayList<Long> orphans = null;
+        while (!success && allowedAttempts > 0) {
+            allowedAttempts--;
+            orphanListHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
+            if (orphanListHandler.isSuccess()) {
+                success = true;
+                ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse resp = (ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse)orphanListHandler.getResponse();
+                if(resp.getTotalCount() > resp.getResources().size()) {
+                    postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getApplicationContext().getString(R.string.upload_error_too_many_orphaned_files_exist_on_server))));
+                    return null;
+                } else {
+                    orphans = resp.getResources();
+                }
+            }
+        }
+        postNewResponse(thisUploadJob.getJobId(), new PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getApplicationContext().getString(R.string.upload_error_orphaned_file_retrieval_failed))));
+        return orphans;
     }
 
     private void notifyListenersOfCustomErrorUploadingFile(UploadJob thisUploadJob, File fileBeingUploaded, String errorMessage) {

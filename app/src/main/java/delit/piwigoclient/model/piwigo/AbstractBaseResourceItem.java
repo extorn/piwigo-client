@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -217,7 +218,10 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         resourceDetailsLoadedAt = System.currentTimeMillis();
     }
 
-    public static class ResourceFile implements Comparable<ResourceFile>, Parcelable {
+    public static class ResourceFile implements Comparable<ResourceFile>, Parcelable, Serializable {
+
+        private static final long serialVersionUID = 2807336261739692481L;
+
         private final String name;
         private final String url;
         private final int width;

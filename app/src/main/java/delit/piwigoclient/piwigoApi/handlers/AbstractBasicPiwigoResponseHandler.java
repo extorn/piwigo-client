@@ -411,7 +411,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     newLoginStatus = PiwigoSessionDetails.LOGGED_IN_WITH_SESSION_AND_USER_DETAILS;
                     exit = true;
                     LoginResponseHandler.PiwigoOnLoginResponse response = (LoginResponseHandler.PiwigoOnLoginResponse) handler.getResponse();
-                    EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
+                    if(getConnectionPrefs().isDefaultProfile()) {
+                        EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
+                    }
                     onGetNewSessionSuccess();
                     // update the session token for this handler.
                     return true;

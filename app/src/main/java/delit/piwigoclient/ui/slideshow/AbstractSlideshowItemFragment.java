@@ -140,7 +140,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private CustomSlidingLayer bottomSheet;
     private View itemContent;
     private TextView resourceRatingScoreField;
-    private View cachedView;
 
     public static <S extends ResourceItem> Bundle buildArgs(S model, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
@@ -273,24 +272,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     @Nullable
     @Override
-    public View getView() {
-        if(cachedView != null) {
-            return cachedView;
-        }
-        return super.getView();
-    }
-
-    @Nullable
-    @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = getView();
-        if (v != null) {
-            return v;
-        }
         super.onCreateView(inflater, container, savedInstanceState);
 
-        v = inflater.inflate(getLayoutId(), container, false);
-        cachedView = v;
+        View v = inflater.inflate(getLayoutId(), container, false);
 
         itemPositionTextView = v.findViewById(R.id.slideshow_resource_item_x_of_y_text);
         progressIndicator = v.findViewById(R.id.slideshow_image_loadingIndicator);
