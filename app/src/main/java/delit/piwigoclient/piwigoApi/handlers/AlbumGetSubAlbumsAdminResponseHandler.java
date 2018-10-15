@@ -83,20 +83,20 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
         // Now lets update the total photo count for all albums so it includes that of the children.
         adminList.updateTotalPhotosAndSubAlbumCount();
 
-        AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse r = new AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse(getMessageId(), getPiwigoMethod(), adminList);
+        PiwigoGetSubAlbumsAdminResponse r = new PiwigoGetSubAlbumsAdminResponse(getMessageId(), getPiwigoMethod(), adminList);
         storeResponse(r);
     }
 
-    public static class PiwigoGetSubAlbumsResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
-        private final ArrayList<CategoryItem> albums;
+    public static class PiwigoGetSubAlbumsAdminResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        final PiwigoAlbumAdminList adminList;
 
-        public PiwigoGetSubAlbumsResponse(long messageId, String piwigoMethod, ArrayList<CategoryItem> albums) {
+        public PiwigoGetSubAlbumsAdminResponse(long messageId, String piwigoMethod, PiwigoAlbumAdminList adminList) {
             super(messageId, piwigoMethod, true);
-            this.albums = albums;
+            this.adminList = adminList;
         }
 
-        public ArrayList<CategoryItem> getAlbums() {
-            return albums;
+        public PiwigoAlbumAdminList getAdminList() {
+            return adminList;
         }
     }
 }

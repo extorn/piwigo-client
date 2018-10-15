@@ -33,7 +33,7 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
         PiwigoSessionDetails currentCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         currentCredentials.setMethodsAvailable(parseMethodsAvailable(rsp));
-        PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse r = new PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse(getMessageId(), getPiwigoMethod());
+        PiwigoGetMethodsAvailableResponse r = new PiwigoGetMethodsAvailableResponse(getMessageId(), getPiwigoMethod());
         storeResponse(r);
     }
 
@@ -48,4 +48,10 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
         return methodsAvailable;
     }
 
+    public static class PiwigoGetMethodsAvailableResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        public PiwigoGetMethodsAvailableResponse(long messageId, String piwigoMethod) {
+            super(messageId, piwigoMethod, true);
+        }
+    }
 }

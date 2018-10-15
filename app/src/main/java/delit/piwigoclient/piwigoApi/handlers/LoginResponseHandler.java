@@ -9,8 +9,6 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
-import java.util.ArrayList;
-
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.User;
@@ -73,17 +71,21 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
 
         loginResponse.setNewSessionDetails(PiwigoSessionDetails.getInstance(connectionPrefs));
 
-        if (canContinue && isCommunityPluginSessionStatusUnknown(PiwigoSessionDetails.getInstance(connectionPrefs))) {
+        if(canContinue && !PiwigoSessionDetails.getInstance(connectionPrefs).isMethodsAvailableListAvailable()) {
+            loadMethodsAvailable();
+        }
+
+        if (canContinue && PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
             canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
+        } else {
+            PiwigoSessionDetails.getInstance(connectionPrefs).setUseCommunityPlugin(false);
         }
 
         if (canContinue && isNeedUserDetails(PiwigoSessionDetails.getInstance(connectionPrefs))) {
             canContinue = loadUserDetails();
         }
 
-        if(canContinue && !PiwigoSessionDetails.getInstance(connectionPrefs).isMethodsAvailableListAvailable()) {
-            loadMethodsAvailable();
-        }
+
 
         if(canContinue && VersionCompatability.INSTANCE.isFavoritesEnabled()) {
             loadFavoritesList();
@@ -111,10 +113,6 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             return false;
         }
         return true;
-    }
-
-    private boolean isCommunityPluginSessionStatusUnknown(PiwigoSessionDetails currentCredentials) {
-        return currentCredentials != null && !currentCredentials.isSessionMayHaveExpired();/*TODO ?maybe add this? && !currentCredentials.isCommunityPluginStatusAvailable();*/
     }
 
     private boolean retrieveCommunityPluginSession(PiwigoSessionDetails newCredentials) {
@@ -181,7 +179,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         userInfoHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         userInfoHandler.invokeAndWait(getContext(), getConnectionPrefs());
         if (userInfoHandler.isSuccess()) {
-            PiwigoGetUserDetailsResponse response = (PiwigoGetUserDetailsResponse) userInfoHandler.getResponse();
+            UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response = (UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse) userInfoHandler.getResponse();
             User userDetails = response.getSelectedUser();
             if (response.getUsers().size() > 0) {
                 EventBus.getDefault().post(new UserNotUniqueWarningEvent(userDetails, response.getUsers()));
@@ -223,17 +221,4 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
     }
 
-    public static class PiwigoGetUserDetailsResponse extends UsersGetListResponseHandler.PiwigoGetUsersListResponse {
-
-        private final User selectedUser;
-
-        public PiwigoGetUserDetailsResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<User> users) {
-            super(messageId, piwigoMethod, page, pageSize, itemsOnPage, users);
-            selectedUser = getUsers().remove(0);
-        }
-
-        public User getSelectedUser() {
-            return selectedUser;
-        }
-    }
 }

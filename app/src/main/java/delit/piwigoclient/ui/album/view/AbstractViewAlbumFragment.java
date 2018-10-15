@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -82,6 +83,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.MainActivity;
@@ -397,21 +399,22 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
 
-        if (galleryListView != null && isSessionDetailsChanged()) {
-            if (galleryModel.getContainerDetails() == CategoryItem.ROOT_ALBUM) {
-                // Root album can just be reloaded.
+        if (isSessionDetailsChanged()) {
+
+            if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
+                //trigger total screen refresh. Any errors will result in screen being closed.
                 galleryIsDirty = true;
+                reloadAlbumContent();
             } else {
-                // If the page has been initialised already (not first visit), and the session token has changed, force moving to parent album.
-                //TODO be cleverer - check if the website is the same (might be okay to try and reload the same album in that instance). N.b. would need to check for a 401 error
-                getFragmentManager().popBackStack();
-                return;
+                if(galleryModel.getContainerDetails() == CategoryItem.ROOT_ALBUM) {
+                    // root of gallery can always be refreshed successfully.
+                    galleryIsDirty = true;
+                } else {
+                    // immediately leave this screen.
+                    getFragmentManager().popBackStack();
+                }
             }
         }
-
-//        if (viewPrefs.isUseDarkMode()) {
-//            view.setBackgroundColor(Color.BLACK);
-//        }
 
         initialiseBasketView(view);
 
@@ -854,6 +857,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private void reloadAlbumContent() {
 
         if (galleryIsDirty) {
+            emptyGalleryLabel.setVisibility(GONE);
             galleryIsDirty = false;
             if (loadingMessageIds.size() > 0) {
                 // already a load in progress - ignore this call.
@@ -1317,7 +1321,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private void onAdminListOfAlbumsLoaded(AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
+    private void onAdminListOfAlbumsLoaded(AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
         albumAdminList = response.getAdminList();
         try {
             adminCategories = albumAdminList.getDirectChildrenOfAlbum(galleryModel.getContainerDetails().getParentageChain(), galleryModel.getContainerDetails().getId());
@@ -1439,10 +1443,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         viewAdapter.clearSelectedItemIds();
         viewAdapter.toggleItemSelection();
         // now update this album view to reflect the server content
-        galleryIsDirty = true;
         if (deleteActionData != null && deleteActionData.removeProcessedResources(response.getDeletedItemIds())) {
             deleteActionData = null;
         }
+        galleryIsDirty = true;
         reloadAlbumContent();
         // Now ensure any parents are also updated when next shown
         List<Long> parentageChain = galleryModel.getContainerDetails().getParentageChain();
@@ -1500,7 +1504,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private void onGetSubGalleries(final AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsResponse response) {
+    private void onGetSubGalleries(final AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
 
         synchronized (this) {
             if (galleryModel.getContainerDetails().isRoot()) {
@@ -2078,8 +2082,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
                 if (response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                     onResourcesDeleted((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response);
-                } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsResponse) {
-                    onGetSubGalleries((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsResponse) response);
+                } else if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
+                    onGetSubGalleries((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response);
                 } else if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
                     onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) {
@@ -2088,8 +2092,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     onAlbumPermissionsRetrieved((AlbumGetPermissionsResponseHandler.PiwigoAlbumPermissionsRetrievedResponse) response);
                 } else if (response instanceof AlbumUpdateInfoResponseHandler.PiwigoUpdateAlbumInfoResponse) {
                     onAlbumInfoAltered((AlbumUpdateInfoResponseHandler.PiwigoUpdateAlbumInfoResponse) response);
-                } else if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                    onAdminListOfAlbumsLoaded((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) response);
+                } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
+                    onAdminListOfAlbumsLoaded((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response);
                 } else if (response instanceof ImageCopyToAlbumResponseHandler.PiwigoUpdateAlbumContentResponse) {
                     onAlbumContentAltered((ImageCopyToAlbumResponseHandler.PiwigoUpdateAlbumContentResponse) response);
                 } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {

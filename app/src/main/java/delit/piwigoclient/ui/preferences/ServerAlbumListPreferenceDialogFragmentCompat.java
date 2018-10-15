@@ -31,7 +31,6 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
@@ -161,8 +160,8 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
                 } else {
                     addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
                 }
-            } else if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                addAlbumsToUI(true, ((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
+            } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
+                addAlbumsToUI(true, ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
             }
             super.onAfterHandlePiwigoResponse(response);
         }

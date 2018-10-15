@@ -1,11 +1,11 @@
 package delit.piwigoclient.ui.permissions.users;
 
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -203,7 +203,10 @@ public class UsersListFragment extends MyFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
+        if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
+            //trigger total screen refresh. Any errors will result in screen being closed.
+            usersModel.clear();
+        } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             return;
@@ -318,6 +321,12 @@ public class UsersListFragment extends MyFragment {
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (isVisible()) {
+                if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+                    getFragmentManager().popBackStack();
+                    return;
+                }
+            }
             if (response instanceof UsersGetListResponseHandler.PiwigoGetUsersListResponse) {
                 onUsersLoaded((UsersGetListResponseHandler.PiwigoGetUsersListResponse) response);
             } else if (response instanceof UserDeleteResponseHandler.PiwigoDeleteUserResponse) {

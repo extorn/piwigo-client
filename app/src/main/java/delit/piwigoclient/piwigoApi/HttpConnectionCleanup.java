@@ -24,11 +24,18 @@ public class HttpConnectionCleanup extends Worker {
     @Override
     protected boolean executeCall(long messageId) {
         HttpClientFactory.getInstance(getContext()).clearCachedClients(connectionPrefs);
-        PiwigoResponseBufferingHandler.getDefault().processResponse(new PiwigoResponseBufferingHandler.HttpClientsShutdownResponse(messageId));
+        PiwigoResponseBufferingHandler.getDefault().processResponse(new HttpClientsShutdownResponse(messageId));
         return true;
     }
 
     public long start() {
         return start(messageId);
+    }
+
+    public static class HttpClientsShutdownResponse extends PiwigoResponseBufferingHandler.BaseResponse {
+
+        public HttpClientsShutdownResponse(long messageId) {
+            super(messageId, true);
+        }
     }
 }

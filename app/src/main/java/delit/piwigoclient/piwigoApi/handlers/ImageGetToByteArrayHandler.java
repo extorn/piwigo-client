@@ -6,6 +6,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HeaderElement;
+import cz.msebera.android.httpclient.HeaderElementIterator;
+import cz.msebera.android.httpclient.client.utils.HttpClientUtils;
 import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
@@ -34,8 +37,22 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
 
     @Override
     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
-        PiwigoResponseBufferingHandler.UrlSuccessResponse r = new PiwigoResponseBufferingHandler.UrlSuccessResponse(getMessageId(), resourceUrl, responseBody);
-        storeResponse(r);
+        Header contentTypeHeader = HttpUtils.getContentTypeHeader(headers);
+        if(contentTypeHeader != null && !contentTypeHeader.getValue().startsWith("image/")) {
+            // this was redirected to an http page - login failed most probable - try to force a login and retry!
+            boolean newLoginAcquired = acquireNewSessionAndRetryCallIfAcquired();
+            // if we either got a new token here or another thread did, retry the original failing call.
+            if (newLoginAcquired) {
+                // just run the original call again (another thread has retrieved a new session
+                rerunCall();
+            } else {
+                storeResponse(new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, 200, responseBody, "Unsupported content type", "Content-Type http response header returned - ("+contentTypeHeader.getValue()+"). image/* expected"));
+                resetSuccessAsFailure();
+            }
+        } else {
+            PiwigoResponseBufferingHandler.UrlSuccessResponse r = new PiwigoResponseBufferingHandler.UrlSuccessResponse(getMessageId(), resourceUrl, responseBody);
+            storeResponse(r);
+        }
     }
 
     @Override

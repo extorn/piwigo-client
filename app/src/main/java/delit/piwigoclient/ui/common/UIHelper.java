@@ -979,13 +979,13 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static class Action<T> implements Serializable {
+    public static class Action<T,S extends PiwigoResponseBufferingHandler.Response> implements Serializable {
 
-        protected T getActionParent(UIHelper uiHelper) {
+        protected T getActionParent(UIHelper<T> uiHelper) {
             return (T)uiHelper.getParent();
         }
 
-        public boolean onSuccess(UIHelper<T> uiHelper, PiwigoResponseBufferingHandler.Response response){
+        public boolean onSuccess(UIHelper<T> uiHelper, S response){
             return true;
         };
         public boolean onFailure(UIHelper<T> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response){

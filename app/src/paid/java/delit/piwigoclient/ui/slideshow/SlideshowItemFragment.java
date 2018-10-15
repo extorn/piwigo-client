@@ -167,9 +167,9 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 buttonView.setEnabled(false);
                 if(!getModel().isFavorite()) {
-                    getUiHelper().invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(getModel()), new FavoriteUpdateAction());
+                    getUiHelper().invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(getModel()), new FavoriteAddAction());
                 } else {
-                    getUiHelper().invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(getModel()), new FavoriteUpdateAction());
+                    getUiHelper().invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(getModel()), new FavoriteRemoveAction());
                 }
             }
         });
@@ -281,7 +281,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private static class FavoriteUpdateAction<T extends ResourceItem> extends UIHelper.Action<SlideshowItemFragment<T>> {
+    private static class FavoriteAction<T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<SlideshowItemFragment<T>, S> {
         @Override
         public boolean onFailure(UIHelper<SlideshowItemFragment<T>> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             getActionParent(uiHelper).onFavoriteUpdateFailed();
@@ -289,11 +289,15 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
 
         @Override
-        public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, PiwigoResponseBufferingHandler.Response response) {
+        public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, S response) {
             getActionParent(uiHelper).onFavoriteUpdateSucceeded();
             return super.onSuccess(uiHelper, response);
         }
     }
+
+    private static class FavoriteRemoveAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> {}
+
+    private static class FavoriteAddAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> {}
 
     private void onFavoriteUpdateSucceeded() {
         favoriteButton.setEnabled(true);

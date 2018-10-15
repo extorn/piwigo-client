@@ -141,20 +141,20 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             }
             availableGalleries.add(item);
         }
-        AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsResponse r = new AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
+        PiwigoGetSubAlbumsResponse r = new PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
         storeResponse(r);
     }
 
-    public static class PiwigoGetSubAlbumsAdminResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
-        final PiwigoAlbumAdminList adminList;
+    public static class PiwigoGetSubAlbumsResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final ArrayList<CategoryItem> albums;
 
-        public PiwigoGetSubAlbumsAdminResponse(long messageId, String piwigoMethod, PiwigoAlbumAdminList adminList) {
+        public PiwigoGetSubAlbumsResponse(long messageId, String piwigoMethod, ArrayList<CategoryItem> albums) {
             super(messageId, piwigoMethod, true);
-            this.adminList = adminList;
+            this.albums = albums;
         }
 
-        public PiwigoAlbumAdminList getAdminList() {
-            return adminList;
+        public ArrayList<CategoryItem> getAlbums() {
+            return albums;
         }
     }
 }

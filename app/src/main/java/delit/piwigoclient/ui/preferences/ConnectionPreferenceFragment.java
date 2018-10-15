@@ -2,13 +2,11 @@ package delit.piwigoclient.ui.preferences;
 
 import android.Manifest;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceManager;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -403,7 +401,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private static class OnLogoutAction extends UIHelper.Action<ConnectionPreferenceFragment> {
+    private static class OnLogoutAction extends UIHelper.Action<ConnectionPreferenceFragment,LogoutResponseHandler.PiwigoOnLogoutResponse> {
         private String loginAsProfileAfterLogout;
         private Boolean loginAgain;
 
@@ -416,7 +414,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
 
         @Override
-        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.Response response) {
+        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getContext()).start();
             if(loginAgain != null && !loginAgain) {
@@ -437,11 +435,10 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<ConnectionPreferenceFragment> {
+    private static class OnLoginAction extends UIHelper.Action<ConnectionPreferenceFragment,LoginResponseHandler.PiwigoOnLoginResponse> {
         @Override
-        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.Response response) {
+        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
             if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
                 PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
                 String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
@@ -451,13 +448,13 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                 } else {
                     uiHelper.showToast(msg);
                 }
-                EventBus.getDefault().post(new PiwigoLoginSuccessEvent(rsp.getOldCredentials(), false));
+                EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
             }
             return false;
         }
     }
 
-    private static class OnHttpClientShutdownAction extends UIHelper.Action<ConnectionPreferenceFragment> {
+    private static class OnHttpClientShutdownAction extends UIHelper.Action<ConnectionPreferenceFragment,HttpConnectionCleanup.HttpClientsShutdownResponse> {
         private String loginAsProfileAfterLogout;
         private boolean loginAgain = true;
 
@@ -470,7 +467,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         }
 
         @Override
-        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.Response response) {
+        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
             boolean retVal = false;
             if(loginAsProfileAfterLogout != null) {
                 // copy those profile values to the working app copy of prefs
@@ -501,7 +498,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
 
-            if (response instanceof PiwigoResponseBufferingHandler.HttpClientsShutdownResponse) {
+            if (response instanceof HttpConnectionCleanup.HttpClientsShutdownResponse) {
                 reloadConnectionProfilePrefs();
             }
         }

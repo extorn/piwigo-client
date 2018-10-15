@@ -37,8 +37,14 @@ public class ImageAddResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoAddImageResponse r = new PiwigoResponseBufferingHandler.PiwigoAddImageResponse(getMessageId(), getPiwigoMethod());
+        PiwigoAddImageResponse r = new PiwigoAddImageResponse(getMessageId(), getPiwigoMethod());
         storeResponse(r);
     }
 
+    public static class PiwigoAddImageResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        public PiwigoAddImageResponse(long messageId, String piwigoMethod) {
+            super(messageId, piwigoMethod, true);
+        }
+    }
 }

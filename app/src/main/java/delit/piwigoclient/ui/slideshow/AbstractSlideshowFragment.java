@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -7,10 +8,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -20,15 +23,22 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
+import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomViewPager;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
@@ -175,7 +185,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         };
         viewPager.clearOnPageChangeListeners();
         viewPager.addOnPageChangeListener(slideshowPageChangeListener);
-        viewPager.setCurrentItem(galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition));
+        int pagerItemsIdx = galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition);
+        viewPager.setCurrentItem(pagerItemsIdx);
+        if(pagerItemsIdx == 0) {
+            // need to force a page selection event as it won't be called otherwise.
+            slideshowPageChangeListener.onPageSelected(0);
+        }
         return view;
     }
 
@@ -185,17 +200,57 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         super.onViewCreated(view, savedInstanceState);
 
         if (isSessionDetailsChanged()) {
-            getFragmentManager().popBackStack();
-
-            //TODO stay on this screen if possible!
-//            if(isServerConnectionChanged()) {
-//                // immediately leave this screen.
-//                getFragmentManager().popBackStack();
-//            } else {
-//                //trigger total screen refresh. Any errors will result in screen being closed.
-//
-//            }
+            if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
+                //trigger total screen refresh. Any errors will result in screen being closed.
+                reloadSlideshowModel();
+            } else {
+                // immediately leave this screen.
+                getFragmentManager().popBackStack();
+            }
         }
+    }
+
+    private void reloadSlideshowModel() {
+        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
+        T album = galleryModel.getContainerDetails();
+        reloadSlideshowModel(album, preferredAlbumThumbnailSize);
+    }
+
+    protected void reloadSlideshowModel(T album, String preferredAlbumThumbnailSize) {
+        if(album instanceof CategoryItem) {
+            reloadAlbumSlideshowModel((CategoryItem)album, preferredAlbumThumbnailSize);
+        }
+    }
+
+    private void reloadAlbumSlideshowModel(CategoryItem album, String preferredAlbumThumbnailSize) {
+        UIHelper.Action action = new UIHelper.Action<Fragment,AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse>() {
+
+            @Override
+            public boolean onSuccess(UIHelper uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+                if(response.getAlbums().isEmpty()) {
+                    // will occur if the album no longer exists.
+                    getFragmentManager().popBackStack();
+                    return false;
+                }
+                CategoryItem currentAlbum = response.getAlbums().get(0);
+                if(currentAlbum.getId() != galleryModel.getId()) {
+                    //Something wierd is going on - this should never happen
+                    Crashlytics.log(Log.ERROR, getTag(), "Closing slideshow - reloaded album had different id to that expected!");
+                    getFragmentManager().popBackStack();
+                    return false;
+                }
+                setContainerDetails((ResourceContainer<T, GalleryItem>) new PiwigoAlbum(currentAlbum));
+                loadMoreGalleryResources();
+                return true;
+            }
+
+            @Override
+            public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+                getFragmentManager().popBackStack();
+                return false;
+            }
+        };
+        getUiHelper().invokeActiveServiceCall(R.string.progress_loading_album_content, new AlbumGetSubAlbumsResponseHandler(album, preferredAlbumThumbnailSize, false), action);
     }
 
     private void hideProgressIndicator() {
@@ -208,6 +263,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
     protected ResourceContainer<T, GalleryItem> getGalleryModel() {
         return galleryModel;
+    }
+
+    protected void setContainerDetails(ResourceContainer<T, GalleryItem> piwigoTag) {
+        galleryModel = piwigoTag;
     }
 
     /**
@@ -264,7 +323,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         }
     }
 
-    private void loadMoreGalleryResources() {
+    protected void loadMoreGalleryResources() {
         int pageToLoad = galleryModel.getPagesLoaded();
         loadAlbumResourcesPage(pageToLoad);
     }

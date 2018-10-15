@@ -230,45 +230,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             } else if (allowSessionRefreshAttempt
                     && (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && (error == null || error.getMessage().equalsIgnoreCase("Access denied")))) {
 
-                boolean newLoginAcquired = false;
-                synchronized (AbstractBasicPiwigoResponseHandler.class) {
-                    // Only one instance of this class can perform a login at a time - all others will wait for the outcome
-                    triedLoggingInAgain = true;
-                    PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
-                    String newToken = null;
-                    if (sessionDetails != null) {
-                        newToken = sessionDetails.getSessionToken();
-                    }
-                    if (newToken != null && !newToken.equals(sessionToken)) {
-                        newLoginAcquired = true;
-                    } else if (!isPerformingLogin() && !(sessionDetails != null && sessionDetails.isLoggedIn() && !sessionDetails.isFullyLoggedIn())) {
-                        // if we're not trying to get a new login at the moment. (otherwise this recurses).
-
-                        // clear the cookies to ensure the fresh cookie is used in subsequent requests.
-                        //TODO is this required?
-                        httpClientFactory.flushCookies(connectionPrefs);
-
-                        // Ensure that the login code knows that the current session token may be invalid despite seemingly being okay
-                        if (sessionDetails != null && sessionDetails.isOlderThanSeconds(5)) {
-                            sessionDetails.setSessionMayHaveExpired();
-                        }
-
-                        // try and get a new session token
-                        synchronized (Worker.class) {
-                            // only one worker at a time can do this.
-                            newLoginAcquired = getNewLogin();
-                        }
-                    }
-                }
-
-                // if we either got a new token here or another thread did, retry the original failing call.
-                if (newLoginAcquired) {
-                    sessionToken = PiwigoSessionDetails.getActiveSessionToken(connectionPrefs);
-                    // ensure we ignore this error (if it errors again, we'll capture that one)
-                    tryingAgain = true;
-                    // just run the original call again (another thread has retrieved a new session
-                    rerunCall();
-                }
+                // ensure we ignore this error (if it errors again, we'll capture that one)
+                tryingAgain = acquireNewSessionAndRetryCallIfAcquired();
             }
         }
         if (!tryingAgain) {
@@ -290,6 +253,53 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 rerunCall();
             }
         }
+    }
+
+    protected boolean acquireNewSessionAndRetryCallIfAcquired() {
+        boolean newLoginAcquired = testLoginGetNewSessionIfNeeded();
+        // if we either got a new token here or another thread did, retry the original failing call.
+        if (newLoginAcquired) {
+            // just run the original call again (another thread has retrieved a new session
+            rerunCall();
+        }
+        return newLoginAcquired;
+    }
+
+    protected boolean testLoginGetNewSessionIfNeeded() {
+        boolean newLoginAcquired = false;
+        synchronized (AbstractBasicPiwigoResponseHandler.class) {
+            // Only one instance of this class can perform a login at a time - all others will wait for the outcome
+            triedLoggingInAgain = true;
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            String newToken = null;
+            if (sessionDetails != null) {
+                newToken = sessionDetails.getSessionToken();
+            }
+            if (newToken != null && !newToken.equals(sessionToken)) {
+                newLoginAcquired = true;
+            } else if (!isPerformingLogin() && !(sessionDetails != null && sessionDetails.isLoggedIn() && !sessionDetails.isFullyLoggedIn())) {
+                // if we're not trying to get a new login at the moment. (otherwise this recurses).
+
+                // clear the cookies to ensure the fresh cookie is used in subsequent requests.
+                //TODO is this required?
+                httpClientFactory.flushCookies(connectionPrefs);
+
+                // Ensure that the login code knows that the current session token may be invalid despite seemingly being okay
+                if (sessionDetails != null && sessionDetails.isOlderThanSeconds(5)) {
+                    sessionDetails.setSessionMayHaveExpired();
+                }
+
+                // try and get a new session token
+                synchronized (Worker.class) {
+                    // only one worker at a time can do this.
+                    newLoginAcquired = getNewLogin();
+                }
+            }
+        }
+        if(newLoginAcquired) {
+            sessionToken = PiwigoSessionDetails.getActiveSessionToken(connectionPrefs);
+        }
+        return newLoginAcquired;
     }
 
     private void recordConnectionReset() {
@@ -334,6 +344,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         return isSuccess;
     }
 
+    protected void resetSuccessAsFailure() {
+        isSuccess = false;
+    }
+
     protected void resetFailureAsASuccess() {
         isSuccess = true;
     }
@@ -346,7 +360,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         this.error = error;
     }
 
-    private void rerunCall() {
+    protected void rerunCall() {
         rerunningCall = true;
         runCall();
     }

@@ -2,13 +2,14 @@ package delit.piwigoclient.ui.preferences;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import delit.piwigoclient.R;
 
 public class PreferencesFragment extends CommonPreferencesFragment {
 
-    protected FragmentPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
+    protected FragmentStatePagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
         return new PaidPreferencesPagerAdapter(childFragmentManager);
     }
 

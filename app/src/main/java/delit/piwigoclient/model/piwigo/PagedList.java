@@ -40,6 +40,10 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         this.pageLoadLock = new ReentrantLock();
     }
 
+    public String getItemType() {
+        return itemType;
+    }
+
     public Integer getAMissingPage() {
         if(!pagesFailedToLoad.isEmpty()) {
             return getNextPageToReload();

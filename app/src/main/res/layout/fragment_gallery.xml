@@ -72,7 +72,8 @@
         <TextView
             android:id="@+id/album_empty_content"
             android:layout_below="@id/album_header_bar"
-            android:visibility="visible"
+            tools:visibility="visible"
+            android:visibility="gone"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

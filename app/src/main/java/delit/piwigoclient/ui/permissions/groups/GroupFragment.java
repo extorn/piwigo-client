@@ -47,6 +47,7 @@ import delit.piwigoclient.piwigoApi.handlers.GroupPermissionsAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupPermissionsRemovedResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupRemoveMembersResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GroupUpdateInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
@@ -275,10 +276,34 @@ public class GroupFragment extends MyFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
+        if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
+            //trigger total screen refresh. Any errors will result in screen being closed.
+            UIHelper.Action action = new UIHelper.Action<GroupFragment, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse>() {
+
+                @Override
+                public boolean onSuccess(UIHelper<GroupFragment> uiHelper, GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
+                    HashSet<Group> groups = response.getGroups();
+                    if(groups.isEmpty()) {
+                        getFragmentManager().popBackStack();
+                        return false;
+                    }
+                    currentGroup = groups.iterator().next();
+                    if(newGroup == null) {
+                        setFieldsFromModel(currentGroup);
+                    }
+                    return false;
+                }
+
+                @Override
+                public boolean onFailure(UIHelper<GroupFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+                    getFragmentManager().popBackStack();
+                    return false;
+                }
+            };
+            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_group_details, new GroupsGetListResponseHandler(currentGroup.getId()), action);
+        } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
-            return;
         }
     }
 
@@ -638,6 +663,12 @@ public class GroupFragment extends MyFragment {
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            if (isVisible()) {
+                if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+                    getFragmentManager().popBackStack();
+                    return;
+                }
+            }
             if (response instanceof UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) {
                 onUsernamesLoaded((UsernamesGetListResponseHandler.PiwigoGetUsernamesListResponse) response);
             } else if (response instanceof GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) {

@@ -1,20 +1,32 @@
 package delit.piwigoclient.ui.slideshow;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTag;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.Tag;
+import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 
 /**
@@ -27,6 +39,52 @@ public class SlideshowFragment<T extends Identifiable&Parcelable> extends Abstra
         SlideshowFragment<S> fragment = new SlideshowFragment<>();
         fragment.setArguments(buildArgs(gallery, currentGalleryItem));
         return fragment;
+    }
+
+    @Override
+    protected void reloadSlideshowModel(T album, String preferredAlbumThumbnailSize) {
+        if(album instanceof Tag) {
+            reloadTagSlideshowModel((Tag)album, preferredAlbumThumbnailSize);
+        } else {
+            super.reloadSlideshowModel(album, preferredAlbumThumbnailSize);
+        }
+    }
+
+    private void reloadTagSlideshowModel(Tag tag, String preferredAlbumThumbnailSize) {
+        UIHelper.Action action = new UIHelper.Action<Fragment,TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
+
+            @Override
+            public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
+                boolean updated = false;
+                for(Tag t : response.getTags()) {
+                    if(t.getId() == getGalleryModel().getId()) {
+                        // tag has been located!
+                        setContainerDetails((ResourceContainer<T, GalleryItem>) new PiwigoTag(t));
+                        updated = true;
+                    }
+                }
+                if(!updated) {
+                    //Something wierd is going on - this should never happen
+                    Crashlytics.log(Log.ERROR, getTag(), "Closing tag slideshow - tag was not available after refreshing session");
+                    getFragmentManager().popBackStack();
+                    return false;
+                }
+                loadMoreGalleryResources();
+                return false;
+            }
+
+            @Override
+            public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+                getFragmentManager().popBackStack();
+                return false;
+            }
+        };
+
+        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(1, Integer.MAX_VALUE), action);
+        } else {
+            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(0, Integer.MAX_VALUE), action);
+        }
     }
 
     @Override

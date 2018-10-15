@@ -184,7 +184,7 @@ public class PiwigoSessionDetails {
     }
 
     public boolean isUseCommunityPlugin() {
-        return Boolean.TRUE.equals(useCommunityPlugin);
+        return isCommunityPluginStatusAvailable() && Boolean.TRUE.equals(useCommunityPlugin);
     }
 
     public void setUseCommunityPlugin(boolean useCommunityPlugin) {
@@ -278,5 +278,9 @@ public class PiwigoSessionDetails {
 
     public boolean isPiwigoClientPluginInstalled() {
         return isMethodAvailable("piwigo_client.favorites.addImage");
+    }
+
+    public boolean isCommunityPluginInstalled() {
+        return isMethodAvailable("community.session.getStatus");
     }
 }

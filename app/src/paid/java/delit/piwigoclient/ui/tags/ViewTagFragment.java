@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.tags;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -12,12 +13,15 @@ import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -45,11 +49,15 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
@@ -245,10 +253,16 @@ public class ViewTagFragment extends MyFragment {
             tagModel = new PiwigoTag(tag);
         }
 
-        if(tagListView != null && isSessionDetailsChanged()) {
-            // If the page has been initialised already (not first visit), and the session token has changed, tag may not be valid for current user.
-            getFragmentManager().popBackStack();
-            return;
+        if (isSessionDetailsChanged()) {
+
+            if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
+                //trigger total screen refresh. Any errors will result in screen being closed.
+                tagIsDirty = false;
+                reloadTagModel();
+            } else {
+                // immediately leave this screen.
+                getFragmentManager().popBackStack();
+            }
         }
 
         retryActionButton = view.findViewById(R.id.tag_retryAction_actionButton);
@@ -328,6 +342,42 @@ public class ViewTagFragment extends MyFragment {
         };
         scrollListener.configure(tagModel.getPagesLoaded(), tagModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
+    }
+
+    private void reloadTagModel() {
+        UIHelper.Action action = new UIHelper.Action<Fragment,TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
+
+            @Override
+            public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
+                boolean updated = false;
+                for(Tag t : response.getTags()) {
+                    if(t.getId() == tagModel.getId()) {
+                        // tag has been located!
+                        tagModel = new PiwigoTag(t);
+                        updated = true;
+                    }
+                }
+                if(!updated) {
+                    //Something wierd is going on - this should never happen
+                    Crashlytics.log(Log.ERROR, getTag(), "Closing tag - tag was not available after refreshing session");
+                    getFragmentManager().popBackStack();
+                    return false;
+                }
+                loadAlbumResourcesPage(0);
+                return false;
+            }
+
+            @Override
+            public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+                getFragmentManager().popBackStack();
+                return false;
+            }
+        };
+        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(1, Integer.MAX_VALUE), action);
+        } else {
+            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(0, Integer.MAX_VALUE), action);
+        }
     }
 
     private void onBulkActionDeleteButtonPressed() {
@@ -568,17 +618,21 @@ public class ViewTagFragment extends MyFragment {
 
     private void loadAlbumResourcesPage(int pageToLoad) {
         synchronized (loadingMessageIds) {
-            Set<String> activeCalls = new HashSet<>(loadingMessageIds.values());
-            if (activeCalls.contains(String.valueOf(pageToLoad))) {
-                // already loading this page, ignore the request.
-                return;
+            tagModel.acquirePageLoadLock();
+            try {
+                if (tagModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+                    return;
+                }
+
+                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
+                String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
+                long loadingMessageId = new TagGetImagesResponseHandler(tag, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+                tagModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
+                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
+            } finally {
+                tagModel.releasePageLoadLock();
             }
-            String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
-            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
-            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
-            long loadingMessageId = new TagGetImagesResponseHandler(tag, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
-            loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
-            addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
         }
     }
 
@@ -653,7 +707,7 @@ public class ViewTagFragment extends MyFragment {
                     onItemRemovedFromTag(r);
                 } else if (response instanceof PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) {
                     onTagUpdateResponse(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response));
-                } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
+                } else if (response instanceof GetMethodsAvailableResponseHandler.PiwigoGetMethodsAvailableResponse) {
                     viewPrefs.withAllowMultiSelect(getMultiSelectionAllowed());
                 } else {
                     String failedCall = loadingMessageIds.get(response.getMessageId());
@@ -694,11 +748,15 @@ public class ViewTagFragment extends MyFragment {
         synchronized (itemsToLoad) {
             while (itemsToLoad.size() > 0) {
                 String itemToLoad = itemsToLoad.remove(0);
-                switch (itemToLoad) {
-                    default:
-                        int page = Integer.valueOf(itemToLoad);
-                        loadAlbumResourcesPage(page);
-                        break;
+                if(itemToLoad != null) {
+                    switch (itemToLoad) {
+                        default:
+                            int page = Integer.valueOf(itemToLoad);
+                            loadAlbumResourcesPage(page);
+                            break;
+                    }
+                } else {
+                    Crashlytics.log(Log.ERROR, getTag(), "User told tag page failed to load, but nothing to retry loading!");
                 }
             }
         }

@@ -54,7 +54,7 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
         }
         return triedToGetNewSession;
     }
-
+/*
     @Override
     protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
         int errorCode = rsp.getErr();
@@ -67,7 +67,7 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
         } else {
             super.onPiwigoFailure(rsp);
         }
-    }
+    }*/
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {

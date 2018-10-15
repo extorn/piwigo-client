@@ -24,9 +24,18 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
     private static final String TAG = "UsernamesListRspHdlr";
     private final String username;
     private final String userType;
+    private final long userId;
+
+    public UserGetInfoResponseHandler(long userId) {
+        super("pwg.users.getList", TAG);
+        this.userId = userId;
+        this.username = null;
+        this.userType = null;
+    }
 
     public UserGetInfoResponseHandler(@NonNull String username, @NonNull String userType) {
         super("pwg.users.getList", TAG);
+        this.userId = -1;
         this.username = username;
         this.userType = userType;
     }
@@ -87,8 +96,12 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
-        params.put("username", username);
-        params.put("status", userType);
+        if(userId > 0) {
+            params.put("userId", userId);
+        } else {
+            params.put("username", username);
+            params.put("status", userType);
+        }
         params.put("page", "0");
         params.put("per_page", "5");
         params.put("display", "username,email,status,level,groups,enabled_high,last_visit"); // useful information for the app
@@ -105,8 +118,21 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
         int itemsOnPage = pagingObj.get("count").getAsInt();
         JsonArray usersObj = result.get("users").getAsJsonArray();
         ArrayList<User> users = parseUsersFromJson(usersObj);
-        LoginResponseHandler.PiwigoGetUserDetailsResponse r = new LoginResponseHandler.PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
+        PiwigoGetUserDetailsResponse r = new PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
         storeResponse(r);
     }
 
+    public static class PiwigoGetUserDetailsResponse extends UsersGetListResponseHandler.PiwigoGetUsersListResponse {
+
+        private final User selectedUser;
+
+        public PiwigoGetUserDetailsResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<User> users) {
+            super(messageId, piwigoMethod, page, pageSize, itemsOnPage, users);
+            selectedUser = getUsers().remove(0);
+        }
+
+        public User getSelectedUser() {
+            return selectedUser;
+        }
+    }
 }

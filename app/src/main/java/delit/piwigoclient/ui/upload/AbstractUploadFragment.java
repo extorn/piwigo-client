@@ -22,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdView;
 
@@ -49,9 +48,9 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
+import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.AdsManager;
@@ -865,7 +864,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onLocalFileError(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse response) {
+        protected void onLocalFileError(Context context, final BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response) {
             String errorMessage;
             if (response.getError() instanceof FileNotFoundException) {
                 errorMessage = String.format(context.getString(R.string.alert_error_upload_file_no_longer_available_message_pattern), response.getFileForUpload().getName());
@@ -876,20 +875,20 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onPrepareUploadFailed(Context context, final PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse response) {
+        protected void onPrepareUploadFailed(Context context, final BasePiwigoUploadService.PiwigoPrepareUploadFailedResponse response) {
 
             PiwigoResponseBufferingHandler.Response error = response.getError();
             processError(context, error);
         }
 
         @Override
-        protected void onCleanupPostUploadFailed(Context context, PiwigoResponseBufferingHandler.PiwigoCleanupPostUploadFailedResponse response) {
+        protected void onCleanupPostUploadFailed(Context context, BasePiwigoUploadService.PiwigoCleanupPostUploadFailedResponse response) {
             PiwigoResponseBufferingHandler.Response error = response.getError();
             processError(context, error);
         }
 
         @Override
-        protected void onFileUploadProgressUpdate(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
+        protected void onFileUploadProgressUpdate(Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
             if (isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = ((FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter());
                 adapter.updateProgressBar(response.getFileForUpload(), response.getProgress());
@@ -899,7 +898,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         }
 
-        private void onFileUploadComplete(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
+        private void onFileUploadComplete(Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
 
             UploadJob uploadJob = getActiveJob(context);
 
@@ -918,7 +917,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onFilesSelectedForUploadAlreadyExistOnServer(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileFilesExistAlreadyResponse response) {
+        protected void onFilesSelectedForUploadAlreadyExistOnServer(Context context, final BasePiwigoUploadService.PiwigoUploadFileFilesExistAlreadyResponse response) {
             if (isAdded()) {
                 UploadJob uploadJob = getActiveJob(context);
 
@@ -936,7 +935,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onChunkUploadFailed(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileChunkFailedResponse response) {
+        protected void onChunkUploadFailed(Context context, final BasePiwigoUploadService.PiwigoUploadFileChunkFailedResponse response) {
             PiwigoResponseBufferingHandler.Response error = response.getError();
             File fileForUpload = response.getFileForUpload();
             String errorMessage = null;
@@ -960,8 +959,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
                 onGetSubGalleryNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
-            } else if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                onGetSubGalleries((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse) response);
+            } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
+                onGetSubGalleries((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response);
             } else if (response instanceof AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) {
                 onAlbumDeleted((AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse)response);
             } else {
@@ -970,7 +969,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         @Override
-        protected void onAddUploadedFileToAlbumFailure(Context context, final PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse response) {
+        protected void onAddUploadedFileToAlbumFailure(Context context, final BasePiwigoUploadService.PiwigoUploadFileAddToAlbumFailedResponse response) {
             PiwigoResponseBufferingHandler.Response error = response.getError();
             File fileForUpload = response.getFileForUpload();
             String errorMessage = null;
@@ -1000,7 +999,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         }
 
-        protected void onGetSubGalleries(AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
+        protected void onGetSubGalleries(AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
             updateSpinnerWithNewAlbumsList(response.getAdminList().flattenTree());
         }
 
