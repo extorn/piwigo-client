@@ -57,7 +57,6 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
@@ -859,6 +858,16 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         setLinkedAlbumFieldText(linkedAlbumsField, currentLinkedAlbumsSet);
     }
 
+    protected String getDisplayText(Object itemValue) {
+        if(itemValue instanceof String) {
+            return itemValue.toString();
+        }
+        if(itemValue instanceof CategoryItemStub) {
+            return ((CategoryItemStub) itemValue).getName();
+        }
+        return null;
+    }
+
     public void setLinkedAlbumFieldText(TextView textView, HashSet<?> linkedSelectedItems) {
         if(linkedSelectedItems == null) {
             textView.setText(getString(R.string.click_to_view));
@@ -866,17 +875,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             Iterator<?> itemIter = linkedSelectedItems.iterator();
 
             Object itemValue = itemIter.hasNext()?itemIter.next():null;
-            if(itemValue instanceof String || itemValue instanceof CategoryItemStub || itemValue instanceof Tag) {
+            if(getDisplayText(itemValue) != null) {
                 StringBuilder sb = new StringBuilder();
                 sb.append(linkedSelectedItems.size());
                 sb.append(" - ");
                 do {
-                    if(itemValue instanceof Tag) {
-                        itemValue = ((Tag) itemValue).getName();
-                    } else if(itemValue instanceof CategoryItemStub) {
-                        itemValue = ((CategoryItemStub) itemValue).getName();
-                    }
-                    sb.append(itemValue);
+                    sb.append(getDisplayText(itemValue));
                     itemValue = null;
                     if (itemIter.hasNext()) {
                         sb.append(", ");

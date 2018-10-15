@@ -1,5 +1,7 @@
 package delit.piwigoclient.ui.slideshow;
 
+import android.support.v4.widget.TextViewCompat;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
@@ -8,7 +10,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 public abstract class SlideshowItemFragment<T extends ResourceItem> extends AbstractSlideshowItemFragment<T> {
     @Override
     protected void onSaveModelChanges(T model) {
-        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler<T>(model).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler<T>(model, false).invokeAsync(getContext()));
     }
 
     protected void populateResourceExtraFields() {

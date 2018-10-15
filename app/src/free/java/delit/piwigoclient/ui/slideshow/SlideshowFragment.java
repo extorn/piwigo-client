@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
+import android.os.Parcelable;
 
 import org.greenrobot.eventbus.EventBus;
 

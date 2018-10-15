@@ -248,6 +248,15 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         return new PaidPiwigoResponseListener();
     }
 
+    @Override
+    protected String getDisplayText(Object itemValue) {
+        if(itemValue instanceof Tag) {
+            return ((Tag)itemValue).getName();
+        } else {
+            return super.getDisplayText(itemValue);
+        }
+    }
+
     private class PaidPiwigoResponseListener extends CustomPiwigoResponseListener {
 
         @Override
