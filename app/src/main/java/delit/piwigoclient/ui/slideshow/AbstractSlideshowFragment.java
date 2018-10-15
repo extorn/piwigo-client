@@ -7,12 +7,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -20,9 +18,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.HashSet;
-
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -35,14 +30,12 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomViewPager;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
-import delit.piwigoclient.util.SetUtils;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static android.view.View.GONE;
@@ -55,12 +48,10 @@ import static android.view.View.VISIBLE;
 public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelable> extends MyFragment {
 
     //    private static final String TAG = "SlideshowFragment";
-    private static final String STATE_GALLERY = "gallery";
-    private static final String STATE_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
-    private static final String STATE_ACTIVE_LOAD_THREADS = "activeLoadThreads";
-    private final HashSet<Integer> pagesBeingLoaded = new HashSet<>();
+    private static final String STATE_GALLERY = "galleryModel";
+    private static final String ARG_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
     private CustomViewPager viewPager;
-    private ResourceContainer<T, GalleryItem> gallery;
+    private ResourceContainer<T, GalleryItem> galleryModel;
     private int rawCurrentGalleryItemPosition;
     private View progressIndicator;
     private GalleryItemAdapter<T, CustomViewPager> galleryItemAdapter;
@@ -69,16 +60,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     public static Bundle buildArgs(ResourceContainer gallery, GalleryItem currentGalleryItem) {
         Bundle args = new Bundle();
         args.putParcelable(STATE_GALLERY, gallery);
-        args.putInt(STATE_GALLERY_ITEM_DISPLAYED, gallery.getItemIdx(currentGalleryItem));
+        args.putInt(ARG_GALLERY_ITEM_DISPLAYED, gallery.getItemIdx(currentGalleryItem));
         return args;
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(STATE_GALLERY, gallery);
-        outState.putInt(STATE_GALLERY_ITEM_DISPLAYED, rawCurrentGalleryItemPosition);
-        BundleUtils.putIntHashSet(outState, STATE_ACTIVE_LOAD_THREADS, pagesBeingLoaded);
+        outState.putParcelable(STATE_GALLERY, galleryModel);
     }
 
     @Override
@@ -89,7 +78,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     @Override
     public void onPause() {
         super.onPause();
-        EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(gallery));
+        EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(galleryModel));
     }
 
     @Override
@@ -104,12 +93,11 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         Bundle configurationBundle = savedInstanceState;
         if (configurationBundle == null) {
             configurationBundle = getArguments();
+            rawCurrentGalleryItemPosition = configurationBundle.getInt(ARG_GALLERY_ITEM_DISPLAYED);
         }
         if (configurationBundle != null) {
-            gallery = configurationBundle.getParcelable(STATE_GALLERY);
-            rawCurrentGalleryItemPosition = configurationBundle.getInt(STATE_GALLERY_ITEM_DISPLAYED);
-            pagesBeingLoaded.clear();
-            SetUtils.setNotNull(pagesBeingLoaded, BundleUtils.getIntHashSet(configurationBundle, STATE_ACTIVE_LOAD_THREADS));
+            galleryModel = configurationBundle.getParcelable(STATE_GALLERY);
+
         }
 
         super.onCreateView(inflater, container, savedInstanceState);
@@ -148,7 +136,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, getContext());
         shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
         if (galleryItemAdapter == null) {
-            galleryItemAdapter = new GalleryItemAdapter(gallery, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
+            galleryItemAdapter = new GalleryItemAdapter(galleryModel, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(40);
         } else {
             // update settings.
@@ -169,7 +157,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
             @Override
             public void onPageSelected(int position) {
-                if (!gallery.isFullyLoaded()) {
+                if (!galleryModel.isFullyLoaded()) {
                     if ((viewPager.getAdapter()).getCount() - position < 10) {
                         //if within 10 items of the end of those items currently loaded, load some more.
                         loadMoreGalleryResources();
@@ -180,7 +168,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
                     ((AdsManager.MyBannerAdListener) adView.getAdListener()).replaceAd();
                 }
 
-                rawCurrentGalleryItemPosition = ((GalleryItemAdapter) viewPager.getAdapter()).getRawGalleryItemPosition(position);
                 if (lastPage >= 0) {
                     ((GalleryItemAdapter) viewPager.getAdapter()).onPageDeselected(lastPage);
                 }
@@ -195,7 +182,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         };
         viewPager.clearOnPageChangeListeners();
         viewPager.addOnPageChangeListener(slideshowPageChangeListener);
-
+        viewPager.setCurrentItem(galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition));
         return view;
     }
 
@@ -211,27 +198,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         }
     }
 
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-
-        super.onViewStateRestored(savedInstanceState);
-
-        if (viewPager == null || viewPager.getAdapter() == null) {
-            return;
-        }
-
-        try {
-            int slideshowIndexToShow = ((GalleryItemAdapter) viewPager.getAdapter()).getSlideshowIndex(rawCurrentGalleryItemPosition);
-            viewPager.setCurrentItem(slideshowIndexToShow);
-        } catch (IllegalStateException e) {
-            Crashlytics.logException(e);
-            Crashlytics.logException(e);
-            if (BuildConfig.DEBUG) {
-                Log.e(getTag(), "Slideshow item cannot be found. Waiting until items have loaded");
-            }
-        }
-    }
-
     private void hideProgressIndicator() {
         progressIndicator.setVisibility(GONE);
     }
@@ -240,8 +206,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         progressIndicator.setVisibility(VISIBLE);
     }
 
-    protected ResourceContainer<T, GalleryItem> getGallery() {
-        return gallery;
+    protected ResourceContainer<T, GalleryItem> getGalleryModel() {
+        return galleryModel;
     }
 
     /**
@@ -267,7 +233,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemActionStartedEvent event) {
-        if (event.getItem().getParentId().equals(gallery.getId())) {
+        if (event.getItem().getParentId().equals(galleryModel.getId())) {
             getUiHelper().setTrackingRequest(event.getActionId());
             viewPager.setEnabled(false);
         }
@@ -277,7 +243,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     public void onEvent(AlbumItemActionFinishedEvent event) {
         //TODO this is rubbish, store a reference to the parent in the resource items so we can test if this screen is relevant.
         // parentId will be null if the parent is a Tag not an Album (viewing contents of a Tag).
-        if ((event.getItem().getParentId() == null || event.getItem().getParentId().equals(gallery.getId()))
+        if ((event.getItem().getParentId() == null || event.getItem().getParentId().equals(galleryModel.getId()))
                 && getUiHelper().isTrackingRequest(event.getActionId())) {
             viewPager.setEnabled(true);
         }
@@ -285,7 +251,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemDeletedEvent event) {
-        if(gallery.getId() == event.item.getParentId()) {
+        if(galleryModel.getId() == event.item.getParentId()) {
             GalleryItemAdapter adapter = ((GalleryItemAdapter) viewPager.getAdapter());
             int fullGalleryIdx = adapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
             adapter.deleteGalleryItem(fullGalleryIdx);
@@ -294,38 +260,30 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
     @Subscribe
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        if (gallery instanceof PiwigoAlbum && gallery.getId() == albumAlteredEvent.getAlbumAltered()) {
-//            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_album));
+        if (galleryModel instanceof PiwigoAlbum && galleryModel.getId() == albumAlteredEvent.getAlbumAltered()) {
         }
     }
-/*
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(viewPager != null && viewPager.getAdapter() != null) {
-            ((GalleryItemAdapter) viewPager.getAdapter()).onResume();
-        }
-    }*/
 
     private void loadMoreGalleryResources() {
-        int pageToLoad = gallery.getPagesLoaded();
+        int pageToLoad = galleryModel.getPagesLoaded();
         loadAlbumResourcesPage(pageToLoad);
     }
 
     private void loadAlbumResourcesPage(int pageToLoad) {
-        synchronized (pagesBeingLoaded) {
-            if (pagesBeingLoaded.contains(Integer.valueOf(pageToLoad))) {
-                // already loading this page, ignore the request.
+        galleryModel.acquirePageLoadLock();
+        try {
+            if (galleryModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
                 return;
             }
-            pagesBeingLoaded.add(pageToLoad);
-            String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
-            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
-            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
 
-            long loadingMessageId;
-            loadingMessageId = invokeResourcePageLoader(gallery, sortOrder, pageToLoad, pageSize, multimediaExtensionList);
-            addActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId);
+            String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
+            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
+            long loadingMessageId = invokeResourcePageLoader(galleryModel, sortOrder, pageToLoad, pageSize, multimediaExtensionList);
+            galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
+//            loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
+        } finally {
+            galleryModel.releasePageLoadLock();
         }
     }
 
@@ -348,20 +306,18 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            synchronized (pagesBeingLoaded) {
-
-                if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
-                    onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
-                    pagesBeingLoaded.remove(((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response).getPage());
-                }
+            if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
+                onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
             }
         }
 
         public void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
-            synchronized (this) {
-                gallery.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
-                pagesBeingLoaded.remove(response.getPage());
-                viewPager.getAdapter().notifyDataSetChanged();
+            galleryModel.acquirePageLoadLock();
+            try {
+                galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
+                ((GalleryItemAdapter)viewPager.getAdapter()).onDataAppended(response.getResources().size());
+            } finally {
+                galleryModel.releasePageLoadLock();
             }
         }
     }

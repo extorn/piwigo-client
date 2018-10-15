@@ -130,14 +130,13 @@ public class BundleUtils {
         int len = b.getInt("bytes");
         byte[] dataBytes = b.getByteArray("data");
         Parcel p = Parcel.obtain();
-        p.unmarshall(dataBytes,0,len);
-        ArrayList<S> keys = (ArrayList<S>) p.readValue(loader);
-        ArrayList<T> values = (ArrayList<T>) p.readValue(loader);
-        HashMap<S,T> map = new HashMap<>(keys.size());
-        for(int i = 0; i < values.size(); i++) {
-            map.put(keys.get(i), values.get(i));
+        try {
+            p.unmarshall(dataBytes, 0, len);
+            p.setDataPosition(0);
+            return ParcelUtils.readMap(p, loader);
+        } finally {
+            p.recycle();
         }
-        return map;
     }
 
     /**
@@ -152,27 +151,28 @@ public class BundleUtils {
         if(data == null) {
             return;
         }
-        ArrayList<S> keys = new ArrayList<>(data.size());
-        ArrayList<T> values = new ArrayList<>(data.size());
-        for(Map.Entry<S,T> entry : data.entrySet()) {
-            keys.add(entry.getKey());
-            values.add(entry.getValue());
-        }
         Parcel p = Parcel.obtain();
-        p.writeValue(keys);
-        p.writeValue(values);
-        byte[] bytes = p.marshall();
+        byte[] parcelBytes;
+        try {
+            ParcelUtils.writeMap(p, data);
+            parcelBytes = p.marshall();
+        } finally {
+            p.recycle();
+        }
         Bundle b = new Bundle();
-        b.putInt("bytes", bytes.length);
-        b.putByteArray("data", bytes);
+        b.putInt("bytes", parcelBytes.length);
+        b.putByteArray("data", parcelBytes);
         bundle.putBundle(key, b);
     }
 
-    public static void logSize(String key, Bundle bundle) {
+    public static void logSize(String bundleId, Bundle bundle) {
         Parcel parcel = Parcel.obtain();
-        parcel.writeBundle(bundle);
-        int sizeInBytes = parcel.dataSize(); // This is what you want to check
-        Log.v("BundleUtils", String.format("BundleSize(%1$s) %2$.02fKb",key,((double)sizeInBytes) / 1024));
-        parcel.recycle();
+        try {
+            parcel.writeBundle(bundle);
+            int sizeInBytes = parcel.dataSize(); // This is what you want to check
+            Log.v("BundleUtils", String.format("BundleSize(%1$s) %2$.02fKb", bundleId, ((double) sizeInBytes) / 1024));
+        } finally {
+            parcel.recycle();
+        }
     }
 }

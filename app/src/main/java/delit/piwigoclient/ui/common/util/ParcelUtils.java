@@ -28,8 +28,9 @@ public class ParcelUtils {
     public static void writeSet(@NonNull Parcel out, HashSet<? extends Parcelable> data) {
         if(data == null) {
             out.writeValue(null);
+        } else {
+            out.writeValue(new ArrayList<>(data));
         }
-        out.writeValue(new ArrayList<>(data));
     }
 
     public static void writeIntSet(@NonNull Parcel dest, Set<Integer> data) {
@@ -65,7 +66,7 @@ public class ParcelUtils {
         long[] rawData = null;
         if(data != null) {
             ArrayList dataWrapper = new ArrayList<>(data);
-            rawData= com.google.android.gms.common.util.ArrayUtils.toLongArray(dataWrapper);
+            rawData = com.google.android.gms.common.util.ArrayUtils.toLongArray(dataWrapper);
         }
         dest.writeLongArray(rawData);
     }
@@ -134,38 +135,59 @@ public class ParcelUtils {
         }
         return data;
     }
+//
+//    public static <T extends Parcelable,S extends Parcelable> void writeMap(Parcel dest, HashMap<T ,ArrayList<S>> data) {
+//        if(data == null) {
+//            dest.writeBundle(null);
+//            return;
+//        }
+//        Bundle b = new Bundle();
+//        ArrayList<Parcelable> keys = new ArrayList<>(data.size());
+//        ArrayList<ArrayList<? extends Parcelable>> values = new ArrayList<>(data.size());
+//        for(Map.Entry<T,ArrayList<S>> entry : data.entrySet()) {
+//            keys.add(entry.getKey());
+//            values.add(entry.getValue());
+//        }
+//        b.putParcelableArrayList("keys", keys);
+//        int i = 0;
+//        for(ArrayList al : values) {
+//            b.putParcelableArrayList("values_"+(i++), al);
+//        }
+//        dest.writeBundle(b);
+//    }
+//
+//    public static <T extends Parcelable,S extends Parcelable> HashMap<T ,ArrayList<S>> readMap(Parcel in) {
+//        Bundle b = in.readBundle();
+//        if(b == null) {
+//            return null;
+//        }
+//        ArrayList<T> keys = b.getParcelableArrayList("keys");
+//        HashMap<T, ArrayList<S>> retVal = new HashMap<>(keys.size());
+//        int i = 0;
+//        for(Parcelable key : keys) {
+//            retVal.put(keys.get(i), (ArrayList<S>) b.get("values_"+(i++)));
+//        }
+//        return retVal;
+//    }
 
-    public static <T extends Parcelable,S extends Parcelable> void writeMap(Parcel dest, HashMap<T ,ArrayList<S>> data) {
-        if(data == null) {
-            dest.writeBundle(null);
-            return;
-        }
-        Bundle b = new Bundle();
-        ArrayList<Parcelable> keys = new ArrayList<>(data.size());
-        ArrayList<ArrayList<? extends Parcelable>> values = new ArrayList<>(data.size());
-        for(Map.Entry<T,ArrayList<S>> entry : data.entrySet()) {
+    public static <S, T> void writeMap(Parcel p, Map<S, T> data) {
+        ArrayList<S> keys = new ArrayList<>(data.size());
+        ArrayList<T> values = new ArrayList<>(data.size());
+        for(Map.Entry<S,T> entry : data.entrySet()) {
             keys.add(entry.getKey());
             values.add(entry.getValue());
         }
-        b.putParcelableArrayList("keys", keys);
-        int i = 0;
-        for(ArrayList al : values) {
-            b.putParcelableArrayList("values_"+(i++), al);
-        }
-        dest.writeBundle(b);
+        p.writeValue(keys);
+        p.writeValue(values);
     }
 
-    public static <T extends Parcelable,S extends Parcelable> HashMap<T ,ArrayList<S>> readMap(Parcel in) {
-        Bundle b = in.readBundle();
-        if(b == null) {
-            return null;
+    public static <S, T> HashMap<S,T> readMap(Parcel p, ClassLoader loader) {
+        ArrayList<S> keys = (ArrayList<S>) p.readValue(loader);
+        ArrayList<T> values = (ArrayList<T>) p.readValue(loader);
+        HashMap<S,T> map = new HashMap<>(keys.size());
+        for(int i = 0; i < values.size(); i++) {
+            map.put(keys.get(i), values.get(i));
         }
-        ArrayList<T> keys = b.getParcelableArrayList("keys");
-        HashMap<T, ArrayList<S>> retVal = new HashMap<>(keys.size());
-        int i = 0;
-        for(Parcelable key : keys) {
-            retVal.put(keys.get(i), (ArrayList<S>) b.get("values_"+(i++)));
-        }
-        return retVal;
+        return map;
     }
 }

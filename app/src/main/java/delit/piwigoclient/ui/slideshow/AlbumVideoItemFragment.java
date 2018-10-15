@@ -65,7 +65,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private static final String STATE_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
     private static final String STATE_PERMISSION_TO_CACHE_GRANTED = "permissionToCacheToDisk";
     private static final String STATE_CACHED_VIDEO_ORIGINAL_FILENAME = "originalVideoFilename";
-    private static final String STATE_PAGE_IS_SHOWING = "pageIsShowing";
 
     private static final int PERMISSIONS_FOR_DOWNLOAD = 1;
     private static final int PERMISSIONS_FOR_CACHE = 2;
@@ -82,8 +81,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private long videoPlaybackPosition;
     private boolean videoIsPlayingWhenVisible;
     private boolean playVideoAutomatically;
-
-    private boolean pageIsShowing;
 
     private TextView downloadedByteCountView;
     private TextView cachedByteCountView;
@@ -119,7 +116,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     public void onResume() {
         logStatus("onResume");
-        if (pageIsShowing) {
+        if (isPrimarySlideshowItem()) {
             configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
         }
         super.onResume();
@@ -139,7 +136,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     private void logStatus(String msg) {
         if (BuildConfig.DEBUG) {
-            Log.d(TAG, String.format("%1$s - %2$b : %3$s", getModel() != null ? getModel().getId() : "UNKNOWN", pageIsShowing, msg));
+            Log.d(TAG, String.format("%1$s - %2$b : %3$s", getModel() != null ? getModel().getId() : "UNKNOWN", isPrimarySlideshowItem(), msg));
         }
     }
 
@@ -152,7 +149,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         outState.putBoolean(STATE_PERMISSION_TO_CACHE_GRANTED, permissionToCache);
         outState.putString(STATE_CACHED_VIDEO_FILENAME, cachedVideoFile != null ? cachedVideoFile.getAbsolutePath() : null);
         outState.putString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME, originalVideoFilename);
-        outState.putBoolean(STATE_PAGE_IS_SHOWING, pageIsShowing);
         outState.putLong(STATE_VIDEO_PLAYBACK_POSITION, videoPlaybackPosition);
     }
 
@@ -204,7 +200,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 cachedVideoFile = new File(cachedVideoFilename);
             }
             originalVideoFilename = savedInstanceState.getString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME);
-            pageIsShowing = savedInstanceState.getBoolean(STATE_PAGE_IS_SHOWING);
         }
         logStatus("view state restored");
         displayItemDetailsControlsBasedOnSessionState();
@@ -250,25 +245,21 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     @Override
     public void onPageDeselected() {
-        if (!pageIsShowing) {
-            return;
+        if (isPrimarySlideshowItem()) {
+            super.onPageDeselected();
+            logStatus("transitioning to page not showing");
+            stopVideoDownloadAndPlay();
         }
-        logStatus("transitioning to page not showing");
-        super.onPageDeselected();
-        pageIsShowing = false;
-        stopVideoDownloadAndPlay();
     }
 
     @Override
     public void onPageSelected() {
-        if (pageIsShowing) {
-            return;
-        }
-        super.onPageSelected();
-        pageIsShowing = true;
-        logStatus("page selected");
-        if (isAdded()) {
-            configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
+        if (!isPrimarySlideshowItem()) {
+            super.onPageSelected();
+            logStatus("page selected");
+            if (isAdded()) {
+                configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
+            }
         }
     }
 
@@ -327,7 +318,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 } else {
                     logStatus("Not all permissions granted - tweak datasource factory settings and configure player now!");
                     permissionToCache = false;
-                    if (pageIsShowing) {
+                    if (isPrimarySlideshowItem()) {
                         getUiHelper().showToast(R.string.video_caching_disabled_warning);
                     }
                 }
@@ -373,7 +364,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         } else {
             logStatus("configuring datasource and player - no caching enabled - do now!");
             configurePlayer(videoIsPlayingWhenVisible);
-            if (pageIsShowing) {
+            if (isPrimarySlideshowItem()) {
                 getUiHelper().showToast(R.string.video_caching_disabled_warning);
             }
         }
@@ -403,7 +394,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             logStatus("configuring player with old datasource - resuming buffering if paused");
             loadControl.resumeBuffering();
         }
-        player.setPlayWhenReady(startPlaybackImmediatelyIfVisibleToUser && pageIsShowing);
+        player.setPlayWhenReady(startPlaybackImmediatelyIfVisibleToUser && isPrimarySlideshowItem());
     }
 
     private void stopVideoDownloadAndPlay() {

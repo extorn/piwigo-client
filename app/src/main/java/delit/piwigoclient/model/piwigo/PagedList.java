@@ -45,7 +45,10 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
             return getNextPageToReload();
         }
         if(!fullyLoaded) {
-            int page = pagesLoaded.last() + 1;
+            int page = 0;
+            if(pagesLoaded.size() > 0) {
+                page = pagesLoaded.last() + 1;
+            }
             if(!pagesBeingLoaded.containsValue(page)) {
                 return page;
             }

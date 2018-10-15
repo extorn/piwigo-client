@@ -48,6 +48,7 @@ import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
 import delit.piwigoclient.ui.events.AlbumSelectedEvent;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
@@ -125,11 +126,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         super.onSaveInstanceState(outState);
 
         if(BuildConfig.DEBUG) {
-            Parcel parcel = Parcel.obtain();
-            parcel.writeBundle(outState);
-            int sizeInBytes = parcel.dataSize(); // This is what you want to check
-            Log.v(TAG, "Current Activity parcel size = " + (sizeInBytes/1024) + "Kb");
-            parcel.recycle();
+            BundleUtils.logSize("Current Activity", outState);
         }
     }
 

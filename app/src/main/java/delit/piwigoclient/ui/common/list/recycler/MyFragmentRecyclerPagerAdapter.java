@@ -147,11 +147,13 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     protected abstract Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position);
 
     public void onDeleteItem(ViewGroup container, int position) {
+
+        destroyItem(container, position, getActiveFragment(position));
+
+        // now shift the remaining active fragments by one position.
         for(int activeAdapterPosition = position + 1; activeAdapterPosition < activeFragments.size(); activeAdapterPosition++) {
             activeFragments.put(activeAdapterPosition -1, activeFragments.remove(activeAdapterPosition));
         }
-
-        destroyItem(container, position, getActiveFragment(position));
 
         // remove this item
         pageState.remove(position);
@@ -160,6 +162,12 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         while(pageState.containsKey(idx+1)) {
             pageState.put(idx, pageState.remove(idx+1));
             idx++;
+        }
+
+        notifyDataSetChanged();
+
+        if(getCount() > position + 1) {
+            instantiateItem(container, position + 1);
         }
     }
 
@@ -292,7 +300,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
             Bundle bundle = (Bundle) state;
             bundle.setClassLoader(loader);
 
-            pageState = BundleUtils.readMap(bundle, "pagesState", loader);
+            pageState = BundleUtils.readMap(bundle, "pagesState", getClass().getClassLoader());
             if (pageState == null) {
                 pageState = new HashMap<>();
             }
@@ -307,7 +315,15 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         pageState.clear();
     }
 
+    public void onDataAppended(int itemsAddedCount) {
+        throw new UnsupportedOperationException("please implement this if it is needed");
+    }
+
     public interface PagerItemFragment {
+        void onPageSelected();
+
+        void onPageDeselected();
+
         int getPagerIndex();
     }
 }

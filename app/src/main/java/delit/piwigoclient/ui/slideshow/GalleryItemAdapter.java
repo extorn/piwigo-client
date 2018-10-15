@@ -131,8 +131,9 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
         SlideshowItemFragment activeFragment = ((SlideshowItemFragment)getActiveFragment(position));
         if(activeFragment == null) {
             activeFragment = (SlideshowItemFragment)instantiateItem(container, position);
+            activeFragment.onPageSelected();
         }
-        activeFragment.onPageSelected();
+//        activeFragment.onPageSelected();
     }
 
     public void onPageSelected(int position) {
@@ -163,24 +164,34 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
 
     public void deleteGalleryItem(int fullGalleryIdx) {
         int slideshowIdxOfItemToDelete = galleryResourceItems.indexOf(fullGalleryIdx);
-        if (slideshowIdxOfItemToDelete >= 0) {
+        deleteItem(slideshowIdxOfItemToDelete);
+    }
+
+    private void deleteItem(int itemIdx) {
+        if (itemIdx >= 0) {
             // remove the item from the list of items in the slideshow.
-            galleryResourceItems.remove(slideshowIdxOfItemToDelete);
+            galleryResourceItems.remove(itemIdx);
 
             // presume that the parent gallery has also been updated and adjust all items down one.
-            for(int i = slideshowIdxOfItemToDelete; i < galleryResourceItems.size(); i++) {
+            for(int i = itemIdx; i < galleryResourceItems.size(); i++) {
                 galleryResourceItems.set(i, galleryResourceItems.get(i)-1);
             }
             // now request a rebuild of the slideshow pages
-//            notifyDataSetChanged();
 
-            super.onDeleteItem(getContainer(), slideshowIdxOfItemToDelete);
-
-            notifyDataSetChanged();
+            onDeleteItem(getContainer(), itemIdx);
         }
     }
 
-//
+    @Override
+    public void onDeleteItem(ViewGroup container, int position) {
+        SlideshowItemFragment selectedPage = (SlideshowItemFragment) getActiveFragment(position);
+        selectedPage.onPageDeselected();
+        super.onDeleteItem(container, position);
+        selectedPage = (SlideshowItemFragment) getActiveFragment(position);
+        selectedPage.onPageSelected();
+    }
+
+    //
 //    public void onResume() {
 //        int pageToShow = Math.max(0, getContainer().getCurrentItem());
 //        if(pageToShow < galleryResourceItems.size()) {
@@ -207,6 +218,12 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
 
     public void setShouldShowVideos(boolean shouldShowVideos) {
         this.shouldShowVideos = shouldShowVideos;
+    }
+
+    @Override
+    public void onDataAppended(int itemsAddedCount) {
+        addResourcesToIndex(gallery.getItemCount() - itemsAddedCount, -1);
+        notifyDataSetChanged();
     }
 
     public S getContainer() {
