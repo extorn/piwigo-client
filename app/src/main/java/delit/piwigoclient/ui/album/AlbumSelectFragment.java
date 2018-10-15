@@ -57,18 +57,22 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        if (isServerConnectionChanged()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
-
         if (savedInstanceState != null) {
             availableAlbums = savedInstanceState.getParcelableArrayList(STATE_AVAILABLE_ITEMS);
             createEmptyPrefs().loadFromBundle(savedInstanceState);
         }
 
         return v;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
     }
 
     @Override

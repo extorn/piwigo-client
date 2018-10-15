@@ -110,12 +110,6 @@ public class GroupsListFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
-
         if (savedInstanceState != null && !isSessionDetailsChanged()) {
             groupsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
         }
@@ -203,6 +197,16 @@ public class GroupsListFragment extends MyFragment {
         recyclerView.addOnScrollListener(scrollListener);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
     }
 
     @Override

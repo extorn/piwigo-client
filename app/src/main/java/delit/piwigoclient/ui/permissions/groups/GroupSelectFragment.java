@@ -75,12 +75,6 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             groupsModel = new PiwigoGroups();
         }
 
-        if (isServerConnectionChanged()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
-
         if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
@@ -130,6 +124,16 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         getList().addOnScrollListener(scrollListener);
 
         return v;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
     }
 
     @Override

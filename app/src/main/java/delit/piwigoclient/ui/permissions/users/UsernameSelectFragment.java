@@ -80,12 +80,6 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        if (isServerConnectionChanged()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
-
         if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
@@ -134,6 +128,16 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         getList().addOnScrollListener(scrollListener);
 
         return v;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
     }
 
     @Override

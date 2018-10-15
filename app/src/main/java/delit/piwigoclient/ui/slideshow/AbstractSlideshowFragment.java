@@ -97,16 +97,9 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         }
         if (configurationBundle != null) {
             galleryModel = configurationBundle.getParcelable(STATE_GALLERY);
-
         }
 
         super.onCreateView(inflater, container, savedInstanceState);
-
-        if (isServerConnectionChanged()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
 
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
 
@@ -191,10 +184,17 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
         super.onViewCreated(view, savedInstanceState);
 
-        if (viewPager != null && isSessionDetailsChanged()) {
-            // If the page has been initialised already (not first visit), and the session token has changed, force reload.
+        if (isSessionDetailsChanged()) {
             getFragmentManager().popBackStack();
-            return;
+
+            //TODO stay on this screen if possible!
+//            if(isServerConnectionChanged()) {
+//                // immediately leave this screen.
+//                getFragmentManager().popBackStack();
+//            } else {
+//                //trigger total screen refresh. Any errors will result in screen being closed.
+//
+//            }
         }
     }
 

@@ -19,9 +19,11 @@ package delit.piwigoclient.ui.preferences;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
@@ -50,7 +52,6 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 public class CommonPreferencesFragment extends MyFragment {
 
     static final String LOG_TAG = "PreferencesFragment";
-    private View view;
 
     public CommonPreferencesFragment() {
         // Required empty public constructor
@@ -75,15 +76,8 @@ public class CommonPreferencesFragment extends MyFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (PiwigoSessionDetails.isLoggedIn(ConnectionPreferences.getActiveProfile()) && isAppInReadOnlyMode()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
-        if (view != null) {
-            return view;
-        }
-        view = inflater.inflate(R.layout.activity_preferences, container, false);
+
+        View view = inflater.inflate(R.layout.activity_preferences, container, false);
 
         AdView adView = view.findViewById(R.id.prefs_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {
@@ -111,6 +105,16 @@ public class CommonPreferencesFragment extends MyFragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (PiwigoSessionDetails.isLoggedIn(ConnectionPreferences.getActiveProfile()) && isAppInReadOnlyMode()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
+    }
+
+    @Override
     protected String buildPageHeading() {
         return getString(R.string.preferences_overall_heading);
     }
@@ -122,7 +126,7 @@ public class CommonPreferencesFragment extends MyFragment {
         }
     }
 
-    protected FragmentPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
+    protected FragmentStatePagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
         return new CommonPreferencesPagerAdapter(childFragmentManager);
     }
 
@@ -132,7 +136,7 @@ public class CommonPreferencesFragment extends MyFragment {
      * this class is the {@link #getPageTitle(int)} method which controls what is displayed in the
      * {@link SlidingTabLayout}.
      */
-    protected class CommonPreferencesPagerAdapter extends FragmentPagerAdapter {
+    protected class CommonPreferencesPagerAdapter extends FragmentStatePagerAdapter {
 
         public CommonPreferencesPagerAdapter(FragmentManager fm) {
             super(fm);

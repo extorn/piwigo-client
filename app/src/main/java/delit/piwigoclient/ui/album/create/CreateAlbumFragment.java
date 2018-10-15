@@ -205,11 +205,7 @@ public class CreateAlbumFragment extends MyFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (!isAllowedToCreateAlbum()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
+
         if (savedInstanceState != null) {
             parentGallery = savedInstanceState.getParcelable(STATE_UPLOAD_TO_GALLERY);
             newAlbum = savedInstanceState.getParcelable(STATE_NEW_GALLERY);
@@ -298,6 +294,16 @@ public class CreateAlbumFragment extends MyFragment {
         setGalleryPermissionsFieldsVisibility();
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (!isAllowedToCreateAlbum()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
     }
 
     private boolean isAllowedToCreateAlbum() {

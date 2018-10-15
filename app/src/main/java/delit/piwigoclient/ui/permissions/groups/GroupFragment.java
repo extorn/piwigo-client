@@ -169,12 +169,6 @@ public class GroupFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
-
         View v = inflater.inflate(R.layout.fragment_group, container, false);
 
         AdView adView = v.findViewById(R.id.group_adView);
@@ -276,6 +270,16 @@ public class GroupFragment extends MyFragment {
         });
 
         return v;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
     }
 
     private HashSet<Long> buildPreselectedUserIds(List<Username> selectedUsernames) {

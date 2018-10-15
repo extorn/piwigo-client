@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.upload;
 
 import android.Manifest;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.app.Notification;
 import android.content.Context;
@@ -186,13 +187,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         final PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
 
-        if ((sessionDetails == null || (!sessionDetails.isAdminUser() && !sessionDetails.isUseCommunityPlugin())) || isAppInReadOnlyMode()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            Log.e(TAG, "Unable to view upload fragment - removing from activity");
-            return null;
-        }
-
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
 
@@ -360,6 +354,19 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesForUploadAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        final PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if ((sessionDetails == null || (!sessionDetails.isAdminUser() && !sessionDetails.isUseCommunityPlugin())) || isAppInReadOnlyMode()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            Log.e(TAG, "Unable to view upload fragment - removing from activity");
+            return;
+        }
     }
 
     @Override

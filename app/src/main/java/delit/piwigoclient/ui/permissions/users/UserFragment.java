@@ -254,12 +254,6 @@ public class UserFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
-
         View v = inflater.inflate(R.layout.fragment_user, container, false);
 
         AdView adView = v.findViewById(R.id.user_adView);
@@ -409,6 +403,16 @@ public class UserFragment extends MyFragment {
 
 
         return v;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode() || isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
     }
 
     private void saveUserChanges() {
