@@ -41,6 +41,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     private Throwable nestedFailure;
     private Gson gson;
     private String failedOriginalMethod;
+    private String piwigoMethodToUse;
 
     protected AbstractPiwigoWsResponseHandler(String piwigoMethod, String tag) {
         super(tag);
@@ -50,6 +51,23 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     public String getPiwigoMethod() {
         return piwigoMethod;
+    }
+
+    protected String getPiwigoMethodOverrideIfPossible(String overrideMethod) {
+        if(piwigoMethodToUse == null) {
+            piwigoMethodToUse = getPiwigoMethod();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+            if(sessionDetails == null) {
+                boolean newLoginAcquired = testLoginGetNewSessionIfNeeded();
+                if(newLoginAcquired) {
+                    sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+                }
+            }
+            if(sessionDetails != null && sessionDetails.isMethodAvailable(overrideMethod)) {
+                piwigoMethodToUse = overrideMethod;
+            }
+        }
+        return piwigoMethodToUse;
     }
 
     private RequestParams getRequestParameters() {

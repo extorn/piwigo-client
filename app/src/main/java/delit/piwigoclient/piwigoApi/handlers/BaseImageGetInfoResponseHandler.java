@@ -16,6 +16,7 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
     private final T resourceItem;
     private final String multimediaExtensionList;
     private boolean usingPiwigoClientOveride;
+    private String piwigoMethodToUse;
 
     public BaseImageGetInfoResponseHandler(T piwigoResource, String multimediaExtensionList) {
         super("pwg.images.getInfo", TAG);
@@ -25,13 +26,7 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
 
     @Override
     public String getPiwigoMethod() {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if(sessionDetails.isMethodAvailable("piwigo_client.images.getInfo")) {
-            usingPiwigoClientOveride = true;
-            return "piwigo_client.images.getInfo";
-        } else {
-            return super.getPiwigoMethod();
-        }
+        return getPiwigoMethodOverrideIfPossible("piwigo_client.images.getInfo");
     }
 
     @Override

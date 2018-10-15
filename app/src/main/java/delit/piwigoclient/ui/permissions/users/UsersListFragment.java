@@ -223,9 +223,14 @@ public class UsersListFragment extends MyFragment {
     }
 
     private void loadUsersPage(int pageToLoad) {
-        if (!usersModel.isPageLoaded(pageToLoad)) {
-            int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-            usersModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+        usersModel.acquirePageLoadLock();
+        try {
+            if (!usersModel.isPageLoadedOrBeingLoaded(pageToLoad) && !usersModel.isFullyLoaded()) {
+                int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
+                usersModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+            }
+        } finally {
+            usersModel.releasePageLoadLock();
         }
     }
 

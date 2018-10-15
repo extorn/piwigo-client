@@ -34,12 +34,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
 
     @Override
     public String getPiwigoMethod() {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if(sessionDetails.isMethodAvailable("piwigo_client.tags.getImages")) {
-            return "piwigo_client.tags.getImages";
-        } else {
-            return super.getPiwigoMethod();
-        }
+        return getPiwigoMethodOverrideIfPossible("piwigo_client.tags.getImages");
     }
 
     @Override

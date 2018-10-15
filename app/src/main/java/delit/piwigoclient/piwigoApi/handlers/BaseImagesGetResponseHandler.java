@@ -35,6 +35,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
     private final String sortOrder;
     private final int pageSize;
     private final int page;
+    private String piwigoMethodToUse;
 
     public BaseImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, String multimediaExtensionList) {
         super("pwg.categories.getImages", TAG);
@@ -47,12 +48,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
 
     @Override
     public String getPiwigoMethod() {
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if(sessionDetails.isMethodAvailable("piwigo_client.categories.getImages")) {
-            return "piwigo_client.categories.getImages";
-        } else {
-            return super.getPiwigoMethod();
-        }
+        return getPiwigoMethodOverrideIfPossible("piwigo_client.categories.getImages");
     }
 
     @Override
