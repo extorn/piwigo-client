@@ -427,10 +427,15 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 ImageFindExistingImagesResponseHandler imageFindExistingHandler = new ImageFindExistingImagesResponseHandler(uniqueIdsList, nameUnique);
                 invokeWithRetries(thisUploadJob, imageFindExistingHandler, 2);
                 if (imageFindExistingHandler.isSuccess()) {
-                    ArrayList<Long> orphans = getOrphanImagesOnServer(thisUploadJob);
-                    if(orphans == null) {
-                        // there has been an error which is reported within the getOrphanImagesOnServer method.
-                        return;
+                    ArrayList<Long> orphans;
+                    if(PiwigoSessionDetails.isAdminUser(thisUploadJob.getConnectionPrefs())) {
+                        orphans = getOrphanImagesOnServer(thisUploadJob);
+                        if(orphans == null) {
+                            // there has been an error which is reported within the getOrphanImagesOnServer method.
+                            return;
+                        }
+                    } else {
+                        orphans = new ArrayList<>();
                     }
                     processFindPreexistingImagesResponse(thisUploadJob, (ImageFindExistingImagesResponseHandler.PiwigoFindExistingImagesResponse) imageFindExistingHandler.getResponse(), orphans);
                 }
