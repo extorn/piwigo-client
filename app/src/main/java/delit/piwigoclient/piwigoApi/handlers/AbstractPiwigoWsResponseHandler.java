@@ -55,7 +55,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
 
     protected String getPiwigoMethodOverrideIfPossible(String overrideMethod) {
         if(piwigoMethodToUse == null) {
-            piwigoMethodToUse = getPiwigoMethod();
+            piwigoMethodToUse = piwigoMethod;
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
             if(sessionDetails == null) {
                 boolean newLoginAcquired = testLoginGetNewSessionIfNeeded();
