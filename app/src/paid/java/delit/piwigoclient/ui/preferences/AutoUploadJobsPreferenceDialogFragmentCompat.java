@@ -89,7 +89,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             if (pref.callChangeListener(val)) {
                 pref.setValue(val);
                 for(AutoUploadJobConfig deletedJob : deletedItems) {
-                    deletedJob.deletePreferences();
+                    deletedJob.deletePreferences(getContext());
                 }
                 deletedItems.clear();
             }
@@ -177,7 +177,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
         ArrayList<AutoUploadJobConfig> uploadJobConfigs = new ArrayList<>(uploadJobIds.size());
         for(Integer jobId : uploadJobIds) {
-            uploadJobConfigs.add(new AutoUploadJobConfig(getContext(), jobId));
+            uploadJobConfigs.add(new AutoUploadJobConfig(jobId));
         }
 
         BaseRecyclerViewAdapterPreferences viewPrefs = new BaseRecyclerViewAdapterPreferences();
@@ -260,7 +260,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
     }
 
     private void addAutoUploadJobConfigToListIfNew(int jobId) {
-        AutoUploadJobConfig cfg = new AutoUploadJobConfig(getContext(), jobId);
+        AutoUploadJobConfig cfg = new AutoUploadJobConfig(jobId);
         if(cfg.exists(getContext()) && adapter.getPosition(Long.valueOf(cfg.getJobId())) < 0) {
             uploadJobIds.add(cfg.getJobId());
             loadListValues(uploadJobIds);
@@ -280,7 +280,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_DELETED_JOBS, deletedItems);
+        outState.putParcelableArrayList(STATE_DELETED_JOBS, deletedItems);
         outState.putBundle(STATE_TRACKABLE_EVENT_MANAGER, trackableEventManager.onSaveInstanceState());
         outState.putIntegerArrayList(STATE_JOB_IDS, uploadJobIds);
     }
@@ -289,7 +289,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState != null) {
-            deletedItems = (ArrayList<AutoUploadJobConfig>) savedInstanceState.getSerializable(STATE_DELETED_JOBS);
+            deletedItems = savedInstanceState.getParcelableArrayList(STATE_DELETED_JOBS);
             trackableEventManager.onRestoreInstanceState(savedInstanceState.getBundle(STATE_TRACKABLE_EVENT_MANAGER));
             uploadJobIds = savedInstanceState.getIntegerArrayList(STATE_JOB_IDS);
         } else {

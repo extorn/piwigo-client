@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.BoolRes;
 import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
@@ -21,25 +23,52 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.util.IOUtils;
 
-public class AutoUploadJobConfig {
+public class AutoUploadJobConfig implements Parcelable {
     private int jobId;
     private SharedPreferences jobPreferences;
 
-    public AutoUploadJobConfig(Context c, int jobId) {
+    public AutoUploadJobConfig(int jobId) {
         this.jobId = jobId;
-        jobPreferences = c.getSharedPreferences(getSharedPreferencesName(jobId), Context.MODE_PRIVATE);
     }
 
-    public void deletePreferences() {
-        jobPreferences.edit().clear().commit();
+    public AutoUploadJobConfig(Parcel in) {
+        jobId = in.readInt();
+    }
+
+    public static final Creator<AutoUploadJobConfig> CREATOR = new Creator<AutoUploadJobConfig>() {
+        @Override
+        public AutoUploadJobConfig createFromParcel(Parcel in) {
+            return new AutoUploadJobConfig(in);
+        }
+
+        @Override
+        public AutoUploadJobConfig[] newArray(int size) {
+            return new AutoUploadJobConfig[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(jobId);
+    }
+    
+    private SharedPreferences getJobPreferences(Context c) {
+        if(jobPreferences == null) {
+            jobPreferences = c.getSharedPreferences(getSharedPreferencesName(jobId), Context.MODE_PRIVATE);
+        }
+        return jobPreferences;
+    }
+    
+    public void deletePreferences(Context c) {
+        getJobPreferences(c).edit().clear().commit();
     }
 
 
     public boolean exists(Context c) {
-        if(jobPreferences.contains(c.getString(R.string.preference_data_upload_automatic_job_server_key))) {
+        if(getJobPreferences(c).contains(c.getString(R.string.preference_data_upload_automatic_job_server_key))) {
             return true;
         }
-        deletePreferences();
+        deletePreferences(c);
         return false;
     }
 
@@ -52,24 +81,24 @@ public class AutoUploadJobConfig {
     }
 
     private boolean getBooleanValue(Context c, @StringRes int prefKeyId, boolean defaultVal) {
-        return jobPreferences.getBoolean(c.getString(prefKeyId), defaultVal);
+        return getJobPreferences(c).getBoolean(c.getString(prefKeyId), defaultVal);
     }
 
     private boolean getBooleanValue(Context c, @StringRes int prefKeyId, @BoolRes int defaultValResId) {
-        return jobPreferences.getBoolean(c.getString(prefKeyId), c.getResources().getBoolean(defaultValResId));
+        return getJobPreferences(c).getBoolean(c.getString(prefKeyId), c.getResources().getBoolean(defaultValResId));
     }
 
     private int getIntValue(Context c, @StringRes int prefKeyId, @IntegerRes int defaultVal) {
-        return jobPreferences.getInt(c.getString(prefKeyId), c.getResources().getInteger(defaultVal));
+        return getJobPreferences(c).getInt(c.getString(prefKeyId), c.getResources().getInteger(defaultVal));
     }
 
     private @NonNull String getStringValue(Context c, @StringRes int prefKeyId) {
-        String value = jobPreferences.getString(c.getString(prefKeyId), null);
+        String value = getJobPreferences(c).getString(c.getString(prefKeyId), null);
         return value;
     }
 
     private String getStringValue(Context c, @StringRes int prefKeyId, String defaultVal) {
-        String value = jobPreferences.getString(c.getString(prefKeyId), defaultVal);
+        String value = getJobPreferences(c).getString(c.getString(prefKeyId), defaultVal);
         return value;
     }
 
@@ -133,6 +162,13 @@ public class AutoUploadJobConfig {
     public boolean isDeleteFilesAfterUpload(Context c) {
         return getBooleanValue(c, R.string.preference_data_upload_automatic_job_delete_uploaded_key, R.bool.preference_data_upload_automatic_job_delete_uploaded_default);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    
 
     public static class PriorUploads implements Serializable {
 

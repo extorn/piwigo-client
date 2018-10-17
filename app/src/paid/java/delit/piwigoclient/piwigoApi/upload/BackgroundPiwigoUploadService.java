@@ -285,7 +285,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     @Override
     public void onJobReadyToUpload(Context c, UploadJob thisUploadJob) {
         thisUploadJob.getJobId();
-        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(c, thisUploadJob.getJobConfigId());
+        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
         AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(c);
         thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFilesToHashMap());
     }

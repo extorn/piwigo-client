@@ -73,7 +73,7 @@ public class AutoUploadJobsConfig {
         ArrayList<Integer> uploadJobIds = CollectionUtils.integersFromCsvList(jobIdsStr);
         List<AutoUploadJobConfig> jobs = new ArrayList<>(uploadJobIds.size());
         for(int jobId : uploadJobIds) {
-            jobs.add(new AutoUploadJobConfig(c, jobId));
+            jobs.add(new AutoUploadJobConfig(jobId));
         }
         return jobs;
     }
