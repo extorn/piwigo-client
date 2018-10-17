@@ -797,4 +797,5 @@ SOFTWARE.
     <string name="alert_server_call_in_progress_please_wait">Server call in progress. Please wait for this to complete before trying again.</string>
     <string name="upload_error_too_many_orphaned_files_exist_on_server">Too many orphaned images exist on the server for the upload to proceed. Please tidy these up before retrying.</string>
     <string name="upload_error_orphaned_file_retrieval_failed">Unable to retrieve orphaned images list. Please retry.</string>
+    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Admin user does not have access to the features anticipated. This can occur if you use the community plugin (which fakes admin status for non admin users) has not installed itself correctly. Check the relevant plugin is correctly exposing methods you expect using a web browser: %1$s/tools/ws.htm</string>
 </resources>

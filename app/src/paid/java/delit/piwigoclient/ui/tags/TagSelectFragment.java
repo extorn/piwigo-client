@@ -152,7 +152,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = page * 2;
+                int pageToLoad = page * tagsModel.getPageSources();
                 if (tagsModel.isPageLoadedOrBeingLoaded(pageToLoad) || tagsModel.isFullyLoaded()) {
                     Integer missingPage = tagsModel.getAMissingPage();
                     if(missingPage != null) {

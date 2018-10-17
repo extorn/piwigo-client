@@ -164,6 +164,10 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return firstInsertPos;
     }
 
+    public void markAsFullyLoaded() {
+        fullyLoaded = true;
+    }
+
     public void clear() {
         items.clear();
         pagesLoaded.clear();

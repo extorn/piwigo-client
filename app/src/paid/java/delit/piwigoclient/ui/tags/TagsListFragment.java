@@ -173,7 +173,7 @@ public class TagsListFragment extends MyFragment {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = page * 2;
+                int pageToLoad = page * tagsModel.getPageSources();
                 if (tagsModel.isPageLoadedOrBeingLoaded(pageToLoad) || tagsModel.isFullyLoaded()) {
                     Integer missingPage = tagsModel.getAMissingPage();
                     if(missingPage != null) {
@@ -392,8 +392,9 @@ public class TagsListFragment extends MyFragment {
                 }
             }
             tagsModel.addItemPage(isAdminPage?1:0, isAdminPage, response.getPage(), response.getPageSize(), response.getTags());
-            if(BuildConfig.DEBUG) {
-                Log.e(getTag(),"!!!! FIXME (TagsListFragment) !!!! "+tagsModel.getItemById(17).getUsageCount());
+            if(tagsModel.getPageSources() == tagsModel.getPagesLoaded()) {
+                // this is okay because there is no paging
+                tagsModel.markAsFullyLoaded();
             }
             viewAdapter.notifyDataSetChanged();
         } finally {

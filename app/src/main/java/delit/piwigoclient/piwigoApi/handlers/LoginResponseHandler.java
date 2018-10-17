@@ -11,6 +11,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
+import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.User;
@@ -197,7 +198,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
              && sessionDetails.isAdminUser()) {
                 FirebaseAnalytics.getInstance(getContext()).logEvent("UserDowngrade_General", null);
                 sessionDetails.updateUserType("general");
-                EventBus.getDefault().post(new ServerConfigErrorEvent("Admin user does not have access to the features anticipated. This can occur if you use the community plugin (which fakes admin status for non admin users) has not installed itself correctly. Check the plugin is correctly exposing methods you expect on ("+userInfoHandler.getPiwigoWsApiUri()+")"));
+                EventBus.getDefault().post(new ServerConfigErrorEvent(getContext().getString(R.string.admin_user_missing_admin_permissions_after_login_warning_pattern, userInfoHandler.getPiwigoServerUrl())));
             }
             reportNestedFailure(userInfoHandler);
         }

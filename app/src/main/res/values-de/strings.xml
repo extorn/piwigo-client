@@ -534,5 +534,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_server_call_in_progress_please_wait">Server call in progress. Please wait for this to complete before trying again.</string>
     <string name="upload_error_too_many_orphaned_files_exist_on_server">Auf dem Server befinden sich zu viele verwaiste Bilder, als dass der Upload fortgesetzt werden könnte. Bitte räumt diese auf, bevor ihr es erneut versucht.</string>
     <string name="upload_error_orphaned_file_retrieval_failed">Die Liste der verwaisten Bilder kann nicht abgerufen werden. Bitte versuchen Sie es erneut.</string>
+    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Der Admin-Benutzer hat keinen Zugriff auf die erwarteten Funktionen. Dies kann vorkommen, wenn das Community-Plugin (das den Admin-Status für Nichtadministratoren vortäuscht) sich nicht korrekt installiert hat. Überprüfen Sie, ob das entsprechende Plugin die Methoden, die Sie von einem Webbrowser erwarten, korrekt darstellt: %1$s/tools/ws.htm</string>
 </resources>
 
