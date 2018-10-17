@@ -195,6 +195,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void loadArgsFromBundle(Bundle b) {
+        if(b == null) {
+            return;
+        }
         model = (T) b.getParcelable(ARG_GALLERY_ITEM);
         albumItemIdx = b.getInt(ARG_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
@@ -202,6 +205,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void restoreSavedInstanceState(Bundle b) {
+        if(b == null) {
+            return;
+        }
         editingItemDetails = b.getBoolean(STATE_EDITING_ITEM_DETAILS);
         informationShowing = b.getBoolean(STATE_INFORMATION_SHOWING);
         allowDownload = b.getBoolean(ALLOW_DOWNLOAD);
@@ -212,20 +218,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        boolean argsLoaded = false;
-        if (getArguments() != null) {
-            intialiseFields();
-            loadArgsFromBundle(getArguments());
-            setArguments(null);
-            argsLoaded = true;
-        }
-        if (savedInstanceState != null) {
-            //restore saved state
-            if(!argsLoaded) {
-                loadArgsFromBundle(savedInstanceState);
-            }
-            restoreSavedInstanceState(savedInstanceState);
-        }
+
+        intialiseFields();
+        loadArgsFromBundle(getArguments());
+        // override values with saved state
+        loadArgsFromBundle(savedInstanceState);
+        restoreSavedInstanceState(savedInstanceState);
 
         setAsAlbumThumbnail.setOnClickListener(new View.OnClickListener() {
             @Override

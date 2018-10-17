@@ -15,18 +15,28 @@ import java.util.HashSet;
  */
 public class PiwigoTags extends IdentifiablePagedList<Tag> {
 
-    private int pageSources;
+    private int pageSources = 1;
 
     private Comparator<Tag> tagComparator = new TagComparator();
 
-    public PiwigoTags(int pageSources) {
+    public PiwigoTags() {
         super("Tag");
-        this.pageSources = pageSources;
     }
 
     public PiwigoTags(Parcel in) {
         super(in);
         pageSources = in.readInt();
+    }
+
+    public int getPageSources() {
+        return pageSources;
+    }
+
+    public void setPageSources(int pageSources) {
+        if(getPagesLoaded() > 0) {
+            throw new IllegalStateException("cannot update the page sources after a page has been added");
+        }
+        this.pageSources = pageSources;
     }
 
     @Override

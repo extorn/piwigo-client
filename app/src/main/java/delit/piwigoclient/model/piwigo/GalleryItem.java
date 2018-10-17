@@ -77,7 +77,6 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         out.writeString(name);
         out.writeString(description);
         ParcelUtils.writeDate(out, lastAltered);
-        out.writeInt(parentageChain.size());
         ParcelUtils.writeLongArrayList(out, parentageChain);
         out.writeLong(loadedAt);
     }

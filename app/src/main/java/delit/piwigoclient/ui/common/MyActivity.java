@@ -25,6 +25,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.MyApplication;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
+import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
@@ -192,6 +193,12 @@ public abstract class MyActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ServerConnectionWarningEvent event) {
         FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("serverKilledConnectionLots", null);
+        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, event.getMessage());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(ServerConfigErrorEvent event) {
+        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("serverCfgErrAdminMissingPerm", null);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, event.getMessage());
     }
 

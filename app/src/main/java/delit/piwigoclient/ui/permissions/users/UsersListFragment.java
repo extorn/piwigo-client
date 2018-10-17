@@ -70,12 +70,12 @@ public class UsersListFragment extends MyFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        if (getArguments() != null) {
-            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(getArguments());
-            setArguments(null);
+        Bundle b = savedInstanceState;
+        if(b == null) {
+            b = getArguments();
         }
-        if (savedInstanceState != null) {
-            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
+        if (b != null) {
+            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(b);
         }
         super.onCreate(savedInstanceState);
     }

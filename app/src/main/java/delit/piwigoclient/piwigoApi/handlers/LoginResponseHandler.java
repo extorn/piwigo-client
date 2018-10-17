@@ -3,6 +3,8 @@ package delit.piwigoclient.piwigoApi.handlers;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -17,6 +19,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
 public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -174,6 +177,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     private boolean loadUserDetails() {
+        boolean canContinue = false;
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         UserGetInfoResponseHandler userInfoHandler = new UserGetInfoResponseHandler(sessionDetails.getUsername(), sessionDetails.getUserType());
         userInfoHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
@@ -185,11 +189,19 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
                 EventBus.getDefault().post(new UserNotUniqueWarningEvent(userDetails, response.getUsers()));
             }
             sessionDetails.setUserDetails(userDetails);
-            return true;
+            canContinue = true;
         } else {
+            canContinue = false;
+            PiwigoResponseBufferingHandler.ErrorResponse response = (PiwigoResponseBufferingHandler.ErrorResponse) userInfoHandler.getResponse();
+            if((response instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse && ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) response).getStatusCode() == 401)
+             && sessionDetails.isAdminUser()) {
+                FirebaseAnalytics.getInstance(getContext()).logEvent("UserDowngrade_General", null);
+                sessionDetails.updateUserType("general");
+                EventBus.getDefault().post(new ServerConfigErrorEvent("Admin user does not have access to the features anticipated. This can occur if you use the community plugin (which fakes admin status for non admin users) has not installed itself correctly. Check the plugin is correctly exposing methods you expect on ("+userInfoHandler.getPiwigoWsApiUri()+")"));
+            }
             reportNestedFailure(userInfoHandler);
-            return false;
         }
+        return canContinue;
     }
 
     public boolean isLoginSuccess() {

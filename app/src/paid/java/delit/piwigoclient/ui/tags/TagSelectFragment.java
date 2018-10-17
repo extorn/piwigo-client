@@ -105,11 +105,8 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         }
 
         if(tagsModel == null) {
-            int pageSources = 1;
-            if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                pageSources = 2;
-            }
-            tagsModel = new PiwigoTags(pageSources);
+            tagsModel = new PiwigoTags();
+            setTagsModelPageSourceCount();
         }
 
         if(unsavedTags != null) {
@@ -172,6 +169,20 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         getList().addOnScrollListener(scrollListener);
 
         return v;
+    }
+
+    /**
+     *
+     * @return if changed
+     */
+    private boolean setTagsModelPageSourceCount() {
+        int pageSources = 1;
+        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+            pageSources = 2;
+        }
+        int currentValue = tagsModel.getPageSources();
+        tagsModel.setPageSources(pageSources);
+        return currentValue != pageSources;
     }
 
     private void createNewTag(String tagname) {
@@ -412,6 +423,12 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         try {
             tagsModel.recordPageLoadSucceeded(response.getMessageId());
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
+            if(!isAdminPage && tagsModel.getPagesLoaded() == 0) {
+                boolean needToLoadAdminList = setTagsModelPageSourceCount();
+                if(needToLoadAdminList) {
+                    loadTagsPage(response.getPage());
+                }
+            }
             boolean isUserTagPluginSearchResult = response instanceof PluginUserTagsGetListResponseHandler.PiwigoUserTagsPluginGetTagsListRetrievedResponse;
             if(isUserTagPluginSearchResult) {
                 tagsModel.addRandomItems(response.getTags(), false);
