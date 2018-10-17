@@ -392,10 +392,11 @@ public class TagsListFragment extends MyFragment {
                 }
             }
             tagsModel.addItemPage(isAdminPage?1:0, isAdminPage, response.getPage(), response.getPageSize(), response.getTags());
-            if(tagsModel.getPageSources() == tagsModel.getPagesLoaded()) {
-                // this is okay because there is no paging
-                tagsModel.markAsFullyLoaded();
-            }
+            // Will this code play nicely with the tags plugin? Testing needed
+//            if(tagsModel.getPageSources() == tagsModel.getPagesLoaded()) {
+//                // this is okay because there is no paging
+//                tagsModel.markAsFullyLoaded();
+//            }
             viewAdapter.notifyDataSetChanged();
         } finally {
             tagsModel.releasePageLoadLock();

@@ -434,6 +434,11 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
                 tagsModel.addRandomItems(response.getTags(), false);
             } else {
                 tagsModel.addItemPage(isAdminPage?1:0, isAdminPage, response.getPage(), response.getPageSize(), response.getTags());
+                // Will this code play nicely with the tags plugin? Testing needed
+//                if(tagsModel.getPageSources() == tagsModel.getPagesLoaded()) {
+//                    // this is okay because there is no paging
+//                    tagsModel.markAsFullyLoaded();
+//                }
             }
             HashSet<Long> selectedItemIds = getListAdapter().getSelectedItemIds();
             for (Long selectedItemId : selectedItemIds) {
