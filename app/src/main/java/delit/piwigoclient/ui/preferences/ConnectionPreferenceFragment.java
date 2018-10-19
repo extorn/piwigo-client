@@ -202,7 +202,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
 
         findPreference(R.string.preference_server_connection_max_redirects_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
-        Preference button = findPreference("piwigo_connection");
+        Preference button = findPreference(R.string.preference_test_server_connection_key);
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {

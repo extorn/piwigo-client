@@ -57,7 +57,6 @@ import static android.view.View.VISIBLE;
 
 public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelable> extends MyFragment {
 
-    //    private static final String TAG = "SlideshowFragment";
     private static final String STATE_GALLERY = "galleryModel";
     private static final String ARG_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
     private CustomViewPager viewPager;
@@ -78,6 +77,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_GALLERY, galleryModel);
+        outState.putInt(ARG_GALLERY_ITEM_DISPLAYED, rawCurrentGalleryItemPosition);
     }
 
     @Override
@@ -107,6 +107,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         }
         if (configurationBundle != null) {
             galleryModel = configurationBundle.getParcelable(STATE_GALLERY);
+            rawCurrentGalleryItemPosition = configurationBundle.getInt(ARG_GALLERY_ITEM_DISPLAYED);
         }
 
         super.onCreateView(inflater, container, savedInstanceState);
@@ -187,10 +188,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         viewPager.addOnPageChangeListener(slideshowPageChangeListener);
         int pagerItemsIdx = galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition);
         viewPager.setCurrentItem(pagerItemsIdx);
-        if(pagerItemsIdx == 0) {
-            // need to force a page selection event as it won't be called otherwise.
-            slideshowPageChangeListener.onPageSelected(0);
-        }
         return view;
     }
 
@@ -314,6 +311,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
             GalleryItemAdapter adapter = ((GalleryItemAdapter) viewPager.getAdapter());
             int fullGalleryIdx = adapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
             adapter.deleteGalleryItem(fullGalleryIdx);
+            if(adapter.getCount() == 0) {
+                // slideshow is now empty close this page.
+                getFragmentManager().popBackStack();
+            }
         }
     }
 
@@ -340,7 +341,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
             int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
             long loadingMessageId = invokeResourcePageLoader(galleryModel, sortOrder, pageToLoad, pageSize, multimediaExtensionList);
             galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
-//            loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
         } finally {
             galleryModel.releasePageLoadLock();
         }

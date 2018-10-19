@@ -63,51 +63,29 @@ public class ParcelUtils {
     }
 
     public static void writeLongSet(Parcel dest, HashSet<Long> data) {
-        long[] rawData = null;
+        ArrayList<Long> dataWrapper = null;
         if(data != null) {
-            ArrayList dataWrapper = new ArrayList<>(data);
-            rawData = com.google.android.gms.common.util.ArrayUtils.toLongArray(dataWrapper);
+            dataWrapper = new ArrayList<>(data);
         }
-        dest.writeLongArray(rawData);
+        writeLongArrayList(dest, dataWrapper);
     }
 
     public static HashSet<Long> readLongSet(Parcel in, ClassLoader loader) {
-        long[] data = (long[]) in.readValue(loader);
+        ArrayList<Long> dataWrapper = readLongArrayList(in, loader);
         HashSet<Long> wrapper = null;
-        if(data != null) {
-            Collections.addAll(wrapper, com.google.android.gms.common.util.ArrayUtils.toWrapperArray(data));
+        if(dataWrapper != null) {
+            wrapper = new HashSet<>(wrapper.size());
+            wrapper.addAll(dataWrapper);
         }
         return wrapper;
     }
 
-
-    public static Set<Long> readlongSet(@NonNull Parcel in, @NonNull Set<Long> destSet, ClassLoader loader) {
-        long[] data = (long[]) in.readValue(loader);
-        if(destSet == null) {
-            throw new IllegalArgumentException("destination set may not be null");
-        }
-        if(data != null) {
-            Collections.addAll(destSet, com.google.android.gms.common.util.ArrayUtils.toWrapperArray(data));
-        }
-        return destSet;
-    }
-
     public static ArrayList<Long> readLongArrayList(Parcel in, ClassLoader loader) {
-        ArrayList<Long> data = null;
-        Long[] rawData = (Long[]) in.readValue(loader);
-        if(rawData != null) {
-            data = new ArrayList<>();
-            Collections.addAll(data, rawData);
-        }
-        return data;
+        return (ArrayList<Long>) in.readValue(loader);
     }
 
     public static void writeLongArrayList(Parcel out, ArrayList<Long> parentageChain) {
-        if(parentageChain != null) {
-            out.writeArray(parentageChain.toArray(new Long[parentageChain.size()]));
-        } else {
-            out.writeArray(null);
-        }
+        out.writeValue(parentageChain);
     }
 
     public static Date readDate(Parcel in) {

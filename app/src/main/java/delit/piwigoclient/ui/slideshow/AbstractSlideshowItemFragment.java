@@ -140,7 +140,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private CustomSlidingLayer bottomSheet;
     private View itemContent;
     private TextView resourceRatingScoreField;
-    private boolean isPrimarySlideshowItem;
+    private transient boolean isPrimarySlideshowItem;
+    private transient boolean doOnPageSelectedAndAddedRun;
 
     public static <S extends ResourceItem> Bundle buildArgs(S model, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
@@ -381,7 +382,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     public void onResume() {
         super.onResume();
         if(isPrimarySlideshowItem) {
-            setTitleBar();
+            doOnPageSelectedAndAdded();
         }
     }
 
@@ -730,14 +731,25 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if(isPrimarySlideshowItem) {
             return;
         }
+        isPrimarySlideshowItem = true;
         if (isAdded()) {
-            isPrimarySlideshowItem = true;
-            FragmentUIHelper uiHelper = getUiHelper();
-            uiHelper.registerToActiveServiceCalls();
-            uiHelper.setBlockDialogsFromShowing(false);
-            uiHelper.handleAnyQueuedPiwigoMessages();
-            setTitleBar();
+            doOnPageSelectedAndAdded();
         }
+    }
+
+    private void doOnPageSelectedAndAdded() {
+        if(!doOnPageSelectedAndAddedRun) {
+            doOnPageSelectedAndAddedRun = true;
+            doOnceOnPageSelectedAndAdded();
+        }
+    }
+
+    protected void doOnceOnPageSelectedAndAdded() {
+        FragmentUIHelper uiHelper = getUiHelper();
+        uiHelper.registerToActiveServiceCalls();
+        uiHelper.setBlockDialogsFromShowing(false);
+        uiHelper.handleAnyQueuedPiwigoMessages();
+        setTitleBar();
     }
 
     private void setTitleBar() {
@@ -751,7 +763,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if(!isPrimarySlideshowItem) {
             return;
         }
-        // pick up responses when the page is visible again.
+        doOnPageSelectedAndAddedRun = false;
+                // pick up responses when the page is visible again.
         isPrimarySlideshowItem = false;
         FragmentUIHelper uiHelper = getUiHelper();
         uiHelper.setBlockDialogsFromShowing(true);

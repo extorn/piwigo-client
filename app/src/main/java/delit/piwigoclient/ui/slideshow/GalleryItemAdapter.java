@@ -131,9 +131,9 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
         SlideshowItemFragment activeFragment = ((SlideshowItemFragment)getActiveFragment(position));
         if(activeFragment == null) {
             activeFragment = (SlideshowItemFragment)instantiateItem(container, position);
-            activeFragment.onPageSelected();
+//            activeFragment.onPageSelected();
         }
-//        activeFragment.onPageSelected();
+        activeFragment.onPageSelected();
     }
 
     public void onPageSelected(int position) {

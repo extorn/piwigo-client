@@ -369,7 +369,6 @@ public abstract class BasePiwigoUploadService extends IntentService {
         thisUploadJob.setSubmitted(false);
 
         try {
-
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(thisUploadJob.getConnectionPrefs());
             if (sessionDetails == null) {
                 LoginResponseHandler handler = new LoginResponseHandler();
@@ -493,7 +492,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
     }
 
     private ArrayList<CategoryItemStub> retrieveListOfAlbumsOnServer(UploadJob thisUploadJob, PiwigoSessionDetails sessionDetails) {
-        if (sessionDetails.isAdminUser(thisUploadJob.getConnectionPrefs())) {
+        if (sessionDetails.isAdminUser()) {
             AlbumGetSubAlbumsAdminResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
             invokeWithRetries(thisUploadJob, handler, 2);
             if (handler.isSuccess()) {

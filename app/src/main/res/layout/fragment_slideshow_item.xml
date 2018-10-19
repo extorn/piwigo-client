@@ -21,20 +21,10 @@
             android:visibility="visible" />
 
         <delit.piwigoclient.ui.common.button.CustomImageButton
-            android:id="@+id/slideshow_resource_action_direct_download"
-            app:srcCompat="@drawable/ic_file_download_black_24px"
+            android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:visibility="visible"/>
-
-        <delit.piwigoclient.ui.common.button.CustomImageButton
-            android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
-            android:layout_toEndOf="@id/slideshow_resource_action_direct_download"
             app:srcCompat="@drawable/ic_wallpaper_black_24dp"
-            android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"

@@ -36,6 +36,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -52,6 +53,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.IOUtils;
 
@@ -65,6 +67,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private static final String STATE_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
     private static final String STATE_PERMISSION_TO_CACHE_GRANTED = "permissionToCacheToDisk";
     private static final String STATE_CACHED_VIDEO_ORIGINAL_FILENAME = "originalVideoFilename";
+    private static final String STATE_SHOWING_STANDALONE = "showingOutsideSlideshow";
 
     private static final int PERMISSIONS_FOR_DOWNLOAD = 1;
     private static final int PERMISSIONS_FOR_CACHE = 2;
@@ -72,7 +75,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private SimpleExoPlayer player;
     private RemoteFileCachingDataSourceFactory dataSourceFactory;
     private PausableLoadControl loadControl;
-    private CustomImageButton directDownloadButton;
 
     private File cachedVideoFile; // Used when downloading (copying) video to user accessible area
     private String originalVideoFilename; // Used for generating downloaded filename
@@ -87,8 +89,15 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private PlayerView simpleExoPlayerView;
     private CustomCacheListener cacheListener;
     private DefaultTrackSelector trackSelector;
+    private boolean showingOutsideSlideshow;
 
     public AlbumVideoItemFragment() {
+    }
+
+    public static Bundle buildStandaloneArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
+        Bundle b = buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay);
+        b.putBoolean(STATE_SHOWING_STANDALONE, true);
+        return b;
     }
 
     public static Bundle buildArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
@@ -116,9 +125,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     public void onResume() {
         logStatus("onResume");
-        if (isPrimarySlideshowItem()) {
-            configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
-        }
         super.onResume();
     }
 
@@ -150,6 +156,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         outState.putString(STATE_CACHED_VIDEO_FILENAME, cachedVideoFile != null ? cachedVideoFile.getAbsolutePath() : null);
         outState.putString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME, originalVideoFilename);
         outState.putLong(STATE_VIDEO_PLAYBACK_POSITION, videoPlaybackPosition);
+        outState.putBoolean(STATE_SHOWING_STANDALONE, showingOutsideSlideshow);
     }
 
     @Override
@@ -186,9 +193,11 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             logStatus("loading arguments");
             playVideoAutomatically = getArguments().getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
             videoIsPlayingWhenVisible = playVideoAutomatically;
+            showingOutsideSlideshow = getArguments().getBoolean(STATE_SHOWING_STANDALONE);
         }
         if (savedInstanceState != null) {
             logStatus("loading saved state");
+            showingOutsideSlideshow = savedInstanceState.getBoolean(STATE_SHOWING_STANDALONE);
             playVideoAutomatically = savedInstanceState.getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
             videoIsPlayingWhenVisible = savedInstanceState.getBoolean(STATE_VIDEO_IS_PLAYING);
             permissionToCache = savedInstanceState.getBoolean(STATE_PERMISSION_TO_CACHE_GRANTED);
@@ -210,10 +219,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         hideProgressIndicator();
         logStatus("Creating item content");
-        directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
 
-        View view = inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
-        simpleExoPlayerView = view.findViewById(R.id.slideshow_video_player);
+        View itemContentView = inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
+        simpleExoPlayerView = itemContentView.findViewById(R.id.slideshow_video_player);
 
         downloadedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_downloaded);
         cachedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_cached_summary);
@@ -221,26 +229,32 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
         CustomExoPlayerTouchListener customTouchListener = new CustomExoPlayerTouchListener(simpleExoPlayerView);
         simpleExoPlayerView.setOnTouchListener(customTouchListener);
-        logStatus("finished created item content");
-        return view;
-    }
-
-    @Override
-    protected void configureItemContent(@Nullable View itemContentView, final VideoResourceItem model, @Nullable Bundle savedInstanceState) {
-        super.configureItemContent(itemContentView, model, savedInstanceState);
-        directDownloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDownloadItem(model);
-            }
-        });
 
         CustomExoPlayerTimeBar timebar = itemContentView.findViewById(R.id.exo_progress);
         cacheListener.setTimebar(timebar);
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
-
         simpleExoPlayerView.setPlayer(player);
+
+        logStatus("finished created item content");
+        return itemContentView;
+    }
+
+    @Override
+    public void onImageDeleted(HashSet<Long> deletedItemIds) {
+        super.onImageDeleted(deletedItemIds);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(AlbumItemDeletedEvent event) {
+        if(event.item.getId() == this.getModel().getId() && isVisible() && showingOutsideSlideshow) {
+            getFragmentManager().popBackStack();
+        }
+    }
+
+    @Override
+    protected void configureItemContent(@Nullable View itemContentView, final VideoResourceItem model, @Nullable Bundle savedInstanceState) {
+        super.configureItemContent(itemContentView, model, savedInstanceState);
     }
 
     @Override
@@ -253,14 +267,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     }
 
     @Override
-    public void onPageSelected() {
-        if (!isPrimarySlideshowItem()) {
-            super.onPageSelected();
-            logStatus("page selected");
-            if (isAdded()) {
-                configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
-            }
-        }
+    protected void doOnceOnPageSelectedAndAdded() {
+        super.doOnceOnPageSelectedAndAdded();
+        configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
     }
 
     private void clearCacheAndRestartVideo() {
@@ -283,7 +292,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     public void displayItemDetailsControlsBasedOnSessionState() {
         super.displayItemDetailsControlsBasedOnSessionState();
-        directDownloadButton.setVisibility(isAllowDownload() ? View.VISIBLE : View.GONE);
     }
 
     @Override

@@ -399,6 +399,37 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
 
+        // store references and initialise anything vital to the page (and used when loading data for example)
+        retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
+
+        retryActionButton.setVisibility(GONE);
+        retryActionButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                onReloadAlbum();
+            }
+        });
+
+        emptyGalleryLabel = view.findViewById(R.id.album_empty_content);
+        emptyGalleryLabel.setText(R.string.gallery_empty_text);
+        if (!galleryIsDirty) {
+            emptyGalleryLabel.setVisibility(galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
+        }
+
+        bulkActionsContainer = view.findViewById(R.id.gallery_actions_bulk_container);
+
+        galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
+
+        galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
+        descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
+
+        bottomSheet = view.findViewById(R.id.slidingDetailBottomSheet);
+
+        // Set the adapter
+        galleryListView = view.findViewById(R.id.gallery_list);
+
+
         if (isSessionDetailsChanged()) {
 
             if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
@@ -418,23 +449,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         initialiseBasketView(view);
 
-        retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
-
-        retryActionButton.setVisibility(GONE);
-        retryActionButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                onReloadAlbum();
-            }
-        });
-
-        emptyGalleryLabel = view.findViewById(R.id.album_empty_content);
-        emptyGalleryLabel.setText(R.string.gallery_empty_text);
-        emptyGalleryLabel.setVisibility(GONE);
-
-        bulkActionsContainer = view.findViewById(R.id.gallery_actions_bulk_container);
-
         EventBus.getDefault().post(new AlbumSelectedEvent(galleryModel.getContainerDetails()));
 
         AdView adView = view.findViewById(R.id.gallery_adView);
@@ -445,26 +459,18 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             adView.setVisibility(GONE);
         }
 
-        galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
-
-        galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
-        descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
-
         setGalleryHeadings();
 
-        bottomSheet = view.findViewById(R.id.slidingDetailBottomSheet);
+
         setupBottomSheet(bottomSheet);
 
 //        viewInOrientation = getResources().getConfiguration().orientation;
 
-        // Set the adapter
-        galleryListView = view.findViewById(R.id.gallery_list);
+
 
         RecyclerView recyclerView = galleryListView;
 
-        if (!galleryIsDirty) {
-            emptyGalleryLabel.setVisibility(galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
-        }
+
 
         // need to wait for the gallery model to be initialised.
 
@@ -512,7 +518,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         };
         galleryListViewScrollListener.configure(galleryModel.getPagesLoaded(), galleryModel.getItemCount());
         recyclerView.addOnScrollListener(galleryListViewScrollListener);
-
 
         //display bottom sheet if needed
         updateInformationShowingStatus();

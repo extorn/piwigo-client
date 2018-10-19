@@ -14,8 +14,14 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="piwigo_title_testConnection">Testverbindung</string>
-    <string name="piwigo_title_testConnectionSummary">Verbindung zum Server testen</string>
+    <string name="preference_test_server_connection_title">Testverbindung</string>
+    <string name="preference_test_server_connection_summary">Verbindung zum Server testen</string>
+
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Clean Server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Fehlerhafte PiwigoClient-Uploads vom Server bereinigen</string>
+    <string name="progress_clearing_failed_uploads_from_server">Löschen von fehlgeschlagenen Uploads vom Server</string>
+    <string name="cleared_failed_uploads_from_server_pattern">Gelöscht %1$d fehlgeschlagene Uploads vom Server</string>
+
     <string name="gallery_photos_summary_text_pattern">%1$d Fotos</string>
     <string name="gallery_subcategory_summary_text_pattern">%1$d Unteralben und %2$d Fotos</string>
     <string name="alert_title_connectionTest">Verbindungstest</string>
@@ -85,7 +91,7 @@
     <string name="logging_in_to_piwigo_pattern">Einloggen in %1$s</string>
 
     <string name="delete_upload_job_button_title">Job löschen</string>
-    <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen den Status auf dem Server manuell bereinigen. Jobs werden oft erfolgreich abgeschlossen, wenn Sie sie später wieder aufnehmen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen wollen?</string>
+    <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen alle Dateien, die teilweise auf den Server hochgeladen wurden, manuell bereinigen (oder die Präferenz in dieser App verwenden - Seite mit den Upload-Einstellungen). Jobs werden oft erfolgreich abgeschlossen, wenn Sie sie später wieder aufnehmen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen wollen?</string>
     <string name="upload_files_button_title">Dateien hochladen</string>
     <string name="loading_please_wait">Laden, bitte warten</string>
     <string name="alert_title_server_error">Server-Fehler</string>
@@ -454,8 +460,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="heading_keystore_filename">Schlüsselspeicher</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Fehler beim Upload</string>
-    <string name="alert_message_error_uploading_end">Nach erfolgreichem Hochladen aller Dateien trat ein Fehler auf. Sie können den Job später noch einmal versuchen, aber Sie können diesen Job vom Gerät löschen, aber alle unvollständigen Änderungen am Server manuell bereinigen. Job löschen?</string>
-    <string name="alert_message_error_uploading_start">Vor dem Hochladen aller Dateien ist ein Fehler aufgetreten. Sie können den Job später noch einmal versuchen, aber Sie können diesen Job vom Gerät löschen, aber alle unvollständigen Änderungen am Server manuell bereinigen. Job löschen?</string>
+    <string name="alert_message_error_uploading_end">Nach erfolgreichem Hochladen aller Dateien ist ein Fehler aufgetreten. Sie können den Job später erneut versuchen, und er kann durchaus erfolgreich sein, oder Sie können diesen Job vom Gerät löschen und dann alle unvollständigen Änderungen am Server manuell bereinigen. Auftrag löschen?</string>
+    <string name="alert_message_error_uploading_start">Vor dem Hochladen aller Dateien ist ein Fehler aufgetreten. Sie können den Job später noch einmal versuchen, aber Sie können diesen Job vom Gerät löschen, aber alle unvollständigen Änderungen am Server manuell bereinigen. Auftrag löschen?</string>
     <string name="release_history">Freigabehistorie</string>
     <string name="planned_releases">Geplante Veröffentlichungen</string>
     <string name="tags_heading">Schilder</string>
@@ -535,5 +541,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_error_too_many_orphaned_files_exist_on_server">Auf dem Server befinden sich zu viele verwaiste Bilder, als dass der Upload fortgesetzt werden könnte. Bitte räumt diese auf, bevor ihr es erneut versucht.</string>
     <string name="upload_error_orphaned_file_retrieval_failed">Die Liste der verwaisten Bilder kann nicht abgerufen werden. Bitte versuchen Sie es erneut.</string>
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Der Admin-Benutzer hat keinen Zugriff auf die erwarteten Funktionen. Dies kann vorkommen, wenn das Community-Plugin (das den Admin-Status für Nichtadministratoren vortäuscht) sich nicht korrekt installiert hat. Überprüfen Sie, ob das entsprechende Plugin die Methoden, die Sie von einem Webbrowser erwarten, korrekt darstellt: %1$s/tools/ws.htm</string>
+    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Diese Funktion ist nicht verfügbar. Bitte installieren Sie das PiwigoClientWsExt Plugin auf Ihrem Server. Wenn Sie diese bereits installiert haben, aktualisieren Sie sie bitte auf die neueste Version.</string>
 </resources>
 

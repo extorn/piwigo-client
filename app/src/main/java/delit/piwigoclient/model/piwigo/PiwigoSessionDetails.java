@@ -9,6 +9,8 @@ import java.util.Set;
 
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
+import delit.piwigoclient.piwigoApi.handlers.PiwigoClientFailedUploadsCleanResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.PiwigoClientGetPluginDetailResponseHandler;
 
 /**
  * Created by gareth on 25/05/17.
@@ -35,6 +37,7 @@ public class PiwigoSessionDetails {
     private Set<String> allowedFileTypes;
     private long webInterfaceUploadChunkSizeKB;
     private User userDetails;
+    private String piwigoClientPluginVersion;
     private boolean sessionMayHaveExpired;
     private int loginStatus = NOT_LOGGED_IN;
     private Boolean useCommunityPlugin;
@@ -274,6 +277,18 @@ public class PiwigoSessionDetails {
 
     public void onMethodNotAvailable(String unavailablePiwigoMethod) {
         methodsAvailable.remove(unavailablePiwigoMethod);
+    }
+
+    public boolean isPiwigoClientCleanUploadsAvailable() {
+        return isMethodAvailable(PiwigoClientFailedUploadsCleanResponseHandler.WS_METHOD_NAME);
+    }
+
+    public String getPiwigoClientPluginVersion() {
+        return piwigoClientPluginVersion;
+    }
+
+    public void setPiwigoClientPluginVersion(String piwigoClientPluginVersion) {
+        this.piwigoClientPluginVersion = piwigoClientPluginVersion;
     }
 
     public boolean isPiwigoClientPluginInstalled() {

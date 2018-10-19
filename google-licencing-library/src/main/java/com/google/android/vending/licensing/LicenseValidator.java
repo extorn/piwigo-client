@@ -97,7 +97,7 @@ class LicenseValidator {
             try {
                 Signature sig = Signature.getInstance(SIGNATURE_ALGORITHM);
                 sig.initVerify(publicKey);
-                sig.update(signedData.getBytes());
+                sig.update(signedData != null ? signedData.getBytes() : new byte[0]);
 
                 if (!sig.verify(Base64.decode(signature))) {
                     if(BuildConfig.DEBUG) {

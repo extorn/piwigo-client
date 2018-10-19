@@ -89,23 +89,34 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             canContinue = loadUserDetails();
         }
 
-
-
-        if(canContinue && VersionCompatability.INSTANCE.isFavoritesEnabled()) {
-            loadFavoritesList();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        if(canContinue && sessionDetails.isMethodAvailable(PiwigoClientGetPluginDetailResponseHandler.WS_METHOD_NAME)) {
+            sessionDetails.setPiwigoClientPluginVersion("1.0.5");
+            loadPiwigoClientPluginDetails();
+        } else {
+            sessionDetails.setPiwigoClientPluginVersion("1.0.4");
         }
 
         setError(getNestedFailure());
-
         storeResponse(loginResponse);
 
-        // this is needed because we aren't calling the onSuccess method.
-        resetFailureAsASuccess();
+        if(canContinue) {
+            // this is needed because we aren't calling the onSuccess method.
+            resetFailureAsASuccess();
+        }
 
         return null;
     }
 
-    private void loadFavoritesList() {
+    private boolean loadPiwigoClientPluginDetails() {
+        PiwigoClientGetPluginDetailResponseHandler handler = new PiwigoClientGetPluginDetailResponseHandler();
+        handler.setPerformingLogin();
+        handler.invokeAndWait(getContext(), getConnectionPrefs());
+        if (!handler.isSuccess()) {
+            reportNestedFailure(handler);
+            return false;
+        }
+        return true;
     }
 
     private boolean loadMethodsAvailable() {

@@ -117,9 +117,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             }
         });
 
-        CustomImageButton directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
-        directDownloadButton.setVisibility(View.GONE);
-
         loader = new PicassoLoader(imageView) {
 
             @Override

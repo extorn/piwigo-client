@@ -249,7 +249,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:enabled="true"
-        android:key="piwigo_connection"
-        android:summary="@string/piwigo_title_testConnectionSummary"
-        android:title="@string/piwigo_title_testConnection" />
+        android:key="@string/preference_test_server_connection_key"
+        android:summary="@string/preference_test_server_connection_summary"
+        android:title="@string/preference_test_server_connection_title" />
 </PreferenceScreen>
