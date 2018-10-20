@@ -247,12 +247,17 @@ public class UploadJob implements Serializable {
             newJob = true;
         }
         for (File f : filesNotFinished) {
-            // recalculate checksums for all files not yet uploaded
-            final String checksum = Md5SumUtils.calculateMD5(f);
-            if (!newJob) {
-                fileChecksums.remove(f);
+            if(!f.exists()) {
+                // Remove file from upload list
+                cancelFileUpload(f);
+            } else {
+                // recalculate checksums for all files not yet uploaded
+                final String checksum = Md5SumUtils.calculateMD5(f);
+                if (!newJob) {
+                    fileChecksums.remove(f);
+                }
+                fileChecksums.put(f, checksum);
             }
-            fileChecksums.put(f, checksum);
         }
     }
 
