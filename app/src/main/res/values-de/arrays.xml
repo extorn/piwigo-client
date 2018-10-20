@@ -112,7 +112,10 @@
     </string-array>
     <string-array name="release_history">
         <item>1.3.96.5</item>
-        <item>"Fehlerbehebung:
+        <item>"Änderungen:
+            - Nutzen Sie die neuesten Android-Build-Tools - kleinerer Download
+            Fehlerbehebung:
+            - Hochladen: Versuchen Sie nicht, die Dateiprüfsumme für Dateien zu berechnen, die nicht mehr auf dem Gerät existieren - Danke Claude
             - Es wurden Probleme mit der App Pause und Wiederaufnahme behoben
             - Geänderte Art und Weise, wie Upload-Jobdaten gespeichert werden (stellen Sie sicher, dass keine Aufträge ausgeführt werden, bevor Sie diese aktualisieren)
             - Bessere Unterstützung für unerwartete Inhaltsarten, die von Serverantworten zurückgegeben werden"</item>
