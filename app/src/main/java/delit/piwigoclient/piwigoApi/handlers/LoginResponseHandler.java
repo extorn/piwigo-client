@@ -82,7 +82,10 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         if (canContinue && PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
             canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
         } else {
-            PiwigoSessionDetails.getInstance(connectionPrefs).setUseCommunityPlugin(false);
+            PiwigoSessionDetails instance = PiwigoSessionDetails.getInstance(connectionPrefs);
+            if(instance != null) {
+                instance.setUseCommunityPlugin(false);
+            }
         }
 
         if (canContinue && isNeedUserDetails(PiwigoSessionDetails.getInstance(connectionPrefs))) {
