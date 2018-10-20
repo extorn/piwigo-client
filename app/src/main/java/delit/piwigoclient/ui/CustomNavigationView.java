@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -37,6 +39,7 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.UnlockAppEvent;
+import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
 
 /**
@@ -163,9 +166,14 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
+                    DisplayUtils.hideKeyboardFrom(getContext(), dialog);
                     EditText passwordEdit = dialog.findViewById(R.id.password);
-                    String password = passwordEdit.getText().toString();
-                    EventBus.getDefault().post(new UnlockAppEvent(password));
+                    if(passwordEdit != null) {
+                        String password = passwordEdit.getText().toString();
+                        EventBus.getDefault().post(new UnlockAppEvent(password));
+                    } else {
+                        Crashlytics.log("unable to find password field on dialog");
+                    }
                 }
             }
         });
