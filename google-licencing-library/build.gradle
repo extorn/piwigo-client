@@ -1,12 +1,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '28.0.2'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 27
+        //<!-- Devices >= 3 have version of Android Market that supports licensing. -->
+        minSdkVersion 3
+        targetSdkVersion 28
     }
 
     buildTypes {
