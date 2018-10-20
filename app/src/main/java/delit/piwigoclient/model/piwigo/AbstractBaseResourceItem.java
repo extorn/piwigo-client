@@ -40,7 +40,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         averageRating = in.readFloat();
         ratingsGiven = in.readInt();
         privacyLevel = in.readInt();
-        in.readList(availableFiles, getClass().getClassLoader());
+        availableFiles = ParcelUtils.readTypedList(in, ResourceFile.CREATOR);
         fullSizeImage = in.readParcelable(null);
         linkedAlbums = ParcelUtils.readLongSet(in, null);
         fileChecksum = in.readString();
@@ -55,7 +55,8 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         out.writeFloat(myRating);
         out.writeFloat(averageRating);
         out.writeInt(ratingsGiven);
-        out.writeList(availableFiles);
+        out.writeInt(privacyLevel);
+        out.writeTypedList(availableFiles);
         out.writeParcelable(fullSizeImage, flags);
         ParcelUtils.writeLongSet(out, linkedAlbums);
         out.writeString(fileChecksum);

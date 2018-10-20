@@ -13,7 +13,7 @@ public class CategoryItemStub implements Parcelable, Identifiable {
 
     public static final CategoryItemStub ROOT_GALLERY = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId());
     private static final CategoryItemStub ROOT_GALLERY_NON_SELECTABLE = new CategoryItemStub(CategoryItem.ROOT_ALBUM.getName(), CategoryItem.ROOT_ALBUM.getId()).markNonUserSelectable();
-    private static final long serialVersionUID = -825032789826191701L;
+
     private final long id;
     private final String name;
     private ArrayList<Long> parentageChain;

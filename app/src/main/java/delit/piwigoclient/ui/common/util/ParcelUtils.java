@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import delit.piwigoclient.model.piwigo.CategoryItem;
+
 public class ParcelUtils {
     public static <T extends Parcelable> HashSet<T> readHashSet(@NonNull Parcel in, ClassLoader loader) {
         ArrayList<T> store = (ArrayList<T>) in.readValue(loader);
@@ -167,5 +169,11 @@ public class ParcelUtils {
             map.put(keys.get(i), values.get(i));
         }
         return map;
+    }
+
+    public static <T extends Parcelable> ArrayList<T> readTypedList(Parcel in, Parcelable.Creator<T> creator) {
+        ArrayList<T> data = new ArrayList<T>();
+        in.readTypedList(data, creator);
+        return data;
     }
 }

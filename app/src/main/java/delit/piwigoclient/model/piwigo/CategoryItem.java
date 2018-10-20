@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
  * An item representing a piece of content.
@@ -47,7 +49,7 @@ public class CategoryItem extends GalleryItem {
 
     public CategoryItem(Parcel in) {
         super(in);
-        in.readTypedList(childAlbums, CREATOR);
+        childAlbums = ParcelUtils.readTypedList(in, CategoryItem.CREATOR);
         photoCount = in.readInt();
         totalPhotoCount = in.readInt();
         subCategories = in.readLong();

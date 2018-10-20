@@ -11,6 +11,8 @@ import java.util.Date;
  */
 public class PictureResourceItem extends ResourceItem {
 
+    private static final long serialVersionUID = 4954838188004567936L;
+
     public PictureResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, dateCreated, lastAltered, thumbnailUrl);
     }

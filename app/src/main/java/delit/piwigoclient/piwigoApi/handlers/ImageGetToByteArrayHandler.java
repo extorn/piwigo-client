@@ -23,10 +23,12 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
 
     private static final String TAG = "GetImgRspHdlr";
     private String resourceUrl;
+    private boolean reattemptedLogin;
 
     public ImageGetToByteArrayHandler(String resourceUrl) {
         super(TAG);
         this.resourceUrl = resourceUrl;
+        reattemptedLogin = false;
         EventBus.getDefault().register(this);
     }
 
@@ -39,9 +41,13 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
         Header contentTypeHeader = HttpUtils.getContentTypeHeader(headers);
         if(contentTypeHeader != null && !contentTypeHeader.getValue().startsWith("image/")) {
-            // this was redirected to an http page - login failed most probable - try to force a login and retry!
-            boolean newLoginAcquired = acquireNewSessionAndRetryCallIfAcquired();
-            // if we either got a new token here or another thread did, retry the original failing call.
+            boolean newLoginAcquired = false;
+            if(!reattemptedLogin) {
+                reattemptedLogin = true;
+                // this was redirected to an http page - login failed most probable - try to force a login and retry!
+                newLoginAcquired = acquireNewSessionAndRetryCallIfAcquired();
+                // if we either got a new token here or another thread did, retry the original failing call.
+            }
             if (newLoginAcquired) {
                 // just run the original call again (another thread has retrieved a new session
                 rerunCall();
@@ -53,6 +59,12 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
             PiwigoResponseBufferingHandler.UrlSuccessResponse r = new PiwigoResponseBufferingHandler.UrlSuccessResponse(getMessageId(), resourceUrl, responseBody);
             storeResponse(r);
         }
+    }
+
+    @Override
+    protected void storeResponse(PiwigoResponseBufferingHandler.BaseResponse response) {
+        reattemptedLogin = false; // this is reset in case the handler is reused (on manual retry)
+        super.storeResponse(response);
     }
 
     @Override
