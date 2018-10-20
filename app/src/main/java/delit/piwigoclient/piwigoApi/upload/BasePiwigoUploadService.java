@@ -83,7 +83,7 @@ import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponse
 public abstract class BasePiwigoUploadService extends IntentService {
 
     public static final String INTENT_ARG_KEEP_DEVICE_AWAKE = "keepDeviceAwake";
-    private static final String TAG = "UploadService";
+    private static final String TAG = "PwgCli:UpldSvc";
     private static final List<UploadJob> activeUploadJobs = Collections.synchronizedList(new ArrayList<UploadJob>(1));
     private static final SecureRandom random = new SecureRandom();
     private SharedPreferences prefs;
