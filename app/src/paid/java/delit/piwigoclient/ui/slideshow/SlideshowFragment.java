@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.slideshow;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Parcelable;
 import android.util.Log;
@@ -15,13 +14,11 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
-import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTag;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
@@ -51,7 +48,7 @@ public class SlideshowFragment<T extends Identifiable&Parcelable> extends Abstra
     }
 
     private void reloadTagSlideshowModel(Tag tag, String preferredAlbumThumbnailSize) {
-        UIHelper.Action action = new UIHelper.Action<Fragment,TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
+        UIHelper.Action action = new UIHelper.Action<AbstractSlideshowFragment,TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
 
             @Override
             public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {

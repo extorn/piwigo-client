@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.slideshow;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -34,8 +33,6 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImagesGetResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomViewPager;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -220,7 +217,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     }
 
     private void reloadAlbumSlideshowModel(CategoryItem album, String preferredAlbumThumbnailSize) {
-        UIHelper.Action action = new UIHelper.Action<Fragment,AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse>() {
+        UIHelper.Action action = new UIHelper.Action<AbstractSlideshowFragment,AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse>() {
 
             @Override
             public boolean onSuccess(UIHelper uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {

@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.tags;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -345,7 +344,7 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private void reloadTagModel() {
-        UIHelper.Action action = new UIHelper.Action<Fragment,TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
+        UIHelper.Action action = new UIHelper.Action<ViewTagFragment,TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
 
             @Override
             public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {

@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.common.fragment;
 
-import android.app.Activity;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
