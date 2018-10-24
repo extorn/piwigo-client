@@ -51,7 +51,7 @@ public class CategoryItem extends GalleryItem {
         super(in);
         childAlbums = ParcelUtils.readTypedList(in, CategoryItem.CREATOR);
         photoCount = in.readInt();
-        totalPhotoCount = in.readInt();
+        totalPhotoCount = in.readLong();
         subCategories = in.readLong();
         isPrivate = (boolean) in.readValue(null);
         representativePictureId = (Long) in.readValue(null);

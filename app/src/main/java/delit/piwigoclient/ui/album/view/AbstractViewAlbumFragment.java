@@ -427,24 +427,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         // Set the adapter
         galleryListView = view.findViewById(R.id.gallery_list);
 
-
-        if (isSessionDetailsChanged()) {
-
-            if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
-                //trigger total screen refresh. Any errors will result in screen being closed.
-                galleryIsDirty = true;
-                reloadAlbumContent();
-            } else {
-                if(galleryModel.getContainerDetails() == CategoryItem.ROOT_ALBUM) {
-                    // root of gallery can always be refreshed successfully.
-                    galleryIsDirty = true;
-                } else {
-                    // immediately leave this screen.
-                    getFragmentManager().popBackStack();
-                }
-            }
-        }
-
         initialiseBasketView(view);
 
         EventBus.getDefault().post(new AlbumSelectedEvent(galleryModel.getContainerDetails()));
@@ -519,6 +501,23 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         //display bottom sheet if needed
         updateInformationShowingStatus();
+
+        if (isSessionDetailsChanged()) {
+
+            if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
+                //trigger total screen refresh. Any errors will result in screen being closed.
+                galleryIsDirty = true;
+                reloadAlbumContent();
+            } else {
+                if(galleryModel.getContainerDetails() == CategoryItem.ROOT_ALBUM) {
+                    // root of gallery can always be refreshed successfully.
+                    galleryIsDirty = true;
+                } else {
+                    // immediately leave this screen.
+                    getFragmentManager().popBackStack();
+                }
+            }
+        }
     }
 
     private boolean showBulkDeleteAction(Basket basket) {

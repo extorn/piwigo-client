@@ -24,6 +24,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -87,7 +88,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private static final String SAVED_STATE_FILES_BEING_UPLOADED = "filesBeingUploaded";
     private static final String SAVED_STATE_UPLOAD_JOB_ID = "uploadJobId";
     private static final String SAVED_SUB_CAT_NAMES_ACTION_ID = "subCategoryNamesActionId";
-    private static final String ARG_SELECT_FILES_ACTION_ID = "selectFilesActionId";
+    private static final String ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID = "externallyTriggeredSelectFilesActionId";
     private AvailableAlbumsListAdapter availableGalleries;
     private RecyclerView filesForUploadView;
     private Button uploadFilesNowButton;
@@ -99,6 +100,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private long privacyLevelWanted;
     private Long uploadToAlbumId;
     private Long uploadJobId;
+    private long externallyTriggeredSelectFilesActionId;
     private long maxGapBeforeAlbumRefreshMillis = 30000; // 30 secs
     private boolean blockAlbumListRefresh;
     private ArrayList<File> filesForUpload = new ArrayList<>();
@@ -111,7 +113,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     protected Bundle buildArgs(long currentGalleryId, int actionId) {
         Bundle args = new Bundle();
         args.putLong(ARG_CURRENT_GALLERY_ID, currentGalleryId);
-        args.putInt(ARG_SELECT_FILES_ACTION_ID, actionId);
+        args.putInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID, actionId);
         return args;
     }
 
@@ -126,6 +128,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (uploadJobId != null) {
             outState.putLong(SAVED_STATE_UPLOAD_JOB_ID, uploadJobId);
         }
+        outState.putLong(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID, externallyTriggeredSelectFilesActionId);
     }
 
     protected RecyclerView getFilesForUploadView() {
@@ -141,19 +144,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (uploadToAlbumId != currentGallery.getId()) {
                 currentGallery = new CategoryItem(uploadToAlbumId);
             }
-            int fileSelectAction = getArguments().getInt(ARG_SELECT_FILES_ACTION_ID);
-            if (fileSelectAction >= 0) {
-                getUiHelper().setTrackingRequest(fileSelectAction);
-            }
+            externallyTriggeredSelectFilesActionId = getArguments().getInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent stickyEvent) {
-        // Integer.MIN_VALUE is a special flag to allow external apps to call in and their events to always be handled.
-        if (getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
-            // ensure we continue tracking this event in case it is used again by the a non internal event re-starting the activity.
-            getUiHelper().setTrackingRequest(stickyEvent.getActionId());
+        if (externallyTriggeredSelectFilesActionId == stickyEvent.getActionId() || getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
             if(stickyEvent.getActionTimeMillis() > 0 && stickyEvent.getActionTimeMillis() < maxGapBeforeAlbumRefreshMillis) {
                 blockAlbumListRefresh = true;
             }
@@ -231,13 +228,22 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     String serverUri = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
                     getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getContext()));
                 } else {
-                    FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
-                    ArrayList<String> allowedFileTypes = new ArrayList<>(sessionDetails.getAllowedFileTypes());
-                    event.setActionId(getUiHelper().getTrackedRequest());
-                    event.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
-                    event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
-                    getUiHelper().setTrackingRequest(event.getActionId());
-                    EventBus.getDefault().post(event);
+                    if(sessionDetails.getAllowedFileTypes() == null) {
+                        fileSelectButton.setEnabled(false);
+                        Bundle b = new Bundle();
+                        sessionDetails.writeToBundle(b);
+                        FirebaseAnalytics.getInstance(getContext()).logEvent("IncompleteUserSession", b);
+                        getUiHelper().showDetailedToast(R.string.alert_error, R.string.alert_user_session_no_allowed_filetypes);
+                        getView().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                fileSelectButton.setEnabled(true);
+                                requestFileSelection(null); // show all files... I hope the user is sensible!
+                            }
+                        }, 5000);
+                    } else {
+                        requestFileSelection(new ArrayList<>(sessionDetails.getAllowedFileTypes()));
+                    }
                 }
             }
         });
@@ -353,6 +359,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesForUploadAdapter);
 
         return view;
+    }
+
+    private void requestFileSelection(ArrayList<String> allowedFileTypes) {
+        FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
+        event.withInitialFolder(Environment.getExternalStorageDirectory().getAbsolutePath());
+        event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
+        getUiHelper().setTrackingRequest(event.getActionId());
+        EventBus.getDefault().post(event);
     }
 
     @Override

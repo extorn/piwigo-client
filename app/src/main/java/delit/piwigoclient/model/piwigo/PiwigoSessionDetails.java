@@ -1,7 +1,9 @@
 package delit.piwigoclient.model.piwigo;
 
 import android.content.Context;
+import android.os.Bundle;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -297,5 +299,22 @@ public class PiwigoSessionDetails {
 
     public boolean isCommunityPluginInstalled() {
         return isMethodAvailable("community.session.getStatus");
+    }
+
+    public ArrayList<String> getMethodsAvailable() {
+        if(this.methodsAvailable == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(this.methodsAvailable);
+    }
+
+    public void writeToBundle(Bundle out) {
+        out.putStringArrayList("piwigo.methods", getMethodsAvailable());
+        out.putBoolean("is.admin.user", isAdminUser());
+        out.putBoolean("community.plugin.installed.", isCommunityPluginInstalled());
+        out.putBoolean("community.plugin.in_use", isUseCommunityPlugin());
+        out.putString("user.type", getUserType());
+        out.putInt("login.status", loginStatus);
+        out.putString("piwigo.client.ws.ext.plugin.version", getPiwigoClientPluginVersion());
     }
 }

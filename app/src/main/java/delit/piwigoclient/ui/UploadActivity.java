@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -91,6 +92,7 @@ public class UploadActivity extends MyActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
+        outState.putLong(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
     }
 
     @Override
@@ -112,7 +114,11 @@ public class UploadActivity extends MyActivity {
         } else {
             setContentView(R.layout.activity_upload);
             toolbar = findViewById(R.id.toolbar);
-            toolbar.setTitle(R.string.upload_page_title);
+            if(BuildConfig.DEBUG) {
+                toolbar.setTitle(getString(R.string.upload_page_title) + " ("+BuildConfig.FLAVOR+')');
+            } else {
+                toolbar.setTitle(R.string.upload_page_title);
+            }
             setSupportActionBar(toolbar);
             showUploadFragment(true, connectionPrefs);
         }
