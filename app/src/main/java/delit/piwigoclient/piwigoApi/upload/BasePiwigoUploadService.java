@@ -905,7 +905,8 @@ public abstract class BasePiwigoUploadService extends IntentService {
         if(thisUploadJob.getTemporaryUploadAlbum() > 0) {
             uploadedResource.getLinkedAlbums().remove(thisUploadJob.getTemporaryUploadAlbum());
         }
-        ImageUpdateInfoResponseHandler imageInfoUpdateHandler = new ImageUpdateInfoResponseHandler(uploadedResource, true);
+        // Don't update the tags because we aren't altering this aspect of the the image during upload and it (could) cause problems
+        ImageUpdateInfoResponseHandler imageInfoUpdateHandler = new ImageUpdateInfoResponseHandler(uploadedResource, false);
         invokeWithRetries(thisUploadJob, imageInfoUpdateHandler, 2);
         if (!imageInfoUpdateHandler.isSuccess()) {
             Iterator<Long> iter = uploadedResource.getLinkedAlbums().iterator();
