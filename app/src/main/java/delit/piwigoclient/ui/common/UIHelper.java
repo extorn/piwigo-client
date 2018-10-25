@@ -438,8 +438,14 @@ public abstract class UIHelper<T> {
     }
 
     public int runWithExtraPermissions(final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String permissionNeeded, String permissionJustificationString) {
+        return runWithExtraPermissions(fragment, sdkVersionRequiredFrom, sdkVersionRequiredUntil, new String[]{permissionNeeded}, permissionJustificationString);
+    }
+
+    public int runWithExtraPermissions(final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String[] permissionsNeeded, String permissionJustificationString) {
         PermissionsWantedRequestEvent event = new PermissionsWantedRequestEvent();
-        event.addPermissionNeeded(permissionNeeded);
+        for(String permissionNeeded : permissionsNeeded) {
+            event.addPermissionNeeded(permissionNeeded);
+        }
         event.setJustification(permissionJustificationString);
         return runWithExtraPermissions(fragment.getActivity(), sdkVersionRequiredFrom, sdkVersionRequiredUntil, event);
     }
