@@ -543,5 +543,17 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Der Admin-Benutzer hat keinen Zugriff auf die erwarteten Funktionen. Dies kann vorkommen, wenn das Community-Plugin (das den Admin-Status für Nichtadministratoren vortäuscht) sich nicht korrekt installiert hat. Überprüfen Sie, ob das entsprechende Plugin die Methoden, die Sie von einem Webbrowser erwarten, korrekt darstellt: %1$s/tools/ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Diese Funktion ist nicht verfügbar. Bitte installieren Sie das PiwigoClientWsExt Plugin auf Ihrem Server. Wenn Sie diese bereits installiert haben, aktualisieren Sie sie bitte auf die neueste Version.</string>
     <string name="alert_user_session_no_allowed_filetypes">Der Server hat keine Liste der Dateitypen bereitgestellt, die mit den Informationen zur Benutzersitzung hochgeladen werden können (dies ist in der Regel nur für Admin-Benutzer möglich). Bitte überprüfen Sie, ob der Server korrekt konfiguriert ist und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, senden Sie mir bitte eine E-Mail, damit ich das Problem für Sie diagnostizieren kann.</string>
+    <string name="upload_job_status_button">Status</string>
+    <string name="job_not_found">Upload Auftrag nicht gefunden</string>
+    <string name="files_mid_data_transfer_title">Dateien teilweise kopiert</string>
+    <string name="files_awaiting_verification_title">Dateien, die auf die Überprüfung der Datenintegrität warten</string>
+    <string name="files_awaiting_transfer_title">Dateien, die auf die Datenübertragung warten</string>
+    <string name="files_awaiting_configuration_title">Dateien, die auf die Konfiguration warten</string>
+    <string name="files_requiring_server_deletion_title">Dateien, die vom Server gelöscht werden müssen</string>
+    <string name="files_fully_uploaded_title">Dateien vollständig hochgeladen</string>
+    <string name="temporary_album_needs_deleting_title">Temporäres Album muss gelöscht werden.</string>
+    <string name="upload_job_status_heading">Upload Auftrag Status</string>
+    <string name="file_count_pattern">%1$d Dateien</string>
+    <string name="errors_encountered_list_title">Aufgetretene Fehler</string>
 </resources>
 

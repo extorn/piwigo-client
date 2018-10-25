@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
@@ -23,6 +24,7 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.iptc.IptcDirectory;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -488,6 +490,19 @@ public abstract class BasePiwigoUploadService extends IntentService {
             allowedAttempts--;
             // this is blocking
             handler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
+        }
+        if(!handler.isSuccess()) {
+            if(handler.getError() != null) {
+                thisUploadJob.recordError(new Date(), handler.getError().getMessage());
+            } else {
+                thisUploadJob.recordError(new Date(), null);
+            }
+            Bundle b = new Bundle();
+            b.putString("piwigoMethod", handler.getPiwigoMethod());
+            b.putString("requestParams", handler.getRequestParameters().toString());
+            b.putString("responseType", handler.getResponse() == null ? null : handler.getResponse().getClass().getName());
+            b.putSerializable("error", handler.getError() == null ? null : handler.getError());
+            FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("uploadError", b);
         }
     }
 

@@ -3,8 +3,10 @@ package delit.piwigoclient.piwigoApi.upload;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,19 +15,21 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.util.Md5SumUtils;
 
 public class UploadJob implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private static final Integer CANCELLED = -1;
-    private static final Integer UPLOADING = 0;
-    private static final Integer UPLOADED = 1;
-    private static final Integer VERIFIED = 2;
-    private static final Integer CONFIGURED = 3;
-    private static final Integer PENDING_APPROVAL = 4;
-    private static final Integer REQUIRES_DELETE = 5;
-    private static final Integer DELETED = 6;
+    private static final long serialVersionUID = 2L;
+
+    public static final Integer CANCELLED = -1;
+    public static final Integer UPLOADING = 0;
+    public static final Integer UPLOADED = 1;
+    public static final Integer VERIFIED = 2;
+    public static final Integer CONFIGURED = 3;
+    public static final Integer PENDING_APPROVAL = 4;
+    public static final Integer REQUIRES_DELETE = 5;
+    public static final Integer DELETED = 6;
     private final long jobId;
     private final long responseHandlerId;
     private final ArrayList<File> filesForUpload;
@@ -44,6 +48,7 @@ public class UploadJob implements Serializable {
     private volatile transient boolean runningNow = false;
     private volatile transient boolean cancelUploadAsap;
     private transient File loadedFromFile;
+    private LinkedHashMap<Date, String> errors = new LinkedHashMap<>();
 
     public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel) {
         this.jobId = jobId;
@@ -102,6 +107,13 @@ public class UploadJob implements Serializable {
         this.jobConfigId = jobConfigId;
     }
 
+    public ArrayList<File> getFilesAwaitingUpload() {
+        Set<File> filesProcessedToSomeDegree = fileUploadStatus.keySet();
+        ArrayList<File> filesAwaitingUpload = new ArrayList<File>(filesForUpload);
+        filesAwaitingUpload.removeAll(filesProcessedToSomeDegree);
+        return filesAwaitingUpload;
+    }
+
     //
 //    public synchronized boolean isUploadOfFileInProgress(File fileForUpload) {
 //        Integer status = fileUploadStatus.get(fileForUpload);
@@ -117,16 +129,16 @@ public class UploadJob implements Serializable {
     }
 
     public HashSet<File> getFilesWithStatus(Integer... statuses) {
-        HashSet<File> filesProcessedToEnd = new HashSet<>();
+        HashSet<File> filesWithStatus = new HashSet<>();
         for (Map.Entry<File, Integer> fileStatusEntry : fileUploadStatus.entrySet()) {
             Integer status = fileStatusEntry.getValue();
             for (Integer i : statuses) {
                 if (status.equals(i)) {
-                    filesProcessedToEnd.add(fileStatusEntry.getKey());
+                    filesWithStatus.add(fileStatusEntry.getKey());
                 }
             }
         }
-        return filesProcessedToEnd;
+        return filesWithStatus;
     }
 
     public HashSet<File> getFilesPendingApproval() {
@@ -405,6 +417,18 @@ public class UploadJob implements Serializable {
 
     public void setLoadedFromFile(File loadedFromFile) {
         this.loadedFromFile = loadedFromFile;
+    }
+
+    public void recordError(Date date, String message) {
+        errors.put(date, message);
+    }
+
+    public boolean hasErrors() {
+        return errors.size() > 0;
+    }
+
+    public LinkedHashMap<Date, String> getErrors() {
+        return errors;
     }
 
     protected static class PartialUploadData implements Serializable {

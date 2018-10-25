@@ -808,4 +808,16 @@ SOFTWARE.
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Admin user does not have access to the features anticipated. This can occur if you use the community plugin (which fakes admin status for non admin users) has not installed itself correctly. Check the relevant plugin is correctly exposing methods you expect using a web browser: %1$s/tools/ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">This feature is not available. Please install the PiwigoClientWsExt plugin on your server. If you already have this installed, please update it to the latest version.</string>
     <string name="alert_user_session_no_allowed_filetypes">The server has not provided a list of file types that can be uploaded with the user session information (this is usually provided only for admin users). Please check the server is correctly configured and try again. If the issue persists, please email me to help me diagnose the problem for you.</string>
+    <string name="upload_job_status_button">Status</string>
+    <string name="job_not_found">Upload Job not found</string>
+    <string name="files_mid_data_transfer_title">Files partially copied</string>
+    <string name="files_awaiting_verification_title">Files awaiting data integrity check</string>
+    <string name="files_awaiting_transfer_title">Files awaiting data transfer</string>
+    <string name="files_awaiting_configuration_title">Files awaiting configuration</string>
+    <string name="files_requiring_server_deletion_title">Files that need deleting from server</string>
+    <string name="files_fully_uploaded_title">Files fully uploaded</string>
+    <string name="temporary_album_needs_deleting_title">Temporary album needs deleting</string>
+    <string name="upload_job_status_heading">Upload Job Status</string>
+    <string name="file_count_pattern">%1$d Files</string>
+    <string name="errors_encountered_list_title">Errors encountered</string>
 </resources>

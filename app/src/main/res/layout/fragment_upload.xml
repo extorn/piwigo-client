@@ -113,6 +113,18 @@
         android:layout_alignWithParentIfMissing="true"
         android:layout_alignParentStart="true"/>
     <Button
+        android:id="@+id/view_detailed_upload_status_button"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="@string/upload_job_status_button"
+        android:layout_above="@+id/upload_adView"
+        android:layout_centerHorizontal="true"
+        android:layout_alignWithParentIfMissing="true"/>
+    <Button
         android:id="@+id/upload_files_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
@@ -36,6 +37,8 @@ import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.StopActivityEvent;
+import delit.piwigoclient.ui.events.ToolbarEvent;
+import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
@@ -47,6 +50,7 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.upload.UploadFragment;
+import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
 
 /**
  * Created by gareth on 12/07/17.
@@ -316,6 +320,13 @@ public class UploadActivity extends MyActivity {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(final ViewJobStatusDetailsEvent event) {
+        UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
+        showFragmentNow(fragment);
+    }
+
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final AlbumCreateNeededEvent event) {
         CreateAlbumFragment fragment = CreateAlbumFragment.newInstance(event.getActionId(), event.getParentAlbum());
@@ -341,6 +352,16 @@ public class UploadActivity extends MyActivity {
         }
         GroupSelectFragment fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ToolbarEvent event) {
+        toolbar.setTitle(event.getTitle());
+        if(event.isExpandToolbarView()) {
+            ((AppBarLayout) toolbar.getParent()).setExpanded(true, true);
+        } else if(event.isContractToolbarView()) {
+            ((AppBarLayout) toolbar.getParent()).setExpanded(false, true);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

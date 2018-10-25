@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.UploadPreferences;
@@ -63,12 +64,15 @@ import delit.piwigoclient.ui.common.list.BiArrayAdapter;
 import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
+import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.ArrayUtils;
+
+import static android.view.View.GONE;
 
 
 /**
@@ -108,6 +112,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private CustomImageButton newGalleryButton;
     private FilesToUploadRecyclerViewAdapter filesToUploadAdapter;
     private CustomImageButton selectedGallerySpinnerRefreshButton;
+    private Button uploadJobStatusButton;
 
 
     protected Bundle buildArgs(long currentGalleryId, int actionId) {
@@ -169,11 +174,19 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             uploadingAsField.setVisibility(View.VISIBLE);
             uploadingAsLabelField.setVisibility(View.VISIBLE);
         } else {
-            uploadingAsField.setVisibility(View.GONE);
-            uploadingAsLabelField.setVisibility(View.GONE);
+            uploadingAsField.setVisibility(GONE);
+            uploadingAsLabelField.setVisibility(GONE);
         }
     }
 
+    @Override
+    protected String buildPageHeading() {
+        if(BuildConfig.DEBUG) {
+            return getString(R.string.upload_page_title) + " ("+BuildConfig.FLAVOR+')';
+        } else {
+            return getString(R.string.upload_page_title);
+        }
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -190,7 +203,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (AdsManager.getInstance().shouldShowAdverts()) {
             new AdsManager.MyBannerAdListener(adView);
         } else {
-            adView.setVisibility(View.GONE);
+            adView.setVisibility(GONE);
         }
 
         AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
@@ -314,7 +327,23 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 });
             }
         });
-        updateJobDeletionButtonStatus();
+
+        uploadJobStatusButton = view.findViewById(R.id.view_detailed_upload_status_button);
+        uploadJobStatusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UploadJob uploadJob = getActiveJob(getContext());
+                if(uploadJob != null) {
+                    EventBus.getDefault().post(new ViewJobStatusDetailsEvent(uploadJob));
+                } else {
+                    getUiHelper().showDetailedToast(R.string.alert_error, R.string.job_not_found);
+                    uploadJobStatusButton.setVisibility(GONE);
+                }
+            }
+        });
+
+
+        updateActiveJobActionButtonsStatus();
 
 
         uploadFilesNowButton = view.findViewById(R.id.upload_files_button);
@@ -488,7 +517,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             getUiHelper().showShortDetailedToast(R.string.alert_information, getString(R.string.files_already_set_for_upload_skipped_pattern, filesAlreadyPresent));
         }
         uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
-        updateJobDeletionButtonStatus();
+        updateActiveJobActionButtonsStatus();
     }
 
     private void uploadFiles() {
@@ -574,22 +603,25 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         boolean jobYetToFinishUploadingFiles = filesStillToBeUploaded && (noJobIsYetConfigured || jobIsFinished || !(jobIsSubmitted || jobIsRunningNow));
         boolean jobYetToCompleteAfterUploadingFiles = !noJobIsYetConfigured && !filesStillToBeUploaded && !jobIsFinished && !jobIsRunningNow; // crashed job just loaded basically
         uploadFilesNowButton.setEnabled(jobYetToFinishUploadingFiles || jobYetToCompleteAfterUploadingFiles); // Allow restart of the job.
-        updateJobDeletionButtonStatus();
+        updateActiveJobActionButtonsStatus();
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         newGalleryButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
         selectedGallerySpinner.setEnabled(availableGalleries.getCount() > 0 && (noJobIsYetConfigured || jobIsFinished));
         privacyLevelSpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
     }
 
-    private void updateJobDeletionButtonStatus() {
+    private void updateActiveJobActionButtonsStatus() {
         if (uploadJobId != null) {
             UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
             if (job != null) {
+                uploadJobStatusButton.setVisibility(View.VISIBLE);
                 deleteUploadJobButton.setEnabled(job.hasBeenRunBefore() && !job.isRunningNow() && !job.hasJobCompletedAllActionsSuccessfully());
             } else {
+                uploadJobStatusButton.setVisibility(GONE);
                 deleteUploadJobButton.setEnabled(false);
             }
         } else {
+            uploadJobStatusButton.setVisibility(GONE);
             deleteUploadJobButton.setEnabled(false);
         }
     }
@@ -700,14 +732,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                         if (Boolean.TRUE == positiveAnswer) {
                             adapter.clear();
                             uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
-                            updateJobDeletionButtonStatus();
+                            updateActiveJobActionButtonsStatus();
                         }
                     }
                 });
             } else {
                 adapter.remove(itemToRemove);
                 uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
-                updateJobDeletionButtonStatus();
+                updateActiveJobActionButtonsStatus();
             }
         }
     }

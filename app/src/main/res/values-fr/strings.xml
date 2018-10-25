@@ -807,4 +807,16 @@ SOFTWARE.
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">L\'utilisateur Admin n\'a pas accès aux fonctionnalités prévues. Cela peut se produire si vous utilisez le plugin de la communauté (qui falsifie le statut administrateur pour les utilisateurs non administrateurs) ne s\'est pas installé correctement. Vérifiez que le plugin correspondant expose correctement les méthodes auxquelles vous vous attendez en utilisant un navigateur Web : 1$/outils/ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Cette fonction n\'est pas disponible. Veuillez installer le plugin PiwigoClientWsExt sur votre serveur. Si vous l\'avez déjà installé, veuillez le mettre à jour avec la dernière version.</string>
     <string name="alert_user_session_no_allowed_filetypes">Le serveur n\'a pas fourni de liste des types de fichiers qui peuvent être téléchargés avec les informations de session utilisateur (ceci n\'est généralement fourni que pour les utilisateurs administrateurs). Veuillez vérifier que le serveur est correctement configuré et réessayer. Si le problème persiste, veuillez m\'envoyer un courriel pour m\'aider à diagnostiquer le problème pour vous.</string>
+    <string name="upload_job_status_button">Statut</string>
+    <string name="job_not_found">Upload Job introuvable</string>
+    <string name="files_mid_data_transfer_title">Fichiers partiellement copiés</string>
+    <string name="files_awaiting_verification_title">Fichiers en attente de vérification de l\'intégrité des données</string>
+    <string name="files_awaiting_transfer_title">Fichiers en attente de transfert de données</string>
+    <string name="files_awaiting_configuration_title">Fichiers en attente de configuration</string>
+    <string name="files_requiring_server_deletion_title">Fichiers à supprimer du serveur</string>
+    <string name="files_fully_uploaded_title">Fichiers entièrement téléchargés</string>
+    <string name="temporary_album_needs_deleting_title">L\'album temporaire a besoin d\'être supprimé</string>
+    <string name="upload_job_status_heading">Upload Job Statut</string>
+    <string name="file_count_pattern">%1$d Fichiers</string>
+    <string name="errors_encountered_list_title">Erreurs rencontrées</string>
 </resources>

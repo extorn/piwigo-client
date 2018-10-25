@@ -70,7 +70,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         return piwigoMethodToUse;
     }
 
-    private RequestParams getRequestParameters() {
+    public RequestParams getRequestParameters() {
         if (requestParams == null) {
             requestParams = buildRequestParameters();
         } else {
