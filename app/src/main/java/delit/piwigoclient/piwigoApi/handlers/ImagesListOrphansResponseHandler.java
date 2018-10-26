@@ -45,6 +45,11 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
     }
 
     @Override
+    public String getPiwigoMethod() {
+        return getPiwigoMethodOverrideIfPossible("piwigo_client.images.getOrphans");
+    }
+
+    @Override
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());

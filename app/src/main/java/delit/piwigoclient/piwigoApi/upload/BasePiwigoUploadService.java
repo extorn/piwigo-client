@@ -492,18 +492,34 @@ public abstract class BasePiwigoUploadService extends IntentService {
             handler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
         }
         if(!handler.isSuccess()) {
-            if(handler.getError() != null) {
-                thisUploadJob.recordError(new Date(), handler.getError().getMessage());
-            } else {
-                thisUploadJob.recordError(new Date(), null);
-            }
-            Bundle b = new Bundle();
-            b.putString("piwigoMethod", handler.getPiwigoMethod());
-            b.putString("requestParams", handler.getRequestParameters().toString());
-            b.putString("responseType", handler.getResponse() == null ? null : handler.getResponse().getClass().getName());
-            b.putSerializable("error", handler.getError() == null ? null : handler.getError());
-            FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("uploadError", b);
+            thisUploadJob.recordError(new Date(), buildErrorMessage(handler));
+            recordServerCallError(handler);
         }
+    }
+
+    protected String buildErrorMessage(AbstractPiwigoWsResponseHandler handler) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("PiwigoMethod:");
+        sb.append('\n');
+        sb.append(handler.getPiwigoMethod());
+        sb.append('\n');
+        sb.append("Error:");
+        sb.append('\n');
+        if(handler.getError() != null) {
+            sb.append(handler.getError().getMessage());
+        } else {
+            sb.append("???");
+        }
+        return sb.toString();
+    }
+
+    protected void recordServerCallError(AbstractPiwigoWsResponseHandler handler) {
+        Bundle b = new Bundle();
+        b.putString("piwigoMethod", handler.getPiwigoMethod());
+        b.putString("requestParams", handler.getRequestParameters().toString());
+        b.putString("responseType", handler.getResponse() == null ? null : handler.getResponse().getClass().getName());
+        b.putSerializable("error", handler.getError() == null ? null : handler.getError());
+        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("uploadError", b);
     }
 
     private ArrayList<CategoryItemStub> retrieveListOfAlbumsOnServer(UploadJob thisUploadJob, PiwigoSessionDetails sessionDetails) {
@@ -658,6 +674,8 @@ public abstract class BasePiwigoUploadService extends IntentService {
                             success = true; // image is on the server, but not yet approved.
                             thisUploadJob.addFileUploaded(entry.getKey(), null);
                             postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadProgressUpdateResponse(getNextMessageId(), entry.getKey(), thisUploadJob.getUploadProgress(entry.getKey())));
+                        } else {
+                            recordServerCallError(getImageInfoHandler);
                         }
                     }
                 }
@@ -668,24 +686,26 @@ public abstract class BasePiwigoUploadService extends IntentService {
     private ArrayList<Long> getOrphanImagesOnServer(UploadJob thisUploadJob) {
 
         ImagesListOrphansResponseHandler orphanListHandler = new ImagesListOrphansResponseHandler(0, 100);
-        int allowedAttempts = 2;
-        boolean success = false;
-        ArrayList<Long> orphans = null;
-        while (!success && allowedAttempts > 0) {
-            allowedAttempts--;
-            orphanListHandler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
+        ArrayList<Long> orphans;
+
+        if(orphanListHandler.isMethodAvailable(getApplicationContext(), thisUploadJob.getConnectionPrefs())) {
+            orphans = null;
+            invokeWithRetries(thisUploadJob, orphanListHandler, 2);
             if (orphanListHandler.isSuccess()) {
-                success = true;
-                ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse resp = (ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse)orphanListHandler.getResponse();
-                if(resp.getTotalCount() > resp.getResources().size()) {
+                ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse resp = (ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse) orphanListHandler.getResponse();
+                if (resp.getTotalCount() > resp.getResources().size()) {
                     postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getApplicationContext().getString(R.string.upload_error_too_many_orphaned_files_exist_on_server))));
                     return null;
                 } else {
                     orphans = resp.getResources();
                 }
             }
+            postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getApplicationContext().getString(R.string.upload_error_orphaned_file_retrieval_failed))));
+        } else {
+            orphans = new ArrayList<>(0);
+            thisUploadJob.recordError(new Date(), getString(R.string.upload_error_orphaned_file_retrieval_unavailable));
         }
-        postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getApplicationContext().getString(R.string.upload_error_orphaned_file_retrieval_failed))));
+
         return orphans;
     }
 

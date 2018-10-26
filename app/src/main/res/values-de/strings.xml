@@ -541,7 +541,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_error_too_many_orphaned_files_exist_on_server">Auf dem Server befinden sich zu viele verwaiste Bilder, als dass der Upload fortgesetzt werden könnte. Bitte räumt diese auf, bevor ihr es erneut versucht.</string>
     <string name="upload_error_orphaned_file_retrieval_failed">Die Liste der verwaisten Bilder kann nicht abgerufen werden. Bitte versuchen Sie es erneut.</string>
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Der Admin-Benutzer hat keinen Zugriff auf die erwarteten Funktionen. Dies kann vorkommen, wenn das Community-Plugin (das den Admin-Status für Nichtadministratoren vortäuscht) sich nicht korrekt installiert hat. Überprüfen Sie, ob das entsprechende Plugin die Methoden, die Sie von einem Webbrowser erwarten, korrekt darstellt: %1$s/tools/ws.htm</string>
-    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Diese Funktion ist nicht verfügbar. Bitte installieren Sie das PiwigoClientWsExt Plugin auf Ihrem Server. Wenn Sie diese bereits installiert haben, aktualisieren Sie sie bitte auf die neueste Version.</string>
+    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Diese Funktion ist nicht verfügbar. Bitte installieren Sie das PiwigoClientWsExts Plugin auf Ihrem Server. Wenn Sie diese bereits installiert haben, aktualisieren Sie sie bitte auf die neueste Version.</string>
     <string name="alert_user_session_no_allowed_filetypes">Der Server hat keine Liste der Dateitypen bereitgestellt, die mit den Informationen zur Benutzersitzung hochgeladen werden können (dies ist in der Regel nur für Admin-Benutzer möglich). Bitte überprüfen Sie, ob der Server korrekt konfiguriert ist und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, senden Sie mir bitte eine E-Mail, damit ich das Problem für Sie diagnostizieren kann.</string>
     <string name="upload_job_status_button">Status</string>
     <string name="job_not_found">Upload Auftrag nicht gefunden</string>
@@ -555,5 +555,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_job_status_heading">Upload Auftrag Status</string>
     <string name="file_count_pattern">%1$d Dateien</string>
     <string name="errors_encountered_list_title">Aufgetretene Fehler</string>
+    <string name="upload_error_orphaned_file_retrieval_unavailable">Es ist nicht möglich, das Vorhandensein von verwaisten Bildern zu überprüfen. Empfohlene Installation PiwigoClientWsExts Server Plugin</string>
 </resources>
 

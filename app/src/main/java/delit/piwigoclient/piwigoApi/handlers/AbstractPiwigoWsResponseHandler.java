@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpUtils;
@@ -68,6 +70,19 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
         }
         return piwigoMethodToUse;
+    }
+
+    public boolean isMethodAvailable(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        setCallDetails(context, connectionPrefs, false);
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        if(sessionDetails == null) {
+            LoginResponseHandler handler = new LoginResponseHandler();
+            handler.invokeAndWait(context, connectionPrefs);
+            if(handler.isLoginSuccess()) {
+                sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            }
+        }
+        return sessionDetails != null && sessionDetails.isMethodAvailable(getPiwigoMethod());
     }
 
     public RequestParams getRequestParameters() {

@@ -52,6 +52,13 @@ public class UploadJobStatusDetailsFragment extends MyFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_upload_job_status,null);
 
+        return v;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         if(getArguments() != null) {
             long uploadJobId = getArguments().getLong(STATE_UPLOAD_JOB_ID);
             uploadJob = BasePiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
@@ -61,15 +68,9 @@ public class UploadJobStatusDetailsFragment extends MyFragment {
             uploadJob = BasePiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
         }
 
-        return v;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
         if(uploadJob == null) {
             getFragmentManager().popBackStack();
+            return;
         }
 
         ArrayList<File> filesAwaitingUpload = uploadJob.getFilesAwaitingUpload();
@@ -160,7 +161,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment {
             view.setText(piwigoDateFormat.format(thisDataItem.getKey()));
 
             view = v.findViewById(R.id.details);
-            view.setText(thisDataItem.getValue() != null ? thisDataItem.getValue() : "???");
+            view.setText(thisDataItem.getValue());
 
             return v;
         }

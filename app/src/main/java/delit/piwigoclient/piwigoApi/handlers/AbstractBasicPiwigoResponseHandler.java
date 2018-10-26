@@ -165,7 +165,6 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        this.httpClientFactory = HttpClientFactory.getInstance(context);
         this.allowSessionRefreshAttempt = allowSessionRefreshAttempt;
         if (this.connectionPrefs == null) {
             this.connectionPrefs = connectionPrefs;
@@ -282,7 +281,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
                 // clear the cookies to ensure the fresh cookie is used in subsequent requests.
                 //TODO is this required?
-                httpClientFactory.flushCookies(connectionPrefs);
+                getHttpClientFactory().flushCookies(connectionPrefs);
 
                 // Ensure that the login code knows that the current session token may be invalid despite seemingly being okay
                 if (sessionDetails != null && sessionDetails.isOlderThanSeconds(5)) {
@@ -405,6 +404,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     public abstract RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler);
 
     public HttpClientFactory getHttpClientFactory() {
+        if(httpClientFactory == null) {
+            httpClientFactory = HttpClientFactory.getInstance(context);
+        }
         return httpClientFactory;
     }
 
