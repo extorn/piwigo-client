@@ -110,9 +110,8 @@
         </item>
     </string-array>
     <string-array name="release_history">
-        <item>1.3.96.7</item>
-        <item>"Änderungen:
-            - Französische Übersetzung
-            - Anzeigen des Status des Upload-Jobs (nützlich für die Hilfe)"</item>
+        <item>1.3.96.8</item>
+        <item>"Fehlerbehebung:
+            - Upload korrigiert - Danke Raphael"</item>
     </string-array>
 </resources>
