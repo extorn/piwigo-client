@@ -315,7 +315,7 @@ public class UploadActivity extends MyActivity {
 
                 int eventId = requestCode;
                 FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload, actionTimeMillis);
-
+                // post sticky because the fragment to handle this event may not yet be created and registered with the event bus.
                 EventBus.getDefault().postSticky(event);
             }
         } else {

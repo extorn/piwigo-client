@@ -1995,7 +1995,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             selectedItemIds = ParcelUtils.readLongSet(in, null);
             itemsUpdated = ParcelUtils.readLongSet(in, null);
             selectedItems = ParcelUtils.readHashSet(in, null);
-            resourceInfoAvailable = (boolean) in.readValue(null);
+            resourceInfoAvailable = ParcelUtils.readValue(in,null, boolean.class);
             trackedMessageIds = ParcelUtils.readLongArrayList(in, null);
         }
 

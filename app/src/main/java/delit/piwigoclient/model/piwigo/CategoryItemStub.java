@@ -33,7 +33,7 @@ public class CategoryItemStub implements Parcelable, Identifiable {
         id = in.readLong();
         name = in.readString();
         parentageChain = ParcelUtils.readLongArrayList(in, null);
-        isUserSelectable = (boolean)in.readValue(null);
+        isUserSelectable = ParcelUtils.readValue(in,null, boolean.class);
     }
 
     @Override

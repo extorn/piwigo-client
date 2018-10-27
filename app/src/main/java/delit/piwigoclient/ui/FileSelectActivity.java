@@ -103,30 +103,6 @@ public class FileSelectActivity extends MyActivity {
         }
     }
 
-    @Subscribe
-    public void onEvent(FileSelectionCompleteEvent event) {
-        int sourceEventId = getTrackedIntentType(event.getActionId());
-        if (sourceEventId >= 0) {
-            Intent result = this.getIntent();
-//            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
-            result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
-            if (event.getSelectedFiles() != null) {
-                result.putExtra(INTENT_SELECTED_FILES, event.getSelectedFiles());
-                setResult(Activity.RESULT_OK, result);
-            } else {
-                setResult(Activity.RESULT_CANCELED, result);
-            }
-            finish();
-        }
-    }
-
-    @Subscribe
-    public void onEvent(StopActivityEvent event) {
-        if (getUiHelper().isTrackingRequest(event.getActionId())) {
-            finish();
-        }
-    }
-
     private void showFileSelectFragment() {
 
         FileSelectionNeededEvent event = (FileSelectionNeededEvent) getIntent().getSerializableExtra(INTENT_DATA);
@@ -187,6 +163,20 @@ public class FileSelectActivity extends MyActivity {
         tx.replace(R.id.app_content, f, f.getClass().getName()).commit();
     }
 
+    private void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
+
+        final int trackingRequestId = TrackableRequestEvent.getNextEventId();
+        getUiHelper().setTrackingRequest(trackingRequestId);
+
+        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultAdapter() {
+            @Override
+            public void onDismiss(AlertDialog dialog) {
+                //exit the app.
+                EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
+            }
+        });
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
@@ -201,17 +191,29 @@ public class FileSelectActivity extends MyActivity {
         }
     }
 
-    private void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
-
-        final int trackingRequestId = TrackableRequestEvent.getNextEventId();
-        getUiHelper().setTrackingRequest(trackingRequestId);
-
-        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultAdapter() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-                //exit the app.
-                EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(FileSelectionCompleteEvent event) {
+        int sourceEventId = getTrackedIntentType(event.getActionId());
+        if (sourceEventId >= 0) {
+            Intent result = this.getIntent();
+//            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
+            result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
+            if (event.getSelectedFiles() != null) {
+                result.putExtra(INTENT_SELECTED_FILES, event.getSelectedFiles());
+                setResult(Activity.RESULT_OK, result);
+            } else {
+                setResult(Activity.RESULT_CANCELED, result);
             }
-        });
+            finish();
+        }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(StopActivityEvent event) {
+        if (getUiHelper().isTrackingRequest(event.getActionId())) {
+            finish();
+        }
+    }
+
+
 }

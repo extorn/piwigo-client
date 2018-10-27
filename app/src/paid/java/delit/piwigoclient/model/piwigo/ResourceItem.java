@@ -24,7 +24,7 @@ public class ResourceItem extends AbstractBaseResourceItem {
     public ResourceItem(Parcel in) {
         super(in);
         tags = ParcelUtils.readHashSet(in, null);
-        isFavorite = (Boolean)in.readValue(null);
+        isFavorite = ParcelUtils.readValue(in,null, Boolean.class);
     }
 
     @Override

@@ -66,7 +66,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         items = in.readArrayList(null);
         in.readMap(pagesBeingLoaded, getClass().getClassLoader());
         ParcelUtils.readIntSet(in, pagesFailedToLoad, null);
-        fullyLoaded = (boolean) in.readValue(null);
+        fullyLoaded = ParcelUtils.readValue(in,null, boolean.class);
 
         if(pageLoadLock == null) {
             this.pageLoadLock = new ReentrantLock();

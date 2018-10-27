@@ -27,7 +27,7 @@ public class User implements Identifiable, Parcelable {
         email = in.readString();
         username = in.readString();
         userType = in.readString();
-        highDefinitionEnabled = (boolean)in.readValue(null);
+        highDefinitionEnabled = ParcelUtils.readValue(in,null, boolean.class);
         lastVisit = ParcelUtils.readDate(in);
         groups = ParcelUtils.readLongSet(in, null);
         privacyLevel = in.readInt();

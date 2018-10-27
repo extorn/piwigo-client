@@ -212,7 +212,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
             selectedResources = ParcelUtils.readHashSet(in, getClass().getClassLoader());
             resourcesReadyToProcess = ParcelUtils.readHashSet(in, getClass().getClassLoader());
             tagMembershipChangesPending = ParcelUtils.readMap(in, getClass().getClassLoader());
-            tagUpdateEvents = (ArrayList<Tag>) in.readValue(getClass().getClassLoader());
+            tagUpdateEvents = ParcelUtils.readValue(in,getClass().getClassLoader(), ArrayList.class);
             tagsToAdd = ParcelUtils.readHashSet(in, getClass().getClassLoader());
         }
 

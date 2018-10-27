@@ -3,6 +3,9 @@ package delit.piwigoclient.ui.common.util;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +20,7 @@ import delit.piwigoclient.util.ArrayUtils;
 
 public class ParcelUtils {
     public static <T extends Parcelable> HashSet<T> readHashSet(@NonNull Parcel in, ClassLoader loader) {
-        ArrayList<T> store = (ArrayList<T>) in.readValue(loader);
+        ArrayList<T> store = readValue(in, loader, ArrayList.class);
         if(store != null) {
             HashSet retVal = new HashSet<T>(store);
             retVal.addAll(store);
@@ -43,16 +46,28 @@ public class ParcelUtils {
     }
     
     public static HashSet<Integer> readIntHashSet(@NonNull Parcel in, ClassLoader loader) {
-        int[] data = (int[]) in.readValue(loader);
-        HashSet<Integer> wrapper = new HashSet<Integer>(data.length);
+        int[] data = readValue(in, loader, int[].class);
+        HashSet<Integer> wrapper = new HashSet<>(data.length);
         if(data != null) {
             Collections.addAll(wrapper, com.google.android.gms.common.util.ArrayUtils.toWrapperArray(data));
         }
         return wrapper;
     }
 
+    public static <T> T readValue(@NonNull Parcel in, ClassLoader loader, Class<T> expectedType) {
+        Object o = in.readValue(loader);
+        try {
+            T val = expectedType.cast(o);
+            return val;
+        } catch(ClassCastException e) {
+            Crashlytics.log(Log.ERROR, "ParcelUtils", "returning null as value of unexpected type : " + o);
+            Crashlytics.logException(e);
+            return null;
+        }
+    }
+
     public static Set<Integer> readIntSet(@NonNull Parcel in, @NonNull Set<Integer> destSet, ClassLoader loader) {
-        int[] data = (int[]) in.readValue(loader);
+        int[] data = readValue(in, loader, int[].class);
         if(data != null) {
             Collections.addAll(destSet, com.google.android.gms.common.util.ArrayUtils.toWrapperArray(data));
         }
@@ -78,7 +93,7 @@ public class ParcelUtils {
     }
 
     public static ArrayList<Long> readLongArrayList(Parcel in, ClassLoader loader) {
-        return (ArrayList<Long>) in.readValue(loader);
+        return readValue(in, loader, ArrayList.class);
     }
 
     public static void writeLongArrayList(Parcel out, ArrayList<Long> parentageChain) {
@@ -99,11 +114,15 @@ public class ParcelUtils {
     }
 
     public static void writeStringSet(Parcel dest, HashSet<String> entries) {
-        dest.writeList(new ArrayList<>(entries));
+        if(entries == null) {
+            dest.writeList(null);
+        } else {
+            dest.writeList(new ArrayList<>(entries));
+        }
     }
 
-    public static HashSet<String> readStringSet(Parcel source, ClassLoader loader) {
-        List<String> rawData = (List<String>) source.readValue(loader);
+    public static HashSet<String> readStringSet(Parcel in, ClassLoader loader) {
+        List<String> rawData = readValue(in, loader, ArrayList.class);
         HashSet<String> data = null;
         if(rawData != null) {
             data = new HashSet<>(rawData);
@@ -146,22 +165,29 @@ public class ParcelUtils {
 //    }
 
     public static <S, T> void writeMap(Parcel p, Map<S, T> data) {
-        ArrayList<S> keys = new ArrayList<>(data.size());
-        ArrayList<T> values = new ArrayList<>(data.size());
-        for(Map.Entry<S,T> entry : data.entrySet()) {
-            keys.add(entry.getKey());
-            values.add(entry.getValue());
+        ArrayList<S> keys = null;
+        ArrayList<T> values = null;
+        if(data != null) {
+            keys = new ArrayList<>(data.size());
+            values = new ArrayList<>(data.size());
+            for (Map.Entry<S, T> entry : data.entrySet()) {
+                keys.add(entry.getKey());
+                values.add(entry.getValue());
+            }
         }
         p.writeValue(keys);
         p.writeValue(values);
     }
 
-    public static <S, T> HashMap<S,T> readMap(Parcel p, ClassLoader loader) {
-        ArrayList<S> keys = (ArrayList<S>) p.readValue(loader);
-        ArrayList<T> values = (ArrayList<T>) p.readValue(loader);
-        HashMap<S,T> map = new HashMap<>(keys.size());
-        for(int i = 0; i < values.size(); i++) {
-            map.put(keys.get(i), values.get(i));
+    public static <S, T> HashMap<S,T> readMap(Parcel in, ClassLoader loader) {
+        ArrayList<S> keys = readValue(in, loader, ArrayList.class);
+        ArrayList<T> values = readValue(in, loader, ArrayList.class);
+        HashMap<S,T> map = null;
+        if(keys != null) {
+            map = new HashMap<>(keys.size());
+            for(int i = 0; i < values.size(); i++) {
+                map.put(keys.get(i), values.get(i));
+            }
         }
         return map;
     }

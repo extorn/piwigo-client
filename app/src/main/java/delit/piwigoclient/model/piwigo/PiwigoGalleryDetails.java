@@ -43,9 +43,9 @@ public class PiwigoGalleryDetails implements Parcelable {
         parentGallery = in.readParcelable(getClass().getClassLoader());
         galleryName = in.readString();
         galleryDescription = in.readString();
-        userCommentsAllowed = (boolean)in.readValue(null);
-        isPrivate = (boolean)in.readValue(null);
-        galleryId = (Long)in.readValue(null);
+        userCommentsAllowed = ParcelUtils.readValue(in,null, boolean.class);
+        isPrivate = ParcelUtils.readValue(in,null, boolean.class);
+        galleryId = ParcelUtils.readValue(in,null, Long.class);
         allowedGroups = ParcelUtils.readLongSet(in, null);
         allowedUsers = ParcelUtils.readLongSet(in, null);
     }
