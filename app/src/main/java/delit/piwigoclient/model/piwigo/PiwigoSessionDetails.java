@@ -12,7 +12,6 @@ import java.util.Set;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.handlers.PiwigoClientFailedUploadsCleanResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.PiwigoClientGetPluginDetailResponseHandler;
 
 /**
  * Created by gareth on 25/05/17.

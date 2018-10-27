@@ -52,7 +52,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         return groups;
     }
 
-    private static Group parseGroupFromJson(JsonObject groupObj) throws JSONException {
+    private static Group parseGroupFromJson(JsonObject groupObj) {
         long id = groupObj.get("id").getAsLong();
         String name = groupObj.get("name").getAsString();
         boolean isDefault = groupObj.get("is_default").getAsBoolean();

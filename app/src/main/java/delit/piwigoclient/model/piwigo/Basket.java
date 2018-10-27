@@ -24,9 +24,9 @@ public class Basket implements Parcelable {
     }
 
     public Basket(Parcel in) {
-        contents = ParcelUtils.readHashSet(in, null);
+        contents = ParcelUtils.readHashSet(in, getClass().getClassLoader());
         action = in.readInt();
-        contentParent = in.readParcelable(null);
+        contentParent = in.readParcelable(getClass().getClassLoader());
     }
 
     @Override

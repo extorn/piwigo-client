@@ -91,13 +91,14 @@
     <string name="logging_in_to_piwigo_pattern">Einloggen in %1$s</string>
 
     <string name="delete_upload_job_button_title">Job löschen</string>
+    <string name="upload_files_button_title">Hochladen</string>
+    <string name="upload_job_status_button">Status</string>
     <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen alle Dateien, die teilweise auf den Server hochgeladen wurden, manuell bereinigen (oder die Präferenz in dieser App verwenden - Seite mit den Upload-Einstellungen). Jobs werden oft erfolgreich abgeschlossen, wenn Sie sie später wieder aufnehmen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen wollen?</string>
-    <string name="upload_files_button_title">Dateien hochladen</string>
     <string name="loading_please_wait">Laden, bitte warten</string>
     <string name="alert_title_server_error">Server-Fehler</string>
     <string name="alert_server_error_pattern">Server liefert HTTP-Fehler: %1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Fehler beim Parsen der piwigo-Antwort</string>
-    <string name="alert_error_handling_response_pattern">Unerträgliche Reaktion: 1$d (%2$s)</string>
+    <string name="alert_error_handling_response_pattern">Unerträgliche Reaktion: %1$d (%2$s)</string>
     <string name="none_selected">Keine</string>
     <string name="alert_title_error_too_many_users">Fehler</string>
     <string name="alert_error_too_many_users_message">Zu viele Benutzer. Bitte senden Sie eine Erweiterungsanfrage, um das Paging von Benutzern zu ermöglichen.</string>
@@ -543,7 +544,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Der Admin-Benutzer hat keinen Zugriff auf die erwarteten Funktionen. Dies kann vorkommen, wenn das Community-Plugin (das den Admin-Status für Nichtadministratoren vortäuscht) sich nicht korrekt installiert hat. Überprüfen Sie, ob das entsprechende Plugin die Methoden, die Sie von einem Webbrowser erwarten, korrekt darstellt: %1$s/tools/ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Diese Funktion ist nicht verfügbar. Bitte installieren Sie das PiwigoClientWsExts Plugin auf Ihrem Server. Wenn Sie diese bereits installiert haben, aktualisieren Sie sie bitte auf die neueste Version.</string>
     <string name="alert_user_session_no_allowed_filetypes">Der Server hat keine Liste der Dateitypen bereitgestellt, die mit den Informationen zur Benutzersitzung hochgeladen werden können (dies ist in der Regel nur für Admin-Benutzer möglich). Bitte überprüfen Sie, ob der Server korrekt konfiguriert ist und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, senden Sie mir bitte eine E-Mail, damit ich das Problem für Sie diagnostizieren kann.</string>
-    <string name="upload_job_status_button">Status</string>
     <string name="job_not_found">Upload Auftrag nicht gefunden</string>
     <string name="files_mid_data_transfer_title">Dateien teilweise kopiert</string>
     <string name="files_awaiting_verification_title">Dateien, die auf die Überprüfung der Datenintegrität warten</string>
@@ -555,6 +555,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_job_status_heading">Upload Auftrag Status</string>
     <string name="file_count_pattern">%1$d Dateien</string>
     <string name="errors_encountered_list_title">Aufgetretene Fehler</string>
-    <string name="upload_error_orphaned_file_retrieval_unavailable">Es ist nicht möglich, das Vorhandensein von verwaisten Bildern zu überprüfen. Empfohlene Installation PiwigoClientWsExts Server Plugin</string>
+    <string name="upload_error_orphaned_file_retrieval_unavailable">Unable to check presence of orphan images. Recommend installing PiwigoClientWsExts server plugin</string>
+    <string name="x_of_y">%1$s / %2$s</string>
+    <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Deine Version von PiwigoClientWsExts ist veraltet. Bitte aktualisieren Sie es als Priorität.</string>
 </resources>
 

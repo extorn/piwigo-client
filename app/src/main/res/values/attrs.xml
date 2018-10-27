@@ -57,4 +57,18 @@
         <attr name="connectionProfileNameKey" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="CustomSlidingLayer">
+        <attr format="boolean" name="shadowDrawable"/>
+        <attr format="dimension" name="shadowSize"/>
+        <attr format="boolean" name="changeStateOnTap"/>
+        <attr format="dimension" name="offsetDistance"/>
+        <attr format="dimension" name="previewOffsetDistance"/>
+        <attr format="enum" name="csl_stickTo">
+            <enum name="right" value="-1"/>
+            <enum name="left" value="-2"/>
+            <enum name="top" value="-3"/>
+            <enum name="bottom" value="-4"/>
+        </attr>
+    </declare-styleable>
+
 </resources>

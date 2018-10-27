@@ -5,21 +5,32 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.google.android.gms.common.util.ArrayUtils;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import delit.piwigoclient.model.piwigo.CategoryItem;
+import delit.piwigoclient.util.ArrayUtils;
 
 public class BundleUtils {
+
+    public static <T extends Serializable> T getSerializable(Bundle bundle, String key, Class<T> clazz) {
+        Serializable val = bundle.getSerializable(key);
+        if(val == null) {
+            return null;
+        }
+        if(clazz.isInstance(val)) {
+            return clazz.cast(val);
+        }
+        throw new IllegalStateException("Looking for object of type " + clazz.getName() + " but was " + val.getClass().getName());
+    }
 
     public static <T extends Parcelable> HashSet<T> getHashSet(Bundle bundle, String key) {
         ArrayList<T> data = bundle.getParcelableArrayList(key);
@@ -39,7 +50,7 @@ public class BundleUtils {
 
 
     public static HashSet<Long> getLongHashSet(Bundle bundle, String key) {
-        Long[] data = ArrayUtils.toWrapperArray(bundle.getLongArray(key));
+        Long[] data = ArrayUtils.wrap(bundle.getLongArray(key));
         HashSet<Long> retVal = null;
         if(data != null) {
             retVal = new HashSet<>(data.length);
@@ -50,7 +61,7 @@ public class BundleUtils {
 
     public static void putLongHashSet(Bundle bundle, String key, Set<Long> data) {
         if(data != null) {
-            long[] dataArr2 = ArrayUtils.toLongArray(data.toArray(new Long[data.size()]));
+            long[] dataArr2 = ArrayUtils.unwrapLongs(data);
             bundle.putLongArray(key, dataArr2);
         }
     }
@@ -70,7 +81,7 @@ public class BundleUtils {
     }
 
     public static HashSet<Integer> getIntHashSet(Bundle bundle, String key) {
-        Integer[] data = ArrayUtils.toWrapperArray(bundle.getIntArray(key));
+        Integer[] data = ArrayUtils.wrap(bundle.getIntArray(key));
         HashSet<Integer> retVal = null;
         if(data != null) {
             retVal = new HashSet<>(data.length);
@@ -81,7 +92,7 @@ public class BundleUtils {
 
     public static void putIntHashSet(Bundle bundle, String key, HashSet<Integer> data) {
         if(data != null) {
-            int[] dataArr2 = ArrayUtils.toPrimitiveArray(data.toArray(new Integer[data.size()]));
+            int[] dataArr2 = ArrayUtils.unwrapInts(data);
             bundle.putIntArray(key, dataArr2);
         }
     }
@@ -178,4 +189,24 @@ public class BundleUtils {
             parcel.recycle();
         }
     }
+
+    public static void putClass(Bundle dest, String key, Class<?> clazz) {
+        if(clazz != null) {
+            dest.putString(key, clazz.getName());
+        }
+    }
+
+    public static <T> Class<T> getClass(Bundle bundle, String key) {
+        String classname = bundle.getString(key);
+        if(classname == null) {
+            return null;
+        }
+        try {
+            return (Class<T>) Class.forName(classname);
+        } catch (ClassNotFoundException e) {
+            Crashlytics.log(Log.ERROR, "BundleUtils", "expected class not found : " + classname);
+        }
+        return null;
+    }
+
 }

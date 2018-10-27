@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -73,7 +74,7 @@ public class AutoUploadJobConfig implements Parcelable {
     }
 
     public static String getSharedPreferencesName(int jobId) {
-        return String.format("autoUploadJob[%1$d]",jobId);
+        return String.format(Locale.UK,"autoUploadJob[%1$d]",jobId);
     }
 
     public int getJobId() {
@@ -92,7 +93,7 @@ public class AutoUploadJobConfig implements Parcelable {
         return getJobPreferences(c).getInt(c.getString(prefKeyId), c.getResources().getInteger(defaultVal));
     }
 
-    private @NonNull String getStringValue(Context c, @StringRes int prefKeyId) {
+    private String getStringValue(Context c, @StringRes int prefKeyId) {
         String value = getJobPreferences(c).getString(c.getString(prefKeyId), null);
         return value;
     }

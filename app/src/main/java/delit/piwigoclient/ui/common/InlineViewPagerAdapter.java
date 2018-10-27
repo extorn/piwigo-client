@@ -12,8 +12,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import delit.piwigoclient.R;
-
 public class InlineViewPagerAdapter extends PagerAdapter {
 
     private List<CharSequence> pagesTitle;

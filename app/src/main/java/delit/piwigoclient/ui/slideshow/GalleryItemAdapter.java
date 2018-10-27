@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.slideshow;
 
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -116,7 +115,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         SlideshowItemFragment fragment = (SlideshowItemFragment) super.instantiateItem(container, position);
-        if (fragment != null && position == ((ViewPager) container).getCurrentItem()) {
+        if (position == ((ViewPager) container).getCurrentItem()) {
             if (lastPosition >= 0 && lastPosition != position) {
                 onPageDeselected(lastPosition);
             }

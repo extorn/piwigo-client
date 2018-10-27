@@ -95,8 +95,8 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
                     ToastUtils.makeDetailedToast(context, R.string.alert_error, toastMessage, Toast.LENGTH_LONG).show();
                 }
             });
-            Integer drawableId = errorDrawables.get(errorResponse.getStatusCode());
-            if (drawableId != null && drawableId > 0) {
+            int drawableId = errorDrawables.get(errorResponse.getStatusCode());
+            if (drawableId > 0) {
                 //return locked padlock image.
                 Bitmap icon = PicassoFactory.getInstance().getPicassoSingleton(context).load(drawableId).get();
                 return new Downloader.Response(icon, true);

@@ -326,7 +326,7 @@ public class CachingAsyncHttpClient implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if (httpClient != null && httpClient instanceof Closeable) {
+        if (httpClient instanceof Closeable) {
             ((Closeable) httpClient).close();
         }
     }

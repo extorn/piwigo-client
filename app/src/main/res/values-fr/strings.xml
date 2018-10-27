@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ad_app_id" translatable="false">ca-app-pub-1408465472557768~4878187139</string>
+
     <string name="checking_license">Vérification de la licence.....</string>
     <string name="button_quit">Sortie</string>
     <string name="button_buy">Acheter l\'application</string>
@@ -9,24 +9,24 @@
     <string name="unlicensed_dialog_title">Application non autorisée</string>
     <string name="application_error">Erreur d\'application : %1$d</string>
 
-    <string name="ad_id_album_banner" translatable="false">ca-app-pub-1408465472557768/1316125026</string>
-    <string name="ad_id_album_create_banner" translatable="false">ca-app-pub-1408465472557768/9877975475</string>
-    <string name="ad_id_slideshow_banner" translatable="false">ca-app-pub-1408465472557768/6117859712</string>
-    <string name="ad_id_album_interstitial" translatable="false">ca-app-pub-1408465472557768/4632241138</string>
-    <string name="ad_id_uploads_interstitial" translatable="false">ca-app-pub-1408465472557768/7831653530</string>
-    <string name="ad_id_selectlist_banner" translatable="false">ca-app-pub-1408465472557768/6141555221</string>
-    <string name="ad_id_user_edit_banner" translatable="false">ca-app-pub-1408465472557768/5646731207</string>
-    <string name="ad_id_group_edit_banner" translatable="false">ca-app-pub-1408465472557768/2002875958</string>
-    <string name="ad_id_uploads_banner" translatable="false">ca-app-pub-1408465472557768/6053925314</string>
-    <string name="ad_id_app_preferences_banner" translatable="false">ca-app-pub-1408465472557768/7547325605</string>
-    <string name="ad_id_app_about_banner" translatable="false">ca-app-pub-1408465472557768/2374534759</string>
-    <string name="ad_id_app_top_tips_banner" translatable="false">ca-app-pub-1408465472557768/3659572555</string>
-    <string name="ad_id_app_licences_banner" translatable="false">ca-app-pub-1408465472557768/5519449132</string>
-    <string name="ad_id_app_eula_banner" translatable="false">ca-app-pub-1408465472557768/4753162372</string>
 
-    <string name="app_name" translatable="false">PiwigoClient</string>
-    <string name="app_name_and_version_pattern" translatable="false">PiwigoClient v%1$s</string>
-    <string name="app_paid_name_and_version_pattern" translatable="false">PiwigoClient v%1$s (paid)</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <string name="alert_title_permissions_needed">Autorisations supplémentaires requises</string>
     <string name="alert_write_permission_needed_for_download">L\'autorisation est nécessaire pour écrire dans le système de fichiers afin de télécharger des fichiers</string>
@@ -34,11 +34,11 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="preference_test_server_connection_key" translatable="false">preference_test_server_connection</string>
+
     <string name="preference_test_server_connection_title">Tester la connexion</string>
     <string name="preference_test_server_connection_summary">Tester la connexion au serveur</string>
 
-    <string name="preference_data_upload_clear_failed_uploads_from_server_key" translatable="false">preference_data_upload_clear_failed_uploads_from_server</string>
+
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">Nettoyer le serveur</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Nettoyer les téléchargements de PiwigoClient ayant échoué depuis le serveur</string>
     <string name="progress_clearing_failed_uploads_from_server">Effacement de tous les téléchargements échoués sur le serveur</string>
@@ -46,7 +46,7 @@
 
     <string name="gallery_photos_summary_text_pattern">%1$d photos</string>
     <string name="gallery_subcategory_summary_text_pattern">%1$d sous-albums et %2$d photos</string>
-    <string name="admin_email" translatable="false"><a href="mailto:gd_apps-piwigoclient@yahoo.co.uk">gd_apps-piwigoclient@yahoo.co.uk</a></string>
+
     <string name="alert_title_connectionTest">Test de connexion</string>
     <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Avertissement @nServer n\'a pas signalé les tailles d\'image disponibles.</string>
@@ -113,14 +113,15 @@
 
     <string name="logging_in_to_piwigo_pattern">Se connecter à %1$s</string>
 
-    <string name="delete_upload_job_button_title">Supprimer un travail</string>
+    <string name="delete_upload_job_button_title">Supprimer job</string>
+    <string name="upload_files_button_title">Télécharger</string>
+    <string name="upload_job_status_button">Statut</string>
     <string name="alert_really_delete_upload_job">Ceci supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - upload settings page). Les travaux seront souvent terminés avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir prendre cette mesure radicale ?</string>
-    <string name="upload_files_button_title">Télécharger des fichiers</string>
     <string name="loading_please_wait">Chargement, Veuillez patienter</string>
     <string name="alert_title_server_error">Erreur de serveur</string>
     <string name="alert_server_error_pattern">Erreur HTTP retournée par le serveur : %1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Erreur lors de l\'analyse de la réponse piwigo</string>
-    <string name="alert_error_handling_response_pattern">Réponse imparable : 1$dd (%2$s)</string>
+    <string name="alert_error_handling_response_pattern">Réponse imparable : %1$d (%2$s)</string>
     <string name="none_selected">Aucune</string>
     <string name="alert_title_error_too_many_users">Erreur</string>
     <string name="alert_error_too_many_users_message">Trop d\'utilisateurs à gérer. Veuillez soumettre une demande d\'amélioration pour permettre la pagination des utilisateurs.</string>
@@ -296,242 +297,7 @@ Veuillez choisir de signaler chaque accident qui se produit. Si vous constatez q
 Pour l\'instant, les sorties sont ponctuelles. On s\'attend à ce que la fréquence des rejets diminue à mesure que l\'application mûrit. Le calendrier et l\'historique des sorties sont présentés ci-dessous. Cela peut changer et les choses peuvent être retardées, mais vous pouvez voir ce qu\'il y a sur la liste.
 "</string>
     <string name="licences_heading">Licences pour les ressources utilisées dans cette application</string>
-    <string name="licences_content" formatted="false" translatable="false">"*** Touch Image View - com.ortiz.touch.
-MIT License - Copyright © 2012 Michael Ortiz
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
-
-
-
-
-
-
-
-
-*** Android-Rate - com.github.hotchemi:android-rate
-
-The MIT License (MIT)
-
-Copyright (c) 2014 Paul Asiimwe
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the \"Software\"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
-
-*** Google Firebase - com.google.firebase
-*** Crashlytics - com.crashlytics
-*** play-services-oss-licenses
-*** com.android.support
-
-
-*** GSON - https://github.com/google/gson - Apache License 2.0
-*** Picasso - http://square.github.io/picasso/ - Copyright 2013 Square, Inc. - Apache License 2.0
-*** Material Icons - https://material.io/icons - Apache License 2.0
-*** EXO Player - Apache License 2.0
-*** EventBus - http://greenrobot.org - Apache License 2.0
-*** android-async-http - http://loopj.com/android-async-http/ - Apache License 2.0
-*** android-sliding-layer-lib - https://github.com/wunderlist/android-sliding-layer-lib - Apache License 2.0
-*** Metadata Extractor - https://drewnoakes.com/code/exif/ - Apache License 2.0
-
- Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/
-
-   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
-
-   1. Definitions.
-
-      \"License\" shall mean the terms and conditions for use, reproduction,
-      and distribution as defined by Sections 1 through 9 of this document.
-
-      \"Licensor\" shall mean the copyright owner or entity authorized by
-      the copyright owner that is granting the License.
-
-      \"Legal Entity\" shall mean the union of the acting entity and all
-      other entities that control, are controlled by, or are under common
-      control with that entity. For the purposes of this definition,
-      \"control\" means (i) the power, direct or indirect, to cause the
-      direction or management of such entity, whether by contract or
-      otherwise, or (ii) ownership of fifty percent (50%) or more of the
-      outstanding shares, or (iii) beneficial ownership of such entity.
-
-      \"You\" (or \"Your\") shall mean an individual or Legal Entity
-      exercising permissions granted by this License.
-
-      \"Source\" form shall mean the preferred form for making modifications,
-      including but not limited to software source code, documentation
-      source, and configuration files.
-
-      \"Object\" form shall mean any form resulting from mechanical
-      transformation or translation of a Source form, including but
-      not limited to compiled object code, generated documentation,
-      and conversions to other media types.
-
-      \"Work\" shall mean the work of authorship, whether in Source or
-      Object form, made available under the License, as indicated by a
-      copyright notice that is included in or attached to the work
-      (an example is provided in the Appendix below).
-
-      \"Derivative Works\" shall mean any work, whether in Source or Object
-      form, that is based on (or derived from) the Work and for which the
-      editorial revisions, annotations, elaborations, or other modifications
-      represent, as a whole, an original work of authorship. For the purposes
-      of this License, Derivative Works shall not include works that remain
-      separable from, or merely link (or bind by name) to the interfaces of,
-      the Work and Derivative Works thereof.
-
-      \"Contribution\" shall mean any work of authorship, including
-      the original version of the Work and any modifications or additions
-      to that Work or Derivative Works thereof, that is intentionally
-      submitted to Licensor for inclusion in the Work by the copyright owner
-      or by an individual or Legal Entity authorized to submit on behalf of
-      the copyright owner. For the purposes of this definition, \"submitted\"
-      means any form of electronic, verbal, or written communication sent
-      to the Licensor or its representatives, including but not limited to
-      communication on electronic mailing lists, source code control systems,
-      and issue tracking systems that are managed by, or on behalf of, the
-      Licensor for the purpose of discussing and improving the Work, but
-      excluding communication that is conspicuously marked or otherwise
-      designated in writing by the copyright owner as \"Not a Contribution.\"
-
-      \"Contributor\" shall mean Licensor and any individual or Legal Entity
-      on behalf of whom a Contribution has been received by Licensor and
-      subsequently incorporated within the Work.
-
-   2. Grant of Copyright License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      copyright license to reproduce, prepare Derivative Works of,
-      publicly display, publicly perform, sublicense, and distribute the
-      Work and such Derivative Works in Source or Object form.
-
-   3. Grant of Patent License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      (except as stated in this section) patent license to make, have made,
-      use, offer to sell, sell, import, and otherwise transfer the Work,
-      where such license applies only to those patent claims licensable
-      by such Contributor that are necessarily infringed by their
-      Contribution(s) alone or by combination of their Contribution(s)
-      with the Work to which such Contribution(s) was submitted. If You
-      institute patent litigation against any entity (including a
-      cross-claim or counterclaim in a lawsuit) alleging that the Work
-      or a Contribution incorporated within the Work constitutes direct
-      or contributory patent infringement, then any patent licenses
-      granted to You under this License for that Work shall terminate
-      as of the date such litigation is filed.
-
-   4. Redistribution. You may reproduce and distribute copies of the
-      Work or Derivative Works thereof in any medium, with or without
-      modifications, and in Source or Object form, provided that You
-      meet the following conditions:
-
-      (a) You must give any other recipients of the Work or
-          Derivative Works a copy of this License; and
-
-      (b) You must cause any modified files to carry prominent notices
-          stating that You changed the files; and
-
-      (c) You must retain, in the Source form of any Derivative Works
-          that You distribute, all copyright, patent, trademark, and
-          attribution notices from the Source form of the Work,
-          excluding those notices that do not pertain to any part of
-          the Derivative Works; and
-
-      (d) If the Work includes a \"NOTICE\" text file as part of its
-          distribution, then any Derivative Works that You distribute must
-          include a readable copy of the attribution notices contained
-          within such NOTICE file, excluding those notices that do not
-          pertain to any part of the Derivative Works, in at least one
-          of the following places: within a NOTICE text file distributed
-          as part of the Derivative Works; within the Source form or
-          documentation, if provided along with the Derivative Works; or,
-          within a display generated by the Derivative Works, if and
-          wherever such third-party notices normally appear. The contents
-          of the NOTICE file are for informational purposes only and
-          do not modify the License. You may add Your own attribution
-          notices within Derivative Works that You distribute, alongside
-          or as an addendum to the NOTICE text from the Work, provided
-          that such additional attribution notices cannot be construed
-          as modifying the License.
-
-      You may add Your own copyright statement to Your modifications and
-      may provide additional or different license terms and conditions
-      for use, reproduction, or distribution of Your modifications, or
-      for any such Derivative Works as a whole, provided Your use,
-      reproduction, and distribution of the Work otherwise complies with
-      the conditions stated in this License.
-
-   5. Submission of Contributions. Unless You explicitly state otherwise,
-      any Contribution intentionally submitted for inclusion in the Work
-      by You to the Licensor shall be under the terms and conditions of
-      this License, without any additional terms or conditions.
-      Notwithstanding the above, nothing herein shall supersede or modify
-      the terms of any separate license agreement you may have executed
-      with Licensor regarding such Contributions.
-
-   6. Trademarks. This License does not grant permission to use the trade
-      names, trademarks, service marks, or product names of the Licensor,
-      except as required for reasonable and customary use in describing the
-      origin of the Work and reproducing the content of the NOTICE file.
-
-   7. Disclaimer of Warranty. Unless required by applicable law or
-      agreed to in writing, Licensor provides the Work (and each
-      Contributor provides its Contributions) on an \"AS IS\" BASIS,
-      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-      implied, including, without limitation, any warranties or conditions
-      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
-      PARTICULAR PURPOSE. You are solely responsible for determining the
-      appropriateness of using or redistributing the Work and assume any
-      risks associated with Your exercise of permissions under this License.
-
-   8. Limitation of Liability. In no event and under no legal theory,
-      whether in tort (including negligence), contract, or otherwise,
-      unless required by applicable law (such as deliberate and grossly
-      negligent acts) or agreed to in writing, shall any Contributor be
-      liable to You for damages, including any direct, indirect, special,
-      incidental, or consequential damages of any character arising as a
-      result of this License or out of the use or inability to use the
-      Work (including but not limited to damages for loss of goodwill,
-      work stoppage, computer failure or malfunction, or any and all
-      other commercial damages or losses), even if such Contributor
-      has been advised of the possibility of such damages.
-
-   9. Accepting Warranty or Additional Liability. While redistributing
-      the Work or Derivative Works thereof, You may choose to offer,
-      and charge a fee for, acceptance of support, warranty, indemnity,
-      or other liability obligations and/or rights consistent with this
-      License. However, in accepting such obligations, You may act only
-      on Your own behalf and on Your sole responsibility, not on behalf
-      of any other Contributor, and only if You agree to indemnify,
-      defend, and hold each Contributor harmless for any liability
-      incurred by, or claims asserted against, such Contributor by reason
-      incurred by, or claims asserted against, such Contributor by reason
-      of your accepting any such warranty or additional liability.
-
-   END OF TERMS AND CONDITIONS
-"
-    </string>
     <string name="slideshow_image_details_name_title">Nom de la ressource</string>
     <string name="slideshow_image_details_description_title">Description de la ressource</string>
     <string name="unlock_menu_title">Déverrouiller</string>
@@ -804,10 +570,9 @@ SOFTWARE.
     <string name="alert_server_call_in_progress_please_wait">Appel serveur en cours. Veuillez attendre que cela se termine avant de réessayer.</string>
     <string name="upload_error_too_many_orphaned_files_exist_on_server">Il y a trop d\'images orphelines sur le serveur pour que le téléchargement puisse avoir lieu. Veuillez les ranger avant de réessayer.</string>
     <string name="upload_error_orphaned_file_retrieval_failed">Impossible de récupérer la liste des images orphelines. Veuillez réessayer.</string>
-    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">L\'utilisateur Admin n\'a pas accès aux fonctionnalités prévues. Cela peut se produire si vous utilisez le plugin de la communauté (qui falsifie le statut administrateur pour les utilisateurs non administrateurs) ne s\'est pas installé correctement. Vérifiez que le plugin correspondant expose correctement les méthodes auxquelles vous vous attendez en utilisant un navigateur Web : 1$/outils/ws.htm</string>
+    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">L\'utilisateur Admin n\'a pas accès aux fonctionnalités prévues. Cela peut se produire si vous utilisez le plugin de la communauté (qui falsifie le statut administrateur pour les utilisateurs non administrateurs) ne s\'est pas installé correctement. Vérifiez que le plugin correspondant expose correctement les méthodes auxquelles vous vous attendez en utilisant un navigateur Web : %1$s/tools/ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Cette fonction n\'est pas disponible. Veuillez installer le plugin PiwigoClientWsExts sur votre serveur. Si vous l\'avez déjà installé, veuillez le mettre à jour avec la dernière version.</string>
     <string name="alert_user_session_no_allowed_filetypes">Le serveur n\'a pas fourni de liste des types de fichiers qui peuvent être téléchargés avec les informations de session utilisateur (ceci n\'est généralement fourni que pour les utilisateurs administrateurs). Veuillez vérifier que le serveur est correctement configuré et réessayer. Si le problème persiste, veuillez m\'envoyer un courriel pour m\'aider à diagnostiquer le problème pour vous.</string>
-    <string name="upload_job_status_button">Statut</string>
     <string name="job_not_found">Upload Job introuvable</string>
     <string name="files_mid_data_transfer_title">Fichiers partiellement copiés</string>
     <string name="files_awaiting_verification_title">Fichiers en attente de vérification de l\'intégrité des données</string>
@@ -820,4 +585,6 @@ SOFTWARE.
     <string name="file_count_pattern">%1$d Fichiers</string>
     <string name="errors_encountered_list_title">Erreurs rencontrées</string>
     <string name="upload_error_orphaned_file_retrieval_unavailable">Impossible de vérifier la présence d\'images orphelines. Recommander l\'installation du plugin du serveur PiwigoClientWsExts</string>
+    <string name="x_of_y">%1$s / %2$s</string>
+    <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Votre version de PiwigoClientWsExts est dépassée. Veuillez le mettre à jour en priorité.</string>
 </resources>

@@ -391,8 +391,8 @@ public abstract class UIHelper<T> {
             if (thisBundle != null) {
                 activeServiceCalls = Collections.synchronizedSet(BundleUtils.getLongHashSet(thisBundle, ACTIVE_SERVICE_CALLS));
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
-                runWithPermissions = (HashMap<Integer, PermissionsWantedRequestEvent>) thisBundle.getSerializable(STATE_RUN_WITH_PERMS_LIST);
-                Map<Long, Action> map = (Map<Long, Action>) thisBundle.getSerializable(STATE_ACTIONS_ON_RESPONSES);
+                runWithPermissions = BundleUtils.getSerializable(thisBundle, STATE_RUN_WITH_PERMS_LIST, HashMap.class);
+                Map<Long, Action> map = BundleUtils.getSerializable(thisBundle, STATE_ACTIONS_ON_RESPONSES, ConcurrentHashMap.class);
                 if(map instanceof ConcurrentHashMap) {
                     actionOnServerCallComplete = (ConcurrentHashMap<Long, Action>) map;
                 } else {
@@ -988,14 +988,15 @@ public abstract class UIHelper<T> {
     public static class Action<T,S extends PiwigoResponseBufferingHandler.Response> implements Serializable {
 
         protected T getActionParent(UIHelper<T> uiHelper) {
-            return (T)uiHelper.getParent();
+            return uiHelper.getParent();
         }
 
         public boolean onSuccess(UIHelper<T> uiHelper, S response){
             return true;
-        };
+        }
+
         public boolean onFailure(UIHelper<T> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response){
             return true;
-        };
+        }
     }
 }

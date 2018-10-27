@@ -5,9 +5,12 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.preference.DialogPreference;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+
+import java.util.Locale;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -78,10 +81,7 @@ public class ServerAlbumListPreference extends DialogPreference {
             String oldValue = currentValue;
             currentValue = value;
             persistString(value);
-
-            if (changed) {
-                notifyChanged();
-            }
+            notifyChanged();
         }
     }
 
@@ -165,8 +165,8 @@ public class ServerAlbumListPreference extends DialogPreference {
 
     public static class ServerAlbumPreference {
 
-        public static String toValue(CategoryItemStub album) {
-            return String.format("%1$d;%2$s", album.getId(), album.getName());
+        public static String toValue(@NonNull CategoryItemStub album) {
+            return String.format(Locale.UK,"%1$d;%2$s", album.getId(), album.getName());
         }
 
         public static long getSelectedAlbumId(String preferenceValue) {

@@ -1,13 +1,9 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.util.DisplayMetrics;
-import android.view.View;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -19,7 +15,6 @@ import delit.piwigoclient.piwigoApi.handlers.PiwigoClientFailedUploadsCleanRespo
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
-import delit.piwigoclient.util.DisplayUtils;
 
 /**
  * Created by gareth on 12/05/17.
@@ -91,6 +86,6 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
         public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             return super.onFailure(uiHelper, response);
         }
-    };
+    }
 
 }

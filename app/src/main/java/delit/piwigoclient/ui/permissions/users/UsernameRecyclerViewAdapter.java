@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
 
@@ -34,6 +35,7 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Bas
         userTypeValues = Arrays.asList(context.getResources().getStringArray(R.array.user_types_values_array));
     }
 
+    @NonNull
     @Override
     public UsernameViewHolder buildViewHolder(View view, int viewType) {
         return new UsernameViewHolder(view);

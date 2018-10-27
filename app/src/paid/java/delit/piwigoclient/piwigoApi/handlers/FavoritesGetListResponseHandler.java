@@ -8,7 +8,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 

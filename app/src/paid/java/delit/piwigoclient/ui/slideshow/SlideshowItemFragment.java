@@ -63,7 +63,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     private void onShowTagsSelection() {
         HashSet<Tag> currentSelection = getLatestTagListForResource();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
+        boolean allowFullEdit = !isAppInReadOnlyMode() && sessionDetails != null && PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
         boolean allowTagEdit = allowFullEdit || (!isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate());
         allowTagEdit &= isEditingItemDetails();
         boolean lockInitialSelection = !sessionDetails.isUseUserTagPluginForUpdate();

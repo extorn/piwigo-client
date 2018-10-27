@@ -30,7 +30,13 @@
         android:roundIcon="@mipmap/ic_launcher_round_new"
         android:supportsRtl="true"
         android:largeHeap="true"
-        android:theme="@style/Custom.Theme">
+        android:theme="@style/Custom.Theme"
+        android:fullBackupContent="@xml/backup_descriptor">
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-1408465472557768~4878187139"/>
+
         <activity
             android:launchMode="singleTop"
             android:name=".ui.MainActivity"

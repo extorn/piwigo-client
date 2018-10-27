@@ -14,7 +14,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
 import java.net.URI;
 import java.security.KeyStore;
 import java.util.HashSet;
@@ -184,7 +183,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                     ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
                     refreshSession(null);
                     getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
-                } catch (IOException e) {
+                } catch (SecurityException e) {
                     Crashlytics.logException(e);
                     getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheClearFailed_message));
                 }

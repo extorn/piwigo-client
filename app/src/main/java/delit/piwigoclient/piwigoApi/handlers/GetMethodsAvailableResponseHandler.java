@@ -37,7 +37,7 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
         storeResponse(r);
     }
 
-    private Set<String> parseMethodsAvailable(JsonElement rsp) throws JSONException {
+    private Set<String> parseMethodsAvailable(JsonElement rsp) {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray methodsArray = result.get("methods").getAsJsonArray();
         Set<String> methodsAvailable = new HashSet<>(methodsArray.size());

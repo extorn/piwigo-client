@@ -48,7 +48,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     @Override
     public abstract long getItemId(int position);
 
-    public abstract S buildViewHolder(View view, int viewType);
+    public abstract @NonNull S buildViewHolder(View view, int viewType);
 
     protected abstract T getItemById(Long selectedId);
 
@@ -96,10 +96,8 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         View view = inflateView(parent, viewType);
 
         final S viewHolder = buildViewHolder(view, viewType);
-        if(viewHolder != null) {
-            CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
-            viewHolder.internalCacheViewFieldsAndConfigure(clickListener);
-        }
+        CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
+        viewHolder.internalCacheViewFieldsAndConfigure(clickListener);
         return viewHolder;
     }
 

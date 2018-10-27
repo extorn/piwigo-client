@@ -43,14 +43,16 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
     @Override
     public AlbumItemRecyclerViewAdapterPreferences loadFromBundle(Bundle parent) {
         Bundle b = parent.getBundle("AlbumItemRecyclerViewAdapterPreferences");
-        recentlyAlteredThresholdDate = BundleUtils.getDate(b, "recentlyAlteredThresholdDate");
-        preferredThumbnailSize = b.getString("preferredThumbnailSize");
-        preferredAlbumThumbnailSize = b.getString("preferredAlbumThumbnailSize");
-        showAlbumThumbnailsZoomed = b.getBoolean("showAlbumThumbnailsZoomed");
-        albumWidth = b.getFloat("albumWidth");
-        showResourceNames = b.getBoolean("showResourceNames");
+        if(b != null) {
+            recentlyAlteredThresholdDate = BundleUtils.getDate(b, "recentlyAlteredThresholdDate");
+            preferredThumbnailSize = b.getString("preferredThumbnailSize");
+            preferredAlbumThumbnailSize = b.getString("preferredAlbumThumbnailSize");
+            showAlbumThumbnailsZoomed = b.getBoolean("showAlbumThumbnailsZoomed");
+            albumWidth = b.getFloat("albumWidth");
+            showResourceNames = b.getBoolean("showResourceNames");
 //                scalingQuality = b.getInt("scalingQuality");
-        super.loadFromBundle(b);
+            super.loadFromBundle(b);
+        }
         return this;
     }
 

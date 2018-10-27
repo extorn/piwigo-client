@@ -32,7 +32,7 @@
         	android:id="@id/exo_artwork"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"/>
+            android:contentDescription="TODO" android:scaleType="fitXY"/>
 
         <com.google.android.exoplayer2.ui.SubtitleView
         	android:id="@id/exo_subtitles"
@@ -48,7 +48,6 @@
 
             <TextView
             	android:id="@+id/exo_downloaded"
-                android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
@@ -57,7 +56,6 @@
             	android:id="@+id/exo_cached_summary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
         </LinearLayout>
 

@@ -114,8 +114,9 @@
     <string name="logging_in_to_piwigo_pattern">Logging in to %1$s</string>
 
     <string name="delete_upload_job_button_title">Delete Job</string>
+    <string name="upload_files_button_title">Upload</string>
+    <string name="upload_job_status_button">Status</string>
     <string name="alert_really_delete_upload_job">This will delete the job status from this device. You will need to manually cleanup any files partially uploaded to the server (or use the preference in this app - upload settings page). Jobs will often complete successfully if you resume them later. Are you sure you wish to take this drastic step?</string>
-    <string name="upload_files_button_title">Upload Files</string>
     <string name="loading_please_wait">Loading, Please wait</string>
     <string name="alert_title_server_error">Server Error</string>
     <string name="alert_server_error_pattern">Server returned HTTP error: %1$d (%2$s)</string>
@@ -808,7 +809,6 @@ SOFTWARE.
     <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Admin user does not have access to the features anticipated. This can occur if you use the community plugin (which fakes admin status for non admin users) has not installed itself correctly. Check the relevant plugin is correctly exposing methods you expect using a web browser: %1$s/tools/ws.htm</string>
     <string name="alert_unavailable_feature_piwigo_client_plugin_needed">This feature is not available. Please install the PiwigoClientWsExts plugin on your server. If you already have this installed, please update it to the latest version.</string>
     <string name="alert_user_session_no_allowed_filetypes">The server has not provided a list of file types that can be uploaded with the user session information (this is usually provided only for admin users). Please check the server is correctly configured and try again. If the issue persists, please email me to help me diagnose the problem for you.</string>
-    <string name="upload_job_status_button">Status</string>
     <string name="job_not_found">Upload Job not found</string>
     <string name="files_mid_data_transfer_title">Files partially copied</string>
     <string name="files_awaiting_verification_title">Files awaiting data integrity check</string>
@@ -821,4 +821,6 @@ SOFTWARE.
     <string name="file_count_pattern">%1$d Files</string>
     <string name="errors_encountered_list_title">Errors encountered</string>
     <string name="upload_error_orphaned_file_retrieval_unavailable">Unable to check presence of orphan images. Recommend installing PiwigoClientWsExts server plugin</string>
+    <string name="x_of_y">%1$s / %2$s</string>
+    <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Your version of PiwigoClientWsExts is out dated. Please update it as a priority.</string>
 </resources>

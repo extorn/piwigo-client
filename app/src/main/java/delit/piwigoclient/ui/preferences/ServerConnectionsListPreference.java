@@ -61,9 +61,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
             currentValue = value;
             persistString(value);
 
-            if (changed) {
-                notifyChanged();
-            }
+            notifyChanged();
         }
     }
 

@@ -65,7 +65,6 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     public RemoteAsyncFileCachingDataSource(Context context, TransferListener<? super DataSource> listener, CacheListener cacheListener, RequestProperties defaultRequestProperties, String userAgent) {
         this.context = context;
         this.listener = listener;
-        this.context = context;
         this.userAgent = userAgent;
         this.cacheListener = cacheListener;
         this.defaultRequestProperties = defaultRequestProperties.getSnapshot();
@@ -296,7 +295,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         CachedContent.SerializableRange cachedRangeDetail = cacheMetaData.getRangeContaining(position);
         if (cachedRangeDetail == null) {
             cancelAnyExistingOpenConnectionToServerAndWaitUntilDone();
-            long retrieveMaxBytes = getBytesToRetrieveFromServer(position, cachedRangeDetail);
+            long retrieveMaxBytes = getBytesToRetrieveFromServer(position, null);
             bytesAvailableToRead = openConnectionToServerAndBlockUntilContentLengthKnown(dataSpec.uri, allowGzip, position, retrieveMaxBytes);
         } else {
             boolean rangeEndsBeforeFileEnd = cacheMetaData.getTotalBytes() <= 0 || (cachedRangeDetail.getUpper() + 1) < cacheMetaData.getTotalBytes();

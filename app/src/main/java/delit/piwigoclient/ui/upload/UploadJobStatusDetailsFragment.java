@@ -156,7 +156,10 @@ public class UploadJobStatusDetailsFragment extends MyFragment {
 
             Map.Entry<Date, String> thisDataItem = dataIndex.get(position);
 
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_list_item, null);
+            View v = convertView;
+            if(v == null) {
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_simple_list_item, null);
+            }
             TextView view = v.findViewById(R.id.name);
             view.setText(piwigoDateFormat.format(thisDataItem.getKey()));
 

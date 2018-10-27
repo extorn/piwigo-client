@@ -22,15 +22,9 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import delit.piwigoclient.BuildConfig;
-import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.model.piwigo.User;
-import delit.piwigoclient.piwigoApi.handlers.AbstractBasicPiwigoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.UsersGetListResponseHandler;
-import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
 /**
  * Created by gareth on 24/06/17.

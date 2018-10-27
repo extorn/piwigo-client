@@ -10,7 +10,9 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.util.DisplayUtils;
 
 public class MappedListPreferenceDialogFragmentCompat<T extends Serializable> extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
@@ -18,8 +20,10 @@ public class MappedListPreferenceDialogFragmentCompat<T extends Serializable> ex
     private static final String SAVE_STATE_INDEX = "MappedListPreference.index";
     private static final String STATE_ENTRIES = "MappedListPreference.entries";
     private static final String STATE_ENTRY_VALUES = "MappedListPreference.entryValues";
+    private static final String STATE_ENTRY_VALUE_CLAZZ = "MappedListPreference.entryValueClazz";
     private int checkedItem;
     private T[] entryValues;
+    private Class<T> entryValueClazz;
     private CharSequence[] entries;
 
 
@@ -33,13 +37,15 @@ public class MappedListPreferenceDialogFragmentCompat<T extends Serializable> ex
         super.onCreate(savedInstanceState);
         if(savedInstanceState != null) {
             checkedItem = savedInstanceState.getInt(SAVE_STATE_INDEX, 0);
+            entryValueClazz = BundleUtils.getClass(savedInstanceState, STATE_ENTRY_VALUE_CLAZZ);
+            entryValues = BundleUtils.getSerializable(savedInstanceState, STATE_ENTRY_VALUES, (Class<T[]>)Array.newInstance(entryValueClazz, 0).getClass());
             entries = savedInstanceState.getCharSequenceArray(STATE_ENTRIES);
-            entryValues = (T[]) savedInstanceState.getSerializable(STATE_ENTRY_VALUES);
         } else {
             MappedListPreference<T> pref = (MappedListPreference<T>) getPreference();
             checkedItem = pref.getValueIndex();
             entryValues = pref.getEntryValues();
             entries = pref.getEntries();
+            entryValueClazz = pref.getEntriesClazz();
         }
     }
 
@@ -47,6 +53,7 @@ public class MappedListPreferenceDialogFragmentCompat<T extends Serializable> ex
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(SAVE_STATE_INDEX, checkedItem);
+        BundleUtils.putClass(outState, STATE_ENTRY_VALUE_CLAZZ, entryValueClazz);
         outState.putSerializable(STATE_ENTRY_VALUES, entryValues);
         outState.putCharSequenceArray(STATE_ENTRIES, entries);
     }

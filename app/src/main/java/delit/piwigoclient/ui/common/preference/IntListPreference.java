@@ -56,6 +56,11 @@ public class IntListPreference extends MappedListPreference<Integer> {
     }
 
     @Override
+    public Class<Integer> getEntriesClazz() {
+        return Integer.class;
+    }
+
+    @Override
     protected Integer[] loadEntryValuesFromResourceId(Resources res, @ArrayRes int resourceId) {
         int[] basicVals = res.getIntArray(resourceId);
         return ArrayUtils.wrap(basicVals);

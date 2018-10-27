@@ -2,7 +2,6 @@ package delit.piwigoclient.ui.common;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
@@ -23,7 +21,7 @@ import java.util.HashMap;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
-import delit.piwigoclient.ui.MyApplication;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
@@ -62,7 +60,7 @@ public abstract class MyActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             uiHelper.onRestoreSavedInstanceState(savedInstanceState);
-            trackedActionIntentsMap = (HashMap<Long, Integer>) savedInstanceState.getSerializable(STATE_TRACKED_ACTION_TO_INTENTS_MAP);
+            trackedActionIntentsMap = BundleUtils.getSerializable(savedInstanceState, STATE_TRACKED_ACTION_TO_INTENTS_MAP, HashMap.class);
         }
 
         if (BuildConfig.PAID_VERSION && !BuildConfig.DEBUG) {

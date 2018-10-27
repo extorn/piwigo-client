@@ -9,8 +9,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashSet;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;

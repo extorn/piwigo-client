@@ -3,7 +3,6 @@ package delit.piwigoclient.piwigoApi.handlers;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -15,7 +14,6 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.User;
-import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
@@ -192,7 +190,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     private boolean loadUserDetails() {
-        boolean canContinue = false;
+        boolean canContinue;
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         UserGetInfoResponseHandler userInfoHandler = new UserGetInfoResponseHandler(sessionDetails.getUsername(), sessionDetails.getUserType());
         userInfoHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session

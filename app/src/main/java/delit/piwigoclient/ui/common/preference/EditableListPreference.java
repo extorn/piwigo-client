@@ -110,11 +110,9 @@ public class EditableListPreference extends DialogPreference {
             currentValue = value;
             persistString(value);
 
-            if (changed) {
-                notifyChanged();
-                if (listener != null) {
-                    listener.onItemSelectionChange(oldValue, value, entries.contains(oldValue));
-                }
+            notifyChanged();
+            if (listener != null) {
+                listener.onItemSelectionChange(oldValue, value, entries.contains(oldValue));
             }
         }
     }

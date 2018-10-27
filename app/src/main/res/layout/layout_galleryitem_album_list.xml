@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="0dp"
-            android:scaleType="fitCenter"
+            android:contentDescription="TODO" android:scaleType="fitCenter"
             tools:layout_height="120dp"
             tools:layout_width="120dp"
             tools:src="@drawable/ic_broken_image_black_240dp" />
@@ -34,7 +34,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentStart="true"
-        app:srcCompat="@drawable/ic_star_yellow_24dp" />
+        android:contentDescription="TODO" app:srcCompat="@drawable/ic_star_yellow_24dp" />
 
     <LinearLayout
         android:id="@+id/album_details_container"

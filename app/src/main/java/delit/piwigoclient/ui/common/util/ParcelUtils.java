@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.common.util;
 
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import delit.piwigoclient.model.piwigo.CategoryItem;
+import delit.piwigoclient.util.ArrayUtils;
 
 public class ParcelUtils {
     public static <T extends Parcelable> HashSet<T> readHashSet(@NonNull Parcel in, ClassLoader loader) {
@@ -38,15 +37,14 @@ public class ParcelUtils {
     public static void writeIntSet(@NonNull Parcel dest, Set<Integer> data) {
         int[] rawData = null;
         if(data != null) {
-            ArrayList dataWrapper = new ArrayList<>(data);
-            rawData= com.google.android.gms.common.util.ArrayUtils.toPrimitiveArray(dataWrapper);
+            rawData = ArrayUtils.unwrapInts(data);
         }
         dest.writeIntArray(rawData);
     }
     
     public static HashSet<Integer> readIntHashSet(@NonNull Parcel in, ClassLoader loader) {
         int[] data = (int[]) in.readValue(loader);
-        HashSet<Integer> wrapper = null;
+        HashSet<Integer> wrapper = new HashSet<Integer>(data.length);
         if(data != null) {
             Collections.addAll(wrapper, com.google.android.gms.common.util.ArrayUtils.toWrapperArray(data));
         }
@@ -55,9 +53,6 @@ public class ParcelUtils {
 
     public static Set<Integer> readIntSet(@NonNull Parcel in, @NonNull Set<Integer> destSet, ClassLoader loader) {
         int[] data = (int[]) in.readValue(loader);
-        if(destSet == null) {
-            throw new IllegalArgumentException("destination set may not be null");
-        }
         if(data != null) {
             Collections.addAll(destSet, com.google.android.gms.common.util.ArrayUtils.toWrapperArray(data));
         }
@@ -74,7 +69,7 @@ public class ParcelUtils {
 
     public static HashSet<Long> readLongSet(Parcel in, ClassLoader loader) {
         ArrayList<Long> dataWrapper = readLongArrayList(in, loader);
-        HashSet<Long> wrapper = null;
+        HashSet<Long> wrapper = new HashSet<>(dataWrapper.size());
         if(dataWrapper != null) {
             wrapper = new HashSet<>(wrapper.size());
             wrapper.addAll(dataWrapper);

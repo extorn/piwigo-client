@@ -176,14 +176,17 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         }
         String response = null;
         try {
-            int idx = -1;
-            for (int i = 0; i < responseBody.length; i++) {
-                if (responseBody[i] == '{') {
-                    idx = i;
-                    break;
+            int jsonStartsAt = 0;
+            if (responseBody != null) {
+                int idx = -1;
+                for (int i = 0; i < responseBody.length; i++) {
+                    if (responseBody[i] == '{') {
+                        idx = i;
+                        break;
+                    }
                 }
+                jsonStartsAt = idx;
             }
-            int jsonStartsAt = idx;
             ByteArrayInputStream jsonBis = new ByteArrayInputStream(responseBody);
             if (jsonStartsAt > 0) {
                 jsonBis.skip(jsonStartsAt - 1);

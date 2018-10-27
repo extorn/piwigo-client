@@ -282,7 +282,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         CharSequence[] privacyLevelsText = getResources().getTextArray(R.array.privacy_levels_groups_array);
         long[] privacyLevelsValues = ArrayUtils.getLongArray(getResources().getIntArray(R.array.privacy_levels_values_array));
-        BiArrayAdapter<CharSequence> privacyLevelOptionsAdapter = new BiArrayAdapter(getContext(), android.R.layout.simple_spinner_item, 0, privacyLevelsText, privacyLevelsValues);
+        BiArrayAdapter<CharSequence> privacyLevelOptionsAdapter = new BiArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, 0, privacyLevelsText, privacyLevelsValues);
 //        if(!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
 //            // remove the "admin only" privacy option.
 //            privacyLevelOptionsAdapter.remove(privacyLevelOptionsAdapter.getItemById(8)); // Admin ID
@@ -535,7 +535,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
 
         if (activeJob != null) {
-            getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, new String[]{Manifest.permission.FOREGROUND_SERVICE, Manifest.permission.WAKE_LOCK}, getString(R.string.alert_foreground_service_and_wake_lock_permission_needed_to_start_upload));
+            getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, new String[]{/*Manifest.permission.FOREGROUND_SERVICE,*/ Manifest.permission.WAKE_LOCK}, getString(R.string.alert_foreground_service_and_wake_lock_permission_needed_to_start_upload));
         }
     }
 

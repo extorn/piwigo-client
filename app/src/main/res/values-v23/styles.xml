@@ -16,7 +16,7 @@
 
         <!-- V23 extras -->
         <!-- used for the slide up bottom panel -->
-        <item name="android:colorBackgroundFloating">@color/background_floating_material_dark</item>
+        <item name="android:colorBackgroundFloating">@color/background_floating</item>
 
         <!-- used for the navigation menu for example -->
         <item name="android:checkboxStyle">@style/Custom.Widget.AppCompat.CompoundButton.CheckBox</item>
@@ -29,7 +29,7 @@
         <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
         <item name="android:dropDownListViewStyle">@style/Custom.Widget.AppCompat.DropDownItem.Spinner</item>
         <item name="preferenceTheme">@style/Custom.PreferenceThemeOverlay.v14.Material</item>
-        <item name="coordinatorLayoutStyle">@style/Widget.Design.CoordinatorLayout</item>
+        <item name="coordinatorLayoutStyle">@style/Widget.Support.CoordinatorLayout</item>
     </style>
 
     <style name="Custom.PreferenceThemeOverlay.v14.Material" parent="PreferenceThemeOverlay.v14.Material">

@@ -2,14 +2,12 @@ package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
 import android.os.Parcelable;
-import android.support.v7.widget.AppCompatImageView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
@@ -116,7 +114,7 @@ public class CategoryItemViewHolder<S extends Identifiable&Parcelable> extends A
         if (parentAdapter.getMultiSelectStatusListener() != null) {
             //Now trigger a load of the real data.
             AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter listener = parentAdapter.getMultiSelectStatusListener();
-            listener.notifyAlbumThumbnailInfoLoadNeeded((CategoryItem) newItem); //see AbstractViewAlbumFragment for implementation
+            listener.notifyAlbumThumbnailInfoLoadNeeded(newItem); //see AbstractViewAlbumFragment for implementation
         }
     }
 

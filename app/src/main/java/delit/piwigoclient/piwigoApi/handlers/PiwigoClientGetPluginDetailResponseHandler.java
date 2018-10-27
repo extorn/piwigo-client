@@ -30,6 +30,8 @@ public class PiwigoClientGetPluginDetailResponseHandler extends AbstractPiwigoWs
         JsonObject result = rsp.getAsJsonObject();
         JsonElement elem = result.get("version");
         String pluginVersion = elem.getAsString();
+
+        PiwigoSessionDetails.getInstance(getConnectionPrefs()).setPiwigoClientPluginVersion(pluginVersion);
         PiwigoPwgCliPluginDetailsResponse r = new PiwigoPwgCliPluginDetailsResponse(getMessageId(), getPiwigoMethod(), pluginVersion);
         storeResponse(r);
     }

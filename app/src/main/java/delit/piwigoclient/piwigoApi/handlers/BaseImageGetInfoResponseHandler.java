@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
@@ -92,12 +91,12 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
                     int usersRated = ratesElem.getAsInt();
                     resourceItem.setRatingsGiven(usersRated);
                 }
-            }
 
-            JsonElement averageJsonElem = rates.get("average");
-            if (averageJsonElem != null && !averageJsonElem.isJsonNull()) {
-                float averageRating = averageJsonElem.getAsFloat();
-                resourceItem.setAverageRating(averageRating);
+                JsonElement averageJsonElem = rates.get("average");
+                if (averageJsonElem != null && !averageJsonElem.isJsonNull()) {
+                    float averageRating = averageJsonElem.getAsFloat();
+                    resourceItem.setAverageRating(averageRating);
+                }
             }
 
             if(usingPiwigoClientOveride) {

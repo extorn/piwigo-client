@@ -63,7 +63,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     private GalleryItemAdapter<T, CustomViewPager> galleryItemAdapter;
     private AdView adView;
 
-    public static Bundle buildArgs(ResourceContainer gallery, GalleryItem currentGalleryItem) {
+    public static <T extends Identifiable&Parcelable> Bundle buildArgs(ResourceContainer<T, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         Bundle args = new Bundle();
         args.putParcelable(STATE_GALLERY, gallery);
         args.putInt(ARG_GALLERY_ITEM_DISPLAYED, gallery.getItemIdx(currentGalleryItem));
@@ -95,7 +95,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+                             @Nullable Bundle savedInstanceState) {
 
         Bundle configurationBundle = savedInstanceState;
         if (configurationBundle == null) {
@@ -137,7 +137,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, getContext());
         shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
         if (galleryItemAdapter == null) {
-            galleryItemAdapter = new GalleryItemAdapter(galleryModel, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
+            galleryItemAdapter = new GalleryItemAdapter<>(galleryModel, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(40);
         } else {
             // update settings.

@@ -55,6 +55,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.ProgressIndicator;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.util.DisplayUtils;
@@ -187,7 +188,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
     private void addNewCertificate() {
         FileSelectionNeededEvent fileSelectionEvent = new FileSelectionNeededEvent(true, false, true);
-        ArrayList allowedFileTypes = new ArrayList();
+        ArrayList<String> allowedFileTypes = new ArrayList<>();
         if (!getPreference().isJustKeysWanted()) {
             allowedFileTypes.addAll(getPreference().getAllowedCertificateFileTypes());
         }
@@ -662,7 +663,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         super.onCreate(savedInstanceState);
         if(savedInstanceState != null) {
             trackedRequest = savedInstanceState.getInt(STATE_TRACKED_REQUEST, -1);
-            keystoreLoadOperationResult = (LoadOperationResult) savedInstanceState.getSerializable(STATE_LOAD_OP_RESULT);
+            keystoreLoadOperationResult = BundleUtils.getSerializable(savedInstanceState, STATE_LOAD_OP_RESULT, LoadOperationResult.class);
             keystoreLoadProgress = savedInstanceState.getInt(STATE_LOAD_PROGRESS);
             keystore = X509Utils.loadKeystore("byteArray", savedInstanceState.getByteArray(STATE_KEYSTORE), keystorePass) ;
         } else {

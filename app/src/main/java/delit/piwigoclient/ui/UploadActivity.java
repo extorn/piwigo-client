@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AlertDialog;
 import android.content.Intent;
@@ -246,7 +247,9 @@ public class UploadActivity extends MyActivity {
         if (imageUris != null) {
             filesToUpload = new ArrayList<>(imageUris.size());
             for (Uri imageUri : imageUris) {
-                handleSentImage(imageUri, filesToUpload);
+                if(imageUri != null) {
+                    handleSentImage(imageUri, filesToUpload);
+                }
             }
         } else {
             filesToUpload = new ArrayList<>(0);
@@ -268,7 +271,7 @@ public class UploadActivity extends MyActivity {
         return filesToUpload;
     }
 
-    private void handleSentImage(Uri imageUri, ArrayList<File> filesToUpload) {
+    private void handleSentImage(@NonNull Uri imageUri, ArrayList<File> filesToUpload) {
         File f = new File(imageUri.getPath());
         if (!f.exists()) {
             f = new File(getRealPathFromURI(imageUri));

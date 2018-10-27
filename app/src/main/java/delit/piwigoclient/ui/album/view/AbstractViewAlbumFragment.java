@@ -91,6 +91,7 @@ import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumDeletedEvent;
@@ -354,7 +355,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
             galleryIsDirty = galleryIsDirty || savedInstanceState.getBoolean(STATE_GALLERY_DIRTY);
-            SetUtils.setNotNull(loadingMessageIds, (HashMap<Long, String>) savedInstanceState.getSerializable(STATE_GALLERY_ACTIVE_LOAD_THREADS));
+            SetUtils.setNotNull(loadingMessageIds, BundleUtils.getSerializable(savedInstanceState, STATE_GALLERY_ACTIVE_LOAD_THREADS, HashMap.class));
             Set<Long> messageIdsExpired = PiwigoResponseBufferingHandler.getDefault().getUnknownMessageIds(loadingMessageIds.keySet());
             if (messageIdsExpired.size() > 0) {
                 for (Long messageId : messageIdsExpired) {
@@ -400,7 +401,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         // store references and initialise anything vital to the page (and used when loading data for example)
         retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
 
-        retryActionButton.setVisibility(GONE);
+        retryActionButton.hide();
         retryActionButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -545,10 +546,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         bulkActionsContainer.setVisibility(showBulkActionsContainer(basket) ? VISIBLE : GONE);
 
         bulkActionButtonTag = bulkActionsContainer.findViewById(R.id.gallery_action_tag_bulk);
-        bulkActionButtonTag.setVisibility(View.GONE);
+        bulkActionButtonTag.hide();
 
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.gallery_action_delete_bulk);
-        bulkActionButtonDelete.setVisibility(showBulkDeleteAction(basket) ? VISIBLE : GONE);
+        if(showBulkDeleteAction(basket)) {
+            bulkActionButtonDelete.show();
+        } else {
+            bulkActionButtonDelete.hide();
+        }
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -560,7 +565,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonCopy = bulkActionsContainer.findViewById(R.id.gallery_action_copy_bulk);
-        bulkActionButtonCopy.setVisibility(showBulkCopyAction(basket) ? VISIBLE : GONE);
+        if(showBulkCopyAction(basket)) {
+            bulkActionButtonCopy.show();
+        } else {
+            bulkActionButtonCopy.hide();
+        }
         bulkActionButtonCopy.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -573,7 +582,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonCut = bulkActionsContainer.findViewById(R.id.gallery_action_cut_bulk);
-        bulkActionButtonCut.setVisibility(showBulkCutAction(basket) ? VISIBLE : GONE);
+        if(showBulkCutAction(basket)) {
+            bulkActionButtonCut.show();
+        } else {
+            bulkActionButtonCut.hide();
+        }
         bulkActionButtonCut.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -586,7 +599,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         });
 
         bulkActionButtonPaste = bulkActionsContainer.findViewById(R.id.gallery_action_paste_bulk);
-        bulkActionButtonPaste.setVisibility(showBulkPasteAction(basket) ? VISIBLE : GONE);
+        if(showBulkPasteAction(basket)) {
+            bulkActionButtonPaste.show();
+        } else {
+            bulkActionButtonPaste.hide();
+        }
         bulkActionButtonPaste.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -730,10 +747,26 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         displayControlsBasedOnSessionState();
         bulkActionsContainer.setVisibility(showBulkActionsContainer(basket) ? VISIBLE : GONE);
-        bulkActionButtonDelete.setVisibility(showBulkDeleteAction(basket) ? VISIBLE : GONE);
-        bulkActionButtonCopy.setVisibility(showBulkCopyAction(basket) ? VISIBLE : GONE);
-        bulkActionButtonCut.setVisibility(showBulkCutAction(basket) ? VISIBLE : GONE);
-        bulkActionButtonPaste.setVisibility(showBulkPasteAction(basket) ? VISIBLE : GONE);
+        if(showBulkDeleteAction(basket)) {
+            bulkActionButtonDelete.show();
+        } else {
+            bulkActionButtonDelete.hide();
+        }
+        if(showBulkCopyAction(basket)) {
+            bulkActionButtonCopy.show();
+        } else {
+            bulkActionButtonCopy.hide();
+        }
+        if(showBulkCutAction(basket)) {
+            bulkActionButtonCut.show();
+        } else {
+            bulkActionButtonCut.hide();
+        }
+        if(showBulkPasteAction(basket)) {
+            bulkActionButtonPaste.show();
+        } else {
+            bulkActionButtonPaste.hide();
+        }
 
     }
 
@@ -884,7 +917,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     } else {
                         CategoryItem adminCopyOfAlbum = null;
                         try {
-                            albumAdminList.getAlbum(galleryModel.getContainerDetails());
+                            adminCopyOfAlbum = albumAdminList.getAlbum(galleryModel.getContainerDetails());
                         } catch (IllegalStateException e) {
                             Crashlytics.logException(e);
                             if (BuildConfig.DEBUG) {
@@ -1479,7 +1512,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void onReloadAlbum() {
-        retryActionButton.setVisibility(GONE);
+        retryActionButton.hide();
         emptyGalleryLabel.setVisibility(GONE);
         synchronized (itemsToLoad) {
             while (itemsToLoad.size() > 0) {
@@ -1645,7 +1678,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             if (newlyAddedGroups.size() > 0 || newlyAddedUsers.size() > 0) {
 
                 if (galleryModel.getContainerDetails().getSubCategories() > 0) {
-                    if (currentLoggedInUserId >= 0 && newlyAddedUsers.contains(currentLoggedInUserId)) {
+                    if (newlyAddedUsers.contains(currentLoggedInUserId)) {
                         //we're having to force add this user explicitly therefore for safety we need to apply the change recursively
                         String msg = String.format(getString(R.string.alert_information_add_album_permissions_recursively_pattern), galleryModel.getContainerDetails().getSubCategories());
                         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg, R.string.button_ok, false, new UIHelper.QuestionResultAdapter() {
@@ -1753,13 +1786,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             exitFragment = true;
         } else {
             if (albumAdminList != null) {
-                CategoryItem adminCopyOfCurrentGallery = albumAdminList.getAlbum(galleryDetails);
-                if (adminCopyOfCurrentGallery != null) {
-                    boolean removedFromAdminList = adminCopyOfCurrentGallery.removeChildAlbum(response.getAlbumId());
-                    adminCategories = adminCopyOfCurrentGallery.getChildAlbums();
-                }
-                galleryDetails.removeChildAlbum(response.getAlbumId()); // will return false if it was the admin copy (unlikely but do after to be sure).
+                albumAdminList.removeAlbumById(response.getAlbumId());
+                adminCategories = albumAdminList.getDirectChildrenOfAlbum(galleryDetails);
             }
+            galleryDetails.removeChildAlbum(response.getAlbumId()); // will return false if it was the admin copy (unlikely but do after to be sure).
             //we've deleted a child album (now update this album view to reflect the server content)
             galleryIsDirty = true;
             reloadAlbumContent();
@@ -2140,7 +2170,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                         }
                         if (itemsToLoad.size() > 0) {
                             emptyGalleryLabel.setVisibility(VISIBLE);
-                            retryActionButton.setVisibility(VISIBLE);
+                            retryActionButton.show();
                         }
                     }
                 }

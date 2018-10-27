@@ -3,7 +3,6 @@ package delit.piwigoclient.model.piwigo;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -98,14 +97,16 @@ public class PiwigoAlbumAdminList implements Parcelable {
 
     protected CategoryItem findAlbumInSubTree(long albumId, CategoryItem subTree) {
         CategoryItem item;
-        for (Iterator<CategoryItem> childrenIter = subTree.getChildAlbums().iterator(); childrenIter.hasNext(); ) {
-            item = childrenIter.next();
-            if (item.getId() == albumId) {
-                return item;
-            } else if (item.getChildAlbums().size() > 0) {
-                item = findAlbumInSubTree(albumId, item);
-                if (item != null) {
+        if(subTree.getChildAlbums() != null) {
+            for (Iterator<CategoryItem> childrenIter = subTree.getChildAlbums().iterator(); childrenIter.hasNext(); ) {
+                item = childrenIter.next();
+                if (item.getId() == albumId) {
                     return item;
+                } else if (item.getChildAlbums().size() > 0) {
+                    item = findAlbumInSubTree(albumId, item);
+                    if (item != null) {
+                        return item;
+                    }
                 }
             }
         }
@@ -115,7 +116,10 @@ public class PiwigoAlbumAdminList implements Parcelable {
     protected CategoryItem findAlbum(long albumId) {
         CategoryItem item;
         for (Iterator<CategoryItem> iter = rootAlbums.iterator(); iter.hasNext(); ) {
-            item = findAlbumInSubTree(albumId, iter.next());
+            item = iter.next();
+            if(item.getId() != albumId) {
+                item = findAlbumInSubTree(albumId, item);
+            }
             if (item != null) {
                 return item;
             }
@@ -170,4 +174,12 @@ public class PiwigoAlbumAdminList implements Parcelable {
             return new PiwigoAlbumAdminList[size];
         }
     };
+
+    public List<CategoryItem> getDirectChildrenOfAlbum(CategoryItem album) {
+        if(ROOT_ALBUM.equals(album)) {
+            return rootAlbums;
+        } else {
+            return getDirectChildrenOfAlbum(album.getParentageChain(), album.getId());
+        }
+    }
 }

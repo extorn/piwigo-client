@@ -8,7 +8,6 @@ import android.view.View;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
-import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -71,7 +70,7 @@ public class ResourceItemViewHolder<S extends Identifiable&Parcelable> extends A
                 imageLoader.setUriToLoad(newItem.getThumbnailUrl());
             }
         }
-        ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
+        imageLoader.setCenterCrop(true);
     }
 
     @Override

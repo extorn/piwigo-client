@@ -228,7 +228,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
      * @return List of all files that were not already present
      */
     public ArrayList addAll(List<File> filesForUpload) {
-        ArrayList newFiles = new ArrayList(filesForUpload);
+        ArrayList<File> newFiles = new ArrayList<File>(filesForUpload);
         newFiles.removeAll(filesToUpload);
         filesToUpload.addAll(newFiles);
         notifyDataSetChanged();

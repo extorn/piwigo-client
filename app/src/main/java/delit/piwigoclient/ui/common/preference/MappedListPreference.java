@@ -293,6 +293,8 @@ public abstract class MappedListPreference<T extends Serializable> extends Dialo
         setValue(valueFromString(myState.value));
     }
 
+    public abstract Class<T> getEntriesClazz();
+
     private static class SavedState extends BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR =
                 new Parcelable.Creator<SavedState>() {

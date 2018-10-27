@@ -141,7 +141,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         int idxToSelect = 0;
         for (ServerConnectionsListPreference.ServerConnection c : serverConnections) {
             if (c.getProfileName().equals(currentSelection)) {
-                selectedIdx.add(Long.valueOf(idxToSelect));
+                selectedIdx.add((long) idxToSelect);
                 break;
             }
             idxToSelect++;

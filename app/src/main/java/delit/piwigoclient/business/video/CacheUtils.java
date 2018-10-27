@@ -61,7 +61,7 @@ public class CacheUtils {
         return f;
     }
 
-    public static void clearResponseCache(Context c) throws IOException {
+    public static void clearResponseCache(Context c) {
         File cacheDir = getBasicCacheFolder(c);
         deleteQuietly(cacheDir);
     }
@@ -199,7 +199,7 @@ public class CacheUtils {
     }
 
     public static String getVideoCacheFilenameStemFromVideoUri(String uri) {
-        return Base64Utils.encodeUrlSafe(uri.toString().getBytes());
+        return Base64Utils.encodeUrlSafe(uri.getBytes());
 //        return uri.replaceAll("^.*/", "");
     }
 
@@ -211,7 +211,7 @@ public class CacheUtils {
         return new File(getVideoCacheFolder(context), connectedToFile);
     }
 
-    public static void clearBasicCache(Context c) throws IOException {
+    public static void clearBasicCache(Context c) {
         File cacheDir = getBasicCacheFolder(c);
         deleteQuietly(cacheDir);
 //        for(File f : cacheDir.listFiles()) {

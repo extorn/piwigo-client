@@ -28,18 +28,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.ui.common.util.BundleUtils;
-import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
  * Implementation of {@link PagerAdapter} that
@@ -119,9 +114,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
             return f;
         }
 
-        if (f == null) {
-            f = createNewItem(fragmentTypeNeeded, position);
-        }
+        f = createNewItem(fragmentTypeNeeded, position);
 
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();

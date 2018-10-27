@@ -177,14 +177,12 @@ public abstract class BasePiwigoUploadService extends IntentService {
             }
         }
         synchronized (activeUploadJobs) {
-            if (activeUploadJobs != null) {
-                for (UploadJob activeJob : activeUploadJobs) {
-                    UploadJob loadedJob;
-                    for (Iterator<UploadJob> iter = jobs.iterator(); iter.hasNext(); ) {
-                        loadedJob = iter.next();
-                        if (loadedJob.getJobId() == activeJob.getJobId()) {
-                            iter.remove();
-                        }
+            for (UploadJob activeJob : activeUploadJobs) {
+                UploadJob loadedJob;
+                for (Iterator<UploadJob> iter = jobs.iterator(); iter.hasNext(); ) {
+                    loadedJob = iter.next();
+                    if (loadedJob.getJobId() == activeJob.getJobId()) {
+                        iter.remove();
                     }
                 }
             }
@@ -518,7 +516,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
         b.putString("piwigoMethod", handler.getPiwigoMethod());
         b.putString("requestParams", handler.getRequestParameters().toString());
         b.putString("responseType", handler.getResponse() == null ? null : handler.getResponse().getClass().getName());
-        b.putSerializable("error", handler.getError() == null ? null : handler.getError());
+        b.putSerializable("error", handler.getError());
         FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("uploadError", b);
     }
 
@@ -999,6 +997,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
 
         String fileMimeType = null;
+        //FIXME get the fileMimeType from somewhere!
 
         BufferedInputStream bis = null;
         Pair<Boolean, ResourceItem> lastChunkUploadResult = null;

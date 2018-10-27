@@ -9,8 +9,6 @@ import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.google.android.gms.common.collect.Sets;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -39,9 +37,7 @@ import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
+import delit.piwigoclient.util.SetUtils;
 
 public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     private static final String STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING = "tagMembershipChangesAction";
@@ -76,7 +72,11 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     protected void setupBulkActionsControls(Basket basket) {
         super.setupBulkActionsControls(basket);
 
-        bulkActionButtonTag.setVisibility(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
+        if(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()) {
+            bulkActionButtonTag.show();
+        } else {
+            bulkActionButtonTag.hide();
+        }
         bulkActionButtonTag.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -90,7 +90,11 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
     protected void updateBasketDisplay(Basket basket) {
         super.updateBasketDisplay(basket);
-        bulkActionButtonTag.setVisibility(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
+        if(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()) {
+            bulkActionButtonTag.show();
+        } else {
+            bulkActionButtonTag.hide();
+        }
     }
 
     private void onBulkActionTagButtonPressed() {
@@ -205,11 +209,11 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         }
 
         public AddTagsToResourcesAction(Parcel in) {
-            selectedResources = ParcelUtils.readHashSet(in, null);
-            resourcesReadyToProcess = ParcelUtils.readHashSet(in, null);
-            tagMembershipChangesPending = ParcelUtils.readMap(in, null);
-            tagUpdateEvents = (ArrayList<Tag>) in.readValue(null);
-            tagsToAdd = ParcelUtils.readHashSet(in, null);
+            selectedResources = ParcelUtils.readHashSet(in, getClass().getClassLoader());
+            resourcesReadyToProcess = ParcelUtils.readHashSet(in, getClass().getClassLoader());
+            tagMembershipChangesPending = ParcelUtils.readMap(in, getClass().getClassLoader());
+            tagUpdateEvents = (ArrayList<Tag>) in.readValue(getClass().getClassLoader());
+            tagsToAdd = ParcelUtils.readHashSet(in, getClass().getClassLoader());
         }
 
         public static final Creator<AddTagsToResourcesAction> CREATOR = new Creator<AddTagsToResourcesAction>() {
@@ -261,7 +265,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                 }
             }
             // remove all those resources for which no change will be made.
-            Set<ResourceItem> resourcesWithoutChange = Sets.difference(resourcesReadyToProcess, tagMembershipChangesPending.keySet());
+            Set<ResourceItem> resourcesWithoutChange = SetUtils.difference(resourcesReadyToProcess, tagMembershipChangesPending.keySet());
             resourcesReadyToProcess.removeAll(resourcesWithoutChange);
             selectedResources.removeAll(resourcesWithoutChange);
             this.tagMembershipChangesPending = tagMembershipChangesPending;

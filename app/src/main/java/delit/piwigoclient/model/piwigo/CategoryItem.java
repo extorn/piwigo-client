@@ -5,12 +5,12 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import delit.piwigoclient.BuildConfig;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
@@ -186,7 +186,7 @@ public class CategoryItem extends GalleryItem {
     private CategoryItem locateChildAlbum(List<Long> parentageChain, int idx) {
         if (parentageChain.size() <= idx) {
             if (BuildConfig.DEBUG) {
-                Log.e("catItem", "Idx out of bounds for parentage chain : " + parentageChain.toArray() + " idx : " + idx);
+                Log.e("catItem", "Idx out of bounds for parentage chain : " + Arrays.toString(parentageChain.toArray()) + " idx : " + idx);
             }
             return null;
         }

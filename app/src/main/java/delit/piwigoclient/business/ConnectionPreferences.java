@@ -29,8 +29,8 @@ public class ConnectionPreferences {
     }
 
     public static void deletePreferences(SharedPreferences prefs, Context context, @NonNull String prefix) {
-        if (prefix == null || prefix.isEmpty()) {
-            //TODO do this better - this causes exceptions (crashes) for users.
+        if (prefix.isEmpty()) {
+            //FIXME do this better - this causes exceptions (crashes) for users.
 //            throw new IllegalArgumentException("Unable to delete the core app preferences");
         }
         if (activeProfile != null && prefix.equals(activeProfile.prefix)) {

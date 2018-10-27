@@ -22,7 +22,7 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
 
     public ResourceContainer(Parcel in) {
         super(in);
-        containerDetails = in.readParcelable(null);
+        containerDetails = in.readParcelable(getClass().getClassLoader());
     }
 
     @Override

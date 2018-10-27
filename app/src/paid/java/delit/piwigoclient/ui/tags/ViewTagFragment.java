@@ -52,7 +52,6 @@ import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
@@ -64,6 +63,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -228,7 +228,7 @@ public class ViewTagFragment extends MyFragment {
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
             tagIsDirty = tagIsDirty || savedInstanceState.getBoolean(STATE_TAG_DIRTY);
-            SetUtils.setNotNull(loadingMessageIds,(HashMap<Long,String>)savedInstanceState.getSerializable(STATE_TAG_ACTIVE_LOAD_THREADS));
+            SetUtils.setNotNull(loadingMessageIds,BundleUtils.getSerializable(savedInstanceState, STATE_TAG_ACTIVE_LOAD_THREADS, HashMap.class));
             SetUtils.setNotNull(itemsToLoad,savedInstanceState.getStringArrayList(STATE_TAG_LOADS_TO_RETRY));
             if(deleteActionData != null && deleteActionData.isEmpty()) {
                 deleteActionData = null;
@@ -266,7 +266,7 @@ public class ViewTagFragment extends MyFragment {
 
         retryActionButton = view.findViewById(R.id.tag_retryAction_actionButton);
 
-        retryActionButton.setVisibility(GONE);
+        retryActionButton.hide();
         retryActionButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -309,7 +309,11 @@ public class ViewTagFragment extends MyFragment {
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
 
         bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.tag_action_delete_bulk);
-        bulkActionButtonDelete.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
+        if(viewAdapter.isItemSelectionAllowed()) {
+            bulkActionButtonDelete.show();
+        } else {
+            bulkActionButtonDelete.hide();
+        }
         bulkActionButtonDelete.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -640,9 +644,9 @@ public class ViewTagFragment extends MyFragment {
 
     private void updateBasketDisplay(Basket basket) {
         if(viewPrefs.isAllowItemSelection()) {
-            bulkActionButtonDelete.setVisibility(VISIBLE);
+            bulkActionButtonDelete.show();
         } else {
-            bulkActionButtonDelete.setVisibility(GONE);
+            bulkActionButtonDelete.hide();
         }
     }
 
@@ -715,7 +719,7 @@ public class ViewTagFragment extends MyFragment {
                         emptyTagLabel.setText(R.string.tag_content_load_failed_text);
                         if (itemsToLoad.size() > 0) {
                             emptyTagLabel.setVisibility(VISIBLE);
-                            retryActionButton.setVisibility(VISIBLE);
+                            retryActionButton.show();
                         }
                     }
                 }
@@ -742,7 +746,7 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private void onReloadAlbum() {
-        retryActionButton.setVisibility(GONE);
+        retryActionButton.hide();
         emptyTagLabel.setVisibility(GONE);
         synchronized (itemsToLoad) {
             while (itemsToLoad.size() > 0) {

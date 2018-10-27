@@ -31,6 +31,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.util.DisplayUtils;
 
 public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
@@ -75,7 +76,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             userSelectedItem = savedInstanceState.getString(STATE_USER_SELECTED_ITEM);
-            actions = (ArrayList<ListAction>) savedInstanceState.getSerializable(STATE_LIST_ACTIONS);
+            actions = BundleUtils.getSerializable(savedInstanceState, STATE_LIST_ACTIONS, actions.getClass());
             entriesList = savedInstanceState.getStringArrayList(STATE_LIST_ITEMS);
             itemEditingAllowed = savedInstanceState.getBoolean(STATE_ITEM_EDIT_ALLOWED);
         } else {

@@ -41,7 +41,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         ratingsGiven = in.readInt();
         privacyLevel = in.readInt();
         availableFiles = ParcelUtils.readTypedList(in, ResourceFile.CREATOR);
-        fullSizeImage = in.readParcelable(null);
+        fullSizeImage = in.readParcelable(getClass().getClassLoader());
         linkedAlbums = ParcelUtils.readLongSet(in, null);
         fileChecksum = in.readString();
         creationDate = ParcelUtils.readDate(in);

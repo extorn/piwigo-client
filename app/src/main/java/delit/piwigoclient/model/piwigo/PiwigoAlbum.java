@@ -74,7 +74,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
                 return 1;
             }
         }
-    };
+    }
 
     @Override
     public void addItem(GalleryItem item) {

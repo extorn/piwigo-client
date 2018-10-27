@@ -11,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -154,7 +152,7 @@ public class TagsListFragment extends MyFragment {
 
             @Override
             public void onClick(View v) {
-                retryActionButton.setVisibility(View.GONE);
+                retryActionButton.hide();
                 loadTagsPage(tagsModel.getNextPageToReload());
             }
         });
@@ -383,7 +381,7 @@ public class TagsListFragment extends MyFragment {
     public void onTagsLoaded(final TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
         tagsModel.acquirePageLoadLock();
         try {
-            retryActionButton.setVisibility(View.GONE);
+            retryActionButton.hide();
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
             if(!isAdminPage && tagsModel.getPagesLoaded() == 0) {
                 boolean needToLoadAdminList = setTagsModelPageSourceCount();

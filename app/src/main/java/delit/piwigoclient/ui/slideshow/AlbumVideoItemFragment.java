@@ -52,7 +52,6 @@ import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.IOUtils;
@@ -462,7 +461,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                     public void run() {
                         if (getContext() != null) {
                             displayItemDetailsControlsBasedOnSessionState();
-                            cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                            cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) ,IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
                             timebar.invalidate();
                         }
                     }
@@ -483,7 +482,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                     public void run() {
                         if (getContext() != null) {
                             downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                            cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                            cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
                             timebar.invalidate();
                         }
                     }
@@ -502,7 +501,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                     public void run() {
                         if (getContext() != null) {
                             downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                            cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                            cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
                             timebar.invalidate();
                         }
                     }
@@ -519,7 +518,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                         if (getContext() != null) {
                             bytesDownloaded += bytesAddedToCache;
                             downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                            cachedByteCountView.setText(IOUtils.toNormalizedText(bytesCachedInThisRange) + " / " + IOUtils.toNormalizedText(totalBytes));
+                            cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.toNormalizedText(bytesCachedInThisRange), IOUtils.toNormalizedText(totalBytes)));
                         }
                     }
                 });

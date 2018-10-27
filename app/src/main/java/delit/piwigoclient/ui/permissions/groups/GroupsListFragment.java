@@ -149,7 +149,7 @@ public class GroupsListFragment extends MyFragment {
 
             @Override
             public void onClick(View v) {
-                retryActionButton.setVisibility(View.GONE);
+                retryActionButton.hide();
                 loadGroupsPage(groupsModel.getNextPageToReload());
             }
         });
@@ -270,7 +270,7 @@ public class GroupsListFragment extends MyFragment {
         groupsModel.acquirePageLoadLock();
         try {
             groupsModel.recordPageLoadSucceeded(response.getMessageId());
-            retryActionButton.setVisibility(View.GONE);
+            retryActionButton.hide();
             int firstIdxAdded = groupsModel.addItemPage(response.getPage(), response.getPageSize(), response.getGroups());
             viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());
         } finally {
@@ -334,7 +334,7 @@ public class GroupsListFragment extends MyFragment {
                     onGroupsLoadFailed(response);
                 } else if (deleteActionsPending.size() == 0) {
                     // assume this to be a list reload that's required.
-                    retryActionButton.setVisibility(View.VISIBLE);
+                    retryActionButton.show();
                 }
             }
         }

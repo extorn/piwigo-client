@@ -40,7 +40,7 @@ public class PiwigoGalleryDetails implements Parcelable {
     public PiwigoGalleryDetails(Parcel in) {
         parentageChain = new ArrayList<>();
         in.readList(parentageChain, getClass().getClassLoader());
-        parentGallery = in.readParcelable(null);
+        parentGallery = in.readParcelable(getClass().getClassLoader());
         galleryName = in.readString();
         galleryDescription = in.readString();
         userCommentsAllowed = (boolean)in.readValue(null);

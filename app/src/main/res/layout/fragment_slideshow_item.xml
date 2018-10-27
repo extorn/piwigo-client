@@ -89,7 +89,7 @@
         app:offsetDistance="30dp"
         app:shadowDrawable="@drawable/sidebar_shadow"
         app:shadowSize="30dp"
-        app:stickTo="bottom">
+        app:csl_stickTo="bottom">
 
         <LinearLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"

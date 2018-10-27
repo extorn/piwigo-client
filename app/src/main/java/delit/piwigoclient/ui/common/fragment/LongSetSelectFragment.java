@@ -197,7 +197,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    reloadListButton.setVisibility(View.GONE);
+                    reloadListButton.hide();
                     rerunRetrievalForFailedPages();
                 }
                 return true;
@@ -257,11 +257,11 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     }
 
     protected void onListItemLoadFailed() {
-        reloadListButton.setVisibility(View.VISIBLE);
+        reloadListButton.show();
     }
 
     protected void onListItemLoadSuccess() {
-        reloadListButton.setVisibility(View.GONE);
+        reloadListButton.hide();
     }
 
     protected abstract void rerunRetrievalForFailedPages();
@@ -302,7 +302,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     }
 
     public HashSet<Long> getCurrentSelection() {
-        if (listAdapter != null && listAdapter instanceof SelectableItemsAdapter) {
+        if (listAdapter instanceof SelectableItemsAdapter) {
             currentSelection = ((SelectableItemsAdapter) listAdapter).getSelectedItemIds();
         }
         return currentSelection;

@@ -1,7 +1,5 @@
 package delit.piwigoclient.util;
 
-import com.drew.lang.StringUtil;
-
 import java.util.Arrays;
 import java.util.StringTokenizer;
 

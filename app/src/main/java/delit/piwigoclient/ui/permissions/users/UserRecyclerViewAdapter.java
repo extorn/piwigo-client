@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -28,6 +29,7 @@ public class UserRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRec
         userTypeValues = Arrays.asList(context.getResources().getStringArray(R.array.user_types_values_array));
     }
 
+    @NonNull
     @Override
     public UserViewHolder buildViewHolder(View view, int viewType) {
         return new UserViewHolder(view);

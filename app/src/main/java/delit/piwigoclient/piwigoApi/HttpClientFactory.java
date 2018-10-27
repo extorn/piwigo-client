@@ -318,12 +318,14 @@ public class HttpClientFactory {
             }
         }
 
-        SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(
-                sslContext,
-                split(System.getProperty("https.protocols")),
-                split(System.getProperty("https.cipherSuites")),
-                hostnameVerifier);
-
+        SSLConnectionSocketFactory sslSocketFactory = null;
+        if (sslContext != null) {
+            sslSocketFactory = new SSLConnectionSocketFactory(
+                    sslContext,
+                    split(System.getProperty("https.protocols")),
+                    split(System.getProperty("https.cipherSuites")),
+                    hostnameVerifier);
+        }
         return sslSocketFactory;
     }
 

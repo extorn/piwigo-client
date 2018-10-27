@@ -121,7 +121,7 @@ public class AvailableAlbumsListAdapter extends CustomSelectListAdapter<Availabl
         return item.getId();
     }
 
-    private int getDepth(CategoryItemStub item) {
+    private int getDepth(@NonNull CategoryItemStub item) {
         CategoryItemStub thisItem = item;
         int pos = getPosition(thisItem.getId());
         int depth = 0;

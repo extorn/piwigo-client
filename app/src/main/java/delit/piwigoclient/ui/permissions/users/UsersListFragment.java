@@ -151,7 +151,7 @@ public class UsersListFragment extends MyFragment {
 
             @Override
             public void onClick(View v) {
-                retryActionButton.setVisibility(View.GONE);
+                retryActionButton.hide();
                 loadUsersPage(usersModel.getNextPageToReload());
             }
         });
@@ -277,7 +277,7 @@ public class UsersListFragment extends MyFragment {
         usersModel.acquirePageLoadLock();
         try {
             usersModel.recordPageLoadSucceeded(response.getMessageId());
-            retryActionButton.setVisibility(View.GONE);
+            retryActionButton.hide();
             int firstIdxAdded = usersModel.addItemPage(response.getPage(), response.getPageSize(), response.getUsers());
             viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getUsers().size());
         } finally {
@@ -341,7 +341,7 @@ public class UsersListFragment extends MyFragment {
                     onUsersLoadFailed(response);
                 } else if (deleteActionsPending.size() == 0) {
                     // assume this to be a list reload that's required.
-                    retryActionButton.setVisibility(View.VISIBLE);
+                    retryActionButton.show();
                 }
             }
         }

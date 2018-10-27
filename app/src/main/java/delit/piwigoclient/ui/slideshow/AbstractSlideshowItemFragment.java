@@ -17,6 +17,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatSpinner;
@@ -199,7 +200,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if(b == null) {
             return;
         }
-        model = (T) b.getParcelable(ARG_GALLERY_ITEM);
+        model = b.getParcelable(ARG_GALLERY_ITEM);
         albumItemIdx = b.getInt(ARG_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
         albumTotalItemCount = b.getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
@@ -293,7 +294,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             LayerDrawable layerDrawable = (LayerDrawable) averageRatingsBar.getProgressDrawable();
             Drawable progressDrawable = layerDrawable.findDrawableByLayerId(android.R.id.progress).mutate();
-            progressDrawable.setColorFilter(getResources().getColor(R.color.rating_indicator), PorterDuff.Mode.SRC_IN);
+            progressDrawable.setColorFilter(ContextCompat.getColor(getContext(), R.color.rating_indicator), PorterDuff.Mode.SRC_IN);
         }
         ratingsBar = v.findViewById(R.id.slideshow_image_ratingBar);
 

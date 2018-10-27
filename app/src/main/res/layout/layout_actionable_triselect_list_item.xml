@@ -43,7 +43,6 @@
             android:padding="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/name"
             tools:text="lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text, lots and lots of  dummy text"
             android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1"/>
 

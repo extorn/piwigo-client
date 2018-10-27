@@ -60,7 +60,7 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
     public void onEvent(ExifDataRetrievedEvent event) {
         if(event.getUri() == null) {
             Crashlytics.log(Log.ERROR, getTag(), "invalid event received");
-        } else if(getCurrentImageUrlDisplayed() != null && event.getUri().toString().startsWith(getCurrentImageUrlDisplayed())) {
+        } else if(getCurrentImageUrlDisplayed() != null && event.getUri().startsWith(getCurrentImageUrlDisplayed())) {
             setupExifDataTab(resourceDetailsViewPager, event.getMetadata());
         }
     }

@@ -42,7 +42,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private static final BlockingQueue<Runnable> sPoolWorkQueue =
             new LinkedBlockingQueue<Runnable>(128) {
                 @Override
-                public void put(Runnable o) throws InterruptedException {
+                public void put(@NonNull Runnable o) throws InterruptedException {
                     Log.d("StandardQueue", "New Queue Size : " + size());
                     super.put(o);
                 }
@@ -50,7 +50,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private static final BlockingQueue<Runnable> loginPoolWorkQueue =
             new LinkedBlockingQueue<Runnable>(20) {
                 @Override
-                public void put(Runnable o) throws InterruptedException {
+                public void put(@NonNull Runnable o) throws InterruptedException {
                     Log.d("LoginQueue", "New Queue Size : " + size());
                     super.put(o);
                 }
@@ -94,7 +94,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     private AbstractPiwigoDirectResponseHandler handler;
     private ConnectionPreferences.ProfilePreferences connectionPreferences;
 
-    public Worker(AbstractPiwigoDirectResponseHandler handler, Context context) {
+    public Worker(@NonNull AbstractPiwigoDirectResponseHandler handler, Context context) {
         this.context = new WeakReference<>(context);
         this.handler = handler;
     }
@@ -158,9 +158,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         }
 
         AbstractPiwigoDirectResponseHandler handler = getHandler(prefs);
-        if (handler != null) {
-            this.tag = handler.getTag();
-        }
+        this.tag = handler.getTag();
 
         ConnectionPreferences.ProfilePreferences profilePrefs = getProfilePreferences();
 
@@ -217,7 +215,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         return handler.isSuccess();
     }
 
-    protected AbstractPiwigoDirectResponseHandler getHandler(SharedPreferences prefs) {
+    protected @NonNull AbstractPiwigoDirectResponseHandler getHandler(SharedPreferences prefs) {
         return handler;
     }
 

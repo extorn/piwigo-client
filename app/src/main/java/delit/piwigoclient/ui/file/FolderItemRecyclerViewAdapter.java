@@ -150,6 +150,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     }
 
+    @NonNull
     @Override
     public FolderItemViewHolder buildViewHolder(View view, int viewType) {
         if (viewType == VIEW_TYPE_FOLDER) {

@@ -3,7 +3,6 @@ package delit.piwigoclient.ui;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -80,6 +79,7 @@ import delit.piwigoclient.ui.permissions.users.UsersListFragment;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
+import delit.piwigoclient.util.VersionUtils;
 import hotchemi.android.rate.MyAppRate;
 
 public abstract class AbstractMainActivity extends MyActivity implements ComponentCallbacks2 {
@@ -436,7 +436,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             if (resultCode == RESULT_OK && data.getExtras() != null) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
                 long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
-                ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
+                ArrayList<File> filesForUpload = BundleUtils.getFileArrayList(data.getExtras(), FileSelectActivity.INTENT_SELECTED_FILES);
                 FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, filesForUpload, actionTimeMillis);
                 EventBus.getDefault().postSticky(event);
             }
@@ -710,6 +710,10 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             String serverVersion = VersionCompatability.INSTANCE.getServerVersionString();
             String minimumVersion = VersionCompatability.INSTANCE.getMinimumTestedVersionString();
             getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_version_pattern), serverVersion, minimumVersion));
+        }
+
+        if(sessionDetails.isPiwigoClientPluginInstalled() && !VersionUtils.versionExceeds(new int[]{1,0,5}, VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion()))) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it)));
         }
 
         if(showUserWarning && !VersionCompatability.INSTANCE.isFavoritesEnabled()) {

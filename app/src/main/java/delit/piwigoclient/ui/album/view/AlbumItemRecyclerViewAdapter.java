@@ -76,6 +76,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> ext
         return view;
     }
 
+    @NonNull
     @Override
     public AlbumItemViewHolder buildViewHolder(View view, int viewType) {
 
@@ -95,9 +96,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> ext
 
     @Override
     public void onViewRecycled(@NonNull AlbumItemViewHolder holder) {
-        if (holder != null) {
-            holder.onRecycled();
-        }
+        holder.onRecycled();
     }
 
     @Override
@@ -107,10 +106,6 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> ext
 
     @Override
     public void onBindViewHolder(@NonNull AlbumItemViewHolder holder, int position) {
-        if (holder == null) {
-            // adverts
-            return;
-        }
         GalleryItem newItem = getItemByPosition(position);
         if (!isHolderOutOfSync(holder, newItem)) {
             // rendering the same item

@@ -41,7 +41,7 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         storeResponse(r);
     }
 
-    private PiwigoSessionDetails parseSessionDetails(JsonElement rsp) throws JSONException {
+    private PiwigoSessionDetails parseSessionDetails(JsonElement rsp) {
         JsonObject result = rsp.getAsJsonObject();
         String user = result.get("username").getAsString();
         String userStatus = result.get("status").getAsString();
