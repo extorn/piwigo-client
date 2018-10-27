@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui;
 
+import android.app.Dialog;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -27,6 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -194,6 +197,17 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     public Basket getBasket() {
         return basket;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
+        int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
+        Dialog dialog = googleApi.getErrorDialog(this, result, new Random().nextInt());
+        if(dialog != null) {
+            dialog.show();
+        }
     }
 
     @Override
