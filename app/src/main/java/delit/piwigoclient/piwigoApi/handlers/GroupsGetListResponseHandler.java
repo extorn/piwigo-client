@@ -42,7 +42,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         this.pageSize = pageSize;
     }
 
-    public static HashSet<Group> parseGroupsFromJson(JsonArray groupsObj) throws JSONException {
+    public static HashSet<Group> parseGroupsFromJson(JsonArray groupsObj) {
         HashSet<Group> groups = new LinkedHashSet<>(groupsObj.size());
         for (int i = 0; i < groupsObj.size(); i++) {
             JsonObject groupObj = groupsObj.get(i).getAsJsonObject();

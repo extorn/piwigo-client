@@ -48,7 +48,7 @@ public class PluginUserTagsGetListResponseHandler extends AbstractPiwigoWsRespon
         }
     }
 
-    public static HashSet<Tag> parseTagsFromJson(JsonArray tagsObj) throws JSONException {
+    public static HashSet<Tag> parseTagsFromJson(JsonArray tagsObj) {
 
         HashSet<Tag> tags = new LinkedHashSet<>(tagsObj.size());
         for (int i = 0; i < tagsObj.size(); i++) {

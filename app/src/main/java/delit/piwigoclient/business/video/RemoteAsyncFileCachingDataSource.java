@@ -126,7 +126,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         }
     }
 
-    private void openConnectionToServerInBackgroundAndContinueLoading(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) throws FileNotFoundException {
+    private void openConnectionToServerInBackgroundAndContinueLoading(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) {
         if (retrieveMaxBytes == 0) {
             return;
         }
@@ -168,7 +168,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         activeRequestHandle = client.get(context, uri.toString(), headersArray, requestParams, getResponseHandler(cacheMetaData));
     }
 
-    private ResponseHandlerInterface getResponseHandler(CachedContent cacheMetaData) throws FileNotFoundException {
+    private ResponseHandlerInterface getResponseHandler(CachedContent cacheMetaData) {
         if (httpResponseHandler == null) {
             httpResponseHandler = new RandomAccessFileAsyncHttpResponseHandler(cacheMetaData, cacheListener, true);
         }
