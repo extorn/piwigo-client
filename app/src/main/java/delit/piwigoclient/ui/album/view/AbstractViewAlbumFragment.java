@@ -1786,7 +1786,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             exitFragment = true;
         } else {
             if (albumAdminList != null) {
-                albumAdminList.removeAlbumById(response.getAlbumId());
+                albumAdminList.removeAlbumById(galleryDetails, response.getAlbumId());
                 adminCategories = albumAdminList.getDirectChildrenOfAlbum(galleryDetails);
             }
             galleryDetails.removeChildAlbum(response.getAlbumId()); // will return false if it was the admin copy (unlikely but do after to be sure).

@@ -127,32 +127,22 @@ public class PiwigoAlbumAdminList implements Parcelable {
         return null;
     }
 
-    public boolean removeAlbumAtPathById(CategoryItem path, long albumId) {
-        List<CategoryItem> children = getDirectChildrenOfAlbum(path.getParentageChain(), path.getId());
-        CategoryItem item;
-        for (Iterator<CategoryItem> iter = children.iterator(); iter.hasNext(); ) {
-            item = iter.next();
-            if (item.getId() == albumId) {
-                iter.remove();
+    public boolean removeAlbumById(CategoryItem parent, long albumId) {
+        if(ROOT_ALBUM.equals(parent)) {
+            for (Iterator<CategoryItem> rootAlbumIter = rootAlbums.iterator(); rootAlbumIter.hasNext(); ) {
+                if(rootAlbumIter.next().getId() == albumId) {
+                    rootAlbumIter.remove();
+                    return true;
+                }
+            }
+        } else {
+            CategoryItem adminCopyOfParent = findAlbum(parent.getId());
+            if (adminCopyOfParent != null) {
+                adminCopyOfParent.removeChildAlbum(albumId);
                 return true;
             }
         }
         return false;
-    }
-
-    public boolean removeAlbumById(long albumId) {
-        CategoryItem item = findAlbum(albumId);
-        if (item == null) {
-            return false;
-        }
-        rootAlbums.remove(item);
-        if (!item.isRoot()) {
-            CategoryItem parent = findAlbum(item.getParentId());
-            if (parent != null) {
-                parent.removeChildAlbum(item);
-            }
-        }
-        return true;
     }
 
     public List<CategoryItem> getAlbums() {
