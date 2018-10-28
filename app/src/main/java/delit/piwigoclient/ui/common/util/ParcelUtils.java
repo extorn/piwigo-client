@@ -39,20 +39,11 @@ public class ParcelUtils {
     }
 
     public static void writeIntSet(@NonNull Parcel dest, Set<Integer> data) {
-        int[] rawData = null;
+        ArrayList<Integer> dataWrapper = null;
         if(data != null) {
-            rawData = ArrayUtils.unwrapInts(data);
+            dataWrapper = new ArrayList<>(data);
         }
-        dest.writeIntArray(rawData);
-    }
-    
-    public static HashSet<Integer> readIntHashSet(@NonNull Parcel in, ClassLoader loader) {
-        int[] data = readValue(in, loader, int[].class);
-        HashSet<Integer> wrapper = new HashSet<>(data.length);
-        if(data != null) {
-            Collections.addAll(wrapper, com.google.android.gms.common.util.ArrayUtils.toWrapperArray(data));
-        }
-        return wrapper;
+        writeIntArrayList(dest, dataWrapper);
     }
 
     public static <T> T readValue(@NonNull Parcel in, ClassLoader loader, Class<T> expectedType) {
@@ -72,9 +63,9 @@ public class ParcelUtils {
     }
 
     public static Set<Integer> readIntSet(@NonNull Parcel in, @NonNull Set<Integer> destSet, ClassLoader loader) {
-        int[] data = readValue(in, loader, int[].class);
-        if(data != null) {
-            Collections.addAll(destSet, com.google.android.gms.common.util.ArrayUtils.toWrapperArray(data));
+        ArrayList<Integer> dataWrapper = readIntArrayList(in, loader);
+        if(dataWrapper != null) {
+            destSet.addAll(dataWrapper);
         }
         return destSet;
     }
@@ -101,8 +92,16 @@ public class ParcelUtils {
         return readValue(in, loader, ArrayList.class);
     }
 
-    public static void writeLongArrayList(Parcel out, ArrayList<Long> parentageChain) {
-        out.writeValue(parentageChain);
+    public static void writeLongArrayList(Parcel out, ArrayList<Long> value) {
+        out.writeValue(value);
+    }
+
+    public static ArrayList<Integer> readIntArrayList(Parcel in, ClassLoader loader) {
+        return readValue(in, loader, ArrayList.class);
+    }
+
+    public static void writeIntArrayList(Parcel out, ArrayList<Integer> value) {
+        out.writeValue(value);
     }
 
     public static Date readDate(Parcel in) {

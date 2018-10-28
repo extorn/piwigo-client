@@ -79,11 +79,16 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
                 }
             }
         }
-        JsonArray groupsArr = userObj.get("groups").getAsJsonArray();
-        HashSet<Long> groups = new HashSet<>(groupsArr.size());
-        for (int j = 0; j < groupsArr.size(); j++) {
-            long groupId = groupsArr.get(j).getAsLong();
-            groups.add(groupId);
+        HashSet<Long> groups;
+        if(userObj.get("groups").isJsonArray()) {
+            JsonArray groupsArr = userObj.get("groups").getAsJsonArray();
+            groups = new HashSet<>(groupsArr.size());
+            for (int j = 0; j < groupsArr.size(); j++) {
+                long groupId = groupsArr.get(j).getAsLong();
+                groups.add(groupId);
+            }
+        } else {
+            groups = new HashSet<>(0);
         }
 
         User user = new User(id, username, userType, privacyLevel, email, highDefEnabled, lastVisitDate);

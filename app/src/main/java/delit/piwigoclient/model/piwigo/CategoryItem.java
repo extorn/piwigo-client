@@ -55,8 +55,8 @@ public class CategoryItem extends GalleryItem {
         subCategories = in.readLong();
         isPrivate = ParcelUtils.readValue(in,null, boolean.class);
         representativePictureId = ParcelUtils.readValue(in,null, Long.class);
-        users = ParcelUtils.readValue(in,null, long[].class);
-        groups = ParcelUtils.readValue(in,null, long[].class);
+        users = in.createLongArray();
+        groups = in.createLongArray();
         permissionLoadedAt = in.readLong();
     }
 

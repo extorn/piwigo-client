@@ -43,12 +43,8 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
                 reattemptedLogin = true;
                 // this was redirected to an http page - login failed most probable - try to force a login and retry!
                 newLoginAcquired = acquireNewSessionAndRetryCallIfAcquired();
-                // if we either got a new token here or another thread did, retry the original failing call.
             }
-            if (newLoginAcquired) {
-                // just run the original call again (another thread has retrieved a new session
-                rerunCall();
-            } else {
+            if (!newLoginAcquired) {
                 storeResponse(new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, 200, responseBody, "Unsupported content type", "Content-Type http response header returned - ("+contentTypeHeader.getValue()+"). image/* expected"));
                 resetSuccessAsFailure();
             }

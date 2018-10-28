@@ -63,7 +63,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     public PagedList(Parcel in) {
         itemType = in.readString();
         ParcelUtils.readIntSet(in, pagesLoaded, null);
-        items = in.readArrayList(null);
+        items = in.readArrayList(getClass().getClassLoader());
         in.readMap(pagesBeingLoaded, getClass().getClassLoader());
         ParcelUtils.readIntSet(in, pagesFailedToLoad, null);
         fullyLoaded = ParcelUtils.readValue(in,null, boolean.class);
