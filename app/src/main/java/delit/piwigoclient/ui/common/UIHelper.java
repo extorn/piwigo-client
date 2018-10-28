@@ -392,7 +392,7 @@ public abstract class UIHelper<T> {
                 activeServiceCalls = Collections.synchronizedSet(BundleUtils.getLongHashSet(thisBundle, ACTIVE_SERVICE_CALLS));
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
                 runWithPermissions = BundleUtils.getSerializable(thisBundle, STATE_RUN_WITH_PERMS_LIST, HashMap.class);
-                Map<Long, Action> map = BundleUtils.getSerializable(thisBundle, STATE_ACTIONS_ON_RESPONSES, ConcurrentHashMap.class);
+                Map<Long, Action> map = BundleUtils.getSerializable(thisBundle, STATE_ACTIONS_ON_RESPONSES, HashMap.class);
                 if(map instanceof ConcurrentHashMap) {
                     actionOnServerCallComplete = (ConcurrentHashMap<Long, Action>) map;
                 } else {

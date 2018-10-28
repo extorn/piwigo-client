@@ -102,7 +102,7 @@ public class PiwigoAlbumAdminList implements Parcelable {
                 item = childrenIter.next();
                 if (item.getId() == albumId) {
                     return item;
-                } else if (item.getChildAlbums().size() > 0) {
+                } else if (item.getChildAlbums() != null && item.getChildAlbums().size() > 0) {
                     item = findAlbumInSubTree(albumId, item);
                     if (item != null) {
                         return item;

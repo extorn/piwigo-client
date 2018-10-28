@@ -74,7 +74,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         loginResponse.setNewSessionDetails(PiwigoSessionDetails.getInstance(connectionPrefs));
 
         if(canContinue && !PiwigoSessionDetails.getInstance(connectionPrefs).isMethodsAvailableListAvailable()) {
-            loadMethodsAvailable();
+            canContinue = loadMethodsAvailable();
         }
 
         if (canContinue && PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
@@ -90,12 +90,14 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             canContinue = loadUserDetails();
         }
 
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
-        if(canContinue && sessionDetails.isMethodAvailable(PiwigoClientGetPluginDetailResponseHandler.WS_METHOD_NAME)) {
-            sessionDetails.setPiwigoClientPluginVersion("1.0.5");
-            loadPiwigoClientPluginDetails();
-        } else {
-            sessionDetails.setPiwigoClientPluginVersion("1.0.4");
+        if(canContinue) {
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            if (sessionDetails.isMethodAvailable(PiwigoClientGetPluginDetailResponseHandler.WS_METHOD_NAME)) {
+                sessionDetails.setPiwigoClientPluginVersion("1.0.5");
+                canContinue = loadPiwigoClientPluginDetails();
+            } else {
+                sessionDetails.setPiwigoClientPluginVersion("1.0.4");
+            }
         }
 
         setError(getNestedFailure());

@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 import delit.piwigoclient.util.ArrayUtils;
+import delit.piwigoclient.util.ClassUtils;
 
 public class ParcelUtils {
     public static <T extends Parcelable> HashSet<T> readHashSet(@NonNull Parcel in, ClassLoader loader) {
@@ -55,9 +56,13 @@ public class ParcelUtils {
     }
 
     public static <T> T readValue(@NonNull Parcel in, ClassLoader loader, Class<T> expectedType) {
+        Class<T> valueType = expectedType;
         Object o = in.readValue(loader);
         try {
-            T val = expectedType.cast(o);
+            if(valueType.isPrimitive()) {
+                valueType = ClassUtils.wrap(valueType);
+            }
+            T val = valueType.cast(o);
             return val;
         } catch(ClassCastException e) {
             Crashlytics.log(Log.ERROR, "ParcelUtils", "returning null as value of unexpected type : " + o);

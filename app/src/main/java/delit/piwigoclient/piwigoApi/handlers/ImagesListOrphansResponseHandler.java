@@ -1,5 +1,7 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.content.Context;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,10 +11,13 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.piwigoclient.util.VersionUtils;
 
 public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -60,6 +65,18 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
         } else {
             return super.runCall(client, handler);
         }
+    }
+
+    @Override
+    public boolean isMethodAvailable(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        boolean available = super.isMethodAvailable(context, connectionPrefs);
+        if(available && "piwigo_client.images.getOrphans".equals(getPiwigoMethod())) {
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            int[] pluginVersion = VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion());
+            boolean versionSupported = VersionUtils.versionExceeds(new int[]{1,0,5}, pluginVersion);
+            available = versionSupported;
+        }
+        return available;
     }
 
     private void runSequenceOfNestedHandlers() {
