@@ -165,27 +165,27 @@
          - Eventuellement - permettre de lier le processus de téléchargement à une routine de compression pour les vidéos
          - Possible - La possibilité de supprimer un album, mais pas son contenu (créer des orphelins)
          - Eventuellement - Gestion des fichiers orphelins
-         - C\'est possible : Permet à l\'utilisateur d\'effectuer un zoom arrière dans le diaporama (affichage plus petit que le plein écran)
-         - C\'est possible : Étudier la possibilité d\'ajouter le support pour les plugins de tags colorés
-         - C\'est possible : Souvenez-vous de la photo ou de l\'album précédemment ouvert lorsque l\'utilisateur ouvre l\'application.
-         - C\'est possible : Paid App Only : L\'idée de photos aléatoires implémentée sur l\'interface web piwigo
-         - C\'est possible : Application payante uniquement : Prise en charge des commentaires des utilisateurs
-         - C\'est possible : Application payante uniquement : avertit l\'utilisateur des mises à jour du serveur qui sont disponibles.
-         - C\'est possible : Application payante uniquement : Prise en charge de l\'édition d\'EXIF et d\'autres formats de métadonnées d\'images
-         - C\'est possible : Application payante uniquement : Ajouter une préférence pour afficher/masquer les champs EXIF etc d\'intérêt ou non.
-         - ? Veuillez m\'envoyer un courriel (il y a un lien courriel dans la barre de navigation) pour demander ce dont vous avez besoin ou ce que vous voulez que cette application ne fait pas encore".</item>
+         - C'est possible : Permet à l'utilisateur d'effectuer un zoom arrière dans le diaporama (affichage plus petit que le plein écran)
+         - C'est possible : Étudier la possibilité d'ajouter le support pour les plugins de tags colorés
+         - C'est possible : Souvenez-vous de la photo ou de l'album précédemment ouvert lorsque l'utilisateur ouvre l'application.
+         - C'est possible : Paid App Only : L'idée de photos aléatoires implémentée sur l'interface web piwigo
+         - C'est possible : Application payante uniquement : Prise en charge des commentaires des utilisateurs
+         - C'est possible : Application payante uniquement : avertit l'utilisateur des mises à jour du serveur qui sont disponibles.
+         - C'est possible : Application payante uniquement : Prise en charge de l'édition d'EXIF et d'autres formats de métadonnées d'images
+         - C'est possible : Application payante uniquement : Ajouter une préférence pour afficher/masquer les champs EXIF etc d'intérêt ou non.
+         - ? Veuillez m'envoyer un courriel (il y a un lien courriel dans la barre de navigation) pour demander ce dont vous avez besoin ou ce que vous voulez que cette application ne fait pas encore"</item>
         <item>1.3.98</item>
-        <item>"Livraison prévue " :
+        <item>"Livraison prévue :
          - Fin novembre 2018
          Changements :
          - Ajoutez une sorte d\'aide pour aider l\'utilisateur à connaître les fonctionnalités"</item>
         <item>1.3.97</item>
-        <item>" Livraison prévue " :
+        <item>"Livraison prévue :
          - Fin octobre ou mi-novembre 2018
          Changements :
-         - Autres améliorations de l\'interface utilisateur
-         - Refonte de la façon dont les messages pop-up et les indicateurs de progression sont affichés - étudier la possibilité d\'utiliser plus de messages Toast ou Snackbar, en minimisant l\'utilisation des fenêtres pop-up de dialogue.
-         - Albums pliables dans les listes de sélection d\'albums lorsque c\'est possible
+         - Autres améliorations de l'interface utilisateur
+         - Refonte de la façon dont les messages pop-up et les indicateurs de progression sont affichés - étudier la possibilité d'utiliser plus de messages Toast ou Snackbar, en minimisant l'utilisation des fenêtres pop-up de dialogue.
+         - Albums pliables dans les listes de sélection d'albums lorsque c'est possible
          - Réviser et améliorer les actions du panier (couper en vrac ou copier-coller)
          - Mettre à jour la liste des meilleurs conseils"</item>
     </string-array>

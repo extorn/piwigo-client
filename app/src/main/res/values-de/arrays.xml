@@ -106,7 +106,7 @@
          - Weitere Überarbeitung der Darstellung von Popup-Meldungen und Fortschrittsanzeigen - Untersuchung mit mehr Toast- oder Snackbar-Meldungen, Minimierung der Verwendung von Dialog-Popup-Fenstern.
          - Zusammenklappbare Alben in den Auswahllisten der Alben, wo dies praktisch möglich ist.
          - Überprüfung und Verbesserung der Korbaktionen (Massenausschnitt oder Kopieren und Einfügen)
-         - Aktualisieren Sie die Liste der wichtigsten Tipps"
+         - Auffrischen der Liste der wichtigsten Tipps"
         </item>
     </string-array>
     <string-array name="release_history">
