@@ -245,6 +245,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     public void onDestroy() {
         super.onDestroy();
         UIHelper.recycleImageViewContent(actionIndicatorImg);
+        galleryModel = null;
+        currentUsers = null;
+        currentGroups = null;
+        if (galleryListView != null) {
+            galleryListView.setAdapter(null);
+        }
     }
 
     private void fillUsernamesField(TextView allowedUsernamesField, Collection<Username> selectedUsernames) {
@@ -430,7 +436,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         initialiseBasketView(view);
 
-        EventBus.getDefault().post(new AlbumSelectedEvent(galleryModel.getContainerDetails()));
+        if(galleryModel != null) {
+            EventBus.getDefault().post(new AlbumSelectedEvent(galleryModel.getContainerDetails()));
+        }
 
         AdView adView = view.findViewById(R.id.gallery_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {
@@ -1332,12 +1340,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     public void onDetach() {
         super.onDetach();
         EventBus.getDefault().unregister(this);
-        galleryModel = null;
-        currentUsers = null;
-        currentGroups = null;
-        if (galleryListView != null) {
-            galleryListView.setAdapter(null);
-        }
     }
 
     @Override

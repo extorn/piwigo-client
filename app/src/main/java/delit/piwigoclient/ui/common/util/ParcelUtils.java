@@ -54,6 +54,9 @@ public class ParcelUtils {
                 valueType = ClassUtils.wrap(valueType);
             }
             T val = valueType.cast(o);
+            if(val == null && valueType.isPrimitive()) {
+                Crashlytics.log(Log.ERROR, "ParcelUtils", "read null, but expected value of type : " + expectedType.getName());
+            }
             return val;
         } catch(ClassCastException e) {
             Crashlytics.log(Log.ERROR, "ParcelUtils", "returning null as value of unexpected type : " + o);
@@ -183,17 +186,20 @@ public class ParcelUtils {
         p.writeValue(values);
     }
 
-    public static <S, T> HashMap<S,T> readMap(Parcel in, ClassLoader loader) {
+    public static <S,T,V extends Map<S, T>> V readMap(Parcel in, V dest, ClassLoader loader) {
         ArrayList<S> keys = readValue(in, loader, ArrayList.class);
         ArrayList<T> values = readValue(in, loader, ArrayList.class);
-        HashMap<S,T> map = null;
         if(keys != null) {
-            map = new HashMap<>(keys.size());
             for(int i = 0; i < values.size(); i++) {
-                map.put(keys.get(i), values.get(i));
+                dest.put(keys.get(i), values.get(i));
             }
         }
-        return map;
+        return dest;
+    }
+
+    public static <S, T> HashMap<S,T> readMap(Parcel in, ClassLoader loader) {
+        HashMap<S,T> map = new HashMap<>(0);
+        return readMap(in, map, loader);
     }
 
     public static <T extends Parcelable> ArrayList<T> readTypedList(Parcel in, Parcelable.Creator<T> creator) {

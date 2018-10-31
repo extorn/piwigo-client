@@ -110,6 +110,9 @@
         </item>
     </string-array>
     <string-array name="release_history">
+        <item>1.3.96.12</item>
+        <item>"Fehlerbehebung:
+            - Fehler bei der Wiederherstellung von App-Daten führen zu Abstürzen"</item>
         <item>1.3.96.11</item>
         <item>"Fehlerbehebung:
             - Fehler bei der Wiederherstellung von App-Daten führen zu Abstürzen
