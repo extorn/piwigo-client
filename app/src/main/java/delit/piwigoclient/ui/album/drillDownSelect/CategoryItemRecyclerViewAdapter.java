@@ -69,7 +69,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
         navigationListener.onCategoryOpened(activeItem, newDisplayRoot);
         activeItem = newDisplayRoot;
-        getSelectedItemIds().clear();
+//        getSelectedItemIds().clear();
         List<CategoryItem> folderContent = activeItem.getChildAlbums();
         currentDisplayContent = folderContent != null ? new ArrayList<>(folderContent) : new ArrayList(0);
         notifyDataSetChanged();

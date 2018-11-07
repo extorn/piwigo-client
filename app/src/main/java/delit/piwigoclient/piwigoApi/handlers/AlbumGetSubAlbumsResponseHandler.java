@@ -88,6 +88,9 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
 
     private void parseCategories(JsonArray categories, ArrayList<CategoryItem> availableGalleries) throws JSONException {
         LongSparseArray<CategoryItem> availableAlbumsMap = new LongSparseArray<>(categories.size());
+        if(!parentAlbum.isRoot()) {
+            availableAlbumsMap.put(parentAlbum.getParentId(), parentAlbum);
+        }
         for (int i = 0; i < categories.size(); i++) {
 
             JsonObject category = (JsonObject) categories.get(i);
