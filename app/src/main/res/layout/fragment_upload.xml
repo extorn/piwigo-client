@@ -32,31 +32,14 @@
         android:layout_height="wrap_content"
         android:text="@string/gallery_to_alter_title" />
 
-    <Spinner
+    <TextView
         android:id="@+id/selected_gallery"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/selected_gallery_refresh_button"
         android:layout_below="@+id/upload_to_label"
-        android:layout_width="match_parent"
+        android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable"
         android:layout_margin="5dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:spinnerMode="dialog"/>
-
-    <delit.piwigoclient.ui.common.button.CustomImageButton
-        android:id="@+id/selected_gallery_refresh_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/upload_to_label"
-        android:layout_toStartOf="@id/add_new_gallery_button"
-        app:srcCompat="@drawable/ic_refresh_black_24dp"/>
-
-    <delit.piwigoclient.ui.common.button.CustomImageButton
-        android:id="@+id/add_new_gallery_button"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/upload_to_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_create_new_folder_black_24dp"/>
+        tools:text="some album" />
 
     <TextView
         android:id="@+id/files_for_upload_label"

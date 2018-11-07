@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Looper;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -141,11 +142,7 @@ public class DisplayUtils {
         return size;
     }
 
-    public static boolean hideKeyboardFrom(Context context, DialogInterface dialog) {
-        if(dialog == null) {
-            return false;
-        }
-        Window window = ((AlertDialog)dialog).getWindow();
+    public static boolean hideKeyboardFrom(Context context, Window window) {
         if(window == null) {
             return false;
         }
@@ -157,7 +154,22 @@ public class DisplayUtils {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(attachedView.getWindowToken(), 0);
         return true;
+    }
 
+    public static boolean hideKeyboardFrom(Fragment fragment) {
+        if(fragment == null || fragment.getActivity() == null) {
+            return false;
+        }
+        Window window = fragment.getActivity().getWindow();
+        return hideKeyboardFrom(fragment.getActivity().getApplicationContext(), window);
+    }
+
+    public static boolean hideKeyboardFrom(Context context, DialogInterface dialog) {
+        if(dialog == null) {
+            return false;
+        }
+        Window window = ((AlertDialog)dialog).getWindow();
+        return hideKeyboardFrom(context, window);
     }
 
     private static float getScreenWidthInches(Activity activity) {

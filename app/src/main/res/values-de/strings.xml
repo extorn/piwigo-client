@@ -232,44 +232,43 @@ alleiniges Ermessen.
 Kontakt-Informationen
 
 Wenn Sie Fragen zu dieser Vereinbarung haben, kontaktieren Sie uns bitte."</string>
-    <string name="about_content"> "Diese App wurde geschrieben, um mir unterwegs den Zugriff auf meine Fotogalerie zu erleichtern.
+    <string name="about_content">"Diese App wurde geschrieben, um mir auch unterwegs einen leichteren Zugang zu meiner Fotogalerie zu ermöglichen.
 
 Es wird regelmäßig aktualisiert, um weitere Funktionen hinzuzufügen, einige, an die ich gedacht habe, andere, die von den Benutzern gewünscht werden.
 
 Im August 2018 kam ein Benutzer, David Klement, mit Screen-Mock-ups für ein professionelleres Design zu mir zurück. Seit dem Release 1.3.95 habe ich diese Ideen übernommen, angefangen bei der Albumansicht.
-Diese vollständige Liste der vorgeschlagenen Screendesigns ist auf der App-Website einsehbar.
+Diese vollständige Liste der vorgeschlagenen Screen Designs ist auf der App-Website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html) verfügbar.
 
-HINWEIS: Sprachübersetzungen werden mit Hilfe von www.Deepl.com oder google translate websites durchgeführt. Wenn Sie offensichtliche Fehler entdecken, lassen Sie es mich bitte wissen, damit ich sie korrigieren kann.
+HINWEIS: Sprachübersetzungen werden über www.Deepl.com oder Google durchgeführt. Wenn Sie offensichtliche Fehler entdecken, lassen Sie es mich bitte wissen, damit ich sie korrigieren kann.
 
-Es gibt zwei Versionen, eine kostenlose Version (mit Werbung) und eine kostenpflichtige Version (ohne Werbung). Sie können frei wählen, welche Sie bevorzugen. Sie können die kostenlose Version derzeit nicht'upgraden', die kostenpflichtige Version installieren und die kostenlose Version löschen.
-Hinweis: Die Versionen unterscheiden sich im Laufe der Zeit. Die meisten Änderungen werden sowohl in der kostenlosen als auch in der kostenpflichtigen Version vorgenommen.
+Es gibt zwei Versionen, eine kostenlose Version (mit Werbung) und eine kostenpflichtige Version (werbefrei). Du kannst frei wählen, was du bevorzugst. Sie können die kostenlose Version derzeit nicht "upgraden", die kostenpflichtige Version installieren und die kostenlose Version löschen.
+Hinweis: Die Versionen werden im Laufe der Zeit variieren. Die meisten Änderungen werden sowohl an der kostenlosen als auch an der kostenpflichtigen Version vorgenommen.
 
-Gegenwärtig unterstützt die kostenpflichtige Version auch Tags:
-        Piwigo unterstützt Tags bis zu einem gewissen Grad out of the box, aber das User Tags Plugin fügt weitere Funktionen hinzu (grundlegende Tests werden durchgeführt).
+Derzeit hat die kostenpflichtige Version die Unterstützung für Tags hinzugefügt:
+        Piwigo unterstützt Tags bis zu einem gewissen Grad out of the box, aber das User Tags Plugin fügt weitere Funktionen hinzu (grundlegende Tests durchgeführt).
 
 
-Im Moment bietet es eine grundlegende Funktionalität, um in einer bestehenden Galerie zu navigieren, neue Fotos und Videos hochzuladen und neue Kategorien innerhalb einer Galerie zu erstellen. Einige Felder können nach der Erstellung geändert werden, aber viele sind noch immer nur lesbar..... vorerst!
+Im Moment bietet es eine grundlegende Funktionsebene, um die Navigation durch eine bestehende Galerie, das Hochladen neuer Fotos und Videos und das Erstellen neuer Kategorien innerhalb einer Galerie zu ermöglichen. Einige Felder können nach der Erstellung geändert werden, aber viele werden immer noch nur gelesen....... vorerst!
 
-Wenn Sie die App deinstallieren, können Sie mir über den Link im App-Menü per E-Mail mitteilen, warum die App nicht Ihren Bedürfnissen entsprach, damit ich mich darum kümmern kann.
+Bitte kann ich Sie fragen, ob Sie, wenn Sie die App deinstallieren, den Link im App-Menü verwenden, um mir eine E-Mail zu schicken, in der Sie mir mitteilen, warum die App nicht Ihren Bedürfnissen entsprach, damit ich dies beheben kann.
 
-Die Version des PIWIGO-Servers, gegen den ich teste, ist derzeit 2.9.4.
+Die Version des PIWIGO-Servers, mit dem ich teste, ist derzeit 2.9.4.
 
-Meine Testgalerie enthält nur .jpg und.mp4 Dateien. Wenn Ihre Datei andere enthält, kann es zu Problemen kommen - wenn ja, sagen Sie es mir bitte und ich werde die Arbeit an diesen Dateitypen priorisieren.
+Meine Testgalerie enthält nur .jpg und.mp4 Dateien. Wenn deines andere enthält, kann es durchaus zu Problemen kommen - wenn ja, sag es mir bitte und ich werde die Arbeit an diesen Dateitypen priorisieren.
 
-WARNUNG: Versionen von Piwigo unter 1.9.2 - das Hochladen von Videos ist meiner Meinung nach abhängig davon, dass Fix #756 auf Ihren Server angewendet wird.
+WARNUNG: Versionen von Piwigo unter 1.9.2 - Hochladen von Videos ist meiner Meinung nach abhängig von Fix #756, der auf Ihren Server angewendet wird.
 
-Ich habe mit einer Kopie des piwigo_privacy Plugins und des VideoJS Plugins getestet.
+Ich habe mit einer Kopie des installierten piwigo_privacy Plugins und auch des installierten VideoJS Plugins getestet.
 Ich habe eine Kopie des Extended Description Plugins installiert, aber leider ist diese Funktionalität noch nicht über die PIWIGO API verfügbar.
-Ich würde gerne Unterstützung für "Lieblingsfotos" hinzufügen, aber diese Funktionalität scheint noch nicht über die PIWIGO-API verfügbar zu sein.
+Ich möchte die Unterstützung für "Lieblingsfotos" einbeziehen, aber diese Funktionalität scheint noch nicht über die PIWIGO-API verfügbar zu sein.
 
-Bitte senden Sie mir eine E-Mail, wenn Sie auf Fehler stoßen. Ich habe das auf dem Android-Emulator, einem Samsung-Handy und einem Samsung-Tablett getestet, aber es ist meine erste Anwendung, also bin ich sicher, dass die Dinge für jemanden schief gehen werden.
+Bitte melden Sie mir eine E-Mail, wenn Sie auf Fehler stoßen. Ich habe das auf dem Android-Emulator, einem Samsung-Telefon und einem Samsung-Tablett getestet, aber es ist meine erste App, also bin ich sicher, dass die Dinge für jemanden schief gehen werden.
 
 Ein großes Dankeschön an alle, die mir mit Vorschlägen oder Fehlern gemailt haben. Ich werde mich bemühen, alle Ihre Vorschläge so schnell wie möglich zu bearbeiten.
 
-Bitte wählen Sie, ob Sie jeden Absturz melden möchten. Falls der Fehler auch nach dem nächsten Update noch auftritt, nehmen Sie sich bitte die Zeit, mir eine E-Mail zu schreiben. Es ist wahrscheinlich, dass ich etwas mehr Kontext brauche, bevor der Fehler auftritt.
+Bitte wählen Sie, ob Sie jeden auftretenden Absturz melden möchten. Wenn Sie feststellen, dass der Fehler nach dem nächsten Update immer noch auftritt, nehmen Sie sich bitte die Zeit, mir eine E-Mail zu schreiben. Es ist wahrscheinlich, dass ich ein wenig mehr Kontext um das, was passiert, brauche, kurz bevor der Fehler auftritt.
 
-Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit der Veröffentlichungen mit zunehmender Reife der Apps abnimmt. Der Veröffentlichungszeitplan und die Historie sind unten aufgeführt. Das kann sich ändern und die Dinge können sich verzögern, aber Sie können sehen, was auf der Liste steht.
-"</string>
+Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, dass sich die Häufigkeit der Veröffentlichungen mit zunehmendem Alter der App verringert. Der Release-Zeitplan und die Historie sind unten dargestellt. Das kann sich ändern und die Dinge können sich verzögern, aber du kannst sehen, was auf der Liste steht."</string>
     <string name="slideshow_image_details_name_title">Name der Ressource</string>
     <string name="slideshow_image_details_description_title">Ressourcenbeschreibung</string>
     <string name="unlock_menu_title">Entsperren</string>
@@ -558,5 +557,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_error_orphaned_file_retrieval_unavailable">Unable to check presence of orphan images. Recommend installing PiwigoClientWsExts server plugin</string>
     <string name="x_of_y">%1$s / %2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Deine Version von PiwigoClientWsExts ist veraltet. Bitte aktualisieren Sie es als Priorität.</string>
+    <string name="subalbum_detail_txt_pattern">%1$d child albums</string>
 </resources>
 

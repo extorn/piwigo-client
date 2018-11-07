@@ -44,8 +44,8 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
-import delit.piwigoclient.ui.album.AlbumSelectFragment;
-import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.album.listSelect.AlbumSelectFragment;
+import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
@@ -82,6 +82,7 @@ import delit.piwigoclient.ui.permissions.users.UsersListFragment;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
+import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.VersionUtils;
 import hotchemi.android.rate.MyAppRate;
 
@@ -360,9 +361,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void showUpload() {
-        Intent intent = new Intent(Constants.ACTION_MANUAL_UPLOAD);
-        intent.putExtra("galleryId", currentAlbum.getId());
-        startActivity(intent);
+        startActivity(UploadActivity.buildIntent(currentAlbum.toStub()));
     }
 
     private void showGroups() {
@@ -586,8 +585,10 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
 
-        Crashlytics.log(Log.DEBUG, TAG, "showing fragment: " + f.getClass().getName());
+        Crashlytics.log(Log.DEBUG, TAG, "showing fragment: " + f.getTag());
         checkLicenceIfNeeded();
+
+        DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
 
         Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
         String lastFragmentName = "";

@@ -78,7 +78,8 @@
                 android:inputType="text|textNoSuggestions"
                 android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                tools:text="some username" />
+                tools:text="some username"
+                android:autofillHints="username"/>
 
             <TextView
                 android:id="@+id/user_password_label"
@@ -92,17 +93,20 @@
                 android:layout_marginTop="7dp"
                 android:text="@string/user_password_title" />
 
+
             <EditText
                 android:id="@+id/user_password_field"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
+                android:layout_marginStart="5dp"
                 android:clickable="true"
-                android:inputType="textWebPassword"
+                android:focusable="true"
+                android:inputType="textPassword"
                 android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:focusable="true" />
+                tools:text="some password"
+                android:autofillHints="password"/>
 
             <TextView
                 android:id="@+id/user_usertype_label"
@@ -150,7 +154,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="7dp"
-                android:text="@string/user_email_title" />
+                android:text="@string/user_email_title"/>
 
             <EditText
                 android:id="@+id/user_email_field"
@@ -162,7 +166,8 @@
                 android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:focusable="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:autofillHints="emailAddress"/>
 
 
             <TextView

@@ -262,13 +262,19 @@ public class GroupFragment extends MyFragment {
             setFieldsFromModel(currentGroup);
         }
 
-        NestedScrollView scrollview = v.findViewById(R.id.group_edit_scrollview);
-        scrollview.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                ((NestedScrollView)v).fullScroll(View.FOCUS_UP);
-            }
-        });
+
+        if(isOnInitialCreate()) {
+            albumAccessRightsField.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    if (top != oldTop) {
+                        NestedScrollView scrollview = v.getRootView().findViewById(R.id.group_edit_scrollview);
+                        scrollview.fullScroll(View.FOCUS_UP);
+                        v.removeOnLayoutChangeListener(this);
+                    }
+                }
+            });
+        }
 
         return v;
     }

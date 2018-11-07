@@ -102,7 +102,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
             configurationBundle = getArguments();
             rawCurrentGalleryItemPosition = configurationBundle.getInt(ARG_GALLERY_ITEM_DISPLAYED);
         }
-        if (configurationBundle != null) {
+        if (configurationBundle != null && galleryModel == null) {
             galleryModel = configurationBundle.getParcelable(STATE_GALLERY);
             rawCurrentGalleryItemPosition = configurationBundle.getInt(ARG_GALLERY_ITEM_DISPLAYED);
         }

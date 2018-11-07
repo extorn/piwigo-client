@@ -89,7 +89,9 @@ public class LicenceCheckingHelper {
     }
 
     private void doVisualCheck() {
-        activity.getUiHelper().showToast(R.string.checking_license);
+        if(BuildConfig.DEBUG) {
+            activity.getUiHelper().showToast(R.string.checking_license);
+        }
         doCheck();
     }
 

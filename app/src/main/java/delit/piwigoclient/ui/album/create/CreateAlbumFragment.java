@@ -27,6 +27,7 @@ import java.util.List;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGalleryDetails;
@@ -391,7 +392,10 @@ public class CreateAlbumFragment extends MyFragment {
 
     private void informInterestedParties() {
         showDialogBox(R.string.alert_success, getString(R.string.alert_album_created));
-        EventBus.getDefault().post(new AlbumCreatedEvent(actionId, parentGallery.getId(), newAlbum.getGalleryId()));
+        CategoryItem newItem = new CategoryItem(newAlbum.getGalleryId(), newAlbum.getGalleryName(), newAlbum.getGalleryDescription(), newAlbum.isPrivate(), null, 0, 0, 0, null);
+        newItem.setParentageChain(newAlbum.getParentageChain());
+
+        EventBus.getDefault().post(new AlbumCreatedEvent(actionId, parentGallery.getId(), newItem));
         List<Long> parentageChain = newAlbum.getParentageChain();
         if(!parentageChain.isEmpty()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(parentageChain.get(0), newAlbum.getGalleryId()));

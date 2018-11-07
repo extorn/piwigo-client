@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -27,6 +26,7 @@ import java.util.List;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.BackButtonHandler;
+import delit.piwigoclient.ui.common.FlowLayout;
 import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
@@ -38,7 +38,7 @@ import static android.view.View.NO_ID;
 
 public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
     private static final String ACTIVE_FOLDER = "RecyclerViewFolderItemSelectFragment.activeFolder";
-    private RelativeLayout folderPathView;
+    private FlowLayout folderPathView;
     private Spinner spinner;
     private MappedArrayAdapter<String, File> folderRootsAdapter;
     private long startedActionAtTime;
@@ -146,12 +146,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                     pathItem.setId(View.generateViewId());
                     TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_AppCompat_Body2_Clickable);
                     pathItem.setText(pathItemFile.getName());
-                    RelativeLayout.LayoutParams relativeParams = new RelativeLayout.LayoutParams(
-                            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                    if(lastId > NO_ID) {
-                        relativeParams.addRule(RelativeLayout.RIGHT_OF, lastId);
-                    }
-                    folderPathView.addView(pathItem,relativeParams);
+                    folderPathView.addView(pathItem);
 
                     pathItem.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -166,18 +161,14 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                         TextViewCompat.setTextAppearance(pathItemSeperator, R.style.TextAppearance_AppCompat_Body2);
                         pathItemSeperator.setText("/");
                         pathItemSeperator.setId(View.generateViewId());
-                        relativeParams = new RelativeLayout.LayoutParams(
-                                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                        relativeParams.addRule(RelativeLayout.RIGHT_OF, pathItem.getId());
-                        folderPathView.addView(pathItemSeperator,relativeParams);
+                        folderPathView.addView(pathItemSeperator);
                         pathItem = pathItemSeperator;
                     }
                 }
             }
         };
 
-        final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>() {
-        }, getViewPrefs());
+        final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>(), getViewPrefs());
         if (!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();
         }

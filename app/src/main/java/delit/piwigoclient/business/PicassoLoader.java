@@ -11,12 +11,12 @@ import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Transformation;
 
 import java.io.File;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.PicassoFactory;
-import delit.piwigoclient.util.picasso.RoundedTransformation;
 
 /**
  * Created by gareth on 11/10/17.
@@ -40,7 +40,7 @@ public class PicassoLoader implements Callback {
     private boolean placeholderLoaded;
     private @DrawableRes
     int errorResourceId = R.drawable.ic_error_black_240px;
-    private RoundedTransformation transformation;
+    private Transformation transformation;
 
     public PicassoLoader(ImageView loadInto) {
         this.loadInto = loadInto;
@@ -260,7 +260,7 @@ public class PicassoLoader implements Callback {
         this.placeholderUri = placeholderUri;
     }
 
-    public void withTransformation(RoundedTransformation transformation) {
+    public void withTransformation(Transformation transformation) {
         this.transformation = transformation;
     }
 

@@ -178,20 +178,20 @@
         <item>"Expected Delivery:
          - End November 2018
          Changes:
-         - Add some sort of help to assist user in knowing the features"
-        </item>
-        <item>1.3.97</item>
-        <item>"Expected Delivery:
-         - End of October or Mid November 2018
-         Changes:
-         - Further user interface refinements
+         - Add some sort of help to assist user in knowing the features
          - Further rework of the way popup messages and progress indicators are shown - investigate using more Toast or Snackbar messages, minimising use of dialog popup windows
-         - Collapsible albums in album selection lists where practical
-         - Review and improve basket actions (bulk cut or copy and paste)
          - Update the list of top tips"
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.97</item>
+        <item>"Bugfix:
+            - The user password field can now be edited again
+            - Review and bugfix basket actions (bulk cut or copy and paste)
+            Changes:
+            - New album selection screen (for the upload screen only at present)
+            - Little UI refinements"
+        </item>
         <item>1.3.96.12</item>
         <item>"Bugfix:
         - Errors in restoring app data cause crashes"

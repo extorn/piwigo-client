@@ -1,4 +1,4 @@
-package delit.piwigoclient.ui.album;
+package delit.piwigoclient.ui.album.listSelect;
 
 import android.content.Context;
 import android.os.Bundle;

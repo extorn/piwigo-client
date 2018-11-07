@@ -82,6 +82,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         this.activeFolder = activeFolder;
     }
 
+    @Override
     protected CustomClickListener<FolderItemViewAdapterPreferences, File, FolderItemViewHolder> buildCustomClickListener(FolderItemViewHolder viewHolder) {
         return new FolderItemCustomClickListener(viewHolder, this);
     }

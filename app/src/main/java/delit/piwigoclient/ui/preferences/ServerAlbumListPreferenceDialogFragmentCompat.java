@@ -34,7 +34,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandl
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.util.DisplayUtils;
 

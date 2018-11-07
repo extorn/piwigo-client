@@ -16,6 +16,7 @@ import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 import delit.piwigoclient.util.ArrayUtils;
+import delit.piwigoclient.util.SetUtils;
 
 public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -30,9 +31,10 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
 
     public GroupsGetListResponseHandler(Collection<Long> groupIds) {
         super("pwg.groups.getList", TAG);
-        this.groupIds = null;
+        this.groupIds = new HashSet();
+        this.groupIds.addAll(groupIds);
         page = PagedList.MISSING_ITEMS_PAGE;
-        pageSize = groupIds.size();
+        pageSize = this.groupIds.size();
     }
 
     public GroupsGetListResponseHandler(int page, int pageSize) {

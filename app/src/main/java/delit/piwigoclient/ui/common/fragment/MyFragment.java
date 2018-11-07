@@ -44,6 +44,7 @@ public class MyFragment extends Fragment {
     private FragmentUIHelper uiHelper;
     private String piwigoSessionToken;
     private String piwigoServerConnected;
+    private boolean onInitialCreate;
 
     protected long addActiveServiceCall(@StringRes int titleStringId, long messageId) {
         return addActiveServiceCall(getString(titleStringId), messageId);
@@ -62,6 +63,12 @@ public class MyFragment extends Fragment {
     protected long addActiveServiceCall(String title, long messageId) {
         uiHelper.addActiveServiceCall(title, messageId);
         return messageId;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        onInitialCreate = true;
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -118,7 +125,12 @@ public class MyFragment extends Fragment {
     @Override
     public void onPause() {
         Crashlytics.log("onPause : " + getClass().getName());
+        onInitialCreate = false;
         super.onPause();
+    }
+
+    public boolean isOnInitialCreate() {
+        return onInitialCreate;
     }
 
     @Override

@@ -218,7 +218,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
-    public void replaceOrAddItem(T item) {
+    public final void replaceOrAddItem(T item) {
         T itemToBeReplaced = null;
         try {
             itemToBeReplaced = getItemFromInternalStoreMatching(item);
@@ -229,9 +229,15 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         if (itemToBeReplaced != null) {
             int replaceIdx = getItemPosition(itemToBeReplaced);
             replaceItemInInternalStore(replaceIdx, item);
+            notifyItemChanged(replaceIdx);
         } else {
-            addItemToInternalStore(item);
+            addItem(item);
         }
+    }
+
+    public final void addItem(T item) {
+        addItemToInternalStore(item);
+        notifyItemInserted(getItemPosition(item));
     }
 
     @Override

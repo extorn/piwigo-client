@@ -747,6 +747,9 @@ public abstract class UIHelper<T> {
     }
 
     public ProgressIndicator getProgressIndicator() {
+        if(progressIndicator == null) {
+            loadProgressIndicatorIfPossible();
+        }
         return progressIndicator;
     }
 

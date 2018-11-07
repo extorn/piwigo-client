@@ -264,7 +264,7 @@ If you have any questions about this Agreement, please contact us."
 It will be updated regularly to add more features, some that I've thought of, others requested by users.
 
 In August 2018, a user, David Klement, came back to me with screen mock-ups for a more professional design. Starting with release 1.3.95, I have been incorporating those ideas, starting with the album view screen.
-These full list of proposed screen designs are available to view on the app website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals.html).
+These full list of proposed screen designs are available to view on the app website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html).
 
 NOTE: Language translations are performed using www.Deepl.com or google translate websites. If you spot any obvious errors, please let me know so I can correct them.
 
@@ -295,8 +295,7 @@ A big thank you to everyone who has emailed me with suggestions or bugs. I will 
 
 Please do choose to report every crash that occurs. If you find the bug still occurs after the next update, please take the time to email me. It's likely I need a little bit more context around what is happening just before the bug occurs.
 
-Releases are on an ad-hoc basis at the moment. The frequency of releases is expected to reduce as the app matures. The release schedule and history is shown below. This may change and things may get delayed, but you can see what's on the list.
-"</string>
+Releases are on an ad-hoc basis at the moment. The frequency of releases is expected to reduce as the app matures. The release schedule and history is shown below. This may change and things may get delayed, but you can see what's on the list."</string>
     <string name="licences_heading">Licences for resources used within this App</string>
     <string name="licences_content"  formatted="false" translatable="false">"*** Touch Image View - com.ortiz.touch.
 MIT License - Copyright © 2012 Michael Ortiz
@@ -823,4 +822,5 @@ SOFTWARE.
     <string name="upload_error_orphaned_file_retrieval_unavailable">Unable to check presence of orphan images. Recommend installing PiwigoClientWsExts server plugin</string>
     <string name="x_of_y">%1$s / %2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Your version of PiwigoClientWsExts is out dated. Please update it as a priority.</string>
+    <string name="subalbum_detail_txt_pattern">%1$d child albums</string>
 </resources>

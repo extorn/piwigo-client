@@ -33,16 +33,22 @@ public class ImageCopyToAlbumResponseHandler<T extends ResourceItem> extends Abs
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoUpdateAlbumContentResponse r = new PiwigoUpdateAlbumContentResponse(getMessageId(), getPiwigoMethod(), targetAlbum);
+        PiwigoUpdateAlbumContentResponse r = new PiwigoUpdateAlbumContentResponse<T>(getMessageId(), getPiwigoMethod(), targetAlbum, piwigoResource);
         storeResponse(r);
     }
 
-    public static class PiwigoUpdateAlbumContentResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+    public static class PiwigoUpdateAlbumContentResponse<T extends ResourceItem> extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
         private final CategoryItem album;
+        private final T piwigoResource;
 
-        public PiwigoUpdateAlbumContentResponse(long messageId, String piwigoMethod, CategoryItem album) {
+        public PiwigoUpdateAlbumContentResponse(long messageId, String piwigoMethod, CategoryItem album, T piwigoResource) {
             super(messageId, piwigoMethod, true);
             this.album = album;
+            this.piwigoResource = piwigoResource;
+        }
+
+        public T getPiwigoResource() {
+            return piwigoResource;
         }
 
         public CategoryItem getAlbum() {

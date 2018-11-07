@@ -541,8 +541,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
             }
         } else {
-            final boolean recursive = true;
-            AlbumGetSubAlbumNamesResponseHandler handler = new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive);
+            AlbumGetSubAlbumNamesResponseHandler handler = new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, true);
             if (handler.isSuccess()) {
                 invokeWithRetries(thisUploadJob, handler, 2);
                 AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse rsp = (AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) handler.getResponse();

@@ -111,7 +111,7 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
     @Override
     protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
 
-        if(rsp == null) {
+        if(rsp == null || rsp.isJsonNull()) {
             storeResponse(new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, null));
             resetSuccessAsFailure();
             return;

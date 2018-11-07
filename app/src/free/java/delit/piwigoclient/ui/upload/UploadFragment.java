@@ -4,17 +4,18 @@ import java.io.File;
 import java.util.ArrayList;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.CategoryItemStub;
 
 public class UploadFragment extends AbstractUploadFragment {
-    public static UploadFragment newInstance(long currentGalleryId, int actionId) {
+    public static UploadFragment newInstance(CategoryItemStub currentGallery, int actionId) {
         UploadFragment fragment = new UploadFragment();
-        fragment.setArguments(fragment.buildArgs(currentGalleryId, actionId));
+        fragment.setArguments(fragment.buildArgs(currentGallery, actionId));
         return fragment;
     }
 
     @Override
     protected void updateFilesForUploadList(ArrayList<File> filesToBeUploaded) {
-        FilesToUploadRecyclerViewAdapter adapter = (FilesToUploadRecyclerViewAdapter) getFilesForUploadView().getAdapter();
+        FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
         boolean maxItemCountReached = false;
         while(filesToBeUploaded.size() > 0 && filesToBeUploaded.size() > 5 - adapter.getItemCount()) {
             filesToBeUploaded.remove(filesToBeUploaded.size() - 1);

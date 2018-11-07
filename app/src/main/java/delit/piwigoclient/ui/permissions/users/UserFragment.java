@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -68,6 +70,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEve
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapter;
+import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
@@ -394,13 +397,18 @@ public class UserFragment extends MyFragment {
             }
         }
 
-        NestedScrollView scrollview = v.findViewById(R.id.user_edit_scrollview);
-        scrollview.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                ((NestedScrollView)v).fullScroll(View.FOCUS_UP);
-            }
-        });
+        if(isOnInitialCreate()) {
+            albumPermissionsField.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                    if (top != oldTop) {
+                        NestedScrollView scrollview = v.getRootView().findViewById(R.id.user_edit_scrollview);
+                        scrollview.fullScroll(View.FOCUS_UP);
+                        v.removeOnLayoutChangeListener(this);
+                    }
+                }
+            });
+        }
 
 
         return v;
@@ -707,6 +715,11 @@ public class UserFragment extends MyFragment {
     }
 
     private void onGroupsLoaded(GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
+        HashSet<Long> differences = SetUtils.differences(user.getGroups(), PiwigoUtils.toSetOfIds(response.getGroups()));
+        if(!differences.isEmpty()) {
+            Crashlytics.log(Log.ERROR, getTag(), String.format("Rxd %1$s groups but asked for %2$s", user.getGroups().size(), response.getGroups().size()));
+            throw new RuntimeException("error in group retrieval");
+        }
         currentGroupMembership = response.getGroups();
         fillGroupMembershipField();
     }

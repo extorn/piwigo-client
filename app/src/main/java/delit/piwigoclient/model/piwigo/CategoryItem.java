@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,7 +18,7 @@ import delit.piwigoclient.ui.common.util.ParcelUtils;
 /**
  * An item representing a piece of content.
  */
-public class CategoryItem extends GalleryItem {
+public class CategoryItem extends GalleryItem implements Cloneable {
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
     public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
     public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 1, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
@@ -34,6 +36,10 @@ public class CategoryItem extends GalleryItem {
     private long[] users;
     private long[] groups;
     private long permissionLoadedAt;
+
+    public CategoryItem(CategoryItemStub stub) {
+        super(stub.getId(), stub.getName(), null, null, null);
+    }
 
     public CategoryItem(long id) {
         super(id, null, null, null, null);
@@ -60,6 +66,14 @@ public class CategoryItem extends GalleryItem {
         permissionLoadedAt = in.readLong();
     }
 
+    public static ArrayList<CategoryItem> newListFromStubs(ArrayList<CategoryItemStub> albumNames) {
+        ArrayList<CategoryItem> albums = new ArrayList<>(albumNames.size());
+        for(CategoryItemStub c : albumNames) {
+            albums.add(new CategoryItem(c));
+        }
+        return albums;
+    }
+
     @Override
     public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
@@ -72,6 +86,10 @@ public class CategoryItem extends GalleryItem {
         out.writeLongArray(users);
         out.writeLongArray(groups);
         out.writeLong(permissionLoadedAt);
+    }
+
+    public void setChildAlbums(ArrayList<CategoryItem> childAlbums) {
+        this.childAlbums = childAlbums;
     }
 
     /**
@@ -267,4 +285,141 @@ public class CategoryItem extends GalleryItem {
         return !isLikelyOutdated(permissionLoadedAt) && groups != null && users != null;
     }
 
+    public int getChildAlbumCount() {
+        if(childAlbums == null) {
+            return 0;
+        }
+        return childAlbums.size();
+    }
+
+    @Override
+    public CategoryItem clone() {
+        Parcel p = Parcel.obtain();
+        byte[] dataBytes;
+        try {
+            writeToParcel(p, 0);
+            dataBytes = p.marshall();
+        } finally {
+            p.recycle();
+        }
+
+        // get a fresh parcel.
+        p = Parcel.obtain();
+
+        CategoryItem clone = null;
+        try {
+            p.unmarshall(dataBytes, 0, dataBytes.length);
+            p.setDataPosition(0);
+            clone = new CategoryItem(p);
+        } finally {
+            p.recycle();
+        }
+        return clone;
+    }
+
+    public CategoryItem findChild(long id) {
+        CategoryItem child = null;
+        if(this.getId() == id) {
+            return this;
+        }
+        if(childAlbums != null) {
+            for(CategoryItem i : childAlbums) {
+                if(i.getId() == id) {
+                    return i;
+                }
+            }
+            for(CategoryItem i : childAlbums) {
+                if(i.getChildAlbumCount() > 0) {
+                    child = i.findChild(id);
+                    if(child != null) {
+                        break;
+                    }
+                }
+            }
+        }
+        return child;
+    }
+
+    public CategoryItem findImmediateChild(long id) {
+        if(childAlbums != null) {
+            for (CategoryItem i : childAlbums) {
+                if (i.getId() == id) {
+                    return i;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * root, child, ..., child, this
+     * @return
+     */
+    public List<CategoryItem> getFullPath(CategoryItem child) {
+        List<Long> parentageIds = new ArrayList<>(child.getParentageChain());
+        CategoryItem root = this;
+        List<CategoryItem> parentage = new ArrayList<>(parentageIds.size() + 1);
+        parentage.add(root);
+        // remove the root item
+        if(parentageIds.size() > 0) {
+            parentageIds.remove(0);
+            while (parentageIds.size() > 0 && root != null) {
+                long id = parentageIds.remove(0);
+                root = root.findImmediateChild(id);
+                if (root != null) {
+                    parentage.add(root);
+                } else {
+                    Crashlytics.log(Log.ERROR, "CatItem", "Unable to find parent album with id : " + id);
+                }
+            }
+        }
+        if(!child.isRoot()) {
+            parentage.add(child);
+        }
+        return parentage;
+    }
+
+    /**
+     * Warning. This will be destructive to the newAlbums object passed in.
+     * @param newAlbums
+     * @param preferExisting
+     */
+    public void mergeChildrenWith(List<CategoryItem> newAlbums, boolean preferExisting) {
+        if(newAlbums == null) {
+            return;
+        }
+        for(int i = 0; i < getChildAlbumCount(); i++) {
+            CategoryItem existingMatchingItem = childAlbums.get(i);
+            int matchItemIdx = newAlbums.indexOf(existingMatchingItem);
+            if(matchItemIdx < 0) {
+                continue;
+            }
+            CategoryItem newMatchingItem = newAlbums.get(matchItemIdx);
+            newAlbums.remove(matchItemIdx);
+            if(newMatchingItem != null) {
+                if(!preferExisting) {
+                    // swap to the new copy. Note still need to merge old child albums across.
+                    childAlbums.remove(i);
+                    childAlbums.add(i, newMatchingItem);
+                    mergeChildrenWith(i, newMatchingItem, existingMatchingItem, !preferExisting);
+                } else {
+                    mergeChildrenWith(i, existingMatchingItem, newMatchingItem, preferExisting);
+                }
+            }
+        }
+        if(childAlbums == null) {
+            childAlbums = new ArrayList<>();
+        }
+        childAlbums.addAll(newAlbums);
+    }
+
+    private void mergeChildrenWith(int thisItemIdx, CategoryItem thisItem, CategoryItem otherItem, boolean preferExisting) {
+        if(preferExisting) {
+            thisItem.mergeChildrenWith(otherItem.getChildAlbums(), preferExisting);
+        } else {
+            otherItem.mergeChildrenWith(thisItem.getChildAlbums(), preferExisting);
+            childAlbums.remove(thisItemIdx);
+            childAlbums.add(thisItemIdx, otherItem);
+        }
+    }
 }
