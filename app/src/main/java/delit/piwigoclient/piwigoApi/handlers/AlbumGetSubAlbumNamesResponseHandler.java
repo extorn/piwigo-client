@@ -38,7 +38,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
         }
         if (recursive) {
             params.put("recursive", Boolean.toString(recursive));
-            params.put("tree_output", Boolean.FALSE.toString()); // use a different algo than AlbumGetSubAlbums to build tree
+            params.put("tree_output", Boolean.FALSE.toString());  // true returns broken json
         }
         boolean  communityPluginInstalled = PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs());
         if(communityPluginInstalled) {
