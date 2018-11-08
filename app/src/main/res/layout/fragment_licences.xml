@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:text="@string/other_licences_button_text"/>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_below="@+id/other_oss_licences_button"
         android:layout_above="@+id/licences_adView"
         android:layout_alignWithParentIfMissing="true"
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:text="@string/licences_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

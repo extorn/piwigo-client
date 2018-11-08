@@ -36,7 +36,7 @@
 -keep class com.commonsware.cwac.merge.** { *; }
 #-dontwarn com.commonsware.cwac.merge.**
 
--keep class delit.piwigoclient.ui.events.**
+###-keep class delit.piwigoclient.ui.events.**
 
 #-keep class delit.piwigoclient.model.piwigo.CategoryItem
 
@@ -111,17 +111,17 @@
 -dontwarn sun.misc.**
 
 # support-v4
-#https://stackoverflow.com/questions/18978706/obfuscate-android-support-v7-widget-gridlayout-issue
+#https://stackoverflow.com/questions/18978706/obfuscate-androidx.appcompat.widget.gridlayout-issue
 #-dontwarn android.support.v4.**
--keep interface android.support.v4.app.** { public *; }
--keep class android.support.v4.** { public *; }
+###-keep interface androidx.support.v4.app.** { public *; }
+###-keep class android.support.v4.** { public *; }
 
--keep class com.wunderlist.slidinglayer.** { public *; }
+###-keep class com.wunderlist.slidinglayer.** { public *; }
 
 # support-v7
 #-dontwarn android.support.v7.**
--keep interface android.support.v7.internal.** { public *; }
--keep class android.support.v7.** { public *; }
+###-keep interface android.support.v7.internal.** { public *; }
+###-keep class android.support.v7.** { public *; }
 
 -keep class com.google.firebase.** { public *; }
 -keep class com.crashlytics.** { public *; }
@@ -131,13 +131,15 @@
 -keep class io.fabric.sdk.android.ActivityLifecycleManager { public *; }
 -keep class io.fabric.sdk.android.ActivityLifecycleManager$Callbacks { public *; }
 -keep class com.google.android.gms.internal.firebase-perf.** { *; }
--keep class android.arch.lifecycle.LifecycleOwner { public *; }
--keep class android.arch.lifecycle.Observer { public *; }
+###
+-keep class androidx.lifecycle.LifecycleOwner { public *; }
+###
+-keep class androidx.lifecycle.Observer { public *; }
 -keep class com.drew.** { public *; }
 -keep class com.adobe.xmp.** { public *; }
 -keep class **.R  { public *; }
 -keep class **.R$*  { public *; }
 #-keep public class * implements java.lang.annotation.Annotation { *; }
-#-keep class delit.piwigoclient.**.*Activity { public *; }
+###-keep class delit.piwigoclient.**.*Activity { public *; }
 
 #-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement

@@ -111,7 +111,11 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
                     item.setParentageChain(parentAlbum.getParentageChain());
                 }
             } else {
-                item.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
+                if(item.getId() == parentAlbum.getId()) {
+                    item.setParentageChain(parentAlbum.getParentageChain());
+                } else {
+                    item.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
+                }
                 availableGalleries.add(item);
             }
         }

@@ -2,8 +2,8 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.DrawableRes;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.DrawableRes;
+import androidx.core.content.ContextCompat;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;

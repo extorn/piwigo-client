@@ -3,8 +3,8 @@ package delit.piwigoclient.ui.common.preference;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
-import android.support.annotation.ArrayRes;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.ArrayRes;
+import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
 
 import com.crashlytics.android.Crashlytics;

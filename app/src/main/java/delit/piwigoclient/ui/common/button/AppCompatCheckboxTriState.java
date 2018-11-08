@@ -2,8 +2,8 @@ package delit.piwigoclient.ui.common.button;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.AppCompatCheckBox;
+import androidx.core.view.ViewCompat;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 

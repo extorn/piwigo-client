@@ -67,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_server_basic_auth">
-        <android.support.v14.preference.SwitchPreference
+        <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="@bool/preference_server_use_basic_auth_default"
@@ -103,7 +103,7 @@
         android:title="@string/preference_connections_category_trusted_server_ca"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <android.support.v14.preference.SwitchPreference
+        <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="false"
@@ -123,7 +123,7 @@
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_client_certificate_auth">
-        <android.support.v14.preference.SwitchPreference
+        <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="false"
@@ -143,14 +143,14 @@
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_advanced">
-        <android.support.v14.preference.SwitchPreference
+        <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="@bool/preference_server_connection_force_https_default"
             android:key="@string/preference_server_connection_force_https_key"
             android:summary="@string/preference_server_connection_force_https_summary"
             android:title="@string/preference_server_connection_force_https_title" />
-        <android.support.v14.preference.SwitchPreference
+        <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:defaultValue="@bool/preference_server_connection_allow_redirects_default"

@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,7 +18,7 @@ import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 
 /**
- * {@link android.support.v7.widget.RecyclerView.Adapter} that can display a {@link Username}
+ * {@link androidx.recyclerview.widget.RecyclerView.Adapter} that can display a {@link Username}
  */
 public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Username, PiwigoUsernames, UsernameRecyclerViewAdapter.UsernameViewHolder> {
 

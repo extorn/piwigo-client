@@ -6,13 +6,13 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.core.app.NotificationCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -279,12 +279,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), columnsToShow);
         filesForUploadView.setLayoutManager(gridLayoutMan);
 
-        FilesToUploadRecyclerViewAdapter filesForUploadAdapter = new FilesToUploadRecyclerViewAdapter(filesForUpload, getContext(), this);
-        filesForUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
-        filesForUploadView.setAdapter(filesForUploadAdapter);
+        if(filesToUploadAdapter == null) {
+            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(filesForUpload, getContext(), this);
+            filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
+        }
+        filesForUploadView.setAdapter(filesToUploadAdapter);
 
-
-        updateUiUploadStatusFromJobIfRun(container.getContext(), filesForUploadAdapter);
+        updateUiUploadStatusFromJobIfRun(container.getContext(), filesToUploadAdapter);
 
         return view;
     }

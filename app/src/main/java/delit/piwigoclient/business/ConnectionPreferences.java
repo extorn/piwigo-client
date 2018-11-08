@@ -2,13 +2,13 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 

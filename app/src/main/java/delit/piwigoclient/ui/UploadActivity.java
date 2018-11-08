@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -8,13 +9,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.appbar.AppBarLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -42,6 +43,7 @@ import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
@@ -76,8 +78,8 @@ public class UploadActivity extends MyActivity {
     private boolean startedWithPermissions;
     private Toolbar toolbar;
 
-    public static Intent buildIntent(CategoryItemStub currentAlbum) {
-        Intent intent = new Intent(Constants.ACTION_MANUAL_UPLOAD);
+    public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
+        Intent intent = new Intent(context, UploadActivity.class);
         intent.putExtra(INTENT_DATA_CURRENT_ALBUM, currentAlbum);
         return intent;
     }
@@ -345,7 +347,7 @@ public class UploadActivity extends MyActivity {
             if (resultCode == RESULT_OK) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
                 long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
-                ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
+                ArrayList<File> filesForUpload = BundleUtils.getFileArrayList(data.getExtras(), FileSelectActivity.INTENT_SELECTED_FILES);
 
                 int eventId = requestCode;
                 FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload, actionTimeMillis);

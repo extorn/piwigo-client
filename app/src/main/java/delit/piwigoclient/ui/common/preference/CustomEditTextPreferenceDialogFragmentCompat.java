@@ -2,10 +2,10 @@ package delit.piwigoclient.ui.common.preference;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.preference.DialogPreference;
-import android.support.v7.preference.EditTextPreferenceDialogFragmentCompat;
-import android.support.v7.preference.Preference;
+import androidx.annotation.NonNull;
+import androidx.preference.DialogPreference;
+import androidx.preference.EditTextPreferenceDialogFragmentCompat;
+import androidx.preference.Preference;
 import android.view.View;
 import android.widget.EditText;
 

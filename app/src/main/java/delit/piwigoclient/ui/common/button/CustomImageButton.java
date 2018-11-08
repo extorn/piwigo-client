@@ -3,8 +3,9 @@ package delit.piwigoclient.ui.common.button;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatImageButton;
+
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
 
 import delit.piwigoclient.R;

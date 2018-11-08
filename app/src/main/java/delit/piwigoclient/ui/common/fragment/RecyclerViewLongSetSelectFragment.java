@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui.common.fragment;
 
-import android.support.annotation.LayoutRes;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.LayoutRes;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.HashSet;
 import java.util.Set;

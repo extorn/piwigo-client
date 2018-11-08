@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 import android.util.SparseIntArray;
 import android.widget.Toast;
 

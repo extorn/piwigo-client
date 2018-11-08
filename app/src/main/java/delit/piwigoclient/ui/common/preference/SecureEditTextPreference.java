@@ -2,7 +2,7 @@ package delit.piwigoclient.ui.common.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
 
 import delit.piwigoclient.R;

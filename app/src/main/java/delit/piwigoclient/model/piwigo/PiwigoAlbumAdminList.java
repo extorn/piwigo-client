@@ -4,8 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
+import delit.piwigoclient.util.CollectionUtils;
 
 import static delit.piwigoclient.model.piwigo.CategoryItem.ROOT_ALBUM;
 
@@ -40,7 +43,8 @@ public class PiwigoAlbumAdminList implements Parcelable {
                 return item.getChildAlbums();
             }
         }
-        throw new IllegalStateException("Trying to locate an album, but either it is missing, or part of its ancestory is missing");
+        String parents = CollectionUtils.toCsvList(parentageChain);
+        throw new IllegalStateException(String.format("Failed to locate within admin list : child album %1$d with parentage %2$s but it could not be found in any of %3$d children",albumId, parents, rootAlbums.size()));
     }
 
     public CategoryItem getAlbum(CategoryItem album) {

@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.common.util;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -109,15 +110,26 @@ public class BundleUtils {
         return files;
     }
 
+    public static void putFileArrayListExtra(Intent intent, String key, ArrayList<File> data) {
+        if(data == null) {
+            return;
+        }
+        intent.putStringArrayListExtra(key, getFileNames(data));
+    }
+
     public static void putFileArrayList(Bundle bundle, String key, ArrayList<File> data) {
         if(data == null) {
             return;
         }
+        bundle.putStringArrayList(key, getFileNames(data));
+    }
+
+    private static ArrayList<String> getFileNames(ArrayList<File> data) {
         ArrayList<String> filenames = new ArrayList<>(data.size());
         for(File f : data) {
             filenames.add(f.getAbsolutePath());
         }
-        bundle.putStringArrayList(key, filenames);
+        return filenames;
     }
 
     public static void putDate(Bundle bundle, String key, Date value) {

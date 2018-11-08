@@ -2,7 +2,7 @@ package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
 import android.os.Parcelable;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;

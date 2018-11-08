@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -171,7 +171,7 @@
                 app:initialTabIdx="0"
                 app:viewPager="@+id/slideshow_resource_details_tabs_content" />
 
-            <android.support.v4.view.ViewPager
+            <androidx.viewpager.widget.ViewPager
                 android:id="@+id/slideshow_resource_details_tabs_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -183,7 +183,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/slideshow_image_tab_basic_info" />
 
-                <android.support.v4.widget.NestedScrollView
+                <androidx.core.widget.NestedScrollView
                     android:id="@+id/pageContent1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -333,7 +333,7 @@
 
                     </LinearLayout>
 
-                </android.support.v4.widget.NestedScrollView>
+                </androidx.core.widget.NestedScrollView>
 
                 <TextView
                     android:id="@+id/pageTitle2"
@@ -355,11 +355,11 @@
 
                 </FrameLayout>
 
-            </android.support.v4.view.ViewPager>
+            </androidx.viewpager.widget.ViewPager>
 
         </RelativeLayout>
 
     </com.wunderlist.slidinglayer.CustomSlidingLayer>
 
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

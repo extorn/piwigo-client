@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v7.preference.EditTextPreference;
-import android.support.v7.preference.PreferenceViewHolder;
+import androidx.preference.EditTextPreference;
+import androidx.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.widget.TextView;
 

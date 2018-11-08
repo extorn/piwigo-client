@@ -1,8 +1,8 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.LayoutRes;
+import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;

@@ -2,7 +2,7 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.IntRange;
+import androidx.annotation.IntRange;
 
 import java.util.Date;
 

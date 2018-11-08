@@ -32,7 +32,7 @@
 
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:clickable="true"
         android:focusable="true"
@@ -45,7 +45,7 @@
         android:layout_marginBottom="5dp"
         android:layout_alignWithParentIfMissing="true"/>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/list_retryAction_actionButton"
         app:srcCompat="@drawable/ic_refresh_black_24dp"
         android:layout_centerHorizontal="true"

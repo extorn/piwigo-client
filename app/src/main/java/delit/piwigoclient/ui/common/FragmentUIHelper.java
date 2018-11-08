@@ -2,7 +2,7 @@ package delit.piwigoclient.ui.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by gareth on 17/10/17.

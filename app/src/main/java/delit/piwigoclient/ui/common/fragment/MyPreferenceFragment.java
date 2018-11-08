@@ -3,14 +3,14 @@ package delit.piwigoclient.ui.common.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.BoolRes;
-import android.support.annotation.IntegerRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
+import androidx.annotation.BoolRes;
+import androidx.annotation.IntegerRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.DialogFragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
@@ -44,7 +44,7 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
     private UIHelper uiHelper;
     private Context c;
     protected static final String DIALOG_FRAGMENT_TAG =
-            "android.support.v7.preference.PreferenceFragment.DIALOG";
+            "androidx.preference.PreferenceFragment.DIALOG";
 
     protected UIHelper getUiHelper() {
         return uiHelper;

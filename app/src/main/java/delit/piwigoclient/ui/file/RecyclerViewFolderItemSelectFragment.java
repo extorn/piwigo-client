@@ -2,11 +2,13 @@ package delit.piwigoclient.ui.file;
 
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.TextViewCompat;
-import android.support.v7.widget.GridLayoutManager;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.widget.TextViewCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,10 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.BackButtonHandler;
@@ -38,11 +43,14 @@ import static android.view.View.NO_ID;
 
 public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
     private static final String ACTIVE_FOLDER = "RecyclerViewFolderItemSelectFragment.activeFolder";
+    private static final String STATE_LIST_VIEW_STATE = "RecyclerViewCategoryItemSelectFragment.listViewStates";
+    private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
     private FlowLayout folderPathView;
     private Spinner spinner;
     private MappedArrayAdapter<String, File> folderRootsAdapter;
     private long startedActionAtTime;
-    private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
+    private FolderItemRecyclerViewAdapter.NavigationListener navListener;
+    private LinkedHashMap<String, Parcelable> listViewStates; // one state for each level within the list (created and deleted on demand)
 
     public static RecyclerViewFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
         RecyclerViewFolderItemSelectFragment fragment = new RecyclerViewFolderItemSelectFragment();
@@ -76,6 +84,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         super.onSaveInstanceState(outState);
         BundleUtils.putFile(outState, ACTIVE_FOLDER, getListAdapter().getActiveFolder());
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
+        outState.putSerializable(STATE_LIST_VIEW_STATE, listViewStates);
     }
 
     @Nullable
@@ -86,6 +95,11 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
+        }
+
+        if (savedInstanceState != null) {
+            startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
+            listViewStates = BundleUtils.getSerializable(savedInstanceState, STATE_LIST_VIEW_STATE, LinkedHashMap.class);
         }
 
         startedActionAtTime = System.currentTimeMillis();
@@ -111,89 +125,129 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         folderPathView = v.findViewById(R.id.folder_path);
 
-        FolderItemRecyclerViewAdapter.NavigationListener navListener = new FolderItemRecyclerViewAdapter.NavigationListener() {
+        navListener = new FolderItemRecyclerViewAdapter.NavigationListener() {
 
             @Override
             public void onFolderOpened(File oldFolder, File newFolder) {
-                String item = folderRootsAdapter.getItemByValue(newFolder);
-                if (item == null) {
-                    // reset the selection
-                    if (spinner.getSelectedItemId() >= 0) {
-                        spinner.setAdapter(folderRootsAdapter);
+
+                if(oldFolder != null) {
+                    if (listViewStates == null) {
+                        listViewStates = new LinkedHashMap<>(5);
                     }
-                } else {
-                    spinner.setSelection(folderRootsAdapter.getPosition(item), false);
+                    listViewStates.put(oldFolder.getAbsolutePath(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
                 }
+                getList().scrollToPosition(0);
 
-                File f = newFolder;
-                folderPathView.removeAllViews();
-
-
-                ArrayList<File> pathItems = new ArrayList<>();
-                while (!f.getName().isEmpty()) {
-                    pathItems.add(0, f);
-                    f = f.getParentFile();
-                }
-                TextView pathItem = null;
-                int idx = 0;
-                for(final File pathItemFile : pathItems) {
-                    idx++;
-                    int lastId = NO_ID;
-                    if(pathItem != null) {
-                        lastId = pathItem.getId();
-                    }
-                    pathItem = new TextView(getContext());
-                    pathItem.setId(View.generateViewId());
-                    TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_AppCompat_Body2_Clickable);
-                    pathItem.setText(pathItemFile.getName());
-                    folderPathView.addView(pathItem);
-
-                    pathItem.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            TextView tv = (TextView) v;
-                            getListAdapter().updateContent(pathItemFile);
-                        }
-                    });
-
-                    if(idx < pathItems.size()) {
-                        TextView pathItemSeperator = new TextView(getContext());
-                        TextViewCompat.setTextAppearance(pathItemSeperator, R.style.TextAppearance_AppCompat_Body2);
-                        pathItemSeperator.setText("/");
-                        pathItemSeperator.setId(View.generateViewId());
-                        folderPathView.addView(pathItemSeperator);
-                        pathItem = pathItemSeperator;
-                    }
-                }
+                buildBreadcrumbs(newFolder);
             }
         };
 
-        final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>(), getViewPrefs());
-        if (!viewAdapter.isItemSelectionAllowed()) {
-            viewAdapter.toggleItemSelection();
+        bindDataToView(savedInstanceState);
+        buildBreadcrumbs(getListAdapter().getActiveFolder());
+
+
+        return v;
+    }
+
+    private void buildBreadcrumbs(File newFolder) {
+        String item = folderRootsAdapter.getItemByValue(newFolder);
+        if (item == null) {
+            // reset the selection
+            if (spinner.getSelectedItemId() >= 0) {
+                spinner.setAdapter(folderRootsAdapter);
+            }
+        } else {
+            spinner.setSelection(folderRootsAdapter.getPosition(item), false);
         }
 
+        File f = newFolder;
+        folderPathView.removeAllViews();
+
+
+        ArrayList<File> pathItems = new ArrayList<>();
+        while (!f.getName().isEmpty()) {
+            pathItems.add(0, f);
+            f = f.getParentFile();
+        }
+        TextView pathItem = null;
+        int idx = 0;
+        for(final File pathItemFile : pathItems) {
+            idx++;
+            int lastId = NO_ID;
+            if(pathItem != null) {
+                lastId = pathItem.getId();
+            }
+            pathItem = new TextView(getContext());
+            pathItem.setId(View.generateViewId());
+            TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_AppCompat_Body2_Clickable);
+            pathItem.setText(pathItemFile.getName());
+            folderPathView.addView(pathItem);
+
+            pathItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TextView tv = (TextView) v;
+                    getListAdapter().updateContent(pathItemFile);
+                    Iterator<Map.Entry<String, Parcelable>> iter = listViewStates.entrySet().iterator();
+                    Map.Entry<String, Parcelable> item;
+                    while(iter.hasNext()) {
+                        item = iter.next();
+                        if(item.getKey() == pathItemFile.getAbsolutePath()) {
+                            getList().getLayoutManager().onRestoreInstanceState(item.getValue());
+                            iter.remove();
+                            while(iter.hasNext()) {
+                                iter.next();
+                                iter.remove();
+                            }
+                        }
+                    }
+                }
+            });
+
+            if(idx < pathItems.size()) {
+                TextView pathItemSeperator = new TextView(getContext());
+                TextViewCompat.setTextAppearance(pathItemSeperator, R.style.TextAppearance_AppCompat_Body2);
+                pathItemSeperator.setText("/");
+                pathItemSeperator.setId(View.generateViewId());
+                folderPathView.addView(pathItemSeperator);
+                pathItem = pathItemSeperator;
+            }
+        }
+    }
+
+    private void bindDataToView(Bundle savedInstanceState) {
+
+        File activeFolder = null;
         if (savedInstanceState != null) {
-            File activeFolder = BundleUtils.getFile(savedInstanceState, ACTIVE_FOLDER);
-            viewAdapter.setActiveFolder(activeFolder);
-            startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
+            activeFolder = BundleUtils.getFile(savedInstanceState, ACTIVE_FOLDER);
         }
-        viewAdapter.setInitiallySelectedItems();
 
-        // will restore previous selection from state if any
-        setListAdapter(viewAdapter);
+        if(getListAdapter() == null) {
+
+            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>(), getViewPrefs());
+            if (activeFolder != null) {
+                viewAdapter.setActiveFolder(activeFolder);
+            } else {
+                // ??? can this ever occur?
+            }
+            if (!viewAdapter.isItemSelectionAllowed()) {
+                viewAdapter.toggleItemSelection();
+            }
+
+            viewAdapter.setInitiallySelectedItems();
+
+            // will restore previous selection from state if any
+            setListAdapter(viewAdapter);
+        }
 
         int colsOnScreen = Math.max(getViewPrefs().getColumnsOfFiles(), getViewPrefs().getColumnsOfFolders());
         if (getViewPrefs().getColumnsOfFiles() % getViewPrefs().getColumnsOfFolders() > 0) {
             colsOnScreen = getViewPrefs().getColumnsOfFiles() * getViewPrefs().getColumnsOfFolders();
         }
         GridLayoutManager layoutMan = new GridLayoutManager(getContext(), colsOnScreen);
-        layoutMan.setSpanSizeLookup(new SpanSizeLookup(viewAdapter, colsOnScreen));
+        layoutMan.setSpanSizeLookup(new SpanSizeLookup(getListAdapter(), colsOnScreen));
         getList().setLayoutManager(layoutMan);
-        getList().setAdapter(viewAdapter);
-
-
-        return v;
+        getList().setAdapter(getListAdapter());
     }
 
     @Override
@@ -270,6 +324,10 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<File> selectedItems = listAdapter.getSelectedItems();
+        if(selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
+            selectedItems = new HashSet<>(1);
+            selectedItems.add(listAdapter.getActiveFolder());
+        }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
         EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems), actionTimeMillis));
         // now pop this screen off the stack.

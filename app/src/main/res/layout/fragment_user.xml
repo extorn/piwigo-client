@@ -40,7 +40,7 @@
             app:srcCompat="@drawable/ic_delete_black_24px" />
     </RelativeLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/user_edit_scrollview"
         android:layout_below="@id/user_edit_controls"
         android:layout_above="@id/user_adView"
@@ -253,7 +253,7 @@
 
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"

@@ -14,6 +14,7 @@ import java.util.List;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.piwigoclient.util.CollectionUtils;
 
 /**
  * An item representing a piece of content.
@@ -222,7 +223,8 @@ public class CategoryItem extends GalleryItem implements Cloneable {
                 }
             }
         }
-        throw new IllegalStateException("Trying to locate an album, but either it is missing, or part of its ancestory is missing");
+        String parents = CollectionUtils.toCsvList(parentageChain);
+        throw new IllegalStateException(String.format("Failed to locate child album %1$d with parentage %2$s but it could not be found in any of %3$d children within album %4$d", parentageChain.get(idx+1), parents, getChildAlbumCount(), parentageChain.get(idx)));
     }
 
     public void updateTotalPhotoAndSubAlbumCount() {

@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui.album.drillDownSelect;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import java.util.HashSet;
 

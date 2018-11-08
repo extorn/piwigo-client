@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
-import android.support.v4.widget.TextViewCompat;
+import androidx.core.widget.TextViewCompat;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.ResourceItem;

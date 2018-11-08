@@ -2,10 +2,10 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.preference.Preference;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.preference.Preference;
 import android.view.View;
 
 import delit.piwigoclient.R;

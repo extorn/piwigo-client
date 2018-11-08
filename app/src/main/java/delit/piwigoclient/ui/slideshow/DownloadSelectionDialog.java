@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
