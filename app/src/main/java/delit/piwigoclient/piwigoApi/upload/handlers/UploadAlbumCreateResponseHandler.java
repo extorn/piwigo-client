@@ -36,11 +36,11 @@ public class UploadAlbumCreateResponseHandler extends AbstractPiwigoWsResponseHa
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
 
         JsonObject result = rsp.getAsJsonObject();
         long newAlbumnId = result.get("id").getAsLong();
-        AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse r = new AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse(getMessageId(), getPiwigoMethod(), newAlbumnId);
+        AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse r = new AlbumCreateResponseHandler.PiwigoAlbumCreatedResponse(getMessageId(), getPiwigoMethod(), newAlbumnId, isCached);
         storeResponse(r);
     }
 }

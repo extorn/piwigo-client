@@ -37,20 +37,20 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
     }
 
     @Override
-    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
+    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
         String response = null;
         try {
             GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
             Gson gson = gsonBuilder.create();
             PiwigoJsonResponse piwigoResponse = gson.fromJson(new InputStreamReader(new ByteArrayInputStream(responseBody)), PiwigoJsonResponse.class);
-            onPiwigoFailure(piwigoResponse);
+            onPiwigoFailure(piwigoResponse, isCached);
         } catch (JsonSyntaxException e) {
-            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession);
+            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         } catch (JsonIOException e) {
-            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession);
+            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         } catch (JSONException e) {
-            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession);
+            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         }
         return triedToGetNewSession;
     }
@@ -70,7 +70,7 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
     }*/
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
 
         JsonObject result = rsp.getAsJsonObject();
         String uploadToAlbumsList = result.get("upload_categories_getList_method").getAsString();
@@ -84,7 +84,7 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
             sessionDetails.setUseCommunityPlugin(false);
         }
         sessionDetails.updateUserType(realUserStatus);
-        PiwigoCommunitySessionStatusResponse r = new PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), uploadToAlbumsList);
+        PiwigoCommunitySessionStatusResponse r = new PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), uploadToAlbumsList, isCached);
         storeResponse(r);
     }
 
@@ -92,8 +92,8 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
 
         private final String categoryListMethod;
 
-        public PiwigoCommunitySessionStatusResponse(long messageId, String piwigoMethod, String categoryListMethod) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoCommunitySessionStatusResponse(long messageId, String piwigoMethod, String categoryListMethod, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.categoryListMethod = categoryListMethod;
         }
 
@@ -104,5 +104,9 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
         public boolean isAvailable() {
             return categoryListMethod != null;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

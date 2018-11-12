@@ -26,26 +26,31 @@ public class PiwigoClientGetPluginDetailResponseHandler extends AbstractPiwigoWs
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonElement elem = result.get("version");
         String pluginVersion = elem.getAsString();
 
         PiwigoSessionDetails.getInstance(getConnectionPrefs()).setPiwigoClientPluginVersion(pluginVersion);
-        PiwigoPwgCliPluginDetailsResponse r = new PiwigoPwgCliPluginDetailsResponse(getMessageId(), getPiwigoMethod(), pluginVersion);
+        PiwigoPwgCliPluginDetailsResponse r = new PiwigoPwgCliPluginDetailsResponse(getMessageId(), getPiwigoMethod(), pluginVersion, isCached);
         storeResponse(r);
     }
 
     public static class PiwigoPwgCliPluginDetailsResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
         private final String pluginVersion;
 
-        public PiwigoPwgCliPluginDetailsResponse(long messageId, String piwigoMethod, String pluginVersion) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoPwgCliPluginDetailsResponse(long messageId, String piwigoMethod, String pluginVersion, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.pluginVersion = pluginVersion;
         }
 
         public String getPluginVersion() {
             return pluginVersion;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        //TODO update the plugin and then set this true!
+        return false;
     }
 }

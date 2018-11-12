@@ -106,7 +106,7 @@
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:defaultValue="false"
+            android:defaultValue="@bool/preference_server_use_custom_trusted_ca_certs_default"
             android:key="@string/preference_server_use_custom_trusted_ca_certs_key"
             android:summary="@string/preference_server_use_custom_trusted_ca_certs_summary"
             android:title="@string/preference_server_use_custom_trusted_ca_certs_title" />
@@ -126,7 +126,7 @@
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:defaultValue="false"
+            android:defaultValue="@bool/preference_server_use_client_certs_default"
             android:key="@string/preference_server_use_client_certs_key"
             android:summary="@string/preference_server_use_client_certs_summary"
             android:title="@string/preference_server_use_client_certs_title" />
@@ -244,6 +244,20 @@
             app:minValue="0"
             app:multiplier="1024"
             app:wrapPickList="false" />
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_server_alter_cache_directives_default"
+            android:key="@string/preference_server_alter_cache_directives_key"
+            android:summary="@string/preference_server_alter_cache_directives_summary"
+            android:title="@string/preference_server_alter_cache_directives_title" />
+        <androidx.preference.SwitchPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@bool/preference_server_connection_offline_mode_default"
+            android:key="@string/preference_server_connection_offline_mode_key"
+            android:summary="@string/preference_server_connection_offline_mode_summary"
+            android:title="@string/preference_server_connection_offline_mode_title" />
     </PreferenceCategory>
     <Preference
         android:layout_width="match_parent"

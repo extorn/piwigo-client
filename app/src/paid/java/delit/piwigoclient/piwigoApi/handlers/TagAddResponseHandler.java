@@ -34,19 +34,19 @@ public class TagAddResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         long tagId = result.get("id").getAsLong();
         Tag tag = new Tag(tagId, tagname);
-        PiwigoAddTagResponse r = new PiwigoAddTagResponse(getMessageId(), getPiwigoMethod(), tag);
+        PiwigoAddTagResponse r = new PiwigoAddTagResponse(getMessageId(), getPiwigoMethod(), tag, isCached);
         storeResponse(r);
     }
 
     public static class PiwigoAddTagResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
         private final Tag tag;
 
-        public PiwigoAddTagResponse(long messageId, String piwigoMethod, Tag tag) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoAddTagResponse(long messageId, String piwigoMethod, Tag tag, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.tag = tag;
         }
 

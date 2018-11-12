@@ -13,11 +13,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
@@ -59,7 +57,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
 
         ArrayList<CategoryItem> availableGalleries = null;
@@ -82,7 +80,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
             availableGalleries = new ArrayList<>(0);
         }
 
-        PiwigoGetSubAlbumsResponse r = new PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
+        PiwigoGetSubAlbumsResponse r = new PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), availableGalleries, isCached);
         storeResponse(r);
     }
 
@@ -221,13 +219,17 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
     public static class PiwigoGetSubAlbumsResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
         private final ArrayList<CategoryItem> albums;
 
-        public PiwigoGetSubAlbumsResponse(long messageId, String piwigoMethod, ArrayList<CategoryItem> albums) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoGetSubAlbumsResponse(long messageId, String piwigoMethod, ArrayList<CategoryItem> albums, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.albums = albums;
         }
 
         public ArrayList<CategoryItem> getAlbums() {
             return albums;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

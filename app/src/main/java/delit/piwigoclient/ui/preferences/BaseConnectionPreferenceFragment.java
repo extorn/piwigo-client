@@ -4,9 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.preference.SwitchPreference;
-import androidx.preference.ListPreference;
-import androidx.preference.Preference;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -19,6 +16,9 @@ import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.Set;
 
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.SwitchPreference;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
@@ -42,15 +42,10 @@ import delit.piwigoclient.util.ObjectUtils;
 import delit.piwigoclient.util.SetUtils;
 import delit.piwigoclient.util.X509Utils;
 
-/**
- * Created by gareth on 12/05/17.
- */
-
-public class ConnectionPreferenceFragment extends MyPreferenceFragment {
-
+public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragment {
     private static final String TAG = "Connection Settings";
     private transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
-    private transient Preference.OnPreferenceChangeListener sessionInvalidationPrefListener = new SessionInvalidatingPrefListener();
+    protected transient Preference.OnPreferenceChangeListener sessionInvalidationPrefListener = new SessionInvalidatingPrefListener();
     private transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
     private boolean initialising = false;
     private String preferencesKey;
@@ -79,7 +74,7 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         cacheLevelPrefListener.onPreferenceChange(cacheLevelPref, getPreferenceValue(cacheLevelPref.getKey()));
     }
 
-    private void buildPreferencesViewAndInitialise(String rootKey) {
+    protected void buildPreferencesViewAndInitialise(String rootKey) {
         setPreferencesFromResource(R.xml.pref_page_connection, rootKey);
         setHasOptionsMenu(true);
 
@@ -316,90 +311,6 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private class CacheLevelPreferenceListener implements Preference.OnPreferenceChangeListener {
-        @Override
-        public boolean onPreferenceChange(final Preference preference, Object value) {
-            String currentPersistedValue = getPrefs().getString(preference.getKey(), null);
-            final String newValue = (String) value;
-            boolean valueChanged = (newValue != null && !newValue.equals(currentPersistedValue));
-
-            if ("disk".equals(newValue) || valueChanged) {
-                getUiHelper().runWithExtraPermissions(ConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
-            } else if(valueChanged) {
-                if (!initialising) {
-                    // clear the existing session - it's not valid any more.
-                    logoutSession();
-                }
-            }
-
-            Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
-            responseCacheFlushButton.setEnabled("disk".equals(newValue));
-
-            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entries_key)).setEnabled(!"disabled".equals(newValue));
-            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entry_size_key)).setEnabled(!"disabled".equals(newValue));
-
-            return true;
-        }
-    }
-
-    private class SessionInvalidatingPrefListener implements Preference.OnPreferenceChangeListener {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-
-            if (!initialising) {
-                // clear the existing session - it's not valid any more.
-                logoutSession();
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    getListView().getAdapter().notifyDataSetChanged();
-                }
-            }
-            return true;
-        }
-    }
-
-    private class ServerNamePreferenceListener implements Preference.OnPreferenceChangeListener {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
-            String stringValue = value.toString();
-            String val = stringValue.toLowerCase();
-            boolean isHttps = val.startsWith("https://");
-            boolean isHttp = val.startsWith("http://");
-
-            if (!initialising) {
-
-                SwitchPreference p = (SwitchPreference) findPreference(R.string.preference_server_connection_force_https_key);
-                if (isHttp) {
-                    p.setEnabled(false);
-                    getPrefs().edit().putBoolean(getString(R.string.preference_server_connection_force_https_key), false).commit();
-                }
-                if (isHttps) {
-                    p.setEnabled(true);
-                }
-
-                if (!(isHttp || isHttps)) {
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
-                } else if (isHttp) {
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
-                } else {
-                    try {
-                        URI uri = URI.create(val);
-                    } catch (IllegalArgumentException e) {
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_invalid_uri_pattern, e.getMessage()));
-                    }
-                }
-
-                // clear the existing session - it's not valid any more.
-                logoutSession();
-                AdsManager.getInstance().updateShowAdvertsSetting(getContext().getApplicationContext());
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    getListView().getAdapter().notifyDataSetChanged();
-                }
-            }
-
-            return true;
-        }
-    }
-
     private static class OnLogoutAction extends UIHelper.Action<ConnectionPreferenceFragment,LogoutResponseHandler.PiwigoOnLogoutResponse> {
         private String loginAsProfileAfterLogout;
         private Boolean loginAgain;
@@ -488,6 +399,90 @@ public class ConnectionPreferenceFragment extends MyPreferenceFragment {
                 }
             }
             return retVal;
+        }
+    }
+
+    private class CacheLevelPreferenceListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(final Preference preference, Object value) {
+            String currentPersistedValue = getPrefs().getString(preference.getKey(), null);
+            final String newValue = (String) value;
+            boolean valueChanged = (newValue != null && !newValue.equals(currentPersistedValue));
+
+            if ("disk".equals(newValue) || valueChanged) {
+                getUiHelper().runWithExtraPermissions(BaseConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
+            } else if(valueChanged) {
+                if (!initialising) {
+                    // clear the existing session - it's not valid any more.
+                    logoutSession();
+                }
+            }
+
+            Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
+            responseCacheFlushButton.setEnabled("disk".equals(newValue));
+
+            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entries_key)).setEnabled(!"disabled".equals(newValue));
+            getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_caching_max_cache_entry_size_key)).setEnabled(!"disabled".equals(newValue));
+
+            return true;
+        }
+    }
+
+    private class SessionInvalidatingPrefListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object value) {
+
+            if (!initialising) {
+                // clear the existing session - it's not valid any more.
+                logoutSession();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    getListView().getAdapter().notifyDataSetChanged();
+                }
+            }
+            return true;
+        }
+    }
+
+    private class ServerNamePreferenceListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object value) {
+            String stringValue = value.toString();
+            String val = stringValue.toLowerCase();
+            boolean isHttps = val.startsWith("https://");
+            boolean isHttp = val.startsWith("http://");
+
+            if (!initialising) {
+
+                SwitchPreference p = (SwitchPreference) findPreference(R.string.preference_server_connection_force_https_key);
+                if (isHttp) {
+                    p.setEnabled(false);
+                    getPrefs().edit().putBoolean(getString(R.string.preference_server_connection_force_https_key), false).commit();
+                }
+                if (isHttps) {
+                    p.setEnabled(true);
+                }
+
+                if (!(isHttp || isHttps)) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
+                } else if (isHttp) {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
+                } else {
+                    try {
+                        URI uri = URI.create(val);
+                    } catch (IllegalArgumentException e) {
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_invalid_uri_pattern, e.getMessage()));
+                    }
+                }
+
+                // clear the existing session - it's not valid any more.
+                logoutSession();
+                AdsManager.getInstance().updateShowAdvertsSetting(getContext().getApplicationContext());
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    getListView().getAdapter().notifyDataSetChanged();
+                }
+            }
+
+            return true;
         }
     }
 

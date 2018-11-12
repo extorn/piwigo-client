@@ -1,5 +1,7 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.util.Log;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -62,7 +64,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
 
         ArrayList<GalleryItem> resources = new ArrayList<>();
 
@@ -89,7 +91,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             }
         }
 
-        PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources);
+        PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources, isCached);
         storeResponse(r);
     }
 
@@ -213,7 +215,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
                 }
                 item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, thumbnail);
-                ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", originalResourceUrl, originalResourceUrlWidth, originalResourceUrlHeight);
+                ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
                 item.addResourceFile(originalImage);
                 item.setFullSizeImage(originalImage);
 
@@ -221,13 +223,13 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
 
                 ResourceItem.ResourceFile originalImage = null;
                 if(originalResourceUrl != null) {
-                    originalImage = new ResourceItem.ResourceFile("original", originalResourceUrl, originalResourceUrlWidth, originalResourceUrlHeight);
+                    originalImage = new ResourceItem.ResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
                 }
 
                 Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
                 thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
 
-                PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateCreated, dateLastAltered, thumbnail);
+                PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateCreated, dateLastAltered, fixUrl(thumbnail));
 
                 while (imageSizeKeys.hasNext()) {
                     String imageSizeKey = imageSizeKeys.next();
@@ -250,7 +252,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                     }
                     int thisImageHeight = jsonElem.getAsInt();
 
-                    ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(imageSizeKey, url, thisImageWidth, thisImageHeight);
+                    ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(imageSizeKey, fixUrl(url), thisImageWidth, thisImageHeight);
                     picItem.addResourceFile(img);
 
                 }
@@ -265,6 +267,17 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
 
             return item;
         }
+
+        private String fixUrl(String url) {
+            String fixedUrl = url;
+            int idx = url.indexOf('&');
+            if(idx > 0 && idx == url.indexOf("&amp;")) {
+                //strip the unwanted extra html escaping
+                fixedUrl = url.replaceAll("&amp;", "&");
+                Crashlytics.log(Log.DEBUG, TAG, "URL Fixed as: " + url);
+            }
+            return fixedUrl;
+        }
     }
 
     public static class PiwigoGetResourcesResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
@@ -273,8 +286,8 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         private final int pageSize;
         private final ArrayList<GalleryItem> resources;
 
-        public PiwigoGetResourcesResponse(long messageId, String piwigoMethod, int page, int pageSize, ArrayList<GalleryItem> resources) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoGetResourcesResponse(long messageId, String piwigoMethod, int page, int pageSize, ArrayList<GalleryItem> resources, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
             this.resources = resources;
@@ -291,5 +304,9 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         public ArrayList<GalleryItem> getResources() {
             return resources;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

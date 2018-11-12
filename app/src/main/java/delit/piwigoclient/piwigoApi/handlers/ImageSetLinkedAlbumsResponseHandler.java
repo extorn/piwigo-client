@@ -46,9 +46,9 @@ public class ImageSetLinkedAlbumsResponseHandler<T extends ResourceItem> extends
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         piwigoResource.setLinkedAlbums(linkedAlbums);
-        BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse r = new BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse(getMessageId(), getPiwigoMethod(), piwigoResource);
+        BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse r = new BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse(getMessageId(), getPiwigoMethod(), piwigoResource, isCached);
         storeResponse(r);
     }
 

@@ -54,8 +54,8 @@ public class ImageDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoDeleteImageResponse r = new PiwigoDeleteImageResponse(getMessageId(), getPiwigoMethod(), itemIds, items);
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        PiwigoDeleteImageResponse r = new PiwigoDeleteImageResponse(getMessageId(), getPiwigoMethod(), itemIds, items, isCached);
         storeResponse(r);
     }
 
@@ -64,8 +64,8 @@ public class ImageDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
         private final HashSet<Long> deletedItemIds;
         private final HashSet<? extends ResourceItem> deletedItems;
 
-        public PiwigoDeleteImageResponse(long messageId, String piwigoMethod, HashSet<Long> itemIds, HashSet<? extends ResourceItem> deletedItems) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoDeleteImageResponse(long messageId, String piwigoMethod, HashSet<Long> itemIds, HashSet<? extends ResourceItem> deletedItems, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.deletedItemIds = itemIds;
             this.deletedItems = deletedItems;
         }

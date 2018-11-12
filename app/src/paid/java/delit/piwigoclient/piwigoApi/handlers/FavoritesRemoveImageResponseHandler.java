@@ -28,15 +28,15 @@ public class FavoritesRemoveImageResponseHandler extends AbstractPiwigoWsRespons
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         piwigoResource.setFavorite(false);
-        PiwigoRemoveFavoriteResponse r = new PiwigoRemoveFavoriteResponse(getMessageId(), getPiwigoMethod(), piwigoResource);
+        PiwigoRemoveFavoriteResponse r = new PiwigoRemoveFavoriteResponse(getMessageId(), getPiwigoMethod(), piwigoResource, isCached);
         storeResponse(r);
     }
 
     public static class PiwigoRemoveFavoriteResponse extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
-        public PiwigoRemoveFavoriteResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource) {
-            super(messageId, piwigoMethod, piwigoResource);
+        public PiwigoRemoveFavoriteResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource, boolean isCached) {
+            super(messageId, piwigoMethod, piwigoResource, isCached);
         }
     }
 

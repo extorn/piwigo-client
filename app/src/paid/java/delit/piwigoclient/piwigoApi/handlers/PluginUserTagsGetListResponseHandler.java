@@ -36,12 +36,12 @@ public class PluginUserTagsGetListResponseHandler extends AbstractPiwigoWsRespon
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         boolean validResponse = rsp.isJsonArray();
         if(validResponse) {
             JsonArray tagsObj = rsp.getAsJsonArray();
             HashSet<Tag> tags = parseTagsFromJson(tagsObj);
-            PiwigoUserTagsPluginGetTagsListRetrievedResponse r = new PiwigoUserTagsPluginGetTagsListRetrievedResponse(getMessageId(), getPiwigoMethod(), 0, tags.size(), tags.size(), tags);
+            PiwigoUserTagsPluginGetTagsListRetrievedResponse r = new PiwigoUserTagsPluginGetTagsListRetrievedResponse(getMessageId(), getPiwigoMethod(), 0, tags.size(), tags.size(), tags, isCached);
             storeResponse(r);
         } else {
             throw new RuntimeException("Unexpected response from user tags plugin");
@@ -69,9 +69,12 @@ public class PluginUserTagsGetListResponseHandler extends AbstractPiwigoWsRespon
 
     public static class PiwigoUserTagsPluginGetTagsListRetrievedResponse extends TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse {
 
-        public PiwigoUserTagsPluginGetTagsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Tag> tags) {
-            super(messageId, piwigoMethod, page, pageSize, itemsOnPage, tags);
+        public PiwigoUserTagsPluginGetTagsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Tag> tags, boolean isCached) {
+            super(messageId, piwigoMethod, page, pageSize, itemsOnPage, tags, isCached);
         }
     }
 
+    public boolean isUseHttpGet() {
+        return true;
+    }
 }

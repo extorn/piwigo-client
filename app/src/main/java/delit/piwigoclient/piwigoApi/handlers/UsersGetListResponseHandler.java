@@ -94,7 +94,7 @@ public class UsersGetListResponseHandler extends AbstractPiwigoWsResponseHandler
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonObject pagingObj = result.get("paging").getAsJsonObject();
         int page = pagingObj.get("page").getAsInt();
@@ -102,7 +102,7 @@ public class UsersGetListResponseHandler extends AbstractPiwigoWsResponseHandler
         int itemsOnPage = pagingObj.get("count").getAsInt();
         JsonArray usersObj = result.get("users").getAsJsonArray();
         ArrayList<User> users = parseUsersFromJson(usersObj);
-        PiwigoGetUsersListResponse r = new PiwigoGetUsersListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
+        PiwigoGetUsersListResponse r = new PiwigoGetUsersListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users, isCached);
         storeResponse(r);
     }
 
@@ -112,8 +112,8 @@ public class UsersGetListResponseHandler extends AbstractPiwigoWsResponseHandler
         private final int pageSize;
         private final int page;
 
-        public PiwigoGetUsersListResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<User> users) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoGetUsersListResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<User> users, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
             this.itemsOnPage = itemsOnPage;
@@ -135,5 +135,9 @@ public class UsersGetListResponseHandler extends AbstractPiwigoWsResponseHandler
         public ArrayList<User> getUsers() {
             return users;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

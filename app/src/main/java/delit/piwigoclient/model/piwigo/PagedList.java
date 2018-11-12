@@ -2,6 +2,9 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +24,7 @@ import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 public abstract class PagedList<T extends Parcelable> implements IdentifiableItemStore<T>, Parcelable {
 
+    private static final String TAG = "PagedList";
     public static int MISSING_ITEMS_PAGE = -1;
     private final String itemType;
     private final SortedSet<Integer> pagesLoaded = new TreeSet<>();
@@ -153,13 +157,18 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     public int addItemPage(int page, int pageSize, Collection<T> newItems) {
 
         int firstInsertPos = 0;
-        if (newItems.size() > 0) {
-            firstInsertPos = Math.min(Math.max(0, getPageInsertPosition(page, pageSize)), items.size());
-            items.addAll(firstInsertPos, newItems);
-        }
-        pagesLoaded.add(page);
-        if (newItems.size() < pageSize) {
-            fullyLoaded = true;
+        try {
+            if (newItems.size() > 0) {
+                firstInsertPos = Math.min(Math.max(0, getPageInsertPosition(page, pageSize)), items.size());
+                items.addAll(firstInsertPos, newItems);
+            }
+            pagesLoaded.add(page);
+            if (newItems.size() < pageSize) {
+                fullyLoaded = true;
+            }
+        } catch(IllegalStateException e) {
+            // page already loaded (can occur after resume...)
+            Crashlytics.log(Log.DEBUG, TAG, "ignoring page already loaded");
         }
         return firstInsertPos;
     }

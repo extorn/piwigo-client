@@ -34,19 +34,19 @@ public class PiwigoClientFailedUploadsCleanResponseHandler extends AbstractPiwig
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonElement elem = result.get("filesRemoved");
         int filesCleaned = elem.getAsInt();
-        PiwigoFailedUploadsCleanedResponse r = new PiwigoFailedUploadsCleanedResponse(getMessageId(), getPiwigoMethod(), filesCleaned);
+        PiwigoFailedUploadsCleanedResponse r = new PiwigoFailedUploadsCleanedResponse(getMessageId(), getPiwigoMethod(), filesCleaned, isCached);
         storeResponse(r);
     }
 
     public static class PiwigoFailedUploadsCleanedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
         private final int filesCleaned;
 
-        public PiwigoFailedUploadsCleanedResponse(long messageId, String piwigoMethod, int filesCleaned) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoFailedUploadsCleanedResponse(long messageId, String piwigoMethod, int filesCleaned, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.filesCleaned = filesCleaned;
         }
 

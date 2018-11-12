@@ -19,32 +19,31 @@
 
     <string name="preference_server_connection_max_redirects_title">Max redirections serveur</string>
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>
-    <integer name="preference_server_connection_max_redirects_default">5</integer>
 
 
     <string name="preference_server_connection_force_https_title">Réécriture d\'URL Http en Https</string>
     <string name="preference_server_connection_force_https_summary">Toutes les urls http:// réécrites sur https:// pour le serveur https</string>
-    <bool name="preference_server_connection_force_https_default">false</bool>
 
+    <string name="preference_server_connection_offline_mode_title">Autoriser la navigation hors ligne</string>
+    <string name="preference_server_connection_offline_mode_summary">Utiliser les données en cache lorsqu\'elles sont disponibles</string>
 
     <string name="preference_server_connection_allow_redirects_title">Autoriser les redirections du serveur</string>
     <string name="preference_server_connection_allow_redirects_summary">Suivre les réponses http 3xx</string>
-    <bool name="preference_server_connection_allow_redirects_default">true</bool>
 
 
     <string name="preference_server_connection_timeout_secs_title">Délai d\'attente de la connexion (secondes)</string>
     <string name="preference_server_connection_timeout_secs_summary">%1$d secondes</string>
-    <integer name="preference_server_connection_timeout_secs_default">10</integer>
 
 
     <string name="preference_server_response_timeout_secs_title">Temps de réponse (secondes)</string>
     <string name="preference_server_response_timeout_secs_summary">%1$d secondes</string>
-    <integer name="preference_server_response_timeout_secs_default">10</integer>
 
+
+    <string name="preference_server_alter_cache_directives_title">Modifier les directives de cache Http du serveur</string>
+    <string name="preference_server_alter_cache_directives_summary">Activer pour permettre l\'accès hors ligne à la galerie</string>
 
     <string name="preference_server_connection_retries_title">Réessai de connexion avant défaillance</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
-    <integer name="preference_server_connection_retries_default">3</integer>
 
 
     <string name="preference_server_basic_auth_username_title">Nom d\'utilisateur d\'authentification de base</string>
@@ -55,10 +54,8 @@
 
     <string name="preference_server_use_basic_auth_title">Utiliser l\'authentification de base</string>
     <string name="preference_server_use_basic_auth_summary">Activer si le serveur nécessite une authentification de base</string>
-    <bool name="preference_server_use_basic_auth_default">false</bool>
 
 
-    <bool name="preference_server_use_client_certs_default">false</bool>
     <string name="preference_server_use_client_certs_title">Utiliser l\'authentification par certificat client</string>
     <string name="preference_server_use_client_certs_summary">Activer si le serveur nécessite une authentification client basée sur un certificat.</string>
 
@@ -104,18 +101,15 @@
 
     <string name="preference_caching_max_cache_entries_title">Nombre maximum d\'entrées dans le cacheList</string>
     <string name="preference_caching_max_cache_entries_summary">%1$d</string>
-    <integer name="preference_caching_max_cache_entries_default">1000</integer>
 
 
     <string name="preference_caching_max_cache_entry_size_title">Max Cache Taille d\'entrée (Ko)</string>
     <string name="preference_caching_max_cache_entry_size_summary">%1$d KB</string>
-    <integer name="preference_caching_max_cache_entry_size_default">1024</integer>
 
     <string name="preference_connections_category_trusted_server_ca">CA de certificats de serveur de confiance</string>
     <string name="preference_server_use_custom_trusted_ca_certs_summary">Utilisez une liste personnalisée de certificats d\'autorité de certification approuvés pour valider les certificats SSL du serveur.</string>
     <string name="preference_server_use_custom_trusted_ca_certs_title">Utiliser des autorités de certification de confiance personnalisées</string>
 
-    <bool name="preference_server_use_custom_trusted_ca_certs_default">false</bool>
 
 
     <string name="preference_select_trusted_certificate_title">Sélectionner les certificats d\'autorité de certification approuvés</string>
@@ -168,7 +162,6 @@
 
     <string name="preference_gallery_enable_video_playback_title">Autoriser la lecture vidéo</string>
     <string name="preference_gallery_enable_video_playback_summary">Activer si vous voulez télécharger et lire des vidéos à la demande</string>
-    <bool name="preference_gallery_enable_video_playback_default">true</bool>
 
 
     <string name="preference_piwigo_playable_media_extensions_title">Extensions multimédia prises en charge (liste CSV)</string>
@@ -178,12 +171,10 @@
 
     <string name="preference_video_cache_enabled_title">Mise en cache des vidéos visionnées dans un fichier</string>
     <string name="preference_video_cache_enabled_summary">Lorsqu\'elle est activée, toutes les vidéos en streaming seront mises en cache pour une lecture ultérieure.</string>
-    <bool name="preference_video_cache_enabled_default">true</bool>
 
 
     <string name="preference_video_cache_maxsize_mb_title">Taille maximale du cache vidéo (Mo)</string>
     <string name="preference_video_cache_maxsize_mb_summary">%1$d MB</string>
-    <integer name="preference_video_cache_maxsize_mb_default">512</integer>
 
 
     <string name="preference_gallery_sortOrder_title">Ordre de tri de l\'album</string>
@@ -208,23 +199,18 @@
 
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Nombre maximum d\'articles récents (jours)</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d jours</string>
-    <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
-    <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
 
 
     <string name="preference_groups_request_pagesize_title">Groupes de la taille d\'une page de demande de serveur</string>
     <string name="preference_groups_request_pagesize_summary">%1$d articles</string>
-    <integer name="preference_groups_request_pagesize_default">20</integer>
 
 
     <string name="preference_users_request_pagesize_title">Taille de la page de requête du serveur des utilisateurs</string>
     <string name="preference_users_request_pagesize_summary">%1$d articles</string>
-    <integer name="preference_users_request_pagesize_default">20</integer>
 
 
     <string name="preference_album_request_pagesize_title">Taille de la page de requête du serveur d\'album</string>
     <string name="preference_album_request_pagesize_summary">%1$d articles</string>
-    <integer name="preference_album_request_pagesize_default">20</integer>
 
     <string name="preference_gallery_item_thumbnail_size_title">Taille de la vignette de la ressource</string>
 
@@ -253,12 +239,10 @@
 
     <string name="preference_data_upload_chunkSizeKb_title">Max Upload Taille des morceaux (KB)</string>
     <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>
-    <integer name="preference_data_upload_chunkSizeKb_default">512</integer>
 
 
     <string name="preference_data_upload_chunk_auto_retries_title">Nombre maximum de tentatives d\'envoi automatique de morceaux de fichiers par téléchargement automatique</string>
     <string name="preference_data_upload_chunk_auto_retries_summary">%1$d</string>
-    <integer name="preference_data_upload_chunk_auto_retries_default">1</integer>
 
 
     <string name="preference_data_upload_preferredColumnsPortrait_title">Portrait : Colonnes d\'images à afficher</string>
@@ -271,7 +255,6 @@
 
     <string name="preference_data_upload_max_filesize_mb_title">Max Filesize à télécharger sans avertissement (en MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
-    <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
 
     <!-- other page -->
 
@@ -280,7 +263,6 @@
 
     <!-- prefs -->
 
-    <bool name="preference_data_file_selector_showFilenames_default">true</bool>
     <string name="preference_data_file_selector_showFilenames_key">preference_data_file_selector_show_show_Filenames</string>
     <string name="preference_data_file_selector_showFilenames_title">Afficher les noms de fichiers</string>
     <string name="preference_data_file_selector_showFilenames_summary">Noms de fichiers affichés pour chaque fichier</string>

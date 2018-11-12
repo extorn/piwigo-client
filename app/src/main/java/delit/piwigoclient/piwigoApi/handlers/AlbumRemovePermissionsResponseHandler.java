@@ -30,8 +30,8 @@ public class AlbumRemovePermissionsResponseHandler extends AlbumAlterPermissions
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoRemoveAlbumPermissionsResponse r = new PiwigoRemoveAlbumPermissionsResponse(getMessageId(), getPiwigoMethod(), getNewAllowedGroups(), getNewAllowedUsers());
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        PiwigoRemoveAlbumPermissionsResponse r = new PiwigoRemoveAlbumPermissionsResponse(getMessageId(), getPiwigoMethod(), getNewAllowedGroups(), getNewAllowedUsers(), isCached);
         storeResponse(r);
     }
 
@@ -39,8 +39,8 @@ public class AlbumRemovePermissionsResponseHandler extends AlbumAlterPermissions
         private final HashSet<Long> groupIdsAffected;
         private final HashSet<Long> userIdsAffected;
 
-        public PiwigoRemoveAlbumPermissionsResponse(long messageId, String piwigoMethod, HashSet<Long> groupIdsAffected, HashSet<Long> userIdsAffected) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoRemoveAlbumPermissionsResponse(long messageId, String piwigoMethod, HashSet<Long> groupIdsAffected, HashSet<Long> userIdsAffected, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.groupIdsAffected = groupIdsAffected;
             this.userIdsAffected = userIdsAffected;
         }

@@ -3,6 +3,7 @@ package delit.piwigoclient.piwigoApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -32,7 +33,6 @@ import cz.msebera.android.httpclient.conn.ssl.TrustStrategy;
 import cz.msebera.android.httpclient.conn.ssl.X509HostnameVerifier;
 import cz.msebera.android.httpclient.util.TextUtils;
 import delit.piwigoclient.BuildConfig;
-import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
@@ -217,9 +217,11 @@ public class HttpClientFactory {
         int maxRedirects = connectionPrefs.getMaxHttpRedirects(prefs, context);
         client.setEnableRedirects(allowRedirects, maxRedirects);
         client.setCookieStore(getCookieStore(connectionPrefs, context));
+        client.setIgnoreServerCacheDirectives(connectionPrefs.isIgnoreServerCacheDirectives(prefs, context));
+        client.setUserAgent("PiwigoClient_"+ BuildConfig.VERSION_NAME);
 
         if (!forceDisableCache) {
-            String cacheLevel = prefs.getString(context.getString(R.string.preference_caching_level_key), context.getResources().getString(R.string.preference_caching_level_default));
+            String cacheLevel = ConnectionPreferences.getCacheLevel(prefs, context);
             if (cacheLevel.equals("disabled")) {
                 client.setCacheSettings(null, 0, 0);
             } else {
@@ -227,14 +229,14 @@ public class HttpClientFactory {
                 if (cacheLevel.equals("disk")) {
                     cacheFolder = CacheUtils.getBasicCacheFolder(context);
                 }
-                int maxCacheEntries = prefs.getInt(context.getString(R.string.preference_caching_max_cache_entries_key), context.getResources().getInteger(R.integer.preference_caching_max_cache_entries_default));
-                int maxCacheEntrySize = prefs.getInt(context.getString(R.string.preference_caching_max_cache_entry_size_key), context.getResources().getInteger(R.integer.preference_caching_max_cache_entry_size_default));
+                int maxCacheEntries = ConnectionPreferences.getMaxCacheEntries(prefs, context);
+
+                int maxCacheEntrySize = ConnectionPreferences.getMaxCacheEntrySizeBytes(prefs, context);
                 client.setCacheSettings(cacheFolder, maxCacheEntries, maxCacheEntrySize);
             }
         } else {
             client.setCacheSettings(null, 0, 0);
         }
-
 
         configureBasicServerAuthentication(connectionPrefs, context, client);
 

@@ -48,7 +48,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
 
         ArrayList<GalleryItem> resources = new ArrayList<>();
 
@@ -66,7 +66,11 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
             }
         }
 
-        BaseImagesGetResponseHandler.PiwigoGetResourcesResponse r = new BaseImagesGetResponseHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources);
+        BaseImagesGetResponseHandler.PiwigoGetResourcesResponse r = new BaseImagesGetResponseHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources, isCached);
         storeResponse(r);
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

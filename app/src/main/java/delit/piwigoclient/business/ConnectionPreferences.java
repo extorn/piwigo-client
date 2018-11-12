@@ -56,6 +56,19 @@ public class ConnectionPreferences {
         return new ProfilePreferences(profile);
     }
 
+    public static int getMaxCacheEntrySizeBytes(SharedPreferences prefs, Context context) {
+        int defaultValueKb = context.getResources().getInteger(R.integer.preference_caching_max_cache_entry_size_default);
+        return prefs.getInt(context.getString(R.string.preference_caching_max_cache_entry_size_key), defaultValueKb * 1024);
+    }
+
+    public static int getMaxCacheEntries(SharedPreferences prefs, Context context) {
+        return prefs.getInt(context.getString(R.string.preference_caching_max_cache_entries_key), context.getResources().getInteger(R.integer.preference_caching_max_cache_entries_default));
+    }
+
+    public static String getCacheLevel(SharedPreferences prefs, Context context) {
+        return prefs.getString(context.getString(R.string.preference_caching_level_key), context.getResources().getString(R.string.preference_caching_level_default));
+    }
+
     public static class ProfilePreferences implements Serializable, Comparable<ProfilePreferences> {
 
         private static final long serialVersionUID = -839430660180276975L;
@@ -211,6 +224,11 @@ public class ConnectionPreferences {
             return prefs.getBoolean(getKey(context, R.string.preference_server_connection_force_https_key), forceHttpsUris);
         }
 
+        public boolean isOfflineMode(SharedPreferences prefs, Context context) {
+            boolean defaultOfflineMode = context.getResources().getBoolean(R.bool.preference_server_connection_offline_mode_default);
+            return prefs.getBoolean(getKey(context, R.string.preference_server_connection_offline_mode_key), defaultOfflineMode);
+        }
+
         public void setForceHttps(SharedPreferences prefs, Context context, boolean newValue) {
             SharedPreferences.Editor editor = prefs.edit();
             writeBooleanPref(editor, context.getString(R.string.preference_server_connection_force_https_key), newValue);
@@ -243,6 +261,11 @@ public class ConnectionPreferences {
             return prefs.getInt(getKey(context, R.string.preference_server_response_timeout_secs_key), defaultConnectTimeoutMillis);
         }
 
+        public boolean isIgnoreServerCacheDirectives(SharedPreferences prefs, Context context) {
+            boolean defaultIgnoreCacheDirectives = context.getResources().getBoolean(R.bool.preference_server_alter_cache_directives_default);
+            return prefs.getBoolean(getKey(context, R.string.preference_server_alter_cache_directives_key), defaultIgnoreCacheDirectives);
+        }
+
         public void copyFrom(SharedPreferences prefs, Context context, ProfilePreferences fromPrefs) {
 
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(context);
@@ -261,6 +284,7 @@ public class ConnectionPreferences {
             writeIntPref(editor, getKey(context, R.string.preference_server_connection_max_redirects_key), fromPrefs.getMaxHttpRedirects(prefs, context));
             writeBooleanPref(editor, getKey(context, R.string.preference_server_connection_allow_redirects_key), fromPrefs.getFollowHttpRedirects(prefs, context));
             writeStringPref(editor, getKey(context, R.string.preference_server_ssl_certificate_hostname_verification_key), fromPrefs.getCertificateHostnameVerificationLevel(prefs, context));
+            writeBooleanPref(editor, getKey(context, R.string.preference_server_alter_cache_directives_key), fromPrefs.isIgnoreServerCacheDirectives(prefs, context));
 
             // received server certs list
             writeStringSetPref(editor, getKey(context, R.string.preference_pre_user_notified_certificates_key), fromPrefs.getUserPreNotifiedCerts(prefs, context));

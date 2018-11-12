@@ -139,6 +139,7 @@ public class CachingAsyncHttpClient implements Closeable {
     private RetryHandler retryHandler;
     private int maxConcurrentConnections = DEFAULT_MAX_CONNECTIONS;
     private int maxRedirects;
+    private boolean ignoreServerCacheDirectives;
 
     /**
      * Creates a new CachingAsyncHttpClient.
@@ -156,6 +157,10 @@ public class CachingAsyncHttpClient implements Closeable {
         if (cls != null) {
             RetryHandler.addClassToWhitelist(cls);
         }
+    }
+
+    public void setIgnoreServerCacheDirectives(boolean ignoreServerCacheDirectives) {
+        this.ignoreServerCacheDirectives = ignoreServerCacheDirectives;
     }
 
     public static void blockRetryExceptionClass(Class<?> cls) {
@@ -377,7 +382,7 @@ public class CachingAsyncHttpClient implements Closeable {
 
         final HttpClientConnectionManager cm = createConnectionManager();
         Utils.asserts(cm != null, "Custom implementation of HttpClientConnectionManager returned null");
-        CloseableHttpClient cachingClient = CachingHttpClients.custom()
+        CloseableHttpClient cachingClient = new MyCachingHttpClientBuilder(ignoreServerCacheDirectives)
                 .setCacheConfig(cacheConfig)
                 .setCacheDir(cacheFolder)
 //TODO custom cache control - offline access etc                .setHttpCacheInvalidator()
@@ -411,6 +416,7 @@ public class CachingAsyncHttpClient implements Closeable {
                         }
                     }
                 })
+                //NOTE: this occurs after the decision is made to cache or not!
                 // This seems to double unzip the response.
                 /*.addInterceptorFirst(new HttpResponseInterceptor() {
                     @Override

@@ -40,4 +40,8 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseIma
             return resourceItem;
         }
     }
+
+    public boolean isUseHttpGet() {
+        return true;
+    }
 }

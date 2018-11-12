@@ -34,7 +34,7 @@ public class FavoritesGetListResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
 
         ArrayList<Long> items = new ArrayList<>();
         JsonObject result = rsp.getAsJsonObject();
@@ -49,7 +49,7 @@ public class FavoritesGetListResponseHandler extends AbstractPiwigoWsResponseHan
             }
         }
 
-        PiwigoFavoriteListResponse r = new PiwigoFavoriteListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, items);
+        PiwigoFavoriteListResponse r = new PiwigoFavoriteListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, items, isCached);
         storeResponse(r);
     }
 
@@ -58,8 +58,8 @@ public class FavoritesGetListResponseHandler extends AbstractPiwigoWsResponseHan
         private final int pageSize;
         private final int page;
 
-        public PiwigoFavoriteListResponse(long messageId, String piwigoMethod, int page, int pageSize, ArrayList<Long> imageIds) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoFavoriteListResponse(long messageId, String piwigoMethod, int page, int pageSize, ArrayList<Long> imageIds, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
             this.imageIds = imageIds;
@@ -76,5 +76,9 @@ public class FavoritesGetListResponseHandler extends AbstractPiwigoWsResponseHan
         public ArrayList<Long> getImageIds() {
             return imageIds;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

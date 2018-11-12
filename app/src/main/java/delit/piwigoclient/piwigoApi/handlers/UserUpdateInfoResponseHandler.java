@@ -55,19 +55,19 @@ public class UserUpdateInfoResponseHandler<T extends ResourceItem> extends Abstr
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         if (user.getGroups() == null) {
             user.setGroups(new HashSet<Long>(0));
         }
-        PiwigoUpdateUserInfoResponse r = new PiwigoUpdateUserInfoResponse(getMessageId(), getPiwigoMethod(), user);
+        PiwigoUpdateUserInfoResponse r = new PiwigoUpdateUserInfoResponse(getMessageId(), getPiwigoMethod(), user, isCached);
         storeResponse(r);
     }
 
     public static class PiwigoUpdateUserInfoResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
         private final User user;
 
-        public PiwigoUpdateUserInfoResponse(long messageId, String piwigoMethod, User user) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoUpdateUserInfoResponse(long messageId, String piwigoMethod, User user, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.user = user;
         }
 

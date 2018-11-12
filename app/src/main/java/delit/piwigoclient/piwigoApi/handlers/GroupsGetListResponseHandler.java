@@ -16,7 +16,6 @@ import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 import delit.piwigoclient.util.ArrayUtils;
-import delit.piwigoclient.util.SetUtils;
 
 public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -78,7 +77,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonObject pagingObj = result.get("paging").getAsJsonObject();
         int page = pagingObj.get("page").getAsInt();
@@ -89,7 +88,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         if (this.page == PagedList.MISSING_ITEMS_PAGE) {
             page = this.page;
         }
-        PiwigoGetGroupsListRetrievedResponse r = new PiwigoGetGroupsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, groups);
+        PiwigoGetGroupsListRetrievedResponse r = new PiwigoGetGroupsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, groups, isCached);
         storeResponse(r);
     }
 
@@ -99,8 +98,8 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         private final int pageSize;
         private final int page;
 
-        public PiwigoGetGroupsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Group> groups) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoGetGroupsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Group> groups, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
             this.itemsOnPage = itemsOnPage;
@@ -122,5 +121,9 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         public HashSet<Group> getGroups() {
             return groups;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

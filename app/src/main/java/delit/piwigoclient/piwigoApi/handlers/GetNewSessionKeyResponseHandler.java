@@ -40,14 +40,14 @@ public class GetNewSessionKeyResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoNewSessionKeyResponse r = new PiwigoNewSessionKeyResponse(getMessageId(), getPiwigoMethod());
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        PiwigoNewSessionKeyResponse r = new PiwigoNewSessionKeyResponse(getMessageId(), getPiwigoMethod(), isCached);
         storeResponse(r);
     }
 
     public static class PiwigoNewSessionKeyResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
-        public PiwigoNewSessionKeyResponse(long messageId, String piwigoMethod) {
-            super(messageId, piwigoMethod);
+        public PiwigoNewSessionKeyResponse(long messageId, String piwigoMethod, boolean isCached) {
+            super(messageId, piwigoMethod, isCached);
         }
     }
 }

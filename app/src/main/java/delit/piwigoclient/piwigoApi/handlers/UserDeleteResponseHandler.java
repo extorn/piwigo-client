@@ -35,14 +35,14 @@ public class UserDeleteResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoDeleteUserResponse r = new PiwigoDeleteUserResponse(getMessageId(), getPiwigoMethod());
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        PiwigoDeleteUserResponse r = new PiwigoDeleteUserResponse(getMessageId(), getPiwigoMethod(), isCached);
         storeResponse(r);
     }
 
     public static class PiwigoDeleteUserResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
-        public PiwigoDeleteUserResponse(long messageId, String piwigoMethod) {
-            super(messageId, piwigoMethod);
+        public PiwigoDeleteUserResponse(long messageId, String piwigoMethod, boolean isCached) {
+            super(messageId, piwigoMethod, isCached);
         }
     }
 }

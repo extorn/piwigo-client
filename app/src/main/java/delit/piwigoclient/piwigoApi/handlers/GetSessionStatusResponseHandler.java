@@ -32,12 +32,12 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         PiwigoSessionDetails oldCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         PiwigoSessionDetails newCredentials = parseSessionDetails(rsp);
         PiwigoSessionDetails.setInstance(getConnectionPrefs(), newCredentials);
 
-        PiwigoSessionStatusRetrievedResponse r = new PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials, newCredentials);
+        PiwigoSessionStatusRetrievedResponse r = new PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials, newCredentials, isCached);
         storeResponse(r);
     }
 
@@ -92,8 +92,8 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
 
         private final PiwigoSessionDetails oldCredentials, newCredentials;
 
-        public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod, PiwigoSessionDetails oldCredentials, PiwigoSessionDetails newCredentials) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoSessionStatusRetrievedResponse(long messageId, String piwigoMethod, PiwigoSessionDetails oldCredentials, PiwigoSessionDetails newCredentials, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.oldCredentials = oldCredentials;
             this.newCredentials = newCredentials;
         }
@@ -105,5 +105,9 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         public PiwigoSessionDetails getNewCredentials() {
             return newCredentials;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

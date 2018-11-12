@@ -48,7 +48,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         ArrayList<CategoryItemStub> availableGalleries = null;
 
@@ -67,7 +67,7 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
                 parseCategories(categories, availableGalleries);
             }
         }
-        PiwigoGetSubAlbumNamesResponse r = new PiwigoGetSubAlbumNamesResponse(getMessageId(), getPiwigoMethod(), availableGalleries);
+        PiwigoGetSubAlbumNamesResponse r = new PiwigoGetSubAlbumNamesResponse(getMessageId(), getPiwigoMethod(), availableGalleries, isCached);
         storeResponse(r);
     }
 
@@ -121,13 +121,17 @@ public class AlbumGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsRespon
     public static class PiwigoGetSubAlbumNamesResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
         private final ArrayList<CategoryItemStub> albumNames;
 
-        public PiwigoGetSubAlbumNamesResponse(long messageId, String piwigoMethod, ArrayList<CategoryItemStub> albumNames) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoGetSubAlbumNamesResponse(long messageId, String piwigoMethod, ArrayList<CategoryItemStub> albumNames, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.albumNames = albumNames;
         }
 
         public ArrayList<CategoryItemStub> getAlbumNames() {
             return albumNames;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

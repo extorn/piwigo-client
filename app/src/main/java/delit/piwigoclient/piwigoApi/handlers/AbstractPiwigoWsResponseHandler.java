@@ -21,6 +21,8 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.client.cache.HeaderConstants;
+import cz.msebera.android.httpclient.message.BasicHeader;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
@@ -174,6 +176,9 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             EventBus.getDefault().post(new PiwigoMethodNowUnavailableUsingFallback(failedOriginalMethod, getPiwigoMethod()));
             failedOriginalMethod = null;
         }
+        boolean isCached = isResponseCached(headers);
+
+
         String response = null;
         try {
             int jsonStartsAt = 0;
@@ -192,7 +197,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 jsonBis.skip(jsonStartsAt - 1);
             }
             PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(jsonBis), PiwigoJsonResponse.class);
-            processJsonResponse(getMessageId(), getPiwigoMethod(), piwigoResponse, responseBody);
+            processJsonResponse(getMessageId(), getPiwigoMethod(), piwigoResponse, responseBody, isCached);
 
         } catch (JsonSyntaxException e) {
             String responseBodyStr = new String(responseBody);
@@ -202,7 +207,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
             boolean handled = handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
             if (!handled) {
-                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
+                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), isCached);
                 r.setResponse(responseBodyStr);
                 storeResponse(r);
             }
@@ -210,7 +215,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             String responseBodyStr = new String(responseBody);
             Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
             Crashlytics.logException(e);
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage());
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), isCached);
             r.setResponse(responseBodyStr);
             storeResponse(r);
         }
@@ -235,15 +240,15 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         return false;
     }
 
-    private void processJsonResponse(long messageId, String piwigoMethod, PiwigoJsonResponse jsonResponse, byte[] rawData) {
+    private void processJsonResponse(long messageId, String piwigoMethod, PiwigoJsonResponse jsonResponse, byte[] rawData, boolean isCached) {
         try {
             if(jsonResponse != null && jsonResponse.getStat() != null) {
                 switch (jsonResponse.getStat()) {
                     case "fail":
-                        onPiwigoFailure(jsonResponse);
+                        onPiwigoFailure(jsonResponse, isCached);
                         break;
                     case "ok":
-                        onPiwigoSuccess(jsonResponse.getResult());
+                        onPiwigoSuccess(jsonResponse.getResult(), isCached);
                         break;
                     default:
                         throw new JSONException("Unexpected piwigo response code");
@@ -251,21 +256,21 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             } else {
                 Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
                 String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
-                PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
+                PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr, isCached);
                 storeResponse(r);
             }
         } catch (JSONException|JsonIOException|NullPointerException|NumberFormatException e) {
             Crashlytics.log(Log.ERROR, getTag(), piwigoMethod + " onReceiveResult: \n" + getRequestParameters() + '\n');
             Crashlytics.logException(e);
             String rawResponseStr = new String(rawData, Charset.forName("UTF-8"));
-            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr);
+            PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_UNKNOWN, rawResponseStr, isCached);
             storeResponse(r);
         }
     }
 
-    protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
+    protected void onPiwigoFailure(PiwigoJsonResponse rsp, boolean isCached) throws JSONException {
         setError(new Throwable(rsp.getMessage()));
-        PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, rsp.getErr(), rsp.getMessage());
+        PiwigoResponseBufferingHandler.PiwigoServerErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, rsp.getErr(), rsp.getMessage(), isCached);
         storeResponse(r);
     }
 
@@ -278,14 +283,14 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         super.reportNestedFailure(nestedHandler);
     }
 
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoSuccessResponse r = new PiwigoResponseBufferingHandler.PiwigoSuccessResponse(getMessageId(), getPiwigoMethod(), rsp);
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        PiwigoResponseBufferingHandler.PiwigoSuccessResponse r = new PiwigoResponseBufferingHandler.PiwigoSuccessResponse(getMessageId(), getPiwigoMethod(), rsp, isCached);
         storeResponse(r);
     }
 
     // When the response returned by REST has Http response code other than '200'
     @Override
-    protected boolean onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession) {
+    protected boolean onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession, boolean isCached) {
         if (BuildConfig.DEBUG) {
             String errorBody = "<NONE PRESENT>";
             if (responseBody != null) {
@@ -343,6 +348,11 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
         }
 
+        if(!isCached && isSuccess()) {
+            Log.d(getTag(), "cache revalidation failed");
+            // this is a cache revalidation attempt.. flag that perhaps?
+        }
+
         if(!canRetryCall) {
             String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
             if (getNestedFailureMethod() != null) {
@@ -351,7 +361,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 errorMsg = getPiwigoMethod() + " : " + errorMsg;
             }
             String errorDetail = error != null ? error.getMessage() : "";
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, errorDetail);
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, errorDetail, isCached);
             r.setResponse(responseBody != null ? new String(responseBody) : "");
             storeResponse(r);
         }
@@ -365,6 +375,14 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             Log.d(getTag(), "calling " + getPiwigoWsApiUri() + '&' + getRequestParameters().toString());
             Log.e(getTag(), "Invoking call to server (" + getRequestParameters() + ") thread from thread " + Thread.currentThread().getName());
         }
-        return client.post(getPiwigoWsApiUri(), getRequestParameters(), handler);
+        if(isUseHttpGet()) {
+            return client.get(getContext(), getPiwigoWsApiUri(), buildOfflineAccessHeaders(), getRequestParameters(), handler);
+        } else {
+            return client.post(getContext(), getPiwigoWsApiUri(), getRequestParameters(), handler);
+        }
+    }
+
+    public boolean isUseHttpGet() {
+        return false;
     }
 }

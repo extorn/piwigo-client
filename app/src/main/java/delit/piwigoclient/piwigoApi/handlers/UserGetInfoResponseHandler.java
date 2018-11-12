@@ -115,7 +115,7 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonObject pagingObj = result.get("paging").getAsJsonObject();
         int page = pagingObj.get("page").getAsInt();
@@ -123,7 +123,7 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
         int itemsOnPage = pagingObj.get("count").getAsInt();
         JsonArray usersObj = result.get("users").getAsJsonArray();
         ArrayList<User> users = parseUsersFromJson(usersObj);
-        PiwigoGetUserDetailsResponse r = new PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
+        PiwigoGetUserDetailsResponse r = new PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users, isCached);
         storeResponse(r);
     }
 
@@ -131,13 +131,17 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
 
         private final User selectedUser;
 
-        public PiwigoGetUserDetailsResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<User> users) {
-            super(messageId, piwigoMethod, page, pageSize, itemsOnPage, users);
+        public PiwigoGetUserDetailsResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<User> users, boolean isCached) {
+            super(messageId, piwigoMethod, page, pageSize, itemsOnPage, users, isCached);
             selectedUser = getUsers().remove(0);
         }
 
         public User getSelectedUser() {
             return selectedUser;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

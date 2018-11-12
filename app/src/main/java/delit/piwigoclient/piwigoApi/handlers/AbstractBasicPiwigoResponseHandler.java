@@ -23,6 +23,8 @@ import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpStatus;
+import cz.msebera.android.httpclient.client.cache.HeaderConstants;
+import cz.msebera.android.httpclient.message.BasicHeader;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -143,10 +145,21 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         }
     }
 
+    protected Header[] buildOfflineAccessHeaders() {
+        if(getConnectionPrefs().isOfflineMode(getSharedPrefs(), getContext())) {
+            Header[] headers = new Header[2];
+            headers[0] = new BasicHeader(HeaderConstants.STALE_IF_ERROR, String.valueOf(Long.MAX_VALUE));
+            headers[1] = new BasicHeader(HeaderConstants.STALE_WHILE_REVALIDATE, String.valueOf(Long.MAX_VALUE));
+            return headers;
+        } else {
+            return new Header[0];
+        }
+    }
+
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
     }
 
-    protected boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
+    protected boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
         return false;
     }
 
@@ -235,7 +248,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         }
         if (!tryingAgain) {
             try {
-                tryingAgain = onFailure(statusCode, headers, responseBody, error, triedLoggingInAgain);
+                tryingAgain = onFailure(statusCode, headers, responseBody, error, triedLoggingInAgain, isResponseCached(headers));
             } catch(RuntimeException e) {
                 Crashlytics.logException(e);
                 throw e;
@@ -328,7 +341,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     }
 
     protected void reportNestedFailure(AbstractBasicPiwigoResponseHandler nestedHandler) {
-        onFailure(nestedHandler.statusCode, nestedHandler.headers, nestedHandler.responseBody, nestedHandler.error, triedLoggingInAgain);
+        onFailure(nestedHandler.statusCode, nestedHandler.headers, nestedHandler.responseBody, nestedHandler.error, triedLoggingInAgain, isResponseCached(nestedHandler.headers));
     }
 
     protected void onGetNewSessionSuccess() {
@@ -450,6 +463,19 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         } while (!exit);
 
         return handler.isSuccess();
+    }
+
+    protected boolean isResponseCached(Header[] headers) {
+        boolean isCached = false;
+        if(headers != null) {
+            for (Header h : headers) {
+                if (HeaderConstants.VIA.equals(h.getName())) {
+                    isCached = h.getValue().contains("(cache)");
+                    break;
+                }
+            }
+        }
+        return isCached;
     }
 
     public boolean isCancelCallAsap() {

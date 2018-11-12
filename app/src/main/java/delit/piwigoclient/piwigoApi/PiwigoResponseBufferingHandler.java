@@ -333,8 +333,8 @@ public class PiwigoResponseBufferingHandler {
 
         private final JsonElement response;
 
-        public PiwigoSuccessResponse(long messageId, String piwigoMethod, JsonElement response) {
-            super(messageId, piwigoMethod);
+        public PiwigoSuccessResponse(long messageId, String piwigoMethod, JsonElement response, boolean isCached) {
+            super(messageId, piwigoMethod, isCached);
             this.response = response;
         }
 
@@ -348,8 +348,8 @@ public class PiwigoResponseBufferingHandler {
         private final int piwigoErrorCode;
         private final String piwigoErrorMessage;
 
-        public PiwigoServerErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int piwigoErrorCode, String piwigoErrorMessage) {
-            super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod());
+        public PiwigoServerErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int piwigoErrorCode, String piwigoErrorMessage, boolean isCached) {
+            super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod(), isCached);
             this.requestHandler = requestHandler;
             this.piwigoErrorCode = piwigoErrorCode;
             this.piwigoErrorMessage = piwigoErrorMessage;
@@ -379,8 +379,8 @@ public class PiwigoResponseBufferingHandler {
         private final AbstractPiwigoWsResponseHandler requestHandler;
         private short requestOutcome;
 
-        public PiwigoUnexpectedReplyErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, short requestOutcome, String rawResponse) {
-            super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod());
+        public PiwigoUnexpectedReplyErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, short requestOutcome, String rawResponse, boolean isCached) {
+            super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod(), isCached);
             this.requestHandler = requestHandler;
             if (requestOutcome > OUTCOME_SUCCESS || requestOutcome < OUTCOME_UNKNOWN) {
                 throw new IllegalArgumentException("RequestOutcome must be one of the constant values defined in " + this.getClass().getName());
@@ -419,8 +419,8 @@ public class PiwigoResponseBufferingHandler {
         private final String errorDetail;
         private String response;
 
-        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, String errorDetail) {
-            super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod());
+        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, String errorDetail, boolean isCached) {
+            super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod(), isCached);
             this.requestHandler = requestHandler;
             this.statusCode = statusCode;
             this.errorMessage = errorMessage;
@@ -435,8 +435,8 @@ public class PiwigoResponseBufferingHandler {
             return response;
         }
 
-        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage) {
-            this(requestHandler, statusCode, errorMessage, null);
+        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, boolean isCached) {
+            this(requestHandler, statusCode, errorMessage, null, isCached);
         }
 
         public int getStatusCode() {
@@ -563,28 +563,35 @@ public class PiwigoResponseBufferingHandler {
 
     public static class BasePiwigoResponse extends BaseResponse implements PiwigoResponse {
         private final String piwigoMethod;
+        private final boolean isCached;
 
-        public BasePiwigoResponse(long messageId, String piwigoMethod) {
+        public BasePiwigoResponse(long messageId, String piwigoMethod, boolean isCached) {
             super(messageId);
             this.piwigoMethod = piwigoMethod;
+            this.isCached = isCached;
         }
 
-        public BasePiwigoResponse(long messageId, String piwigoMethod, boolean isEndResponse) {
+        public BasePiwigoResponse(long messageId, String piwigoMethod, boolean isEndResponse, boolean isCached) {
             super(messageId, isEndResponse);
             this.piwigoMethod = piwigoMethod;
+            this.isCached = isCached;
         }
 
         @Override
         public String getPiwigoMethod() {
             return piwigoMethod;
         }
+
+        public boolean isCached() {
+            return isCached;
+        }
     }
 
     public static class PiwigoResourceItemResponse<T extends ResourceItem> extends BasePiwigoResponse {
         private final T piwigoResource;
 
-        public PiwigoResourceItemResponse(long messageId, String piwigoMethod, T piwigoResource) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoResourceItemResponse(long messageId, String piwigoMethod, T piwigoResource, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.piwigoResource = piwigoResource;
         }
 

@@ -68,7 +68,7 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonObject pagingObj = result.get("paging").getAsJsonObject();
         int page = pagingObj.get("page").getAsInt();
@@ -86,7 +86,7 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
         if (this.page == PagedList.MISSING_ITEMS_PAGE) {
             page = this.page;
         }
-        PiwigoGetUsernamesListResponse r = new PiwigoGetUsernamesListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, usernames);
+        PiwigoGetUsernamesListResponse r = new PiwigoGetUsernamesListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, usernames, isCached);
         storeResponse(r);
     }
 
@@ -96,8 +96,8 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
         private final int pageSize;
         private final int page;
 
-        public PiwigoGetUsernamesListResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<Username> usernames) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoGetUsernamesListResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<Username> usernames, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
             this.itemsOnPage = itemsOnPage;
@@ -119,5 +119,9 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
         public ArrayList<Username> getUsernames() {
             return usernames;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

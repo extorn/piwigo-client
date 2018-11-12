@@ -43,7 +43,7 @@ public class GroupGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray cats = result.get("categories").getAsJsonArray();
         HashSet<Long> allowedAlbums = new HashSet<>(cats.size());
@@ -64,7 +64,7 @@ public class GroupGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
             }
         }
 
-        PiwigoGroupPermissionsRetrievedResponse r = new PiwigoGroupPermissionsRetrievedResponse(getMessageId(), getPiwigoMethod(), groupIds, allowedAlbums);
+        PiwigoGroupPermissionsRetrievedResponse r = new PiwigoGroupPermissionsRetrievedResponse(getMessageId(), getPiwigoMethod(), groupIds, allowedAlbums, isCached);
         storeResponse(r);
     }
 
@@ -73,8 +73,8 @@ public class GroupGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
         private final HashSet<Long> allowedAlbums;
         private final HashSet<Long> groupIds;
 
-        public PiwigoGroupPermissionsRetrievedResponse(long messageId, String piwigoMethod, HashSet<Long> groupIds, HashSet<Long> allowedAlbums) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoGroupPermissionsRetrievedResponse(long messageId, String piwigoMethod, HashSet<Long> groupIds, HashSet<Long> allowedAlbums, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.groupIds = groupIds;
             this.allowedAlbums = allowedAlbums;
         }
@@ -93,5 +93,9 @@ public class GroupGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
         public HashSet<Long> getAllowedAlbums() {
             return allowedAlbums;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

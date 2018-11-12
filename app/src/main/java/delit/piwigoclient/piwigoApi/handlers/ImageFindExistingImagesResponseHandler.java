@@ -50,7 +50,7 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
 
         final HashMap<String, Long> preexistingItems = new HashMap<>();
 
@@ -66,7 +66,7 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
                 }
             }
         }
-        PiwigoFindExistingImagesResponse r = new PiwigoFindExistingImagesResponse(getMessageId(), getPiwigoMethod(), preexistingItems);
+        PiwigoFindExistingImagesResponse r = new PiwigoFindExistingImagesResponse(getMessageId(), getPiwigoMethod(), preexistingItems, isCached);
         storeResponse(r);
     }
 
@@ -74,8 +74,8 @@ public class ImageFindExistingImagesResponseHandler extends AbstractPiwigoWsResp
 
         private final HashMap<String, Long> existingImages;
 
-        public PiwigoFindExistingImagesResponse(long messageId, String piwigoMethod, HashMap<String, Long> existingImages) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoFindExistingImagesResponse(long messageId, String piwigoMethod, HashMap<String, Long> existingImages, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.existingImages = existingImages;
         }
 

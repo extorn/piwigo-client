@@ -31,7 +31,7 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         if (sessionDetails == null || !sessionDetails.isLoggedIn()) {
-            onLogout(sessionDetails);
+            onLogout(sessionDetails, false);
             return null;
         } else {
             return super.runCall(client, handler);
@@ -39,21 +39,21 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        onLogout(PiwigoSessionDetails.getInstance(getConnectionPrefs()));
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        onLogout(PiwigoSessionDetails.getInstance(getConnectionPrefs()), isCached);
     }
 
-    private void onLogout(PiwigoSessionDetails sessionDetails) {
+    private void onLogout(PiwigoSessionDetails sessionDetails, boolean isCached) {
         if (sessionDetails != null) {
             PiwigoSessionDetails.logout(getConnectionPrefs(), getContext());
         }
-        PiwigoOnLogoutResponse r = new PiwigoOnLogoutResponse(getMessageId(), getPiwigoMethod());
+        PiwigoOnLogoutResponse r = new PiwigoOnLogoutResponse(getMessageId(), getPiwigoMethod(), isCached);
         storeResponse(r);
     }
 
     public static class PiwigoOnLogoutResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
-        public PiwigoOnLogoutResponse(long messageId, String piwigoMethod) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoOnLogoutResponse(long messageId, String piwigoMethod, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
         }
     }
 }

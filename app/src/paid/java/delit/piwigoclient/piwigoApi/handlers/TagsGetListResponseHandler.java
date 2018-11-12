@@ -43,11 +43,11 @@ public class TagsGetListResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray tagsObj = result.get("tags").getAsJsonArray();
         HashSet<Tag> tags = parseTagsFromJson(tagsObj);
-        PiwigoGetTagsListRetrievedResponse r = new PiwigoGetTagsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, tags.size(), tags.size(), tags);
+        PiwigoGetTagsListRetrievedResponse r = new PiwigoGetTagsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, tags.size(), tags.size(), tags, isCached);
         storeResponse(r);
     }
 
@@ -93,8 +93,8 @@ Crashlytics.logException(e);
         private final int pageSize;
         private final int page;
 
-        public PiwigoGetTagsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Tag> tags) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoGetTagsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Tag> tags, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
             this.itemsOnPage = itemsOnPage;
@@ -116,5 +116,9 @@ Crashlytics.logException(e);
         public HashSet<Tag> getTags() {
             return tags;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

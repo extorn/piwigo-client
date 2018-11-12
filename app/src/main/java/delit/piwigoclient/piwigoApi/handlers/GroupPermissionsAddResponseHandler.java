@@ -46,10 +46,10 @@ public class GroupPermissionsAddResponseHandler extends AbstractPiwigoWsResponse
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
 
-        PiwigoGroupPermissionsAddedResponse r = new PiwigoGroupPermissionsAddedResponse(getMessageId(), getPiwigoMethod(), groupId, newAlbumsAllowedAccessTo);
+        PiwigoGroupPermissionsAddedResponse r = new PiwigoGroupPermissionsAddedResponse(getMessageId(), getPiwigoMethod(), groupId, newAlbumsAllowedAccessTo, isCached);
         storeResponse(r);
     }
 
@@ -57,8 +57,8 @@ public class GroupPermissionsAddResponseHandler extends AbstractPiwigoWsResponse
         private final ArrayList<Long> albumsForWhichPermissionAdded;
         private final long groupId;
 
-        public PiwigoGroupPermissionsAddedResponse(long messageId, String piwigoMethod, long groupId, ArrayList<Long> albumsForWhichPermissionAdded) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoGroupPermissionsAddedResponse(long messageId, String piwigoMethod, long groupId, ArrayList<Long> albumsForWhichPermissionAdded, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.groupId = groupId;
             this.albumsForWhichPermissionAdded = albumsForWhichPermissionAdded;
         }

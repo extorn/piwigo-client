@@ -102,17 +102,17 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
         setError(getNestedFailure());
 
         if(nestedResponse != null) {
-            storeResponse(new PiwigoGetOrphansResponse(getMessageId(), getPiwigoMethod(), 0, resultContainer.size(), resultContainer.size(), resultContainer));
+            storeResponse(new PiwigoGetOrphansResponse(getMessageId(), getPiwigoMethod(), 0, resultContainer.size(), resultContainer.size(), resultContainer, nestedResponse.isCached()));
         }
         // this is needed because we aren't calling the onSuccess method.
         resetFailureAsASuccess();
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
 
         if(rsp == null || rsp.isJsonNull()) {
-            storeResponse(new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, null));
+            storeResponse(new PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse(this, PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse.OUTCOME_FAILED, null, isCached));
             resetSuccessAsFailure();
             return;
         }
@@ -136,7 +136,7 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
             resultContainer.add(id);
         }
 
-        PiwigoGetOrphansResponse r = new PiwigoGetOrphansResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalCount, resultContainer);
+        PiwigoGetOrphansResponse r = new PiwigoGetOrphansResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalCount, resultContainer, isCached);
         storeResponse(r);
     }
 
@@ -147,8 +147,8 @@ public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHa
         private final int totalCount;
         private final ArrayList<Long> resourceIds;
 
-        public PiwigoGetOrphansResponse(long messageId, String piwigoMethod, int page, int pageSize, int totalCount, ArrayList<Long> resourceIds) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoGetOrphansResponse(long messageId, String piwigoMethod, int page, int pageSize, int totalCount, ArrayList<Long> resourceIds, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
             this.totalCount = totalCount;

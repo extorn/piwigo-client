@@ -42,4 +42,8 @@ public class ImagesGetResponseHandler extends BaseImagesGetResponseHandler {
             return item;
         }
     }
+
+    public boolean isUseHttpGet() {
+        return true;
+    }
 }

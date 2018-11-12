@@ -36,16 +36,16 @@ public class AlbumDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoAlbumDeletedResponse r = new PiwigoAlbumDeletedResponse(getMessageId(), getPiwigoMethod(), galleryId);
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        PiwigoAlbumDeletedResponse r = new PiwigoAlbumDeletedResponse(getMessageId(), getPiwigoMethod(), galleryId, isCached);
         storeResponse(r);
     }
 
     public static class PiwigoAlbumDeletedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
         private final long albumId;
 
-        public PiwigoAlbumDeletedResponse(long messageId, String piwigoMethod, long albumId) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoAlbumDeletedResponse(long messageId, String piwigoMethod, long albumId, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.albumId = albumId;
         }
 

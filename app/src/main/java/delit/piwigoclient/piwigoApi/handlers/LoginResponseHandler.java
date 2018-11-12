@@ -54,7 +54,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionPrefs();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        PiwigoOnLoginResponse loginResponse = new PiwigoOnLoginResponse(getMessageId(), "UserLogin");
+        PiwigoOnLoginResponse loginResponse = new PiwigoOnLoginResponse(getMessageId(), "UserLogin", false);
         loginResponse.setOldCredentials(PiwigoSessionDetails.getInstance(connectionPrefs));
 
         boolean canContinue = true;
@@ -167,7 +167,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         throw new UnsupportedOperationException("will never run");
     }
 
@@ -227,8 +227,8 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         private PiwigoSessionDetails oldCredentials;
         private PiwigoSessionDetails sessionDetails;
 
-        public PiwigoOnLoginResponse(long messageId, String piwigoMethod) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoOnLoginResponse(long messageId, String piwigoMethod, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
         }
 
         public PiwigoSessionDetails getOldCredentials() {

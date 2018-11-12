@@ -30,7 +30,7 @@ public class UserGetPermissionsResponseHandler extends AbstractPiwigoWsResponseH
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray cats = result.get("categories").getAsJsonArray();
         HashSet<Long> allowedDirectAlbums = new HashSet<>(cats.size());
@@ -57,7 +57,7 @@ public class UserGetPermissionsResponseHandler extends AbstractPiwigoWsResponseH
                 }
             }
         }
-        PiwigoUserPermissionsResponse r = new PiwigoUserPermissionsResponse(getMessageId(), getPiwigoMethod(), userId, allowedDirectAlbums, allowedIndirectAlbums);
+        PiwigoUserPermissionsResponse r = new PiwigoUserPermissionsResponse(getMessageId(), getPiwigoMethod(), userId, allowedDirectAlbums, allowedIndirectAlbums, isCached);
         storeResponse(r);
     }
 
@@ -66,8 +66,8 @@ public class UserGetPermissionsResponseHandler extends AbstractPiwigoWsResponseH
         private final HashSet<Long> directlyAccessibleAlbumIds;
         private final long userId;
 
-        public PiwigoUserPermissionsResponse(long messageId, String piwigoMethod, long userId, HashSet<Long> directlyAccessibleAlbumIds, HashSet<Long> indirectlyAccessibleAlbumIds) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoUserPermissionsResponse(long messageId, String piwigoMethod, long userId, HashSet<Long> directlyAccessibleAlbumIds, HashSet<Long> indirectlyAccessibleAlbumIds, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
             this.userId = userId;
             this.directlyAccessibleAlbumIds = directlyAccessibleAlbumIds;
             this.indirectlyAccessibleAlbumIds = indirectlyAccessibleAlbumIds;
@@ -84,5 +84,9 @@ public class UserGetPermissionsResponseHandler extends AbstractPiwigoWsResponseH
         public HashSet<Long> getIndirectlyAccessibleAlbumIds() {
             return indirectlyAccessibleAlbumIds;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

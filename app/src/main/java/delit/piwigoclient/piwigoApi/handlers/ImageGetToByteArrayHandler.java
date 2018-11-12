@@ -61,7 +61,7 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
     }
 
     @Override
-    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
+    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
         PiwigoResponseBufferingHandler.UrlErrorResponse r = new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, statusCode, responseBody, HttpUtils.getHttpErrorMessage(statusCode, error), error.getMessage());
         storeResponse(r);
         return triedToGetNewSession;
@@ -72,7 +72,7 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
         if (getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext()) && resourceUrl.toLowerCase().startsWith("http://")) {
             resourceUrl = resourceUrl.replaceFirst("://", "s://");
         }
-        return client.get(resourceUrl, handler);
+        return client.get(getContext(), resourceUrl, buildOfflineAccessHeaders(), null, handler);
     }
 
     @Subscribe
@@ -80,5 +80,9 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
         if (event.messageId == this.getMessageId()) {
             cancelCallAsap();
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }
