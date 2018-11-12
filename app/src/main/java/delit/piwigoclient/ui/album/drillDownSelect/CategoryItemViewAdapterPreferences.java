@@ -5,12 +5,14 @@ import androidx.annotation.NonNull;
 
 import java.util.HashSet;
 
+import androidx.annotation.Nullable;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.util.BundleUtils;
 
 public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
 
+    private String connectionProfileKey;
     private CategoryItemStub initialRoot;
     private HashSet<Long> initialSelection;
     private int columns = 1;
@@ -18,8 +20,18 @@ public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterP
     public CategoryItemViewAdapterPreferences() {
     }
 
+    public CategoryItemViewAdapterPreferences withConnectionProfile(@Nullable String connectionProfileKey) {
+        this.connectionProfileKey = connectionProfileKey;
+        return this;
+    }
+
     public CategoryItemViewAdapterPreferences withInitialRoot(@NonNull CategoryItemStub initialRoot) {
         this.initialRoot = initialRoot;
+        return this;
+    }
+
+    public CategoryItemViewAdapterPreferences withInitialSelection(HashSet<Long> initialSelection) {
+        this.initialSelection = initialSelection;
         return this;
     }
 
@@ -33,6 +45,7 @@ public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterP
         b.putInt("columns", columns);
         b.putParcelable("initialRoot", initialRoot);
         BundleUtils.putLongHashSet(b, "initialSelection", initialSelection);
+        b.putString("connectionProfileKey", connectionProfileKey);
         parent.putBundle("FolderItemViewAdapterPreferences", b);
         super.storeToBundle(b);
         return parent;
@@ -43,6 +56,7 @@ public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterP
         columns = b.getInt("columns");
         initialRoot = b.getParcelable("initialRoot");
         initialSelection = BundleUtils.getLongHashSet(b, "initialSelection");
+        connectionProfileKey = b.getString("connectionProfileKey");
         super.loadFromBundle(b);
 
         return this;
@@ -57,12 +71,11 @@ public class CategoryItemViewAdapterPreferences extends BaseRecyclerViewAdapterP
         return initialSelection;
     }
 
-    public CategoryItemViewAdapterPreferences withInitialSelection(HashSet<Long> initialSelection) {
-        this.initialSelection = initialSelection;
-        return this;
-    }
-
     public int getColumns() {
         return columns;
+    }
+
+    public String getConnectionProfileKey() {
+        return connectionProfileKey;
     }
 }

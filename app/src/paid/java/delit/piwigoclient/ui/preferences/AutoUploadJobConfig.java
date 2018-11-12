@@ -22,6 +22,7 @@ import java.util.Set;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.util.IOUtils;
 
 public class AutoUploadJobConfig implements Parcelable {

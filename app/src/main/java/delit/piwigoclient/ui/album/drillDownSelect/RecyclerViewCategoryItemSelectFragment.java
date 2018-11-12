@@ -33,6 +33,7 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
@@ -233,19 +234,28 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     }
 
     private void loadData() {
-        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(getViewPrefs().getConnectionProfileKey());
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
 
         if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
             //NOTE: No thumbnail url is provided with this call... Maybe need to run a standard call too as for the main albums then merge?
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler().invokeAsync(getContext()));
+            AbstractPiwigoWsResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
+            handler.withConnectionPreferences(connectionPrefs);
+            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
             String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true).invokeAsync(getContext()));
+
+            handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
+            handler.withConnectionPreferences(connectionPrefs);
+            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
         } else if (sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
-            addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
+            CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true);
+            handler.withConnectionPreferences(connectionPrefs);
+            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
         } else {
             String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
-            addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true).invokeAsync(getContext()));
+            AlbumGetSubAlbumsResponseHandler handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
+            handler.withConnectionPreferences(connectionPrefs);
+            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
         }
     }
 
@@ -282,9 +292,20 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
         CategoryItemRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<CategoryItem> selectedItems = listAdapter.getSelectedItems();
-        if(selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
-            selectedItems = new HashSet<>(1);
-            selectedItems.add(listAdapter.getActiveItem());
+        if(getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
+            boolean selectedIdsAreValid = false;
+            if(!selectedItems.isEmpty()) {
+                CategoryItem selectedItem = selectedItems.iterator().next();
+                if(selectedItem.getParentId() == listAdapter.getActiveItem().getId()
+                    || selectedItem.getId() == listAdapter.getActiveItem().getId()) {
+                    // do nothing.
+                    selectedIdsAreValid = true;
+                }
+            }
+            if(!selectedIdsAreValid) {
+                selectedItems = new HashSet<>(1);
+                selectedItems.add(listAdapter.getActiveItem());
+            }
         }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
         EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), PiwigoUtils.toSetOfIds(selectedItems), selectedItems));

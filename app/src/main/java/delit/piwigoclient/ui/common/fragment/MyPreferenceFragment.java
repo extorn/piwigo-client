@@ -31,10 +31,10 @@ import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 import delit.piwigoclient.ui.common.preference.NumberPickerPreferenceDialogFragmentCompat;
 import delit.piwigoclient.ui.common.preference.SecureEditTextPreference;
 import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
-import delit.piwigoclient.ui.preferences.ServerAlbumListPreference;
-import delit.piwigoclient.ui.preferences.ServerAlbumListPreferenceDialogFragmentCompat;
-import delit.piwigoclient.ui.preferences.ServerConnectionsListPreference;
-import delit.piwigoclient.ui.preferences.ServerConnectionsListPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
+import delit.piwigoclient.ui.common.preference.ServerAlbumListPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
+import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreferenceDialogFragmentCompat;
 
 /**
  * Created by gareth on 26/05/17.

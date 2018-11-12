@@ -42,7 +42,7 @@
 
     <string name="preference_data_upload_automatic_job_local_folder_title">Aus Ordner hochladen</string>
 
-    <string name="preference_data_upload_automatic_job_local_folder_summary">Hochladen %1$s</string>
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
 
     <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Erfolgreich hochgeladene Dateien löschen</string>

@@ -48,7 +48,7 @@
 
     <string name="preference_data_upload_automatic_job_local_folder_title">Charger à partir du dossier</string>
 
-    <string name="preference_data_upload_automatic_job_local_folder_summary">Upload %1$s</string>
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
 
     <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Supprimer les fichiers téléchargés avec succès</string>

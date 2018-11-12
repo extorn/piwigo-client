@@ -63,8 +63,14 @@
     </declare-styleable>
 
     <declare-styleable name="ServerAlbumListPreference">
-        <attr name="connectionProfileNameKey" format="string"/>
+        <attr name="connectionProfileNameKey"/>
     </declare-styleable>
+
+    <declare-styleable name="ServerAlbumSelectPreference">
+        <attr name="connectionProfileNameKey"/>
+    </declare-styleable>
+
+    <attr name="connectionProfileNameKey" format="string"/>
 
     <declare-styleable name="CustomSlidingLayer">
         <attr format="boolean" name="shadowDrawable"/>

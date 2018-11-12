@@ -2,10 +2,6 @@ package delit.piwigoclient.ui.common.preference;
 
 import android.content.Context;
 import android.os.Environment;
-import android.os.Parcel;
-import android.os.Parcelable;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 
 import org.greenrobot.eventbus.EventBus;
@@ -19,10 +15,8 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 
-public class LocalFoldersListPreference extends Preference {
+public class LocalFoldersListPreference extends EventDrivenPreference<FileSelectionNeededEvent> {
 
-    private int folderSelectActionId = -1;
-    private String value;
 
     public LocalFoldersListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -55,48 +49,8 @@ public class LocalFoldersListPreference extends Preference {
     }
 
     @Override
-    public void onAttached() {
-        super.onAttached();
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
-    }
+    protected FileSelectionNeededEvent buildOpenSelectionEvent() {
 
-    @Override
-    protected void onPrepareForRemoval() {
-        EventBus.getDefault().unregister(this);
-        super.onPrepareForRemoval();
-    }
-
-    @Override
-    public void onBindViewHolder(PreferenceViewHolder holder) {
-        super.onBindViewHolder(holder);
-        setOnPreferenceClickListener(new OnPreferenceClickListener() {
-
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                requestFolderSelection();
-                return true;
-            }
-        });
-    }
-
-    @Override
-    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
-        setValue(restorePersistedValue ? getPersistedString(this.value) : (String) defaultValue);
-    }
-
-    protected String getValue() {
-        value = getPersistedString(this.value);
-        return value;
-    }
-
-    protected void setValue(String newValue) {
-        this.value = newValue;
-        super.persistString(newValue);
-    }
-
-    private void requestFolderSelection() {
         String initialFolder = getValue();
         ArrayList<String> selection = new ArrayList<>();
         if (initialFolder == null) {
@@ -117,83 +71,17 @@ public class LocalFoldersListPreference extends Preference {
         fileSelectNeededEvent.withInitialFolder(initialFolder);
         fileSelectNeededEvent.withVisibleContent(FileSelectionNeededEvent.ALPHABETICAL);
         fileSelectNeededEvent.withInitialSelection(selection);
-        folderSelectActionId = fileSelectNeededEvent.getActionId();
-        EventBus.getDefault().post(fileSelectNeededEvent);
+        return fileSelectNeededEvent;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent event) {
-        if (event.getActionId() != this.folderSelectActionId) {
-            return;
-        }
-        EventBus.getDefault().removeStickyEvent(event);
-        folderSelectActionId = -1;
-        File selectedFile = event.getSelectedFiles().get(0);
-        if (selectedFile.isDirectory()) {
-            setValue(selectedFile.getAbsolutePath());
-            notifyChanged();
-        }
-    }
-
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        final Parcelable superState = super.onSaveInstanceState();
-        if (isPersistent()) {
-            // No need to save instance state since it's persistent
-            return superState;
-        }
-
-        final SavedState myState = new SavedState(superState);
-        myState.value = getValue();
-        myState.trackedRequest = folderSelectActionId;
-        return myState;
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        if (state == null || !state.getClass().equals(SavedState.class)) {
-            // Didn't save state for us in onSaveInstanceState
-            super.onRestoreInstanceState(state);
-            return;
-        }
-
-        SavedState myState = (SavedState) state;
-        super.onRestoreInstanceState(myState.getSuperState());
-        setValue(myState.value);
-        folderSelectActionId = myState.trackedRequest;
-    }
-
-
-    public static class SavedState extends BaseSavedState {
-
-        public static final Creator<SavedState> CREATOR =
-                new Creator<SavedState>() {
-                    public SavedState createFromParcel(Parcel in) {
-                        return new SavedState(in);
-                    }
-
-                    public SavedState[] newArray(int size) {
-                        return new SavedState[size];
-                    }
-                };
-        public String value;
-        private int trackedRequest;
-
-        public SavedState(Parcel source) {
-            super(source);
-            trackedRequest = source.readInt();
-            value = source.readString();
-        }
-
-        public SavedState(Parcelable superState) {
-            super(superState);
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeInt(trackedRequest);
-            dest.writeString(value);
+        if(isTrackingEvent(event)) {
+            EventBus.getDefault().removeStickyEvent(event);
+            File selectedFile = event.getSelectedFiles().get(0);
+            if (selectedFile.isDirectory()) {
+                persistStringValue(selectedFile.getAbsolutePath());
+            }
         }
     }
 

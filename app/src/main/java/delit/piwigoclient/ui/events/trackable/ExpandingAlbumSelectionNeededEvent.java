@@ -8,6 +8,7 @@ import java.util.HashSet;
 
 public class ExpandingAlbumSelectionNeededEvent extends LongSetSelectionNeededEvent {
     private final Long initialRoot;
+    private String connectionProfileName;
 
     public ExpandingAlbumSelectionNeededEvent(boolean allowMultiSelect, boolean allowEditing, HashSet<Long> currentSelection, Long initialRoot) {
         super(allowMultiSelect, allowEditing, currentSelection);
@@ -16,5 +17,13 @@ public class ExpandingAlbumSelectionNeededEvent extends LongSetSelectionNeededEv
 
     public Long getInitialRoot() {
         return initialRoot;
+    }
+
+    public void setConnectionProfileName(String connectionProfileName) {
+        this.connectionProfileName = connectionProfileName;
+    }
+
+    public String getConnectionProfileName() {
+        return connectionProfileName;
     }
 }
