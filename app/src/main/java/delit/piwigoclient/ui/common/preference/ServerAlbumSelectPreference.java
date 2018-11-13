@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.drew.lang.StringUtil;
 
 import org.greenrobot.eventbus.Subscribe;
 
@@ -15,6 +16,7 @@ import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
@@ -52,7 +54,8 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if(key.equals(connectionProfileNamePreferenceKey)) {
-                    setEnabled(null != sharedPreferences.getString(connectionProfileNamePreferenceKey, null));
+                    String connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, "");
+                    setEnabled(ConnectionPreferences.getPreferences(connectionProfileName).isValid(sharedPreferences, getContext()));
                 }
             }
         };

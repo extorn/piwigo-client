@@ -236,4 +236,7 @@ public class MyFragment extends Fragment {
         return prefs.getBoolean(getContext().getString(R.string.preference_app_read_only_mode_key), false);
     }
 
+    protected SharedPreferences getPrefs() {
+        return prefs;
+    }
 }

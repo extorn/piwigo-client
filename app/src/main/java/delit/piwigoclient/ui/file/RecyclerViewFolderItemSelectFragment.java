@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.FlowLayout;
 import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
@@ -239,6 +240,10 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             // will restore previous selection from state if any
             setListAdapter(viewAdapter);
         }
+
+        // call this here to ensure page reformats if orientation changes for example.
+        getViewPrefs().withColumnsOfFiles(OtherPreferences.getFileSelectorColumnsOfFiles(getPrefs(), getActivity()));
+        getViewPrefs().withColumnsOfFolders(OtherPreferences.getFileSelectorColumnsOfFolders(getPrefs(), getActivity()));
 
         int colsOnScreen = Math.max(getViewPrefs().getColumnsOfFiles(), getViewPrefs().getColumnsOfFolders());
         if (getViewPrefs().getColumnsOfFiles() % getViewPrefs().getColumnsOfFolders() > 0) {

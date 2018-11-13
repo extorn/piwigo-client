@@ -346,7 +346,7 @@ public class ConnectionPreferences {
         }
 
         public boolean isValid(SharedPreferences prefs, Context context) {
-            return getConnectionProfileList(prefs, context).contains(prefix);
+            return "".equals(prefix) || getConnectionProfileList(prefs, context).contains(prefix);
         }
     }
 

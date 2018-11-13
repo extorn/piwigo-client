@@ -227,6 +227,8 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             setListAdapter(viewAdapter);
         }
 
+        // call this here to ensure page reformats if orientation changes for example.
+        getViewPrefs().withColumns(AlbumViewPreferences.getAlbumsToDisplayPerRow(getActivity(), getPrefs()));
         int colsOnScreen = Math.max(getViewPrefs().getColumns(), getViewPrefs().getColumns());
         GridLayoutManager layoutMan = new GridLayoutManager(getContext(), colsOnScreen);
         getList().setLayoutManager(layoutMan);

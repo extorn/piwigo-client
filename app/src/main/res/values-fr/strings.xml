@@ -587,4 +587,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="x_of_y">%1$s / %2$s</string>
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Votre version de PiwigoClientWsExts est dépassée. Veuillez le mettre à jour en priorité.</string>
     <string name="subalbum_detail_txt_pattern">%1$d child albums</string>
+    <string name="please_read_and_agree_with_eula_first">Veuillez d\'abord lire et confirmer votre accord avec les termes du CLUF</string>
 </resources>

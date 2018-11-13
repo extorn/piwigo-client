@@ -34,6 +34,7 @@ import java.util.Random;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
@@ -220,15 +221,15 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
         int backstackCount = getSupportFragmentManager().getBackStackEntryCount();
 
-        if (!hasAgreedToEula()) {
+        boolean preferencesShowing;
+        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(PreferencesFragment.class.getName());
+        preferencesShowing = myFragment != null && myFragment.isVisible();
+
+        if (!hasAgreedToEula() && !preferencesShowing) {
             // exit immediately.
             finish();
             return;
         }
-
-        boolean preferencesShowing;
-        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(PreferencesFragment.class.getName());
-        preferencesShowing = myFragment != null && myFragment.isVisible();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -273,6 +274,10 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (!hasAgreedToEula()) {
+            getUiHelper().showDetailedToast(R.string.alert_error, R.string.please_read_and_agree_with_eula_first);
+            return true;
+        }
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
