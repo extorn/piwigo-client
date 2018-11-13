@@ -2,8 +2,8 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.annotation.DrawableRes;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.DrawableRes;
+import androidx.core.content.ContextCompat;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
@@ -11,12 +11,12 @@ import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
+import com.squareup.picasso.Transformation;
 
 import java.io.File;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.PicassoFactory;
-import delit.piwigoclient.util.picasso.RoundedTransformation;
 
 /**
  * Created by gareth on 11/10/17.
@@ -40,7 +40,7 @@ public class PicassoLoader implements Callback {
     private boolean placeholderLoaded;
     private @DrawableRes
     int errorResourceId = R.drawable.ic_error_black_240px;
-    private RoundedTransformation transformation;
+    private Transformation transformation;
 
     public PicassoLoader(ImageView loadInto) {
         this.loadInto = loadInto;
@@ -165,7 +165,7 @@ public class PicassoLoader implements Callback {
             }
         }
 
-        if (Math.abs(rotation) > Float.MIN_NORMAL) {
+        if (placeholderLoaded && Math.abs(rotation) > Float.MIN_NORMAL) {
             rc.rotate(rotation);
         }
         rc.tag(PICASSO_REQUEST_TAG);
@@ -194,6 +194,7 @@ public class PicassoLoader implements Callback {
         fileToLoad = null;
         resourceToLoad = Integer.MIN_VALUE;
         uriToLoad = null;
+        rotation = 0;
     }
 
     public void resetAll() {
@@ -259,7 +260,7 @@ public class PicassoLoader implements Callback {
         this.placeholderUri = placeholderUri;
     }
 
-    public void withTransformation(RoundedTransformation transformation) {
+    public void withTransformation(Transformation transformation) {
         this.transformation = transformation;
     }
 

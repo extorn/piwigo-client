@@ -6,10 +6,10 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.ArrayRes;
-import android.support.annotation.RequiresApi;
-import android.support.v7.preference.DialogPreference;
-import android.support.v7.preference.Preference;
+import androidx.annotation.ArrayRes;
+import androidx.annotation.RequiresApi;
+import androidx.preference.DialogPreference;
+import androidx.preference.Preference;
 import android.util.AttributeSet;
 
 import java.io.Serializable;
@@ -292,6 +292,8 @@ public abstract class MappedListPreference<T extends Serializable> extends Dialo
         super.onRestoreInstanceState(myState.getSuperState());
         setValue(valueFromString(myState.value));
     }
+
+    public abstract Class<T> getEntriesClazz();
 
     private static class SavedState extends BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR =

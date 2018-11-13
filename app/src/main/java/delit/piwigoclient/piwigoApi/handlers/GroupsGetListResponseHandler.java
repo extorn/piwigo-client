@@ -15,6 +15,7 @@ import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.piwigoclient.util.ArrayUtils;
 
 public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 
@@ -23,11 +24,16 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
     private final int pageSize;
     private final Set<Long> groupIds;
 
+    public GroupsGetListResponseHandler(long groupId) {
+        this(ArrayUtils.toList(new long[]{groupId}));
+    }
+
     public GroupsGetListResponseHandler(Collection<Long> groupIds) {
         super("pwg.groups.getList", TAG);
-        this.groupIds = null;
+        this.groupIds = new HashSet();
+        this.groupIds.addAll(groupIds);
         page = PagedList.MISSING_ITEMS_PAGE;
-        pageSize = groupIds.size();
+        pageSize = this.groupIds.size();
     }
 
     public GroupsGetListResponseHandler(int page, int pageSize) {
@@ -37,7 +43,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         this.pageSize = pageSize;
     }
 
-    public static HashSet<Group> parseGroupsFromJson(JsonArray groupsObj) throws JSONException {
+    public static HashSet<Group> parseGroupsFromJson(JsonArray groupsObj) {
         HashSet<Group> groups = new LinkedHashSet<>(groupsObj.size());
         for (int i = 0; i < groupsObj.size(); i++) {
             JsonObject groupObj = groupsObj.get(i).getAsJsonObject();
@@ -47,7 +53,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         return groups;
     }
 
-    private static Group parseGroupFromJson(JsonObject groupObj) throws JSONException {
+    private static Group parseGroupFromJson(JsonObject groupObj) {
         long id = groupObj.get("id").getAsLong();
         String name = groupObj.get("name").getAsString();
         boolean isDefault = groupObj.get("is_default").getAsBoolean();
@@ -71,7 +77,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonObject pagingObj = result.get("paging").getAsJsonObject();
         int page = pagingObj.get("page").getAsInt();
@@ -82,7 +88,42 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
         if (this.page == PagedList.MISSING_ITEMS_PAGE) {
             page = this.page;
         }
-        PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, groups);
+        PiwigoGetGroupsListRetrievedResponse r = new PiwigoGetGroupsListRetrievedResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, groups, isCached);
         storeResponse(r);
+    }
+
+    public static class PiwigoGetGroupsListRetrievedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final HashSet<Group> groups;
+        private final int itemsOnPage;
+        private final int pageSize;
+        private final int page;
+
+        public PiwigoGetGroupsListRetrievedResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, HashSet<Group> groups, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.page = page;
+            this.pageSize = pageSize;
+            this.itemsOnPage = itemsOnPage;
+            this.groups = groups;
+        }
+
+        public int getItemsOnPage() {
+            return itemsOnPage;
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public int getPageSize() {
+            return pageSize;
+        }
+
+        public HashSet<Group> getGroups() {
+            return groups;
+        }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

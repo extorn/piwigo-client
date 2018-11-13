@@ -56,7 +56,7 @@
 
         </RelativeLayout>
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/gallery_retryAction_actionButton"
             android:layout_alignTop="@+id/gallery_list"
             android:layout_alignParentEnd="true"
@@ -72,7 +72,8 @@
         <TextView
             android:id="@+id/album_empty_content"
             android:layout_below="@id/album_header_bar"
-            android:visibility="visible"
+            tools:visibility="visible"
+            android:visibility="gone"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -80,7 +81,7 @@
             android:padding="5dp"
             tools:text="A Reason that this gallery is empty or which calls need repeating"/>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/gallery_list"
             android:layout_below="@id/album_empty_content"
             android:name="delit.piwigoclient.GalleryFragment"
@@ -105,7 +106,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="30dp">
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/gallery_action_tag_bulk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -113,7 +114,7 @@
                 android:layout_marginEnd="10dp"
                 app:srcCompat="@drawable/ic_add_tag_black_24dp" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/gallery_action_paste_bulk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -121,7 +122,7 @@
                 android:layout_toEndOf="@+id/gallery_action_tag_bulk"
                 app:srcCompat="@drawable/ic_content_paste_black_24dp" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/gallery_action_cut_bulk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -129,7 +130,7 @@
                 android:layout_toEndOf="@+id/gallery_action_paste_bulk"
                 app:srcCompat="@drawable/ic_content_cut_black_24px" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/gallery_action_copy_bulk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -137,7 +138,7 @@
                 android:layout_toEndOf="@+id/gallery_action_cut_bulk"
                 app:srcCompat="@drawable/ic_content_copy_black_24px" />
 
-            <android.support.design.widget.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/gallery_action_delete_bulk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -157,7 +158,7 @@
         app:offsetDistance="30dp"
         app:shadowDrawable="@drawable/sidebar_shadow"
         app:shadowSize="30dp"
-        app:stickTo="bottom">
+        app:csl_stickTo="bottom">
 
         <LinearLayout
             android:id="@+id/gallery_bottom_sheet_content"
@@ -309,7 +310,6 @@
                         android:id="@+id/gallery_details_allowed_groups"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAlignment="viewEnd"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"
@@ -330,7 +330,6 @@
                         android:id="@+id/gallery_details_allowed_users"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textAlignment="viewEnd"
                         android:ellipsize="end"
                         android:maxLines="2"
                         android:text="@string/click_to_view"

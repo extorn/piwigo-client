@@ -49,23 +49,23 @@ public class ImageUpdateTagsResponseHandler<T extends ResourceItem> extends Abst
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject rspObj = rsp.getAsJsonObject();
         PiwigoResponseBufferingHandler.BaseResponse responseForUser;
         if(rspObj.has("error")) {
             // actually failed.
             JsonObject errObj = rspObj.getAsJsonObject("error");
             String errorReason = errObj.get("item").getAsString();
-            responseForUser = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, 0, errorReason);
+            responseForUser = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, 0, errorReason, isCached);
         }
         String resultMsg = null;
         if(rspObj.has("info")) {
             resultMsg = rspObj.get("info").getAsString();
         }
         if("Tags updated".equals(resultMsg)) {
-            responseForUser = new PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource);
+            responseForUser = new BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource, isCached);
         } else {
-            responseForUser = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, 0, ERROR_IMAGE_NOT_FOUND);
+            responseForUser = new PiwigoResponseBufferingHandler.PiwigoServerErrorResponse(this, 0, ERROR_IMAGE_NOT_FOUND, isCached);
         }
         storeResponse(responseForUser);
     }

@@ -31,7 +31,7 @@ public class ImageCheckFilesResponseHandler<T extends ResourceItem> extends Abst
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         String testResult = result.get("file").getAsString();
         Boolean same = null;
@@ -43,7 +43,7 @@ public class ImageCheckFilesResponseHandler<T extends ResourceItem> extends Abst
         fileMatches = same;
 
         if (!getUseSynchronousMode()) {
-            PiwigoResponseBufferingHandler.PiwigoResourceCheckRetrievedResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoResourceCheckRetrievedResponse<>(getMessageId(), getPiwigoMethod(), resourceItem, same);
+            PiwigoResourceCheckRetrievedResponse<T> r = new PiwigoResourceCheckRetrievedResponse<>(getMessageId(), getPiwigoMethod(), resourceItem, same, isCached);
             storeResponse(r);
         }
     }
@@ -52,4 +52,27 @@ public class ImageCheckFilesResponseHandler<T extends ResourceItem> extends Abst
         return fileMatches != null && fileMatches;
     }
 
+    public static class PiwigoResourceCheckRetrievedResponse<T extends ResourceItem> extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final T resource;
+        private final Boolean fileMatches;
+
+        public PiwigoResourceCheckRetrievedResponse(long messageId, String piwigoMethod, T resource, Boolean fileMatches, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.resource = resource;
+            this.fileMatches = fileMatches;
+        }
+
+        public Boolean getFileMatches() {
+            return fileMatches;
+        }
+
+        public boolean isFileMatch() {
+            return fileMatches != null && fileMatches;
+        }
+
+        public T getResource() {
+            return resource;
+        }
+    }
 }

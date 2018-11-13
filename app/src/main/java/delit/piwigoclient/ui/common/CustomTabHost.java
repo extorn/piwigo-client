@@ -1,10 +1,8 @@
 package delit.piwigoclient.ui.common;
 
 import android.content.Context;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TabHost;
 
 public class CustomTabHost extends TabHost {

@@ -11,7 +11,7 @@ public class MemoryTrimmedRunningAppEvent {
 
     public MemoryTrimmedRunningAppEvent(int level, boolean cacheCleared) {
         this.level = level;
-        this.picassoCacheCleared = picassoCacheCleared;
+        this.picassoCacheCleared = cacheCleared;
     }
 
     public boolean isPicassoCacheCleared() {

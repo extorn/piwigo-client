@@ -5,14 +5,14 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.preference.DialogPreference;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceDialogFragmentCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.DialogPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceDialogFragmentCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +55,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.ProgressIndicator;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.util.DisplayUtils;
@@ -187,7 +188,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
 
     private void addNewCertificate() {
         FileSelectionNeededEvent fileSelectionEvent = new FileSelectionNeededEvent(true, false, true);
-        ArrayList allowedFileTypes = new ArrayList();
+        ArrayList<String> allowedFileTypes = new ArrayList<>();
         if (!getPreference().isJustKeysWanted()) {
             allowedFileTypes.addAll(getPreference().getAllowedCertificateFileTypes());
         }
@@ -662,7 +663,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
         super.onCreate(savedInstanceState);
         if(savedInstanceState != null) {
             trackedRequest = savedInstanceState.getInt(STATE_TRACKED_REQUEST, -1);
-            keystoreLoadOperationResult = (LoadOperationResult) savedInstanceState.getSerializable(STATE_LOAD_OP_RESULT);
+            keystoreLoadOperationResult = BundleUtils.getSerializable(savedInstanceState, STATE_LOAD_OP_RESULT, LoadOperationResult.class);
             keystoreLoadProgress = savedInstanceState.getInt(STATE_LOAD_PROGRESS);
             keystore = X509Utils.loadKeystore("byteArray", savedInstanceState.getByteArray(STATE_KEYSTORE), keystorePass) ;
         } else {

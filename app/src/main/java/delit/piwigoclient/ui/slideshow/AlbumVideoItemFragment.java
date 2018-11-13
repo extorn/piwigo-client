@@ -1,14 +1,14 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +36,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -49,10 +50,9 @@ import delit.piwigoclient.business.video.RemoteDirectHttpClientBasedHttpDataSour
 import delit.piwigoclient.business.video.RemoteFileCachingDataSourceFactory;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
+import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.IOUtils;
 
@@ -66,7 +66,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private static final String STATE_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
     private static final String STATE_PERMISSION_TO_CACHE_GRANTED = "permissionToCacheToDisk";
     private static final String STATE_CACHED_VIDEO_ORIGINAL_FILENAME = "originalVideoFilename";
-    private static final String STATE_PAGE_IS_SHOWING = "pageIsShowing";
+    private static final String STATE_SHOWING_STANDALONE = "showingOutsideSlideshow";
 
     private static final int PERMISSIONS_FOR_DOWNLOAD = 1;
     private static final int PERMISSIONS_FOR_CACHE = 2;
@@ -74,7 +74,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private SimpleExoPlayer player;
     private RemoteFileCachingDataSourceFactory dataSourceFactory;
     private PausableLoadControl loadControl;
-    private CustomImageButton directDownloadButton;
 
     private File cachedVideoFile; // Used when downloading (copying) video to user accessible area
     private String originalVideoFilename; // Used for generating downloaded filename
@@ -84,15 +83,20 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private boolean videoIsPlayingWhenVisible;
     private boolean playVideoAutomatically;
 
-    private boolean pageIsShowing;
-
     private TextView downloadedByteCountView;
     private TextView cachedByteCountView;
     private PlayerView simpleExoPlayerView;
     private CustomCacheListener cacheListener;
     private DefaultTrackSelector trackSelector;
+    private boolean showingOutsideSlideshow;
 
     public AlbumVideoItemFragment() {
+    }
+
+    public static Bundle buildStandaloneArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
+        Bundle b = buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay);
+        b.putBoolean(STATE_SHOWING_STANDALONE, true);
+        return b;
     }
 
     public static Bundle buildArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
@@ -120,9 +124,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     public void onResume() {
         logStatus("onResume");
-        if (pageIsShowing) {
-            configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
-        }
         super.onResume();
     }
 
@@ -140,7 +141,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     private void logStatus(String msg) {
         if (BuildConfig.DEBUG) {
-            Log.d(TAG, String.format("%1$s - %2$b : %3$s", getModel() != null ? getModel().getId() : "UNKNOWN", pageIsShowing, msg));
+            Log.d(TAG, String.format("%1$s - %2$b : %3$s", getModel() != null ? getModel().getId() : "UNKNOWN", isPrimarySlideshowItem(), msg));
         }
     }
 
@@ -153,8 +154,8 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         outState.putBoolean(STATE_PERMISSION_TO_CACHE_GRANTED, permissionToCache);
         outState.putString(STATE_CACHED_VIDEO_FILENAME, cachedVideoFile != null ? cachedVideoFile.getAbsolutePath() : null);
         outState.putString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME, originalVideoFilename);
-        outState.putBoolean(STATE_PAGE_IS_SHOWING, pageIsShowing);
         outState.putLong(STATE_VIDEO_PLAYBACK_POSITION, videoPlaybackPosition);
+        outState.putBoolean(STATE_SHOWING_STANDALONE, showingOutsideSlideshow);
     }
 
     @Override
@@ -191,9 +192,11 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             logStatus("loading arguments");
             playVideoAutomatically = getArguments().getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
             videoIsPlayingWhenVisible = playVideoAutomatically;
+            showingOutsideSlideshow = getArguments().getBoolean(STATE_SHOWING_STANDALONE);
         }
         if (savedInstanceState != null) {
             logStatus("loading saved state");
+            showingOutsideSlideshow = savedInstanceState.getBoolean(STATE_SHOWING_STANDALONE);
             playVideoAutomatically = savedInstanceState.getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
             videoIsPlayingWhenVisible = savedInstanceState.getBoolean(STATE_VIDEO_IS_PLAYING);
             permissionToCache = savedInstanceState.getBoolean(STATE_PERMISSION_TO_CACHE_GRANTED);
@@ -205,7 +208,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 cachedVideoFile = new File(cachedVideoFilename);
             }
             originalVideoFilename = savedInstanceState.getString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME);
-            pageIsShowing = savedInstanceState.getBoolean(STATE_PAGE_IS_SHOWING);
         }
         logStatus("view state restored");
         displayItemDetailsControlsBasedOnSessionState();
@@ -216,10 +218,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         hideProgressIndicator();
         logStatus("Creating item content");
-        directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
 
-        View view = inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
-        simpleExoPlayerView = view.findViewById(R.id.slideshow_video_player);
+        View itemContentView = inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
+        simpleExoPlayerView = itemContentView.findViewById(R.id.slideshow_video_player);
 
         downloadedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_downloaded);
         cachedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_cached_summary);
@@ -227,50 +228,47 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
         CustomExoPlayerTouchListener customTouchListener = new CustomExoPlayerTouchListener(simpleExoPlayerView);
         simpleExoPlayerView.setOnTouchListener(customTouchListener);
-        logStatus("finished created item content");
-        return view;
-    }
-
-    @Override
-    protected void configureItemContent(@Nullable View itemContentView, final VideoResourceItem model, @Nullable Bundle savedInstanceState) {
-        super.configureItemContent(itemContentView, model, savedInstanceState);
-        directDownloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onDownloadItem(model);
-            }
-        });
 
         CustomExoPlayerTimeBar timebar = itemContentView.findViewById(R.id.exo_progress);
         cacheListener.setTimebar(timebar);
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
-
         simpleExoPlayerView.setPlayer(player);
+
+        logStatus("finished created item content");
+        return itemContentView;
+    }
+
+    @Override
+    public void onImageDeleted(HashSet<Long> deletedItemIds) {
+        super.onImageDeleted(deletedItemIds);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(AlbumItemDeletedEvent event) {
+        if(event.item.getId() == this.getModel().getId() && isVisible() && showingOutsideSlideshow) {
+            getFragmentManager().popBackStack();
+        }
+    }
+
+    @Override
+    protected void configureItemContent(@Nullable View itemContentView, final VideoResourceItem model, @Nullable Bundle savedInstanceState) {
+        super.configureItemContent(itemContentView, model, savedInstanceState);
     }
 
     @Override
     public void onPageDeselected() {
-        if (!pageIsShowing) {
-            return;
+        if (isPrimarySlideshowItem()) {
+            super.onPageDeselected();
+            logStatus("transitioning to page not showing");
+            stopVideoDownloadAndPlay();
         }
-        logStatus("transitioning to page not showing");
-        super.onPageDeselected();
-        pageIsShowing = false;
-        stopVideoDownloadAndPlay();
     }
 
     @Override
-    public void onPageSelected() {
-        if (pageIsShowing) {
-            return;
-        }
-        super.onPageSelected();
-        pageIsShowing = true;
-        logStatus("page selected");
-        if (isAdded()) {
-            configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
-        }
+    protected void doOnceOnPageSelectedAndAdded() {
+        super.doOnceOnPageSelectedAndAdded();
+        configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
     }
 
     private void clearCacheAndRestartVideo() {
@@ -293,7 +291,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     public void displayItemDetailsControlsBasedOnSessionState() {
         super.displayItemDetailsControlsBasedOnSessionState();
-        directDownloadButton.setVisibility(isAllowDownload() ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -302,7 +299,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         getUiHelper().runWithExtraPermissions(this, Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_download));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
 
         if (getUiHelper().completePermissionsWantedRequest(event)) {
@@ -328,7 +325,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 } else {
                     logStatus("Not all permissions granted - tweak datasource factory settings and configure player now!");
                     permissionToCache = false;
-                    if (pageIsShowing) {
+                    if (isPrimarySlideshowItem()) {
                         getUiHelper().showToast(R.string.video_caching_disabled_warning);
                     }
                 }
@@ -374,7 +371,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         } else {
             logStatus("configuring datasource and player - no caching enabled - do now!");
             configurePlayer(videoIsPlayingWhenVisible);
-            if (pageIsShowing) {
+            if (isPrimarySlideshowItem()) {
                 getUiHelper().showToast(R.string.video_caching_disabled_warning);
             }
         }
@@ -404,7 +401,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             logStatus("configuring player with old datasource - resuming buffering if paused");
             loadControl.resumeBuffering();
         }
-        player.setPlayWhenReady(startPlaybackImmediatelyIfVisibleToUser && pageIsShowing);
+        player.setPlayWhenReady(startPlaybackImmediatelyIfVisibleToUser && isPrimarySlideshowItem());
     }
 
     private void stopVideoDownloadAndPlay() {
@@ -464,7 +461,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                     public void run() {
                         if (getContext() != null) {
                             displayItemDetailsControlsBasedOnSessionState();
-                            cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                            cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) ,IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
                             timebar.invalidate();
                         }
                     }
@@ -485,7 +482,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                     public void run() {
                         if (getContext() != null) {
                             downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                            cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                            cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
                             timebar.invalidate();
                         }
                     }
@@ -504,7 +501,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                     public void run() {
                         if (getContext() != null) {
                             downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                            cachedByteCountView.setText(IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()) + " / " + IOUtils.toNormalizedText(cacheFileContent.getTotalBytes()));
+                            cachedByteCountView.setText(getString(R.string.x_of_y,IOUtils.toNormalizedText(cacheFileContent.getCachedBytes()), IOUtils.toNormalizedText(cacheFileContent.getTotalBytes())));
                             timebar.invalidate();
                         }
                     }
@@ -521,7 +518,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                         if (getContext() != null) {
                             bytesDownloaded += bytesAddedToCache;
                             downloadedByteCountView.setText(IOUtils.toNormalizedText(bytesDownloaded));
-                            cachedByteCountView.setText(IOUtils.toNormalizedText(bytesCachedInThisRange) + " / " + IOUtils.toNormalizedText(totalBytes));
+                            cachedByteCountView.setText(getString(R.string.x_of_y, IOUtils.toNormalizedText(bytesCachedInThisRange), IOUtils.toNormalizedText(totalBytes)));
                         }
                     }
                 });

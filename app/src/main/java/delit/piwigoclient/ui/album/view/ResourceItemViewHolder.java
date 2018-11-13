@@ -1,13 +1,13 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.AppCompatImageView;
+import android.os.Parcelable;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.view.View;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
-import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -15,7 +15,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 
 import static android.view.View.GONE;
 
-public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemViewHolder<S> {
+public class ResourceItemViewHolder<S extends Identifiable&Parcelable> extends AlbumItemViewHolder<S> {
     public AppCompatImageView mTypeIndicatorImg;
     public AppCompatCheckBox checkBox;
 
@@ -70,7 +70,7 @@ public class ResourceItemViewHolder<S extends Identifiable> extends AlbumItemVie
                 imageLoader.setUriToLoad(newItem.getThumbnailUrl());
             }
         }
-        ((ResizingPicassoLoader) imageLoader).setCenterCrop(true);
+        imageLoader.setCenterCrop(true);
     }
 
     @Override

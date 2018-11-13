@@ -1,8 +1,7 @@
 package delit.piwigoclient.ui.common;
 
 import android.content.SharedPreferences;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
@@ -30,7 +29,10 @@ public class ActivityUIHelper extends UIHelper<MyActivity> {
         protected void onNoDialogToShow() {
             Fragment f = getParent().getActiveFragment();
             if(f instanceof MyFragment) {
-                ((MyFragment)f).getUiHelper().showNextQueuedMessage();
+                UIHelper helper = ((MyFragment)f).getUiHelper();
+                if(helper != null) {
+                    helper.showNextQueuedMessage();
+                }
             }
         }
     }

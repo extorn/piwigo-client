@@ -1,10 +1,11 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
+import android.os.Parcelable;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 import android.view.ViewGroup;
 
 import org.greenrobot.eventbus.EventBus;
@@ -21,7 +22,7 @@ import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 
-public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> extends MyFragmentRecyclerPagerAdapter {
+public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends ViewPager> extends MyFragmentRecyclerPagerAdapter {
 
     private final List<Integer> galleryResourceItems;
     private boolean shouldShowVideos;
@@ -89,18 +90,6 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
     }
 
     @Override
-    protected void bindDataToFragment(Fragment fragment, int position) {
-        GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
-        int totalSlideshowItems = getTotalSlideshowItems();
-
-        if (galleryItem instanceof PictureResourceItem) {
-            fragment.setArguments(SlideshowItemFragment.buildArgs((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems));
-        } else if (galleryItem instanceof VideoResourceItem) {
-            fragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, false));
-        }
-    }
-
-    @Override
     public Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
 
         GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
@@ -126,8 +115,8 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         SlideshowItemFragment fragment = (SlideshowItemFragment) super.instantiateItem(container, position);
-        if (fragment != null && position == ((ViewPager) container).getCurrentItem()) {
-            if (lastPosition >= 0) {
+        if (position == ((ViewPager) container).getCurrentItem()) {
+            if (lastPosition >= 0 && lastPosition != position) {
                 onPageDeselected(lastPosition);
             }
             lastPosition = position;
@@ -141,6 +130,7 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
         SlideshowItemFragment activeFragment = ((SlideshowItemFragment)getActiveFragment(position));
         if(activeFragment == null) {
             activeFragment = (SlideshowItemFragment)instantiateItem(container, position);
+//            activeFragment.onPageSelected();
         }
         activeFragment.onPageSelected();
     }
@@ -173,25 +163,34 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
 
     public void deleteGalleryItem(int fullGalleryIdx) {
         int slideshowIdxOfItemToDelete = galleryResourceItems.indexOf(fullGalleryIdx);
-        if (slideshowIdxOfItemToDelete >= 0) {
+        deleteItem(slideshowIdxOfItemToDelete);
+    }
+
+    private void deleteItem(int itemIdx) {
+        if (itemIdx >= 0) {
             // remove the item from the list of items in the slideshow.
-            galleryResourceItems.remove(slideshowIdxOfItemToDelete);
+            galleryResourceItems.remove(itemIdx);
 
             // presume that the parent gallery has also been updated and adjust all items down one.
-            for(int i = slideshowIdxOfItemToDelete; i < galleryResourceItems.size(); i++) {
+            for(int i = itemIdx; i < galleryResourceItems.size(); i++) {
                 galleryResourceItems.set(i, galleryResourceItems.get(i)-1);
             }
             // now request a rebuild of the slideshow pages
-//            notifyDataSetChanged();
 
-            // the object is not used by this.
-            super.destroyItem(getContainer(),slideshowIdxOfItemToDelete, getActiveFragment(slideshowIdxOfItemToDelete));
-
-            notifyDataSetChanged();
+            onDeleteItem(getContainer(), itemIdx);
         }
     }
 
-//
+    @Override
+    public void onDeleteItem(ViewGroup container, int position) {
+        SlideshowItemFragment selectedPage = (SlideshowItemFragment) getActiveFragment(position);
+        selectedPage.onPageDeselected();
+        super.onDeleteItem(container, position);
+        selectedPage = (SlideshowItemFragment) getActiveFragment(position);
+        selectedPage.onPageSelected();
+    }
+
+    //
 //    public void onResume() {
 //        int pageToShow = Math.max(0, getContainer().getCurrentItem());
 //        if(pageToShow < galleryResourceItems.size()) {
@@ -218,6 +217,12 @@ public class GalleryItemAdapter<T extends Identifiable, S extends ViewPager> ext
 
     public void setShouldShowVideos(boolean shouldShowVideos) {
         this.shouldShowVideos = shouldShowVideos;
+    }
+
+    @Override
+    public void onDataAppended(int itemsAddedCount) {
+        addResourcesToIndex(gallery.getItemCount() - itemsAddedCount, -1);
+        notifyDataSetChanged();
     }
 
     public S getContainer() {

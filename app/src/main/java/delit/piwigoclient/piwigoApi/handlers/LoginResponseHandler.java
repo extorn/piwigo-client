@@ -3,12 +3,14 @@ package delit.piwigoclient.piwigoApi.handlers;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonElement;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
+import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.User;
@@ -16,6 +18,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
 public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -51,7 +54,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionPrefs();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        PiwigoOnLoginResponse loginResponse = new PiwigoOnLoginResponse(getMessageId(), "UserLogin");
+        PiwigoOnLoginResponse loginResponse = new PiwigoOnLoginResponse(getMessageId(), "UserLogin", false);
         loginResponse.setOldCredentials(PiwigoSessionDetails.getInstance(connectionPrefs));
 
         boolean canContinue = true;
@@ -70,26 +73,64 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
 
         loginResponse.setNewSessionDetails(PiwigoSessionDetails.getInstance(connectionPrefs));
 
-        if (canContinue && isCommunityPluginSessionStatusUnknown(PiwigoSessionDetails.getInstance(connectionPrefs))) {
+        if(canContinue && !PiwigoSessionDetails.getInstance(connectionPrefs).isMethodsAvailableListAvailable()) {
+            canContinue = loadMethodsAvailable();
+        }
+
+        if (canContinue && PiwigoSessionDetails.getInstance(connectionPrefs).isCommunityPluginInstalled()) {
             canContinue = retrieveCommunityPluginSession(PiwigoSessionDetails.getInstance(connectionPrefs));
+        } else {
+            PiwigoSessionDetails instance = PiwigoSessionDetails.getInstance(connectionPrefs);
+            if(instance != null) {
+                instance.setUseCommunityPlugin(false);
+            }
         }
 
         if (canContinue && isNeedUserDetails(PiwigoSessionDetails.getInstance(connectionPrefs))) {
-            /*canContinue = */loadUserDetails();
+            canContinue = loadUserDetails();
+        }
+
+        if(canContinue) {
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            if (sessionDetails.isMethodAvailable(PiwigoClientGetPluginDetailResponseHandler.WS_METHOD_NAME)) {
+                sessionDetails.setPiwigoClientPluginVersion("1.0.5");
+                canContinue = loadPiwigoClientPluginDetails();
+            } else {
+                sessionDetails.setPiwigoClientPluginVersion("1.0.4");
+            }
         }
 
         setError(getNestedFailure());
-
         storeResponse(loginResponse);
 
-        // this is needed because we aren't calling the onSuccess method.
-        resetFailureAsASuccess();
+        if(canContinue) {
+            // this is needed because we aren't calling the onSuccess method.
+            resetFailureAsASuccess();
+        }
 
         return null;
     }
 
-    private boolean isCommunityPluginSessionStatusUnknown(PiwigoSessionDetails currentCredentials) {
-        return currentCredentials != null && !currentCredentials.isSessionMayHaveExpired();/*TODO ?maybe add this? && !currentCredentials.isCommunityPluginStatusAvailable();*/
+    private boolean loadPiwigoClientPluginDetails() {
+        PiwigoClientGetPluginDetailResponseHandler handler = new PiwigoClientGetPluginDetailResponseHandler();
+        handler.setPerformingLogin();
+        handler.invokeAndWait(getContext(), getConnectionPrefs());
+        if (!handler.isSuccess()) {
+            reportNestedFailure(handler);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean loadMethodsAvailable() {
+        GetMethodsAvailableResponseHandler methodsHandler = new GetMethodsAvailableResponseHandler();
+        methodsHandler.setPerformingLogin();
+        methodsHandler.invokeAndWait(getContext(), getConnectionPrefs());
+        if (!methodsHandler.isSuccess()) {
+            reportNestedFailure(methodsHandler);
+            return false;
+        }
+        return true;
     }
 
     private boolean retrieveCommunityPluginSession(PiwigoSessionDetails newCredentials) {
@@ -126,7 +167,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         throw new UnsupportedOperationException("will never run");
     }
 
@@ -151,22 +192,31 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     }
 
     private boolean loadUserDetails() {
+        boolean canContinue;
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         UserGetInfoResponseHandler userInfoHandler = new UserGetInfoResponseHandler(sessionDetails.getUsername(), sessionDetails.getUserType());
         userInfoHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         userInfoHandler.invokeAndWait(getContext(), getConnectionPrefs());
         if (userInfoHandler.isSuccess()) {
-            PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse response = (PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse) userInfoHandler.getResponse();
+            UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse response = (UserGetInfoResponseHandler.PiwigoGetUserDetailsResponse) userInfoHandler.getResponse();
             User userDetails = response.getSelectedUser();
             if (response.getUsers().size() > 0) {
                 EventBus.getDefault().post(new UserNotUniqueWarningEvent(userDetails, response.getUsers()));
             }
             sessionDetails.setUserDetails(userDetails);
-            return true;
+            canContinue = true;
         } else {
+            canContinue = false;
+            PiwigoResponseBufferingHandler.ErrorResponse response = (PiwigoResponseBufferingHandler.ErrorResponse) userInfoHandler.getResponse();
+            if((response instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse && ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) response).getStatusCode() == 401)
+             && sessionDetails.isAdminUser()) {
+                FirebaseAnalytics.getInstance(getContext()).logEvent("UserDowngrade_General", null);
+                sessionDetails.updateUserType("general");
+                EventBus.getDefault().post(new ServerConfigErrorEvent(getContext().getString(R.string.admin_user_missing_admin_permissions_after_login_warning_pattern, userInfoHandler.getPiwigoServerUrl())));
+            }
             reportNestedFailure(userInfoHandler);
-            return false;
         }
+        return canContinue;
     }
 
     public boolean isLoginSuccess() {
@@ -177,8 +227,8 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         private PiwigoSessionDetails oldCredentials;
         private PiwigoSessionDetails sessionDetails;
 
-        public PiwigoOnLoginResponse(long messageId, String piwigoMethod) {
-            super(messageId, piwigoMethod, true);
+        public PiwigoOnLoginResponse(long messageId, String piwigoMethod, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
         }
 
         public PiwigoSessionDetails getOldCredentials() {
@@ -197,4 +247,5 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             this.sessionDetails = sessionDetails;
         }
     }
+
 }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Automatic Upload Jobs page -->
+
+    <string name="preference_page_auto_upload_jobs">Chargement automatique</string>
+    <string name="preference_data_upload_automatic_title">Chargement automatique</string>
+    <string name="preference_data_upload_automatic_job_title">Téléchargement automatique du travail</string>
+
+    <!-- prefs -->
+
+
+    <string name="preference_data_upload_automatic_upload_enable_summary">Activer le téléchargement en arrière-plan</string>
+    <string name="preference_data_upload_automatic_upload_enable_title">Chargement automatique</string>
+    <bool name="preference_data_upload_automatic_upload_enabled_default">false</bool>
+
+
+    <string name="preference_data_upload_automatic_upload_polling_interval_title">Intervalle du scrutin</string>
+    <string name="preference_data_upload_automatic_upload_polling_interval_summary">Exécutez le travail de téléchargement toutes les %1$d minutes</string>
+    <integer name="preference_data_upload_automatic_upload_polling_interval_default">15</integer>
+
+    <string name="preference_data_upload_automatic_upload_wireless_only_summary">N\'utilisez que l\'Auto Upload sur Wireless</string>
+    <string name="preference_data_upload_automatic_upload_wireless_only_title">Sans fil seulement</string>
+
+    <bool name="preference_data_upload_automatic_upload_wireless_only_default">true</bool>
+
+
+    <string name="preference_data_upload_automatic_upload_jobs_title">Téléchargement automatique des offres d\'emploi</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Emplois</string>
+
+    <!-- boolean flag set that if false will stop the job running -->
+
+
+    <string name="preference_data_upload_automatic_job_is_valid_title">L\'emploi est valide</string>
+
+
+    <string name="preference_data_upload_automatic_job_enabled_summary">Est-ce que ce travail écoute en arrière-plan ?</string>
+    <string name="preference_data_upload_automatic_job_enabled_title">Activation de l\'emploi</string>
+    <bool name="preference_data_upload_automatic_job_enabled_default">true</bool>
+
+    <string name="preference_data_upload_automatic_job_server_title">Téléchargement vers le serveur</string>
+
+    <string name="preference_data_upload_automatic_job_server_summary">Profil : %1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_server_album_title">Télécharger sur Album</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_local_folder_title">Charger à partir du dossier</string>
+
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
+
+
+    <string name="preference_data_upload_automatic_job_delete_uploaded_summary">Supprimer les fichiers téléchargés avec succès</string>
+    <string name="preference_data_upload_automatic_job_delete_uploaded_title">Effacement automatique</string>
+    <bool name="preference_data_upload_automatic_job_delete_uploaded_default">true</bool>
+
+    <integer name="preference_data_upload_automatic_job_max_upload_size_mb_default">20</integer>
+
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize téléchargé</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
+
+
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">jpg,png,raw</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Extensions de fichiers</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Télécharger des fichiers avec ext %1$s</string>
+
+    <string name="preference_data_upload_automatic_job_privacy_level_title">Niveau de confidentialité</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">Fichiers téléchargés visibles à %1$s</string>
+
+    <integer name="preference_data_upload_automatic_job_privacy_level_default">0</integer>
+
+
+
+</resources>

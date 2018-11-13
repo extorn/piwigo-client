@@ -1,7 +1,8 @@
 package delit.piwigoclient.ui.tags;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import delit.piwigoclient.R;
@@ -22,6 +23,7 @@ public class TagRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecy
 
 
 
+    @NonNull
     @Override
     public TagViewHolder buildViewHolder(View view, int viewType) {
         return new TagViewHolder(view);
@@ -41,9 +43,11 @@ public class TagRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecy
                 getDeleteButton().setVisibility(View.GONE);
             }
             getCheckBox().setVisibility(isMultiSelectionAllowed() ? View.VISIBLE : View.GONE);
-            getCheckBox().setChecked(getSelectedItemIds().contains(newItem.getId()));
+            boolean isChecked = getSelectedItemIds().contains(newItem.getId());
+            boolean alwaysChecked = !isAllowItemDeselection(getItemId());
+            getCheckBox().setChecked(isChecked);
             getCheckBox().setEnabled(isEnabled());
-            getCheckBox().setAlwaysChecked(!isAllowItemDeselection(getItemId()));
+            getCheckBox().setAlwaysChecked(alwaysChecked);
         }
     }
 

@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.preference.CheckBoxPreference;
-import android.support.v7.preference.PreferenceManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +26,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
+import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 
 public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
@@ -87,7 +88,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         // check remote privacy level
         if(allPreferencesValid) {
             int privacyLevel = getPreferenceValueOrMinInt(R.string.preference_data_upload_automatic_job_privacy_level_key);
-            allPreferencesValid = allPreferencesValid & privacyLevel != Integer.MIN_VALUE;
+            allPreferencesValid &= privacyLevel != Integer.MIN_VALUE;
         }
 
         updateJobValidPreferenceIfNeeded(allPreferencesValid, isFinalValidationCheck);
@@ -113,7 +114,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
             AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
             albumHandler.withConnectionPreferences(profilePrefs);
-            addActiveServiceCall(R.string.progress_loading_albums,albumHandler.invokeAsync(getContext()));
+            callServer(R.string.progress_loading_albums,albumHandler);
         } else {
             updateJobValidPreferenceIfNeeded(false, false);
         }

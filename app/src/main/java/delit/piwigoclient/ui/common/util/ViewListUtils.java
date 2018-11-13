@@ -31,9 +31,9 @@ public class ViewListUtils {
         View view = null;
         for (int i = 0; i < listAdapter.getCount() && i < maxVisibleChildren; i++) {
             view = listAdapter.getView(i, view, listView);
-            if (i == 0)
+            if (i == 0) {
                 view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, ViewGroup.LayoutParams.WRAP_CONTENT));
-
+            }
             view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
             totalHeight += view.getMeasuredHeight();
         }

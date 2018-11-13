@@ -70,7 +70,7 @@
             android:inputType="textMultiLine"
             android:text="" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/createGallery_galleryCommentsAllowed"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:layout_margin="5dp"
@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:text="@string/createGallery_galleryCommentsAllowed" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/createGallery_galleryIsPrivate"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:layout_margin="5dp"

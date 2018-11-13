@@ -27,7 +27,6 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
@@ -61,7 +60,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
     private boolean canParseResponseData;
     private boolean isIdle;
 
-    public RandomAccessFileAsyncHttpResponseHandler(CachedContent cacheMetaData, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, boolean usePoolThread) throws FileNotFoundException {
+    public RandomAccessFileAsyncHttpResponseHandler(CachedContent cacheMetaData, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, boolean usePoolThread) {
         super(cacheMetaData.getCachedDataFile(), false, false, usePoolThread);
         this.cacheMetaData = cacheMetaData;
         this.cacheListener = cacheListener;

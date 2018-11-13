@@ -2,18 +2,17 @@ package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.os.Parcel;
+import android.os.Parcelable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
-
-import com.google.android.gms.common.collect.Sets;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,17 +28,16 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImageUpdateTagsResponseHandler;
-import delit.piwigoclient.ui.PicassoFactory;
+import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
+import delit.piwigoclient.util.SetUtils;
 
 public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     private static final String STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING = "tagMembershipChangesAction";
@@ -48,13 +46,13 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING, tagMembershipChangesAction);
+        outState.putParcelable(STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING, tagMembershipChangesAction);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            tagMembershipChangesAction = (AddTagsToResourcesAction) savedInstanceState.getSerializable(STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING);
+            tagMembershipChangesAction = savedInstanceState.getParcelable(STATE_TAG_MEMBERSHIP_CHANGES_ACTION_PENDING);
         }
         super.onViewCreated(view, savedInstanceState);
     }
@@ -62,10 +60,6 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     @Override
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
         AlbumItemRecyclerViewAdapterPreferences prefs = super.updateViewPrefs();
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        if(sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isMethodsAvailableListAvailable()) {
-            addActiveServiceCall(R.string.progress_loading_session_details,new GetMethodsAvailableResponseHandler().invokeAsync(getContext()));
-        }
         return prefs;
     }
 
@@ -78,7 +72,11 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     protected void setupBulkActionsControls(Basket basket) {
         super.setupBulkActionsControls(basket);
 
-        bulkActionButtonTag.setVisibility(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
+        if(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()) {
+            bulkActionButtonTag.show();
+        } else {
+            bulkActionButtonTag.hide();
+        }
         bulkActionButtonTag.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -92,7 +90,11 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
     protected void updateBasketDisplay(Basket basket) {
         super.updateBasketDisplay(basket);
-        bulkActionButtonTag.setVisibility(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
+        if(isTagSelectionAllowed() && viewAdapter.isItemSelectionAllowed()) {
+            bulkActionButtonTag.show();
+        } else {
+            bulkActionButtonTag.hide();
+        }
     }
 
     private void onBulkActionTagButtonPressed() {
@@ -112,7 +114,9 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
     private void onShowTagsSelection() {
         //disable tag deselection if user tags plugin is not present but allow editing if is admin user. (bug in PIWIGO API)
-        TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, isTagSelectionAllowed(), false, null);
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        boolean tagsCanBeDeselected = !sessionDetails.isUseUserTagPluginForUpdate();
+        TagSelectionNeededEvent tagSelectEvent = new TagSelectionNeededEvent(true, isTagSelectionAllowed(), tagsCanBeDeselected, null);
         getUiHelper().setTrackingRequest(tagSelectEvent.getActionId());
         EventBus.getDefault().post(tagSelectEvent);
     }
@@ -122,7 +126,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         super.onResume();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(TagSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             viewAdapter.toggleItemSelection();
@@ -132,7 +136,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     @Override
-    protected void onPiwigoUpdateResourceInfoResponse(PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse response) {
+    protected void onPiwigoUpdateResourceInfoResponse(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {
         if(tagMembershipChangesAction != null) {
         tagMembershipChangesAction.recordTagListUpdated(response.getPiwigoResource());
             // changes made.
@@ -153,16 +157,19 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     @Override
-    protected void onResourceInfoRetrieved(PiwigoResponseBufferingHandler.PiwigoResourceInfoRetrievedResponse response) {
+    protected void onResourceInfoRetrieved(BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
         if(tagMembershipChangesAction != null) {
             if(tagMembershipChangesAction.addResourceReadyToProcess(response.getResource())) {
                 // action is ready for the next step.
                 tagMembershipChangesAction.makeChangesToLocalResources();
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
+
                 for(ResourceItem item : tagMembershipChangesAction.resourcesReadyToProcess) {
-                    if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                        addActiveServiceCall(R.string.progress_resource_details_updating,new ImageUpdateInfoResponseHandler(item).invokeAsync(getContext()));
+                    if (allowTagEdit) {
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(item).invokeAsync(getContext()));
                     } else {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateTagsResponseHandler(item).invokeAsync(getContext()));
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
                     }
                 }
             }
@@ -185,18 +192,11 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     protected class ViewAlbumPiwigoResponseListener extends CustomPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse) {
-                //FIXME - this is not how to prevent item selection mode from being enabled! See all uses of preventItemSelection!!!! All wrong wrong wrong
-                boolean itemSelectionModeEnabled = !isPreventItemSelection();
-                getViewPrefs().withAllowMultiSelect(itemSelectionModeEnabled);
-            } else {
-                super.onAfterHandlePiwigoResponse(response);
-            }
+            super.onAfterHandlePiwigoResponse(response);
         }
     }
 
-    private class AddTagsToResourcesAction implements Serializable {
-        private static final long serialVersionUID = -6944626147044296967L;
+    private static class AddTagsToResourcesAction implements Parcelable {
         private final HashSet<ResourceItem> selectedResources;
         private final HashSet<ResourceItem> resourcesReadyToProcess;
         private HashMap<ResourceItem,ArrayList<Tag>> tagMembershipChangesPending;
@@ -206,6 +206,35 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
         public AddTagsToResourcesAction(Set<ResourceItem> selectedItems) {
             selectedResources = new HashSet<>(selectedItems);
             resourcesReadyToProcess = new HashSet<>(selectedItems.size());
+        }
+
+        public AddTagsToResourcesAction(Parcel in) {
+            selectedResources = ParcelUtils.readHashSet(in, getClass().getClassLoader());
+            resourcesReadyToProcess = ParcelUtils.readHashSet(in, getClass().getClassLoader());
+            tagMembershipChangesPending = ParcelUtils.readMap(in, getClass().getClassLoader());
+            tagUpdateEvents = ParcelUtils.readValue(in,getClass().getClassLoader(), ArrayList.class);
+            tagsToAdd = ParcelUtils.readHashSet(in, getClass().getClassLoader());
+        }
+
+        public static final Creator<AddTagsToResourcesAction> CREATOR = new Creator<AddTagsToResourcesAction>() {
+            @Override
+            public AddTagsToResourcesAction createFromParcel(Parcel in) {
+                return new AddTagsToResourcesAction(in);
+            }
+
+            @Override
+            public AddTagsToResourcesAction[] newArray(int size) {
+                return new AddTagsToResourcesAction[size];
+            }
+        };
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            ParcelUtils.writeSet(dest, selectedResources);
+            ParcelUtils.writeSet(dest,resourcesReadyToProcess);
+            ParcelUtils.writeMap(dest, tagMembershipChangesPending);
+            dest.writeValue(tagUpdateEvents);
+            ParcelUtils.writeSet(dest, tagsToAdd);
         }
 
         public void setTagsToAdd(HashSet<Tag> tagsToAdd) {
@@ -236,7 +265,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                 }
             }
             // remove all those resources for which no change will be made.
-            Set<ResourceItem> resourcesWithoutChange = Sets.difference(resourcesReadyToProcess, tagMembershipChangesPending.keySet());
+            Set<ResourceItem> resourcesWithoutChange = SetUtils.difference(resourcesReadyToProcess, tagMembershipChangesPending.keySet());
             resourcesReadyToProcess.removeAll(resourcesWithoutChange);
             selectedResources.removeAll(resourcesWithoutChange);
             this.tagMembershipChangesPending = tagMembershipChangesPending;
@@ -271,5 +300,11 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
             tagUpdateEvents.clear();
             tagsToAdd.clear();
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
     }
 }

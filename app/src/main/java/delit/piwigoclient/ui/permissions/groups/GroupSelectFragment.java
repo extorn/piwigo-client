@@ -2,10 +2,10 @@ package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +40,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<GroupRecyclerViewAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String GROUPS_MODEL = "groupsModel";
-    private PiwigoGroups groupsModel = new PiwigoGroups();
+    private PiwigoGroups groupsModel;
 
     public static GroupSelectFragment newInstance(BaseRecyclerViewAdapterPreferences prefs, int actionId, HashSet<Long> initialSelection) {
         GroupSelectFragment fragment = new GroupSelectFragment();
@@ -56,7 +56,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(GROUPS_MODEL, groupsModel);
+        outState.putParcelable(GROUPS_MODEL, groupsModel);
     }
 
     @Nullable
@@ -65,10 +65,14 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        if (isServerConnectionChanged()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
+        if (savedInstanceState != null) {
+            if(!isSessionDetailsChanged()) {
+                groupsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
+            }
+        }
+
+        if(groupsModel == null) {
+            groupsModel = new PiwigoGroups();
         }
 
         if (isNotAuthorisedToAlterState()) {
@@ -103,10 +107,15 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = groupsModel.getPagesLoaded();
-                if (pageToLoad == 0 || groupsModel.isFullyLoaded()) {
-                    // already load this one by default so lets not double load it (or we've already loaded all items).
-                    return;
+                int pageToLoad = page;
+                if (groupsModel.isPageLoadedOrBeingLoaded(page) || groupsModel.isFullyLoaded()) {
+                    Integer missingPage = groupsModel.getAMissingPage();
+                    if(missingPage != null) {
+                        pageToLoad = missingPage;
+                    } else {
+                        // already load this one by default so lets not double load it (or we've already loaded all items).
+                        return;
+                    }
                 }
                 loadGroupsPage(pageToLoad);
             }
@@ -114,11 +123,17 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         scrollListener.configure(groupsModel.getPagesLoaded(), groupsModel.getItemCount());
         getList().addOnScrollListener(scrollListener);
 
-        if (savedInstanceState != null) {
-            groupsModel = (PiwigoGroups) savedInstanceState.getSerializable(GROUPS_MODEL);
-        }
-
         return v;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (isServerConnectionChanged()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
     }
 
     @Override
@@ -139,7 +154,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             return;
         }
 
-        if (groupsModel.getPagesLoaded() == 0) {
+        if (!groupsModel.isPageLoadedOrBeingLoaded(0)) {
             getListAdapter().notifyDataSetChanged();
             loadGroupsPage(0);
         }
@@ -171,6 +186,13 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         } finally {
             groupsModel.releasePageLoadLock();
         }
+    }
+
+    @Override
+    protected void onCancelChanges() {
+        // reset the selection to default.
+        getListAdapter().setSelectedItems(null);
+        onSelectActionComplete(getListAdapter().getSelectedItemIds());
     }
 
     @Override
@@ -215,7 +237,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         }
     }
 
-    private void onGroupsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    private void onGroupsLoaded(final GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         groupsModel.acquirePageLoadLock();
         try {
             groupsModel.recordPageLoadSucceeded(response.getMessageId());
@@ -241,7 +263,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(GroupUpdatedEvent event) {
         getListAdapter().replaceOrAddItem(event.getGroup());
     }
@@ -249,8 +271,8 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
+            if (response instanceof GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) {
+                onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else {
                 onGroupsLoadFailed(response);
             }

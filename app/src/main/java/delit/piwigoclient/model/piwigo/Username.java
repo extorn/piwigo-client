@@ -1,9 +1,9 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Username implements Identifiable, Serializable {
-    private static final long serialVersionUID = -135397513975209201L;
+public class Username implements Identifiable, Parcelable {
     private final long id;
     private final String username;
     private final String userType; //guest,    generic,    normal,    admin,    webmaster
@@ -12,6 +12,12 @@ public class Username implements Identifiable, Serializable {
         this.id = id;
         this.username = username;
         this.userType = userType;
+    }
+
+    public Username(Parcel in) {
+        id = in.readLong();
+        username = in.readString();
+        userType = in.readString();
     }
 
     public String getUsername() {
@@ -25,4 +31,27 @@ public class Username implements Identifiable, Serializable {
     public long getId() {
         return id;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(username);
+        dest.writeString(userType);
+    }
+
+    public static final Parcelable.Creator<Username> CREATOR
+            = new Parcelable.Creator<Username>() {
+        public Username createFromParcel(Parcel in) {
+            return new Username(in);
+        }
+
+        public Username[] newArray(int size) {
+            return new Username[size];
+        }
+    };
 }

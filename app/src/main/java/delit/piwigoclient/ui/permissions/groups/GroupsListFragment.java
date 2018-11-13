@@ -1,13 +1,13 @@
 package delit.piwigoclient.ui.permissions.groups;
 
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,12 +51,10 @@ import delit.piwigoclient.ui.events.ViewGroupEvent;
 public class GroupsListFragment extends MyFragment {
 
     private static final String GROUPS_MODEL = "groupsModel";
-    private static final String GROUPS_PAGE_BEING_LOADED = "groupsPageBeingLoaded";
     private final ConcurrentHashMap<Long, Group> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
     private PiwigoGroups groupsModel = new PiwigoGroups();
     private GroupRecyclerViewAdapter viewAdapter;
-    private int pageToLoadNow = -1;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
 
     public static GroupsListFragment newInstance() {
@@ -72,12 +70,12 @@ public class GroupsListFragment extends MyFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        if (getArguments() != null) {
-            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(getArguments());
-            setArguments(null);
+        Bundle b = savedInstanceState;
+        if(b == null) {
+            b = getArguments();
         }
-        if (savedInstanceState != null) {
-            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
+        if (b != null) {
+            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(b);
         }
         super.onCreate(savedInstanceState);
     }
@@ -97,8 +95,7 @@ public class GroupsListFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(GROUPS_MODEL, groupsModel);
-        outState.putInt(GROUPS_PAGE_BEING_LOADED, pageToLoadNow);
+        outState.putParcelable(GROUPS_MODEL, groupsModel);
         viewPrefs.storeToBundle(outState);
     }
 
@@ -113,15 +110,8 @@ public class GroupsListFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        if ((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
-
         if (savedInstanceState != null && !isSessionDetailsChanged()) {
-            groupsModel = (PiwigoGroups) savedInstanceState.getSerializable(GROUPS_MODEL);
-            pageToLoadNow = savedInstanceState.getInt(GROUPS_PAGE_BEING_LOADED);
+            groupsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);
@@ -159,8 +149,8 @@ public class GroupsListFragment extends MyFragment {
 
             @Override
             public void onClick(View v) {
-                retryActionButton.setVisibility(View.GONE);
-                loadGroupsPage(pageToLoadNow);
+                retryActionButton.hide();
+                loadGroupsPage(groupsModel.getNextPageToReload());
             }
         });
 
@@ -190,10 +180,15 @@ public class GroupsListFragment extends MyFragment {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = groupsModel.getPagesLoaded();
-                if (pageToLoad == 0 || groupsModel.isFullyLoaded()) {
-                    // already load this one by default so lets not double load it (or we've already loaded all items).
-                    return;
+                int pageToLoad = page;
+                if (groupsModel.isPageLoadedOrBeingLoaded(page) || groupsModel.isFullyLoaded()) {
+                    Integer missingPage = groupsModel.getAMissingPage();
+                    if(missingPage != null) {
+                        pageToLoad = missingPage;
+                    } else {
+                        // already load this one by default so lets not double load it (or we've already loaded all items).
+                        return;
+                    }
                 }
                 loadGroupsPage(pageToLoad);
             }
@@ -202,6 +197,19 @@ public class GroupsListFragment extends MyFragment {
         recyclerView.addOnScrollListener(scrollListener);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
+            //trigger total screen refresh. Any errors will result in screen being closed.
+            groupsModel.clear();
+        } else if((!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) || isAppInReadOnlyMode()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
     }
 
     @Override
@@ -214,9 +222,15 @@ public class GroupsListFragment extends MyFragment {
     }
 
     private void loadGroupsPage(int pageToLoad) {
-        this.pageToLoadNow = pageToLoad;
-        int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
-        groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+        groupsModel.acquirePageLoadLock();
+        try {
+            if (!groupsModel.isPageLoadedOrBeingLoaded(pageToLoad) && !groupsModel.isFullyLoaded()) {
+                int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
+                groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+            }
+        } finally {
+            groupsModel.releasePageLoadLock();
+        }
     }
 
     private void addNewGroup() {
@@ -252,12 +266,11 @@ public class GroupsListFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onGroupsLoaded(final PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse response) {
+    private void onGroupsLoaded(final GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse response) {
         groupsModel.acquirePageLoadLock();
         try {
             groupsModel.recordPageLoadSucceeded(response.getMessageId());
-            pageToLoadNow = -1;
-            retryActionButton.setVisibility(View.GONE);
+            retryActionButton.hide();
             int firstIdxAdded = groupsModel.addItemPage(response.getPage(), response.getPageSize(), response.getGroups());
             viewAdapter.notifyItemRangeInserted(firstIdxAdded, response.getGroups().size());
         } finally {
@@ -265,18 +278,18 @@ public class GroupsListFragment extends MyFragment {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(GroupDeletedEvent event) {
         viewAdapter.remove(event.getGroup());
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), event.getGroup().getName()));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(GroupUpdatedEvent event) {
         viewAdapter.replaceOrAddItem(event.getGroup());
     }
 
-    private void onGroupDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse response) {
+    private void onGroupDeleted(final GroupDeleteResponseHandler.PiwigoDeleteGroupResponse response) {
         Group group = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(group);
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), group.getName()));
@@ -287,7 +300,7 @@ public class GroupsListFragment extends MyFragment {
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_failed_pattern), group.getName()));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
@@ -306,16 +319,22 @@ public class GroupsListFragment extends MyFragment {
 
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            if (response instanceof PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) {
-                onGroupDeleted((PiwigoResponseBufferingHandler.PiwigoDeleteGroupResponse) response);
-            } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) {
-                onGroupsLoaded((PiwigoResponseBufferingHandler.PiwigoGetGroupsListRetrievedResponse) response);
+            if (isVisible()) {
+                if (!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
+                    getFragmentManager().popBackStack();
+                    return;
+                }
+            }
+            if (response instanceof GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) {
+                onGroupDeleted((GroupDeleteResponseHandler.PiwigoDeleteGroupResponse) response);
+            } else if (response instanceof GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) {
+                onGroupsLoaded((GroupsGetListResponseHandler.PiwigoGetGroupsListRetrievedResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.ErrorResponse) {
                 if(groupsModel.isTrackingPageLoaderWithId(response.getMessageId())) {
                     onGroupsLoadFailed(response);
                 } else if (deleteActionsPending.size() == 0) {
                     // assume this to be a list reload that's required.
-                    retryActionButton.setVisibility(View.VISIBLE);
+                    retryActionButton.show();
                 }
             }
         }

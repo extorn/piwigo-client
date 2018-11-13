@@ -1,8 +1,8 @@
 package delit.piwigoclient.ui.common;
 
 import android.content.Context;
-import android.support.annotation.IntRange;
-import android.support.annotation.StringRes;
+import androidx.annotation.IntRange;
+import androidx.annotation.StringRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;
@@ -45,16 +45,14 @@ public class ProgressIndicator extends FrameLayout {
 
     public void showProgressIndicator(String progressText, @IntRange(from=-1,to=100) int progress) {
 
-        setVisibility(VISIBLE);
-
-
         actionButton.setVisibility(View.GONE);
-
 
         descriptionField.setText(progressText);
 
         progressBar.setIndeterminate(progress < 0);
         progressBar.setProgress(progress);
+
+        setVisibility(VISIBLE);
     }
 
     public void showProgressIndicator(@StringRes int textResId, @IntRange(from=-1,to=100) int progress, View.OnClickListener actionListener) {

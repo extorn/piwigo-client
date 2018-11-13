@@ -50,7 +50,7 @@ public class GroupAddMembersResponseHandler<T extends ResourceItem> extends Abst
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray groupsObj = result.get("groups").getAsJsonArray();
         HashSet<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
@@ -64,8 +64,20 @@ public class GroupAddMembersResponseHandler<T extends ResourceItem> extends Abst
             HashSet<Long> currentUsersGroupMemberships = sessionDetails.getGroupMemberships();
             currentUsersGroupMemberships.add(groupId);
         }
-        PiwigoResponseBufferingHandler.PiwigoGroupAddMembersResponse r = new PiwigoResponseBufferingHandler.PiwigoGroupAddMembersResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
+        PiwigoGroupAddMembersResponse r = new PiwigoGroupAddMembersResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next(), isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoGroupAddMembersResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final Group group;
+
+        public PiwigoGroupAddMembersResponse(long messageId, String piwigoMethod, Group group, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.group = group;
+        }
+
+        public Group getGroup() {
+            return group;
+        }
+    }
 }

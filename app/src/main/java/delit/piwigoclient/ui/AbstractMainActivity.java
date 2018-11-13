@@ -1,21 +1,24 @@
 package delit.piwigoclient.ui;
 
+import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.appbar.AppBarLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -27,9 +30,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -39,14 +46,15 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.VersionCompatability;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
-import delit.piwigoclient.ui.album.AlbumSelectFragment;
-import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
+import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
+import delit.piwigoclient.ui.album.listSelect.AlbumSelectFragment;
+import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.view.ViewAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
-import delit.piwigoclient.ui.events.AlbumAlteredEvent;
-import delit.piwigoclient.ui.events.AlbumDeletedEvent;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
 import delit.piwigoclient.ui.events.AlbumSelectedEvent;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
@@ -65,6 +73,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
+import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
@@ -78,6 +87,8 @@ import delit.piwigoclient.ui.permissions.users.UsersListFragment;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 import delit.piwigoclient.ui.slideshow.AlbumVideoItemFragment;
 import delit.piwigoclient.ui.slideshow.SlideshowFragment;
+import delit.piwigoclient.util.DisplayUtils;
+import delit.piwigoclient.util.VersionUtils;
 import hotchemi.android.rate.MyAppRate;
 
 public abstract class AbstractMainActivity extends MyActivity implements ComponentCallbacks2 {
@@ -119,17 +130,21 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable(STATE_CURRENT_ALBUM, currentAlbum);
-        outState.putSerializable(STATE_BASKET, basket);
+        outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
+        outState.putParcelable(STATE_BASKET, basket);
         super.onSaveInstanceState(outState);
+
+        if(BuildConfig.DEBUG) {
+            BundleUtils.logSize("Current Activity", outState);
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            currentAlbum = (CategoryItem) savedInstanceState.getSerializable(STATE_CURRENT_ALBUM);
-            basket = (Basket) savedInstanceState.getSerializable(STATE_BASKET);
+            currentAlbum = savedInstanceState.getParcelable(STATE_CURRENT_ALBUM);
+            basket = savedInstanceState.getParcelable(STATE_BASKET);
         }
 
         setContentView(R.layout.activity_main);
@@ -191,19 +206,30 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        GoogleApiAvailability googleApi = GoogleApiAvailability.getInstance();
+        int result = googleApi.isGooglePlayServicesAvailable(getApplicationContext());
+        Dialog dialog = googleApi.getErrorDialog(this, result, new Random().nextInt());
+        if(dialog != null) {
+            dialog.show();
+        }
+    }
+
+    @Override
     public void onBackPressed() {
 
         int backstackCount = getSupportFragmentManager().getBackStackEntryCount();
 
-        if (!hasAgreedToEula()) {
+        boolean preferencesShowing;
+        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(PreferencesFragment.class.getName());
+        preferencesShowing = myFragment != null && myFragment.isVisible();
+
+        if (!hasAgreedToEula() && !preferencesShowing) {
             // exit immediately.
             finish();
             return;
         }
-
-        boolean preferencesShowing;
-        Fragment myFragment = getSupportFragmentManager().findFragmentByTag(PreferencesFragment.class.getName());
-        preferencesShowing = myFragment != null && myFragment.isVisible();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -248,6 +274,10 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (!hasAgreedToEula()) {
+            getUiHelper().showDetailedToast(R.string.alert_error, R.string.please_read_and_agree_with_eula_first);
+            return true;
+        }
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -340,9 +370,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void showUpload() {
-        Intent intent = new Intent(Constants.ACTION_MANUAL_UPLOAD);
-        intent.putExtra("galleryId", currentAlbum.getId());
-        startActivity(intent);
+        try {
+            startActivity(UploadActivity.buildIntent(getBaseContext(), currentAlbum.toStub()));
+        } catch(ActivityNotFoundException e) {
+            Crashlytics.logException(e);
+        }
     }
 
     private void showGroups() {
@@ -394,7 +426,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                     newFragment.setArguments(SlideshowFragment.buildArgs(albumOpen, selectedItem));
                 } else if (allowVideoPlayback) {
                     newFragment = new AlbumVideoItemFragment();
-                    newFragment.setArguments(AlbumVideoItemFragment.buildArgs((VideoResourceItem) selectedItem, 1, 1, 1, true));
+                    newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs((VideoResourceItem) selectedItem, 1, 1, 1, true));
                     ((AlbumVideoItemFragment) newFragment).onPageSelected();
                 }
             } else if (selectedItem instanceof PictureResourceItem) {
@@ -408,14 +440,14 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final AlbumCreateNeededEvent event) {
 
         CreateAlbumFragment fragment = CreateAlbumFragment.newInstance(event.getActionId(), event.getParentAlbum());
         showFragmentNow(fragment);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(FileSelectionNeededEvent event) {
         Intent intent = new Intent(getBaseContext(), FileSelectActivity.class);
         intent.putExtra(FileSelectActivity.INTENT_DATA, event);
@@ -430,7 +462,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             if (resultCode == RESULT_OK && data.getExtras() != null) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
                 long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
-                ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
+                ArrayList<File> filesForUpload = BundleUtils.getFileArrayList(data.getExtras(), FileSelectActivity.INTENT_SELECTED_FILES);
                 FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(requestCode, filesForUpload, actionTimeMillis);
                 EventBus.getDefault().postSticky(event);
             }
@@ -539,7 +571,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         getUiHelper().showToast(getString(messageId, memoryLevel));
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final UsernameSelectionNeededEvent event) {
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         if (!event.isAllowEditing()) {
@@ -549,7 +581,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         showFragmentNow(fragment);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ViewUserEvent event) {
         UserFragment fragment = UserFragment.newInstance(event.getUser());
         showFragmentNow(fragment);
@@ -566,8 +598,10 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
 
-        Crashlytics.log(Log.DEBUG, TAG, "showing fragment: " + f.getClass().getName());
+        Crashlytics.log(Log.DEBUG, TAG, "showing fragment: " + f.getTag());
         checkLicenceIfNeeded();
+
+        DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
 
         Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
         String lastFragmentName = "";
@@ -586,13 +620,13 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         Crashlytics.log(Log.DEBUG, TAG, "replaced existing fragment with new: " + f.getClass().getName());
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ViewGroupEvent event) {
         GroupFragment fragment = GroupFragment.newInstance(event.getGroup());
         showFragmentNow(fragment);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final GroupSelectionNeededEvent event) {
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences().selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
         if (!event.isAllowEditing()) {
@@ -622,7 +656,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumPermissionsSelectionNeededEvent event) {
         showAlbumPermissions(event.getAvailableAlbums(), event.getDirectAlbumPermissions(), event.getIndirectAlbumPermissions(), event.isAllowEdit(), event.getActionId());
     }
@@ -697,10 +731,21 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         }
         AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
         VersionCompatability.INSTANCE.runTests();
+
+        boolean showUserWarning = OtherPreferences.getAndUpdateLastWarnedAboutVersionOrFeatures(prefs, this);
+
         if (!VersionCompatability.INSTANCE.isSupportedVersion()) {
             String serverVersion = VersionCompatability.INSTANCE.getServerVersionString();
             String minimumVersion = VersionCompatability.INSTANCE.getMinimumTestedVersionString();
             getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_version_pattern), serverVersion, minimumVersion));
+        }
+
+        if(sessionDetails.isPiwigoClientPluginInstalled() && !VersionUtils.versionExceeds(new int[]{1,0,5}, VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion()))) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it)));
+        }
+
+        if(showUserWarning && !VersionCompatability.INSTANCE.isFavoritesEnabled()) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_features_pattern)));
         }
     }
 
@@ -714,7 +759,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         getSupportFragmentManager().popBackStackImmediate();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumSelectionNeededEvent event) {
         AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences prefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
         prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
@@ -723,6 +768,25 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             prefs.readonly();
         }
         showAlbumSelectionFragment(event.getActionId(), prefs, event.getInitialSelection());
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(ExpandingAlbumSelectionNeededEvent event) {
+//        ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs = new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences();
+//        AlbumSelectExpandableFragment f = AlbumSelectExpandableFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
+        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences();
+        if(event.isAllowEditing()) {
+            prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        }
+        if(event.getInitialRoot() != null) {
+            prefs.withInitialRoot(new CategoryItemStub("???", event.getInitialRoot()));
+        } else {
+            prefs.withInitialRoot(CategoryItemStub.ROOT_GALLERY);
+        }
+        prefs.setAllowItemAddition(true);
+        prefs.withInitialSelection(event.getInitialSelection());
+        RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
+        showFragmentNow(f);
     }
 
 }

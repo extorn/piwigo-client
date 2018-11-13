@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
-import android.support.v7.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -9,11 +9,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.appbar.AppBarLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -24,19 +29,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
+import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
+import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.StopActivityEvent;
+import delit.piwigoclient.ui.events.ToolbarEvent;
+import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreateNeededEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumCreatedEvent;
+import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
@@ -46,6 +60,8 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.upload.UploadFragment;
+import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
+import delit.piwigoclient.util.DisplayUtils;
 
 /**
  * Created by gareth on 12/07/17.
@@ -53,13 +69,21 @@ import delit.piwigoclient.ui.upload.UploadFragment;
 
 public class UploadActivity extends MyActivity {
 
+    private static final String TAG = "uploadActivity";
     private static final int FILE_SELECTION_INTENT_REQUEST = 10101;
     private static final String STATE_FILE_SELECT_EVENT_ID = "fileSelectionEventId";
     private static final String STATE_STARTED_ALREADY = "startedAlready";
+    private static final String INTENT_DATA_CURRENT_ALBUM = "currentAlbum";
     private final HashMap<String, String> errors = new HashMap<>();
     private int fileSelectionEventId;
     private boolean startedWithPermissions;
     private Toolbar toolbar;
+
+    public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
+        Intent intent = new Intent(context, UploadActivity.class);
+        intent.putExtra(INTENT_DATA_CURRENT_ALBUM, currentAlbum);
+        return intent;
+    }
 
     @Override
     public void onStart() {
@@ -91,6 +115,7 @@ public class UploadActivity extends MyActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
+        outState.putInt(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
     }
 
     @Override
@@ -112,7 +137,11 @@ public class UploadActivity extends MyActivity {
         } else {
             setContentView(R.layout.activity_upload);
             toolbar = findViewById(R.id.toolbar);
-            toolbar.setTitle(R.string.upload_page_title);
+            if(BuildConfig.DEBUG) {
+                toolbar.setTitle(getString(R.string.upload_page_title) + " ("+BuildConfig.FLAVOR+')');
+            } else {
+                toolbar.setTitle(R.string.upload_page_title);
+            }
             setSupportActionBar(toolbar);
             showUploadFragment(true, connectionPrefs);
         }
@@ -159,10 +188,10 @@ public class UploadActivity extends MyActivity {
     private void showUploadFragment(boolean allowLogin, ConnectionPreferences.ProfilePreferences connectionPrefs) {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
-        long initialGalleryId = getIntent().getLongExtra("galleryId", 0);
+        CategoryItemStub currentAlbum = getIntent().getParcelableExtra(INTENT_DATA_CURRENT_ALBUM);
 
         if (isCurrentUserAuthorisedToUpload(sessionDetails)) {
-            Fragment f = UploadFragment.newInstance(initialGalleryId, fileSelectionEventId);
+            Fragment f = UploadFragment.newInstance(currentAlbum, fileSelectionEventId);
             removeFragmentsFromHistory(UploadFragment.class, true);
             showFragmentNow(f);
         } else if (allowLogin && sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
@@ -236,7 +265,9 @@ public class UploadActivity extends MyActivity {
         if (imageUris != null) {
             filesToUpload = new ArrayList<>(imageUris.size());
             for (Uri imageUri : imageUris) {
-                handleSentImage(imageUri, filesToUpload);
+                if(imageUri != null) {
+                    handleSentImage(imageUri, filesToUpload);
+                }
             }
         } else {
             filesToUpload = new ArrayList<>(0);
@@ -258,7 +289,7 @@ public class UploadActivity extends MyActivity {
         return filesToUpload;
     }
 
-    private void handleSentImage(Uri imageUri, ArrayList<File> filesToUpload) {
+    private void handleSentImage(@NonNull Uri imageUri, ArrayList<File> filesToUpload) {
         File f = new File(imageUri.getPath());
         if (!f.exists()) {
             f = new File(getRealPathFromURI(imageUri));
@@ -283,6 +314,25 @@ public class UploadActivity extends MyActivity {
         return path;
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(ExpandingAlbumSelectionNeededEvent event) {
+//        ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences prefs = new ExpandableAlbumsListAdapter.ExpandableAlbumsListAdapterPreferences();
+//        AlbumSelectExpandableFragment f = AlbumSelectExpandableFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
+        CategoryItemViewAdapterPreferences prefs = new CategoryItemViewAdapterPreferences();
+        if(event.isAllowEditing()) {
+            prefs.selectable(event.isAllowMultiSelect(), event.isInitialSelectionLocked());
+        }
+        if(event.getInitialRoot() != null) {
+            prefs.withInitialRoot(new CategoryItemStub("???", event.getInitialRoot()));
+        } else {
+            prefs.withInitialRoot(CategoryItemStub.ROOT_GALLERY);
+        }
+        prefs.setAllowItemAddition(true);
+        prefs.withInitialSelection(event.getInitialSelection());
+        RecyclerViewCategoryItemSelectFragment f = RecyclerViewCategoryItemSelectFragment.newInstance(prefs, event.getActionId());
+        showFragmentNow(f);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(FileSelectionNeededEvent event) {
         Intent intent = new Intent(getBaseContext(), FileSelectActivity.class);
@@ -298,17 +348,24 @@ public class UploadActivity extends MyActivity {
             if (resultCode == RESULT_OK) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
                 long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
-                ArrayList<File> filesForUpload = (ArrayList<File>) data.getExtras().get(FileSelectActivity.INTENT_SELECTED_FILES);
+                ArrayList<File> filesForUpload = BundleUtils.getFileArrayList(data.getExtras(), FileSelectActivity.INTENT_SELECTED_FILES);
 
                 int eventId = requestCode;
                 FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload, actionTimeMillis);
-
+                // post sticky because the fragment to handle this event may not yet be created and registered with the event bus.
                 EventBus.getDefault().postSticky(event);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(final ViewJobStatusDetailsEvent event) {
+        UploadJobStatusDetailsFragment fragment = UploadJobStatusDetailsFragment.newInstance(event.getJob());
+        showFragmentNow(fragment);
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final AlbumCreateNeededEvent event) {
@@ -335,6 +392,16 @@ public class UploadActivity extends MyActivity {
         }
         GroupSelectFragment fragment = GroupSelectFragment.newInstance(prefs, event.getActionId(), event.getInitialSelection());
         showFragmentNow(fragment);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ToolbarEvent event) {
+        toolbar.setTitle(event.getTitle());
+        if(event.isExpandToolbarView()) {
+            ((AppBarLayout) toolbar.getParent()).setExpanded(true, true);
+        } else if(event.isContractToolbarView()) {
+            ((AppBarLayout) toolbar.getParent()).setExpanded(false, true);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -373,7 +440,10 @@ public class UploadActivity extends MyActivity {
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
 
+        Crashlytics.log(Log.DEBUG, TAG, "showing fragment: " + f.getTag());
         checkLicenceIfNeeded();
+
+        DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());
 
         Fragment lastFragment = getSupportFragmentManager().findFragmentById(R.id.main_view);
         String lastFragmentName = "";
@@ -401,7 +471,7 @@ public class UploadActivity extends MyActivity {
         public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
             if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
                 if (((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails() != null) {
-                    Log.e("UploadActivity", "Retrieved user login success response. Showing upload fragment");
+                    Log.e("UploadActivity", "Retrieved user login success response");
                     showUploadFragment(false, ((LoginResponseHandler.PiwigoOnLoginResponse) response).getNewSessionDetails().getConnectionPrefs());
                 } else {
                     createAndShowDialogWithExitOnClose(R.string.alert_error, R.string.alert_error_admin_user_required);

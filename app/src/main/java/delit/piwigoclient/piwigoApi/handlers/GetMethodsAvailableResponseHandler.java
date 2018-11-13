@@ -30,14 +30,14 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         PiwigoSessionDetails currentCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         currentCredentials.setMethodsAvailable(parseMethodsAvailable(rsp));
-        PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse r = new PiwigoResponseBufferingHandler.PiwigoGetMethodsAvailableResponse(getMessageId(), getPiwigoMethod());
+        PiwigoGetMethodsAvailableResponse r = new PiwigoGetMethodsAvailableResponse(getMessageId(), getPiwigoMethod(), isCached);
         storeResponse(r);
     }
 
-    private Set<String> parseMethodsAvailable(JsonElement rsp) throws JSONException {
+    private Set<String> parseMethodsAvailable(JsonElement rsp) {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray methodsArray = result.get("methods").getAsJsonArray();
         Set<String> methodsAvailable = new HashSet<>(methodsArray.size());
@@ -48,4 +48,14 @@ public class GetMethodsAvailableResponseHandler extends AbstractPiwigoWsResponse
         return methodsAvailable;
     }
 
+    public static class PiwigoGetMethodsAvailableResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        public PiwigoGetMethodsAvailableResponse(long messageId, String piwigoMethod, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+        }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
+    }
 }

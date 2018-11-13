@@ -1,14 +1,15 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,6 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
@@ -116,9 +116,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             }
         });
 
-        CustomImageButton directDownloadButton = container.findViewById(R.id.slideshow_resource_action_direct_download);
-        directDownloadButton.setVisibility(View.GONE);
-
         loader = new PicassoLoader(imageView) {
 
             @Override
@@ -166,7 +163,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             @Override
             public boolean onLongClick(View v) {
                 final SelectImageRenderDetailsDialog dialogFactory = new SelectImageRenderDetailsDialog(getContext());
-                AlertDialog dialog = dialogFactory.buildDialog(imageView.getMaxZoom(), currentImageUrlDisplayed, model.getAvailableFiles(), new SelectImageRenderDetailsDialog.RenderDetailSelectListener() {
+                AlertDialog dialog = dialogFactory.buildDialog(currentImageUrlDisplayed, model.getAvailableFiles(), new SelectImageRenderDetailsDialog.RenderDetailSelectListener() {
                     @Override
                     public void onSelection(String selectedUrl, float rotateDegrees, float maxZoom) {
                         currentImageUrlDisplayed = selectedUrl;
@@ -176,6 +173,8 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                         //TODO work out how to do auto rotation!
                         if (0 != Float.compare(rotateDegrees, 0f)) {
                             loader.setRotation(rotateDegrees);
+                        } else {
+                            loader.setRotation(0f);
                         }
                         loader.load();
                         imageView.setMaxZoom(maxZoom);
@@ -218,10 +217,18 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             }
             if (currentImageUrlDisplayed == null) {
                 //Oh no - image couldn't be found - use the default.
-                ResourceItem.ResourceFile fullscreenImage = model.getFullScreenImage();
+                int appHeight = getView().getRootView().getMeasuredHeight();
+                int appWidth = getView().getRootView().getMeasuredWidth();
+                if(appHeight == 0 || appWidth == 0) {
+                    Point p = DisplayUtils.getRealScreenSize(getContext());
+                    appHeight = p.y;
+                    appWidth = p.x;
+                }
+                ResourceItem.ResourceFile fullscreenImage = model.getBestFitFile(appWidth, appHeight);
                 if (fullscreenImage != null) {
-                    currentImageUrlDisplayed = model.getFullScreenImage().getUrl();
+                    currentImageUrlDisplayed = fullscreenImage.getUrl();
                 } else {
+                    // this is theoretically never going to happen. Only if bug in the image selection code.
                     currentImageUrlDisplayed = model.getFile("original").getUrl();
                 }
             }
@@ -241,7 +248,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
 
         if (getUiHelper().completePermissionsWantedRequest(event)) {
@@ -289,6 +296,5 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         currentImageUrlDisplayed = null;
         //Enable the next line to cancel download of the image if not yet complete. This is very wasteful of network traffic though possibly essential for memory.
         loader.cancelImageLoadIfRunning();
-        loader = null;
     }
 }

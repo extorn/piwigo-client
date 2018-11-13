@@ -50,7 +50,7 @@ public class GroupRemoveMembersResponseHandler<T extends ResourceItem> extends A
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray groupsObj = result.get("groups").getAsJsonArray();
         HashSet<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
@@ -64,8 +64,20 @@ public class GroupRemoveMembersResponseHandler<T extends ResourceItem> extends A
             HashSet<Long> currentUsersGroupMemberships = sessionDetails.getGroupMemberships();
             currentUsersGroupMemberships.remove(groupId);
         }
-        PiwigoResponseBufferingHandler.PiwigoGroupRemoveMembersResponse r = new PiwigoResponseBufferingHandler.PiwigoGroupRemoveMembersResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
+        PiwigoGroupRemoveMembersResponse r = new PiwigoGroupRemoveMembersResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next(), isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoGroupRemoveMembersResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final Group group;
+
+        public PiwigoGroupRemoveMembersResponse(long messageId, String piwigoMethod, Group group, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.group = group;
+        }
+
+        public Group getGroup() {
+            return group;
+        }
+    }
 }

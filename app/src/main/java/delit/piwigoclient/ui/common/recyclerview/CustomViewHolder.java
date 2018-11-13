@@ -1,7 +1,7 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferences, T> extends RecyclerView.ViewHolder {
@@ -38,6 +38,6 @@ public abstract class CustomViewHolder<V extends BaseRecyclerViewAdapterPreferen
         return itemActionListener;
     }
 
-    public <T> void redisplayOldValues(Context context, T newItem, boolean allowItemDeletion) {
+    public <S> void redisplayOldValues(Context context, S newItem, boolean allowItemDeletion) {
     }
 }

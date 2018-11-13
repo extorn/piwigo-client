@@ -11,12 +11,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.StringRes;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,16 +46,23 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.ui.preferences.ConnectionPreferenceFragment;
 import delit.piwigoclient.util.ToastUtils;
 import delit.piwigoclient.util.X509Utils;
 
@@ -91,7 +92,7 @@ public abstract class UIHelper<T> {
     private int permissionsNeededReason;
     private NotificationManager notificationManager;
     ProgressIndicator progressIndicator;
-    private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap<Long, Action>();
+    private ConcurrentHashMap<Long, Action> actionOnServerCallComplete = new ConcurrentHashMap();
 
     public UIHelper(T parent, SharedPreferences prefs, Context context) {
         this.context = context;
@@ -161,8 +162,20 @@ public abstract class UIHelper<T> {
         return this.context != context;
     }
 
-    public void showDetailedToast(@StringRes int titleResId, String message) {
+    public void showShortDetailedToast(@StringRes int titleResId, @StringRes int messageResId) {
+        showDetailedToast(titleResId, getContext().getString(messageResId), Toast.LENGTH_SHORT);
+    }
+
+    public void showDetailedToast(@StringRes int titleResId, @StringRes int messageResId) {
+        showDetailedToast(titleResId, getContext().getString(messageResId), Toast.LENGTH_LONG);
+    }
+
+    public void showShortDetailedToast(@StringRes int titleResId, String message) {
         showDetailedToast(titleResId, message, Toast.LENGTH_SHORT);
+    }
+
+    public void showDetailedToast(@StringRes int titleResId, String message) {
+        showDetailedToast(titleResId, message, Toast.LENGTH_LONG);
     }
 
     public void showDetailedToast(@StringRes int titleResId, String message, int duration) {
@@ -327,6 +340,16 @@ public abstract class UIHelper<T> {
         }
     }
 
+    public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+        addActionOnResponse(worker.getMessageId(), actionOnResponse);
+        addActiveServiceCall(progressMsg, worker.getMessageId());
+        worker.invokeAsync(context);
+    }
+
+    public void invokeActiveServiceCall(int progressMsgId, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+        invokeActiveServiceCall(context.getString(progressMsgId), worker, actionOnResponse);
+    }
+
     public void addActiveServiceCall(int titleStringId, long messageId) {
         addActiveServiceCall(context.getString(titleStringId), messageId);
     }
@@ -353,7 +376,7 @@ public abstract class UIHelper<T> {
 
     public void onSaveInstanceState(Bundle outState) {
         Bundle thisBundle = new Bundle();
-        thisBundle.putSerializable(ACTIVE_SERVICE_CALLS, new HashSet<>(activeServiceCalls));
+        BundleUtils.putLongHashSet(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls);
         thisBundle.putInt(STATE_TRACKED_REQUESTS, trackedRequest);
         thisBundle.putSerializable(STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
         thisBundle.putSerializable(STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
@@ -366,10 +389,15 @@ public abstract class UIHelper<T> {
         if (savedInstanceState != null) {
             Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
             if (thisBundle != null) {
-                activeServiceCalls = Collections.synchronizedSet((HashSet<Long>) thisBundle.getSerializable(ACTIVE_SERVICE_CALLS));
+                activeServiceCalls = Collections.synchronizedSet(BundleUtils.getLongHashSet(thisBundle, ACTIVE_SERVICE_CALLS));
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
-                runWithPermissions = (HashMap<Integer, PermissionsWantedRequestEvent>) thisBundle.getSerializable(STATE_RUN_WITH_PERMS_LIST);
-                actionOnServerCallComplete = (ConcurrentHashMap<Long, Action>) thisBundle.getSerializable(STATE_ACTIONS_ON_RESPONSES);
+                runWithPermissions = BundleUtils.getSerializable(thisBundle, STATE_RUN_WITH_PERMS_LIST, HashMap.class);
+                try {
+                    actionOnServerCallComplete = BundleUtils.getSerializable(thisBundle, STATE_ACTIONS_ON_RESPONSES, ConcurrentHashMap.class);
+                } catch(IllegalStateException e) {
+                    Map<Long, Action> map = BundleUtils.getSerializable(thisBundle, STATE_ACTIONS_ON_RESPONSES, HashMap.class);
+                    actionOnServerCallComplete = new ConcurrentHashMap<>(map);
+                }
                 permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
                 piwigoResponseListener.onRestoreInstanceState(thisBundle);
             }
@@ -410,8 +438,14 @@ public abstract class UIHelper<T> {
     }
 
     public int runWithExtraPermissions(final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String permissionNeeded, String permissionJustificationString) {
+        return runWithExtraPermissions(fragment, sdkVersionRequiredFrom, sdkVersionRequiredUntil, new String[]{permissionNeeded}, permissionJustificationString);
+    }
+
+    public int runWithExtraPermissions(final Fragment fragment, int sdkVersionRequiredFrom, int sdkVersionRequiredUntil, final String[] permissionsNeeded, String permissionJustificationString) {
         PermissionsWantedRequestEvent event = new PermissionsWantedRequestEvent();
-        event.addPermissionNeeded(permissionNeeded);
+        for(String permissionNeeded : permissionsNeeded) {
+            event.addPermissionNeeded(permissionNeeded);
+        }
         event.setJustification(permissionJustificationString);
         return runWithExtraPermissions(fragment.getActivity(), sdkVersionRequiredFrom, sdkVersionRequiredUntil, event);
     }
@@ -713,6 +747,9 @@ public abstract class UIHelper<T> {
     }
 
     public ProgressIndicator getProgressIndicator() {
+        if(progressIndicator == null) {
+            loadProgressIndicatorIfPossible();
+        }
         return progressIndicator;
     }
 
@@ -951,12 +988,18 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static class Action implements Serializable {
-        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response){
+    public static class Action<T,S extends PiwigoResponseBufferingHandler.Response> implements Serializable {
+
+        protected T getActionParent(UIHelper<T> uiHelper) {
+            return uiHelper.getParent();
+        }
+
+        public boolean onSuccess(UIHelper<T> uiHelper, S response){
             return true;
-        };
-        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response){
+        }
+
+        public boolean onFailure(UIHelper<T> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response){
             return true;
-        };
+        }
     }
 }

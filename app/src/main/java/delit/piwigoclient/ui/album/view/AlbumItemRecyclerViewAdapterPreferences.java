@@ -5,6 +5,7 @@ import android.os.Bundle;
 import java.util.Date;
 
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 
 public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
     public static final int SCALING_QUALITY_PERFECT = Integer.MAX_VALUE;
@@ -27,29 +28,31 @@ public class AlbumItemRecyclerViewAdapterPreferences extends BaseRecyclerViewAda
     @Override
     public Bundle storeToBundle(Bundle parent) {
         Bundle b = new Bundle();
-        b.putSerializable("recentlyAlteredThresholdDate", recentlyAlteredThresholdDate);
+        BundleUtils.putDate(b, "recentlyAlteredThresholdDate", recentlyAlteredThresholdDate);
         b.putString("preferredThumbnailSize", preferredThumbnailSize);
         b.putString("preferredAlbumThumbnailSize", preferredAlbumThumbnailSize);
         b.putBoolean("showAlbumThumbnailsZoomed", showAlbumThumbnailsZoomed);
         b.putFloat("albumWidth", albumWidth);
         b.putBoolean("showResourceNames", showResourceNames);
 //                b.putInt("scalingQuality", scalingQuality);
-        parent.putBundle("AlbumItemRecyclerViewAdapterPreferences", b);
         super.storeToBundle(b);
+        parent.putBundle("AlbumItemRecyclerViewAdapterPreferences", b);
         return parent;
     }
 
     @Override
     public AlbumItemRecyclerViewAdapterPreferences loadFromBundle(Bundle parent) {
         Bundle b = parent.getBundle("AlbumItemRecyclerViewAdapterPreferences");
-        recentlyAlteredThresholdDate = (Date) b.getSerializable("recentlyAlteredThresholdDate");
-        preferredThumbnailSize = b.getString("preferredThumbnailSize");
-        preferredAlbumThumbnailSize = b.getString("preferredAlbumThumbnailSize");
-        showAlbumThumbnailsZoomed = b.getBoolean("showAlbumThumbnailsZoomed");
-        albumWidth = b.getFloat("albumWidth");
-        showResourceNames = b.getBoolean("showResourceNames");
+        if(b != null) {
+            recentlyAlteredThresholdDate = BundleUtils.getDate(b, "recentlyAlteredThresholdDate");
+            preferredThumbnailSize = b.getString("preferredThumbnailSize");
+            preferredAlbumThumbnailSize = b.getString("preferredAlbumThumbnailSize");
+            showAlbumThumbnailsZoomed = b.getBoolean("showAlbumThumbnailsZoomed");
+            albumWidth = b.getFloat("albumWidth");
+            showResourceNames = b.getBoolean("showResourceNames");
 //                scalingQuality = b.getInt("scalingQuality");
-        super.loadFromBundle(b);
+            super.loadFromBundle(b);
+        }
         return this;
     }
 

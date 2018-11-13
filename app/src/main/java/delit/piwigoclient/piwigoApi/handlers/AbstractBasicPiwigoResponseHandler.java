@@ -15,13 +15,16 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpStatus;
+import cz.msebera.android.httpclient.client.cache.HeaderConstants;
+import cz.msebera.android.httpclient.message.BasicHeader;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -57,8 +60,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private ConnectionPreferences.ProfilePreferences connectionPrefs;
     private SharedPreferences sharedPrefs;
     private boolean isPerformingLogin;
-    private static AtomicLong connectionResetOccurredWindowStart = new AtomicLong();
-    private static AtomicLong connectionResetCount = new AtomicLong();
+    private static Lock connectionResetLock = new ReentrantLock();
+    private static long connectionResetOccurredWindowStart = 0;
+    private static long connectionResetCount = 0;
+    private double lastProgressReportAtPercent;
 
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
@@ -86,11 +91,13 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                         rerunningCall = false;
                     }
                     isRunning = false;
-                    break;
                 default:
                     if (BuildConfig.DEBUG) {
-                        Log.i(tag, "rx " + message.what);
+                        Log.v(tag, "rx message type : " + message.what);
                     }
+                    break;
+                case PROGRESS_MESSAGE:
+                    break;
             }
         } finally {
             synchronized (this) {
@@ -106,6 +113,23 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         }
     }
 
+    @Override
+    public void onProgress(long bytesWritten, long totalSize) {
+        if(BuildConfig.DEBUG) {
+            double currentProgressPercent = Math.floor((totalSize > 0) ? (bytesWritten * 1.0 / totalSize) * 100 : -1);
+            if(currentProgressPercent < 0 || currentProgressPercent > lastProgressReportAtPercent) {
+                lastProgressReportAtPercent = currentProgressPercent;
+                super.onProgress(bytesWritten, totalSize);
+            }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        lastProgressReportAtPercent = -1;
+    }
+
     protected void postCall(boolean success) {
         // do nothing by default
     }
@@ -113,13 +137,30 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     @Override
     public final void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
         this.isSuccess = true;
-        onSuccess(statusCode, headers, responseBody, triedLoggingInAgain);
+        try {
+            onSuccess(statusCode, headers, responseBody, triedLoggingInAgain);
+        } catch(RuntimeException e) {
+            Crashlytics.logException(e);
+            throw e;
+        }
+    }
+
+    protected Header[] buildOfflineAccessHeaders() {
+        if(getConnectionPrefs().isOfflineMode(getSharedPrefs(), getContext())) {
+            Header[] headers = new Header[2];
+            headers[0] = new BasicHeader(HeaderConstants.STALE_IF_ERROR, String.valueOf(Long.MAX_VALUE));
+            headers[1] = new BasicHeader(HeaderConstants.STALE_WHILE_REVALIDATE, String.valueOf(Long.MAX_VALUE));
+            return headers;
+        } else {
+            return new Header[0];
+        }
     }
 
     protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
     }
 
-    protected void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
+    protected boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
+        return false;
     }
 
     public void setCallDetails(Context parentContext, ConnectionPreferences.ProfilePreferences connectionPrefs, boolean useAsyncMode) {
@@ -137,7 +178,6 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        this.httpClientFactory = HttpClientFactory.getInstance(context);
         this.allowSessionRefreshAttempt = allowSessionRefreshAttempt;
         if (this.connectionPrefs == null) {
             this.connectionPrefs = connectionPrefs;
@@ -202,81 +242,106 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             } else if (allowSessionRefreshAttempt
                     && (statusCode == HttpStatus.SC_UNAUTHORIZED && !triedLoggingInAgain && (error == null || error.getMessage().equalsIgnoreCase("Access denied")))) {
 
-                boolean newLoginAcquired = false;
-                synchronized (AbstractBasicPiwigoResponseHandler.class) {
-                    // Only one instance of this class can perform a login at a time - all others will wait for the outcome
-                    triedLoggingInAgain = true;
-                    PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
-                    String newToken = null;
-                    if (sessionDetails != null) {
-                        newToken = sessionDetails.getSessionToken();
-                    }
-                    if (newToken != null && !newToken.equals(sessionToken)) {
-                        newLoginAcquired = true;
-                    } else if (!isPerformingLogin() && !(sessionDetails != null && sessionDetails.isLoggedIn() && !sessionDetails.isFullyLoggedIn())) {
-                        // if we're not trying to get a new login at the moment. (otherwise this recurses).
-
-                        // clear the cookies to ensure the fresh cookie is used in subsequent requests.
-                        //TODO is this required?
-                        httpClientFactory.flushCookies(connectionPrefs);
-
-                        // Ensure that the login code knows that the current session token may be invalid despite seemingly being okay
-                        if (sessionDetails != null && sessionDetails.isOlderThanSeconds(5)) {
-                            sessionDetails.setSessionMayHaveExpired();
-                        }
-
-                        // try and get a new session token
-                        synchronized (Worker.class) {
-                            // only one worker at a time can do this.
-                            newLoginAcquired = getNewLogin();
-                        }
-                    }
-                }
-
-                // if we either got a new token here or another thread did, retry the original failing call.
-                if (newLoginAcquired) {
-                    sessionToken = PiwigoSessionDetails.getActiveSessionToken(connectionPrefs);
-                    // ensure we ignore this error (if it errors again, we'll capture that one)
-                    tryingAgain = true;
-                    // just run the original call again (another thread has retrieved a new session
-                    rerunCall();
-                }
+                // ensure we ignore this error (if it errors again, we'll capture that one)
+                tryingAgain = acquireNewSessionAndRetryCallIfAcquired();
             }
         }
         if (!tryingAgain) {
-            if (BuildConfig.DEBUG && error != null && !"Method name is not valid".equals(error.getMessage())) {
-                Log.e(getTag(), "Tracking piwigo failure class: " + error.getClass() + " message: " + error.getMessage(), error);
+            try {
+                tryingAgain = onFailure(statusCode, headers, responseBody, error, triedLoggingInAgain, isResponseCached(headers));
+            } catch(RuntimeException e) {
+                Crashlytics.logException(e);
+                throw e;
             }
-            this.statusCode = statusCode;
-            this.headers = headers;
-            this.responseBody = responseBody;
-            if (this.error == null) {
-                this.error = error;
+            if(!tryingAgain) {
+                this.statusCode = statusCode;
+                this.headers = headers;
+                this.responseBody = responseBody;
+                if (this.error == null) {
+                    this.error = error;
+                }
+            } else {
+                // just run the original call again (some action has been taken such that it may succeed this time)
+                rerunCall();
             }
-            onFailure(statusCode, headers, responseBody, this.error, triedLoggingInAgain);
         }
+    }
+
+    protected boolean acquireNewSessionAndRetryCallIfAcquired() {
+        boolean newLoginAcquired = testLoginGetNewSessionIfNeeded();
+        // if we either got a new token here or another thread did, retry the original failing call.
+        if (newLoginAcquired) {
+            // just run the original call again (another thread has retrieved a new session
+            rerunCall();
+        }
+        return newLoginAcquired;
+    }
+
+    protected boolean testLoginGetNewSessionIfNeeded() {
+        boolean newLoginAcquired = false;
+        synchronized (AbstractBasicPiwigoResponseHandler.class) {
+            // Only one instance of this class can perform a login at a time - all others will wait for the outcome
+            triedLoggingInAgain = true;
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            String newToken = null;
+            if (sessionDetails != null) {
+                newToken = sessionDetails.getSessionToken();
+            }
+            if (newToken != null && !newToken.equals(sessionToken)) {
+                newLoginAcquired = true;
+            } else if (!isPerformingLogin() && !(sessionDetails != null && sessionDetails.isLoggedIn() && !sessionDetails.isFullyLoggedIn())) {
+                // if we're not trying to get a new login at the moment. (otherwise this recurses).
+
+                // clear the cookies to ensure the fresh cookie is used in subsequent requests.
+                //TODO is this required?
+                getHttpClientFactory().flushCookies(connectionPrefs);
+
+                // Ensure that the login code knows that the current session token may be invalid despite seemingly being okay
+                if (sessionDetails != null && sessionDetails.isOlderThanSeconds(5)) {
+                    sessionDetails.setSessionMayHaveExpired();
+                }
+
+                // try and get a new session token
+                synchronized (Worker.class) {
+                    // only one worker at a time can do this.
+                    newLoginAcquired = getNewLogin();
+                }
+            }
+        }
+        if(newLoginAcquired) {
+            sessionToken = PiwigoSessionDetails.getActiveSessionToken(connectionPrefs);
+        }
+        return newLoginAcquired;
     }
 
     private void recordConnectionReset() {
-        int maxAcceptableServerResetCount = 30;
-        int maxWindowSizeMillis = 1000 * 60 * 10; // 10 minutes
-        long windowStart = connectionResetOccurredWindowStart.get();
-        long currentWindowSizeMillis = System.currentTimeMillis() - windowStart;
-        if(windowStart == 0 || currentWindowSizeMillis > maxWindowSizeMillis) {
-            connectionResetOccurredWindowStart.set(System.currentTimeMillis());
-            connectionResetCount.set(0);
-        } else {
-            long curentWindowResetCount = connectionResetCount.incrementAndGet();
-            if(curentWindowResetCount > maxAcceptableServerResetCount) {
-                connectionResetCount.set(0);
-                connectionResetOccurredWindowStart.set(0);
-                EventBus.getDefault().post(new ServerConnectionWarningEvent(String.format(Locale.getDefault(), context.getString(R.string.connection_reset_warning_pattern), curentWindowResetCount, currentWindowSizeMillis / 1000)));
+        try {
+            connectionResetLock.lock();
+
+            int maxAcceptableServerResetCount = 100;
+            int maxWindowSizeMillis = 1000 * 60 * 10; // 10 minutes
+            long windowStart = connectionResetOccurredWindowStart;
+            long currentWindowSizeMillis = System.currentTimeMillis() - windowStart;
+            if(windowStart == 0 || currentWindowSizeMillis > maxWindowSizeMillis) {
+                connectionResetOccurredWindowStart = System.currentTimeMillis();
+                connectionResetCount = 0;
+            } else {
+                long curentWindowResetCount = ++connectionResetCount;
+                if(curentWindowResetCount > maxAcceptableServerResetCount) {
+                    connectionResetCount = 0;
+                    connectionResetOccurredWindowStart = 0;
+                    EventBus.getDefault().post(new ServerConnectionWarningEvent(String.format(Locale.getDefault(), context.getString(R.string.connection_reset_warning_pattern), curentWindowResetCount, currentWindowSizeMillis / 1000)));
+                }
             }
+
+        } finally {
+            connectionResetLock.unlock();
         }
+
     }
 
     protected void reportNestedFailure(AbstractBasicPiwigoResponseHandler nestedHandler) {
-        onFailure(nestedHandler.statusCode, nestedHandler.headers, nestedHandler.responseBody, nestedHandler.error, triedLoggingInAgain);
+        onFailure(nestedHandler.statusCode, nestedHandler.headers, nestedHandler.responseBody, nestedHandler.error, triedLoggingInAgain, isResponseCached(nestedHandler.headers));
     }
 
     protected void onGetNewSessionSuccess() {
@@ -291,6 +356,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         return isSuccess;
     }
 
+    protected void resetSuccessAsFailure() {
+        isSuccess = false;
+    }
+
     protected void resetFailureAsASuccess() {
         isSuccess = true;
     }
@@ -303,7 +372,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         this.error = error;
     }
 
-    private void rerunCall() {
+    protected void rerunCall() {
         rerunningCall = true;
         runCall();
     }
@@ -348,6 +417,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     public abstract RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler);
 
     public HttpClientFactory getHttpClientFactory() {
+        if(httpClientFactory == null) {
+            httpClientFactory = HttpClientFactory.getInstance(context);
+        }
         return httpClientFactory;
     }
 
@@ -368,7 +440,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     newLoginStatus = PiwigoSessionDetails.LOGGED_IN_WITH_SESSION_AND_USER_DETAILS;
                     exit = true;
                     LoginResponseHandler.PiwigoOnLoginResponse response = (LoginResponseHandler.PiwigoOnLoginResponse) handler.getResponse();
-                    EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
+                    if(getConnectionPrefs().isDefaultProfile()) {
+                        EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
+                    }
                     onGetNewSessionSuccess();
                     // update the session token for this handler.
                     return true;
@@ -389,6 +463,19 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         } while (!exit);
 
         return handler.isSuccess();
+    }
+
+    protected boolean isResponseCached(Header[] headers) {
+        boolean isCached = false;
+        if(headers != null) {
+            for (Header h : headers) {
+                if (HeaderConstants.VIA.equals(h.getName())) {
+                    isCached = h.getValue().contains("(cache)");
+                    break;
+                }
+            }
+        }
+        return isCached;
     }
 
     public boolean isCancelCallAsap() {

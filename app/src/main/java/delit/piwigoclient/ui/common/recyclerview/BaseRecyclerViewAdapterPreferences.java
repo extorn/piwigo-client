@@ -53,14 +53,19 @@ public class BaseRecyclerViewAdapterPreferences {
     }
 
     public BaseRecyclerViewAdapterPreferences loadFromBundle(Bundle parent) {
+        if(parent == null) {
+            return this;
+        }
         Bundle b = parent.getBundle("BaseRecyclerViewAdapterPreferences");
-        allowItemSelection = b.getBoolean("allowItemSelection");
-        initialSelectionLocked = b.getBoolean("initialSelectionLocked");
-        multiSelectionEnabled = b.getBoolean("multiSelectionEnabled");
-        allowItemDeletion = b.getBoolean("allowItemDeletion");
-        allowItemAddition = b.getBoolean("allowItemAddition");
-        enabled = b.getBoolean("enabled");
-        readonly = b.getBoolean("readonly");
+        if(b != null) {
+            allowItemSelection = b.getBoolean("allowItemSelection");
+            initialSelectionLocked = b.getBoolean("initialSelectionLocked");
+            multiSelectionEnabled = b.getBoolean("multiSelectionEnabled");
+            allowItemDeletion = b.getBoolean("allowItemDeletion");
+            allowItemAddition = b.getBoolean("allowItemAddition");
+            enabled = b.getBoolean("enabled");
+            readonly = b.getBoolean("readonly");
+        }
         return this;
     }
 

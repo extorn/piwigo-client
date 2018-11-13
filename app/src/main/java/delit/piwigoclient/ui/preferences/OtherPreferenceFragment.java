@@ -3,8 +3,6 @@ package delit.piwigoclient.ui.preferences;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.View;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;

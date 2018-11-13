@@ -32,7 +32,7 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray categories = result.get("categories").getAsJsonArray();
 
@@ -83,8 +83,24 @@ public class AlbumGetSubAlbumsAdminResponseHandler extends AbstractPiwigoWsRespo
         // Now lets update the total photo count for all albums so it includes that of the children.
         adminList.updateTotalPhotosAndSubAlbumCount();
 
-        PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse r = new PiwigoResponseBufferingHandler.PiwigoGetSubAlbumsAdminResponse(getMessageId(), getPiwigoMethod(), adminList);
+        PiwigoGetSubAlbumsAdminResponse r = new PiwigoGetSubAlbumsAdminResponse(getMessageId(), getPiwigoMethod(), adminList, isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoGetSubAlbumsAdminResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        final PiwigoAlbumAdminList adminList;
+
+        public PiwigoGetSubAlbumsAdminResponse(long messageId, String piwigoMethod, PiwigoAlbumAdminList adminList, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.adminList = adminList;
+        }
+
+        public PiwigoAlbumAdminList getAdminList() {
+            return adminList;
+        }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
+    }
 }

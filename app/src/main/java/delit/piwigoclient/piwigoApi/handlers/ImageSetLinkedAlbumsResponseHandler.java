@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class ImageSetLinkedAlbumsResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
@@ -47,9 +46,9 @@ public class ImageSetLinkedAlbumsResponseHandler<T extends ResourceItem> extends
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         piwigoResource.setLinkedAlbums(linkedAlbums);
-        PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse r = new PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse(getMessageId(), getPiwigoMethod(), piwigoResource);
+        BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse r = new BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse(getMessageId(), getPiwigoMethod(), piwigoResource, isCached);
         storeResponse(r);
     }
 

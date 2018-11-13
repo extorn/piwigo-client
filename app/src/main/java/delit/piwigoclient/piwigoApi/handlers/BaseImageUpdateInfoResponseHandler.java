@@ -58,7 +58,7 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
     }
 
     @Override
-    protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
+    protected void onPiwigoFailure(PiwigoJsonResponse rsp, boolean isCached) throws JSONException {
         /*
          * OK 200
          * <error><item>You are not allowed to delete tags</item></error>
@@ -69,13 +69,19 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
          *
          * <rsp stat="ok"><script/></rsp> (image not found)
          */
-        super.onPiwigoFailure(rsp);
+        super.onPiwigoFailure(rsp, isCached);
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<T> r = new PiwigoResponseBufferingHandler.PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource);
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        piwigoResource.markResourceDetailUpdated();
+        PiwigoUpdateResourceInfoResponse<T> r = new PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource, isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
+        public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource, boolean isCached) {
+            super(messageId, piwigoMethod, piwigoResource, isCached);
+        }
+    }
 }

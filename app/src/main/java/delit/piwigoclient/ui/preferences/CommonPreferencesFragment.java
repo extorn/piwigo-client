@@ -18,12 +18,13 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.preference.PreferenceFragmentCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,7 +51,6 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 public class CommonPreferencesFragment extends MyFragment {
 
     static final String LOG_TAG = "PreferencesFragment";
-    private View view;
 
     public CommonPreferencesFragment() {
         // Required empty public constructor
@@ -75,15 +75,8 @@ public class CommonPreferencesFragment extends MyFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (PiwigoSessionDetails.isLoggedIn(ConnectionPreferences.getActiveProfile()) && isAppInReadOnlyMode()) {
-            // immediately leave this screen.
-            getFragmentManager().popBackStack();
-            return null;
-        }
-        if (view != null) {
-            return view;
-        }
-        view = inflater.inflate(R.layout.activity_preferences, container, false);
+
+        View view = inflater.inflate(R.layout.activity_preferences, container, false);
 
         AdView adView = view.findViewById(R.id.prefs_adView);
         if (AdsManager.getInstance().shouldShowAdverts()) {
@@ -111,28 +104,38 @@ public class CommonPreferencesFragment extends MyFragment {
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (PiwigoSessionDetails.isLoggedIn(ConnectionPreferences.getActiveProfile()) && isAppInReadOnlyMode()) {
+            // immediately leave this screen.
+            getFragmentManager().popBackStack();
+            return;
+        }
+    }
+
+    @Override
     protected String buildPageHeading() {
         return getString(R.string.preferences_overall_heading);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
         }
     }
 
-    protected FragmentPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
+    protected FragmentStatePagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
         return new CommonPreferencesPagerAdapter(childFragmentManager);
     }
 
     /**
-     * The {@link android.support.v4.view.PagerAdapter} used to display pages in this sample.
+     * The {@link androidx.viewpager.widget.PagerAdapter} used to display pages in this sample.
      * The individual pages are simple and just display two lines of value. The important section of
      * this class is the {@link #getPageTitle(int)} method which controls what is displayed in the
      * {@link SlidingTabLayout}.
      */
-    protected class CommonPreferencesPagerAdapter extends FragmentPagerAdapter {
+    protected class CommonPreferencesPagerAdapter extends FragmentStatePagerAdapter {
 
         public CommonPreferencesPagerAdapter(FragmentManager fm) {
             super(fm);

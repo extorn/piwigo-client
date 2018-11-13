@@ -2,10 +2,10 @@ package delit.piwigoclient.ui.common.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +31,7 @@ import delit.piwigoclient.ui.common.Enableable;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 
@@ -61,7 +62,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         Bundle args = new Bundle();
         prefs.storeToBundle(args);
         args.putInt(STATE_ACTION_ID, actionId);
-        args.putSerializable(STATE_INITIAL_SELECTION, initialSelection);
+        BundleUtils.putLongHashSet(args, STATE_INITIAL_SELECTION, initialSelection);
         return args;
     }
 
@@ -108,8 +109,8 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         viewPrefs = createEmptyPrefs();
         viewPrefs.loadFromBundle(bundle);
         actionId = bundle.getInt(STATE_ACTION_ID);
-        currentSelection = (HashSet<Long>) bundle.getSerializable(STATE_CURRENT_SELECTION);
-        initialSelection = (HashSet<Long>) bundle.getSerializable(STATE_INITIAL_SELECTION);
+        currentSelection = BundleUtils.getLongHashSet(bundle, STATE_CURRENT_SELECTION);
+        initialSelection = BundleUtils.getLongHashSet(bundle, STATE_INITIAL_SELECTION);
         if (currentSelection == null) {
             currentSelection = initialSelection;
         }
@@ -121,7 +122,8 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
         outState.putInt(STATE_ACTION_ID, actionId);
-        outState.putSerializable(STATE_CURRENT_SELECTION, getCurrentSelection());
+        BundleUtils.putLongHashSet(outState, STATE_CURRENT_SELECTION, getCurrentSelection());
+        BundleUtils.putLongHashSet(outState, STATE_INITIAL_SELECTION, getInitialSelection());
         outState.putBoolean(STATE_SELECT_TOGGLE, selectToggle);
     }
 
@@ -179,6 +181,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
                 onToggleAllSelection();
             }
         });
+        setToggleSelectionButtonText();
 
         saveChangesButton = view.findViewById(R.id.list_action_save_button);
         saveChangesButton.setVisibility(View.VISIBLE);
@@ -194,7 +197,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    reloadListButton.setVisibility(View.GONE);
+                    reloadListButton.hide();
                     rerunRetrievalForFailedPages();
                 }
                 return true;
@@ -218,10 +221,21 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     protected abstract void selectOnlyListItems(Set<Long> selectionIds);
 
+    private void setToggleSelectionButtonText() {
+        if (selectToggle) {
+            if (initialSelection != null) {
+                toggleAllSelectionButton.setText(getString(R.string.button_reset));
+            } else {
+                toggleAllSelectionButton.setText(getString(R.string.button_none));
+            }
+        } else {
+            toggleAllSelectionButton.setText(getString(R.string.button_all));
+        }
+    }
+
     private void onToggleAllSelection() {
         if (!selectToggle) {
             selectAllListItems();
-            toggleAllSelectionButton.setText(getString(R.string.button_none));
             selectToggle = true;
         } else {
             if (viewPrefs.isInitialSelectionLocked() && initialSelection != null) {
@@ -229,9 +243,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             } else {
                 selectNoneListItems();
             }
-            toggleAllSelectionButton.setText(getString(R.string.button_all));
             selectToggle = false;
         }
+        setToggleSelectionButtonText();
     }
 
     public X getListAdapter() {
@@ -243,11 +257,11 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
     }
 
     protected void onListItemLoadFailed() {
-        reloadListButton.setVisibility(View.VISIBLE);
+        reloadListButton.show();
     }
 
     protected void onListItemLoadSuccess() {
-        reloadListButton.setVisibility(View.GONE);
+        reloadListButton.hide();
     }
 
     protected abstract void rerunRetrievalForFailedPages();
@@ -277,18 +291,18 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppLockedEvent(AppLockedEvent event) {
         setAppropriateComponentState();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onAppUnlockedEvent(AppUnlockedEvent event) {
         setAppropriateComponentState();
     }
 
     public HashSet<Long> getCurrentSelection() {
-        if (listAdapter != null && listAdapter instanceof SelectableItemsAdapter) {
+        if (listAdapter instanceof SelectableItemsAdapter) {
             currentSelection = ((SelectableItemsAdapter) listAdapter).getSelectedItemIds();
         }
         return currentSelection;
@@ -306,6 +320,7 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
             listAdapter.setEnabled(enabled);
         }
         addListItemButton.setVisibility(!isNotAuthorisedToAlterState() && viewPrefs.isAllowItemAddition() ? View.VISIBLE : View.GONE);
+        setToggleSelectionButtonText();
     }
 
     public boolean isEditingEnabled() {

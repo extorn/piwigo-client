@@ -1,8 +1,9 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import android.os.Parcelable;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,7 @@ import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
  * FIXME This is broken. swap for a new class based upon IdentifiableListViewAdapter
  */
-public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends IdentifiableListViewAdapter<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, ResourceContainer<T, GalleryItem>, AlbumItemViewHolder<T>> {
+public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> extends IdentifiableListViewAdapter<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, ResourceContainer<T, GalleryItem>, AlbumItemViewHolder<T>> {
 
     public AlbumItemRecyclerViewAdapter(final Context context, final ResourceContainer<T, GalleryItem> gallery, MultiSelectStatusListener multiSelectStatusListener, AlbumItemRecyclerViewAdapterPreferences prefs) {
         super(gallery, multiSelectStatusListener, prefs);
@@ -75,6 +76,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
         return view;
     }
 
+    @NonNull
     @Override
     public AlbumItemViewHolder buildViewHolder(View view, int viewType) {
 
@@ -94,9 +96,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
     @Override
     public void onViewRecycled(@NonNull AlbumItemViewHolder holder) {
-        if (holder != null) {
-            holder.onRecycled();
-        }
+        holder.onRecycled();
     }
 
     @Override
@@ -106,10 +106,6 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
 
     @Override
     public void onBindViewHolder(@NonNull AlbumItemViewHolder holder, int position) {
-        if (holder == null) {
-            // adverts
-            return;
-        }
         GalleryItem newItem = getItemByPosition(position);
         if (!isHolderOutOfSync(holder, newItem)) {
             // rendering the same item
@@ -161,7 +157,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable> extends Identi
         }
     }
 
-    private static class AlbumItemCustomClickListener<T extends Identifiable> extends CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<T>> {
+    private static class AlbumItemCustomClickListener<T extends Identifiable&Parcelable> extends CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<T>> {
 
         private final int maxManualRetries = 2;
         private int manualRetries = 0;

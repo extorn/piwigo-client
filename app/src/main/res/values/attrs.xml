@@ -9,6 +9,15 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="FlowLayout">
+        <attr name="horizontalSpacing" format="dimension"/>
+        <attr name="verticalSpacing" format="dimension"/>
+    </declare-styleable>
+    <declare-styleable name="FlowLayout_LayoutParams">
+        <attr name="layout_breakLine" format="boolean" />
+        <attr name="layout_horizontalSpacing" format="dimension" />
+    </declare-styleable>
+
     <declare-styleable name="SlidingTabLayout">
         <attr name="viewPager" format="reference" />
         <attr name="initialTabIdx" format="integer" />
@@ -54,7 +63,27 @@
     </declare-styleable>
 
     <declare-styleable name="ServerAlbumListPreference">
-        <attr name="connectionProfileNameKey" format="string"/>
+        <attr name="connectionProfileNameKey"/>
+    </declare-styleable>
+
+    <declare-styleable name="ServerAlbumSelectPreference">
+        <attr name="connectionProfileNameKey"/>
+    </declare-styleable>
+
+    <attr name="connectionProfileNameKey" format="string"/>
+
+    <declare-styleable name="CustomSlidingLayer">
+        <attr format="boolean" name="shadowDrawable"/>
+        <attr format="dimension" name="shadowSize"/>
+        <attr format="boolean" name="changeStateOnTap"/>
+        <attr format="dimension" name="offsetDistance"/>
+        <attr format="dimension" name="previewOffsetDistance"/>
+        <attr format="enum" name="csl_stickTo">
+            <enum name="right" value="-1"/>
+            <enum name="left" value="-2"/>
+            <enum name="top" value="-3"/>
+            <enum name="bottom" value="-4"/>
+        </attr>
     </declare-styleable>
 
 </resources>

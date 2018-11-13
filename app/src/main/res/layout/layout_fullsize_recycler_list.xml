@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,31 +10,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        tools:visibility="visible"></delit.piwigoclient.ui.common.ProgressIndicator>
+        tools:visibility="visible"/>
 
-    <delit.piwigoclient.ui.common.button.CustomImageButton
-        android:id="@+id/list_action_add_item_button"
-        android:visibility="visible"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/list_action_progress_indicator"
-        android:layout_alignWithParentIfMissing="true"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="5dp"
-        app:srcCompat="@drawable/ic_add_circle_black_24px" />
-
-    <TextView
-        android:id="@+id/heading"
-        android:visibility="visible"
+    <RelativeLayout
+        android:id="@+id/heading_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginStart="5dp"
         android:layout_below="@id/list_action_progress_indicator"
-        android:layout_alignWithParentIfMissing="true"
-        tools:text="Some Heading"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+        android:layout_alignWithParentIfMissing="true">
+
+        <delit.piwigoclient.ui.common.button.CustomImageButton
+            android:id="@+id/list_action_add_item_button"
+            android:visibility="visible"
+            android:layout_alignParentEnd="true"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="5dp"
+            app:srcCompat="@drawable/ic_add_circle_black_24px" />
+
+        <TextView
+            android:id="@+id/heading"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            tools:text="Some Heading"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+
+    </RelativeLayout>
 
     <Button
         android:id="@+id/list_action_cancel_button"
@@ -78,19 +82,20 @@
         ads:adUnitId="@string/ad_id_selectlist_banner">
     </com.google.android.gms.ads.AdView>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:clickable="true"
         android:layout_height="0px"
         android:layout_width="match_parent"
         android:layout_above="@id/list_action_save_button"
-        android:layout_below="@id/heading"
+        android:layout_below="@id/heading_bar"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
-        android:layout_alignWithParentIfMissing="true"/>
+        android:layout_alignWithParentIfMissing="true"
+        android:focusable="true" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/list_retryAction_actionButton"
         app:srcCompat="@drawable/ic_refresh_black_24dp"
         android:layout_centerHorizontal="true"
@@ -100,6 +105,7 @@
         android:clickable="true"
         android:visibility="gone"
         tools:visibility="visible"
-        app:fabSize="mini" />
+        app:fabSize="mini"
+        android:focusable="true" />
 
 </RelativeLayout>

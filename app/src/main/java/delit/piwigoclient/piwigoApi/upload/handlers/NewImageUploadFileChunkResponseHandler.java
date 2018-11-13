@@ -57,7 +57,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         ResourceItem uploadedResource = null;
         if (rsp != null && !rsp.isJsonNull()) {
             JsonObject result = rsp.getAsJsonObject();
@@ -71,7 +71,25 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
             linkedAlbums.add(albumId);
             uploadedResource.setLinkedAlbums(linkedAlbums);
         }
-        PiwigoResponseBufferingHandler.PiwigoUploadFileChunkResponse r = new PiwigoResponseBufferingHandler.PiwigoUploadFileChunkResponse(getMessageId(), getPiwigoMethod(), uploadedResource);
+        PiwigoUploadFileChunkResponse r = new PiwigoUploadFileChunkResponse(getMessageId(), getPiwigoMethod(), uploadedResource, isCached);
         storeResponse(r);
+    }
+
+    public static class PiwigoUploadFileChunkResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final ResourceItem uploadedResource;
+
+        public PiwigoUploadFileChunkResponse(long messageId, String piwigoMethod, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            uploadedResource = null;
+        }
+
+        public PiwigoUploadFileChunkResponse(long messageId, String piwigoMethod, ResourceItem uploadedResource, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.uploadedResource = uploadedResource;
+        }
+
+        public ResourceItem getUploadedResource() {
+            return uploadedResource;
+        }
     }
 }

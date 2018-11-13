@@ -2,8 +2,8 @@ package delit.piwigoclient.ui.file;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +82,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         this.activeFolder = activeFolder;
     }
 
+    @Override
     protected CustomClickListener<FolderItemViewAdapterPreferences, File, FolderItemViewHolder> buildCustomClickListener(FolderItemViewHolder viewHolder) {
         return new FolderItemCustomClickListener(viewHolder, this);
     }
@@ -150,6 +151,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     }
 
+    @NonNull
     @Override
     public FolderItemViewHolder buildViewHolder(View view, int viewType) {
         if (viewType == VIEW_TYPE_FOLDER) {

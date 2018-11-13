@@ -49,15 +49,27 @@ public class GroupUpdateInfoResponseHandler<T extends ResourceItem> extends Abst
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray groupsObj = result.get("groups").getAsJsonArray();
         HashSet<Group> groups = GroupsGetListResponseHandler.parseGroupsFromJson(groupsObj);
         if (groups.size() != 1) {
             throw new JSONException("Expected one group to be returned, but there were " + groups.size());
         }
-        PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse r = new PiwigoResponseBufferingHandler.PiwigoGroupUpdateInfoResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next());
+        PiwigoGroupUpdateInfoResponse r = new PiwigoGroupUpdateInfoResponse(getMessageId(), getPiwigoMethod(), groups.iterator().next(), isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoGroupUpdateInfoResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final Group group;
+
+        public PiwigoGroupUpdateInfoResponse(long messageId, String piwigoMethod, Group group, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.group = group;
+        }
+
+        public Group getGroup() {
+            return group;
+        }
+    }
 }

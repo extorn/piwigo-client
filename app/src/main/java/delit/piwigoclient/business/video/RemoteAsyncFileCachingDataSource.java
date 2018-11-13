@@ -65,7 +65,6 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     public RemoteAsyncFileCachingDataSource(Context context, TransferListener<? super DataSource> listener, CacheListener cacheListener, RequestProperties defaultRequestProperties, String userAgent) {
         this.context = context;
         this.listener = listener;
-        this.context = context;
         this.userAgent = userAgent;
         this.cacheListener = cacheListener;
         this.defaultRequestProperties = defaultRequestProperties.getSnapshot();
@@ -127,7 +126,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         }
     }
 
-    private void openConnectionToServerInBackgroundAndContinueLoading(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) throws FileNotFoundException {
+    private void openConnectionToServerInBackgroundAndContinueLoading(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) {
         if (retrieveMaxBytes == 0) {
             return;
         }
@@ -169,7 +168,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         activeRequestHandle = client.get(context, uri.toString(), headersArray, requestParams, getResponseHandler(cacheMetaData));
     }
 
-    private ResponseHandlerInterface getResponseHandler(CachedContent cacheMetaData) throws FileNotFoundException {
+    private ResponseHandlerInterface getResponseHandler(CachedContent cacheMetaData) {
         if (httpResponseHandler == null) {
             httpResponseHandler = new RandomAccessFileAsyncHttpResponseHandler(cacheMetaData, cacheListener, true);
         }
@@ -296,7 +295,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         CachedContent.SerializableRange cachedRangeDetail = cacheMetaData.getRangeContaining(position);
         if (cachedRangeDetail == null) {
             cancelAnyExistingOpenConnectionToServerAndWaitUntilDone();
-            long retrieveMaxBytes = getBytesToRetrieveFromServer(position, cachedRangeDetail);
+            long retrieveMaxBytes = getBytesToRetrieveFromServer(position, null);
             bytesAvailableToRead = openConnectionToServerAndBlockUntilContentLengthKnown(dataSpec.uri, allowGzip, position, retrieveMaxBytes);
         } else {
             boolean rangeEndsBeforeFileEnd = cacheMetaData.getTotalBytes() <= 0 || (cachedRangeDetail.getUpper() + 1) < cacheMetaData.getTotalBytes();

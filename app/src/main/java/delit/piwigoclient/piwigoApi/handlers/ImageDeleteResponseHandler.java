@@ -7,24 +7,28 @@ import org.json.JSONException;
 import java.util.HashSet;
 
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
+import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class ImageDeleteResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "DeleteImageRspHdlr";
+    private final HashSet<? extends ResourceItem> items;
+    private final HashSet<Long> itemIds;
 
-    private long itemId = -1;
-    private HashSet<Long> itemIds;
-
-    public ImageDeleteResponseHandler(HashSet<Long> itemIds) {
+    public ImageDeleteResponseHandler(HashSet<Long> itemIds, HashSet<? extends ResourceItem> selectedItems) {
         super("pwg.images.delete", TAG);
         this.itemIds = itemIds;
+        this.items = selectedItems;
     }
 
-    public ImageDeleteResponseHandler(long itemId) {
+    public <T extends ResourceItem> ImageDeleteResponseHandler(T item) {
         super("pwg.images.delete", TAG);
-        this.itemId = itemId;
+        this.itemIds = new HashSet<Long>();
+        this.items = new HashSet<T>();
+        ((HashSet<T>)items).add(item);
+        itemIds.add(item.getId());
     }
 
     @Override
@@ -38,10 +42,9 @@ public class ImageDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
 
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
-        if (itemId > 0) {
-            params.put("image_id", String.valueOf(itemId));
-        }
-        if (itemIds != null) {
+        if (itemIds.size() == 1) {
+            params.put("image_id", String.valueOf(itemIds.iterator().next()));
+        } else if (itemIds.size() > 1) {
             for (Long itemId : itemIds) {
                 params.add("image_id[]", String.valueOf(itemId));
             }
@@ -51,9 +54,28 @@ public class ImageDeleteResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse r = new PiwigoResponseBufferingHandler.PiwigoDeleteImageResponse(getMessageId(), getPiwigoMethod(), itemIds);
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        PiwigoDeleteImageResponse r = new PiwigoDeleteImageResponse(getMessageId(), getPiwigoMethod(), itemIds, items, isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoDeleteImageResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final HashSet<Long> deletedItemIds;
+        private final HashSet<? extends ResourceItem> deletedItems;
+
+        public PiwigoDeleteImageResponse(long messageId, String piwigoMethod, HashSet<Long> itemIds, HashSet<? extends ResourceItem> deletedItems, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.deletedItemIds = itemIds;
+            this.deletedItems = deletedItems;
+        }
+
+        public HashSet<? extends ResourceItem> getDeletedItems() {
+            return deletedItems;
+        }
+
+        public HashSet<Long> getDeletedItemIds() {
+            return deletedItemIds;
+        }
+    }
 }

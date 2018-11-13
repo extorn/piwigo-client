@@ -8,7 +8,7 @@
         android:title="@string/preference_data_upload_automatic_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <android.support.v14.preference.SwitchPreference
+        <androidx.preference.SwitchPreference
             android:defaultValue="@bool/preference_data_upload_automatic_upload_enabled_default"
             android:key="@string/preference_data_upload_automatic_upload_enabled_key"
             android:summary="@string/preference_data_upload_automatic_upload_enable_summary"
@@ -24,7 +24,7 @@
             android:summary="@string/preference_data_upload_automatic_upload_polling_interval_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-        <android.support.v14.preference.SwitchPreference
+        <androidx.preference.SwitchPreference
             android:defaultValue="@bool/preference_data_upload_automatic_upload_wireless_only_default"
             android:key="@string/preference_data_upload_automatic_upload_wireless_only_key"
             android:summary="@string/preference_data_upload_automatic_upload_wireless_only_summary"

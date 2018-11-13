@@ -43,15 +43,27 @@ public class UserAddResponseHandler<T extends ResourceItem> extends AbstractPiwi
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray usersObj = result.get("users").getAsJsonArray();
         ArrayList<User> users = UsersGetListResponseHandler.parseUsersFromJson(usersObj);
         if (users.size() != 1) {
             throw new JSONException("Expected one user to be returned, but there were " + users.size());
         }
-        PiwigoResponseBufferingHandler.PiwigoAddUserResponse r = new PiwigoResponseBufferingHandler.PiwigoAddUserResponse(getMessageId(), getPiwigoMethod(), users.get(0));
+        PiwigoAddUserResponse r = new PiwigoAddUserResponse(getMessageId(), getPiwigoMethod(), users.get(0), isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoAddUserResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final User user;
+
+        public PiwigoAddUserResponse(long messageId, String piwigoMethod, User user, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.user = user;
+        }
+
+        public User getUser() {
+            return user;
+        }
+    }
 }

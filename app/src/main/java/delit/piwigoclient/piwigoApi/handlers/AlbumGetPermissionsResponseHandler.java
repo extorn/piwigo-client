@@ -30,7 +30,7 @@ public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonArray cats = result.get("categories").getAsJsonArray();
         if (cats.size() > 1) {
@@ -65,7 +65,21 @@ public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
         album.setUsers(users);
         album.setGroups(groups);
 
-        PiwigoResponseBufferingHandler.PiwigoAlbumPermissionsRetrievedResponse r = new PiwigoResponseBufferingHandler.PiwigoAlbumPermissionsRetrievedResponse(getMessageId(), getPiwigoMethod(), album);
+        PiwigoAlbumPermissionsRetrievedResponse r = new PiwigoAlbumPermissionsRetrievedResponse(getMessageId(), getPiwigoMethod(), album, isCached);
         storeResponse(r);
+    }
+
+    public static class PiwigoAlbumPermissionsRetrievedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final CategoryItem album;
+
+        public PiwigoAlbumPermissionsRetrievedResponse(long messageId, String piwigoMethod, CategoryItem album, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.album = album;
+        }
+
+        public CategoryItem getAlbum() {
+            return album;
+        }
     }
 }

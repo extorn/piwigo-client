@@ -8,6 +8,7 @@ import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLHandshakeException;
 
+import cz.msebera.android.httpclient.Header;
 import delit.piwigoclient.util.X509Utils;
 
 /**
@@ -73,5 +74,16 @@ public class HttpUtils {
             message = "Unexpected response : \nHTTP Status Code (" + statusCode + ")" + "\nHTTP Error Message (" + errorMessage + ")";
         }
         return message;
+    }
+
+    public static Header getContentTypeHeader(Header[] headers) {
+        if(headers != null) {
+            for(Header h : headers) {
+                if(h.getName().equalsIgnoreCase("Content-Type")) {
+                    return h;
+                }
+            }
+        }
+        return null;
     }
 }

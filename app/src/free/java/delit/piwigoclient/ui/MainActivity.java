@@ -1,14 +1,10 @@
 package delit.piwigoclient.ui;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
 
 /**
  * Created by gareth on 07/04/18.
@@ -40,11 +36,6 @@ public class MainActivity extends AbstractMainActivity {
     }
 
     protected void showTags() {
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_feature_only), R.string.button_close);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(TagSelectionNeededEvent event) {
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_feature_only), R.string.button_close);
     }
 }

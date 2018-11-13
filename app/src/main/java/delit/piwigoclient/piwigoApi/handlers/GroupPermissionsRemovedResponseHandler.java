@@ -45,11 +45,29 @@ public class GroupPermissionsRemovedResponseHandler extends AbstractPiwigoWsResp
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
 
-        PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRemovedResponse r = new PiwigoResponseBufferingHandler.PiwigoGroupPermissionsRemovedResponse(getMessageId(), getPiwigoMethod(), groupId, albumsNotAllowedAccessTo);
+        PiwigoGroupPermissionsRemovedResponse r = new PiwigoGroupPermissionsRemovedResponse(getMessageId(), getPiwigoMethod(), groupId, albumsNotAllowedAccessTo, isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoGroupPermissionsRemovedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final ArrayList<Long> albumsForWhichPermissionRemoved;
+        private final long groupId;
+
+        public PiwigoGroupPermissionsRemovedResponse(long messageId, String piwigoMethod, long groupId, ArrayList<Long> albumsForWhichPermissionRemoved, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.groupId = groupId;
+            this.albumsForWhichPermissionRemoved = albumsForWhichPermissionRemoved;
+        }
+
+        public long getGroupId() {
+            return groupId;
+        }
+
+        public ArrayList<Long> getAlbumsForWhichPermissionRemoved() {
+            return albumsForWhichPermissionRemoved;
+        }
+    }
 }

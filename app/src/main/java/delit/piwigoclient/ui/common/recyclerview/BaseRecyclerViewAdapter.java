@@ -1,8 +1,8 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +48,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
     @Override
     public abstract long getItemId(int position);
 
-    public abstract S buildViewHolder(View view, int viewType);
+    public abstract @NonNull S buildViewHolder(View view, int viewType);
 
     protected abstract T getItemById(Long selectedId);
 
@@ -96,10 +96,8 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         View view = inflateView(parent, viewType);
 
         final S viewHolder = buildViewHolder(view, viewType);
-        if(viewHolder != null) {
-            CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
-            viewHolder.internalCacheViewFieldsAndConfigure(clickListener);
-        }
+        CustomClickListener<V, T, S> clickListener = buildCustomClickListener(viewHolder);
+        viewHolder.internalCacheViewFieldsAndConfigure(clickListener);
         return viewHolder;
     }
 
@@ -206,7 +204,6 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
             int idx = getItemPosition(item);
             notifyItemChanged(idx);
         } catch (IllegalArgumentException e) {
-            Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(TAG, "Item not available to select (probably not loaded yet)", e);
             }
@@ -221,7 +218,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
-    public void replaceOrAddItem(T item) {
+    public final void replaceOrAddItem(T item) {
         T itemToBeReplaced = null;
         try {
             itemToBeReplaced = getItemFromInternalStoreMatching(item);
@@ -232,9 +229,15 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         if (itemToBeReplaced != null) {
             int replaceIdx = getItemPosition(itemToBeReplaced);
             replaceItemInInternalStore(replaceIdx, item);
+            notifyItemChanged(replaceIdx);
         } else {
-            addItemToInternalStore(item);
+            addItem(item);
         }
+    }
+
+    public final void addItem(T item) {
+        addItemToInternalStore(item);
+        notifyItemInserted(getItemPosition(item));
     }
 
     @Override

@@ -1,7 +1,9 @@
 package delit.piwigoclient.model.piwigo;
 
 import android.content.Context;
+import android.os.Bundle;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +11,7 @@ import java.util.Set;
 
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
+import delit.piwigoclient.piwigoApi.handlers.PiwigoClientFailedUploadsCleanResponseHandler;
 
 /**
  * Created by gareth on 25/05/17.
@@ -35,6 +38,7 @@ public class PiwigoSessionDetails {
     private Set<String> allowedFileTypes;
     private long webInterfaceUploadChunkSizeKB;
     private User userDetails;
+    private String piwigoClientPluginVersion;
     private boolean sessionMayHaveExpired;
     private int loginStatus = NOT_LOGGED_IN;
     private Boolean useCommunityPlugin;
@@ -184,7 +188,7 @@ public class PiwigoSessionDetails {
     }
 
     public boolean isUseCommunityPlugin() {
-        return Boolean.TRUE.equals(useCommunityPlugin);
+        return isCommunityPluginStatusAvailable() && Boolean.TRUE.equals(useCommunityPlugin);
     }
 
     public void setUseCommunityPlugin(boolean useCommunityPlugin) {
@@ -255,7 +259,7 @@ public class PiwigoSessionDetails {
         return methodsAvailable != null;
     }
 
-    private boolean isMethodAvailable(String methodName) {
+    public boolean isMethodAvailable(String methodName) {
         return methodsAvailable != null && methodsAvailable.contains(methodName);
     }
 
@@ -270,5 +274,46 @@ public class PiwigoSessionDetails {
     public boolean isOlderThanSeconds(int i) {
         long ageMillis = System.currentTimeMillis() - retrievedAt.getTime();
         return ageMillis > (1000 * i);
+    }
+
+    public void onMethodNotAvailable(String unavailablePiwigoMethod) {
+        methodsAvailable.remove(unavailablePiwigoMethod);
+    }
+
+    public boolean isPiwigoClientCleanUploadsAvailable() {
+        return isMethodAvailable(PiwigoClientFailedUploadsCleanResponseHandler.WS_METHOD_NAME);
+    }
+
+    public String getPiwigoClientPluginVersion() {
+        return piwigoClientPluginVersion;
+    }
+
+    public void setPiwigoClientPluginVersion(String piwigoClientPluginVersion) {
+        this.piwigoClientPluginVersion = piwigoClientPluginVersion;
+    }
+
+    public boolean isPiwigoClientPluginInstalled() {
+        return isMethodAvailable("piwigo_client.favorites.addImage");
+    }
+
+    public boolean isCommunityPluginInstalled() {
+        return isMethodAvailable("community.session.getStatus");
+    }
+
+    public ArrayList<String> getMethodsAvailable() {
+        if(this.methodsAvailable == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(this.methodsAvailable);
+    }
+
+    public void writeToBundle(Bundle out) {
+        out.putStringArrayList("piwigo.methods", getMethodsAvailable());
+        out.putBoolean("is.admin.user", isAdminUser());
+        out.putBoolean("community.plugin.installed.", isCommunityPluginInstalled());
+        out.putBoolean("community.plugin.in_use", isUseCommunityPlugin());
+        out.putString("user.type", getUserType());
+        out.putInt("login.status", loginStatus);
+        out.putString("piwigo.client.ws.ext.plugin.version", getPiwigoClientPluginVersion());
     }
 }

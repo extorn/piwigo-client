@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import java.util.HashSet;
@@ -26,6 +27,7 @@ public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdap
         return itemStore.getItemByIdx(position).getId();
     }
 
+    @NonNull
     @Override
     public abstract S buildViewHolder(View view, int viewType);
 

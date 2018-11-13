@@ -510,7 +510,7 @@ public class RequestParams implements Serializable {
         }
     }
 
-    private HttpEntity createJsonStreamerEntity(ResponseHandlerInterface progressHandler) throws IOException {
+    private HttpEntity createJsonStreamerEntity(ResponseHandlerInterface progressHandler) {
         JsonStreamerEntity entity = new JsonStreamerEntity(
                 progressHandler,
                 !fileParams.isEmpty() || !streamParams.isEmpty(),

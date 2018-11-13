@@ -1,10 +1,13 @@
 package delit.piwigoclient.model.piwigo;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by gareth on 06/04/18.
  */
 
-public abstract class ResourceContainer<S extends Identifiable, T extends Identifiable> extends IdentifiablePagedList<T> implements Identifiable {
+public abstract class ResourceContainer<S extends Identifiable&Parcelable, T extends Identifiable&Parcelable> extends IdentifiablePagedList<T> implements Identifiable, Parcelable {
 
     private S containerDetails;
 
@@ -15,6 +18,16 @@ public abstract class ResourceContainer<S extends Identifiable, T extends Identi
     public ResourceContainer(S containerDetails, String itemType, int maxExpectedItemCount) {
         super(itemType, maxExpectedItemCount);
         this.containerDetails = containerDetails;
+    }
+
+    public ResourceContainer(Parcel in) {
+        super(in);
+        containerDetails = in.readParcelable(getClass().getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(containerDetails, flags);
     }
 
     public ResourceItem getResourceItemById(long itemId) {

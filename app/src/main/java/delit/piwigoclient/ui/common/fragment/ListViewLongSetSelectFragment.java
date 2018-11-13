@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.common.fragment;
 
-import android.support.annotation.LayoutRes;
+import androidx.annotation.LayoutRes;
 import android.widget.ListView;
 
 import java.util.HashSet;

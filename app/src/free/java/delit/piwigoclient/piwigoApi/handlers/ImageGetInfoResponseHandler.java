@@ -9,4 +9,15 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseIma
     public ImageGetInfoResponseHandler(T piwigoResource, String multimediaExtensionList) {
         super(piwigoResource, multimediaExtensionList);
     }
+
+    protected BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(String multimediaExtensionList, boolean usingPiwigoClientOveride) {
+        return new ImageGetInfoResourceParser(multimediaExtensionList, usingPiwigoClientOveride);
+    }
+
+    public static class ImageGetInfoResourceParser extends BaseImageGetInfoResourceParser {
+
+        public ImageGetInfoResourceParser(String multimediaExtensionList, boolean usingPiwigoClientOveride) {
+            super(multimediaExtensionList, usingPiwigoClientOveride);
+        }
+    }
 }

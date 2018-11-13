@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,22 +20,11 @@
             android:visibility="visible" />
 
         <delit.piwigoclient.ui.common.button.CustomImageButton
-            android:id="@+id/slideshow_resource_action_direct_download"
-            app:srcCompat="@drawable/ic_file_download_black_24px"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:visibility="visible"/>
-
-        <delit.piwigoclient.ui.common.button.CustomImageButton
             android:id="@+id/slideshow_resource_action_use_for_album_thumbnail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_gravity="start"
-            android:layout_toEndOf="@id/slideshow_resource_action_direct_download"
             android:visibility="visible"
             app:srcCompat="@drawable/ic_wallpaper_black_24dp" />
 
@@ -74,15 +63,17 @@
             tools:visibility="visible" tools:targetApi="lollipop"/>
 
 
-        <!-- this is currently unsupported by the Piwigo API 2.9.1 required -->
-        <!--<delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+        <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
             android:id="@+id/slideshow_image_favorite"
+            android:layout_below="@+id/slideshow_image_average_ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/favorite_checkbox"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="16sp"/>-->
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="10dp"
+            android:visibility="gone"
+            tools:visibility="visible"/>
 
         <!--<com.ortiz.touch.TouchImageView
             android:id="@+id/slideshow_image"
@@ -102,7 +93,7 @@
         app:offsetDistance="30dp"
         app:shadowDrawable="@drawable/sidebar_shadow"
         app:shadowSize="30dp"
-        app:stickTo="bottom">
+        app:csl_stickTo="bottom">
 
         <RelativeLayout
             android:id="@+id/slideshow_image_bottom_sheet_content"
@@ -180,7 +171,7 @@
                 app:initialTabIdx="0"
                 app:viewPager="@+id/slideshow_resource_details_tabs_content" />
 
-            <android.support.v4.view.ViewPager
+            <androidx.viewpager.widget.ViewPager
                 android:id="@+id/slideshow_resource_details_tabs_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -192,7 +183,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/slideshow_image_tab_basic_info" />
 
-                <android.support.v4.widget.NestedScrollView
+                <androidx.core.widget.NestedScrollView
                     android:id="@+id/pageContent1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -262,7 +253,6 @@
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="@string/click_to_view"
-                            android:textAlignment="viewEnd"
                             android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
 
                         <TextView
@@ -283,7 +273,6 @@
                             android:ellipsize="end"
                             android:maxLines="2"
                             android:text="@string/click_to_view"
-                            android:textAlignment="viewEnd"
                             android:textAppearance="@style/Custom.TextAppearance.AppCompat.Body1.Clickable" />
 
                         <TextView
@@ -302,7 +291,6 @@
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="2dp"
                             android:text="@string/rating_score_pattern"
-                            android:textAlignment="viewEnd"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                             tools:text="1.2 (5 rates)"/>
 
@@ -319,7 +307,6 @@
                             style="@style/Widget.AppCompat.RatingBar.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="end"
                             android:layout_marginBottom="3dp"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="2dp"
@@ -346,7 +333,7 @@
 
                     </LinearLayout>
 
-                </android.support.v4.widget.NestedScrollView>
+                </androidx.core.widget.NestedScrollView>
 
                 <TextView
                     android:id="@+id/pageTitle2"
@@ -364,15 +351,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:clickable="true"
-                        android:focusable="true"></delit.piwigoclient.ui.common.CustomExpandableListView>
+                        android:focusable="true"/>
 
                 </FrameLayout>
 
-            </android.support.v4.view.ViewPager>
+            </androidx.viewpager.widget.ViewPager>
 
         </RelativeLayout>
 
     </com.wunderlist.slidinglayer.CustomSlidingLayer>
 
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

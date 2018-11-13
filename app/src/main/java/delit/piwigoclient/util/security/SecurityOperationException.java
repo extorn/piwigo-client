@@ -1,7 +1,7 @@
 package delit.piwigoclient.util.security;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 
 import java.io.File;
 

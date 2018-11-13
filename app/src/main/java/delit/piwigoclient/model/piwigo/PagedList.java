@@ -1,8 +1,11 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,13 +16,15 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.locks.ReentrantLock;
 
+import delit.piwigoclient.ui.common.util.ParcelUtils;
+
 /**
  * Created by gareth on 02/01/18.
  */
 
-public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializable {
+public abstract class PagedList<T extends Parcelable> implements IdentifiableItemStore<T>, Parcelable {
 
-    private static final long serialVersionUID = 6459233465655813249L;
+    private static final String TAG = "PagedList";
     public static int MISSING_ITEMS_PAGE = -1;
     private final String itemType;
     private final SortedSet<Integer> pagesLoaded = new TreeSet<>();
@@ -39,14 +44,47 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
         this.pageLoadLock = new ReentrantLock();
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
+    public String getItemType() {
+        return itemType;
     }
 
-    private void readObject(java.io.ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        this.pageLoadLock = new ReentrantLock();
+    public Integer getAMissingPage() {
+        if(!pagesFailedToLoad.isEmpty()) {
+            return getNextPageToReload();
+        }
+        if(!fullyLoaded) {
+            int page = 0;
+            if(pagesLoaded.size() > 0) {
+                page = pagesLoaded.last() + 1;
+            }
+            if(!pagesBeingLoaded.containsValue(page)) {
+                return page;
+            }
+        }
+        return null;
+    }
+
+    public PagedList(Parcel in) {
+        itemType = in.readString();
+        ParcelUtils.readIntSet(in, pagesLoaded, null);
+        items = in.readArrayList(getClass().getClassLoader());
+        ParcelUtils.readMap(in, pagesBeingLoaded, getClass().getClassLoader());
+        ParcelUtils.readIntSet(in, pagesFailedToLoad, null);
+        fullyLoaded = ParcelUtils.readValue(in,null, boolean.class);
+
+        if(pageLoadLock == null) {
+            this.pageLoadLock = new ReentrantLock();
+        }
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(itemType);
+        ParcelUtils.writeIntSet(dest, pagesLoaded);
+        dest.writeList(items);
+        ParcelUtils.writeMap(dest, pagesBeingLoaded);
+        ParcelUtils.writeIntSet(dest, pagesFailedToLoad);
+        dest.writeValue(fullyLoaded);
     }
 
     public void updateMaxExpectedItemCount(int newCount) {
@@ -119,15 +157,24 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
     public int addItemPage(int page, int pageSize, Collection<T> newItems) {
 
         int firstInsertPos = 0;
-        if (newItems.size() > 0) {
-            firstInsertPos = Math.min(getPageInsertPosition(page, pageSize), items.size());
-            items.addAll(firstInsertPos, newItems);
-        }
-        pagesLoaded.add(page);
-        if (newItems.size() < pageSize) {
-            fullyLoaded = true;
+        try {
+            if (newItems.size() > 0) {
+                firstInsertPos = Math.min(Math.max(0, getPageInsertPosition(page, pageSize)), items.size());
+                items.addAll(firstInsertPos, newItems);
+            }
+            pagesLoaded.add(page);
+            if (newItems.size() < pageSize) {
+                fullyLoaded = true;
+            }
+        } catch(IllegalStateException e) {
+            // page already loaded (can occur after resume...)
+            Crashlytics.log(Log.DEBUG, TAG, "ignoring page already loaded");
         }
         return firstInsertPos;
+    }
+
+    public void markAsFullyLoaded() {
+        fullyLoaded = true;
     }
 
     public void clear() {
@@ -232,5 +279,10 @@ public abstract class PagedList<T> implements IdentifiableItemStore<T>, Serializ
 
     public boolean isPageLoaded(int pageNum) {
         return pagesLoaded.contains(pageNum);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 }

@@ -2,8 +2,9 @@ package delit.piwigoclient.ui.common.list.recycler;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.support.annotation.IntRange;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import delit.piwigoclient.util.DisplayUtils;
@@ -30,8 +31,8 @@ public class RecyclerViewMargin extends RecyclerView.ItemDecoration {
      * and no left margin for the first column.
      */
     @Override
-    public void getItemOffsets(Rect outRect, View view,
-                               RecyclerView parent, RecyclerView.State state) {
+    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view,
+                               @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
 
         int position = parent.getChildLayoutPosition(view);
         //set right margin to all

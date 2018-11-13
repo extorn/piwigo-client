@@ -52,7 +52,7 @@ class RetryHandler implements HttpRequestRetryHandler {
 
     @Override
     public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
-        boolean retry = true;
+        boolean retry;
 
         Boolean b = (Boolean) context.getAttribute(HttpCoreContext.HTTP_REQ_SENT);
         boolean sent = (b != null && b);
@@ -68,6 +68,8 @@ class RetryHandler implements HttpRequestRetryHandler {
             retry = false;
         } else if (!sent) {
             // for most other errors, retry only if request hasn't been fully sent yet
+            retry = true;
+        } else {
             retry = true;
         }
 

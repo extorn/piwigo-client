@@ -1,6 +1,8 @@
 package delit.piwigoclient.model.piwigo;
 
-import android.support.annotation.NonNull;
+import android.os.Parcel;
+import android.os.Parcelable;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,10 +10,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import delit.piwigoclient.ui.common.util.ParcelUtils;
+
 /**
  * An item representing a piece of content.
  */
-public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Serializable {
+public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parcelable, Serializable {
 
     public static final int CATEGORY_TYPE = 0;
     public static final int PICTURE_RESOURCE_TYPE = 1;
@@ -43,6 +47,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Seria
     private String description;
     private Date lastAltered;
     private ArrayList<Long> parentageChain;
+    private long loadedAt;
 
 
     public GalleryItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
@@ -52,6 +57,28 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Seria
         this.thumbnailUrl = thumbnailUrl;
         this.lastAltered = lastAltered;
         parentageChain = new ArrayList<>();
+        this.loadedAt = System.currentTimeMillis();
+    }
+
+    public GalleryItem(Parcel in) {
+        id = in.readLong();
+        thumbnailUrl = in.readString();
+        name = in.readString();
+        description = in.readString();
+        lastAltered = ParcelUtils.readDate(in);
+        parentageChain = ParcelUtils.readLongArrayList(in, null);
+        loadedAt = in.readLong();
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeLong(id);
+        out.writeString(thumbnailUrl);
+        out.writeString(name);
+        out.writeString(description);
+        ParcelUtils.writeDate(out, lastAltered);
+        ParcelUtils.writeLongArrayList(out, parentageChain);
+        out.writeLong(loadedAt);
     }
 
     public long getId() {
@@ -157,5 +184,30 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Seria
         if (copyParentage) {
             parentageChain = other.parentageChain;
         }
+        this.loadedAt = other.loadedAt;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<GalleryItem> CREATOR
+            = new Parcelable.Creator<GalleryItem>() {
+        public GalleryItem createFromParcel(Parcel in) {
+            return new GalleryItem(in);
+        }
+
+        public GalleryItem[] newArray(int size) {
+            return new GalleryItem[size];
+        }
+    };
+
+    protected boolean isLikelyOutdated(long flagTime) {
+        return System.currentTimeMillis() - flagTime > 5 * 60 * 1000; // older than 5 minutes.
+    }
+
+    public boolean isLikelyOutdated() {
+        return isLikelyOutdated(loadedAt);
     }
 }

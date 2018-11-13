@@ -1,51 +1,58 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+import androidx.annotation.IntRange;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by gareth on 02/01/18.
  */
+public class PiwigoTags extends IdentifiablePagedList<Tag> {
 
-public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
+    private int pageSources = 1;
 
-    private static final long serialVersionUID = 5861064490986171049L;
-    private final ArrayList<Tag> items = new ArrayList<>();
-    private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
-    private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
-    private int pagesLoaded = 0;
-    private transient ReentrantLock pageLoadLock = new ReentrantLock();
-    private transient Comparator<Tag> tagComparator = new TagComparator();
+    private Comparator<Tag> tagComparator = new TagComparator();
 
     public PiwigoTags() {
+        super("Tag");
     }
 
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
+    public PiwigoTags(Parcel in) {
+        super(in);
+        pageSources = in.readInt();
     }
 
-    private void readObject(java.io.ObjectInputStream in)
-            throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        this.tagComparator = new TagComparator();
-        this.pageLoadLock = new ReentrantLock();
+    public int getPageSources() {
+        return pageSources;
     }
 
-    public void sort() {
-        Collections.sort(items, tagComparator);
+    public void setPageSources(int pageSources) {
+        if(getPagesLoaded() > 0) {
+            throw new IllegalStateException("cannot update the page sources after a page has been added");
+        }
+        this.pageSources = pageSources;
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeInt(pageSources);
+    }
+
+    public int getPagesLoaded() {
+        return super.getPagesLoaded()/pageSources;
+    }
+
+
 
     public boolean containsTag(String tagName) {
-        for (Tag tag : items) {
+        for (Tag tag : getItems()) {
             if (tag.getName().equals(tagName)) {
                 return true;
             }
@@ -53,117 +60,46 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
         return false;
     }
 
-    @Override
-    public Tag getItemByIdx(int idx) {
-        return items.get(idx);
+    public void sort() {
+        Collections.sort(getItems(), tagComparator);
     }
 
     @Override
-    public ArrayList<Tag> getItems() {
-        return items;
+    public int addItemPage(int page, int pageSize, Collection<Tag> newItems) {
+        throw new UnsupportedOperationException("use addItemPage specifying a page source indicator");
     }
 
-    @Override
-    public int getItemCount() {
-        return items.size();
-    }
-
-    @Override
-    public Tag getItemById(long selectedItemId) {
-        for (Tag item : items) {
-            if (item.getId() == selectedItemId) {
-                return item;
-            }
-        }
-        throw new IllegalArgumentException("No Tag present with id : " + selectedItemId);
-    }
-
-    public int addItemPage(boolean isAdminPage, HashSet<Tag> tags) {
-        pagesLoaded++;
+    public int addItemPage(@IntRange(from = 0, to = 5) int pageSourceId, boolean preferExistingItems, int page, int pageSize, Collection<Tag> newItems) {
+        ArrayList<Tag> items = getItems();
+        int realPage = (page * pageSources) + pageSourceId;
         if (items.size() == 0) {
-            items.addAll(tags);
-            return 0;
+            super.addItemPage(realPage, pageSize, newItems);
+        } else {
+            if (preferExistingItems) {
+                // remove any items loaded into the store already from the new items as the admin items contain less information
+                newItems.removeAll(getItems());
+            } else {
+                // remove any items loaded into the store already by the admin page so there are no duplicates
+                items.removeAll(newItems);
+            }
+            super.addItemPage(realPage, pageSize, newItems);
         }
-        if (isAdminPage) {
-            // remove any already present in the store.
+        sort();
+        return -1;
+    }
+
+    /**
+     * Adds items without affecting the page load count etc
+     * @param tags new items
+     * @param preferExistingItems should existing items be left alone if already present
+     */
+    public void addRandomItems(HashSet<Tag> tags, boolean preferExistingItems) {
+        if(preferExistingItems) {
             tags.removeAll(getItems());
         } else {
-            // overwrite those already in the store.
             getItems().removeAll(tags);
         }
-        int insertAt = items.size();
-        items.addAll(tags);
-        sort();
-        return insertAt;
-    }
-
-    public int getPagesLoaded() {
-        return pagesLoaded;
-    }
-
-    public boolean isFullyLoaded() {
-        return pagesLoaded > 0;
-    }
-
-    @Override
-    public void addItem(Tag newTag) {
-        items.add(newTag);
-    }
-
-    @Override
-    public int getItemIdx(Tag newTag) {
-        return items.indexOf(newTag);
-    }
-
-    @Override
-    public boolean removeAll(Collection<Tag> itemsForDeletion) {
-        return items.removeAll(itemsForDeletion);
-    }
-
-    @Override
-    public void remove(Tag r) {
-        items.remove(r);
-    }
-
-    public void acquirePageLoadLock() {
-        pageLoadLock.lock();
-    }
-
-    public void releasePageLoadLock() {
-        pageLoadLock.unlock();
-    }
-
-    public void recordPageBeingLoaded(long loaderId, int pageNum) {
-        pagesBeingLoaded.put(loaderId, pageNum);
-    }
-
-    public boolean isPageLoadedOrBeingLoaded(int pageNum) {
-        return pagesLoaded > 0 || pagesBeingLoaded.containsValue(pageNum);
-    }
-
-    public Integer getNextPageToReload() {
-        Integer retVal = null;
-        if (!pagesFailedToLoad.isEmpty()) {
-            Iterator<Integer> iter = pagesFailedToLoad.iterator();
-            retVal = iter.next();
-            iter.remove();
-        }
-        return retVal;
-    }
-
-    public void recordPageLoadSucceeded(long loaderId) {
-        pagesBeingLoaded.remove(loaderId);
-    }
-
-    public void recordPageLoadFailed(long loaderId) {
-        Integer pageNum = pagesBeingLoaded.remove(loaderId);
-        if (pageNum != null) {
-            pagesFailedToLoad.add(pageNum);
-        }
-    }
-
-    public boolean hasNoFailedPageLoads() {
-        return pagesFailedToLoad.isEmpty();
+        getItems().addAll(tags);
     }
 
     private static class TagComparator implements Comparator<Tag> {
@@ -181,4 +117,15 @@ public class PiwigoTags implements Serializable, IdentifiableItemStore<Tag> {
             return o1.getName().compareTo(o2.getName());
         }
     }
+
+    public static final Parcelable.Creator<PiwigoTags> CREATOR
+            = new Parcelable.Creator<PiwigoTags>() {
+        public PiwigoTags createFromParcel(Parcel in) {
+            return new PiwigoTags(in);
+        }
+
+        public PiwigoTags[] newArray(int size) {
+            return new PiwigoTags[size];
+        }
+    };
 }

@@ -1,6 +1,6 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonArray;
@@ -17,7 +17,6 @@ import java.util.HashSet;
 import java.util.Locale;
 
 import delit.piwigoclient.model.piwigo.User;
-import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -25,9 +24,18 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
     private static final String TAG = "UsernamesListRspHdlr";
     private final String username;
     private final String userType;
+    private final long userId;
+
+    public UserGetInfoResponseHandler(long userId) {
+        super("pwg.users.getList", TAG);
+        this.userId = userId;
+        this.username = null;
+        this.userType = null;
+    }
 
     public UserGetInfoResponseHandler(@NonNull String username, @NonNull String userType) {
         super("pwg.users.getList", TAG);
+        this.userId = -1;
         this.username = username;
         this.userType = userType;
     }
@@ -71,11 +79,16 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
                 }
             }
         }
-        JsonArray groupsArr = userObj.get("groups").getAsJsonArray();
-        HashSet<Long> groups = new HashSet<>(groupsArr.size());
-        for (int j = 0; j < groupsArr.size(); j++) {
-            long groupId = groupsArr.get(j).getAsLong();
-            groups.add(groupId);
+        HashSet<Long> groups;
+        if(userObj.get("groups").isJsonArray()) {
+            JsonArray groupsArr = userObj.get("groups").getAsJsonArray();
+            groups = new HashSet<>(groupsArr.size());
+            for (int j = 0; j < groupsArr.size(); j++) {
+                long groupId = groupsArr.get(j).getAsLong();
+                groups.add(groupId);
+            }
+        } else {
+            groups = new HashSet<>(0);
         }
 
         User user = new User(id, username, userType, privacyLevel, email, highDefEnabled, lastVisitDate);
@@ -88,8 +101,12 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
-        params.put("username", username);
-        params.put("status", userType);
+        if(userId > 0) {
+            params.put("userId", userId);
+        } else {
+            params.put("username", username);
+            params.put("status", userType);
+        }
         params.put("page", "0");
         params.put("per_page", "5");
         params.put("display", "username,email,status,level,groups,enabled_high,last_visit"); // useful information for the app
@@ -98,7 +115,7 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonObject pagingObj = result.get("paging").getAsJsonObject();
         int page = pagingObj.get("page").getAsInt();
@@ -106,8 +123,25 @@ public class UserGetInfoResponseHandler extends AbstractPiwigoWsResponseHandler 
         int itemsOnPage = pagingObj.get("count").getAsInt();
         JsonArray usersObj = result.get("users").getAsJsonArray();
         ArrayList<User> users = parseUsersFromJson(usersObj);
-        PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse r = new PiwigoResponseBufferingHandler.PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users);
+        PiwigoGetUserDetailsResponse r = new PiwigoGetUserDetailsResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, users, isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoGetUserDetailsResponse extends UsersGetListResponseHandler.PiwigoGetUsersListResponse {
+
+        private final User selectedUser;
+
+        public PiwigoGetUserDetailsResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<User> users, boolean isCached) {
+            super(messageId, piwigoMethod, page, pageSize, itemsOnPage, users, isCached);
+            selectedUser = getUsers().remove(0);
+        }
+
+        public User getSelectedUser() {
+            return selectedUser;
+        }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
+    }
 }

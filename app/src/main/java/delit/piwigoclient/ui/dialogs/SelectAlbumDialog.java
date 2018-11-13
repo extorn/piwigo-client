@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.dialogs;
 
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.ui.album.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 
 /**
  * Created by gareth on 31/08/17.

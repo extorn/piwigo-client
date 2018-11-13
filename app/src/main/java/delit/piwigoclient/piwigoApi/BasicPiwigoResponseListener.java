@@ -1,13 +1,13 @@
 package delit.piwigoclient.piwigoApi;
 
 import android.app.Activity;
-import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.preference.DialogPreference;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -106,11 +106,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE.equals(positiveAnswer)) {
                     uiHelper.addActiveServiceCall(handler.getMessageId());
-                    if (handler.isRunAsync()) {
-                        handler.invokeAsyncAgain(dialog.getContext().getApplicationContext());
-                    } else {
-                        handler.invokeAgain(dialog.getContext().getApplicationContext());
-                    }
+                    handler.rerun(dialog.getContext().getApplicationContext());
                 } else {
                     onAfterHandlePiwigoResponse(errorResponse);
                 }

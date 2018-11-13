@@ -37,23 +37,24 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
     }
 
     @Override
-    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession) {
+    public boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
         String response = null;
         try {
             GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
             Gson gson = gsonBuilder.create();
             PiwigoJsonResponse piwigoResponse = gson.fromJson(new InputStreamReader(new ByteArrayInputStream(responseBody)), PiwigoJsonResponse.class);
-            onPiwigoFailure(piwigoResponse);
+            onPiwigoFailure(piwigoResponse, isCached);
         } catch (JsonSyntaxException e) {
-            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession);
+            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         } catch (JsonIOException e) {
-            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession);
+            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         } catch (JSONException e) {
-            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession);
+            super.onFailure(statusCode, headers, responseBody, error, triedToGetNewSession, isCached);
         }
+        return triedToGetNewSession;
     }
-
+/*
     @Override
     protected void onPiwigoFailure(PiwigoJsonResponse rsp) throws JSONException {
         int errorCode = rsp.getErr();
@@ -61,15 +62,15 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
         if (errorCode == 501 && "Method name is not valid".equals(errorMessage)) {
             resetFailureAsASuccess();
             PiwigoSessionDetails.getInstance(getConnectionPrefs()).setUseCommunityPlugin(false);
-            PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), null);
+            PiwigoCommunitySessionStatusResponse r = new PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), null);
             storeResponse(r);
         } else {
             super.onPiwigoFailure(rsp);
         }
-    }
+    }*/
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
 
         JsonObject result = rsp.getAsJsonObject();
         String uploadToAlbumsList = result.get("upload_categories_getList_method").getAsString();
@@ -83,7 +84,29 @@ public class CommunitySessionStatusResponseHandler extends AbstractPiwigoWsRespo
             sessionDetails.setUseCommunityPlugin(false);
         }
         sessionDetails.updateUserType(realUserStatus);
-        PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), uploadToAlbumsList);
+        PiwigoCommunitySessionStatusResponse r = new PiwigoCommunitySessionStatusResponse(getMessageId(), getPiwigoMethod(), uploadToAlbumsList, isCached);
         storeResponse(r);
+    }
+
+    public static class PiwigoCommunitySessionStatusResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final String categoryListMethod;
+
+        public PiwigoCommunitySessionStatusResponse(long messageId, String piwigoMethod, String categoryListMethod, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.categoryListMethod = categoryListMethod;
+        }
+
+        public String getCategoryListMethod() {
+            return categoryListMethod;
+        }
+
+        public boolean isAvailable() {
+            return categoryListMethod != null;
+        }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

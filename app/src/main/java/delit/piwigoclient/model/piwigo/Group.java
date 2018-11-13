@@ -1,17 +1,35 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
  * Created by gareth on 26/06/17.
  */
-public class Group implements Identifiable, Serializable {
+public class Group implements Identifiable, Parcelable {
     private long id = -1;
     private String name;
     private boolean isDefault;
     private int memberCount;
 
     public Group() {
+    }
+
+    public Group(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        isDefault = ParcelUtils.readValue(in,null, boolean.class);
+        memberCount = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeValue(isDefault);
+        dest.writeInt(memberCount);
     }
 
     public Group(long id, String name, boolean isDefault) {
@@ -59,4 +77,19 @@ public class Group implements Identifiable, Serializable {
         this.memberCount = memberCount;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<Group> CREATOR
+            = new Parcelable.Creator<Group>() {
+        public Group createFromParcel(Parcel in) {
+            return new Group(in);
+        }
+
+        public Group[] newArray(int size) {
+            return new Group[size];
+        }
+    };
 }

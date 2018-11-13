@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.util.DisplayMetrics;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.AbstractMainActivity;
 import delit.piwigoclient.util.DisplayUtils;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
@@ -54,5 +56,25 @@ public class OtherPreferences {
     @SuppressWarnings("JavadocReference")
     public static int getDefaultFoldersColumnCount(Activity activity, int orientationId) {
         return DisplayUtils.getDefaultColumnCount(activity, orientationId, 2);
+    }
+
+    public static Date getLastWarnedAboutVersionOrFeatures(SharedPreferences prefs, AbstractMainActivity activity) {
+        long dateTimeMillis = prefs.getLong(activity.getString(R.string.preference_functions_missing_app_version_warned_key), 0);
+        return new Date(dateTimeMillis);
+    }
+
+    public static boolean getAndUpdateLastWarnedAboutVersionOrFeatures(SharedPreferences prefs, AbstractMainActivity activity) {
+        Calendar lastWarnedAt = Calendar.getInstance();
+        lastWarnedAt.setTime(getLastWarnedAboutVersionOrFeatures(prefs, activity));
+        Calendar warnIfLastWarnedBeforeDateTime = Calendar.getInstance();
+        warnIfLastWarnedBeforeDateTime.setTime(new Date());
+        warnIfLastWarnedBeforeDateTime.add(Calendar.DATE, -7); // 7 days before now.
+        boolean showWarning = lastWarnedAt.before(warnIfLastWarnedBeforeDateTime);
+        if(showWarning) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putLong(activity.getString(R.string.preference_functions_missing_app_version_warned_key), System.currentTimeMillis());
+            editor.commit();
+        }
+        return showWarning;
     }
 }

@@ -4,15 +4,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.preference.DialogPreference;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceDialogFragmentCompat;
-import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.appcompat.app.AlertDialog;
+import androidx.preference.DialogPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceDialogFragmentCompat;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +31,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.util.DisplayUtils;
 
 public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
@@ -75,7 +76,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             userSelectedItem = savedInstanceState.getString(STATE_USER_SELECTED_ITEM);
-            actions = (ArrayList<ListAction>) savedInstanceState.getSerializable(STATE_LIST_ACTIONS);
+            actions = BundleUtils.getSerializable(savedInstanceState, STATE_LIST_ACTIONS, actions.getClass());
             entriesList = savedInstanceState.getStringArrayList(STATE_LIST_ITEMS);
             itemEditingAllowed = savedInstanceState.getBoolean(STATE_ITEM_EDIT_ALLOWED);
         } else {
@@ -166,7 +167,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
     private void showEditBox(final boolean editingExistingValue, final String initialValue) {
         // popup with text entry field.
-        android.support.v7.app.AlertDialog.Builder b = new android.support.v7.app.AlertDialog.Builder(getContext());
+        androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(getContext());
         if (editingExistingValue) {
             b.setMessage(R.string.title_editing_item);
         } else {
@@ -217,7 +218,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     protected void onChangeItem(String oldValue, String newValue) {
 
         if (entriesList.contains(newValue)) {
-            android.support.v7.app.AlertDialog.Builder b = new android.support.v7.app.AlertDialog.Builder(getContext());
+            androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(getContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
             b.create();
@@ -235,7 +236,7 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
 
     protected void onAddNewItemToList(String newItem) {
         if (entriesList.contains(newItem)) {
-            android.support.v7.app.AlertDialog.Builder b = new android.support.v7.app.AlertDialog.Builder(getContext());
+            androidx.appcompat.app.AlertDialog.Builder b = new androidx.appcompat.app.AlertDialog.Builder(getContext());
             b.setTitle(R.string.alert_error);
             b.setMessage(R.string.alert_error_item_not_unique);
             b.create();

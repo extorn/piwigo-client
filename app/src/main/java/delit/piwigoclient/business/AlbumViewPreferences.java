@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.util.DisplayMetrics;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.util.DisplayUtils;

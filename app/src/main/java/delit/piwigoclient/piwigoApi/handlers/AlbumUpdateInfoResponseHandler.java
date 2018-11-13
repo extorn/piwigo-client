@@ -19,8 +19,8 @@ public class AlbumUpdateInfoResponseHandler extends AbstractPiwigoWsResponseHand
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoUpdateAlbumInfoResponse r = new PiwigoResponseBufferingHandler.PiwigoUpdateAlbumInfoResponse(getMessageId(), getPiwigoMethod(), album);
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        PiwigoUpdateAlbumInfoResponse r = new PiwigoUpdateAlbumInfoResponse(getMessageId(), getPiwigoMethod(), album, isCached);
         storeResponse(r);
     }
 
@@ -33,5 +33,18 @@ public class AlbumUpdateInfoResponseHandler extends AbstractPiwigoWsResponseHand
         params.put("comment", album.getDescription());
         params.put("status", album.isPrivate() ? "private" : "public");
         return params;
+    }
+
+    public static class PiwigoUpdateAlbumInfoResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final CategoryItem album;
+
+        public PiwigoUpdateAlbumInfoResponse(long messageId, String piwigoMethod, CategoryItem album, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.album = album;
+        }
+
+        public CategoryItem getAlbum() {
+            return album;
+        }
     }
 }

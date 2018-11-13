@@ -31,12 +31,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.VelocityTrackerCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewConfigurationCompat;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -49,12 +43,15 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 
-import com.wunderlist.slidinglayer.LayerTransformer;
-
 import java.util.Random;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.ViewConfigurationCompat;
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.common.InlineViewPagerAdapter;
 
 
 public class CustomSlidingLayer extends FrameLayout {
@@ -209,28 +206,28 @@ public class CustomSlidingLayer extends FrameLayout {
 
     private void init(Context context, AttributeSet attrs, int defStyle, int defTheme) {
         // Style
-        final TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SlidingLayer, defStyle, defTheme);
+        final TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CustomSlidingLayer, defStyle, defTheme);
 
         // Set the side of the screen
-        setStickTo(ta.getInt(R.styleable.SlidingLayer_stickTo, STICK_TO_RIGHT));
+        setStickTo(ta.getInt(R.styleable.CustomSlidingLayer_csl_stickTo, STICK_TO_RIGHT));
 
         // Sets the shadow drawable
-        int shadowRes = ta.getResourceId(R.styleable.SlidingLayer_shadowDrawable, INVALID_VALUE);
+        int shadowRes = ta.getResourceId(R.styleable.CustomSlidingLayer_shadowDrawable, INVALID_VALUE);
         if (shadowRes != INVALID_VALUE) {
             setShadowDrawable(shadowRes);
         }
 
         // Sets the shadow size
-        mShadowSize = (int) ta.getDimension(R.styleable.SlidingLayer_shadowSize, 0);
+        mShadowSize = (int) ta.getDimension(R.styleable.CustomSlidingLayer_shadowSize, 0);
 
         // Sets the ability to open or close the layer by tapping in any empty space
-        changeStateOnTap = ta.getBoolean(R.styleable.SlidingLayer_changeStateOnTap, true);
+        changeStateOnTap = ta.getBoolean(R.styleable.CustomSlidingLayer_changeStateOnTap, true);
 
         // How much of the view sticks out when closed
-        mOffsetDistance = ta.getDimensionPixelOffset(R.styleable.SlidingLayer_offsetDistance, 0);
+        mOffsetDistance = ta.getDimensionPixelOffset(R.styleable.CustomSlidingLayer_offsetDistance, 0);
 
         // Sets the size of the preview summary, if any
-        mPreviewOffsetDistance = ta.getDimensionPixelOffset(R.styleable.SlidingLayer_previewOffsetDistance,
+        mPreviewOffsetDistance = ta.getDimensionPixelOffset(R.styleable.CustomSlidingLayer_previewOffsetDistance,
                 INVALID_VALUE);
 
         // If showing offset is greater than preview mode offset dimension, exception is thrown
@@ -418,7 +415,7 @@ public class CustomSlidingLayer extends FrameLayout {
      * @param resId Resource ID of a drawable
      */
     public void setShadowDrawable(int resId) {
-        setShadowDrawable(getContext().getResources().getDrawable(resId));
+        setShadowDrawable(ContextCompat.getDrawable(getContext(),resId));
     }
 
     /**
@@ -490,7 +487,7 @@ public class CustomSlidingLayer extends FrameLayout {
     }
 
     @Override
-    protected boolean verifyDrawable(Drawable who) {
+    protected boolean verifyDrawable(@NonNull Drawable who) {
         return super.verifyDrawable(who) || who == mShadowDrawable;
     }
 
@@ -769,14 +766,12 @@ public class CustomSlidingLayer extends FrameLayout {
                 if (mIsDragging) {
                     final VelocityTracker velocityTracker = mVelocityTracker;
                     velocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
-                    final int initialVelocityX = (int) VelocityTrackerCompat.getXVelocity(velocityTracker,
-                            mActivePointerId);
-                    final int initialVelocityY = (int) VelocityTrackerCompat.getYVelocity(velocityTracker,
-                            mActivePointerId);
+                    final int initialVelocityX = (int) velocityTracker.getXVelocity(mActivePointerId);
+                    final int initialVelocityY = (int) velocityTracker.getYVelocity(mActivePointerId);
                     final int scrollX = getScrollX();
                     final int scrollY = getScrollY();
 
-                    final int pointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId);
+                    final int pointerIndex = ev.findPointerIndex(mActivePointerId);
                     final float x = getViewX(ev);
                     final float y = getViewY(ev);
 
@@ -1477,7 +1472,7 @@ public class CustomSlidingLayer extends FrameLayout {
 
         public SavedState(Parcel in) {
             super(in);
-            mState = in.readBundle();
+            mState = in.readBundle(getClass().getClassLoader());
         }
 
         @Override

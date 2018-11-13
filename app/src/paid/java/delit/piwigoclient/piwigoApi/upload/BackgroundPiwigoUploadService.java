@@ -285,7 +285,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
     @Override
     public void onJobReadyToUpload(Context c, UploadJob thisUploadJob) {
         thisUploadJob.getJobId();
-        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(c, thisUploadJob.getJobConfigId());
+        AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
         AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(c);
         thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFilesToHashMap());
     }
@@ -317,15 +317,17 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             final ConnectivityManager connMgr = (ConnectivityManager) context
                     .getSystemService(Context.CONNECTIVITY_SERVICE);
 
-            android.net.NetworkInfo network;
-            if(jobs.isUploadOnWirelessOnly(context)) {
-                network = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-                if(BuildConfig.DEBUG) {
-                    // just allow testing in the emulator.
-                    network = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+            android.net.NetworkInfo network = null;
+            if(connMgr != null) {
+                if (jobs.isUploadOnWirelessOnly(context)) {
+                    network = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                    if (BuildConfig.DEBUG) {
+                        // just allow testing in the emulator.
+                        network = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+                    }
+                } else {
+                    network = connMgr.getActiveNetworkInfo();
                 }
-            } else {
-                network = connMgr.getActiveNetworkInfo();
             }
 
             if (network != null && network.isAvailable() && network.isConnected()) {

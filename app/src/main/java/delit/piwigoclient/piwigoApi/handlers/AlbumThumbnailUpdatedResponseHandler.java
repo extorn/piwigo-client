@@ -34,9 +34,27 @@ public class AlbumThumbnailUpdatedResponseHandler extends AbstractPiwigoWsRespon
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse r = new PiwigoResponseBufferingHandler.PiwigoAlbumThumbnailUpdatedResponse(getMessageId(), getPiwigoMethod(), albumParentId, albumId);
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        PiwigoAlbumThumbnailUpdatedResponse r = new PiwigoAlbumThumbnailUpdatedResponse(getMessageId(), getPiwigoMethod(), albumParentId, albumId, isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoAlbumThumbnailUpdatedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final Long albumParentId;
+        private long albumIdAltered;
+
+        public PiwigoAlbumThumbnailUpdatedResponse(long messageId, String piwigoMethod, Long albumParentId, long albumIdAltered, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.albumParentId = albumParentId;
+            this.albumIdAltered = albumIdAltered;
+        }
+
+        public Long getAlbumParentIdAltered() {
+            return albumParentId;
+        }
+
+        public long getAlbumIdAltered() {
+            return albumIdAltered;
+        }
+    }
 }

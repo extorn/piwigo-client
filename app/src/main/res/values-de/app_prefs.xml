@@ -19,6 +19,9 @@
     <string name="preference_server_connection_force_https_title">Http-URLs in Https umwandeln</string>
     <string name="preference_server_connection_force_https_summary">Alle http:// URLs neu geschrieben auf https://</string>
 
+    <string name="preference_server_connection_offline_mode_title">Offline-Surfen zulassen</string>
+    <string name="preference_server_connection_offline_mode_summary">Verwenden Sie gecachte Daten, wenn verfügbar</string>
+
     <string name="preference_server_connection_max_redirects_title">Max. Server-Weiterleitung</string>
     <string name="preference_server_connection_max_redirects_summary">%1$d</string>
 
@@ -41,6 +44,8 @@
 
     <string name="preference_server_basic_auth_password_title">Basis-Authentifizierungspasswort</string>
 
+    <string name="preference_server_alter_cache_directives_title">Ändern von Server-Http-Cache-Anweisungen</string>
+    <string name="preference_server_alter_cache_directives_summary">Aktivieren Sie, um den Offline-Zugriff auf die Galerie zu ermöglichen</string>
 
     <string name="preference_server_use_basic_auth_title">Basic Authentication verwenden</string>
     <string name="preference_server_use_basic_auth_summary">Aktivieren, wenn Server Basic Authentication erfordert</string>

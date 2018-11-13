@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/file_for_upload_img"
-        android:layout_width="80dp"
+        android:layout_width="80dp" android:contentDescription="TODO" 
         android:layout_height="80dp"
         android:layout_alignParentStart="true" />
 

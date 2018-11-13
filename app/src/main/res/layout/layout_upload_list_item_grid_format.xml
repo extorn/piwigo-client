@@ -17,7 +17,7 @@
             android:id="@+id/file_for_upload_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter" />
+            android:contentDescription="TODO" android:scaleType="fitCenter" />
 
     </delit.piwigoclient.ui.common.SquareLinearLayout>
 

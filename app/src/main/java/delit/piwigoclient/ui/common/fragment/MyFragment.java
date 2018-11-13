@@ -1,17 +1,15 @@
 package delit.piwigoclient.ui.common.fragment;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +19,9 @@ import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -43,6 +44,7 @@ public class MyFragment extends Fragment {
     private FragmentUIHelper uiHelper;
     private String piwigoSessionToken;
     private String piwigoServerConnected;
+    private boolean onInitialCreate;
 
     protected long addActiveServiceCall(@StringRes int titleStringId, long messageId) {
         return addActiveServiceCall(getString(titleStringId), messageId);
@@ -61,6 +63,12 @@ public class MyFragment extends Fragment {
     protected long addActiveServiceCall(String title, long messageId) {
         uiHelper.addActiveServiceCall(title, messageId);
         return messageId;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        onInitialCreate = true;
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -117,7 +125,12 @@ public class MyFragment extends Fragment {
     @Override
     public void onPause() {
         Crashlytics.log("onPause : " + getClass().getName());
+        onInitialCreate = false;
         super.onPause();
+    }
+
+    public boolean isOnInitialCreate() {
+        return onInitialCreate;
     }
 
     @Override
@@ -179,8 +192,11 @@ public class MyFragment extends Fragment {
                 dialog.show();
 //                uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, this);
             } else {
-                getActivity().getLifecycle().removeObserver(observer);
-                prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 0).commit();
+                FragmentActivity a = getActivity();
+                if(a != null) {
+                    a.getLifecycle().removeObserver(observer);
+                    prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 0).commit();
+                }
             }
         }
     }
@@ -220,4 +236,7 @@ public class MyFragment extends Fragment {
         return prefs.getBoolean(getContext().getString(R.string.preference_app_read_only_mode_key), false);
     }
 
+    protected SharedPreferences getPrefs() {
+        return prefs;
+    }
 }

@@ -1,13 +1,16 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 import java.util.HashSet;
 
-public class User implements Identifiable, Serializable {
-    private static final long serialVersionUID = -3747900490774558690L;
-    private String email;
+import delit.piwigoclient.ui.common.util.ParcelUtils;
+
+public class User implements Identifiable, Parcelable {
     private long id = -1;
+    private String email;
     private String username;
     private String userType; //guest,    generic,    normal,    admin,    webmaster
     private boolean highDefinitionEnabled;
@@ -17,6 +20,31 @@ public class User implements Identifiable, Serializable {
     private String password;
 
     public User() {
+    }
+
+    public User(Parcel in) {
+        id = in.readLong();
+        email = in.readString();
+        username = in.readString();
+        userType = in.readString();
+        highDefinitionEnabled = ParcelUtils.readValue(in,null, boolean.class);
+        lastVisit = ParcelUtils.readDate(in);
+        groups = ParcelUtils.readLongSet(in, null);
+        privacyLevel = in.readInt();
+        password = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(email);
+        dest.writeString(username);
+        dest.writeString(userType);
+        dest.writeValue(highDefinitionEnabled);
+        ParcelUtils.writeDate(dest, lastVisit);
+        ParcelUtils.writeLongSet(dest, groups);
+        dest.writeInt(privacyLevel);
+        dest.writeString(password);
     }
 
     public User(long id, String username, String userType, int privacyLevel, String email, boolean highDefinitionEnabled, Date lastVisit) {
@@ -102,4 +130,19 @@ public class User implements Identifiable, Serializable {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<User> CREATOR
+            = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }

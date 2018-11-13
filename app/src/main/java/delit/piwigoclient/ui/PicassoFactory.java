@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
@@ -18,7 +18,6 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 
-import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cz.msebera.android.httpclient.HttpStatus;
@@ -58,7 +57,10 @@ public class PicassoFactory {
             if (picasso == null) {
                 errorHandler = new PicassoErrorHandler();
                 // request handler would work but it cant because it doesnt get in before the broken one!
-                picasso = new MyPicasso.Builder(context).addRequestHandler(new ResourceRequestHandler(context)).addRequestHandler(new VideoRequestHandler()).listener(errorHandler).downloader(getDownloader(context)).build();
+                picasso = new MyPicasso.Builder(context)
+                        .addRequestHandler(new ResourceRequestHandler(context))
+                        .addRequestHandler(new VideoRequestHandler())
+                        .listener(errorHandler).downloader(getDownloader(context)).build();
             }
             return picasso;
         }
@@ -128,7 +130,7 @@ public class PicassoFactory {
         }
 
         @Override
-        public Result load(Request data, int networkPolicy) throws IOException {
+        public Result load(Request data, int networkPolicy) {
             Bitmap bm = ThumbnailUtils.createVideoThumbnail(data.uri.getPath(), MediaStore.Images.Thumbnails.MINI_KIND);
             return new Result(bm, Picasso.LoadedFrom.DISK);
         }
@@ -145,7 +147,7 @@ public class PicassoFactory {
             return data.resourceId != 0 || "android.resource".equals(data.uri.getScheme());
         }
 
-        public Result load(Request data, int networkPolicy) throws IOException {
+        public Result load(Request data, int networkPolicy) {
             Drawable d = ContextCompat.getDrawable(context, data.resourceId);
             return new Result(drawableToBitmap(d), Picasso.LoadedFrom.DISK);
         }

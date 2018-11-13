@@ -1,15 +1,14 @@
 package delit.piwigoclient.ui;
 
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.crashlytics.android.Crashlytics;
+import com.google.android.material.navigation.NavigationView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,6 +39,7 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.UnlockAppEvent;
+import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
 
 /**
@@ -163,9 +166,14 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
+                    DisplayUtils.hideKeyboardFrom(getContext(), dialog);
                     EditText passwordEdit = dialog.findViewById(R.id.password);
-                    String password = passwordEdit.getText().toString();
-                    EventBus.getDefault().post(new UnlockAppEvent(password));
+                    if(passwordEdit != null) {
+                        String password = passwordEdit.getText().toString();
+                        EventBus.getDefault().post(new UnlockAppEvent(password));
+                    } else {
+                        Crashlytics.log("unable to find password field on dialog");
+                    }
                 }
             }
         });
@@ -208,7 +216,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         });
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final UnlockAppEvent event) {
         String savedPassword = ConnectionPreferences.getActiveProfile().getPiwigoPasswordNotNull(prefs, getContext());
         if (savedPassword.equals(event.getPassword())) {
@@ -221,7 +229,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final LockAppEvent event) {
         lockAppInReadOnlyMode(true);
         EventBus.getDefault().post(new AppLockedEvent());

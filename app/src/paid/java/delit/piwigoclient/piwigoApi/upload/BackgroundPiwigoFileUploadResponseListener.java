@@ -24,37 +24,37 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
-    protected void onAddUploadedFileToAlbumFailure(Context context, PiwigoResponseBufferingHandler.PiwigoUploadFileAddToAlbumFailedResponse response) {
+    protected void onAddUploadedFileToAlbumFailure(Context context, BasePiwigoUploadService.PiwigoUploadFileAddToAlbumFailedResponse response) {
 
     }
 
     @Override
-    protected void onChunkUploadFailed(Context context, PiwigoResponseBufferingHandler.PiwigoUploadFileChunkFailedResponse response) {
+    protected void onChunkUploadFailed(Context context, BasePiwigoUploadService.PiwigoUploadFileChunkFailedResponse response) {
 
     }
 
     @Override
-    protected void onFilesSelectedForUploadAlreadyExistOnServer(Context context, PiwigoResponseBufferingHandler.PiwigoUploadFileFilesExistAlreadyResponse response) {
+    protected void onFilesSelectedForUploadAlreadyExistOnServer(Context context, BasePiwigoUploadService.PiwigoUploadFileFilesExistAlreadyResponse response) {
 
     }
 
     @Override
-    protected void onLocalFileError(Context context, PiwigoResponseBufferingHandler.PiwigoUploadFileLocalErrorResponse response) {
+    protected void onLocalFileError(Context context, BasePiwigoUploadService.PiwigoUploadFileLocalErrorResponse response) {
 
     }
 
     @Override
-    protected void onFileUploadProgressUpdate(Context context, PiwigoResponseBufferingHandler.PiwigoUploadProgressUpdateResponse response) {
+    protected void onFileUploadProgressUpdate(Context context, BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
 
     }
 
     @Override
-    protected void onPrepareUploadFailed(Context context, PiwigoResponseBufferingHandler.PiwigoPrepareUploadFailedResponse response) {
+    protected void onPrepareUploadFailed(Context context, BasePiwigoUploadService.PiwigoPrepareUploadFailedResponse response) {
 
     }
 
     @Override
-    protected void onCleanupPostUploadFailed(Context context, PiwigoResponseBufferingHandler.PiwigoCleanupPostUploadFailedResponse response) {
+    protected void onCleanupPostUploadFailed(Context context, BasePiwigoUploadService.PiwigoCleanupPostUploadFailedResponse response) {
 
     }
 

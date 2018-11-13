@@ -33,12 +33,38 @@ public class AlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler 
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         long newAlbumnId = result.get("id").getAsLong();
         newAlbum.setGalleryId(newAlbumnId);
 
-        PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse r = new PiwigoResponseBufferingHandler.PiwigoAlbumCreatedResponse(getMessageId(), getPiwigoMethod(), newAlbum);
+        PiwigoAlbumCreatedResponse r = new PiwigoAlbumCreatedResponse(getMessageId(), getPiwigoMethod(), newAlbum, isCached);
         storeResponse(r);
+    }
+
+    public static class PiwigoAlbumCreatedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+
+        private final PiwigoGalleryDetails albumDetails;
+        private final long newAlbumId;
+
+        public PiwigoAlbumCreatedResponse(long messageId, String piwigoMethod, long albumId, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.albumDetails = null;
+            this.newAlbumId = albumId;
+        }
+
+        public PiwigoAlbumCreatedResponse(long messageId, String piwigoMethod, PiwigoGalleryDetails albumDetails, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.albumDetails = albumDetails;
+            this.newAlbumId = albumDetails.getGalleryId();
+        }
+
+        public PiwigoGalleryDetails getAlbumDetails() {
+            return albumDetails;
+        }
+
+        public long getNewAlbumId() {
+            return newAlbumId;
+        }
     }
 }

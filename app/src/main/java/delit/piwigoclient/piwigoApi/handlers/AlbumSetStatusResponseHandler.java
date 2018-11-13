@@ -30,10 +30,15 @@ public class AlbumSetStatusResponseHandler extends AbstractPiwigoWsResponseHandl
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
-        PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse r = new PiwigoResponseBufferingHandler.PiwigoSetAlbumStatusResponse(getMessageId(), getPiwigoMethod());
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
+        PiwigoSetAlbumStatusResponse r = new PiwigoSetAlbumStatusResponse(getMessageId(), getPiwigoMethod(), isCached);
         storeResponse(r);
     }
 
 
+    public static class PiwigoSetAlbumStatusResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        public PiwigoSetAlbumStatusResponse(long messageId, String piwigoMethod, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+        }
+    }
 }

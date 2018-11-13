@@ -204,7 +204,7 @@ class SimpleMultipartEntity implements HttpEntity {
     }
 
     @Override
-    public void consumeContent() throws IOException, UnsupportedOperationException {
+    public void consumeContent() throws UnsupportedOperationException {
         if (isStreaming()) {
             throw new UnsupportedOperationException(
                     "Streaming entity does not implement #consumeContent()");
@@ -212,7 +212,7 @@ class SimpleMultipartEntity implements HttpEntity {
     }
 
     @Override
-    public InputStream getContent() throws IOException, UnsupportedOperationException {
+    public InputStream getContent() throws UnsupportedOperationException {
         throw new UnsupportedOperationException(
                 "getContent() is not supported. Use writeTo() instead.");
     }

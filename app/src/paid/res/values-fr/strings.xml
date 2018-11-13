@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_title_background_upload_service">Contexte Piwigo Upload Service Piwigo</string>
+    <string name="notification_text_background_upload_running">Exécution du travail de téléchargement</string>
+    <string name="notification_text_background_upload_sleeping">Dormir. Prochaine exécution à %1$tR</string>
+    <string name="notification_text_background_upload_polling">Interrogation des fichiers à télécharger.</string>
+
+    <string name="alert_auto_upload_service_stopped">Arrêt du service de téléchargement en arrière-plan</string>
+    <string name="alert_auto_upload_service_started">Démarrage du service de téléchargement en arrière-plan</string>
+    <string name="alert_auto_upload_service_job_restarted">Lancement du téléchargement d\'un travail précédemment incomplet sur le serveur %1$s avec des fichiers %2$d</string>
+    <string name="alert_auto_upload_service_job_started">Démarrer le téléchargement d\'un travail sur le serveur %1$s avec des fichiers %2$d</string>
+    <string name="alert_auto_upload_service_job_finished_success">Terminé l\'exécution du travail de téléchargement en arrière-plan vers le serveur %1$s.</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">Terminé l\'exécution du travail de téléchargement en arrière-plan vers le serveur %1$s. Certains fichiers n\'ont pas pu être téléchargés et seront réessayés plus tard.</string>
+    <string name="alert_auto_upload_service_job_finished_failure">Terminé l\'exécution du travail de téléchargement en arrière-plan vers le serveur %1$s. Aucun fichier n\'a pu être téléchargé. Le travail sera réessayé plus tard.</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">Vérification des tâches par le service de téléchargement en arrière-plan</string>
+    <string name="progress_creating_tag">Création d\'une balise</string>
+</resources>

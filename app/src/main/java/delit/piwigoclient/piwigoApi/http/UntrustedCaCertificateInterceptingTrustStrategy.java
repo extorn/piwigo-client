@@ -38,9 +38,7 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
     public void update(Observable o, Object arg) {
         String thumbprint = (String) arg;
         synchronized (preNotifiedCerts) {
-            if (!preNotifiedCerts.contains(thumbprint)) {
-                preNotifiedCerts.add(thumbprint);
-            }
+            preNotifiedCerts.add(thumbprint);
         }
     }
 

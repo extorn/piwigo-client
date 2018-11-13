@@ -3,20 +3,20 @@ package delit.piwigoclient.ui.common.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.BoolRes;
-import android.support.annotation.IntegerRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
+import androidx.annotation.BoolRes;
+import androidx.annotation.IntegerRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.fragment.app.DialogFragment;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 
-import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.preference.ClientCertificatePreference;
@@ -31,10 +31,10 @@ import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 import delit.piwigoclient.ui.common.preference.NumberPickerPreferenceDialogFragmentCompat;
 import delit.piwigoclient.ui.common.preference.SecureEditTextPreference;
 import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
-import delit.piwigoclient.ui.preferences.ServerAlbumListPreference;
-import delit.piwigoclient.ui.preferences.ServerAlbumListPreferenceDialogFragmentCompat;
-import delit.piwigoclient.ui.preferences.ServerConnectionsListPreference;
-import delit.piwigoclient.ui.preferences.ServerConnectionsListPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
+import delit.piwigoclient.ui.common.preference.ServerAlbumListPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
+import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreferenceDialogFragmentCompat;
 
 /**
  * Created by gareth on 26/05/17.
@@ -44,7 +44,7 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
     private UIHelper uiHelper;
     private Context c;
     protected static final String DIALOG_FRAGMENT_TAG =
-            "android.support.v7.preference.PreferenceFragment.DIALOG";
+            "androidx.preference.PreferenceFragment.DIALOG";
 
     protected UIHelper getUiHelper() {
         return uiHelper;
@@ -75,8 +75,8 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
         return new BasicPiwigoResponseListener();
     }
 
-    protected void addActiveServiceCall(@StringRes int stringId, long messageId) {
-        uiHelper.addActiveServiceCall(stringId, messageId);
+    protected void callServer(@StringRes int callDescriptionResId, AbstractPiwigoDirectResponseHandler handler) {
+        uiHelper.addActiveServiceCall(callDescriptionResId, handler.invokeAsync(getContext()));
     }
 
     @Override

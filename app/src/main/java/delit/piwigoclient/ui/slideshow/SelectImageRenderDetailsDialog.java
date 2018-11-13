@@ -1,12 +1,11 @@
 package delit.piwigoclient.ui.slideshow;
 
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v7.widget.SwitchCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -33,8 +32,8 @@ class SelectImageRenderDetailsDialog {
         this.context = context;
     }
 
-    public AlertDialog buildDialog(float currentMaxZoom, String currentImageUrlDisplayed, ArrayList<ResourceItem.ResourceFile> availableFiles, final RenderDetailSelectListener listener) {
-        android.support.v7.app.AlertDialog.Builder builder1 = new android.support.v7.app.AlertDialog.Builder(context);
+    public AlertDialog buildDialog(String currentImageUrlDisplayed, ArrayList<ResourceItem.ResourceFile> availableFiles, final RenderDetailSelectListener listener) {
+        androidx.appcompat.app.AlertDialog.Builder builder1 = new androidx.appcompat.app.AlertDialog.Builder(context);
         builder1.setTitle(R.string.alert_image_show_image_title);
         adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, availableFiles);
 
@@ -53,56 +52,10 @@ class SelectImageRenderDetailsDialog {
         maxZoomPicker = view.findViewById(R.id.allowFreeZoom);
         fileSelectList = view.findViewById(R.id.fileSelectList);
         fileSelectList.setAdapter(adapter);
-        AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                int selectPos = Math.min(Math.max(0, position), adapter.getCount() - 1);
-
-                float rotateDegrees = 0f;
-
-                if (selectPos >= 0) {
-
-                    ResourceItem.ResourceFile selectedItem = adapter.getItem(selectPos);
-
-                    if (adapter.getCount() >= 2 && selectedItem.getName().equals("original")) {
-                        int i = 0;
-                        ResourceItem.ResourceFile rf = adapter.getItem(i);
-                        while (rf.getName().equals("square") || rf.getName().equals("original")) {
-                            rf = adapter.getItem(++i);
-                            if (i == adapter.getCount()) {
-                                rf = null;
-                                break;
-                            }
-                        }
-                        if (rf != null) {
-                            boolean oldIsLandscape = rf.getWidth() > rf.getHeight();
-                            boolean newIsLandscape = selectedItem.getWidth() > selectedItem.getHeight();
-
-                            if (newIsLandscape && !oldIsLandscape) {
-                                rotateDegrees = 90f;
-                            } else if (!newIsLandscape && oldIsLandscape) {
-                                rotateDegrees = -90f;
-                            }
-                        }
-                    }
-                }
-                int i = 0;
-                for (int rotateDegreeOption : rotationValues) {
-                    if (0 == Float.compare(rotateDegrees, (float) rotateDegreeOption)) {
-                        imageRotation.setSelection(i);
-                        break;
-                    }
-                    i++;
-                }
-            }
-        };
-        fileSelectList.setOnItemClickListener(itemClickListener);
         int defaultFileSelectionPos = adapter.getPosition(currentImageUrlDisplayed);
         if(defaultFileSelectionPos >= 0) {
             fileSelectList.setItemChecked(defaultFileSelectionPos, true);
         }
-        itemClickListener.onItemClick(fileSelectList, null, defaultFileSelectionPos, -1);
         builder1.setView(view);
         builder1.setNegativeButton(R.string.button_cancel, null);
         builder1.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {

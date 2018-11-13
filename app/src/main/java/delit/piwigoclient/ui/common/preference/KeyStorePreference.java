@@ -3,7 +3,7 @@ package delit.piwigoclient.ui.common.preference;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v7.preference.DialogPreference;
+import androidx.preference.DialogPreference;
 import android.util.AttributeSet;
 
 import com.crashlytics.android.Crashlytics;

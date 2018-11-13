@@ -2,9 +2,9 @@ package delit.piwigoclient.ui.upload;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -228,7 +228,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
      * @return List of all files that were not already present
      */
     public ArrayList addAll(List<File> filesForUpload) {
-        ArrayList newFiles = new ArrayList(filesForUpload);
+        ArrayList<File> newFiles = new ArrayList<File>(filesForUpload);
         newFiles.removeAll(filesToUpload);
         filesToUpload.addAll(newFiles);
         notifyDataSetChanged();

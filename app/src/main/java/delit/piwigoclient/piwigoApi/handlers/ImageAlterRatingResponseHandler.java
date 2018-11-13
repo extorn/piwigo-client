@@ -30,18 +30,23 @@ public class ImageAlterRatingResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         float score = (float) result.get("score").getAsDouble();
         float averageRating = (float) result.get("average").getAsDouble();
         int usersRated = result.get("count").getAsInt();
-        piwigoResource.setYourRating(newRating);
+        piwigoResource.setMyRating(newRating);
         piwigoResource.setAverageRating(averageRating);
         piwigoResource.setScore(score);
         piwigoResource.setRatingsGiven(usersRated);
 
-        PiwigoResponseBufferingHandler.PiwigoRatingAlteredResponse r = new PiwigoResponseBufferingHandler.PiwigoRatingAlteredResponse(getMessageId(), getPiwigoMethod(), piwigoResource);
+        PiwigoRatingAlteredResponse r = new PiwigoRatingAlteredResponse(getMessageId(), getPiwigoMethod(), piwigoResource, isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoRatingAlteredResponse extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
+        public PiwigoRatingAlteredResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource, boolean isCached) {
+            super(messageId, piwigoMethod, piwigoResource, isCached);
+        }
+    }
 }

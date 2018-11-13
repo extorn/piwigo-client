@@ -25,9 +25,9 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
     public UsernamesGetListResponseHandler(Collection<Long> groupIds, int page, int pageSize) {
         super("pwg.users.getList", TAG);
         this.groupIds = groupIds;
-        this.userIds = null;
         this.page = page;
         this.pageSize = pageSize;
+        this.userIds = null;
     }
 
     public UsernamesGetListResponseHandler(Collection<Long> userIds) {
@@ -68,7 +68,7 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
         JsonObject pagingObj = result.get("paging").getAsJsonObject();
         int page = pagingObj.get("page").getAsInt();
@@ -86,7 +86,42 @@ public class UsernamesGetListResponseHandler extends AbstractPiwigoWsResponseHan
         if (this.page == PagedList.MISSING_ITEMS_PAGE) {
             page = this.page;
         }
-        PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse r = new PiwigoResponseBufferingHandler.PiwigoGetUsernamesListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, usernames);
+        PiwigoGetUsernamesListResponse r = new PiwigoGetUsernamesListResponse(getMessageId(), getPiwigoMethod(), page, pageSize, itemsOnPage, usernames, isCached);
         storeResponse(r);
+    }
+
+    public static class PiwigoGetUsernamesListResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final ArrayList<Username> usernames;
+        private final int itemsOnPage;
+        private final int pageSize;
+        private final int page;
+
+        public PiwigoGetUsernamesListResponse(long messageId, String piwigoMethod, int page, int pageSize, int itemsOnPage, ArrayList<Username> usernames, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.page = page;
+            this.pageSize = pageSize;
+            this.itemsOnPage = itemsOnPage;
+            this.usernames = usernames;
+        }
+
+        public int getItemsOnPage() {
+            return itemsOnPage;
+        }
+
+        public int getPage() {
+            return page;
+        }
+
+        public int getPageSize() {
+            return pageSize;
+        }
+
+        public ArrayList<Username> getUsernames() {
+            return usernames;
+        }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

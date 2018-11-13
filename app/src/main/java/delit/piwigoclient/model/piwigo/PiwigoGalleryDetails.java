@@ -1,18 +1,21 @@
 package delit.piwigoclient.model.piwigo;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import delit.piwigoclient.ui.common.util.ParcelUtils;
+
 /**
  * Created by gareth on 23/05/17.
  */
 
-public class PiwigoGalleryDetails implements Serializable {
+public class PiwigoGalleryDetails implements Parcelable {
 
-    private static final long serialVersionUID = -5754083671359840095L;
     private final ArrayList<Long> parentageChain;
     private final CategoryItemStub parentGallery;
     private final String galleryName;
@@ -32,6 +35,32 @@ public class PiwigoGalleryDetails implements Serializable {
         this.galleryDescription = galleryDescription;
         this.userCommentsAllowed = userCommentsAllowed;
         this.isPrivate = isPrivate;
+    }
+
+    public PiwigoGalleryDetails(Parcel in) {
+        parentageChain = new ArrayList<>();
+        in.readList(parentageChain, getClass().getClassLoader());
+        parentGallery = in.readParcelable(getClass().getClassLoader());
+        galleryName = in.readString();
+        galleryDescription = in.readString();
+        userCommentsAllowed = ParcelUtils.readValue(in,null, boolean.class);
+        isPrivate = ParcelUtils.readValue(in,null, boolean.class);
+        galleryId = ParcelUtils.readValue(in,null, Long.class);
+        allowedGroups = ParcelUtils.readLongSet(in, null);
+        allowedUsers = ParcelUtils.readLongSet(in, null);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeList(parentageChain);
+        dest.writeParcelable(parentGallery, flags);
+        dest.writeString(galleryName);
+        dest.writeString(galleryDescription);
+        dest.writeValue(userCommentsAllowed);
+        dest.writeValue(isPrivate);
+        dest.writeValue(galleryId);
+        ParcelUtils.writeLongSet(dest, allowedGroups);
+        ParcelUtils.writeLongSet(dest, allowedUsers);
     }
 
     public CategoryItemStub getParentGallery() {
@@ -93,5 +122,21 @@ public class PiwigoGalleryDetails implements Serializable {
     public Long getParentGalleryId() {
         return parentGallery.getId();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Parcelable.Creator<PiwigoGalleryDetails> CREATOR
+            = new Parcelable.Creator<PiwigoGalleryDetails>() {
+        public PiwigoGalleryDetails createFromParcel(Parcel in) {
+            return new PiwigoGalleryDetails(in);
+        }
+
+        public PiwigoGalleryDetails[] newArray(int size) {
+            return new PiwigoGalleryDetails[size];
+        }
+    };
 }
 

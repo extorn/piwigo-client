@@ -1,6 +1,8 @@
 package delit.piwigoclient.model.piwigo;
 
-import android.support.annotation.NonNull;
+import android.os.Parcel;
+import android.os.Parcelable;
+import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,11 +11,13 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import delit.piwigoclient.ui.common.util.ParcelUtils;
+
 /**
  * Created by gareth on 12/07/17.
  */
 public abstract class AbstractBaseResourceItem extends GalleryItem {
-    private float yourRating = 0;
+    private float myRating = 0;
     private float averageRating = 0;
     private int ratingsGiven = 0;
     private int privacyLevel = 0;
@@ -23,10 +27,42 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     private String fileChecksum;
     private Date creationDate;
     private float score;
+    private long resourceDetailsLoadedAt;
 
     public AbstractBaseResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
         super(id, name, description, lastAltered, thumbnailUrl);
         this.creationDate = creationDate;
+    }
+
+    public AbstractBaseResourceItem(Parcel in) {
+        super(in);
+        myRating = in.readFloat();
+        averageRating = in.readFloat();
+        ratingsGiven = in.readInt();
+        privacyLevel = in.readInt();
+        availableFiles = ParcelUtils.readTypedList(in, ResourceFile.CREATOR);
+        fullSizeImage = in.readParcelable(getClass().getClassLoader());
+        linkedAlbums = ParcelUtils.readLongSet(in, null);
+        fileChecksum = in.readString();
+        creationDate = ParcelUtils.readDate(in);
+        score = in.readFloat();
+        resourceDetailsLoadedAt = in.readLong();
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        super.writeToParcel(out, flags);
+        out.writeFloat(myRating);
+        out.writeFloat(averageRating);
+        out.writeInt(ratingsGiven);
+        out.writeInt(privacyLevel);
+        out.writeTypedList(availableFiles);
+        out.writeParcelable(fullSizeImage, flags);
+        ParcelUtils.writeLongSet(out, linkedAlbums);
+        out.writeString(fileChecksum);
+        ParcelUtils.writeDate(out, creationDate);
+        out.writeFloat(score);
+        out.writeLong(resourceDetailsLoadedAt);
     }
 
     public String getFileChecksum() {
@@ -125,12 +161,12 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         this.linkedAlbums = linkedAlbums;
     }
 
-    public float getYourRating() {
-        return yourRating;
+    public float getMyRating() {
+        return myRating;
     }
 
-    public void setYourRating(float yourRating) {
-        this.yourRating = yourRating;
+    public void setMyRating(float myRating) {
+        this.myRating = myRating;
     }
 
     public float getAverageRating() {
@@ -159,7 +195,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
 
     public void copyFrom(AbstractBaseResourceItem other, boolean copyParentage) {
         super.copyFrom(other, copyParentage);
-        yourRating = other.yourRating;
+        myRating = other.myRating;
         score = other.score;
         averageRating = other.averageRating;
         ratingsGiven = other.ratingsGiven;
@@ -168,6 +204,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         fullSizeImage = other.fullSizeImage;
         linkedAlbums = other.linkedAlbums;
         fileChecksum = other.fileChecksum;
+        resourceDetailsLoadedAt = other.resourceDetailsLoadedAt;
     }
 
     public void setScore(float score) {
@@ -178,8 +215,14 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         return score;
     }
 
-    public static class ResourceFile implements Comparable<ResourceFile>, Serializable {
+    public void markResourceDetailUpdated() {
+        resourceDetailsLoadedAt = System.currentTimeMillis();
+    }
+
+    public static class ResourceFile implements Comparable<ResourceFile>, Parcelable, Serializable {
+
         private static final long serialVersionUID = 2807336261739692481L;
+
         private final String name;
         private final String url;
         private final int width;
@@ -190,6 +233,21 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             this.url = url;
             this.width = width;
             this.height = height;
+        }
+
+        public ResourceFile(Parcel in) {
+            name = in.readString();
+            url = in.readString();
+            width = in.readInt();
+            height = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(name);
+            dest.writeString(url);
+            dest.writeInt(width);
+            dest.writeInt(height);
         }
 
         public String getUrl() {
@@ -223,5 +281,25 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             }
             return this.name.compareTo(o.name);
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Parcelable.Creator<ResourceFile> CREATOR
+                = new Parcelable.Creator<ResourceFile>() {
+            public ResourceFile createFromParcel(Parcel in) {
+                return new ResourceFile(in);
+            }
+
+            public ResourceFile[] newArray(int size) {
+                return new ResourceFile[size];
+            }
+        };
+    }
+
+    public boolean isResourceDetailsLikelyOutdated() {
+        return isLikelyOutdated(resourceDetailsLoadedAt);
     }
 }

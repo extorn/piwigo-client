@@ -26,6 +26,11 @@
     <string name="preference_server_connection_force_https_summary">All http:// urls rewritten to https:// for https server</string>
     <bool name="preference_server_connection_force_https_default">false</bool>
 
+    <string name="preference_server_connection_offline_mode_key" translatable="false">preference_server_connection_offline_mode</string>
+    <string name="preference_server_connection_offline_mode_title">Allow offline browsing</string>
+    <string name="preference_server_connection_offline_mode_summary">Use cached data when available</string>
+    <bool name="preference_server_connection_offline_mode_default">false</bool>
+
     <string name="preference_server_connection_allow_redirects_key" translatable="false">preference_server_connection_allow_redirects</string>
     <string name="preference_server_connection_allow_redirects_title">Allow server redirects</string>
     <string name="preference_server_connection_allow_redirects_summary">Follow http 3xx responses</string>
@@ -40,6 +45,11 @@
     <string name="preference_server_response_timeout_secs_title">Response timeout (seconds)</string>
     <string name="preference_server_response_timeout_secs_summary">%1$d seconds</string>
     <integer name="preference_server_response_timeout_secs_default">10</integer>
+
+    <string name="preference_server_alter_cache_directives_key" translatable="false">preference_server_alter_cache_directives</string>
+    <string name="preference_server_alter_cache_directives_title">Alter Server Http Cache Directives</string>
+    <string name="preference_server_alter_cache_directives_summary">Enable to allow offline access to gallery</string>
+    <bool name="preference_server_alter_cache_directives_default">false</bool>
 
     <string name="preference_server_connection_retries_key" translatable="false">preference_server_connection_retries</string>
     <string name="preference_server_connection_retries_title">Connection retries before failure</string>
@@ -300,4 +310,6 @@
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_key">preference_data_file_selector_preferredFolderColumnsPortrait</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Portrait: Columns of Folders to show</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
+
+    <string name="preference_functions_missing_app_version_warned_key" translatable="false">preference_functions_missing_app_version_warned</string>
 </resources>

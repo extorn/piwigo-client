@@ -389,7 +389,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
      * @param allowGzip Whether to allow the use of gzip.
      */
     private void makeConnection(URL url, byte[] postBody, long position,
-                                long length, boolean allowGzip) throws IOException {
+                                long length, boolean allowGzip) {
 
         client.setConnectTimeout(connectTimeoutMillis);
         client.setResponseTimeout(readTimeoutMillis);
@@ -631,7 +631,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         }
 
         @Override
-        public void sendResponseMessage(HttpResponse response) throws IOException {
+        public void sendResponseMessage(HttpResponse response) {
             // do not process if request has been cancelled
             httpResponse = response;
         }

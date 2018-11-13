@@ -5,7 +5,8 @@
 
     <application
         android:name="delit.piwigoclient.ui.MyApplication"
-        tools:node="merge">
+        tools:node="merge"
+        android:fullBackupContent="@xml/backup_descriptor">
 
         <service
             android:name=".piwigoApi.upload.BackgroundPiwigoUploadService"

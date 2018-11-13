@@ -10,7 +10,7 @@ public class GenericLowMemoryEvent {
 
     public GenericLowMemoryEvent(int level, boolean cacheCleared) {
         this.level = level;
-        this.picassoCacheCleared = picassoCacheCleared;
+        this.picassoCacheCleared = cacheCleared;
     }
 
     public boolean isPicassoCacheCleared() {

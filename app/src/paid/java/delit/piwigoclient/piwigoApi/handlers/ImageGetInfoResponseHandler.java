@@ -19,16 +19,29 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseIma
         super(piwigoResource, multimediaExtensionList);
     }
 
-    @Override
-    protected ResourceItem parseResourceItemFromJson(JsonObject resourceItemElem) throws JSONException {
-        ResourceItem loadedResourceItem = super.parseResourceItemFromJson(resourceItemElem);
+    protected BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(String multimediaExtensionList, boolean usingPiwigoClientOveride) {
+        return new ImageGetInfoResourceParser(multimediaExtensionList, usingPiwigoClientOveride);
+    }
 
-        JsonArray tagsElem = resourceItemElem.get("tags").getAsJsonArray();
+    public static class ImageGetInfoResourceParser extends BaseImageGetInfoResourceParser {
 
-        HashSet<Tag> tags = TagsGetListResponseHandler.parseTagsFromJson(tagsElem);
+        public ImageGetInfoResourceParser(String multimediaExtensionList, boolean usingPiwigoClientOveride) {
+            super(multimediaExtensionList, usingPiwigoClientOveride);
+        }
 
-        loadedResourceItem.setTags(tags);
+        @Override
+        public ResourceItem parseAndProcessResourceData(JsonObject image) throws JSONException {
+            ResourceItem resourceItem = super.parseAndProcessResourceData(image);
 
-        return loadedResourceItem;
+            JsonArray tagsElem = image.get("tags").getAsJsonArray();
+            HashSet<Tag> tags = TagsGetListResponseHandler.parseTagsFromJson(tagsElem);
+            resourceItem.setTags(tags);
+
+            return resourceItem;
+        }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

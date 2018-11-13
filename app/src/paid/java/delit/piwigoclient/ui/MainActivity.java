@@ -9,6 +9,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashSet;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
@@ -60,8 +61,8 @@ public class MainActivity extends AbstractMainActivity {
         showFragmentNow(fragment);
     }
 
-    private void showTagSelectionFragment(int actionId, BaseRecyclerViewAdapterPreferences prefs, HashSet<Long> initialSelection) {
-        TagSelectFragment fragment = TagSelectFragment.newInstance(prefs, actionId, initialSelection);
+    private void showTagSelectionFragment(int actionId, BaseRecyclerViewAdapterPreferences prefs, HashSet<Long> initialSelection, HashSet<Tag> unsavedTags) {
+        TagSelectFragment fragment = TagSelectFragment.newInstance(prefs, actionId, initialSelection, unsavedTags);
         showFragmentNow(fragment);
     }
 
@@ -72,7 +73,7 @@ public class MainActivity extends AbstractMainActivity {
         if(!event.isAllowEditing()) {
             prefs.readonly();
         }
-        showTagSelectionFragment(event.getActionId(), prefs , event.getInitialSelection());
+        showTagSelectionFragment(event.getActionId(), prefs , event.getInitialSelection(), event.getNewUnsavedTags());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

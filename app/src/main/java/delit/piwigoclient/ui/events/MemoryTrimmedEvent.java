@@ -10,7 +10,7 @@ public class MemoryTrimmedEvent {
 
     public MemoryTrimmedEvent(int level, boolean cacheCleared) {
         this.level = level;
-        this.picassoCacheCleared = picassoCacheCleared;
+        this.picassoCacheCleared = cacheCleared;
     }
 
     public boolean isPicassoCacheCleared() {

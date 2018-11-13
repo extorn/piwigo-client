@@ -14,8 +14,14 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="piwigo_title_testConnection">Testverbindung</string>
-    <string name="piwigo_title_testConnectionSummary">Verbindung zum Server testen</string>
+    <string name="preference_test_server_connection_title">Testverbindung</string>
+    <string name="preference_test_server_connection_summary">Verbindung zum Server testen</string>
+
+    <string name="preference_data_upload_clear_failed_uploads_from_server_title">Clean Server</string>
+    <string name="preference_data_upload_clear_failed_uploads_from_server_summary">Fehlerhafte PiwigoClient-Uploads vom Server bereinigen</string>
+    <string name="progress_clearing_failed_uploads_from_server">Löschen von fehlgeschlagenen Uploads vom Server</string>
+    <string name="cleared_failed_uploads_from_server_pattern">Gelöscht %1$d fehlgeschlagene Uploads vom Server</string>
+
     <string name="gallery_photos_summary_text_pattern">%1$d Fotos</string>
     <string name="gallery_subcategory_summary_text_pattern">%1$d Unteralben und %2$d Fotos</string>
     <string name="alert_title_connectionTest">Verbindungstest</string>
@@ -85,13 +91,14 @@
     <string name="logging_in_to_piwigo_pattern">Einloggen in %1$s</string>
 
     <string name="delete_upload_job_button_title">Job löschen</string>
-    <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen den Status auf dem Server manuell bereinigen. Jobs werden oft erfolgreich abgeschlossen, wenn Sie sie später wieder aufnehmen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen wollen?</string>
-    <string name="upload_files_button_title">Dateien hochladen</string>
+    <string name="upload_files_button_title">Hochladen</string>
+    <string name="upload_job_status_button">Status</string>
+    <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen alle Dateien, die teilweise auf den Server hochgeladen wurden, manuell bereinigen (oder die Präferenz in dieser App verwenden - Seite mit den Upload-Einstellungen). Jobs werden oft erfolgreich abgeschlossen, wenn Sie sie später wieder aufnehmen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen wollen?</string>
     <string name="loading_please_wait">Laden, bitte warten</string>
     <string name="alert_title_server_error">Server-Fehler</string>
     <string name="alert_server_error_pattern">Server liefert HTTP-Fehler: %1$d (%2$s)</string>
     <string name="alert_title_error_handling_response">Fehler beim Parsen der piwigo-Antwort</string>
-    <string name="alert_error_handling_response_pattern">Unerträgliche Reaktion: 1$d (%2$s)</string>
+    <string name="alert_error_handling_response_pattern">Unerträgliche Reaktion: %1$d (%2$s)</string>
     <string name="none_selected">Keine</string>
     <string name="alert_title_error_too_many_users">Fehler</string>
     <string name="alert_error_too_many_users_message">Zu viele Benutzer. Bitte senden Sie eine Erweiterungsanfrage, um das Paging von Benutzern zu ermöglichen.</string>
@@ -225,44 +232,43 @@ alleiniges Ermessen.
 Kontakt-Informationen
 
 Wenn Sie Fragen zu dieser Vereinbarung haben, kontaktieren Sie uns bitte."</string>
-    <string name="about_content"> "Diese App wurde geschrieben, um mir unterwegs den Zugriff auf meine Fotogalerie zu erleichtern.
+    <string name="about_content">"Diese App wurde geschrieben, um mir auch unterwegs einen leichteren Zugang zu meiner Fotogalerie zu ermöglichen.
 
 Es wird regelmäßig aktualisiert, um weitere Funktionen hinzuzufügen, einige, an die ich gedacht habe, andere, die von den Benutzern gewünscht werden.
 
 Im August 2018 kam ein Benutzer, David Klement, mit Screen-Mock-ups für ein professionelleres Design zu mir zurück. Seit dem Release 1.3.95 habe ich diese Ideen übernommen, angefangen bei der Albumansicht.
-Diese vollständige Liste der vorgeschlagenen Screendesigns ist auf der App-Website einsehbar.
+Diese vollständige Liste der vorgeschlagenen Screen Designs ist auf der App-Website (https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html) verfügbar.
 
-HINWEIS: Sprachübersetzungen werden mit Hilfe von www.Deepl.com oder google translate websites durchgeführt. Wenn Sie offensichtliche Fehler entdecken, lassen Sie es mich bitte wissen, damit ich sie korrigieren kann.
+HINWEIS: Sprachübersetzungen werden über www.Deepl.com oder Google durchgeführt. Wenn Sie offensichtliche Fehler entdecken, lassen Sie es mich bitte wissen, damit ich sie korrigieren kann.
 
-Es gibt zwei Versionen, eine kostenlose Version (mit Werbung) und eine kostenpflichtige Version (ohne Werbung). Sie können frei wählen, welche Sie bevorzugen. Sie können die kostenlose Version derzeit nicht'upgraden', die kostenpflichtige Version installieren und die kostenlose Version löschen.
-Hinweis: Die Versionen unterscheiden sich im Laufe der Zeit. Die meisten Änderungen werden sowohl in der kostenlosen als auch in der kostenpflichtigen Version vorgenommen.
+Es gibt zwei Versionen, eine kostenlose Version (mit Werbung) und eine kostenpflichtige Version (werbefrei). Du kannst frei wählen, was du bevorzugst. Sie können die kostenlose Version derzeit nicht "upgraden", die kostenpflichtige Version installieren und die kostenlose Version löschen.
+Hinweis: Die Versionen werden im Laufe der Zeit variieren. Die meisten Änderungen werden sowohl an der kostenlosen als auch an der kostenpflichtigen Version vorgenommen.
 
-Gegenwärtig unterstützt die kostenpflichtige Version auch Tags:
-        Piwigo unterstützt Tags bis zu einem gewissen Grad out of the box, aber das User Tags Plugin fügt weitere Funktionen hinzu (grundlegende Tests werden durchgeführt).
+Derzeit hat die kostenpflichtige Version die Unterstützung für Tags hinzugefügt:
+        Piwigo unterstützt Tags bis zu einem gewissen Grad out of the box, aber das User Tags Plugin fügt weitere Funktionen hinzu (grundlegende Tests durchgeführt).
 
 
-Im Moment bietet es eine grundlegende Funktionalität, um in einer bestehenden Galerie zu navigieren, neue Fotos und Videos hochzuladen und neue Kategorien innerhalb einer Galerie zu erstellen. Einige Felder können nach der Erstellung geändert werden, aber viele sind noch immer nur lesbar..... vorerst!
+Im Moment bietet es eine grundlegende Funktionsebene, um die Navigation durch eine bestehende Galerie, das Hochladen neuer Fotos und Videos und das Erstellen neuer Kategorien innerhalb einer Galerie zu ermöglichen. Einige Felder können nach der Erstellung geändert werden, aber viele werden immer noch nur gelesen....... vorerst!
 
-Wenn Sie die App deinstallieren, können Sie mir über den Link im App-Menü per E-Mail mitteilen, warum die App nicht Ihren Bedürfnissen entsprach, damit ich mich darum kümmern kann.
+Bitte kann ich Sie fragen, ob Sie, wenn Sie die App deinstallieren, den Link im App-Menü verwenden, um mir eine E-Mail zu schicken, in der Sie mir mitteilen, warum die App nicht Ihren Bedürfnissen entsprach, damit ich dies beheben kann.
 
-Die Version des PIWIGO-Servers, gegen den ich teste, ist derzeit 2.9.4.
+Die Version des PIWIGO-Servers, mit dem ich teste, ist derzeit 2.9.4.
 
-Meine Testgalerie enthält nur .jpg und.mp4 Dateien. Wenn Ihre Datei andere enthält, kann es zu Problemen kommen - wenn ja, sagen Sie es mir bitte und ich werde die Arbeit an diesen Dateitypen priorisieren.
+Meine Testgalerie enthält nur .jpg und.mp4 Dateien. Wenn deines andere enthält, kann es durchaus zu Problemen kommen - wenn ja, sag es mir bitte und ich werde die Arbeit an diesen Dateitypen priorisieren.
 
-WARNUNG: Versionen von Piwigo unter 1.9.2 - das Hochladen von Videos ist meiner Meinung nach abhängig davon, dass Fix #756 auf Ihren Server angewendet wird.
+WARNUNG: Versionen von Piwigo unter 1.9.2 - Hochladen von Videos ist meiner Meinung nach abhängig von Fix #756, der auf Ihren Server angewendet wird.
 
-Ich habe mit einer Kopie des piwigo_privacy Plugins und des VideoJS Plugins getestet.
+Ich habe mit einer Kopie des installierten piwigo_privacy Plugins und auch des installierten VideoJS Plugins getestet.
 Ich habe eine Kopie des Extended Description Plugins installiert, aber leider ist diese Funktionalität noch nicht über die PIWIGO API verfügbar.
-Ich würde gerne Unterstützung für "Lieblingsfotos" hinzufügen, aber diese Funktionalität scheint noch nicht über die PIWIGO-API verfügbar zu sein.
+Ich möchte die Unterstützung für "Lieblingsfotos" einbeziehen, aber diese Funktionalität scheint noch nicht über die PIWIGO-API verfügbar zu sein.
 
-Bitte senden Sie mir eine E-Mail, wenn Sie auf Fehler stoßen. Ich habe das auf dem Android-Emulator, einem Samsung-Handy und einem Samsung-Tablett getestet, aber es ist meine erste Anwendung, also bin ich sicher, dass die Dinge für jemanden schief gehen werden.
+Bitte melden Sie mir eine E-Mail, wenn Sie auf Fehler stoßen. Ich habe das auf dem Android-Emulator, einem Samsung-Telefon und einem Samsung-Tablett getestet, aber es ist meine erste App, also bin ich sicher, dass die Dinge für jemanden schief gehen werden.
 
 Ein großes Dankeschön an alle, die mir mit Vorschlägen oder Fehlern gemailt haben. Ich werde mich bemühen, alle Ihre Vorschläge so schnell wie möglich zu bearbeiten.
 
-Bitte wählen Sie, ob Sie jeden Absturz melden möchten. Falls der Fehler auch nach dem nächsten Update noch auftritt, nehmen Sie sich bitte die Zeit, mir eine E-Mail zu schreiben. Es ist wahrscheinlich, dass ich etwas mehr Kontext brauche, bevor der Fehler auftritt.
+Bitte wählen Sie, ob Sie jeden auftretenden Absturz melden möchten. Wenn Sie feststellen, dass der Fehler nach dem nächsten Update immer noch auftritt, nehmen Sie sich bitte die Zeit, mir eine E-Mail zu schreiben. Es ist wahrscheinlich, dass ich ein wenig mehr Kontext um das, was passiert, brauche, kurz bevor der Fehler auftritt.
 
-Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, dass die Häufigkeit der Veröffentlichungen mit zunehmender Reife der Apps abnimmt. Der Veröffentlichungszeitplan und die Historie sind unten aufgeführt. Das kann sich ändern und die Dinge können sich verzögern, aber Sie können sehen, was auf der Liste steht.
-"</string>
+Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, dass sich die Häufigkeit der Veröffentlichungen mit zunehmendem Alter der App verringert. Der Release-Zeitplan und die Historie sind unten dargestellt. Das kann sich ändern und die Dinge können sich verzögern, aber du kannst sehen, was auf der Liste steht."</string>
     <string name="slideshow_image_details_name_title">Name der Ressource</string>
     <string name="slideshow_image_details_description_title">Ressourcenbeschreibung</string>
     <string name="unlock_menu_title">Entsperren</string>
@@ -436,7 +442,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="x509_cert_valid_from_field_pattern">Gültig ab: %1$s</string>
     <string name="x509_cert_valid_to_field_pattern">Gültig bis: %1$s</string>
     <string name="alert_warning_multiple_users_found_pattern">Es wurden %1$d andere Benutzer gefunden, die diesen Benutzernamen teilen (%2$s). Der letzte Benutzer dieses Piwigo-Servers wurde ausgewählt, aber dies ist nicht sicher, wenn es möglich ist, dass er den Server zur gleichen oder ähnlichen Zeit benutzt. Bitte denken Sie daran, diese Benutzernamen zu ändern, damit der Benutzername eine eindeutige Kennung für eine bestimmte Klasse von Benutzern ist.</string>
-    <string name="alert_wake_lock_permission_needed_to_keep_upload_job_running_with_screen_off">Diese Berechtigung wird benötigt, um den Upload bei ausgeschaltetem Bildschirm aufrechtzuerhalten.</string>
+    <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Diese Berechtigungen sind erforderlich, um einen Upload-Prozess zu starten und den Upload-Prozess nach dem Ausschalten des Bildschirms weiterzuführen</string>
     <string name="alert_no_scheme_specified">Sie müssen Ihrer Serveradresse entweder http:// oder https://. voranstellen. Andere Systeme werden nicht unterstützt. Port ist optional, wenn der Standard - 80 für http oder 443 für https. Beispiel http://piwigo.org/demo oder http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">Die folgenden %1$d-Dateien haben die Warnschwelle überschritten: %2$s. Möchten Sie diese aus dem Upload entfernen?</string>
     <string name="alert_trusted_certificates_polling">Nicht vertrauenswürdige Zertifikate, die vom Server bei der Verbindung bereitgestellt werden, werden Ihnen angezeigt, damit Sie diese dem Vertrauensspeicher hinzufügen können. Wenn Sie ablehnen, werden Sie nicht erneut nach dem gleichen Zertifikat gefragt. Um erneut aufgefordert zu werden, deaktivieren Sie die Option, einen benutzerdefinierten vertrauenswürdigen Zertifikatsspeicher zu verwenden.</string>
@@ -454,8 +460,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="heading_keystore_filename">Schlüsselspeicher</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Fehler beim Upload</string>
-    <string name="alert_message_error_uploading_end">Nach erfolgreichem Hochladen aller Dateien trat ein Fehler auf. Sie können den Job später noch einmal versuchen, aber Sie können diesen Job vom Gerät löschen, aber alle unvollständigen Änderungen am Server manuell bereinigen. Job löschen?</string>
-    <string name="alert_message_error_uploading_start">Vor dem Hochladen aller Dateien ist ein Fehler aufgetreten. Sie können den Job später noch einmal versuchen, aber Sie können diesen Job vom Gerät löschen, aber alle unvollständigen Änderungen am Server manuell bereinigen. Job löschen?</string>
+    <string name="alert_message_error_uploading_end">Nach erfolgreichem Hochladen aller Dateien ist ein Fehler aufgetreten. Sie können den Job später erneut versuchen, und er kann durchaus erfolgreich sein, oder Sie können diesen Job vom Gerät löschen und dann alle unvollständigen Änderungen am Server manuell bereinigen. Auftrag löschen?</string>
+    <string name="alert_message_error_uploading_start">Vor dem Hochladen aller Dateien ist ein Fehler aufgetreten. Sie können den Job später noch einmal versuchen, aber Sie können diesen Job vom Gerät löschen, aber alle unvollständigen Änderungen am Server manuell bereinigen. Auftrag löschen?</string>
     <string name="release_history">Freigabehistorie</string>
     <string name="planned_releases">Geplante Veröffentlichungen</string>
     <string name="tags_heading">Schilder</string>
@@ -491,6 +497,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="folder_default">Standard</string>
     <string name="button_all">Alles prüfen</string>
     <string name="button_none">Keine prüfen</string>
+    <string name="button_reset">Zurücksetzen</string>
     <string name="alert_network_monitor_permission_needed_for_wifi_upload">Netzwerküberwachung sollte nur für die effiziente Nutzung von WIFI erlaubt sein.</string>
     <string name="inaccessible_remote_folder">** privat **</string>
     <string name="error_unable_to_acquire_valid_session">Es ist nicht möglich, eine gültige Sitzung mit dem Server zu erhalten.</string>
@@ -523,5 +530,34 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="content_description_icon">icon</string>
     <string name="files_already_set_for_upload_skipped_pattern">%1$d Dateien wurden bereits für den Upload ausgewählt und ignoriert, um Doppelarbeit zu vermeiden.</string>
     <string name="progress_loading_session_details">Laden von Benutzerberechtigungen</string>
+    <string name="alert_msg_using_fallback_piwigo_method_pattern">Die Piwigo WS-Methode %1$s ist auf diesem Server nicht mehr verfügbar, und der Fallback %2$s wurde verwendet. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
+    <string name="alert_msg_piwigo_method_not_available_pattern">Die Piwigo WS-Methode %1$s ist auf diesem Server nicht mehr verfügbar. Deaktivieren der betroffenen Funktionen in der App. Haben Sie gerade ein Server-Plugin deaktiviert oder gelöscht?</string>
+    <string name="removing_favorite">Removing favorite</string>
+    <string name="adding_favorite">Adding Favorite</string>
+    <string name="alert_error_unsupported_features_pattern">Einige Funktionen, die diese App unterstützt, sind auf Ihrem Server nicht verfügbar. Um:\n1 zu aktivieren. Installieren Sie das Plugin PiwigoClientWsExts.\n2.Loggen Sie sich aus und wieder ein in dieser App.\n\n\nSie werden in einer Woche erinnert.</string>
+    <string name="tag_will_be_created_when_resource_is_saved">Mit dem User Tags Plugin können Sie neue Tags hinzufügen. Das Tag wird erst erstellt, wenn die Ressource gespeichert ist.</string>
+    <string name="resource_details_updated_message">Ressourcendetails aktualisiert</string>
+    <string name="alert_server_call_in_progress_please_wait">Server call in progress. Please wait for this to complete before trying again.</string>
+    <string name="upload_error_too_many_orphaned_files_exist_on_server">Auf dem Server befinden sich zu viele verwaiste Bilder, als dass der Upload fortgesetzt werden könnte. Bitte räumt diese auf, bevor ihr es erneut versucht.</string>
+    <string name="upload_error_orphaned_file_retrieval_failed">Die Liste der verwaisten Bilder kann nicht abgerufen werden. Bitte versuchen Sie es erneut.</string>
+    <string name="admin_user_missing_admin_permissions_after_login_warning_pattern">Der Admin-Benutzer hat keinen Zugriff auf die erwarteten Funktionen. Dies kann vorkommen, wenn das Community-Plugin (das den Admin-Status für Nichtadministratoren vortäuscht) sich nicht korrekt installiert hat. Überprüfen Sie, ob das entsprechende Plugin die Methoden, die Sie von einem Webbrowser erwarten, korrekt darstellt: %1$s/tools/ws.htm</string>
+    <string name="alert_unavailable_feature_piwigo_client_plugin_needed">Diese Funktion ist nicht verfügbar. Bitte installieren Sie das PiwigoClientWsExts Plugin auf Ihrem Server. Wenn Sie diese bereits installiert haben, aktualisieren Sie sie bitte auf die neueste Version.</string>
+    <string name="alert_user_session_no_allowed_filetypes">Der Server hat keine Liste der Dateitypen bereitgestellt, die mit den Informationen zur Benutzersitzung hochgeladen werden können (dies ist in der Regel nur für Admin-Benutzer möglich). Bitte überprüfen Sie, ob der Server korrekt konfiguriert ist und versuchen Sie es erneut. Wenn das Problem weiterhin besteht, senden Sie mir bitte eine E-Mail, damit ich das Problem für Sie diagnostizieren kann.</string>
+    <string name="job_not_found">Upload Auftrag nicht gefunden</string>
+    <string name="files_mid_data_transfer_title">Dateien teilweise kopiert</string>
+    <string name="files_awaiting_verification_title">Dateien, die auf die Überprüfung der Datenintegrität warten</string>
+    <string name="files_awaiting_transfer_title">Dateien, die auf die Datenübertragung warten</string>
+    <string name="files_awaiting_configuration_title">Dateien, die auf die Konfiguration warten</string>
+    <string name="files_requiring_server_deletion_title">Dateien, die vom Server gelöscht werden müssen</string>
+    <string name="files_fully_uploaded_title">Dateien vollständig hochgeladen</string>
+    <string name="temporary_album_needs_deleting_title">Temporäres Album muss gelöscht werden.</string>
+    <string name="upload_job_status_heading">Upload Auftrag Status</string>
+    <string name="file_count_pattern">%1$d Dateien</string>
+    <string name="errors_encountered_list_title">Aufgetretene Fehler</string>
+    <string name="upload_error_orphaned_file_retrieval_unavailable">Unable to check presence of orphan images. Recommend installing PiwigoClientWsExts server plugin</string>
+    <string name="x_of_y">%1$s / %2$s</string>
+    <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Deine Version von PiwigoClientWsExts ist veraltet. Bitte aktualisieren Sie es als Priorität.</string>
+    <string name="subalbum_detail_txt_pattern">%1$d child albums</string>
+    <string name="please_read_and_agree_with_eula_first">Bitte lesen und bestätigen Sie zuerst die Zustimmung zu den Bedingungen der EULA</string>
 </resources>
 

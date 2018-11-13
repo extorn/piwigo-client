@@ -18,7 +18,7 @@
             android:id="@+id/resource_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
+            android:contentDescription="TODO" android:scaleType="fitCenter"
             tools:src="@drawable/ic_broken_image_black_240dp" />
 
     </delit.piwigoclient.ui.common.SquareLinearLayout>
@@ -29,7 +29,7 @@
         android:layout_height="24dp"
         android:layout_alignParentEnd="true"
         android:layout_margin="2dp"
-        app:srcCompat="@drawable/ic_star_yellow_24dp" />
+        android:contentDescription="TODO" app:srcCompat="@drawable/ic_star_yellow_24dp" />
 
     <ImageView
         android:id="@+id/type_indicator"
@@ -38,7 +38,7 @@
         android:layout_alignBottom="@id/image_container"
         android:layout_alignEnd="@id/image_container"
         android:alpha="0.9"
-        android:padding="2dp"
+        android:contentDescription="TODO" android:padding="2dp"
         android:visibility="visible" />
 
     <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState

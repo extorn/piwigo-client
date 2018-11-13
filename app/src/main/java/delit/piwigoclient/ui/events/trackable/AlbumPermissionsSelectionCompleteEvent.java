@@ -7,14 +7,20 @@ import java.util.HashSet;
  */
 
 public class AlbumPermissionsSelectionCompleteEvent extends TrackableResponseEvent {
-    private final HashSet<Long> selectedAlbums;
+    private final HashSet<Long> selectedAlbumIds;
+    private final HashSet<String> selectedAlbums;
 
-    public AlbumPermissionsSelectionCompleteEvent(int actionId, HashSet<Long> selectedAlbums) {
+    public AlbumPermissionsSelectionCompleteEvent(int actionId, HashSet<Long> selectedAlbumIds, HashSet<String> selectedAlbums) {
         super(actionId);
+        this.selectedAlbumIds = selectedAlbumIds;
         this.selectedAlbums = selectedAlbums;
     }
 
-    public HashSet<Long> getSelectedAlbums() {
+    public HashSet<Long> getSelectedAlbumIds() {
+        return selectedAlbumIds;
+    }
+
+    public HashSet<String> getSelectedAlbums() {
         return selectedAlbums;
     }
 }

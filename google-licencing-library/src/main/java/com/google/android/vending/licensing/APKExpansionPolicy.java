@@ -365,10 +365,7 @@ Crashlytics.logException(e);
         if (mLastResponse == Policy.LICENSED) {
             // Check if the LICENSED response occurred within the validity
             // timeout.
-            if (ts <= mValidityTimestamp) {
-                // Cached LICENSED response is still valid.
-                return true;
-            }
+            return ts <= mValidityTimestamp;
         } else if (mLastResponse == Policy.RETRY &&
                 ts < mLastResponseTime + MILLIS_PER_MINUTE) {
             // Only allow access if we are within the retry period or we haven't

@@ -1,8 +1,8 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.v4.view.ViewPager;
+import androidx.annotation.LayoutRes;
+import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
@@ -16,10 +16,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.ui.common.InlineViewPagerAdapter;
-import delit.piwigoclient.ui.common.SlidingTabLayout;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.ExifDataRetrievedEvent;
-import delit.piwigoclient.util.DisplayUtils;
 
 public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
 
@@ -58,11 +56,11 @@ public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
         setupExifDataTab(resourceDetailsViewPager, null);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ExifDataRetrievedEvent event) {
         if(event.getUri() == null) {
             Crashlytics.log(Log.ERROR, getTag(), "invalid event received");
-        } else if(getCurrentImageUrlDisplayed() != null && event.getUri().toString().startsWith(getCurrentImageUrlDisplayed())) {
+        } else if(getCurrentImageUrlDisplayed() != null && event.getUri().startsWith(getCurrentImageUrlDisplayed())) {
             setupExifDataTab(resourceDetailsViewPager, event.getMetadata());
         }
     }

@@ -5,10 +5,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AlertDialog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -21,6 +21,7 @@ import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.StopActivityEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
@@ -103,30 +104,6 @@ public class FileSelectActivity extends MyActivity {
         }
     }
 
-    @Subscribe
-    public void onEvent(FileSelectionCompleteEvent event) {
-        int sourceEventId = getTrackedIntentType(event.getActionId());
-        if (sourceEventId >= 0) {
-            Intent result = this.getIntent();
-//            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
-            result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
-            if (event.getSelectedFiles() != null) {
-                result.putExtra(INTENT_SELECTED_FILES, event.getSelectedFiles());
-                setResult(Activity.RESULT_OK, result);
-            } else {
-                setResult(Activity.RESULT_CANCELED, result);
-            }
-            finish();
-        }
-    }
-
-    @Subscribe
-    public void onEvent(StopActivityEvent event) {
-        if (getUiHelper().isTrackingRequest(event.getActionId())) {
-            finish();
-        }
-    }
-
     private void showFileSelectFragment() {
 
         FileSelectionNeededEvent event = (FileSelectionNeededEvent) getIntent().getSerializableExtra(INTENT_DATA);
@@ -149,9 +126,6 @@ public class FileSelectActivity extends MyActivity {
         prefs.selectable(event.isMultiSelectAllowed(), false);
         prefs.setInitialSelection(event.getInitialSelection());
         prefs.withShowFilenames(OtherPreferences.isShowFilenames(getSharedPrefs(), getApplicationContext()));
-        prefs.withColumnsOfFiles(OtherPreferences.getFileSelectorColumnsOfFiles(getSharedPrefs(), this));
-        prefs.withColumnsOfFolders(OtherPreferences.getFileSelectorColumnsOfFolders(getSharedPrefs(), this));
-
 
         removeFragmentsFromHistory(RecyclerViewFolderItemSelectFragment.class, true);
 
@@ -187,6 +161,20 @@ public class FileSelectActivity extends MyActivity {
         tx.replace(R.id.app_content, f, f.getClass().getName()).commit();
     }
 
+    private void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
+
+        final int trackingRequestId = TrackableRequestEvent.getNextEventId();
+        getUiHelper().setTrackingRequest(trackingRequestId);
+
+        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultAdapter() {
+            @Override
+            public void onDismiss(AlertDialog dialog) {
+                //exit the app.
+                EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
+            }
+        });
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
@@ -201,17 +189,29 @@ public class FileSelectActivity extends MyActivity {
         }
     }
 
-    private void createAndShowDialogWithExitOnClose(int titleId, int messageId) {
-
-        final int trackingRequestId = TrackableRequestEvent.getNextEventId();
-        getUiHelper().setTrackingRequest(trackingRequestId);
-
-        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultAdapter() {
-            @Override
-            public void onDismiss(AlertDialog dialog) {
-                //exit the app.
-                EventBus.getDefault().post(new StopActivityEvent(trackingRequestId));
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(FileSelectionCompleteEvent event) {
+        int sourceEventId = getTrackedIntentType(event.getActionId());
+        if (sourceEventId >= 0) {
+            Intent result = this.getIntent();
+//            result.putExtra(INTENT_SOURCE_EVENT_ID, sourceEventId);
+            result.putExtra(ACTION_TIME_MILLIS, event.getActionTimeMillis());
+            if (event.getSelectedFiles() != null) {
+                BundleUtils.putFileArrayListExtra(result,INTENT_SELECTED_FILES, event.getSelectedFiles());
+                setResult(Activity.RESULT_OK, result);
+            } else {
+                setResult(Activity.RESULT_CANCELED, result);
             }
-        });
+            finish();
+        }
     }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(StopActivityEvent event) {
+        if (getUiHelper().isTrackingRequest(event.getActionId())) {
+            finish();
+        }
+    }
+
+
 }

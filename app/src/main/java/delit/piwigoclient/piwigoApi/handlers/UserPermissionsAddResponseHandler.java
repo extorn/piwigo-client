@@ -46,11 +46,29 @@ public class UserPermissionsAddResponseHandler extends AbstractPiwigoWsResponseH
     }
 
     @Override
-    protected void onPiwigoSuccess(JsonElement rsp) throws JSONException {
+    protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         JsonObject result = rsp.getAsJsonObject();
 
-        PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse r = new PiwigoResponseBufferingHandler.PiwigoUserPermissionsAddedResponse(getMessageId(), getPiwigoMethod(), userId, newAlbumsAllowedAccessTo);
+        PiwigoUserPermissionsAddedResponse r = new PiwigoUserPermissionsAddedResponse(getMessageId(), getPiwigoMethod(), userId, newAlbumsAllowedAccessTo, isCached);
         storeResponse(r);
     }
 
+    public static class PiwigoUserPermissionsAddedResponse extends PiwigoResponseBufferingHandler.BasePiwigoResponse {
+        private final HashSet<Long> albumsForWhichPermissionAdded;
+        private final long userId;
+
+        public PiwigoUserPermissionsAddedResponse(long messageId, String piwigoMethod, long userId, HashSet<Long> albumsForWhichPermissionAdded, boolean isCached) {
+            super(messageId, piwigoMethod, true, isCached);
+            this.userId = userId;
+            this.albumsForWhichPermissionAdded = albumsForWhichPermissionAdded;
+        }
+
+        public long getUserId() {
+            return userId;
+        }
+
+        public HashSet<Long> getAlbumsForWhichPermissionAdded() {
+            return albumsForWhichPermissionAdded;
+        }
+    }
 }

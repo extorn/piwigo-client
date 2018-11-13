@@ -5,8 +5,8 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v7.preference.DialogPreference;
-import android.support.v7.preference.PreferenceManager;
+import androidx.preference.DialogPreference;
+import androidx.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
  * Created by gareth on 23/01/18.
@@ -109,11 +110,9 @@ public class EditableListPreference extends DialogPreference {
             currentValue = value;
             persistString(value);
 
-            if (changed) {
-                notifyChanged();
-                if (listener != null) {
-                    listener.onItemSelectionChange(oldValue, value, entries.contains(oldValue));
-                }
+            notifyChanged();
+            if (listener != null) {
+                listener.onItemSelectionChange(oldValue, value, entries.contains(oldValue));
             }
         }
     }
@@ -267,8 +266,8 @@ public class EditableListPreference extends DialogPreference {
         public SavedState(Parcel source) {
             super(source);
             value = source.readString();
-            entries = (HashSet<String>) source.readSerializable();
-            entriesAltered = source.readInt() != 0;
+            entries = ParcelUtils.readStringSet(source, null);
+            entriesAltered = ParcelUtils.readValue(source,null, boolean.class);
         }
 
         public SavedState(Parcelable superState) {
@@ -279,8 +278,8 @@ public class EditableListPreference extends DialogPreference {
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeString(value);
-            dest.writeSerializable(entries);
-            dest.writeInt(entriesAltered ? 1 : 0);
+            ParcelUtils.writeStringSet(dest, entries);
+            dest.writeValue(entriesAltered);
         }
     }
 
