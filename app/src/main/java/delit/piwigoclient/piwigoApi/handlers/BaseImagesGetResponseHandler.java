@@ -213,6 +213,11 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
                 if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
+                } else {
+                    boolean missingImageId = mediaFile.startsWith("/upload");
+                    if(missingImageId) {
+                        originalResourceUrl = originalResourceUrl.replaceFirst("/upload", "/"+id+"/upload");
+                    }
                 }
                 item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, thumbnail);
                 ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
