@@ -88,4 +88,8 @@ public class AlbumViewPreferences {
     public static boolean isIncludeVideosInSlideshow(SharedPreferences prefs, Context context) {
         return prefs.getBoolean(context.getString(R.string.preference_gallery_include_videos_in_slideshow_key), context.getResources().getBoolean(R.bool.preference_gallery_include_videos_in_slideshow_default));
     }
+
+    public static boolean isSlideshowExtraInfoShadowTransparent(SharedPreferences prefs, Context context) {
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_slideshow_transparent_extra_info_shadow_key), context.getResources().getBoolean(R.bool.preference_gallery_slideshow_transparent_extra_info_shadow_default));
+    }
 }

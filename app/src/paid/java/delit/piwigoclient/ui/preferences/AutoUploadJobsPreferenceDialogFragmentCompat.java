@@ -34,16 +34,21 @@ import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
 import delit.piwigoclient.ui.events.trackable.TrackableEventManager;
 import delit.piwigoclient.util.CollectionUtils;
+import delit.piwigoclient.util.ObjectUtils;
 
 public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
+    private final static String STATE_DELETED_JOBS = "AutoUploadJobsPreference.deletedJobs";
+    private final static String STATE_TRACKABLE_EVENT_MANAGER = "AutoUploadJobsPreference.trackableEventManagerState";
+    private final static String STATE_JOB_IDS = "AutoUploadJobsPreference.JobIds";
+    private final static String STATE_ACTIVE_JOB_CONFIG_SUMMARY = "AutoUploadJobsPreference.activeUploadJobConfigSummary";
+    private final static String STATE_JOBS_HAVE_CHANGED = "AutoUploadJobsPreference.jobsHaveChanged";
     private ListView itemListView;
     private AutoUploadJobsListAdapter adapter;
     private ArrayList<AutoUploadJobConfig> deletedItems = new ArrayList<>();
     private TrackableEventManager trackableEventManager = new TrackableEventManager();
-    private String STATE_DELETED_JOBS = "AutoUploadJobsPreference.deletedJobs";
-    private String STATE_TRACKABLE_EVENT_MANAGER = "AutoUploadJobsPreference.trackableEventManagerState";
     private ArrayList<Integer> uploadJobIds;
-    private String STATE_JOB_IDS = "AutoUploadJobsPreference.JobIds";
+    private String activeUploadJobConfigSummary;
+    private boolean jobsHaveChanged;
 
 
     @Override
@@ -87,7 +92,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             String val = CollectionUtils.toCsvList(uploadJobIds);
 
             if (pref.callChangeListener(val)) {
-                pref.setValue(val);
+                pref.setValue(val, jobsHaveChanged);
                 for(AutoUploadJobConfig deletedJob : deletedItems) {
                     deletedJob.deletePreferences(getContext());
                 }
@@ -148,6 +153,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
     }
 
     private void onDisplayUploadJob(AutoUploadJobConfig uploadJobConfig) {
+        activeUploadJobConfigSummary = uploadJobConfig==null?null:uploadJobConfig.getSummary(getPreference().getSharedPreferences(), getContext());
         int jobId;
         if(uploadJobConfig == null) {
             jobId = getNextJobId();
@@ -259,12 +265,16 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         }
     }
 
-    private void addAutoUploadJobConfigToListIfNew(int jobId) {
-        AutoUploadJobConfig cfg = new AutoUploadJobConfig(jobId);
+    private void addAutoUploadJobConfigToListIfNew(AutoUploadJobConfig cfg) {
         if(cfg.exists(getContext()) && adapter.getPosition(Long.valueOf(cfg.getJobId())) < 0) {
             uploadJobIds.add(cfg.getJobId());
             loadListValues(uploadJobIds);
         }
+    }
+
+    private boolean hasChanged(AutoUploadJobConfig cfg) {
+        String newSummary = cfg.getSummary(getPreference().getSharedPreferences(), getContext());
+        return !ObjectUtils.areEqual(activeUploadJobConfigSummary, newSummary);
     }
 
     @Subscribe(sticky = true)
@@ -272,7 +282,11 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         if(!trackableEventManager.wasTrackingEvent(event)) {
             return;
         }
-        addAutoUploadJobConfigToListIfNew(event.getJobId());
+        AutoUploadJobConfig cfg = new AutoUploadJobConfig(event.getJobId());
+        if(hasChanged(cfg)) {
+            jobsHaveChanged = true;
+        }
+        addAutoUploadJobConfigToListIfNew(cfg);
         // reload the list anyway (content of job may have altered)
         loadListValues(uploadJobIds);
     }
@@ -283,6 +297,8 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
         outState.putParcelableArrayList(STATE_DELETED_JOBS, deletedItems);
         outState.putBundle(STATE_TRACKABLE_EVENT_MANAGER, trackableEventManager.onSaveInstanceState());
         outState.putIntegerArrayList(STATE_JOB_IDS, uploadJobIds);
+        outState.putString(STATE_ACTIVE_JOB_CONFIG_SUMMARY, activeUploadJobConfigSummary);
+        outState.putBoolean(STATE_JOBS_HAVE_CHANGED, jobsHaveChanged);
     }
 
     @Override
@@ -292,6 +308,8 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
             deletedItems = savedInstanceState.getParcelableArrayList(STATE_DELETED_JOBS);
             trackableEventManager.onRestoreInstanceState(savedInstanceState.getBundle(STATE_TRACKABLE_EVENT_MANAGER));
             uploadJobIds = savedInstanceState.getIntegerArrayList(STATE_JOB_IDS);
+            activeUploadJobConfigSummary = savedInstanceState.getString(STATE_ACTIVE_JOB_CONFIG_SUMMARY);
+            jobsHaveChanged = savedInstanceState.getBoolean(STATE_JOBS_HAVE_CHANGED);
         } else {
             uploadJobIds = getPreference().getUploadJobIdsFromValue();
         }

@@ -2,15 +2,19 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.IntRange;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.util.Date;
+
+import androidx.annotation.IntRange;
 
 /**
  * Created by gareth on 12/07/17.
  */
 public class PictureResourceItem extends ResourceItem {
-
+    private static final String TAG = "PicResItem";
     private static final long serialVersionUID = 4954838188004567936L;
 
     public PictureResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String thumbnailUrl) {
@@ -64,7 +68,12 @@ public class PictureResourceItem extends ResourceItem {
     public static final Parcelable.Creator<PictureResourceItem> CREATOR
             = new Parcelable.Creator<PictureResourceItem>() {
         public PictureResourceItem createFromParcel(Parcel in) {
-            return new PictureResourceItem(in);
+            try {
+                return new PictureResourceItem(in);
+            } catch(RuntimeException e) {
+                Crashlytics.log(Log.ERROR, TAG, "Unable to create pic resource item from parcel: " + in.toString());
+                throw e;
+            }
         }
 
         public PictureResourceItem[] newArray(int size) {

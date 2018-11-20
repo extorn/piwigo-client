@@ -2,12 +2,12 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.Preference;
-import android.view.View;
-
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
@@ -42,8 +42,8 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
                 onBackgroundServiceEnabled(getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_enabled_default));
             } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_wireless_only_key))) {
                 onUploadWirelessOnlyChanged(getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_wireless_only_default));
-            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_polling_interval_key))) {
-                onUploadIntervalChanged(getIntegerPreferenceValue(key, R.integer.preference_data_upload_automatic_upload_polling_interval_default));
+            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_jobs_key))) {
+                onUploadJobsChanged();
             }
 
         }
@@ -59,12 +59,12 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
             if(BackgroundPiwigoUploadService.isStarted() && !backgroundUploadEnabled) {
                 BackgroundPiwigoUploadService.killService();
             } else if(!BackgroundPiwigoUploadService.isStarted() && backgroundUploadEnabled) {
-                BackgroundPiwigoUploadService.startService(getContext(), true);
+                BackgroundPiwigoUploadService.startService(getContext());
             }
         }
     };
 
-    private void onUploadIntervalChanged(int integerPreferenceValue) {
+    private void onUploadJobsChanged() {
         if(BackgroundPiwigoUploadService.isStarted()) {
             // ensure the service knows the change occurred.
             BackgroundPiwigoUploadService.wakeServiceIfSleeping();

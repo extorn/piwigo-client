@@ -2,12 +2,6 @@ package delit.piwigoclient.ui.file;
 
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.TextViewCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +23,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.widget.TextViewCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
@@ -189,16 +188,18 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                 public void onClick(View v) {
                     TextView tv = (TextView) v;
                     getListAdapter().updateContent(pathItemFile);
-                    Iterator<Map.Entry<String, Parcelable>> iter = listViewStates.entrySet().iterator();
-                    Map.Entry<String, Parcelable> item;
-                    while(iter.hasNext()) {
-                        item = iter.next();
-                        if(item.getKey() == pathItemFile.getAbsolutePath()) {
-                            getList().getLayoutManager().onRestoreInstanceState(item.getValue());
-                            iter.remove();
-                            while(iter.hasNext()) {
-                                iter.next();
+                    if(listViewStates != null) {
+                        Iterator<Map.Entry<String, Parcelable>> iter = listViewStates.entrySet().iterator();
+                        Map.Entry<String, Parcelable> item;
+                        while (iter.hasNext()) {
+                            item = iter.next();
+                            if (item.getKey() == pathItemFile.getAbsolutePath()) {
+                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
                                 iter.remove();
+                                while (iter.hasNext()) {
+                                    iter.next();
+                                    iter.remove();
+                                }
                             }
                         }
                     }

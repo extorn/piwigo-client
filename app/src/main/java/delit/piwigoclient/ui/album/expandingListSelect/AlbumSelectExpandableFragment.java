@@ -22,6 +22,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -51,6 +52,8 @@ public class AlbumSelectExpandableFragment extends MyFragment {
     private static final String STATE_CURRENT_SELECTION = "currentSelection";
     private static final String STATE_INITIAL_SELECTION = "initialSelection";
     private static final String STATE_SELECT_TOGGLE = "selectToggle";
+    private static final String STATE_ROOT_ALBUM = "rootAlbum";
+    private CategoryItem rootAlbum;
     private ArrayList<CategoryItem> availableAlbums;
     private int actionId;
     private HashSet<Long> currentSelection;
@@ -105,6 +108,7 @@ public class AlbumSelectExpandableFragment extends MyFragment {
         if(currentSelection == null) {
             currentSelection = initialSelection;
         }
+        rootAlbum = in.getParcelable(STATE_ROOT_ALBUM);
         availableAlbums = in.getParcelableArrayList(STATE_AVAILABLE_ITEMS);
         selectToggle = in.getBoolean(STATE_SELECT_TOGGLE);
     }
@@ -118,6 +122,7 @@ public class AlbumSelectExpandableFragment extends MyFragment {
         super.onSaveInstanceState(outState);
         getViewPrefs().storeToBundle(outState);
         outState.putInt(STATE_ACTION_ID, actionId);
+        outState.putParcelable(STATE_ROOT_ALBUM, rootAlbum);
         outState.putParcelableArrayList(STATE_AVAILABLE_ITEMS, availableAlbums);
         BundleUtils.putLongHashSet(outState, STATE_CURRENT_SELECTION, getCurrentSelection());
         BundleUtils.putLongHashSet(outState, STATE_INITIAL_SELECTION, getInitialSelection());
@@ -376,7 +381,11 @@ public class AlbumSelectExpandableFragment extends MyFragment {
 
     protected void onSelectActionComplete(HashSet<Long> selectedAlbumIds) {
         HashSet<CategoryItem> selectedAlbums = new HashSet<>(getListAdapter().getCheckedItems());
-        EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), selectedAlbumIds, selectedAlbums));
+        HashMap<CategoryItem, String> albumPaths = new HashMap<>();
+        for(CategoryItem selectedItem : selectedAlbums) {
+            albumPaths.put(selectedItem, rootAlbum.getAlbumPath(selectedItem));
+        }
+        EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), selectedAlbumIds, selectedAlbums, albumPaths));
         // now pop this screen off the stack.
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();

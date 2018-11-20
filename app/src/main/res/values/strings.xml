@@ -824,4 +824,5 @@ SOFTWARE.
     <string name="alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it">Your version of PiwigoClientWsExts is out dated. Please update it as a priority.</string>
     <string name="subalbum_detail_txt_pattern">%1$d child albums</string>
     <string name="please_read_and_agree_with_eula_first">Please read and confirm agreement with the terms of the EULA first</string>
+    <string name="alert_required_permissions_not_granted_action_cancelled">Required Permissions were not granted. Action cancelled.</string>
 </resources>

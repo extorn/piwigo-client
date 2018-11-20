@@ -9,7 +9,7 @@ public class MyApplication extends AbstractMyApplication {
     protected void onAppCreate() {
         if(new AutoUploadJobsConfig(getPrefs()).isBackgroundUploadEnabled(getApplicationContext())) {
             if (!BackgroundPiwigoUploadService.isStarted()) {
-                BackgroundPiwigoUploadService.startService(getApplicationContext(), true);
+                BackgroundPiwigoUploadService.startService(getApplicationContext());
             }
         }
     }

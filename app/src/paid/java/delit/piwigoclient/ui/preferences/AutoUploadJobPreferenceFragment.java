@@ -5,10 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.preference.CheckBoxPreference;
-import androidx.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +13,12 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.PreferenceManager;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -27,6 +28,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandle
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
+import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 
 public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
@@ -87,7 +89,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         }
         // check remote privacy level
         if(allPreferencesValid) {
-            int privacyLevel = getPreferenceValueOrMinInt(R.string.preference_data_upload_automatic_job_privacy_level_key);
+            int privacyLevel = getIntegerPreferenceValue(getString(R.string.preference_data_upload_automatic_job_privacy_level_key), R.integer.preference_data_upload_automatic_job_privacy_level_default);
             allPreferencesValid &= privacyLevel != Integer.MIN_VALUE;
         }
 
@@ -112,9 +114,13 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         String remoteFolderDetails = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_album_key);
         if(remoteFolderDetails != null) {
             long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
-            AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
-            albumHandler.withConnectionPreferences(profilePrefs);
-            callServer(R.string.progress_loading_albums,albumHandler);
+            if(albumId >= 0) {
+                AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
+                albumHandler.withConnectionPreferences(profilePrefs);
+                callServer(R.string.progress_loading_albums, albumHandler);
+            } else {
+                updateJobValidPreferenceIfNeeded(false, false);
+            }
         } else {
             updateJobValidPreferenceIfNeeded(false, false);
         }
@@ -126,8 +132,34 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         SharedPreferences.Editor editor = getPrefs().edit();
         if(remoteAlbumExists) {
             // ensure the folder name is in-sync with the value on the server
-            String remoteFolderDetails = ServerAlbumListPreference.ServerAlbumPreference.toValue(albumNames.get(0));
-            editor.putString(getString(R.string.preference_data_upload_automatic_job_server_album_key), remoteFolderDetails);
+            ServerAlbumSelectPreference pref = (ServerAlbumSelectPreference) findPreference(R.string.preference_data_upload_automatic_job_server_album_key);
+            ServerAlbumSelectPreference.ServerAlbumDetails selectedAlbumDetails = pref.getSelectedServerAlbumDetails();
+            boolean changed = false;
+            if(selectedAlbumDetails != null) {
+                String selectedAlbumName = selectedAlbumDetails.getAlbumName();
+                CategoryItemStub testAlbum = albumNames.get(0);
+
+                if(!testAlbum.getName().equals(selectedAlbumName)) {
+                    selectedAlbumName = testAlbum.getName();
+                    changed = true;
+                }
+                List<Long> selectedAlbumParentage = selectedAlbumDetails.getParentage();
+                String selectedAlbumPath = selectedAlbumDetails.getAlbumPath();
+                if(selectedAlbumParentage == null || !testAlbum.getParentageChain().equals(selectedAlbumParentage)) {
+                    selectedAlbumParentage = testAlbum.getParentageChain();
+                    StringBuilder sb = new StringBuilder();
+                    for(int i = 0; i < selectedAlbumParentage.size() - 1; i++) {
+                        sb.append("? / ");
+                    }
+                    sb.append(selectedAlbumName);
+                    selectedAlbumPath = sb.toString();
+                    changed = true;
+                }
+                if(changed) {
+                    ServerAlbumSelectPreference.ServerAlbumDetails newAlbumDetails = new ServerAlbumSelectPreference.ServerAlbumDetails(selectedAlbumDetails.getAlbumId(), selectedAlbumName, selectedAlbumParentage, selectedAlbumPath);
+                    editor.putString(getString(R.string.preference_data_upload_automatic_job_server_album_key), newAlbumDetails.encode());
+                }
+            }
         } else {
             editor.putString(getString(R.string.preference_data_upload_automatic_job_server_album_key), null);
         }
@@ -198,7 +230,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
             } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_enabled_key))) {
                 if(getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_enabled_default)) {
                     if(!BackgroundPiwigoUploadService.isStarted()) {
-                        BackgroundPiwigoUploadService.startService(getContext(), true);
+                        BackgroundPiwigoUploadService.startService(getContext());
                     }
                 } else {
                     BackgroundPiwigoUploadService.killService();

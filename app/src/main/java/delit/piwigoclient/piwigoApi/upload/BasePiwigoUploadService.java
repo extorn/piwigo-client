@@ -9,11 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import android.util.Log;
 import android.util.Pair;
 
@@ -45,6 +41,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.app.JobIntentService;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -82,16 +82,16 @@ import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponse
  * a service on a separate handler thread.
  * <p>
  */
-public abstract class BasePiwigoUploadService extends IntentService {
+public abstract class BasePiwigoUploadService extends JobIntentService {
 
-    public static final String INTENT_ARG_KEEP_DEVICE_AWAKE = "keepDeviceAwake";
     private static final String TAG = "PwgCli:UpldSvc";
     private static final List<UploadJob> activeUploadJobs = Collections.synchronizedList(new ArrayList<UploadJob>(1));
     private static final SecureRandom random = new SecureRandom();
+    private final String tag;
     private SharedPreferences prefs;
 
     public BasePiwigoUploadService(String tag) {
-        super(tag);
+        this.tag = tag;
     }
 
     public static UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, ArrayList<File> filesForUpload, CategoryItemStub category, int uploadedFilePrivacyLevel, long responseHandlerId) {
@@ -232,9 +232,9 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 if (f.exists()) {
                     if (!f.getAbsoluteFile().delete()) {
                         if (BuildConfig.DEBUG) {
-                            Log.e(TAG, "Unable to delete uploaded file : " + f.getAbsolutePath());
+                            Log.e(tag, "Unable to delete uploaded file : " + f.getAbsolutePath());
                         } else {
-                            Crashlytics.log(Log.WARN, TAG, "\"Unable to delete uploaded file");
+                            Crashlytics.log(Log.WARN, tag, "\"Unable to delete uploaded file");
                         }
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                             try {
@@ -242,7 +242,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                             } catch (IOException e) {
                                 Crashlytics.logException(e);
                                 if (BuildConfig.DEBUG) {
-                                    Log.e(TAG, "Really unable to delete uploaded file : " + f.getAbsolutePath(), e);
+                                    Log.e(tag, "Really unable to delete uploaded file : " + f.getAbsolutePath(), e);
                                 }
                             }
                         }
@@ -250,19 +250,6 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 }
             }
         }
-    }
-
-    protected PowerManager.WakeLock getWakeLock(Intent intent) {
-        boolean keepDeviceAwake = intent.getBooleanExtra(INTENT_ARG_KEEP_DEVICE_AWAKE, false);
-        PowerManager.WakeLock wl = null;
-        if (keepDeviceAwake) {
-            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-            if (wl != null) {
-                wl.acquire();
-            }
-        }
-        return wl;
     }
 
     protected NotificationCompat.Builder getNotificationBuilder() {
@@ -338,12 +325,6 @@ public abstract class BasePiwigoUploadService extends IntentService {
         return prefs;
     }
 
-    protected void releaseWakeLock(PowerManager.WakeLock wl) {
-        if (wl != null) {
-            wl.release();
-        }
-    }
-
     protected abstract void doWork(Intent intent);
 
     protected abstract void postNewResponse(long jobId, PiwigoResponseBufferingHandler.Response response);
@@ -359,9 +340,9 @@ public abstract class BasePiwigoUploadService extends IntentService {
 
         if (thisUploadJob == null) {
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Upload job could not be located immediately after creating it - weird!");
+                Log.e(tag, "Upload job could not be located immediately after creating it - weird!");
             } else {
-                Crashlytics.log(Log.WARN, TAG, "Upload job could not be located immediately after creating it - weird!");
+                Crashlytics.log(Log.WARN, tag, "Upload job could not be located immediately after creating it - weird!");
             }
             return;
         }
@@ -901,19 +882,19 @@ public abstract class BasePiwigoUploadService extends IntentService {
             Crashlytics.logException(e);
             // ignore for now
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error parsing EXIF data : sinking", e);
+                Log.e(tag, "Error parsing EXIF data : sinking", e);
             } else {
-                Crashlytics.log(Log.ERROR, TAG, "Error parsing EXIF data : sinking");
+                Crashlytics.log(Log.ERROR, tag, "Error parsing EXIF data : sinking");
             }
         } catch(FileNotFoundException e) {
-            Crashlytics.log(Log.WARN, TAG, "File Not found - Unable to parse EXIF data : sinking");
+            Crashlytics.log(Log.WARN, tag, "File Not found - Unable to parse EXIF data : sinking");
         } catch (IOException e) {
             Crashlytics.logException(e);
             // ignore for now
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error parsing EXIF data : sinking", e);
+                Log.e(tag, "Error parsing EXIF data : sinking", e);
             } else {
-                Crashlytics.log(Log.ERROR, TAG, "Error parsing EXIF data : sinking");
+                Crashlytics.log(Log.ERROR, tag, "Error parsing EXIF data : sinking");
             }
         }
     }
@@ -1056,7 +1037,7 @@ public abstract class BasePiwigoUploadService extends IntentService {
                 } catch (IOException e) {
                     Crashlytics.logException(e);
                     if (BuildConfig.DEBUG) {
-                        Log.e(TAG, "Exception on closing File input stream", e);
+                        Log.e(tag, "Exception on closing File input stream", e);
                     }
                 }
             }

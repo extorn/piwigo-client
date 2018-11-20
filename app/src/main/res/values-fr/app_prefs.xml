@@ -200,6 +200,8 @@
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Nombre maximum d\'articles récents (jours)</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d jours</string>
 
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Le tiroir du diaporama est transparent</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Le tiroir d\'information d\'image du diaporama est transparent</string>
 
     <string name="preference_groups_request_pagesize_title">Groupes de la taille d\'une page de demande de serveur</string>
     <string name="preference_groups_request_pagesize_summary">%1$d articles</string>

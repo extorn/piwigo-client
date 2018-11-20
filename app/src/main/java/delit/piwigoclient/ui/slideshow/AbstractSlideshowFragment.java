@@ -3,9 +3,6 @@ package delit.piwigoclient.ui.slideshow;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +17,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -100,7 +100,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         Bundle configurationBundle = savedInstanceState;
         if (configurationBundle == null) {
             configurationBundle = getArguments();
-            rawCurrentGalleryItemPosition = configurationBundle.getInt(ARG_GALLERY_ITEM_DISPLAYED);
         }
         if (configurationBundle != null && galleryModel == null) {
             galleryModel = configurationBundle.getParcelable(STATE_GALLERY);

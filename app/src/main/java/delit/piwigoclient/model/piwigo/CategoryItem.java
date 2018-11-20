@@ -20,6 +20,7 @@ import delit.piwigoclient.util.CollectionUtils;
  * An item representing a piece of content.
  */
 public class CategoryItem extends GalleryItem implements Cloneable {
+    private static final String TAG = "CategoryItem";
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
     public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
     public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 1, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
@@ -271,7 +272,12 @@ public class CategoryItem extends GalleryItem implements Cloneable {
     public static final Parcelable.Creator<CategoryItem> CREATOR
             = new Parcelable.Creator<CategoryItem>() {
         public CategoryItem createFromParcel(Parcel in) {
-            return new CategoryItem(in);
+            try {
+                return new CategoryItem(in);
+            } catch(RuntimeException e) {
+                Crashlytics.log(Log.ERROR, TAG, "Unable to create category item from parcel: " + in.toString());
+                throw e;
+            }
         }
 
         public CategoryItem[] newArray(int size) {
@@ -423,5 +429,19 @@ public class CategoryItem extends GalleryItem implements Cloneable {
             childAlbums.remove(thisItemIdx);
             childAlbums.add(thisItemIdx, otherItem);
         }
+    }
+
+    public String getAlbumPath(CategoryItem selectedItem) {
+        List<CategoryItem> path = getFullPath(selectedItem);
+        StringBuilder sb = new StringBuilder();
+        for(CategoryItem item : path) {
+            if(!item.isRoot()) {
+                if (sb.length() > 0) {
+                    sb.append(" / ");
+                }
+                sb.append(item.getName());
+            }
+        }
+        return sb.toString();
     }
 }

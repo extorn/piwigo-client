@@ -2,7 +2,9 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
@@ -17,6 +20,7 @@ import delit.piwigoclient.ui.common.util.ParcelUtils;
  */
 public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parcelable, Serializable {
 
+    private static final String TAG = "GalleryItem";
     public static final int CATEGORY_TYPE = 0;
     public static final int PICTURE_RESOURCE_TYPE = 1;
     public static final int VIDEO_RESOURCE_TYPE = 2;
@@ -195,7 +199,12 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     public static final Parcelable.Creator<GalleryItem> CREATOR
             = new Parcelable.Creator<GalleryItem>() {
         public GalleryItem createFromParcel(Parcel in) {
-            return new GalleryItem(in);
+            try {
+                return new GalleryItem(in);
+            } catch(RuntimeException e) {
+                Crashlytics.log(Log.ERROR, TAG, "Unable to create gallery item from parcel: " + in.toString());
+                throw e;
+            }
         }
 
         public GalleryItem[] newArray(int size) {

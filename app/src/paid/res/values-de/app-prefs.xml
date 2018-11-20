@@ -13,16 +13,12 @@
     <string name="preference_data_upload_automatic_upload_enable_summary">Hintergrund-Upload aktivieren</string>
     <string name="preference_data_upload_automatic_upload_enable_title">Automatischer Upload</string>
 
-    <string name="preference_data_upload_automatic_upload_polling_interval_title">Poll-Intervall</string>
-    <string name="preference_data_upload_automatic_upload_polling_interval_summary">Ausführen des Upload-Jobs alle %1$d Minuten</string>
 
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">Nur Auto Upload auf Wireless verwenden</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Nur über Funk</string>
 
     <string name="preference_data_upload_automatic_upload_jobs_title">Auto Upload Aufträge</string>
     <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d Jobs</string>
-
-    <!-- boolean flag set that if false will stop the job running -->
 
 
     <string name="preference_data_upload_automatic_job_is_valid_title">Auftrag ist gültig</string>

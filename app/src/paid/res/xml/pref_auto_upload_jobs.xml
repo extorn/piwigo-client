@@ -15,15 +15,6 @@
             android:title="@string/preference_data_upload_automatic_upload_enable_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
-            app:defValue="@integer/preference_data_upload_automatic_upload_polling_interval_default"
-            app:minValue="1"
-            app:maxValue="1440"
-            android:key="@string/preference_data_upload_automatic_upload_polling_interval_key"
-            android:title="@string/preference_data_upload_automatic_upload_polling_interval_title"
-            android:summary="@string/preference_data_upload_automatic_upload_polling_interval_summary"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
         <androidx.preference.SwitchPreference
             android:defaultValue="@bool/preference_data_upload_automatic_upload_wireless_only_default"
             android:key="@string/preference_data_upload_automatic_upload_wireless_only_key"

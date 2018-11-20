@@ -23,6 +23,8 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
+import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
+import delit.piwigoclient.util.CollectionUtils;
 import delit.piwigoclient.util.IOUtils;
 
 public class AutoUploadJobConfig implements Parcelable {
@@ -60,7 +62,31 @@ public class AutoUploadJobConfig implements Parcelable {
         }
         return jobPreferences;
     }
-    
+
+    public String getSummary(SharedPreferences appPrefs, Context c) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("uploadFrom:\n");
+        sb.append(getLocalFolderToMonitor(c).getAbsolutePath());
+        sb.append('\n');
+        sb.append("uploadTo:\n");
+        ConnectionPreferences.ProfilePreferences cp = getConnectionPrefs(c);
+        sb.append(cp.getAbsoluteProfileKey(appPrefs, c));
+        sb.append('\n');
+        sb.append(getUploadToAlbumId(c));
+        sb.append('\n');
+        sb.append("Prefs:\n");
+        sb.append("MaxUploadSize:");
+        sb.append(getMaxUploadSize(c));
+        sb.append('\n');
+        sb.append("PrivacyLevel:");
+        sb.append(getUploadedFilePrivacyLevel(c));
+        sb.append('\n');
+        sb.append("UploadExts:\n");
+        sb.append(CollectionUtils.toCsvList(getFileExtsToUpload(c)));
+        sb.append('\n');
+        return sb.toString();
+    }
+
     public void deletePreferences(Context c) {
         getJobPreferences(c).edit().clear().commit();
     }
@@ -134,7 +160,7 @@ public class AutoUploadJobConfig implements Parcelable {
         if(remoteAlbumDetails == null) {
             return null;
         }
-        return ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumName(remoteAlbumDetails);
+        return ServerAlbumSelectPreference.ServerAlbumDetails.fromString(remoteAlbumDetails).getAlbumName();
     }
 
     public long getUploadToAlbumId(Context c) {

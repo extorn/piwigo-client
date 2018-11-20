@@ -27,6 +27,7 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
         dest.writeParcelable(containerDetails, flags);
     }
 

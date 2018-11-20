@@ -6,13 +6,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.core.app.NotificationCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +30,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -562,13 +562,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
             UploadJob activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
-            boolean keepDeviceAwake = false;
-            if (event.areAllPermissionsGranted()) {
-                keepDeviceAwake = true;
+            if (!event.areAllPermissionsGranted()) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_required_permissions_not_granted_action_cancelled));
+                return;
             }
             //ensure the handler is actively listening before the job starts.
             getUiHelper().addBackgroundServiceCall(uploadJobId);
-            ForegroundPiwigoUploadService.startActionRunOrReRunUploadJob(getContext(), activeJob, keepDeviceAwake);
+            ForegroundPiwigoUploadService.startActionRunOrReRunUploadJob(getContext(), activeJob);
             allowUserUploadConfiguration(activeJob);
         }
     }

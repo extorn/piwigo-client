@@ -197,6 +197,8 @@
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">Max. Alter der letzten Artikel (Tage)</string>
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d Tage</string>
 
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Die Schublade der Diashow ist transparent</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Slideshow Bildinformationsschublade ist transparent</string>
 
     <string name="preference_groups_request_pagesize_title">Gruppen Serveranfrage Seitengröße</string>
     <string name="preference_groups_request_pagesize_summary">%1$d Artikel</string>

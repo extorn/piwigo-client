@@ -13,11 +13,6 @@
     <string name="preference_data_upload_automatic_upload_enable_title">Automatic Upload</string>
     <bool name="preference_data_upload_automatic_upload_enabled_default">false</bool>
 
-    <string name="preference_data_upload_automatic_upload_polling_interval_key" translatable="false">preference_data_upload_automatic_upload_polling_interval</string>
-    <string name="preference_data_upload_automatic_upload_polling_interval_title">Poll Interval</string>
-    <string name="preference_data_upload_automatic_upload_polling_interval_summary">Run upload job every %1$d minutes</string>
-    <integer name="preference_data_upload_automatic_upload_polling_interval_default">15</integer>
-
     <string name="preference_data_upload_automatic_upload_wireless_only_summary">Only use Auto Upload on Wireless</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_title">Over Wireless Only</string>
     <string name="preference_data_upload_automatic_upload_wireless_only_key" translatable="false">preference_data_upload_automatic_upload_wireless_only</string>

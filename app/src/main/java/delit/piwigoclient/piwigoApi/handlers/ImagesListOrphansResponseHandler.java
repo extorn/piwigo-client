@@ -21,7 +21,7 @@ import delit.piwigoclient.util.VersionUtils;
 
 public class ImagesListOrphansResponseHandler extends AbstractPiwigoWsResponseHandler {
 
-    private static final String TAG = "GetResourcesRspHdlr";
+    private static final String TAG = "ListOrphansRspHdlr";
     private final int pageSize;
     private final int page;
     private boolean retrieveFullList;

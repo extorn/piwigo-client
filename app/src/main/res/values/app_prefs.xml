@@ -221,6 +221,11 @@
     <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
     <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
 
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_key">preference_gallery_slideshow_transparent_extra_info_shadow</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Slideshow drawer is transparent</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Slideshow image information drawer is transparent</string>
+    <bool name="preference_gallery_slideshow_transparent_extra_info_shadow_default">false</bool>
+
     <string name="preference_groups_request_pagesize_key" translatable="false">preference_groups_request_pagesize</string>
     <string name="preference_groups_request_pagesize_title">Groups server request page-size</string>
     <string name="preference_groups_request_pagesize_summary">%1$d items</string>

@@ -56,15 +56,25 @@ public class AutoUploadJobsPreference extends DialogPreference {
      * @param value The value to set for the key.
      */
     public void setValue(String value) {
+        setValue(value, false);
+    }
+
+    /**
+     * Sets the value of the key.
+     *
+     * @param value The value to set for the key.
+     * @param jobContentsHaveChanged if true will force a change notification to be posted
+     */
+    public void setValue(String value, boolean jobContentsHaveChanged) {
         // Always persist/notify the first time.
         boolean changed = !ObjectUtils.areEqual(this.mValue, value);
         if (!mValueSet || changed) {
             this.mValue = value;
             mValueSet = true;
             persistString(mValue);
-            if (changed) {
-                notifyChanged();
-            }
+        }
+        if (changed || jobContentsHaveChanged) {
+            notifyChanged();
         }
     }
 

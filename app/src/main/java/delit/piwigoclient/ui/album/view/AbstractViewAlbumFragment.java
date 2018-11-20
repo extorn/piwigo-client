@@ -5,15 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +19,7 @@ import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.wunderlist.slidinglayer.CustomSlidingLayer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,6 +37,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -272,7 +272,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        viewPrefs.storeToBundle(outState);
+        if(viewPrefs != null) {
+            viewPrefs.storeToBundle(outState);
+        }
         outState.putParcelable(STATE_GALLERY_MODEL, galleryModel);
         outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
         outState.putBoolean(STATE_INFORMATION_SHOWING, informationShowing);
@@ -1289,6 +1291,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void setGalleryHeadings() {
+        if(galleryModel == null) {
+            return;
+        }
         CategoryItem currentAlbum = galleryModel.getContainerDetails();
         if (currentAlbum != null && currentAlbum.getName() != null && !currentAlbum.getName().isEmpty() && CategoryItem.ROOT_ALBUM != currentAlbum) {
             galleryNameHeader.setText(galleryModel.getContainerDetails().getName());

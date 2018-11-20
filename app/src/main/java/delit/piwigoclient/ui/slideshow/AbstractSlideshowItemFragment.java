@@ -307,6 +307,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
 
         bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
+
+        if(AlbumViewPreferences.isSlideshowExtraInfoShadowTransparent(getPrefs(), getContext())) {
+            bottomSheet.setShadowDrawable(null);
+        }
         return v;
     }
 

@@ -3,11 +3,6 @@ package delit.piwigoclient.ui.album.drillDownSelect;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.TextViewCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +13,18 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.widget.TextViewCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -174,16 +175,18 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
                 public void onClick(View v) {
                     TextView tv = (TextView) v;
                     getListAdapter().setActiveItem(pathItemCategory);
-                    Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();
-                    Map.Entry<Long, Parcelable> item;
-                    while(iter.hasNext()) {
-                        item = iter.next();
-                        if(item.getKey() == pathItemCategory.getId()) {
-                            getList().getLayoutManager().onRestoreInstanceState(item.getValue());
-                            iter.remove();
-                            while(iter.hasNext()) {
-                                iter.next();
+                    if(listViewStates != null) {
+                        Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();
+                        Map.Entry<Long, Parcelable> item;
+                        while (iter.hasNext()) {
+                            item = iter.next();
+                            if (item.getKey() == pathItemCategory.getId()) {
+                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
                                 iter.remove();
+                                while (iter.hasNext()) {
+                                    iter.next();
+                                    iter.remove();
+                                }
                             }
                         }
                     }
@@ -298,8 +301,10 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             boolean selectedIdsAreValid = false;
             if(!selectedItems.isEmpty()) {
                 CategoryItem selectedItem = selectedItems.iterator().next();
-                if(selectedItem.getParentId() == listAdapter.getActiveItem().getId()
-                    || selectedItem.getId() == listAdapter.getActiveItem().getId()) {
+                Long activeId = listAdapter.getActiveItem().getId(); // need this to be a long as it is comparing with a Long!
+                if(activeId != null
+                 && (activeId.equals(selectedItem.getParentId())
+                    || activeId.equals(selectedItem.getId()))) {
                     // do nothing.
                     selectedIdsAreValid = true;
                 }
@@ -310,7 +315,12 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             }
         }
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-        EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), PiwigoUtils.toSetOfIds(selectedItems), selectedItems));
+
+        HashMap<CategoryItem, String> albumPaths = new HashMap<>();
+        for(CategoryItem selectedItem : selectedItems) {
+            albumPaths.put(selectedItem, rootAlbum.getAlbumPath(selectedItem));
+        }
+        EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), PiwigoUtils.toSetOfIds(selectedItems), selectedItems, albumPaths));
         // now pop this screen off the stack.
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
@@ -320,7 +330,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     @Override
     public void onCancelChanges() {
         long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-        EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId(), null, null));
+        EventBus.getDefault().post(new ExpandingAlbumSelectionCompleteEvent(getActionId()));
         super.onCancelChanges();
     }
 
