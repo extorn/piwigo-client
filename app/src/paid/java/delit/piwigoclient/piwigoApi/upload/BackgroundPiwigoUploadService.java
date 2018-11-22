@@ -251,7 +251,6 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 runningUploadJob = thisUploadJob;
             }
             updateNotificationText(getString(R.string.notification_text_background_upload_running), true);
-            EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob, thisUploadJob.hasBeenRunBefore()));
             super.runJob(thisUploadJob, listener);
         } finally {
             synchronized (BackgroundPiwigoUploadService.class) {
@@ -294,6 +293,10 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
         AutoUploadJobConfig.PriorUploads priorUploads = jobConfig.getFilesPreviouslyUploaded(c);
         thisUploadJob.filterPreviouslyUploadedFiles(priorUploads.getFilesToHashMap());
+        // technically this is called after the job has already started, but the user doesn't need to know that.
+        if(thisUploadJob.getFilesForUpload().size() > 0) {
+            EventBus.getDefault().post(new BackgroundUploadStartedEvent(thisUploadJob, thisUploadJob.hasBeenRunBefore()));
+        }
     }
 
     private static class BroadcastEventsListener extends BroadcastReceiver {

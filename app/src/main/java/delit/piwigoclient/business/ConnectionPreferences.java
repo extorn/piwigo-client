@@ -2,6 +2,7 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -347,6 +348,11 @@ public class ConnectionPreferences {
 
         public boolean isValid(SharedPreferences prefs, Context context) {
             return "".equals(prefix) || getConnectionProfileList(prefs, context).contains(prefix);
+        }
+
+        public boolean isValid(Context context) {
+            SharedPreferences overallSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+            return isValid(overallSharedPreferences, context);
         }
     }
 

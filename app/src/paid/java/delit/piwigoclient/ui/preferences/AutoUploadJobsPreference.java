@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,6 +10,7 @@ import android.util.AttributeSet;
 
 import java.util.ArrayList;
 
+import androidx.preference.PreferenceDataStore;
 import delit.piwigoclient.R;
 import delit.piwigoclient.util.CollectionUtils;
 import delit.piwigoclient.util.ObjectUtils;
@@ -59,6 +61,24 @@ public class AutoUploadJobsPreference extends DialogPreference {
         setValue(value, false);
     }
 
+    protected boolean persistString(String value, boolean force) {
+        if (!shouldPersist()) {
+            return false;
+        }
+        if(force) {
+            PreferenceDataStore dataStore = getPreferenceDataStore();
+            if (dataStore != null) {
+                dataStore.putString(getKey(), value);
+            } else {
+                SharedPreferences.Editor editor = getPreferenceManager().getSharedPreferences().edit();
+                editor.putString(getKey(), value);
+                editor.commit();
+            }
+            return true;
+        }
+        return super.persistString(value);
+    }
+
     /**
      * Sets the value of the key.
      *
@@ -68,10 +88,10 @@ public class AutoUploadJobsPreference extends DialogPreference {
     public void setValue(String value, boolean jobContentsHaveChanged) {
         // Always persist/notify the first time.
         boolean changed = !ObjectUtils.areEqual(this.mValue, value);
-        if (!mValueSet || changed) {
+        if (!mValueSet || changed || jobContentsHaveChanged) {
             this.mValue = value;
             mValueSet = true;
-            persistString(mValue);
+            persistString(mValue, jobContentsHaveChanged);
         }
         if (changed || jobContentsHaveChanged) {
             notifyChanged();

@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -133,6 +134,23 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
             for (UploadJob uploadJob : activeUploadJobs) {
                 if (uploadJob.isRunInBackground()) {
+                    return uploadJob;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static UploadJob getActiveBackgroundJob(Context context, long jobId) {
+        synchronized (activeUploadJobs) {
+            for (UploadJob uploadJob : activeUploadJobs) {
+                if (uploadJob.isRunInBackground() && uploadJob.getJobId() == jobId) {
+                    return uploadJob;
+                }
+            }
+            activeUploadJobs.addAll(loadBackgroundJobsStateFromDisk(context));
+            for (UploadJob uploadJob : activeUploadJobs) {
+                if (uploadJob.isRunInBackground() && uploadJob.getJobId() == jobId) {
                     return uploadJob;
                 }
             }
@@ -284,6 +302,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     protected NotificationCompat.Builder buildNotification(String text) {
         NotificationCompat.Builder notificationBuilder = getNotificationBuilder();
+//        notificationBuilder.setContentIntent(PendingIntent.getActivity(this, 0, new Intent(), 0));
         notificationBuilder.setContentTitle(getNotificationTitle())
                 .setContentText(text);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -294,6 +313,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             notificationBuilder.setSmallIcon(R.drawable.ic_file_upload_black_24dp);
             notificationBuilder.setCategory(Notification.CATEGORY_SERVICE);
         }
+        notificationBuilder.setAutoCancel(true);
 //        .setTicker(getText(R.string.ticker_text))
         return notificationBuilder;
     }
@@ -435,7 +455,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             saveStateToDisk(thisUploadJob);
 
-            uploadFilesInJob(maxChunkUploadAutoRetries, thisUploadJob, availableAlbumsOnServer);
+            if (!thisUploadJob.getFilesForUpload().isEmpty()) {
+                uploadFilesInJob(maxChunkUploadAutoRetries, thisUploadJob, availableAlbumsOnServer);
+            }
 
             if (thisUploadJob.getFilesNotYetUploaded().size() == 0 && thisUploadJob.getTemporaryUploadAlbum() > 0) {
                 boolean success = deleteTemporaryUploadAlbum(thisUploadJob);

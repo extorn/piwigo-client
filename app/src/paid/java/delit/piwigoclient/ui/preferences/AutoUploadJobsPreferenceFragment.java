@@ -1,6 +1,8 @@
 package delit.piwigoclient.ui.preferences;
 
+import android.Manifest;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
@@ -49,6 +51,9 @@ public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
         }
 
         private void onUploadWirelessOnlyChanged(Boolean uploadOverWirelessOnly) {
+            if(uploadOverWirelessOnly) {
+                getUiHelper().runWithExtraPermissions(getActivity(), Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.ACCESS_NETWORK_STATE, getString(R.string.alert_network_monitor_permission_needed_for_wifi_upload));
+            }
             if(BackgroundPiwigoUploadService.isStarted()) {
                 // ensure the service knows the change occurred.
                 BackgroundPiwigoUploadService.wakeServiceIfSleeping();

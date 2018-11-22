@@ -55,11 +55,12 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         super.onCreate(paramBundle);
         jobId = getArguments().getInt(JOB_ID_ARG);
         actionId = getArguments().getInt(ACTION_ID_ARG);
-        getPreferenceManager().setSharedPreferencesName(AutoUploadJobConfig.getSharedPreferencesName(jobId));
     }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        // ensure we use the shared preferences for this job
+        getPreferenceManager().setSharedPreferencesName(AutoUploadJobConfig.getSharedPreferencesName(jobId));
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.pref_auto_upload_job, rootKey);
     }
@@ -132,10 +133,9 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         SharedPreferences.Editor editor = getPrefs().edit();
         if(remoteAlbumExists) {
             // ensure the folder name is in-sync with the value on the server
-            ServerAlbumSelectPreference pref = (ServerAlbumSelectPreference) findPreference(R.string.preference_data_upload_automatic_job_server_album_key);
-            ServerAlbumSelectPreference.ServerAlbumDetails selectedAlbumDetails = pref.getSelectedServerAlbumDetails();
+            ServerAlbumSelectPreference.ServerAlbumDetails selectedAlbumDetails = new AutoUploadJobConfig(jobId).getUploadToAlbumDetails(getContext());
             boolean changed = false;
-            if(selectedAlbumDetails != null) {
+            if(selectedAlbumDetails.getAlbumId() >= 0) {
                 String selectedAlbumName = selectedAlbumDetails.getAlbumName();
                 CategoryItemStub testAlbum = albumNames.get(0);
 
@@ -169,7 +169,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
         // update job validity status.
         if(!remoteAlbumExists) {
-            updateJobValidPreferenceIfNeeded(remoteAlbumExists, true);
+            updateJobValidPreferenceIfNeeded(false, true);
         } else {
             invokePreferenceValuesValidation(true);
         }
@@ -221,19 +221,6 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
                 long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
                 if(albumId >= 0) {
                     invokeRemoteFolderPreferenceValidation();
-                }
-            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_wireless_only_key))) {
-                boolean wifiOnlyEnabled = getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_wireless_only_default);
-                if(wifiOnlyEnabled) {
-                    getUiHelper().runWithExtraPermissions(getActivity(), Build.VERSION_CODES.BASE, Integer.MAX_VALUE, Manifest.permission.ACCESS_NETWORK_STATE, getString(R.string.alert_network_monitor_permission_needed_for_wifi_upload));
-                }
-            } else if(key.equals(getString(R.string.preference_data_upload_automatic_upload_enabled_key))) {
-                if(getBooleanPreferenceValue(key, R.bool.preference_data_upload_automatic_upload_enabled_default)) {
-                    if(!BackgroundPiwigoUploadService.isStarted()) {
-                        BackgroundPiwigoUploadService.startService(getContext());
-                    }
-                } else {
-                    BackgroundPiwigoUploadService.killService();
                 }
             } else {
                 invokePreferenceValuesValidation(false);

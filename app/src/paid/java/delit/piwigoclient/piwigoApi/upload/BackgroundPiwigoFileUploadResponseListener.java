@@ -2,9 +2,12 @@ package delit.piwigoclient.piwigoApi.upload;
 
 import android.content.Context;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.upload.PiwigoFileUploadResponseListener;
 
 public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUploadResponseListener {
@@ -45,7 +48,19 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
 
     @Override
     protected void onFileUploadProgressUpdate(Context context, BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+        if (response.getProgress() == 100) {
+            onFileUploadComplete(context, response);
+        }
+    }
 
+    private void onFileUploadComplete(Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
+        UploadJob uploadJob = BackgroundPiwigoUploadService.getActiveBackgroundJob(context, response.getJobId());
+        if (uploadJob != null) {
+            for (Long albumParent : uploadJob.getUploadToCategoryParentage()) {
+                EventBus.getDefault().post(new AlbumAlteredEvent(albumParent));
+            }
+            EventBus.getDefault().post(new AlbumAlteredEvent(uploadJob.getUploadToCategory()));
+        }
     }
 
     @Override

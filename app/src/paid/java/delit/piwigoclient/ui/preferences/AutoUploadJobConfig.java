@@ -22,7 +22,6 @@ import java.util.Set;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 import delit.piwigoclient.util.CollectionUtils;
 import delit.piwigoclient.util.IOUtils;
@@ -157,18 +156,12 @@ public class AutoUploadJobConfig implements Parcelable {
 
     public String getUploadToAlbumName(Context c) {
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
-        if(remoteAlbumDetails == null) {
-            return null;
-        }
         return ServerAlbumSelectPreference.ServerAlbumDetails.fromString(remoteAlbumDetails).getAlbumName();
     }
 
     public long getUploadToAlbumId(Context c) {
-        if(!isJobValid(c)) {
-            throw new IllegalStateException("Unable to retrieve upload album for invalid job");
-        }
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
-        return ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteAlbumDetails);
+        return ServerAlbumSelectPreference.ServerAlbumDetails.fromString(remoteAlbumDetails).getAlbumId();
     }
 
     public boolean isJobValid(Context c) {
@@ -286,13 +279,16 @@ public class AutoUploadJobConfig implements Parcelable {
         return getCsvListValue(c, R.string.preference_data_upload_automatic_job_file_exts_uploaded_key, R.string.preference_data_upload_automatic_job_file_exts_uploaded_default);
     }
 
+    public ServerAlbumSelectPreference.ServerAlbumDetails getUploadToAlbumDetails(Context context) {
+        String remoteAlbumDetails = getStringValue(context, R.string.preference_data_upload_automatic_job_server_album_key);
+        return ServerAlbumSelectPreference.ServerAlbumDetails.fromString(remoteAlbumDetails);
+    }
+
     public CategoryItemStub getUploadToAlbum(Context context) {
         if(!isJobValid(context)) {
             throw new IllegalStateException("Unable to retrieve upload album for invalid job");
         }
-        String albumName = getUploadToAlbumName(context);
-        long albumId = getUploadToAlbumId(context);
-        return new CategoryItemStub(albumName, albumId);
+        return getUploadToAlbumDetails(context).toCategoryItemStub();
     }
 
 }

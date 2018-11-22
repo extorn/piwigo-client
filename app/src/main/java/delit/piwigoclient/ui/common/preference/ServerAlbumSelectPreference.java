@@ -3,6 +3,7 @@ package delit.piwigoclient.ui.common.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -18,6 +19,7 @@ import androidx.annotation.NonNull;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
+import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
 import delit.piwigoclient.util.CollectionUtils;
@@ -56,7 +58,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if(key.equals(connectionProfileNamePreferenceKey)) {
                     String connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, "");
-                    setEnabled(ConnectionPreferences.getPreferences(connectionProfileName).isValid(sharedPreferences, getContext()));
+                    setEnabled(ConnectionPreferences.getPreferences(connectionProfileName).isValid(getContext()));
                 }
             }
         };
@@ -77,17 +79,17 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
 
     @Override
     public CharSequence getSummary() {
-        String currentValue = getPersistedString(getCurrentValue());
+        String currentValue = getPersistedString(getValue());
         ServerAlbumDetails pref = ServerAlbumDetails.fromString(currentValue);
-        if (super.getSummary() == null) {
-            return pref.getAlbumPath();
-        } else {
-            String albumName = pref.getAlbumPath();
-            if (albumName != null) {
-                return String.format(super.getSummary().toString(), albumName);
+        String albumPath =pref.getAlbumPath();
+        if (albumPath != null) {
+            if (super.getSummary() == null) {
+                return albumPath;
             } else {
-                return getContext().getString(R.string.server_album_preference_summary_default);
+                return String.format(super.getSummary().toString(), albumPath);
             }
+        } else {
+            return getContext().getString(R.string.server_album_preference_summary_default);
         }
     }
     
@@ -121,7 +123,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
     }
 
     public ServerAlbumDetails getSelectedServerAlbumDetails() {
-        return ServerAlbumDetails.fromString(getCurrentValue());
+        return ServerAlbumDetails.fromString(getValue());
     }
 
     public static class ServerAlbumDetails {
@@ -144,7 +146,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
                 }
                 return new ServerAlbumDetails(albumId, albumName, parentage, albumPath);
             }
-            return null;
+            return new ServerAlbumDetails(-1, null, null, null);
         }
 
         public ServerAlbumDetails(long albumId, @NonNull String albumName, List<Long> parentage, String albumPath) {
@@ -194,6 +196,10 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
 
         public long getAlbumId() {
             return albumId;
+        }
+
+        public CategoryItemStub toCategoryItemStub() {
+            return new CategoryItemStub(albumName, albumId);
         }
     }
 }
