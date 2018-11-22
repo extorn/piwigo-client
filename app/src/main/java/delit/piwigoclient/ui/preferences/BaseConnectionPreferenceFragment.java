@@ -96,6 +96,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         findPreference(R.string.preference_server_basic_auth_password_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
         EditableListPreference connectionProfilePref = (EditableListPreference) findPreference(R.string.preference_piwigo_connection_profile_key);
+        String value = connectionProfilePref.getValue();
         connectionProfilePref.setListener(new EditableListPreference.EditableListPreferenceChangeAdapter() {
 
             @Override
@@ -132,6 +133,9 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 ConnectionPreferences.deletePreferences(getPrefs(), getContext(), oldValue);
             }
         });
+        if(value == null) {
+            connectionProfilePref.addAndSelectItem("default");
+        }
 
         Preference clientCertPref = findPreference(R.string.preference_server_use_client_certs_key);
         clientCertPref.setOnPreferenceChangeListener(sessionInvalidationPrefListener);

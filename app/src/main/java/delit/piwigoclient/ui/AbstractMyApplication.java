@@ -69,7 +69,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsPortrait_key));
             Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
             for(String profile : connectionProfiles) {
-                ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile);
+                ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile, getPrefs(), this);
                 int currentTimeout = connPrefs.getServerConnectTimeout(prefs, getApplicationContext());
                 if(currentTimeout >= 1000) {
                     currentTimeout = (int) Math.round(Math.ceil((double)currentTimeout / 1000));

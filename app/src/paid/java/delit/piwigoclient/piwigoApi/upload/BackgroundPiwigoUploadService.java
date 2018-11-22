@@ -24,7 +24,6 @@ import java.util.Map;
 import androidx.annotation.Nullable;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AutoUploadPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
@@ -157,7 +156,11 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                         // if there's an old incomplete job, try and finish that first.
                         unfinishedJob = getActiveBackgroundJob(context);
                         if (unfinishedJob != null) {
-                            if (!unfinishedJob.isFinished() && unfinishedJob.getConnectionPrefs().isValid(getPrefs(), getApplicationContext())) {
+                            boolean jobIsValid = unfinishedJob.getConnectionPrefs().isValid(getPrefs(), getApplicationContext());
+                            if(!jobIsValid) {
+                                new AutoUploadJobConfig(unfinishedJob.getJobConfigId()).setJobValid(getBaseContext(), false);
+                            }
+                            if (!unfinishedJob.isFinished() && jobIsValid) {
                                 AutoUploadJobConfig jobConfig = jobs.getAutoUploadJobConfig(unfinishedJob.getJobConfigId(), context);
                                 runJob(unfinishedJob, this);
                                 if (jobConfig != null) {
@@ -251,7 +254,14 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 runningUploadJob = thisUploadJob;
             }
             updateNotificationText(getString(R.string.notification_text_background_upload_running), true);
-            super.runJob(thisUploadJob, listener);
+            boolean connectionDetailsValid = thisUploadJob.getConnectionPrefs().isValid(getBaseContext());
+            if(connectionDetailsValid) {
+                super.runJob(thisUploadJob, listener);
+            } else {
+                // update the job validity status
+                AutoUploadJobConfig config = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
+                config.setJobValid(getBaseContext(), false);
+            }
         } finally {
             synchronized (BackgroundPiwigoUploadService.class) {
                 runningUploadJob = null;
@@ -405,7 +415,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         ArrayList<File> filesToUpload = new ArrayList(Arrays.asList(matchingFiles));
         //public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel, boolean useTempFolder) {
         CategoryItemStub category = jobConfig.getUploadToAlbum(context);
-        UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(context), filesToUpload, category,
+        UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(context, getPrefs()), filesToUpload, category,
                 jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId());
         uploadJob.setToRunInBackground();
         uploadJob.setJobConfigId(jobConfig.getJobId());

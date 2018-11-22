@@ -68,7 +68,7 @@ public class AutoUploadJobConfig implements Parcelable {
         sb.append(getLocalFolderToMonitor(c).getAbsolutePath());
         sb.append('\n');
         sb.append("uploadTo:\n");
-        ConnectionPreferences.ProfilePreferences cp = getConnectionPrefs(c);
+        ConnectionPreferences.ProfilePreferences cp = getConnectionPrefs(c, appPrefs);
         sb.append(cp.getAbsoluteProfileKey(appPrefs, c));
         sb.append('\n');
         sb.append(getUploadToAlbumId(c));
@@ -141,9 +141,9 @@ public class AutoUploadJobConfig implements Parcelable {
         return Arrays.asList(values);
     }
 
-    public ConnectionPreferences.ProfilePreferences getConnectionPrefs(Context c) {
+    public ConnectionPreferences.ProfilePreferences getConnectionPrefs(Context c, SharedPreferences overallAppPrefs) {
         String connectionProfileName = getStringValue(c, R.string.preference_data_upload_automatic_job_server_key);
-        return ConnectionPreferences.getPreferences(connectionProfileName);
+        return ConnectionPreferences.getPreferences(connectionProfileName, overallAppPrefs, c);
     }
 
     public File getLocalFolderToMonitor(Context c) {
@@ -162,6 +162,12 @@ public class AutoUploadJobConfig implements Parcelable {
     public long getUploadToAlbumId(Context c) {
         String remoteAlbumDetails = getStringValue(c, R.string.preference_data_upload_automatic_job_server_album_key);
         return ServerAlbumSelectPreference.ServerAlbumDetails.fromString(remoteAlbumDetails).getAlbumId();
+    }
+
+    public void setJobValid(Context c, boolean isValid) {
+        SharedPreferences.Editor editor = getJobPreferences(c).edit();
+        editor.putBoolean(c.getString(R.string.preference_data_upload_automatic_job_is_valid_key), isValid);
+        editor.apply();
     }
 
     public boolean isJobValid(Context c) {

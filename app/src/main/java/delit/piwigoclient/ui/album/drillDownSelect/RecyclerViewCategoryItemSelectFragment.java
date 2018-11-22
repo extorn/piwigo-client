@@ -239,7 +239,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     }
 
     private void loadData() {
-        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(getViewPrefs().getConnectionProfileKey());
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(getViewPrefs().getConnectionProfileKey(), prefs, getContext());
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
 
         if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {

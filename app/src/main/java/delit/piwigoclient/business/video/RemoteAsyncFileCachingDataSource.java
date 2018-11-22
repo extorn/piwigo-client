@@ -1,7 +1,9 @@
 package delit.piwigoclient.business.video;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -44,6 +46,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
     private final TransferListener<? super DataSource> listener;
     private final Map<String, String> defaultRequestProperties;
     private final boolean logEnabled = false;
+    private final SharedPreferences sharedPrefs;
     private Context context;
     private DataSpec dataSpec;
     private CachedContent cacheMetaData;
@@ -68,6 +71,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         this.userAgent = userAgent;
         this.cacheListener = cacheListener;
         this.defaultRequestProperties = defaultRequestProperties.getSnapshot();
+        this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     public void setEnableRedirects(boolean enableRedirects) {
@@ -130,7 +134,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         if (retrieveMaxBytes == 0) {
             return;
         }
-        CachingAsyncHttpClient client = HttpClientFactory.getInstance(context).getVideoDownloadASyncHttpClient(ConnectionPreferences.getPreferences(null), context);
+        CachingAsyncHttpClient client = HttpClientFactory.getInstance(context).getVideoDownloadASyncHttpClient(ConnectionPreferences.getPreferences(null, sharedPrefs, context), context);
         RequestParams requestParams = new RequestParams(defaultRequestProperties);
 
         List<Header> headers = new ArrayList<>();

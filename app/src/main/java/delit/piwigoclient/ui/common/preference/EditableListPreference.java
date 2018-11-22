@@ -238,6 +238,15 @@ public class EditableListPreference extends DialogPreference {
         persistEntries(entries);
     }
 
+    public void addAndSelectItem(String item) {
+        loadEntries();
+        EditableListPreferenceDialogFragmentCompat.Addition action = new EditableListPreferenceDialogFragmentCompat.Addition(item);
+        ArrayList<EditableListPreferenceDialogFragmentCompat.ListAction> actions = new ArrayList<>(1);
+        actions.add(action);
+        updateEntryValues(actions);
+        setValue(item);
+    }
+
     public interface EditableListPreferenceChangeListener extends Serializable {
         void onItemAdded(String newItem);
 

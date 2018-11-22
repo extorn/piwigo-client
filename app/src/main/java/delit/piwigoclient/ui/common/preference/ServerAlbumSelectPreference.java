@@ -3,7 +3,6 @@ package delit.piwigoclient.ui.common.preference;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -47,7 +46,7 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
     }
 
     @Override
-    protected void initPreference(Context context, AttributeSet attrs) {
+    protected void initPreference(final Context context, AttributeSet attrs) {
         super.initPreference(context, attrs);
         final TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.ServerAlbumSelectPreference, 0, 0);
@@ -57,8 +56,8 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 if(key.equals(connectionProfileNamePreferenceKey)) {
-                    String connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, "");
-                    setEnabled(ConnectionPreferences.getPreferences(connectionProfileName).isValid(getContext()));
+                    String connectionProfileName = sharedPreferences.getString(connectionProfileNamePreferenceKey, null);
+                    setEnabled(connectionProfileName != null && ConnectionPreferences.getPreferences(connectionProfileName, sharedPreferences, context).isValid(getContext()));
                 }
             }
         };
@@ -101,6 +100,9 @@ public class ServerAlbumSelectPreference extends EventDrivenPreference<Expanding
         if(selectedAlbumId >= 0) {
             currentSelection.add(selectedAlbumId);
             defaultRootAlbumId = selectedAlbumId;
+        }
+        if(getSelectedServerAlbumDetails().getParentage() != null && getSelectedServerAlbumDetails().getParentage().size() > 0) {
+            defaultRootAlbumId = getSelectedServerAlbumDetails().getParentage().get(getSelectedServerAlbumDetails().getParentage().size() -1);
         }
         ExpandingAlbumSelectionNeededEvent event = new ExpandingAlbumSelectionNeededEvent(false, true, currentSelection, defaultRootAlbumId);
         event.setConnectionProfileName(connectionProfileNamePreferenceKey);

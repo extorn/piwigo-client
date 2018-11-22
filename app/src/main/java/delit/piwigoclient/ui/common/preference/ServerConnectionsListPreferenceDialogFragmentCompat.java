@@ -159,7 +159,10 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
         ArrayList<ServerConnectionsListPreference.ServerConnection> connections = new ArrayList<>();
         if (profiles.size() > 0) {
             for (String p : profiles) {
-                ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(p);
+                if(profiles.size() == 1) {
+                    ConnectionPreferences.clonePreferences(prefs, getContext(), null, p);
+                }
+                ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(p, prefs, getContext());
                 connections.add(new ServerConnectionsListPreference.ServerConnection(p,
                         profilePrefs.getPiwigoServerAddress(prefs, getContext()),
                         profilePrefs.getPiwigoUsername(prefs, getContext())));

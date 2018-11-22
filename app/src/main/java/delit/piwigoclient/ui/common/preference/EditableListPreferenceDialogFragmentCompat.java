@@ -46,24 +46,24 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     private String STATE_ITEM_EDIT_ALLOWED = "EditableListPreference.itemEditAllowed";
 
 
-    public class ListAction implements Serializable {
+    public static class ListAction implements Serializable {
         public final String entryValue;
 
         public ListAction(String entryValue) {
             this.entryValue = entryValue;
         }
     }
-    public class Removal extends ListAction{
+    public static class Removal extends ListAction{
         public Removal(String entryValue) {
             super(entryValue);
         }
     }
-    public class Addition extends ListAction{
+    public static class Addition extends ListAction{
         public Addition(String entryValue) {
             super(entryValue);
         }
     }
-    public class Replacement extends ListAction{
+    public static class Replacement extends ListAction{
         public final String newEntryValue;
         public Replacement(String entryValue, String newValue) {
             super(entryValue);
@@ -100,14 +100,24 @@ public class EditableListPreferenceDialogFragmentCompat extends PreferenceDialog
     @Override
     public void onDialogClosed(boolean positiveResult) {
         EditableListPreference pref = getPreference();
-        if (positiveResult && userSelectedItem != null && pref.getEntryValues() != null) {
-            String value = userSelectedItem;
-            if (pref.callChangeListener(value)) {
-                if(actions.size() > 0) {
-                    pref.updateEntryValues(actions);
+        if (positiveResult) {
+            if(userSelectedItem != null && pref.getEntryValues() != null) {
+                String value = userSelectedItem;
+                if (!entriesList.contains(value)) {
+                    value = null;
                 }
-                actions.clear();
-                pref.setValue(value);
+                if (pref.callChangeListener(value)) {
+                    if (actions.size() > 0) {
+                        pref.updateEntryValues(actions);
+                    }
+                    actions.clear();
+                    pref.setValue(value);
+                }
+            } else if (actions.size() > 0) {
+                if (pref.callChangeListener(userSelectedItem)) {
+                    pref.updateEntryValues(actions);
+                    actions.clear();
+                }
             }
         }
     }

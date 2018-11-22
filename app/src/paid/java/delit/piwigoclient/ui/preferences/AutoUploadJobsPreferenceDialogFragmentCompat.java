@@ -220,7 +220,7 @@ public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDial
 
         public String getUploadToSummary(AutoUploadJobConfig item) {
 
-            ConnectionPreferences.ProfilePreferences connPrefs = item.getConnectionPrefs(getContext());
+            ConnectionPreferences.ProfilePreferences connPrefs = item.getConnectionPrefs(getContext(), getPreference().getSharedPreferences());
             String serverName = connPrefs.getPiwigoServerAddress(getPreference().getSharedPreferences(), getContext());
             String username = connPrefs.getPiwigoUsername(getPreference().getSharedPreferences(), getContext());
             String uploadFolder = item.getUploadToAlbumName(getContext());

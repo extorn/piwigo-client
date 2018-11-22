@@ -53,7 +53,12 @@ public class ConnectionPreferences {
         return activeProfile;
     }
 
-    public static ProfilePreferences getPreferences(String profile) {
+    public static ProfilePreferences getPreferences(String profile, SharedPreferences prefs, Context context) {
+        if(profile != null) {
+            if(profile.equals(getActiveConnectionProfile(prefs, context)) || getConnectionProfileList(prefs, context).size() == 1) {
+                ConnectionPreferences.clonePreferences(prefs, context, null, profile);
+            }
+        }
         return new ProfilePreferences(profile);
     }
 
@@ -134,7 +139,7 @@ public class ConnectionPreferences {
         }
 
         public String getAbsoluteProfileKey(SharedPreferences prefs, Context context) {
-            return getProfileId(prefs, context) + ':' + asGuest;
+            return getProfileId(prefs, context) + ':' + (asGuest ? "guest" : getPiwigoUsername(prefs, context));
         }
 
         public boolean isDefaultProfile() {
@@ -347,7 +352,7 @@ public class ConnectionPreferences {
         }
 
         public boolean isValid(SharedPreferences prefs, Context context) {
-            return "".equals(prefix) || getConnectionProfileList(prefs, context).contains(prefix);
+            return ("".equals(prefix) || getConnectionProfileList(prefs, context).contains(prefix)) && getPiwigoServerAddress(prefs, context) != null;
         }
 
         public boolean isValid(Context context) {

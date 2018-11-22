@@ -186,7 +186,7 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         SharedPreferences prefs = getSharedPreferences();
         ServerAlbumListPreference pref = getPreference();
         String connectionProfile = prefs.getString(pref.getConnectionProfileNamePreferenceKey(), null);
-        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(connectionProfile);
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getPreferences(connectionProfile, prefs, getContext());
 
         return connectionPrefs;
     }

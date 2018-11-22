@@ -71,7 +71,7 @@ public class ServerConnectionsListPreference extends DialogPreference {
         currentValue = getPersistedString(currentValue);
         ServerConnection activeConnection;
         if (currentValue != null) {
-            ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(currentValue);
+            ConnectionPreferences.ProfilePreferences selectedPref = ConnectionPreferences.getPreferences(currentValue, prefs, getContext());
             activeConnection = new ServerConnection(currentValue,
                     selectedPref.getPiwigoServerAddress(prefs, getContext()),
                     selectedPref.getPiwigoUsername(prefs, getContext()));

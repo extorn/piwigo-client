@@ -1,7 +1,9 @@
 package delit.piwigoclient.business.video;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -27,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.prefs.PreferenceChangeEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,6 +73,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private final TransferListener<? super RemoteDirectHttpClientBasedHttpDataSource> listener;
     private final Context context;
     private final boolean logEnabled = false;
+    private final SharedPreferences sharedPrefs;
     private CachingAsyncHttpClient client;
     private DownloadListener downloadListener;
     private DataSpec dataSpec;
@@ -152,6 +156,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         this.connectTimeoutMillis = connectTimeoutMillis;
         this.readTimeoutMillis = readTimeoutMillis;
         this.context = context;
+        this.sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         startClient();
     }
 
@@ -161,7 +166,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 
     private void startClient() {
         if (client == null) {
-            client = HttpClientFactory.getInstance(context).getVideoDownloadSyncHttpClient(ConnectionPreferences.getPreferences(null), context);
+            client = HttpClientFactory.getInstance(context).getVideoDownloadSyncHttpClient(ConnectionPreferences.getPreferences(null, sharedPrefs, context), context);
         }
     }
 

@@ -64,6 +64,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private static long connectionResetOccurredWindowStart = 0;
     private static long connectionResetCount = 0;
     private double lastProgressReportAtPercent;
+    private boolean forceLogin;
 
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
@@ -392,6 +393,10 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 // unable to build a client from configuration properties.
                 sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_server_configuration_invalid)));
             } else {
+                if(forceLogin) {
+                    forceLogin = false;
+                    getNewLogin();
+                }
                 requestHandle = runCall(client, this);
             }
         } catch (RuntimeException e) {
@@ -536,5 +541,9 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
      */
     public void beforeCall() {
         this.triedLoggingInAgain = false;
+    }
+
+    public void forceLogin() {
+        forceLogin = true;
     }
 }

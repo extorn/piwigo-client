@@ -1,9 +1,7 @@
 package delit.piwigoclient.ui.preferences;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +23,6 @@ import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
-import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
@@ -52,9 +49,9 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     @Override
     public void onCreate(Bundle paramBundle) {
-        super.onCreate(paramBundle);
         jobId = getArguments().getInt(JOB_ID_ARG);
         actionId = getArguments().getInt(ACTION_ID_ARG);
+        super.onCreate(paramBundle);
     }
 
     @Override
@@ -78,7 +75,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_key);
         allPreferencesValid = serverProfile != null;
         if(allPreferencesValid) {
-            profilePrefs = ConnectionPreferences.getPreferences(serverProfile);
+            profilePrefs = ConnectionPreferences.getPreferences(serverProfile, appPrefs, getContext());
             String serverName = profilePrefs.getPiwigoServerAddress(appPrefs, getContext());
             allPreferencesValid = serverName != null;
         }
@@ -111,13 +108,14 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     private void invokeRemoteFolderPreferenceValidation() {
         String serverProfile = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_key);
-        ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(serverProfile);
+        ConnectionPreferences.ProfilePreferences profilePrefs = ConnectionPreferences.getPreferences(serverProfile, getPrefs(), getContext());
         String remoteFolderDetails = getPreferenceValueOrNull(R.string.preference_data_upload_automatic_job_server_album_key);
         if(remoteFolderDetails != null) {
             long albumId = ServerAlbumListPreference.ServerAlbumPreference.getSelectedAlbumId(remoteFolderDetails);
             if(albumId >= 0) {
                 AlbumGetSubAlbumNamesResponseHandler albumHandler = new AlbumGetSubAlbumNamesResponseHandler(albumId, false);
                 albumHandler.withConnectionPreferences(profilePrefs);
+                albumHandler.forceLogin();
                 callServer(R.string.progress_loading_albums, albumHandler);
             } else {
                 updateJobValidPreferenceIfNeeded(false, false);
