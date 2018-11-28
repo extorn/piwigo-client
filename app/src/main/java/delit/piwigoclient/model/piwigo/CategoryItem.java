@@ -21,9 +21,10 @@ import delit.piwigoclient.util.CollectionUtils;
  */
 public class CategoryItem extends GalleryItem implements Cloneable {
     private static final String TAG = "CategoryItem";
+    private static final String BLANK_TAG = "PIWIGO_CLIENT_INTERNAL_BLANK";
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
-    public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, null, null, true, null, 0, 0, 0, null);
-    public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 1, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
+    public static final CategoryItem BLANK = new CategoryItem(Long.MIN_VALUE, BLANK_TAG, null, true, null, 0, 0, 0, null);
+    public static final CategoryItem ALBUM_HEADING = new CategoryItem(Long.MIN_VALUE + 100, "AlbumsHeading", null, true, null, 0, 0, 0, null) {
         @Override
         public int getType() {
             return GalleryItem.ALBUM_HEADING_TYPE;
@@ -57,7 +58,7 @@ public class CategoryItem extends GalleryItem implements Cloneable {
 
     public CategoryItem(Parcel in) {
         super(in);
-        childAlbums = ParcelUtils.readTypedList(in, CategoryItem.CREATOR);
+        childAlbums = in.createTypedArrayList(CategoryItem.CREATOR);
         photoCount = in.readInt();
         totalPhotoCount = in.readLong();
         subCategories = in.readLong();
@@ -133,7 +134,11 @@ public class CategoryItem extends GalleryItem implements Cloneable {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof GalleryItem && ((GalleryItem) other).getId() == this.getId();
+        if(other instanceof GalleryItem) {
+            GalleryItem otherItem = (GalleryItem) other;
+            return otherItem.getId() == this.getId() || BLANK_TAG.equals(getName()) && BLANK_TAG.equals(otherItem.getName());
+        }
+        return false;
     }
 
     @Override
@@ -443,5 +448,10 @@ public class CategoryItem extends GalleryItem implements Cloneable {
             }
         }
         return sb.toString();
+    }
+
+    public CategoryItem withId(long newId) {
+        this.setId(newId);
+        return this;
     }
 }

@@ -11,11 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.ortiz.touch.TouchImageView;
+import com.ortiz.touchview.TouchImageView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -96,23 +97,23 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
             @Override
             public void onMove() {
-
+                getOverlaysVisibilityControl().runWithDelay(getView());
             }
 
             @Override
             public void onDrag(float deltaX, float deltaY, boolean actionAlteredImageViewState) {
-                if(!actionAlteredImageViewState && Math.abs(deltaX) < 10 && Math.abs(deltaY) > 30) {
-                    ToolbarEvent toolbarEvent = new ToolbarEvent();
-                    if(deltaY > 0) {
-                        toolbarEvent.setTitle(getModel().getName());
-                        toolbarEvent.setExpandToolbarView(true);
-                        EventBus.getDefault().post(toolbarEvent);
-                    } else {
-                        toolbarEvent.setTitle(getModel().getName());
-                        toolbarEvent.setContractToolbarView(true);
-                        EventBus.getDefault().post(toolbarEvent);
-                    }
-                }
+//                if(!actionAlteredImageViewState && Math.abs(deltaX) < 10 && Math.abs(deltaY) > 30) {
+//                    ToolbarEvent toolbarEvent = new ToolbarEvent();
+//                    if(deltaY > 0) {
+//                        toolbarEvent.setTitle(getModel().getName());
+//                        toolbarEvent.setExpandToolbarView(true);
+//                        EventBus.getDefault().post(toolbarEvent);
+//                    } else {
+//                        toolbarEvent.setTitle(getModel().getName());
+//                        toolbarEvent.setContractToolbarView(true);
+//                        EventBus.getDefault().post(toolbarEvent);
+//                    }
+//                }
             }
         });
 
@@ -134,6 +135,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 }
                 EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
                 hideProgressIndicator();
+                getOverlaysVisibilityControl().runWithDelay(getView());
             }
 
             @Override
@@ -197,6 +199,8 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        getOverlaysVisibilityControl().addBottomSheetTransparency(getBottomSheet());
 
         // reset the screen state if we're entering for the first time
         if (currentImageUrlDisplayed == null) {

@@ -45,7 +45,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         }
     };
     private static final long serialVersionUID = 7684159305897923971L;
-    private final long id;
+    private long id; // this is final... except blank category items need to alter it
     private String thumbnailUrl;
     private String name;
     private String description;
@@ -134,9 +134,9 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         }
         // both are categories
         if (isCategory) {
-            if (this == CategoryItem.BLANK || o == CategoryItem.ALBUM_HEADING) {
+            if (CategoryItem.BLANK.equals(this)  || CategoryItem.ALBUM_HEADING.equals(o)) {
                 return 1;
-            } else if (o == CategoryItem.BLANK || this == CategoryItem.ALBUM_HEADING) {
+            } else if (CategoryItem.BLANK.equals(o) || CategoryItem.ALBUM_HEADING.equals(this)) {
                 return -1;
             }
             return -this.name.compareTo(o.name);
@@ -196,8 +196,8 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         return 0;
     }
 
-    public static final Parcelable.Creator<GalleryItem> CREATOR
-            = new Parcelable.Creator<GalleryItem>() {
+    public static final Creator<GalleryItem> CREATOR
+            = new Creator<GalleryItem>() {
         public GalleryItem createFromParcel(Parcel in) {
             try {
                 return new GalleryItem(in);
@@ -218,5 +218,9 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
 
     public boolean isLikelyOutdated() {
         return isLikelyOutdated(loadedAt);
+    }
+
+    protected void setId(long id) {
+        this.id = id;
     }
 }

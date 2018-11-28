@@ -59,11 +59,12 @@ public class Basket implements Parcelable {
         return contents.size();
     }
 
-    public void removeItem(ResourceItem item) {
-        contents.remove(item);
+    public boolean removeItem(ResourceItem item) {
+        boolean altered = contents.remove(item);
         if (contents.size() == 0) {
             contentParent = null;
         }
+        return altered;
     }
 
     public HashSet<ResourceItem> getContents() {

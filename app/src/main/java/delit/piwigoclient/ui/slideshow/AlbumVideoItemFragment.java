@@ -26,6 +26,7 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
@@ -235,6 +236,17 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
         simpleExoPlayerView.setPlayer(player);
 
+        simpleExoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
+            @Override
+            public void onVisibilityChange(int visibility) {
+                if(visibility == View.VISIBLE) {
+                    getBottomSheet().setVisibility(View.GONE);
+                } else {
+                    getBottomSheet().setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         logStatus("finished created item content");
         return itemContentView;
     }
@@ -268,6 +280,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     protected void doOnceOnPageSelectedAndAdded() {
         super.doOnceOnPageSelectedAndAdded();
+        getOverlaysVisibilityControl().runWithDelay(getView());
         configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
     }
 
@@ -529,6 +542,12 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private class CustomExoPlayerTouchListener extends CustomClickTouchListener {
         public CustomExoPlayerTouchListener(View linkedView) {
             super(linkedView);
+        }
+
+        @Override
+        public boolean onClick() {
+            getOverlaysVisibilityControl().runWithDelay(getView());
+            return super.onClick();
         }
 
         @Override

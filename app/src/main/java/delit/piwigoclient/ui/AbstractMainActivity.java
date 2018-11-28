@@ -6,6 +6,10 @@ import android.content.ComponentCallbacks2;
 import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.appbar.AppBarLayout;
+
+import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -16,6 +20,8 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -103,6 +109,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     private ArrayList<Serializable> onLoginActionParams = new ArrayList<>();
     private Basket basket = new Basket();
     private Toolbar toolbar;
+    private AppBarLayout appBar;
 
     public static void performNoBackStackTransaction(final FragmentManager fragmentManager, String tag, Fragment fragment) {
         final int newBackStackLength = fragmentManager.getBackStackEntryCount() + 1;
@@ -150,7 +157,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        appBar = findViewById(R.id.appbar);
         /*
         Floating action button (all screens!) - if wanted
 
@@ -702,10 +709,11 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     public void onEvent(ToolbarEvent event) {
         toolbar.setTitle(event.getTitle());
         if(event.isExpandToolbarView()) {
-            ((AppBarLayout) toolbar.getParent()).setExpanded(true, true);
+            appBar.setExpanded(true, event.getTitle()!= null);
         } else if(event.isContractToolbarView()) {
-            ((AppBarLayout) toolbar.getParent()).setExpanded(false, true);
+            appBar.setExpanded(false, event.getTitle()!= null);
         }
+        appBar.setEnabled(event.getTitle()!= null);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

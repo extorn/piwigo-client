@@ -166,20 +166,27 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 buttonView.setEnabled(false);
-                if(!getModel().isFavorite()) {
-                    getUiHelper().invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(getModel()), new FavoriteAddAction());
-                } else {
-                    getUiHelper().invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(getModel()), new FavoriteRemoveAction());
+                if(getModel().hasFavoriteInfo()) {
+                    if (!getModel().isFavorite()) {
+                        getUiHelper().invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(getModel()), new FavoriteAddAction());
+                    } else {
+                        getUiHelper().invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(getModel()), new FavoriteRemoveAction());
+                    }
                 }
             }
         });
+
+        addViewVisibleControl(favoriteButton);
+
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        favoriteButton.setVisibility(getModel().hasFavoriteInfo()?View.VISIBLE:View.GONE);
+        boolean favoritesSupported = getModel().hasFavoriteInfo();
+        //PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).isPiwigoClientPluginInstalled();
+        favoriteButton.setVisibility(favoritesSupported?View.VISIBLE:View.GONE);
     }
 
     @Override

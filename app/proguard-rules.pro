@@ -51,7 +51,7 @@
 
 -keep class com.google.ads.** { public *; }
 
--keep class com.ortiz.touch.TouchImageView* { public *; }
+-keep class com.ortiz.touchview.TouchImageView* { public *; }
 
 -keep class com.loopj.android.http.SerializableCookie { *; }
 

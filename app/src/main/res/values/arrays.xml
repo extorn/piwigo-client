@@ -162,19 +162,26 @@
     <string-array name="planned_releases" translatable="true">
         <item>The future</item>
         <item>"Changes:
-         - Possibly: allow linking the upload process to a compression routine for videos
-         - Possibly: The ability to delete an album, but not its contents (creating orphans)
-         - Possibly: Orphan file management
-         - Possibly: Allow user to zoom out in slideshow (view smaller than fullscreen)
-         - Possibly: Investigate adding support for coloured tag plugin
-         - Possibly: Remember the previously opened photo or album when the user opens the app.
-         - Possibly: Paid App Only : The random photos idea implemented on the piwigo web UI
-         - Possibly: Paid App Only : Support for user comments
-         - Possibly: Paid App Only : Notify user of server updates that are available
-         - Possibly: Paid App Only : Support for editing EXIF and other image metadata formats
-         - Possibly: Paid App Only : Add preference to allow showing/hiding the EXIF etc fields of or not of interest
-         - Possibly: screen cast of some kind to allow mirror of device on a larger screen
-         - Possibly: Support stretching or cropping images to fill device screen
+         - Possibly:
+            - Removal of all or most adverts in favour of a free trial period followed by a subscription based payment model
+            - Auto image rotation based on device orientation, device orientation, device orientation ignoring screen rotation lock
+            - Verify the current login status to ensure album and image lists are always correct
+            - Verify support for upload to older servers (e.g. piwigo.com - version 2.8a)
+            - Allow linking the upload process to a compression routine for videos
+            - The ability to delete an album, but not its contents (creating orphans)
+            - Orphan file management
+            - Allow user to zoom out in slideshow (view smaller than fullscreen)
+            - Investigate adding support for coloured tag plugin
+            - Remember the previously opened photo or album when the user opens the app.
+            - Support stretching or cropping images to fill device screen
+         - Possibly (Paid App only):
+            - Viewing Favorites list
+            - The random photos idea implemented on the piwigo web UI
+            - Support for user comments
+            - Notify user of server updates that are available
+            - Support for editing EXIF and other image metadata formats
+            - Add preference to allow showing/hiding the EXIF etc fields of or not of interest
+            - Screen cast of some kind to allow mirror of device on a larger screen
          - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
         <item>1.3.98</item>
         <item>"Expected Delivery:
@@ -186,6 +193,11 @@
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.97.6</item>
+        <item>"Changes:
+            - Hide buttons in fullscreen image and video view after 2 seconds (touch to show)
+            Bugfix:
+            - incorrect saving of album view causing crash on app pause"</item>
         <item>1.3.97.5</item>
         <item>"Bugfix:
             - Corrected odd behaviour regarding connection profiles"</item>

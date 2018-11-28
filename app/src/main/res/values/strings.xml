@@ -8,6 +8,7 @@
     <string name="unlicensed_dialog_body">Unable to validate license. Check to see if a network connection is available.</string>
     <string name="unlicensed_dialog_title">Application not licensed</string>
     <string name="application_error">Application error: %1$d</string>
+    <!--<string name="appbar_scrolling_view_behavior" translatable="false">delit.piwigoclient.ui.CustomScrollingViewBehavior</string>-->
 
     <string name="ad_id_album_banner" translatable="false">ca-app-pub-1408465472557768/1316125026</string>
     <string name="ad_id_album_create_banner" translatable="false">ca-app-pub-1408465472557768/9877975475</string>

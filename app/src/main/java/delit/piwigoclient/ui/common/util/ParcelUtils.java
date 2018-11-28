@@ -201,10 +201,4 @@ public class ParcelUtils {
         HashMap<S,T> map = new HashMap<>(0);
         return readMap(in, map, loader);
     }
-
-    public static <T extends Parcelable> ArrayList<T> readTypedList(Parcel in, Parcelable.Creator<T> creator) {
-        ArrayList<T> data = new ArrayList<T>();
-        in.readTypedList(data, creator);
-        return data;
-    }
 }

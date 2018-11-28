@@ -408,6 +408,10 @@ public class CustomSlidingLayer extends FrameLayout {
         invalidate(getLeft(), getTop(), getRight(), getBottom());
     }
 
+    public Drawable getShadowDrawable() {
+        return mShadowDrawable;
+    }
+
     /**
      * Sets a drawable resource that will be used to create the shadow for the
      * layer.

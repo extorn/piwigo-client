@@ -110,6 +110,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.util.SetUtils;
+import io.fabric.sdk.android.services.common.Crash;
 
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
@@ -1460,26 +1461,30 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             return;
         }
         CategoryItem movedParent = basket.getContentParent();
-        basket.removeItem(response.getPiwigoResource());
-        movedParent.reducePhotoCount();
-        if (movedParent.getRepresentativePictureId() != null && response.getPiwigoResource().getId() == movedParent.getRepresentativePictureId()) {
-            if (movedParent.getPhotoCount() > 0) {
-                movedResourceParentUpdateRequired = true;
+        boolean itemRemoved = basket.removeItem(response.getPiwigoResource());
+        if(itemRemoved) {
+            movedParent.reducePhotoCount();
+            if (movedParent.getRepresentativePictureId() != null && response.getPiwigoResource().getId() == movedParent.getRepresentativePictureId()) {
+                if (movedParent.getPhotoCount() > 0) {
+                    movedResourceParentUpdateRequired = true;
+                }
             }
+            if (basket.getItemCount() == 0 && movedResourceParentUpdateRequired) {
+                movedResourceParentUpdateRequired = false;
+                addActiveServiceCall(R.string.progress_move_resources, new AlbumThumbnailUpdatedResponseHandler(movedParent.getId(), movedParent.getParentId(), null).invokeAsync(getContext()));
+            }
+
+            updateBasketDisplay(basket);
+
+            // Now ensure any parents are also updated when next shown
+            notifyAllParentAlbumsOfContentChange();
+
+            //we've altered the album content (now update this album view to reflect the server content)
+            galleryIsDirty = true;
+            reloadAlbumContent();
+        } else {
+            Crashlytics.log(Log.ERROR, getTag(), "processed onResourceMoved but basket (" + basket.getItemCount() + " items) does not contain resource");
         }
-        if (basket.getItemCount() == 0 && movedResourceParentUpdateRequired) {
-            movedResourceParentUpdateRequired = false;
-            addActiveServiceCall(R.string.progress_move_resources, new AlbumThumbnailUpdatedResponseHandler(movedParent.getId(), movedParent.getParentId(), null).invokeAsync(getContext()));
-        }
-
-        updateBasketDisplay(basket);
-
-        // Now ensure any parents are also updated when next shown
-        notifyAllParentAlbumsOfContentChange();
-
-        //we've altered the album content (now update this album view to reflect the server content)
-        galleryIsDirty = true;
-        reloadAlbumContent();
     }
 
     private void onResourcesDeleted(ImageDeleteResponseHandler.PiwigoDeleteImageResponse response) {

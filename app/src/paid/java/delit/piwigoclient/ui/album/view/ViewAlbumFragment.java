@@ -253,15 +253,17 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
                 throw new IllegalStateException("Unable to process. Not all resources are ready yet");
             }
             HashMap<ResourceItem, ArrayList<Tag>> tagMembershipChangesPending = new HashMap<>(resourcesReadyToProcess.size());
-            for (ResourceItem r : resourcesReadyToProcess) {
-                ArrayList<Tag> tagsAdded = new ArrayList<>(tagsToAdd.size());
-                for (Tag t : tagsToAdd) {
-                    if (r.getTags().add(t)) {
-                        tagsAdded.add(t);
+            if(tagsToAdd != null) {
+                for (ResourceItem r : resourcesReadyToProcess) {
+                    ArrayList<Tag> tagsAdded = new ArrayList<>(tagsToAdd.size());
+                    for (Tag t : tagsToAdd) {
+                        if (r.getTags().add(t)) {
+                            tagsAdded.add(t);
+                        }
                     }
-                }
-                if (tagsAdded.size() > 0) {
-                    tagMembershipChangesPending.put(r, tagsAdded);
+                    if (tagsAdded.size() > 0) {
+                        tagMembershipChangesPending.put(r, tagsAdded);
+                    }
                 }
             }
             // remove all those resources for which no change will be made.

@@ -29,15 +29,15 @@ public class ImagesGetResponseHandler extends BaseImagesGetResponseHandler {
         public ResourceItem parseAndProcessResourceData(JsonObject image) throws JSONException {
             ResourceItem item = super.parseAndProcessResourceData(image);
 
-            Boolean isFavorite = null;
-            JsonElement favoriteJsonElem = image.get("isFavorite");
-            if (favoriteJsonElem != null && !favoriteJsonElem.isJsonNull()) {
-                isFavorite = favoriteJsonElem.getAsBoolean();
-            }
-
-            if(isFavorite != null) {
-                item.setFavorite(isFavorite);
-            }
+//            Boolean isFavorite = null;
+//            JsonElement favoriteJsonElem = image.get("isFavorite");
+//            if (favoriteJsonElem != null && !favoriteJsonElem.isJsonNull()) {
+//                isFavorite = favoriteJsonElem.getAsBoolean();
+//            }
+//
+//            if(isFavorite != null) {
+//                item.setFavorite(isFavorite);
+//            }
 
             return item;
         }

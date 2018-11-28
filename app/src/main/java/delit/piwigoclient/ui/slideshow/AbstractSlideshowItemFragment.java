@@ -21,6 +21,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
+
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,6 +46,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -143,6 +146,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private TextView resourceRatingScoreField;
     private transient boolean isPrimarySlideshowItem;
     private transient boolean doOnPageSelectedAndAddedRun;
+    private ViewVisibleControl overlaysVisibilityControl;
+    private TextView resourceTitleView;
 
     public static <S extends ResourceItem> Bundle buildArgs(S model, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
@@ -270,6 +275,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     public void onStart() {
         super.onStart();
         // need to do this here because text fields don't update correctly when set in onCreateView / onViewCreated
+        resourceTitleView.setText(model.getName());
         fillResourceEditFields();
     }
 
@@ -289,6 +295,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 return onUseAsAlbumThumbnailSelectAlbum();
             }
         });
+
+        resourceTitleView = v.findViewById(R.id.slideshow_resource_item_title);
 
         averageRatingsBar = v.findViewById(R.id.slideshow_image_average_ratingBar);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -311,7 +319,79 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if(AlbumViewPreferences.isSlideshowExtraInfoShadowTransparent(getPrefs(), getContext())) {
             bottomSheet.setShadowDrawable(null);
         }
+
+        overlaysVisibilityControl = new ViewVisibleControl(setAsAlbumThumbnail,itemPositionTextView,averageRatingsBar, resourceTitleView);
+        overlaysVisibilityControl.setVisibility(View.VISIBLE);
+
         return v;
+    }
+
+    protected void addViewVisibleControl(View v) {
+        overlaysVisibilityControl.addView(v);
+    }
+
+    public ViewVisibleControl getOverlaysVisibilityControl() {
+        return overlaysVisibilityControl;
+    }
+
+    public static class ViewVisibleControl implements Runnable {
+
+        private long delayMillis = 2000;
+        private List<View> views;
+        private int visibilityOnRun = View.INVISIBLE;
+        private long timerStarted;
+        private CustomSlidingLayer bottomSheet;
+        private Drawable shadowDrawable;
+
+        public ViewVisibleControl(View ... views) {
+            this.views = new ArrayList<>(Arrays.asList(views));
+        }
+
+        public void setDelayMillis(long delayMillis) {
+            this.delayMillis = delayMillis;
+        }
+
+        public void setVisibilityOnRun(int visibility) {
+            this.visibilityOnRun = visibility;
+        }
+
+        private void setVisibility(int visibility) {
+            for(View v : views) {
+                v.setVisibility(visibility);
+            }
+            if(bottomSheet != null) {
+                Drawable currentDrawable = bottomSheet.getShadowDrawable();
+                if(currentDrawable != null) {
+                    shadowDrawable = currentDrawable;
+                }
+                bottomSheet.setShadowDrawable(visibility == View.VISIBLE ? shadowDrawable : null);
+
+            }
+        }
+
+        @Override
+        public synchronized void run() {
+            if(timerStarted + delayMillis - System.currentTimeMillis() > 0) {
+                // another trigger has been added.
+                return;
+            }
+            setVisibility(visibilityOnRun);
+        }
+
+        public synchronized void runWithDelay(View v) {
+            timerStarted = System.currentTimeMillis();
+            setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+            v.postDelayed(this, 2000);
+        }
+
+        public synchronized void addView(View v) {
+            setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+            views.add(v);
+        }
+
+        public void addBottomSheetTransparency(CustomSlidingLayer bottomSheet) {
+            this.bottomSheet = bottomSheet;
+        }
     }
 
     protected @LayoutRes
@@ -356,6 +436,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
     }
 
+    protected CustomSlidingLayer getBottomSheet() {
+        return bottomSheet;
+    }
+
     private void updateInformationShowingStatus() {
         if (informationShowing) {
             bottomSheet.openLayer(false);
@@ -396,6 +480,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     protected void setupImageDetailPopup(View v, Bundle savedInstanceState) {
+
         resourceNameView = v.findViewById(R.id.slideshow_image_details_name);
         resourceDescriptionView = v.findViewById(R.id.slideshow_image_details_description);
         resourceRatingScoreField = v.findViewById(R.id.slideshow_image_details_rating_score);
@@ -754,13 +839,14 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         uiHelper.registerToActiveServiceCalls();
         uiHelper.setBlockDialogsFromShowing(false);
         uiHelper.handleAnyQueuedPiwigoMessages();
-        setTitleBar();
+//        setTitleBar();
+        overlaysVisibilityControl.setVisibility(View.VISIBLE);
     }
 
     private void setTitleBar() {
-        ToolbarEvent event = new ToolbarEvent();
+        /*ToolbarEvent event = new ToolbarEvent();
         event.setTitle(model.getName());
-        EventBus.getDefault().post(event);
+        EventBus.getDefault().post(event);*/
     }
 
     @Override

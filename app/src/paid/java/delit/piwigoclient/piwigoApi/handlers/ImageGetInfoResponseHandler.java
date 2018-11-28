@@ -1,6 +1,7 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.json.JSONException;
@@ -36,6 +37,16 @@ public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseIma
             JsonArray tagsElem = image.get("tags").getAsJsonArray();
             HashSet<Tag> tags = TagsGetListResponseHandler.parseTagsFromJson(tagsElem);
             resourceItem.setTags(tags);
+
+            Boolean isFavorite = null;
+            JsonElement favoriteJsonElem = image.get("isFavorite");
+            if (favoriteJsonElem != null && !favoriteJsonElem.isJsonNull()) {
+                isFavorite = favoriteJsonElem.getAsBoolean();
+            }
+
+            if(isFavorite != null) {
+                resourceItem.setFavorite(isFavorite);
+            }
 
             return resourceItem;
         }

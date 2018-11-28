@@ -80,20 +80,27 @@
     <string-array name="planned_releases">
         <item>Die Zukunft</item>
         <item>"Änderungen:
-         - Möglicherweise: erlauben Sie die Verknüpfung des Upload-Prozesses mit einer Kompressionsroutine für Videos.
-         - Möglicherweise: Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Waisenkinder erstellen).
-         - Möglicherweise: Orphan File Management
-         - Möglicherweise: Erlaubt es dem Benutzer, in der Diashow herauszuzoomen (Ansicht kleiner als Vollbild).
-         - Möglicherweise: Untersuchung der Hinzufügung von Unterstützung für farbiges Tag-Plugin
-         - Möglicherweise: Merken Sie sich das zuvor geöffnete Foto oder Album, wenn der Benutzer die App öffnet.
-         - Möglicherweise: Nur kostenpflichtige App: Die Idee der Zufallsfotos, die auf der Piwigo-Weboberfläche umgesetzt wurde.
-         - Möglicherweise: Nur kostenpflichtige App: Unterstützung für Benutzerkommentare
-         - Möglicherweise: Nur kostenpflichtige App: Benachrichtigen Sie den Benutzer über verfügbare Server-Updates.
-         - Möglicherweise: Nur kostenpflichtige App: Unterstützung für die Bearbeitung von EXIF und anderen Metadatenformaten für Bilder.
-         - Möglicherweise: Nur kostenpflichtige App: Fügen Sie eine Präferenz hinzu, um das Ein- und Ausblenden der EXIF- und anderen Felder von Interesse oder nicht von Interesse zu ermöglichen.
-         - Möglicherweise: Screen Cast irgendeiner Art, um den Spiegel des Geräts auf einem größeren Bildschirm zu ermöglichen.
-         - Möglicherweise: Unterstützt das Strecken oder Zuschneiden von Bildern, um den Bildschirm des Geräts zu füllen.
-         - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann."</item>
+         - Möglicherweise:
+            - Entfernung aller oder der meisten Anzeigen zugunsten einer kostenlosen Probezeit, gefolgt von einem abonnementbasierten Zahlungsmodell
+            - Automatische Bildrotation basierend auf Geräteausrichtung, Geräteausrichtung, Geräteausrichtung, Geräteausrichtung ignoriert Bildschirmrotationssperre
+            - Überprüfen Sie den aktuellen Anmeldestatus, um sicherzustellen, dass die Alben- und Bildlisten immer korrekt sind
+            - Überprüfen Sie die Unterstützung für den Upload auf ältere Server (z.B. piwigo.com - Version 2.8a)
+            - Erlaubt die Verknüpfung des Hochladevorgangs mit einer Komprimierungsroutine für Videos
+            - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Waisenkinder erstellen)
+            - Verwaltung von verwaisten Dateien
+            - Erlaubt es dem Benutzer, in der Diashow herauszuzoomen (Ansicht kleiner als Vollbild)
+            - Untersuchung der Hinzufügung von Unterstützung für farbiges Tag-Plugin
+            - Merken Sie sich das zuvor geöffnete Foto oder Album, wenn der Benutzer die App öffnet
+            - Unterstützt das Strecken oder Zuschneiden von Bildern, um den Bildschirm des Geräts zu füllen
+         - Möglicherweise (nur kostenpflichtige App):
+            - Favoritenliste anzeigen
+            - Die Idee der Zufallsfotos, die auf der Piwigo-Weboberfläche umgesetzt wurde
+            - Unterstützung für Benutzerkommentare
+            - Benachrichtigen Sie den Benutzer über verfügbare Server-Updates
+            - Unterstützung für die Bearbeitung von EXIF und anderen Bild-Metadatenformaten
+            - Präferenz hinzufügen, um das Ein-/Ausblenden der EXIF- und anderen Felder von Interesse oder nicht von Interesse zu ermöglichen
+            - Bildschirmabdruck einer Art, der es ermöglicht, die Vorrichtung auf einem größeren Bildschirm zu spiegeln
+         - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann"</item>
         <item>1.3.98</item>
         <item>"Erwartete Lieferung:
          - Ende November 2018
@@ -104,6 +111,11 @@
         </item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.97.6</item>
+        <item>"Änderungen:
+            - Schaltflächen im Vollbildmodus und in der Videoansicht nach 2 Sekunden ausblenden (berühren zum Anzeigen)
+            Fehlerbehebung:
+            - falsches Speichern der Albumansicht verursacht Absturz bei der App-Pause"</item>
         <item>1.3.97.5</item>
         <item>"Fehlerbehebung:
             - Das seltsame Verhalten bei Verbindungsprofilen wurde korrigiert."</item>

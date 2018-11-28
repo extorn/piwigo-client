@@ -29,6 +29,23 @@
             app:srcCompat="@drawable/ic_wallpaper_black_24dp" />
 
         <TextView
+            android:id="@+id/slideshow_resource_item_title"
+            android:paddingTop="5dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:shadowColor="@color/primary"
+            android:shadowRadius="6"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:layout_below="@id/slideshow_image_favorite"
+            android:layout_alignParentStart="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            tools:text="Image 20121.jpg"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
+
+        <TextView
             android:id="@+id/slideshow_resource_item_x_of_y_text"
             android:paddingTop="5dp"
             android:paddingStart="0dp"
@@ -75,7 +92,7 @@
             android:visibility="gone"
             tools:visibility="visible"/>
 
-        <!--<com.ortiz.touch.TouchImageView
+        <!--<com.ortiz.touchview.TouchImageView
             android:id="@+id/slideshow_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

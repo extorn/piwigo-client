@@ -140,8 +140,9 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         spacerAlbums = spacerAlbumsNeeded;
         if (spacerAlbumsNeeded > 0) {
             // add correct number of spacers
+            long blankId = CategoryItem.BLANK.getId();
             for (int i = 0; i < spacerAlbumsNeeded; i++) {
-                items.add(CategoryItem.BLANK);
+                items.add(CategoryItem.BLANK.clone().withId(blankId++));
             }
             // ensure spacers are always placed before images etc.
             Collections.sort(items, itemComparator);
@@ -165,7 +166,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         if (removedItem instanceof CategoryItem) {
             if (removedItem == CategoryItem.ADVERT || removedItem == GalleryItem.PICTURE_HEADING || removedItem == CategoryItem.ALBUM_HEADING) {
                 bannerCount--;
-            } else if (removedItem == CategoryItem.BLANK) {
+            } else if (CategoryItem.BLANK.equals(removedItem)) {
                 subAlbumCount--;
             }
         } else {

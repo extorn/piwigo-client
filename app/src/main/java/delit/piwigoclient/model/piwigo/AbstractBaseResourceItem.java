@@ -40,7 +40,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         averageRating = in.readFloat();
         ratingsGiven = in.readInt();
         privacyLevel = in.readInt();
-        availableFiles = ParcelUtils.readTypedList(in, ResourceFile.CREATOR);
+        availableFiles = in.createTypedArrayList(ResourceFile.CREATOR);
         fullSizeImage = in.readParcelable(getClass().getClassLoader());
         linkedAlbums = ParcelUtils.readLongSet(in, null);
         fileChecksum = in.readString();

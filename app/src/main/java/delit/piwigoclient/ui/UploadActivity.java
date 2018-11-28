@@ -12,11 +12,14 @@ import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.appbar.AppBarLayout;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -78,6 +81,7 @@ public class UploadActivity extends MyActivity {
     private int fileSelectionEventId;
     private boolean startedWithPermissions;
     private Toolbar toolbar;
+    private AppBarLayout appBar;
 
     public static Intent buildIntent(Context context, CategoryItemStub currentAlbum) {
         Intent intent = new Intent(context, UploadActivity.class);
@@ -137,6 +141,7 @@ public class UploadActivity extends MyActivity {
         } else {
             setContentView(R.layout.activity_upload);
             toolbar = findViewById(R.id.toolbar);
+            appBar = findViewById(R.id.appbar);
             if(BuildConfig.DEBUG) {
                 toolbar.setTitle(getString(R.string.upload_page_title) + " ("+BuildConfig.FLAVOR+')');
             } else {
@@ -402,6 +407,7 @@ public class UploadActivity extends MyActivity {
         } else if(event.isContractToolbarView()) {
             ((AppBarLayout) toolbar.getParent()).setExpanded(false, true);
         }
+        appBar.setEnabled(event.getTitle()!= null);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
