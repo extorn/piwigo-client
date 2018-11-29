@@ -407,7 +407,7 @@ public class UploadJob implements Serializable {
     }
 
     public boolean hasBeenRunBefore() {
-        return filePartialUploadProgress.size() > 0;
+        return loadedFromFile != null || filePartialUploadProgress.size() > 0;
     }
 
     public File getLoadedFromFile() {
