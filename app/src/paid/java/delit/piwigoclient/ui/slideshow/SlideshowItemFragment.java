@@ -281,7 +281,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
                 }
                 onGalleryItemActionFinished();
             } else if(response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
-                getUiHelper().showToast(R.string.resource_details_updated_message);
+                getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.resource_details_updated_message));
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }

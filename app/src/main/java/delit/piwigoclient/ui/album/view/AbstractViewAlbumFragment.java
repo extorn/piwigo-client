@@ -110,7 +110,6 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.util.SetUtils;
-import io.fabric.sdk.android.services.common.Crash;
 
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
@@ -1335,12 +1334,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void onMoveItem(CategoryItem model) {
         //TODO implement this
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unimplemented));
+        getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unimplemented));
     }
 
     private void onCopyItem(CategoryItem model) {
         //TODO implement this
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unimplemented));
+        getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unimplemented));
     }
 
     @Override
@@ -1847,7 +1846,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 //You've attempted to remove your own permission to access this album. Adding it back in.
                 currentUsers = Arrays.copyOf(currentUsers, currentUsers.length + 1);
                 currentUsers[currentUsers.length - 1] = currentLoggedInUserId;
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_information_own_user_readded_to_permissions_list));
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_information_own_user_readded_to_permissions_list));
             }
             fillUsernamesField(allowedUsersField, usernameSelectionCompleteEvent.getSelectedItems());
         }

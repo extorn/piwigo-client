@@ -1,8 +1,11 @@
 package delit.piwigoclient.ui.common;
 
 import android.content.SharedPreferences;
+import android.view.View;
+
 import androidx.fragment.app.Fragment;
 
+import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
 /**
@@ -17,6 +20,13 @@ public class ActivityUIHelper extends UIHelper<MyActivity> {
     @Override
     protected boolean canShowDialog() {
         return super.canShowDialog() && !getParent().isFinishing();
+    }
+
+    @Override
+    protected View getParentView() {
+        View v = getParent().getWindow().getDecorView().findViewById(android.R.id.content);
+        View iv = v.findViewById(R.id.main_view);
+        return iv != null ? iv : v;
     }
 
     @Override

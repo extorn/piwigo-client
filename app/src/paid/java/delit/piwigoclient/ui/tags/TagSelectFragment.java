@@ -295,7 +295,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
         Tag t = new Tag(tagsModel.findAnIdNotYetPresentInTheList(), tagName);
         insertNewTagToList(t);
-        getUiHelper().showShortDetailedToast(R.string.alert_warning, R.string.tag_will_be_created_when_resource_is_saved);
+        getUiHelper().showDetailedShortMsg(R.string.alert_warning, R.string.tag_will_be_created_when_resource_is_saved);
     }
 
     @Override

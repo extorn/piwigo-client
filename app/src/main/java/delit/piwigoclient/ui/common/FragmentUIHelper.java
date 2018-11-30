@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
+
 import androidx.fragment.app.Fragment;
 
 /**
@@ -15,6 +17,11 @@ public class FragmentUIHelper extends UIHelper<Fragment> {
 
     public FragmentUIHelper(Fragment parent, SharedPreferences prefs, Context context) {
         super(parent, prefs, context);
+    }
+
+    @Override
+    protected View getParentView() {
+        return getParent().getView();
     }
 
     @Override

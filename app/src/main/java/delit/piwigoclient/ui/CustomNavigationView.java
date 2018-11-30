@@ -200,7 +200,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     private void onLogin(PiwigoSessionDetails oldCredentials) {
         lockAppInReadOnlyMode(false);
         uiHelper.closeAllDialogs();
-        uiHelper.showOrQueueDialogMessage(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
+        uiHelper.showDetailedMsg(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
         EventBus.getDefault().post(new AppUnlockedEvent());
     }
 
@@ -221,7 +221,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         String savedPassword = ConnectionPreferences.getActiveProfile().getPiwigoPasswordNotNull(prefs, getContext());
         if (savedPassword.equals(event.getPassword())) {
             lockAppInReadOnlyMode(false);
-            uiHelper.showOrQueueDialogMessage(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
+            uiHelper.showDetailedMsg(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
             EventBus.getDefault().post(new AppUnlockedEvent());
         } else {
             // attempt login to PIWIGO server using this password.

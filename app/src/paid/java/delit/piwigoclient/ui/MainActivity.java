@@ -90,21 +90,21 @@ public class MainActivity extends AbstractMainActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(BackgroundUploadThreadTerminatedEvent event) {
-        getUiHelper().showToast(getString(R.string.alert_auto_upload_service_stopped));
+        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_stopped));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(BackgroundUploadThreadStartedEvent event) {
-        getUiHelper().showToast(R.string.alert_auto_upload_service_started);
+        getUiHelper().showShortMsg(R.string.alert_auto_upload_service_started);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(BackgroundUploadStartedEvent event) {
         String uploadingToServer = event.getUploadJob().getConnectionPrefs().getPiwigoServerAddress(prefs, getApplicationContext());
         if(event.isJobBeingRerun()) {
-            getUiHelper().showToast(getString(R.string.alert_auto_upload_service_job_restarted, uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
+            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_restarted, uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
         } else {
-            getUiHelper().showToast(getString(R.string.alert_auto_upload_service_job_started, uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
+            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_started, uploadingToServer, event.getUploadJob().getFilesForUpload().size()));
         }
     }
 
@@ -112,18 +112,18 @@ public class MainActivity extends AbstractMainActivity {
     public void onEvent(BackgroundUploadStoppedEvent event) {
         String uploadingToServer = event.getUploadJob().getConnectionPrefs().getPiwigoServerAddress(prefs, getApplicationContext());
         if(event.getUploadJob().isFinished()) {
-            getUiHelper().showToast(getString(R.string.alert_auto_upload_service_job_finished_success, uploadingToServer));
+            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_finished_success, uploadingToServer));
         } else {
             if(event.getUploadJob().getFilesNotYetUploaded().size() < event.getUploadJob().getFilesForUpload().size()) {
-                getUiHelper().showLongToast(getString(R.string.alert_auto_upload_service_job_finished_partial_success, uploadingToServer));
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_finished_partial_success, uploadingToServer));
             } else {
-                getUiHelper().showLongToast(getString(R.string.alert_auto_upload_service_job_finished_failure, uploadingToServer));
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_job_finished_failure, uploadingToServer));
             }
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(BackgroundUploadThreadCheckingForTasksEvent event) {
-        getUiHelper().showToast(getString(R.string.alert_auto_upload_service_checking_for_tasks));
+        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_auto_upload_service_checking_for_tasks));
     }
 }

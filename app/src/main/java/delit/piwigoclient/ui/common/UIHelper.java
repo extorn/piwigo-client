@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -11,6 +13,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,11 +64,15 @@ import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.util.ToastUtils;
+import delit.piwigoclient.util.CustomSnackbar;
+import delit.piwigoclient.util.TransientMsgUtils;
 import delit.piwigoclient.util.X509Utils;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 /**
  * Created by gareth on 13/10/17.
@@ -79,9 +87,13 @@ public abstract class UIHelper<T> {
     private static final String STATE_ACTIONS_ON_RESPONSES = "UIHelper.actionOnResponse";
     private static final String STATE_RUN_WITH_PERMS_LIST = "UIHelper.runWithPermsList";
     private static final String STATE_PERMS_FOR_REASON = "UIHelper.reasonForPermissionsRequired";
+    private static final String STATE_SIMPLE_MESSAGE_QUEUE = "UIHelper.simpleMessageQueue";
+    private static final String STATE_DIALOG_MESSAGE_QUEUE = "UIHelper.dialogMessageQueue";
     private final T parent;
     private final SharedPreferences prefs;
-    private final Queue<QueuedMessage> messageQueue = new LinkedBlockingQueue<>(100);
+    private final Queue<QueuedDialogMessage> dialogMessageQueue = new LinkedBlockingQueue<>(20);
+    private final Queue<QueuedSimpleMessage> simpleMessageQueue = new LinkedBlockingQueue<>(10);
+    private boolean toastShowing = false;
     private Context context;
     private DismissListener dismissListener;
     private AlertDialog alertDialog;
@@ -162,54 +174,105 @@ public abstract class UIHelper<T> {
         return this.context != context;
     }
 
-    public void showShortDetailedToast(@StringRes int titleResId, @StringRes int messageResId) {
-        showDetailedToast(titleResId, getContext().getString(messageResId), Toast.LENGTH_SHORT);
+    public void showDetailedMsg(@StringRes int titleResId, @StringRes int messageResId) {
+        showDetailedMsg(titleResId, getContext().getString(messageResId), Toast.LENGTH_LONG);
     }
 
-    public void showDetailedToast(@StringRes int titleResId, @StringRes int messageResId) {
-        showDetailedToast(titleResId, getContext().getString(messageResId), Toast.LENGTH_LONG);
+    public void showDetailedShortMsg(@StringRes int titleResId, @StringRes int messageResId) {
+        showDetailedMsg(titleResId, getContext().getString(messageResId), Toast.LENGTH_LONG);
     }
 
-    public void showShortDetailedToast(@StringRes int titleResId, String message) {
-        showDetailedToast(titleResId, message, Toast.LENGTH_SHORT);
+    public void showDetailedShortMsg(@StringRes int titleResId, String message) {
+        showDetailedMsg(titleResId, message, Toast.LENGTH_SHORT);
     }
 
-    public void showDetailedToast(@StringRes int titleResId, String message) {
-        showDetailedToast(titleResId, message, Toast.LENGTH_LONG);
+    public void showDetailedMsg(@StringRes int titleResId, String message) {
+        showDetailedMsg(titleResId, message, Toast.LENGTH_LONG);
     }
 
-    public void showDetailedToast(@StringRes int titleResId, String message, int duration) {
-        ToastUtils.makeDetailedToast(getContext(), titleResId, message, duration).show();
+    public synchronized void showDetailedMsg(@StringRes int titleResId, String message, int duration) {
+        simpleMessageQueue.add(new QueuedSimpleMessage(titleResId, message, duration));
+        if(!toastShowing) {
+            showQueuedMsg();
+        }
     }
 
-    public void showToast(@StringRes int messageResId) {
-        Toast toast = Toast.makeText(getContext().getApplicationContext(), messageResId, Toast.LENGTH_SHORT);
-        toast.show();
+    public void showShortMsg(@StringRes int messageResId) {
+        showDetailedShortMsg(messageResId, null);
     }
 
-    public void showToast(String message) {
-        Toast toast = Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_SHORT);
-        toast.show();
+    protected void showQueuedMsg() {
+        final CustomSnackbar snackbar;
+        toastShowing = true;
+        QueuedSimpleMessage toastMsg = simpleMessageQueue.remove();
+        final String message;
+        if(toastMsg.message == null) {
+            message = getContext().getString(toastMsg.titleResId);
+            snackbar = TransientMsgUtils.makeSnackbar(getParentView(), toastMsg.titleResId, null, toastMsg.getSnackbarDuration());
+        } else {
+            message = toastMsg.message;
+            snackbar = TransientMsgUtils.makeSnackbar(getParentView(), toastMsg.titleResId, toastMsg.message, toastMsg.getSnackbarDuration());
+        }
+        snackbar.addCallback(new CustomSnackbar.BaseCallback() {
+            private boolean dismissHandled;
+
+            @Override
+            public void onDismissed(CustomSnackbar transientBottomBar, int event) {
+                super.onDismissed(transientBottomBar, event);
+                if(!dismissHandled && !simpleMessageQueue.isEmpty()) {
+                    showQueuedMsg();
+                }
+            }
+            @Override
+            public boolean onLongClick(View v) {
+                ClipboardManager clipboardService = (ClipboardManager) v.getContext().getApplicationContext().getSystemService(CLIPBOARD_SERVICE);
+                clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
+                dismissHandled = true;
+                snackbar.dismiss();
+                CustomSnackbar snackbarNotification = TransientMsgUtils.makeSnackbar(getParentView(), R.string.copied_to_clipboard, null, CustomSnackbar.LENGTH_SHORT);
+                snackbarNotification.getView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+                    @Override
+                    public void onViewAttachedToWindow(View v) {
+                        //do nothing.
+                    }
+
+                    @Override
+                    public void onViewDetachedFromWindow(View v) {
+                        if(!simpleMessageQueue.isEmpty()) {
+                            showQueuedMsg();
+                        }
+                    }
+                });
+                snackbarNotification.show();
+                return false;
+            }
+        });
+        snackbar.show();
     }
 
-    public void showLongToast(String message) {
-        Toast toast = Toast.makeText(getContext().getApplicationContext(), message, Toast.LENGTH_LONG);
-        toast.show();
-    }
-
-    public void showLongToast(@StringRes int messageResId) {
-        Toast toast = Toast.makeText(getContext().getApplicationContext(), messageResId, Toast.LENGTH_LONG);
-        toast.show();
-    }
+    protected abstract View getParentView();
 
     public T getParent() {
         return parent;
     }
 
+    public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker) {
+        worker.setRunInBackground(true);
+        long msgId = worker.getMessageId();
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(msgId, piwigoResponseListener);
+        worker.invokeAsync(context);
+        return msgId;
+    }
+
+    public long invokeSilentServiceCall(AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
+        addActionOnResponse(worker.getMessageId(), actionOnResponse);
+        return invokeSilentServiceCall(worker);
+    }
+
     public void addBackgroundServiceCall(long messageId) {
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
     }
-    
+
     private  boolean isProgressIndicatorVisible() {
         if(progressIndicator == null) {
             loadProgressIndicatorIfPossible();
@@ -241,7 +304,7 @@ public abstract class UIHelper<T> {
 
     public void addNonBlockingActiveServiceCall(String titleString, long messageId) {
 //        activeServiceCalls.add(messageId);
-//        showToast(titleString);
+//        showShortMsg(titleString);
 //        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
         addActiveServiceCall(titleString, messageId);
     }
@@ -314,7 +377,7 @@ public abstract class UIHelper<T> {
         nextMessage.getListener().onShow(alertDialog);
     }
 
-    protected void showDialog(final QueuedMessage nextMessage) {
+    protected void showDialog(final QueuedDialogMessage nextMessage) {
         buildAlertDialog();
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
@@ -338,6 +401,11 @@ public abstract class UIHelper<T> {
         if (l != null) {
             l.onShow(alertDialog);
         }
+    }
+
+    public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker) {
+        addActiveServiceCall(progressMsg, worker.getMessageId());
+        worker.invokeAsync(context);
     }
 
     public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
@@ -381,8 +449,12 @@ public abstract class UIHelper<T> {
         thisBundle.putSerializable(STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
         thisBundle.putSerializable(STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
         thisBundle.putInt(STATE_PERMS_FOR_REASON, permissionsNeededReason);
+        BundleUtils.writeQueue(thisBundle, STATE_SIMPLE_MESSAGE_QUEUE, simpleMessageQueue);
+        BundleUtils.writeQueue(thisBundle, STATE_DIALOG_MESSAGE_QUEUE, dialogMessageQueue);
+
         piwigoResponseListener.onSaveInstanceState(thisBundle);
         outState.putBundle(STATE_UIHELPER, thisBundle);
+
     }
 
     public void onRestoreSavedInstanceState(Bundle savedInstanceState) {
@@ -400,6 +472,9 @@ public abstract class UIHelper<T> {
                 }
                 permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
                 piwigoResponseListener.onRestoreInstanceState(thisBundle);
+
+                BundleUtils.readQueue(savedInstanceState, STATE_SIMPLE_MESSAGE_QUEUE, simpleMessageQueue);
+                BundleUtils.readQueue(savedInstanceState, STATE_DIALOG_MESSAGE_QUEUE, dialogMessageQueue);
             }
         }
     }
@@ -417,9 +492,9 @@ public abstract class UIHelper<T> {
     }
 
     public void showNextQueuedMessage() {
-        if (messageQueue.size() > 0 && !isDialogShowing()) {
+        if (dialogMessageQueue.size() > 0 && !isDialogShowing()) {
             // show the dialog now we're able.
-            QueuedMessage nextMessage = messageQueue.peek();
+            QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
             if (nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage) nextMessage);
             } else if (nextMessage != null) {
@@ -537,7 +612,7 @@ public abstract class UIHelper<T> {
     }
 
     public boolean messagesQueuedOrShowing() {
-        return messageQueue.size() > 0;
+        return dialogMessageQueue.size() > 0;
     }
 
     protected boolean canShowDialog() {
@@ -618,7 +693,7 @@ public abstract class UIHelper<T> {
                     PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
                         @Override
                         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-                            showOrQueueMessage(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
+                            showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
                         }
                     });
                 }
@@ -648,24 +723,24 @@ public abstract class UIHelper<T> {
     }
 
     public void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId) {
-        showOrQueueDialogMessage(new QueuedMessage(titleId, message, null, positiveButtonTextId));
+        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, positiveButtonTextId));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedMessage(titleId, message, null, positiveButtonTextId, cancellable, listener));
+        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, positiveButtonTextId, cancellable, listener));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message, QuestionResultListener listener) {
-        showOrQueueDialogMessage(new QueuedMessage(titleId, message, null, listener));
+        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null, listener));
     }
 
     public void showOrQueueDialogMessage(int titleId, String message) {
-        showOrQueueDialogMessage(new QueuedMessage(titleId, message, null));
+        showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null));
     }
 
-    public <S extends QueuedMessage> void showOrQueueDialogMessage(S message) {
+    public <S extends QueuedDialogMessage> void showOrQueueDialogMessage(S message) {
         if (!isDialogShowing() && canShowDialog()) {
-            QueuedMessage nextMessage = messageQueue.peek();
+            QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
             if (nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage) nextMessage);
             } else if (nextMessage != null) {
@@ -673,11 +748,11 @@ public abstract class UIHelper<T> {
             }
         }
 
-        if (!messageQueue.contains(message)) {
-            messageQueue.add(message);
+        if (!dialogMessageQueue.contains(message)) {
+            dialogMessageQueue.add(message);
         }
         if (!isDialogShowing() && canShowDialog()) {
-            QueuedMessage nextMessage = messageQueue.peek();
+            QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
             if (nextMessage instanceof QueuedQuestionMessage) {
                 showDialog((QueuedQuestionMessage) nextMessage);
             } else if (nextMessage != null) {
@@ -786,8 +861,54 @@ public abstract class UIHelper<T> {
         void onShow(AlertDialog alertDialog);
     }
 
-    private static class QueuedMessage implements Serializable {
-        private static final long serialVersionUID = 3026567735215782957L;
+    private static class QueuedSimpleMessage implements Parcelable {
+        private final int duration;
+        private final int titleResId;
+        private final String message;
+
+        public QueuedSimpleMessage(@StringRes int titleResId, String message, int duration) {
+            this.duration = duration;
+            this.titleResId = titleResId;
+            this.message = message;
+        }
+
+        public QueuedSimpleMessage(Parcel in) {
+            duration = in.readInt();
+            titleResId = in.readInt();
+            message = in.readString();
+        }
+
+
+        public static final Creator<QueuedSimpleMessage> CREATOR = new Creator<QueuedSimpleMessage>() {
+            @Override
+            public QueuedSimpleMessage createFromParcel(Parcel in) {
+                return new QueuedSimpleMessage(in);
+            }
+
+            @Override
+            public QueuedSimpleMessage[] newArray(int size) {
+                return new QueuedSimpleMessage[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(duration);
+            dest.writeInt(titleResId);
+            dest.writeString(message);
+        }
+
+        public int getSnackbarDuration() {
+            return duration == Toast.LENGTH_SHORT ? CustomSnackbar.LENGTH_SHORT : duration == Toast.LENGTH_LONG ? CustomSnackbar.LENGTH_LONG : CustomSnackbar.LENGTH_INDEFINITE;
+        }
+    }
+
+    private static class QueuedDialogMessage implements Parcelable {
         private final int titleId;
         private final String message;
         private final int positiveButtonTextId;
@@ -795,19 +916,28 @@ public abstract class UIHelper<T> {
         private final String detail;
         private final QuestionResultListener listener;
 
-        public QueuedMessage(int titleId, String message, String detail) {
+        public QueuedDialogMessage(Parcel in) {
+            titleId = in.readInt();
+            message = in.readString();
+            positiveButtonTextId = in.readInt();
+            cancellable = ParcelUtils.readValue(in,null, boolean.class);
+            detail = in.readString();
+            listener = (QuestionResultListener) in.readSerializable();
+        }
+
+        public QueuedDialogMessage(int titleId, String message, String detail) {
             this(titleId, message, detail, R.string.button_ok, true, null);
         }
 
-        public QueuedMessage(int titleId, String message, String detail, QuestionResultListener listener) {
+        public QueuedDialogMessage(int titleId, String message, String detail, QuestionResultListener listener) {
             this(titleId, message, detail, R.string.button_ok, true, listener);
         }
 
-        public QueuedMessage(int titleId, String message, String detail, int positiveButtonTextId) {
+        public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId) {
             this(titleId, message, detail, positiveButtonTextId, true, null);
         }
 
-        public QueuedMessage(int titleId, String message, String detail, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
+        public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
             this.titleId = titleId;
             if (message == null) {
                 throw new IllegalArgumentException("Message cannot be null");
@@ -818,6 +948,18 @@ public abstract class UIHelper<T> {
             this.detail = detail;
             this.cancellable = cancellable;
         }
+
+        public static final Creator<QueuedDialogMessage> CREATOR = new Creator<QueuedDialogMessage>() {
+            @Override
+            public QueuedDialogMessage createFromParcel(Parcel in) {
+                return new QueuedDialogMessage(in);
+            }
+
+            @Override
+            public QueuedDialogMessage[] newArray(int size) {
+                return new QueuedDialogMessage[size];
+            }
+        };
 
         public int getTitleId() {
             return titleId;
@@ -845,18 +987,33 @@ public abstract class UIHelper<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof QueuedMessage)) {
+            if (!(obj instanceof UIHelper.QueuedDialogMessage)) {
                 return false;
             }
-            QueuedMessage other = ((QueuedMessage) obj);
+            QueuedDialogMessage other = ((QueuedDialogMessage) obj);
             return titleId == other.titleId && message.equals(other.message);
         }
 
         public void populateCustomView(LinearLayout dialogView) {
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(titleId);
+            dest.writeString(message);
+            dest.writeInt(positiveButtonTextId);
+            dest.writeValue(cancellable);
+            dest.writeString(detail);
+            dest.writeSerializable(listener);
+        }
     }
 
-    private static class QueuedQuestionMessage extends QueuedMessage {
+    private static class QueuedQuestionMessage extends QueuedDialogMessage {
 
         private final int negativeButtonTextId;
         private final int layoutId;
@@ -953,8 +1110,8 @@ public abstract class UIHelper<T> {
         @Override
         public void onDismiss(DialogInterface dialog) {
             // remove the item we've just shown.
-            if (messageQueue.size() > 0) {
-                messageQueue.remove();
+            if (dialogMessageQueue.size() > 0) {
+                dialogMessageQueue.remove();
             } else {
                 Log.w("UiHelper", "Message queue was empty - strange");
             }
@@ -968,8 +1125,8 @@ public abstract class UIHelper<T> {
                 buildAlertDialog();
             }
 
-            if (messageQueue.size() > 0 && canShowDialog()) {
-                QueuedMessage nextMessage = messageQueue.peek();
+            if (dialogMessageQueue.size() > 0 && canShowDialog()) {
+                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
                 if (nextMessage instanceof QueuedQuestionMessage) {
                     showDialog((QueuedQuestionMessage) nextMessage);
                 } else if (nextMessage != null) {

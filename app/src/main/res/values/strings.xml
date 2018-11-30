@@ -827,4 +827,5 @@ SOFTWARE.
     <string name="please_read_and_agree_with_eula_first">Please read and confirm agreement with the terms of the EULA first</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Required Permissions were not granted. Action cancelled.</string>
     <string name="default_str">default</string>
+    <string name="copied_to_clipboard">Copied to Clipboard</string>
 </resources>

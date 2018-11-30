@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -35,7 +34,6 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
-import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.DisplayUtils;
 
@@ -267,7 +265,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                         File outputFile = new File(downloadsFolder, getModel().getDownloadFileName(selectedItem));
                         //TODO check what happens if file exists
                         //NOTE: Don't add to active service calls (we want control over the dialog displayed).
-                        addDownloadAction(new ImageGetToFileHandler(selectedItem.getUrl(), outputFile).invokeAsync(getContext()));
+                        addDownloadAction(getUiHelper().invokeSilentServiceCall(new ImageGetToFileHandler(selectedItem.getUrl(), outputFile)));
                     }
                 });
                 dialog.show();
@@ -283,7 +281,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Override
     public void onGetResource(final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
         super.onGetResource(response);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_image_download_title, getString(R.string.alert_image_download_complete_message));
+        getUiHelper().showDetailedMsg(R.string.alert_image_download_title, getString(R.string.alert_image_download_complete_message));
     }
 
     public String getCurrentImageUrlDisplayed() {

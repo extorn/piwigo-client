@@ -273,9 +273,14 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         }
     }
 
-    private class CustomUIHelper extends UIHelper {
-        public CustomUIHelper(Object parent, SharedPreferences prefs, Context context) {
+    private class CustomUIHelper extends UIHelper<DialogFragment> {
+        public CustomUIHelper(DialogFragment parent, SharedPreferences prefs, Context context) {
             super(parent, prefs, context);
+        }
+
+        @Override
+        protected View getParentView() {
+            return getParent().getView();
         }
 
         @Override

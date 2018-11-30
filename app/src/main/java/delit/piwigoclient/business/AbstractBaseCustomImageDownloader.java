@@ -32,7 +32,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.events.BadRequestUsesRedirectionServerEvent;
 import delit.piwigoclient.ui.events.BadRequestUsingHttpToHttpsServerEvent;
-import delit.piwigoclient.util.ToastUtils;
+import delit.piwigoclient.util.TransientMsgUtils;
 
 /**
  * Created by gareth on 18/05/17.
@@ -92,7 +92,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    ToastUtils.makeDetailedToast(context, R.string.alert_error, toastMessage, Toast.LENGTH_LONG).show();
+                    TransientMsgUtils.makeDetailedToast(context, R.string.alert_error, toastMessage, Toast.LENGTH_LONG).show();
                 }
             });
             int drawableId = errorDrawables.get(errorResponse.getStatusCode());

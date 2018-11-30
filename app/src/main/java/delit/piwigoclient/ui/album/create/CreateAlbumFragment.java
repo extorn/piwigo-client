@@ -165,11 +165,6 @@ public class CreateAlbumFragment extends MyFragment {
         }
     }
 
-    private void showDialogBox(int titleId, String message) {
-
-        getUiHelper().showOrQueueDialogMessage(titleId, message, R.string.button_close);
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -391,7 +386,7 @@ public class CreateAlbumFragment extends MyFragment {
     }
 
     private void informInterestedParties() {
-        showDialogBox(R.string.alert_success, getString(R.string.alert_album_created));
+        getUiHelper().showDetailedMsg(R.string.alert_success, getString(R.string.alert_album_created));
         CategoryItem newItem = new CategoryItem(newAlbum.getGalleryId(), newAlbum.getGalleryName(), newAlbum.getGalleryDescription(), newAlbum.isPrivate(), null, 0, 0, 0, null);
         newItem.setParentageChain(newAlbum.getParentageChain());
 
@@ -437,11 +432,11 @@ public class CreateAlbumFragment extends MyFragment {
             if (response instanceof PiwigoResponseBufferingHandler.RemoteErrorResponse) {
                 if (response.getMessageId() == createGalleryMessageId) {
                     // error action failed and server state unchanged.
-                    showDialogBox(R.string.alert_failure, getString(R.string.album_create_failed));
+                    getUiHelper().showDetailedMsg(R.string.alert_failure, getString(R.string.album_create_failed));
                 } else if (response.getMessageId() == setGalleryPermissionsMessageId) {
 //                    deleteGalleryMessageId = PiwigoAccessService.startActionDeleteAlbum(newAlbum.getGalleryId(), getContext());
 //                    callServer(deleteGalleryMessageId);
-                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
+                    getUiHelper().showDetailedMsg(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
                 } else if (response.getMessageId() == deleteGalleryMessageId) {
 //                    showDialogBox(R.string.alert_failure, getString(R.string.album_created_but_permissions_set_failed));
                 }

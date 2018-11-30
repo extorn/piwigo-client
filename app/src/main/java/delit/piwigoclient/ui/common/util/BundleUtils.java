@@ -16,8 +16,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
+import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.util.ArrayUtils;
 
 public class BundleUtils {
@@ -221,4 +223,19 @@ public class BundleUtils {
         return null;
     }
 
+    public static <T extends Parcelable> void readQueue(Bundle in, String key, Queue<T> queue) {
+        Parcelable[] queueData = in.getParcelableArray(key);
+        if(queueData != null) {
+            for(Parcelable p : queueData) {
+                queue.add((T)p);
+            }
+        }
+    }
+
+    public static void writeQueue(Bundle dest, String key, Queue<? extends Parcelable> queue) {
+        if(queue != null) {
+            Parcelable[] queueData = queue.toArray(new Parcelable[queue.size()]);
+            dest.putParcelableArray(key, queueData);
+        }
+    }
 }

@@ -44,7 +44,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
                 getUiHelper().runWithExtraPermissions(GalleryPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_video_caching));
             } else {
                 getPreferenceManager().findPreference(preference.getContext().getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
-                getUiHelper().showToast(R.string.video_caching_disabled_not_recommended);
+                getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_not_recommended));
             }
             return true;
         }
@@ -63,11 +63,11 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
                 if (preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_thumbnail_size_key))
                         || preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_album_thumbnail_size_key))) {
                     if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_thumbnail_size_not_natively_supported_by_server));
+                        getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_warning_thumbnail_size_not_natively_supported_by_server));
                     }
                 } else if (preference.getKey().equals(preference.getContext().getString(R.string.preference_gallery_item_slideshow_image_size_key))) {
                     if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails() && !sessionDetails.getAvailableImageSizes().contains(stringValue)) {
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_warning_slideshow_image_size_not_natively_supported_by_server));
+                        getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_warning_slideshow_image_size_not_natively_supported_by_server));
                     }
                 }
             }
@@ -90,7 +90,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
                 Preference videoCacheEnabledPref = findPreference(R.string.preference_video_cache_enabled_key);
                 ((SwitchPreference) videoCacheEnabledPref).setChecked(false);
                 getPreferenceManager().findPreference(getString(R.string.preference_video_cache_maxsize_mb_key)).setEnabled(false);
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_information_video_caching_disabled));
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_information_video_caching_disabled));
             }
         }
     }
@@ -131,7 +131,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 PicassoFactory.getInstance().clearPicassoCache(getContext().getApplicationContext(), true);
-                getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
+                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
                 preference.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
                 return true;
             }
@@ -144,10 +144,10 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 try {
                     CacheUtils.clearVideoCache(getContext());
-                    getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.videoCacheCleared_message));
+                    getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.videoCacheCleared_message));
                 } catch (IOException e) {
                     Crashlytics.logException(e);
-                    getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.videoCacheClearFailed_message));
+                    getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.videoCacheClearFailed_message));
                 }
                 setVideoCacheButtonText(preference);
                 return true;

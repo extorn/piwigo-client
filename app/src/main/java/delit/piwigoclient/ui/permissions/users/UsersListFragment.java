@@ -288,7 +288,7 @@ public class UsersListFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(UserDeletedEvent event) {
         viewAdapter.remove(event.getUser());
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), event.getUser().getUsername()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), event.getUser().getUsername()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -299,12 +299,12 @@ public class UsersListFragment extends MyFragment {
     private void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
         User user = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(user);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), user.getUsername()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), user.getUsername()));
     }
 
     private void onUserDeleteFailed(final long messageId) {
         User user = deleteActionsPending.remove(messageId);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_user_delete_failed_pattern), user.getUsername()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, String.format(getString(R.string.alert_user_delete_failed_pattern), user.getUsername()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

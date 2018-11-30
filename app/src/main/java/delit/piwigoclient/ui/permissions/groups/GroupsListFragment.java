@@ -281,7 +281,7 @@ public class GroupsListFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(GroupDeletedEvent event) {
         viewAdapter.remove(event.getGroup());
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), event.getGroup().getName()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), event.getGroup().getName()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -292,12 +292,12 @@ public class GroupsListFragment extends MyFragment {
     private void onGroupDeleted(final GroupDeleteResponseHandler.PiwigoDeleteGroupResponse response) {
         Group group = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(group);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), group.getName()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, String.format(getString(R.string.alert_group_delete_success_pattern), group.getName()));
     }
 
     private void onGroupDeleteFailed(final long messageId) {
         Group group = deleteActionsPending.remove(messageId);
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, String.format(getString(R.string.alert_group_delete_failed_pattern), group.getName()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, String.format(getString(R.string.alert_group_delete_failed_pattern), group.getName()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

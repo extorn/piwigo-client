@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
 import android.view.ViewGroup;
 
 /**
@@ -11,6 +12,11 @@ import android.view.ViewGroup;
 public class ViewGroupUIHelper extends UIHelper<ViewGroup> {
     public ViewGroupUIHelper(ViewGroup parent, SharedPreferences prefs, Context context) {
         super(parent, prefs, context);
+    }
+
+    @Override
+    protected View getParentView() {
+        return getParent();
     }
 
     @Override

@@ -22,7 +22,6 @@ import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,7 +86,6 @@ import delit.piwigoclient.ui.events.CancelDownloadEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
-import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
@@ -573,7 +571,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     protected void onSaveChangesButtonClicked() {
         updateModelFromFields();
         if(getUiHelper().getActiveServiceCallCount() > 0) {
-            getUiHelper().showDetailedToast(R.string.alert_information, R.string.alert_server_call_in_progress_please_wait);
+            getUiHelper().showDetailedMsg(R.string.alert_information, R.string.alert_server_call_in_progress_please_wait);
             return;
         }
         //TODO ideally disable the button until complete but this involves tracking the precise calls.
@@ -680,12 +678,12 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private void onMoveItem(T model) {
         //TODO implement this
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unimplemented));
+        getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unimplemented));
     }
 
     private void onCopyItem(T model) {
         //TODO implement this
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unimplemented));
+        getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unimplemented));
     }
 
     protected void onDownloadItem(T model) {
@@ -941,7 +939,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void onGetResourceCancelled(PiwigoResponseBufferingHandler.UrlCancelledResponse response) {
-        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_image_download_cancelled_message));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_image_download_cancelled_message));
     }
 
     private void onResourceInfoRetrieved(final BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {

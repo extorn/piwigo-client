@@ -323,7 +323,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                         File toFile = new File(downloadsFolder, originalVideoFilename.replaceAll(".*/", "").replaceAll("(\\.[^.]*$)", "_" + getModel().getId() + "$1"));
                         IOUtils.copy(cachedVideoFile, toFile);
                         onGetResource(new PiwigoResponseBufferingHandler.UrlToFileSuccessResponse(0, getModel().getFullSizeFile().getUrl(), toFile));
-                        getUiHelper().showToast(getString(R.string.alert_image_download_complete_message));
+                        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
                     } catch (IOException e) {
                         Crashlytics.logException(e);
                         getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern), e.getMessage()));
@@ -339,7 +339,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                     logStatus("Not all permissions granted - tweak datasource factory settings and configure player now!");
                     permissionToCache = false;
                     if (isPrimarySlideshowItem()) {
-                        getUiHelper().showToast(R.string.video_caching_disabled_warning);
+                        getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_warning));
                     }
                 }
                 boolean factorySettingsAltered = dataSourceFactory.setCachingEnabled(isUseCache());
@@ -385,7 +385,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             logStatus("configuring datasource and player - no caching enabled - do now!");
             configurePlayer(videoIsPlayingWhenVisible);
             if (isPrimarySlideshowItem()) {
-                getUiHelper().showToast(R.string.video_caching_disabled_warning);
+                getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(R.string.video_caching_disabled_warning));
             }
         }
     }
@@ -444,7 +444,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 CacheUtils.manageVideoCache(getContext(), maxCacheSizeBytes);
             } catch (IOException e) {
                 Crashlytics.logException(e);
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_tidying_video_cache));
+                getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_tidying_video_cache));
             }
         }
     }

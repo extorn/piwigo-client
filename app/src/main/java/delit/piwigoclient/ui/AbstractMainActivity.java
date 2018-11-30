@@ -7,9 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.appbar.AppBarLayout;
 
-import androidx.annotation.NonNull;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -20,8 +17,6 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -40,7 +35,6 @@ import java.util.Random;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
-import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
@@ -165,7 +159,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         fab.setOnClickListener(pkg View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.makeSnackbar(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });*/
@@ -282,7 +276,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (!hasAgreedToEula()) {
-            getUiHelper().showDetailedToast(R.string.alert_error, R.string.please_read_and_agree_with_eula_first);
+            getUiHelper().showDetailedMsg(R.string.alert_error, R.string.please_read_and_agree_with_eula_first);
             return true;
         }
         // Handle action bar item clicks here. The action bar will
@@ -575,7 +569,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     private void showLowMemoryWarningMessage(int messageId, int memoryLevel) {
-        getUiHelper().showToast(getString(messageId, memoryLevel));
+        getUiHelper().showDetailedShortMsg(R.string.alert_warning, getString(messageId, memoryLevel));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -745,15 +739,15 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         if (!VersionCompatability.INSTANCE.isSupportedVersion()) {
             String serverVersion = VersionCompatability.INSTANCE.getServerVersionString();
             String minimumVersion = VersionCompatability.INSTANCE.getMinimumTestedVersionString();
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_version_pattern), serverVersion, minimumVersion));
+            getUiHelper().showDetailedMsg(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_version_pattern), serverVersion, minimumVersion));
         }
 
-        if(sessionDetails.isPiwigoClientPluginInstalled() && !VersionUtils.versionExceeds(new int[]{1,0,5}, VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion()))) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it)));
+        if(sessionDetails.isPiwigoClientPluginInstalled() && !VersionUtils.versionExceeds(VersionUtils.parseVersionString(BuildConfig.PIWIGO_CLIENT_WS_VERSION), VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion()))) {
+            getUiHelper().showDetailedMsg(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it)));
         }
 
         if(showUserWarning && !VersionCompatability.INSTANCE.isFavoritesEnabled()) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_features_pattern)));
+            getUiHelper().showDetailedMsg(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_features_pattern)));
         }
     }
 

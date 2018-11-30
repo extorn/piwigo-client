@@ -181,10 +181,10 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                     CacheUtils.clearResponseCache(preference.getContext());
                     ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
                     refreshSession(null);
-                    getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
+                    getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
                 } catch (SecurityException e) {
                     Crashlytics.logException(e);
-                    getUiHelper().showOrQueueDialogMessage(R.string.cacheCleared_title, getString(R.string.cacheClearFailed_message));
+                    getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheClearFailed_message));
                 }
                 setResponseCacheButtonText(preference);
                 return true;
@@ -358,9 +358,9 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
                 if (sessionDetails.getAvailableImageSizes().size() == 0) {
                     msg += '\n' + uiHelper.getContext().getString(R.string.alert_message_no_available_image_sizes);
-                    uiHelper.showOrQueueDialogMessage(R.string.alert_title_connectionTest, msg);
+                    uiHelper.showDetailedMsg(R.string.alert_title_connectionTest, msg);
                 } else {
-                    uiHelper.showToast(msg);
+                    uiHelper.showDetailedMsg(R.string.alert_title_connectionTest, msg);
                 }
                 EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
             }
@@ -467,14 +467,14 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 }
 
                 if (!(isHttp || isHttps)) {
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
+                    getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
                 } else if (isHttp) {
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
+                    getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
                 } else {
                     try {
                         URI uri = URI.create(val);
                     } catch (IllegalArgumentException e) {
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_invalid_uri_pattern, e.getMessage()));
+                        getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_invalid_uri_pattern, e.getMessage()));
                     }
                 }
 

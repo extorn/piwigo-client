@@ -114,7 +114,7 @@ public class SlideshowFragment<T extends Identifiable&Parcelable> extends Abstra
     public void onEvent(TagContentAlteredEvent tagContentAlteredEvent) {
         ResourceContainer<T,GalleryItem> gallery = getGalleryModel();
         if(gallery instanceof PiwigoTag && gallery.getId() == tagContentAlteredEvent.getId()) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_tag));
+            getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_tag));
         }
     }
 }

@@ -65,6 +65,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     private static long connectionResetCount = 0;
     private double lastProgressReportAtPercent;
     private boolean forceLogin;
+    private boolean runInBackground;
 
 
     public AbstractBasicPiwigoResponseHandler(String tag) {
@@ -545,5 +546,17 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     public void forceLogin() {
         forceLogin = true;
+    }
+
+    public boolean isTriedLoggingInAgain() {
+        return triedLoggingInAgain;
+    }
+
+    public boolean runInBackground() {
+        return runInBackground;
+    }
+
+    public void setRunInBackground(boolean runInBackground) {
+        this.runInBackground = runInBackground;
     }
 }

@@ -1,5 +1,7 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.util.Log;
+
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -19,6 +21,8 @@ import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.StatusLine;
 import cz.msebera.android.httpclient.client.HttpResponseException;
+import cz.msebera.android.httpclient.util.ByteArrayBuffer;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
@@ -52,8 +56,9 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
         // do not process if request has been cancelled
         if (!Thread.currentThread().isInterrupted()) {
             StatusLine status = response.getStatusLine();
+            boolean isSuccess = false;
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                writeResponseDataToFile(response.getEntity());
+                isSuccess = writeResponseDataToFile(response.getEntity());
             }
             // additional cancellation check as getResponseData() can take non-zero time to process
             if (!Thread.currentThread().isInterrupted()) {
@@ -61,20 +66,38 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
                     sendFailureMessage(-1, null, null, null);
                 } else if (status.getStatusCode() >= 300) {
                     sendFailureMessage(status.getStatusCode(), response.getAllHeaders(), null, new HttpResponseException(status.getStatusCode(), status.getReasonPhrase()));
-                } else {
+                } else if(isSuccess){
                     sendSuccessMessage(status.getStatusCode(), response.getAllHeaders(), null);
                 }
             }
         }
     }
 
-    public void writeResponseDataToFile(HttpEntity entity) throws IOException {
+    public boolean writeResponseDataToFile(HttpEntity entity) throws IOException {
+
+
 
         InputStream is = entity.getContent();
         FileOutputStream fos = new FileOutputStream(outputFile);
         BufferedOutputStream bos = new BufferedOutputStream(fos);
         BufferedInputStream bis = new BufferedInputStream(is);
+        boolean isSuccess = false;
         try {
+            Header contentTypeHeader = entity.getContentType();
+            if(contentTypeHeader != null && !contentTypeHeader.getValue().startsWith("image/")) {
+                boolean newLoginAcquired = false;
+                if(!isTriedLoggingInAgain()) {
+                    // this was redirected to an http page - login failed most probable - try to force a login and retry!
+                    newLoginAcquired = acquireNewSessionAndRetryCallIfAcquired();
+                }
+                if (!newLoginAcquired) {
+                    byte[] responseBody = getResponseBodyAsByteArray(entity);
+                    resetSuccessAsFailure();
+                    storeResponse(new PiwigoResponseBufferingHandler.UrlErrorResponse(this, resourceUrl, 200, responseBody, "Unsupported content type", "Content-Type http response header returned - ("+contentTypeHeader.getValue()+"). image/* expected"));
+                }
+                return false; // this isn't a success yet, but there's another call in progress so we're getting a second chance!
+            }
+
             long contentLength = entity.getContentLength();
             int buffersize = (contentLength > BUFFER_SIZE) ? BUFFER_SIZE : (int) contentLength;
             int progress = -1;
@@ -114,6 +137,9 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
                     onDownloadProgress(progress);
                 }
             }
+            isSuccess = true;
+        } catch(Exception e) {
+            setError(new IOException("Error parsing response", e));
         } finally {
             //TODO why would I have written this block?
 //            if (!cancelOperationAsap) {
@@ -127,9 +153,50 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
                 outputFile.delete();
             }
         }
+        return isSuccess;
+    }
+
+
+    private byte[] getResponseBodyAsByteArray(HttpEntity entity) throws IOException {
+        byte[] responseBody = null;
+        if (entity != null) {
+            InputStream instream = entity.getContent();
+            if (instream != null) {
+                long contentLength = entity.getContentLength();
+                if (contentLength > Integer.MAX_VALUE) {
+                    throw new IllegalArgumentException("HTTP entity too large to be buffered in memory");
+                }
+                int buffersize = (contentLength <= 0) ? BUFFER_SIZE : (int) contentLength;
+                try {
+                    ByteArrayBuffer buffer = new ByteArrayBuffer(buffersize);
+                    try {
+                        byte[] tmp = new byte[BUFFER_SIZE];
+                        long count = 0;
+                        int l;
+                        // do not send messages if request has been cancelled
+                        while ((l = instream.read(tmp)) != -1 && !Thread.currentThread().isInterrupted()) {
+                            count += l;
+                            buffer.append(tmp, 0, l);
+//                            sendProgressMessage(count, (contentLength <= 0 ? 1 : contentLength));
+                        }
+                    } finally {
+                        AsyncHttpClient.silentCloseInputStream(instream);
+                        AsyncHttpClient.endEntityViaReflection(entity);
+                    }
+                    responseBody = buffer.toByteArray();
+                } catch (OutOfMemoryError e) {
+                    System.gc();
+                    throw new IOException("File too large to fit into available memory");
+                }
+            }
+        }
+        return responseBody;
     }
 
     public void onDownloadProgress(int progressPercent) {
+        if(BuildConfig.DEBUG) {
+            Log.d(getTag(), String.format("download progress %1$d%%", progressPercent));
+        }
         PiwigoResponseBufferingHandler.UrlProgressResponse r = new PiwigoResponseBufferingHandler.UrlProgressResponse(getMessageId(), resourceUrl, progressPercent);
         storeResponse(r);
     }
@@ -158,7 +225,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
         if (getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext()) && resourceUrl.startsWith("http://")) {
             resourceUrl = resourceUrl.replaceFirst("://", "s://");
         }
-        return client.get(getContext(), getPiwigoWsApiUri(), buildOfflineAccessHeaders(), null, handler);
+        return client.get(getContext(), resourceUrl, buildOfflineAccessHeaders(), null, handler);
     }
 
     @Subscribe

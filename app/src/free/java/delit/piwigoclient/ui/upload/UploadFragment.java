@@ -23,7 +23,7 @@ public class UploadFragment extends AbstractUploadFragment {
         }
         super.updateFilesForUploadList(filesToBeUploaded);
         if(maxItemCountReached) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_message_max_upload_file_count_reached));
+            getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_max_upload_file_count_reached));
         }
     }
 }

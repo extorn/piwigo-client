@@ -209,7 +209,7 @@ public class UploadActivity extends MyActivity {
     private void runLogin(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         String serverUri = connectionPrefs.getPiwigoServerAddress(prefs, getApplicationContext());
         if (serverUri == null || serverUri.trim().isEmpty()) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
+            getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
             getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getApplicationContext(), connectionPrefs));
         }

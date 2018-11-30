@@ -60,7 +60,7 @@ public class LicenceCheckingHelper {
                 activity, new ServerManagedPolicy(activity.getApplicationContext(),
                 new AESObfuscator(salt, myPackageName, deviceId)),
                 BASE64_PUBLIC_KEY);
-        doVisualCheck();
+        doVisualCheck(activity.getApplicationContext());
     }
 
     private void showDialog(final boolean showRetryButton) {
@@ -88,9 +88,9 @@ public class LicenceCheckingHelper {
         doCheck();
     }
 
-    private void doVisualCheck() {
+    private void doVisualCheck(Context applicationContext) {
         if(BuildConfig.DEBUG) {
-            activity.getUiHelper().showToast(R.string.checking_license);
+            activity.getUiHelper().showDetailedShortMsg(R.string.alert_information, applicationContext.getString(R.string.checking_license));
         }
         doCheck();
     }
@@ -119,7 +119,7 @@ public class LicenceCheckingHelper {
     private void displayResult(final String result) {
         mHandler.post(new Runnable() {
             public void run() {
-                activity.getUiHelper().showOrQueueDialogMessage(R.string.alert_information, result);
+                activity.getUiHelper().showDetailedMsg(R.string.alert_information, result);
             }
         });
     }

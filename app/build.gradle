@@ -24,11 +24,12 @@ android {
 
     buildToolsVersion '28.0.3'
     defaultConfig {
+        buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"1.0.7\""
         applicationId "delit.piwigoclient"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 176
-        versionName "1.3.97.6"
+        versionCode 179
+        versionName "1.3.97.7"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config

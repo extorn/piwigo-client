@@ -314,7 +314,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if(uploadJob != null) {
             EventBus.getDefault().post(new ViewJobStatusDetailsEvent(uploadJob));
         } else {
-            getUiHelper().showDetailedToast(R.string.alert_error, R.string.job_not_found);
+            getUiHelper().showDetailedMsg(R.string.alert_error, R.string.job_not_found);
             uploadJobStatusButton.setVisibility(GONE);
         }
     }
@@ -331,14 +331,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if (sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
             String serverUri = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().invokeAsync(getContext()));
+            getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler());
         } else {
             if(sessionDetails.getAllowedFileTypes() == null) {
                 fileSelectButton.setEnabled(false);
                 Bundle b = new Bundle();
                 sessionDetails.writeToBundle(b);
                 FirebaseAnalytics.getInstance(getContext()).logEvent("IncompleteUserSession", b);
-                getUiHelper().showDetailedToast(R.string.alert_error, R.string.alert_user_session_no_allowed_filetypes);
+                getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_user_session_no_allowed_filetypes);
                 getView().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -444,7 +444,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         List<File> addedFiles = adapter.addAll(filesToBeUploaded);
         int filesAlreadyPresent = filesToBeUploaded.size() - addedFiles.size();
         if(filesAlreadyPresent > 0) {
-            getUiHelper().showShortDetailedToast(R.string.alert_information, getString(R.string.files_already_set_for_upload_skipped_pattern, filesAlreadyPresent));
+            getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.files_already_set_for_upload_skipped_pattern, filesAlreadyPresent));
         }
         uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
         updateActiveJobActionButtonsStatus();
@@ -589,7 +589,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (getContext() == null) {
             notifyUserUploadStatus(context.getApplicationContext(), message);
         } else {
-            getUiHelper().showDetailedToast(titleId, message);
+            getUiHelper().showDetailedMsg(titleId, message);
         }
     }
 
@@ -640,7 +640,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             } else {
                 // job running.
                 boolean immediatelyCancelled = activeJob.cancelFileUpload(itemToRemove);
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_message_file_upload_cancelled_pattern, itemToRemove.getName()));
+                getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_message_file_upload_cancelled_pattern, itemToRemove.getName()));
                 if (immediatelyCancelled) {
                     adapter.remove(itemToRemove);
                 }
@@ -750,7 +750,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
             UploadJob uploadJob = ForegroundPiwigoUploadService.getActiveForegroundJob(context, uploadJobId);
             if (uploadJob.isFilePartiallyUploaded(cancelledFile)) {
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_warning, getString(R.string.alert_partial_upload_deleted));
+                getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_partial_upload_deleted));
             }
         }
 
@@ -928,6 +928,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private void onAlbumDeleted(AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse response) {
-        getUiHelper().showToast(R.string.alert_temporary_upload_album_deleted);
+        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_temporary_upload_album_deleted));
     }
 }

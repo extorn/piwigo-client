@@ -54,7 +54,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
                 } else if(sessionDetails.isPiwigoClientCleanUploadsAvailable()){
                     getUiHelper().invokeActiveServiceCall(R.string.progress_clearing_failed_uploads_from_server, new PiwigoClientFailedUploadsCleanResponseHandler(), new FailedUploadCleanAction());
                 } else {
-                    getUiHelper().showDetailedToast(R.string.alert_error, R.string.alert_unavailable_feature_piwigo_client_plugin_needed);
+                    getUiHelper().showDetailedMsg(R.string.alert_error, R.string.alert_unavailable_feature_piwigo_client_plugin_needed);
                 }
                 return true;
             }
@@ -69,7 +69,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
             if(sessionDetails.isPiwigoClientCleanUploadsAvailable()){
                 uiHelper.invokeActiveServiceCall(R.string.progress_clearing_failed_uploads_from_server, new PiwigoClientFailedUploadsCleanResponseHandler(), new FailedUploadCleanAction());
             } else {
-                uiHelper.showDetailedToast(R.string.alert_error, R.string.alert_unavailable_feature_piwigo_client_plugin_needed);
+                uiHelper.showDetailedMsg(R.string.alert_error, R.string.alert_unavailable_feature_piwigo_client_plugin_needed);
             }
             return true;
         }
@@ -78,7 +78,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
     private static class FailedUploadCleanAction extends UIHelper.Action<MyPreferenceFragment, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse> {
         @Override
         public boolean onSuccess(UIHelper<MyPreferenceFragment> uiHelper, PiwigoClientFailedUploadsCleanResponseHandler.PiwigoFailedUploadsCleanedResponse response) {
-            uiHelper.showDetailedToast(R.string.alert_information, uiHelper.getContext().getString(R.string.cleared_failed_uploads_from_server_pattern, response.getFilesCleaned()));
+            uiHelper.showDetailedMsg(R.string.alert_information, uiHelper.getContext().getString(R.string.cleared_failed_uploads_from_server_pattern, response.getFilesCleaned()));
             return super.onSuccess(uiHelper, response);
         }
 

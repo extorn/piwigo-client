@@ -561,5 +561,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="please_read_and_agree_with_eula_first">Bitte lesen und bestätigen Sie zuerst die Zustimmung zu den Bedingungen der EULA</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Erforderliche Berechtigungen wurden nicht erteilt. Aktion abgebrochen.</string>
     <string name="default_str">Standard</string>
+    <string name="copied_to_clipboard">In die Zwischenablage kopieren</string>
 </resources>
 

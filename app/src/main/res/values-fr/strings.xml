@@ -590,4 +590,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="please_read_and_agree_with_eula_first">Veuillez d\'abord lire et confirmer votre accord avec les termes du CLUF</string>
     <string name="alert_required_permissions_not_granted_action_cancelled">Les autorisations requises n\'ont pas été accordées. Action annulée.</string>
     <string name="default_str">défaut</string>
+    <string name="copied_to_clipboard">Copié dans le Presse-papiers</string>
 </resources>
