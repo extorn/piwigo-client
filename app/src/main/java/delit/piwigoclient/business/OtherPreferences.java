@@ -77,4 +77,14 @@ public class OtherPreferences {
         }
         return showWarning;
     }
+
+    public static int getColumnsOfUsers(SharedPreferences prefs, Activity activity) {
+        int orientationId = activity.getResources().getConfiguration().orientation;
+        return DisplayUtils.getDefaultColumnCount(activity, orientationId, 2);
+    }
+
+    public static int getColumnsOfGroups(SharedPreferences prefs, Activity activity) {
+        int orientationId = activity.getResources().getConfiguration().orientation;
+        return DisplayUtils.getDefaultColumnCount(activity, orientationId, 2);
+    }
 }

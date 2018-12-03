@@ -1,13 +1,7 @@
 package delit.piwigoclient.ui.permissions.groups;
 
-import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,8 +17,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.Group;
 import delit.piwigoclient.model.piwigo.PiwigoGroups;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -156,7 +157,7 @@ public class GroupsListFragment extends MyFragment {
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
 
-        RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext()); //new GridLayoutManager(getContext(), 1);
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfGroups(getPrefs(), getActivity()));
 
         recyclerView.setLayoutManager(layoutMan);
 

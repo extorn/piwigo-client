@@ -2,10 +2,6 @@ package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +11,12 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashSet;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.model.piwigo.PagedList;
 import delit.piwigoclient.model.piwigo.PiwigoUsernames;
 import delit.piwigoclient.model.piwigo.Username;
@@ -102,7 +103,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         viewAdapter.setSelectedItems(getInitialSelection());
         setListAdapter(viewAdapter);
 
-        RecyclerView.LayoutManager layoutMan = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager layoutMan = new GridLayoutManager(getContext(), OtherPreferences.getColumnsOfUsers(getPrefs(), getActivity()));
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(viewAdapter);
         getList().addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
