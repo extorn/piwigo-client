@@ -67,7 +67,6 @@ import cz.msebera.android.httpclient.impl.client.BasicAuthCache;
 import cz.msebera.android.httpclient.impl.client.BasicCredentialsProvider;
 import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.cache.CacheConfig;
-import cz.msebera.android.httpclient.impl.client.cache.CachingHttpClients;
 import cz.msebera.android.httpclient.impl.conn.PoolingHttpClientConnectionManager;
 import cz.msebera.android.httpclient.protocol.HttpContext;
 

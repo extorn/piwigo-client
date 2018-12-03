@@ -137,7 +137,6 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
-            return;
         }
     }
 

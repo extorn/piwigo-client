@@ -163,7 +163,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         client.setConnectTimeout(connectTimeoutMillis);
         client.setResponseTimeout(readTimeoutMillis);
         client.setEnableRedirects(enableRedirects, maxRedirects);
-        Header[] headersArray = headers.toArray(new Header[headers.size()]);
+        Header[] headersArray = headers.toArray(new Header[0]);
 
         for (Header h : headersArray) {
             Log.d(TAG, h.getValue());

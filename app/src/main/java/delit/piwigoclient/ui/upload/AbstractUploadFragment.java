@@ -369,7 +369,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             // immediately leave this screen.
             getFragmentManager().popBackStack();
             Log.e(TAG, "Unable to view upload fragment - removing from activity");
-            return;
         }
     }
 
@@ -392,7 +391,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         // This block is to hopefully protect against a WindowManager$BadTokenException when showing a dialog as part of this call.
         if (getActivity().isDestroyed() || getActivity().isFinishing()) {
-            return;
         }
     }
 

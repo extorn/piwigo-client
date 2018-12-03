@@ -412,7 +412,7 @@ public class TouchImageView extends AppCompatImageView {
                 Drawable drawable = getDrawable();
                 int drawableWidth = drawable.getIntrinsicWidth();
                 int drawableHeight = drawable.getIntrinsicHeight();
-                if (drawable != null && drawableWidth > 0 && drawableHeight > 0) {
+                if (drawableWidth > 0 && drawableHeight > 0) {
                     float widthRatio = (float) viewWidth / drawableWidth;
                     float heightRatio = (float) viewHeight / drawableHeight;
                     if (mScaleType == ScaleType.CENTER) {

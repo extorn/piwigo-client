@@ -2,7 +2,6 @@ package delit.piwigoclient.piwigoApi.http;
 
 import cz.msebera.android.httpclient.impl.client.cache.CachingHttpClientBuilder;
 import cz.msebera.android.httpclient.impl.execchain.ClientExecChain;
-import delit.piwigoclient.business.ConnectionPreferences;
 
 class MyCachingHttpClientBuilder extends CachingHttpClientBuilder {
 

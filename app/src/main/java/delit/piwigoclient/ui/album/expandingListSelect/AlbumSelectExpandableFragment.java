@@ -218,7 +218,6 @@ public class AlbumSelectExpandableFragment extends MyFragment {
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
-            return;
         }
     }
 

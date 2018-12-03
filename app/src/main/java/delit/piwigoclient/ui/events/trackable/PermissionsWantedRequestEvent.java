@@ -28,7 +28,7 @@ public class PermissionsWantedRequestEvent extends TrackableRequestEvent {
     }
 
     public String[] getPermissionsNeeded() {
-        return permissionsNeeded.toArray(new String[permissionsNeeded.size()]);
+        return permissionsNeeded.toArray(new String[0]);
     }
 
     public void setPermissionsNeeded(HashSet<String> permissionsNeeded) {

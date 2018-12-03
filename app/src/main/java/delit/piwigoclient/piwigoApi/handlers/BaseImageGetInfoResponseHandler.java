@@ -97,13 +97,13 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
                     float averageRating = averageJsonElem.getAsFloat();
                     resourceItem.setAverageRating(averageRating);
                 }
-            }
 
-            if(usingPiwigoClientOveride) {
-                JsonElement yourRateElem = rates.get("my_rating");
-                if (yourRateElem != null && !yourRateElem.isJsonNull()) {
-                    float yourRating = yourRateElem.getAsFloat();
-                    resourceItem.setMyRating(yourRating);
+                if(usingPiwigoClientOveride) {
+                    JsonElement yourRateElem = rates.get("my_rating");
+                    if (yourRateElem != null && !yourRateElem.isJsonNull()) {
+                        float yourRating = yourRateElem.getAsFloat();
+                        resourceItem.setMyRating(yourRating);
+                    }
                 }
             }
 

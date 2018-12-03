@@ -51,7 +51,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         }
         boolean communityPluginInstalled = PiwigoSessionDetails.isUseCommunityPlugin(getConnectionPrefs());
         if(communityPluginInstalled) {
-            params.put("faked_by_community", String.valueOf(!communityPluginInstalled));
+            params.put("faked_by_community", "false");
         }
         return params;
     }

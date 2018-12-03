@@ -39,7 +39,6 @@ public class RoundableImageView extends androidx.appcompat.widget.AppCompatImage
         if (!enableRoundedCorners || !(drawable instanceof BitmapDrawable)) {
             // pass straight through.
             super.setImageDrawable(drawable);
-            return;
         } else {
             RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), ((BitmapDrawable) drawable).getBitmap());
             roundedDrawable.setCornerRadius(cornerRadius);

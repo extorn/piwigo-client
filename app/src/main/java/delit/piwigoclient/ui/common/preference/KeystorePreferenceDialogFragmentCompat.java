@@ -209,7 +209,7 @@ public class KeystorePreferenceDialogFragmentCompat extends PreferenceDialogFrag
             List<X509LoadOperation> loadOperations = keystoreLoadOperationResult.getRemainingLoadOperations();
             if (loadOperations.size() > 0) {
                 keystoreLoadOperationResult = null;
-                new AsyncX509LoaderTask(this).execute(loadOperations.toArray(new X509LoadOperation[loadOperations.size()]));
+                new AsyncX509LoaderTask(this).execute(loadOperations.toArray(new X509LoadOperation[0]));
             }
             return;
         }

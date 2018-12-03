@@ -32,7 +32,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.NotSerializableException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.KeyStore;
@@ -596,7 +595,7 @@ public abstract class UIHelper<T> {
                 alert.setNegativeButton(context.getString(R.string.button_cancel), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // Do nothing, automatically the dialog is going to be closed.
-                        onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[permissionsNeeded.size()]), new int[0]);
+                        onRequestPermissionsResult(activity, event.getActionId(), permissionsNeeded.toArray(new String[0]), new int[0]);
                     }
                 });
                 alert.create().show();
@@ -610,7 +609,7 @@ public abstract class UIHelper<T> {
             // have permission - run immediately.
             int[] permissionResponses = new int[permissionsWanted.size()];
             Arrays.fill(permissionResponses, PackageManager.PERMISSION_GRANTED);
-            onRequestPermissionsResult(activity, event.getActionId(), permissionsWanted.toArray(new String[permissionsWanted.size()]), permissionResponses);
+            onRequestPermissionsResult(activity, event.getActionId(), permissionsWanted.toArray(new String[0]), permissionResponses);
         }
         return event.getActionId();
     }
@@ -1165,7 +1164,7 @@ public abstract class UIHelper<T> {
         public void requestPermission(int requestId, final HashSet<String> permissionsNeeded) {
             ActivityCompat.requestPermissions(
                     activity,
-                    permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
+                    permissionsNeeded.toArray(new String[0]),
                     requestId);
         }
     }

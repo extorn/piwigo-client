@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.prefs.PreferenceChangeEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -418,7 +417,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         client.setEnableRedirects(enableRedirects, maxRedirects);
         CustomResponseHandler responseHandler = new CustomResponseHandler();
 
-        client.get(context, dataSpec.uri.toString(), headers.toArray(new Header[headers.size()]), null, responseHandler);
+        client.get(context, dataSpec.uri.toString(), headers.toArray(new Header[0]), null, responseHandler);
     }
 
     /**

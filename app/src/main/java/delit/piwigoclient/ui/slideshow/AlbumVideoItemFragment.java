@@ -397,7 +397,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             Uri videoUri = Uri.parse(getModel().getFullSizeFile().getUrl());
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            if (connectionPrefs.isForceHttps(prefs, getContext()) && videoUri.getScheme().equalsIgnoreCase("http")) {
+            if (connectionPrefs.isForceHttps(prefs, getContext()) && "http".equalsIgnoreCase(videoUri.getScheme())) {
                 videoUri = videoUri.buildUpon().scheme("https").build();
             }
             ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(dataSourceFactory);

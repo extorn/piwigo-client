@@ -83,7 +83,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
             final String toastMessage = msgBuilder.toString();
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-            if (uri.getScheme().equalsIgnoreCase("http") && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
+            if ("http".equalsIgnoreCase(uri.getScheme()) && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
                 EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs));
             }
             if (errorResponse.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {

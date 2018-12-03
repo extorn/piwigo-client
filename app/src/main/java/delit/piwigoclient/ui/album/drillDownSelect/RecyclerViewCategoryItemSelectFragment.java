@@ -301,9 +301,8 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             boolean selectedIdsAreValid = false;
             if(!selectedItems.isEmpty()) {
                 CategoryItem selectedItem = selectedItems.iterator().next();
-                Long activeId = listAdapter.getActiveItem().getId(); // need this to be a long as it is comparing with a Long!
-                if(activeId != null
-                 && (activeId.equals(selectedItem.getParentId())
+                Long activeId = Long.valueOf(listAdapter.getActiveItem().getId()); // need this to be a long as it is comparing with a Long!
+                if((activeId.equals(selectedItem.getParentId())
                     || activeId.equals(selectedItem.getId()))) {
                     // do nothing.
                     selectedIdsAreValid = true;

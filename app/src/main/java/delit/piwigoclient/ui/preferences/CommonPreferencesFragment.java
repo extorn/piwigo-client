@@ -109,7 +109,6 @@ public class CommonPreferencesFragment extends MyFragment {
         if (PiwigoSessionDetails.isLoggedIn(ConnectionPreferences.getActiveProfile()) && isAppInReadOnlyMode()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
-            return;
         }
     }
 

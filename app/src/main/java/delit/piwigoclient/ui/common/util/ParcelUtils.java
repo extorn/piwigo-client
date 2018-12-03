@@ -8,7 +8,6 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import delit.piwigoclient.util.ArrayUtils;
 import delit.piwigoclient.util.ClassUtils;
 
 public class ParcelUtils {
@@ -189,7 +187,7 @@ public class ParcelUtils {
     public static <S,T,V extends Map<S, T>> V readMap(Parcel in, V dest, ClassLoader loader) {
         ArrayList<S> keys = readValue(in, loader, ArrayList.class);
         ArrayList<T> values = readValue(in, loader, ArrayList.class);
-        if(keys != null) {
+        if(keys != null && values != null) {
             for(int i = 0; i < values.size(); i++) {
                 dest.put(keys.get(i), values.get(i));
             }

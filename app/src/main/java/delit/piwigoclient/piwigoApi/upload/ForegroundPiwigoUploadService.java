@@ -1,6 +1,5 @@
 package delit.piwigoclient.piwigoApi.upload;
 
-import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;

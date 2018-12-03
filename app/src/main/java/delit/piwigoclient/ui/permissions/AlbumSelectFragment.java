@@ -97,7 +97,6 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSele
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
-            return;
         }
     }
 

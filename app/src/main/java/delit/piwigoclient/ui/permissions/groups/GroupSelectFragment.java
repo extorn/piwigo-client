@@ -133,7 +133,6 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
         if (isServerConnectionChanged()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
-            return;
         }
     }
 

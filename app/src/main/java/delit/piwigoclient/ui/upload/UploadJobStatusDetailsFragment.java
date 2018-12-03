@@ -126,9 +126,7 @@ public class UploadJobStatusDetailsFragment extends MyFragment {
 
         public UploadJobErrorsListAdapter(LinkedHashMap<Date,String> errors) {
             this.dataIndex = new ArrayList<Map.Entry<Date, String>>();
-            for(Map.Entry<Date,String> d : errors.entrySet()) {
-                dataIndex.add(d);
-            }
+            dataIndex.addAll(errors.entrySet());
         }
 
         @Override

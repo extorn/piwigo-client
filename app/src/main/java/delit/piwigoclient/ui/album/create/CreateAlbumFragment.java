@@ -298,7 +298,6 @@ public class CreateAlbumFragment extends MyFragment {
         if (!isAllowedToCreateAlbum()) {
             // immediately leave this screen.
             getFragmentManager().popBackStack();
-            return;
         }
     }
 

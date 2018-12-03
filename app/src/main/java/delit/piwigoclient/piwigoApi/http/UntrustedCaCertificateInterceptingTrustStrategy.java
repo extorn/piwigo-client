@@ -26,7 +26,7 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
 
     private static Observable observable = new Observable();
     private final Set<String> certThumbprints;
-    private Set<String> preNotifiedCerts;
+    private final Set<String> preNotifiedCerts;
 
     public UntrustedCaCertificateInterceptingTrustStrategy(KeyStore trustedCAKeystore, Set<String> preNotifiedCertsSet) {
         certThumbprints = X509Utils.listAliasesInStore(trustedCAKeystore);

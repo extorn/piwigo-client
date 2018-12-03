@@ -428,9 +428,9 @@ public class CategoryItem extends GalleryItem implements Cloneable {
 
     private void mergeChildrenWith(int thisItemIdx, CategoryItem thisItem, CategoryItem otherItem, boolean preferExisting) {
         if(preferExisting) {
-            thisItem.mergeChildrenWith(otherItem.getChildAlbums(), preferExisting);
+            thisItem.mergeChildrenWith(otherItem.getChildAlbums(), true);
         } else {
-            otherItem.mergeChildrenWith(thisItem.getChildAlbums(), preferExisting);
+            otherItem.mergeChildrenWith(thisItem.getChildAlbums(), false);
             childAlbums.remove(thisItemIdx);
             childAlbums.add(thisItemIdx, otherItem);
         }

@@ -1,27 +1,16 @@
 package delit.piwigoclient.util;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 
-import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.snackbar.SnackbarContentLayout;
-
-import androidx.core.widget.ImageViewCompat;
 import delit.piwigoclient.R;
-
-import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class TransientMsgUtils {
 

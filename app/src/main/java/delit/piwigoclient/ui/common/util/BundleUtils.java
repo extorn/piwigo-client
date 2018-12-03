@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.util.ArrayUtils;
 
 public class BundleUtils {
@@ -234,7 +233,7 @@ public class BundleUtils {
 
     public static void writeQueue(Bundle dest, String key, Queue<? extends Parcelable> queue) {
         if(queue != null) {
-            Parcelable[] queueData = queue.toArray(new Parcelable[queue.size()]);
+            Parcelable[] queueData = queue.toArray(new Parcelable[0]);
             dest.putParcelableArray(key, queueData);
         }
     }

@@ -14,7 +14,7 @@ public class CollectionUtils {
     private CollectionUtils() {
     }
 
-    public static String toCsvList(Collection<? extends Object> items) {
+    public static String toCsvList(Collection<?> items) {
 
         if (items == null || items.size() == 0) {
             return null;

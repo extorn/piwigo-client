@@ -91,7 +91,7 @@ public class FlowLayout extends ViewGroup {
             breakLine = lp.breakLine;
         }
 
-        if (newLine == false)
+        if (!newLine)
         {
             width = Math.max(width, currentWidth - spacing);
         }

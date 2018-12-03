@@ -21,8 +21,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.client.cache.HeaderConstants;
-import cz.msebera.android.httpclient.message.BasicHeader;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
@@ -200,7 +198,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             processJsonResponse(getMessageId(), getPiwigoMethod(), piwigoResponse, responseBody, isCached);
 
         } catch (JsonSyntaxException e) {
-            String responseBodyStr = new String(responseBody);
+            String responseBodyStr = responseBody != null ? new String(responseBody) : null;
             Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
             if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
                 Crashlytics.logException(e);
@@ -212,7 +210,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                 storeResponse(r);
             }
         } catch (JsonIOException e) {
-            String responseBodyStr = new String(responseBody);
+            String responseBodyStr = responseBody != null ? new String(responseBody) : null;
             Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
             Crashlytics.logException(e);
             PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), isCached);

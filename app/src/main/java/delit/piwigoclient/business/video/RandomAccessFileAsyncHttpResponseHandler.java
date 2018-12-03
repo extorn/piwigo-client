@@ -55,7 +55,7 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
     private long totalFileContentBytes;
     private long lastContentByte;
     private long firstContentByte;
-    private CachedContent cacheMetaData;
+    private final CachedContent cacheMetaData;
     private boolean loadSucceeded;
     private boolean canParseResponseData;
     private boolean isIdle;

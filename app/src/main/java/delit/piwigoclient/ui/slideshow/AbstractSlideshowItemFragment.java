@@ -997,7 +997,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     protected void onResourceInfoAltered(final T resourceItem) {
         model = resourceItem;
         if (editingItemDetails) {
-            editingItemDetails = !editingItemDetails;
+            editingItemDetails = false;
             fillResourceEditFields();
         }
         if (albumsRequiringReload != null) {
