@@ -135,7 +135,7 @@
 
     <string name="preference_gallery_show_image_name_title">Afficher les noms des images dans l\'album</string>
     <string name="preference_gallery_show_image_name_summary">Affiche le nom de l\'image sous chaque image</string>
-    <bool name="preference_gallery_show_image_name_default">true</bool>
+    
 
 
     <string name="preference_gallery_images_preferredColumnsLandscape_title">Paysage : Colonnes d\'images à afficher</string>
@@ -144,7 +144,7 @@
 
     <string name="preference_gallery_show_album_thumbnail_zoomed_title">Afficher la vignette de l\'album zoomé</string>
     <string name="preference_gallery_show_album_thumbnail_zoomed_summary">Les vignettes d\'album sont recadrées au centre</string>
-    <bool name="preference_gallery_show_album_thumbnail_zoomed_default">true</bool>
+    
 
 
     <string name="preference_gallery_albums_preferredColumnsPortrait_title">Portrait : Colonnes d\'albums à afficher</string>
@@ -157,7 +157,7 @@
 
     <string name="preference_gallery_include_videos_in_slideshow_title">Montrer les vidéos dans le diaporama</string>
     <string name="preference_gallery_include_videos_in_slideshow_summary">Les vidéos doivent-elles être affichées lors de la navigation dans une galerie en mode diaporama ?</string>
-    <bool name="preference_gallery_include_videos_in_slideshow_default">false</bool>
+
 
 
     <string name="preference_gallery_enable_video_playback_title">Autoriser la lecture vidéo</string>

@@ -173,7 +173,7 @@
     <string name="preference_gallery_include_videos_in_slideshow_key" translatable="false">preference_gallery_include_videos_in_slideshow</string>
     <string name="preference_gallery_include_videos_in_slideshow_title">Show videos in Slideshow</string>
     <string name="preference_gallery_include_videos_in_slideshow_summary">Should videos be shown when browsing a gallery in slideshow mode?</string>
-    <bool name="preference_gallery_include_videos_in_slideshow_default">false</bool>
+    <bool name="preference_gallery_include_videos_in_slideshow_default">true</bool>
 
     <string name="preference_gallery_enable_video_playback_key" translatable="false">preference_gallery_enable_video_playback</string>
     <string name="preference_gallery_enable_video_playback_title">Allow video playback</string>

@@ -235,6 +235,10 @@ public abstract class UIHelper<T> {
             }
             @Override
             public boolean onLongClick(View v) {
+                if(v == null) {
+                    //TODO check why... this can occur if the app is minimised at this point?
+                    return false;
+                }
                 ClipboardManager clipboardService = (ClipboardManager) v.getContext().getApplicationContext().getSystemService(CLIPBOARD_SERVICE);
                 clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
                 dismissHandled = true;
