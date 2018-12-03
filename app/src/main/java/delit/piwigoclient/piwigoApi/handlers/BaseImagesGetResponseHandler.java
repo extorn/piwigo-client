@@ -279,7 +279,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             if(idx > 0 && idx == url.indexOf("&amp;")) {
                 //strip the unwanted extra html escaping
                 fixedUrl = url.replaceAll("&amp;", "&");
-                Crashlytics.log(Log.DEBUG, TAG, "URL Fixed as: " + url);
+                Crashlytics.log(Log.DEBUG, TAG, String.format("URL Fixed (%1$s) as: %2$s", url, fixedUrl));
             }
             return fixedUrl;
         }

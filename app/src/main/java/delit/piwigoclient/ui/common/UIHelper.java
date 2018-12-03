@@ -32,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.NotSerializableException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.security.KeyStore;
@@ -49,7 +50,9 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
@@ -69,6 +72,7 @@ import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.CustomSnackbar;
+import delit.piwigoclient.util.ObjectUtils;
 import delit.piwigoclient.util.TransientMsgUtils;
 import delit.piwigoclient.util.X509Utils;
 
@@ -92,7 +96,7 @@ public abstract class UIHelper<T> {
     private final T parent;
     private final SharedPreferences prefs;
     private final Queue<QueuedDialogMessage> dialogMessageQueue = new LinkedBlockingQueue<>(20);
-    private final Queue<QueuedSimpleMessage> simpleMessageQueue = new LinkedBlockingQueue<>(10);
+    private final Queue<QueuedSimpleMessage> simpleMessageQueue = new LinkedBlockingQueue<>(50);
     private boolean toastShowing = false;
     private Context context;
     private DismissListener dismissListener;
@@ -191,7 +195,10 @@ public abstract class UIHelper<T> {
     }
 
     public synchronized void showDetailedMsg(@StringRes int titleResId, String message, int duration) {
-        simpleMessageQueue.add(new QueuedSimpleMessage(titleResId, message, duration));
+        QueuedSimpleMessage newItem = new QueuedSimpleMessage(titleResId, message, duration);
+        if(!simpleMessageQueue.contains(newItem)) {
+            simpleMessageQueue.add(newItem);
+        }
         if(!toastShowing) {
             showQueuedMsg();
         }
@@ -202,6 +209,9 @@ public abstract class UIHelper<T> {
     }
 
     protected void showQueuedMsg() {
+        if(!canShowDialog()) {
+            return;
+        }
         final CustomSnackbar snackbar;
         toastShowing = true;
         QueuedSimpleMessage toastMsg = simpleMessageQueue.remove();
@@ -906,23 +916,42 @@ public abstract class UIHelper<T> {
         public int getSnackbarDuration() {
             return duration == Toast.LENGTH_SHORT ? CustomSnackbar.LENGTH_SHORT : duration == Toast.LENGTH_LONG ? CustomSnackbar.LENGTH_LONG : CustomSnackbar.LENGTH_INDEFINITE;
         }
+
+        @Override
+        public int hashCode() {
+            return duration + (titleResId * 3) + (5 * message.hashCode());
+        }
+
+        @Override
+        public boolean equals(@Nullable Object obj) {
+            if(!(obj instanceof QueuedSimpleMessage)) {
+                return false;
+            }
+            QueuedSimpleMessage other = (QueuedSimpleMessage) obj;
+            return duration == other.duration && titleResId == other.titleResId && ObjectUtils.areEqual(message, other.message);
+        }
     }
 
     private static class QueuedDialogMessage implements Parcelable {
+        private static final AtomicInteger idGen = new AtomicInteger();
+        private final int id;
         private final int titleId;
         private final String message;
         private final int positiveButtonTextId;
         private final boolean cancellable;
         private final String detail;
         private final QuestionResultListener listener;
+        private final boolean hasListener;
 
         public QueuedDialogMessage(Parcel in) {
+            id = in.readInt();
             titleId = in.readInt();
             message = in.readString();
             positiveButtonTextId = in.readInt();
             cancellable = ParcelUtils.readValue(in,null, boolean.class);
             detail = in.readString();
             listener = (QuestionResultListener) in.readSerializable();
+            hasListener = ParcelUtils.readValue(in,null, boolean.class);
         }
 
         public QueuedDialogMessage(int titleId, String message, String detail) {
@@ -938,6 +967,7 @@ public abstract class UIHelper<T> {
         }
 
         public QueuedDialogMessage(int titleId, String message, String detail, int positiveButtonTextId, boolean cancellable, QuestionResultListener listener) {
+            this.id = idGen.incrementAndGet();
             this.titleId = titleId;
             if (message == null) {
                 throw new IllegalArgumentException("Message cannot be null");
@@ -947,6 +977,7 @@ public abstract class UIHelper<T> {
             this.listener = listener;
             this.detail = detail;
             this.cancellable = cancellable;
+            this.hasListener = listener != null;
         }
 
         public static final Creator<QueuedDialogMessage> CREATOR = new Creator<QueuedDialogMessage>() {
@@ -1004,12 +1035,22 @@ public abstract class UIHelper<T> {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(id);
             dest.writeInt(titleId);
             dest.writeString(message);
             dest.writeInt(positiveButtonTextId);
             dest.writeValue(cancellable);
             dest.writeString(detail);
-            dest.writeSerializable(listener);
+            try {
+                dest.writeSerializable(listener);
+            } catch(RuntimeException e) {
+                dest.writeString(null); // so we can still read the non serializable object in (as null)
+            }
+            dest.writeValue(listener != null); // has listener
+        }
+
+        public boolean isHasListener() {
+            return hasListener;
         }
     }
 
@@ -1018,6 +1059,33 @@ public abstract class UIHelper<T> {
         private final int negativeButtonTextId;
         private final int layoutId;
         private final int neutralButtonTextId;
+
+        public QueuedQuestionMessage(Parcel in) {
+            super(in);
+            negativeButtonTextId = in.readInt();
+            layoutId = in.readInt();
+            neutralButtonTextId = in.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeInt(negativeButtonTextId);
+            dest.writeInt(layoutId);
+            dest.writeInt(neutralButtonTextId);
+        }
+
+        public static final Creator<QueuedQuestionMessage> CREATOR = new Creator<QueuedQuestionMessage>() {
+            @Override
+            public QueuedQuestionMessage createFromParcel(Parcel in) {
+                return new QueuedQuestionMessage(in);
+            }
+
+            @Override
+            public QueuedQuestionMessage[] newArray(int size) {
+                return new QueuedQuestionMessage[size];
+            }
+        };
 
         public QueuedQuestionMessage(int titleId, String message, int positiveButtonTextId, int negativeButtonTextId, QuestionResultListener listener) {
             this(titleId, message, null, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, listener);
@@ -1126,11 +1194,21 @@ public abstract class UIHelper<T> {
             }
 
             if (dialogMessageQueue.size() > 0 && canShowDialog()) {
-                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                QueuedDialogMessage nextMessage;
+                do {
+                    nextMessage = dialogMessageQueue.peek();
+                    if (nextMessage.isHasListener() && nextMessage.getListener() == null) {
+                        Crashlytics.log(Log.WARN, TAG, "Discarding corrupt message");
+                        dialogMessageQueue.remove();
+                        nextMessage = null;
+                    }
+                } while(nextMessage == null && dialogMessageQueue.size() > 0);
                 if (nextMessage instanceof QueuedQuestionMessage) {
                     showDialog((QueuedQuestionMessage) nextMessage);
                 } else if (nextMessage != null) {
                     showDialog(nextMessage);
+                } else {
+                    onNoDialogToShow();
                 }
             } else {
                 onNoDialogToShow();

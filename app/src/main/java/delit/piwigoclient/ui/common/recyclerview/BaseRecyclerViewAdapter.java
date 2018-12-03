@@ -165,7 +165,10 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         try {
             HashSet<T> selectedItems = new HashSet<>();
             for (Long selectedItemId : selectedResourceIds) {
-                selectedItems.add(getItemById(selectedItemId));
+                T selectedItem = getItemById(selectedItemId);
+                if(selectedItem != null) {
+                    selectedItems.add(selectedItem);
+                }
             }
             return selectedItems;
         } catch (RuntimeException e) {

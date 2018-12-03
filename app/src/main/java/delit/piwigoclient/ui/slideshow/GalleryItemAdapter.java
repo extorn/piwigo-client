@@ -6,7 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
+
+import android.util.Log;
 import android.view.ViewGroup;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -24,6 +28,7 @@ import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 
 public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends ViewPager> extends MyFragmentRecyclerPagerAdapter {
 
+    private static final String TAG = "GalleryItemAdapter";
     private final List<Integer> galleryResourceItems;
     private boolean shouldShowVideos;
     private ResourceContainer<T, GalleryItem> gallery;
@@ -156,7 +161,11 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     public int getSlideshowIndex(int rawCurrentGalleryItemPosition) {
         int idx = galleryResourceItems.indexOf(rawCurrentGalleryItemPosition);
         if (idx < 0) {
-            throw new IllegalStateException("Item to show was not found in the gallery - weird!");
+            Crashlytics.log(Log.WARN, TAG, String.format("Slideshow does not contain album item with index position (%1$d) (only have %2$d items available) - probably deleted it - will show first available.", rawCurrentGalleryItemPosition, galleryResourceItems.size()));
+            if(galleryResourceItems.size() > 0) {
+                return 0;
+            }
+            throw new IllegalArgumentException("This slideshow is empty and should not have been opened!");
         }
         return idx;
     }

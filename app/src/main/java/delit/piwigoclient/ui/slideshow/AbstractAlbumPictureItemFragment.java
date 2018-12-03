@@ -95,7 +95,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
             @Override
             public void onMove() {
-                getOverlaysVisibilityControl().runWithDelay(getView());
+                getOverlaysVisibilityControl().runWithDelay(imageView);
             }
 
             @Override
