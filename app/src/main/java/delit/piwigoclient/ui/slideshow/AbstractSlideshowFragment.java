@@ -357,7 +357,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         public void onPageScrollStateChanged(int state) {
 
         }
-    };
+    }
 
     private static class AlbumLoadResponseAction extends UIHelper.Action<AbstractSlideshowFragment,AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
 

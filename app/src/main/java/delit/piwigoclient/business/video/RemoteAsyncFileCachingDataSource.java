@@ -180,7 +180,7 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         return httpResponseHandler;
     }
 
-    private long openConnectionToServerAndBlockUntilContentLengthKnown(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) throws FileNotFoundException {
+    private long openConnectionToServerAndBlockUntilContentLengthKnown(Uri uri, boolean allowGzip, long firstByteToRetrieve, long retrieveMaxBytes) {
         if (retrieveMaxBytes == 0) {
             return 0;
         }

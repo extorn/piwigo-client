@@ -21,4 +21,4 @@ class MyCachingHttpClientBuilder extends CachingHttpClientBuilder {
         }
     }
 
-};
+}

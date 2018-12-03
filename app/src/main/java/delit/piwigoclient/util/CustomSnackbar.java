@@ -84,7 +84,7 @@ public class CustomSnackbar extends BaseTransientBottomBar<CustomSnackbar> {
     }
 
     public CustomSnackbar setAction(CharSequence text, final View.OnClickListener listener) {
-        Button actionView = (Button) getView().findViewById(R.id.snackbar_action);
+        Button actionView = getView().findViewById(R.id.snackbar_action);
         actionView.setText(text);
         actionView.setVisibility(View.VISIBLE);
         actionView.setOnClickListener(new View.OnClickListener() {
