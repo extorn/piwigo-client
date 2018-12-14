@@ -472,6 +472,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="tag_usage_count_pattern">(%1$d verwendet)</string>
     <string name="progress_loading_tag_details">Abrufen von Ressourcen, die dem Tag entsprechen</string>
     <string name="tags_menu_title">Tags</string>
+    <string name="favorites_menu_title">Favoriten</string>
     <string name="tag_empty_text">Keine Artikel mit diesem Tag getaggt</string>
     <string name="tag_content_load_failed_text">Ressourcen, die mit dem Tag verknüpft sind, konnten nicht geladen werden.</string>
     <string name="tag_heading">Anhänger</string>
@@ -562,5 +563,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_required_permissions_not_granted_action_cancelled">Erforderliche Berechtigungen wurden nicht erteilt. Aktion abgebrochen.</string>
     <string name="default_str">Standard</string>
     <string name="copied_to_clipboard">In die Zwischenablage kopieren</string>
+    <string name="alert_plugin_required_pattern">%1$s Plugin serveur requis - Version %2$s ou plus récente</string>
 </resources>
 

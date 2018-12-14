@@ -33,6 +33,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.events.FavoritesUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
@@ -302,9 +303,25 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private static class FavoriteRemoveAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> {}
+    private static class FavoriteRemoveAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse> {
+        @Override
+        public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse response) {
+            if(EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class) == null) {
+                EventBus.getDefault().postSticky(new FavoritesUpdatedEvent());
+            }
+            return super.onSuccess(uiHelper, response);
+        }
+    }
 
-    private static class FavoriteAddAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> {}
+    private static class FavoriteAddAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> {
+        @Override
+        public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse response) {
+            if(EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class) == null) {
+                EventBus.getDefault().postSticky(new FavoritesUpdatedEvent());
+            }
+            return super.onSuccess(uiHelper, response);
+        }
+    }
 
     private void onFavoriteUpdateSucceeded() {
         favoriteButton.setEnabled(true);

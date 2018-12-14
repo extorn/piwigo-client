@@ -31,6 +31,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:layout_toStartOf="@+id/gallery_details_description_dropdown_button"
                 android:layout_margin="5dp"
                 android:maxLines="2"
                 android:ellipsize="end"
@@ -50,7 +51,7 @@
                 android:id="@+id/gallery_details_description_dropdown_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/gallery_details_description_header"
+                android:layout_alignTop="@+id/gallery_details_name_header"
                 android:layout_alignParentEnd="true"
                 app:srcCompat="@drawable/ic_more_horiz_black_24px"/>
 
@@ -258,7 +259,8 @@
                         android:focusable="true"
                         android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="3"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:importantForAutofill="no" tools:targetApi="o"/>
 
                     <TextView
                         android:id="@+id/gallery_details_description_label"
@@ -277,7 +279,8 @@
                         android:layout_marginTop="2dp"
                         android:inputType="textMultiLine|textNoSuggestions"
                         android:maxLines="10"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                        android:importantForAutofill="no" tools:targetApi="o"/>
 
                     <TextView
                         android:id="@+id/gallery_details_status_label"

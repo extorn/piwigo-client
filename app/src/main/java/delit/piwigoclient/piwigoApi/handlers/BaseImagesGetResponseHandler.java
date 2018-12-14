@@ -56,7 +56,9 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
     public RequestParams buildRequestParameters() {
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
-        params.put("cat_id", String.valueOf(parentAlbum.getId()));
+        if(parentAlbum != null) {
+            params.put("cat_id", String.valueOf(parentAlbum.getId()));
+        }
         params.put("order", sortOrder);
         params.put("page", String.valueOf(page));
         params.put("per_page", String.valueOf(pageSize));
@@ -68,8 +70,15 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
 
         ArrayList<GalleryItem> resources = new ArrayList<>();
 
+
         JsonObject result = rsp.getAsJsonObject();
         JsonArray images;
+
+        JsonObject pagingObj = result.get("paging").getAsJsonObject();
+        int page = pagingObj.get("page").getAsInt();
+        int pageSize = pagingObj.get("per_page").getAsInt();
+        int totalResourceCount = pagingObj.get("count").getAsInt();
+
         if(result.has("images")) {
             images = result.get("images").getAsJsonArray();
         } else if(result.has("_content")) {
@@ -84,14 +93,16 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             for (int i = 0; i < images.size(); i++) {
                 JsonObject image = (JsonObject) images.get(i);
                 ResourceItem item = resourceParser.parseAndProcessResourceData(image);
-
-                item.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
+                if(parentAlbum != null) {
+                    // will be null when retrieving favorites.
+                    item.setParentageChain(parentAlbum.getParentageChain(), parentAlbum.getId());
+                }
                 resources.add(item);
 
             }
         }
 
-        PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources, isCached);
+        PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalResourceCount, resources, isCached);
         storeResponse(r);
     }
 
@@ -289,13 +300,19 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
 
         private final int page;
         private final int pageSize;
+        private final int totalResourceCount;
         private final ArrayList<GalleryItem> resources;
 
-        public PiwigoGetResourcesResponse(long messageId, String piwigoMethod, int page, int pageSize, ArrayList<GalleryItem> resources, boolean isCached) {
+        public PiwigoGetResourcesResponse(long messageId, String piwigoMethod, int page, int pageSize, int totalResourceCount, ArrayList<GalleryItem> resources, boolean isCached) {
             super(messageId, piwigoMethod, true, isCached);
             this.page = page;
             this.pageSize = pageSize;
+            this.totalResourceCount = totalResourceCount;
             this.resources = resources;
+        }
+
+        public int getTotalResourceCount() {
+            return totalResourceCount;
         }
 
         public int getPage() {

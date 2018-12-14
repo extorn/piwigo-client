@@ -9,6 +9,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashSet;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
@@ -19,10 +21,12 @@ import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
+import delit.piwigoclient.ui.favorites.ViewFavoritesFragment;
 import delit.piwigoclient.ui.preferences.AutoUploadJobPreferenceFragment;
 import delit.piwigoclient.ui.tags.TagSelectFragment;
 import delit.piwigoclient.ui.tags.TagsListFragment;
 import delit.piwigoclient.ui.tags.ViewTagFragment;
+import delit.piwigoclient.util.VersionUtils;
 
 /**
  * Created by gareth on 07/04/18.
@@ -53,6 +57,19 @@ public class MainActivity extends AbstractMainActivity {
         super.onStop();
     }
 
+    @Override
+    protected void showFavorites() {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        int[] pluginVersion = VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion());
+        boolean versionSupported = VersionUtils.versionExceeds(new int[]{1,0,8}, pluginVersion);
+        if(versionSupported) {
+            showFragmentNow(ViewFavoritesFragment.newInstance());
+        } else {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_plugin_required_pattern, "PiwigoClientWs", "1.0.8"), R.string.button_close);
+        }
+    }
+
+    @Override
     protected void showTags() {
         BaseRecyclerViewAdapterPreferences prefs = new BaseRecyclerViewAdapterPreferences();
         prefs.setEnabled(true);

@@ -78,6 +78,7 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.favorites.ViewFavoritesFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupSelectFragment;
 import delit.piwigoclient.ui.permissions.groups.GroupsListFragment;
@@ -303,6 +304,8 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         showFragmentNow(EulaFragment.newInstance());
     }
 
+    protected abstract void showFavorites();
+
     private void showGallery(final CategoryItem gallery) {
         if (CategoryItem.ROOT_ALBUM.equals(gallery)) {
             // check if we've shown any albums before. If so, pop everything off the stack.
@@ -335,6 +338,9 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 break;
             case R.id.nav_gallery:
                 showGallery(CategoryItem.ROOT_ALBUM);
+                break;
+            case R.id.nav_favorites:
+                showFavorites();
                 break;
             case R.id.nav_about:
                 showAboutFragment();

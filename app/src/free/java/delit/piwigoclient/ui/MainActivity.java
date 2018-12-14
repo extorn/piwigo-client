@@ -35,6 +35,12 @@ public class MainActivity extends AbstractMainActivity {
         super.onStop();
     }
 
+    @Override
+    protected void showFavorites() {
+        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_feature_only), R.string.button_close);
+    }
+
+    @Override
     protected void showTags() {
         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(R.string.alert_paid_feature_only), R.string.button_close);
     }

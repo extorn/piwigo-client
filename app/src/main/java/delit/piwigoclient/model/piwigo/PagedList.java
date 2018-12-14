@@ -26,9 +26,9 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
 
     private static final String TAG = "PagedList";
     public static int MISSING_ITEMS_PAGE = -1;
-    private final String itemType;
+    private String itemType;
     private final SortedSet<Integer> pagesLoaded = new TreeSet<>();
-    private final ArrayList<T> items;
+    private ArrayList<T> items;
     private final HashMap<Long, Integer> pagesBeingLoaded = new HashMap<>();
     private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
     private boolean fullyLoaded;
@@ -65,15 +65,26 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     }
 
     public PagedList(Parcel in) {
-        itemType = in.readString();
-        ParcelUtils.readIntSet(in, pagesLoaded, null);
-        items = in.readArrayList(getClass().getClassLoader());
-        ParcelUtils.readMap(in, pagesBeingLoaded, getClass().getClassLoader());
-        ParcelUtils.readIntSet(in, pagesFailedToLoad, null);
-        fullyLoaded = ParcelUtils.readValue(in,null, boolean.class);
+        try {
+            itemType = in.readString();
+            ParcelUtils.readIntSet(in, pagesLoaded, null);
+            items = in.readArrayList(getClass().getClassLoader());
+            ParcelUtils.readMap(in, pagesBeingLoaded, getClass().getClassLoader());
+            ParcelUtils.readIntSet(in, pagesFailedToLoad, null);
+            fullyLoaded = ParcelUtils.readValue(in, null, boolean.class);
 
-        if(pageLoadLock == null) {
-            this.pageLoadLock = new ReentrantLock();
+            if (pageLoadLock == null) {
+                this.pageLoadLock = new ReentrantLock();
+            }
+        } catch(RuntimeException e) {
+            if(itemType == null) {
+                itemType = "???";
+            }
+            if(items == null) {
+                items = new ArrayList<>(0);
+            }
+            Crashlytics.log(Log.ERROR, TAG, "Unable to load from parcel");
+            Crashlytics.logException(e);
         }
     }
 

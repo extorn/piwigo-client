@@ -14,4 +14,11 @@
     <string name="alert_auto_upload_service_job_finished_failure">Terminé l\'exécution du travail de téléchargement en arrière-plan vers le serveur %1$s. Aucun fichier n\'a pu être téléchargé. Le travail sera réessayé plus tard.</string>
     <string name="alert_auto_upload_service_checking_for_tasks">Vérification des tâches par le service de téléchargement en arrière-plan</string>
     <string name="progress_creating_tag">Création d\'une balise</string>
+    <string name="error_updating_favorites_pattern">Erreur de suppression de ressource (%1$s) des favoris : %2$s</string>
+    <string name="favorites_content_load_failed_text">Impossible de charger les ressources marquées comme favorites</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">Vous avez demandé de supprimer %1$d ressources. Souhaitez-vous les supprimer de tous les albums (et du serveur) - de façon permanente, ou simplement les dissocier de ce favori ?</string>
+    <string name="progress_remove_favorite_resources">Supprimer des ressources de la liste des favoris</string>
+    <string name="favorites_empty_text">Vous n\'avez actuellement aucun favori</string>
+    <string name="favorites_heading">Vos Favoris</string>
+    <string name="button_unfavorite">Pas Favoris</string>
 </resources>

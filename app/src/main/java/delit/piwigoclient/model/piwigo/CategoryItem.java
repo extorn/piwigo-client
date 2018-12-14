@@ -369,7 +369,10 @@ public class CategoryItem extends GalleryItem implements Cloneable {
      * @return
      */
     public List<CategoryItem> getFullPath(CategoryItem child) {
-        List<Long> parentageIds = new ArrayList<>(child.getParentageChain());
+        List<Long> parentageIds = new ArrayList<>();
+        if(child.getParentageChain() != null) {
+            parentageIds.addAll(child.getParentageChain());
+        }
         CategoryItem root = this;
         List<CategoryItem> parentage = new ArrayList<>(parentageIds.size() + 1);
         parentage.add(root);

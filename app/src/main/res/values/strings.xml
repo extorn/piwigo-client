@@ -737,6 +737,7 @@ SOFTWARE.
     <string name="tag_usage_count_pattern">(%1$d uses)</string>
     <string name="progress_loading_tag_details">Retrieving resources matching tag</string>
     <string name="tags_menu_title">Tags</string>
+    <string name="favorites_menu_title">Favorites</string>
     <string name="tag_empty_text">No items tagged with this tag</string>
     <string name="tag_content_load_failed_text">Failed to load resources linked to tag</string>
     <string name="tag_heading">Tag</string>
@@ -828,4 +829,5 @@ SOFTWARE.
     <string name="alert_required_permissions_not_granted_action_cancelled">Required Permissions were not granted. Action cancelled.</string>
     <string name="default_str">default</string>
     <string name="copied_to_clipboard">Copied to Clipboard</string>
+    <string name="alert_plugin_required_pattern">%1$s Server Plugin Required - Version %2$s or newer</string>
 </resources>

@@ -14,6 +14,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- needed to create a service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- seems to be needed on later versions of android -->
+    <uses-permission android:name="com.google.android.providers.gsf.permisson.READ_GSERVICES"/>
+    <!-- lets hope this isn't needed
+    <uses-permission android:name="com.google.android.providers.gsf.permission.WRITE_GSERVICES"/>
+    -->
 
 
     <supports-screens android:resizeable="true"

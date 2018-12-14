@@ -2003,7 +2003,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         public DeleteActionData(Parcel in) {
             selectedItemIds = ParcelUtils.readLongSet(in, null);
             itemsUpdated = ParcelUtils.readLongSet(in, null);
-            selectedItems = ParcelUtils.readHashSet(in, null);
+            selectedItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
             resourceInfoAvailable = ParcelUtils.readValue(in,null, boolean.class);
             trackedMessageIds = ParcelUtils.readLongArrayList(in, null);
         }

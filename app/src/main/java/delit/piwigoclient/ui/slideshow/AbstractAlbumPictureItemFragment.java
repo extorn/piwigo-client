@@ -133,7 +133,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 }
                 EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
                 hideProgressIndicator();
-                getOverlaysVisibilityControl().runWithDelay(getView());
+                getOverlaysVisibilityControl().runWithDelay(imageView);
             }
 
             @Override

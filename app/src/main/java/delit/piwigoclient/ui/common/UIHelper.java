@@ -208,7 +208,8 @@ public abstract class UIHelper<T> {
     }
 
     protected void showQueuedMsg() {
-        if(!canShowDialog()) {
+        View parentView = getParentView();
+        if(parentView == null || !canShowDialog()) {
             return;
         }
         final CustomSnackbar snackbar;
@@ -217,10 +218,10 @@ public abstract class UIHelper<T> {
         final String message;
         if(toastMsg.message == null) {
             message = getContext().getString(toastMsg.titleResId);
-            snackbar = TransientMsgUtils.makeSnackbar(getParentView(), toastMsg.titleResId, null, toastMsg.getSnackbarDuration());
+            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.titleResId, null, toastMsg.getSnackbarDuration());
         } else {
             message = toastMsg.message;
-            snackbar = TransientMsgUtils.makeSnackbar(getParentView(), toastMsg.titleResId, toastMsg.message, toastMsg.getSnackbarDuration());
+            snackbar = TransientMsgUtils.makeSnackbar(parentView, toastMsg.titleResId, toastMsg.message, toastMsg.getSnackbarDuration());
         }
         snackbar.addCallback(new CustomSnackbar.BaseCallback() {
             private boolean dismissHandled;
@@ -957,6 +958,22 @@ public abstract class UIHelper<T> {
             hasListener = ParcelUtils.readValue(in,null, boolean.class);
         }
 
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(id);
+            dest.writeInt(titleId);
+            dest.writeString(message);
+            dest.writeInt(positiveButtonTextId);
+            dest.writeValue(cancellable);
+            dest.writeString(detail);
+            try {
+                dest.writeSerializable(listener);
+            } catch(RuntimeException e) {
+                dest.writeSerializable(null); // so we can still read the non serializable object in (as null)
+            }
+            dest.writeValue(listener != null); // has listener
+        }
+
         public QueuedDialogMessage(int titleId, String message, String detail) {
             this(titleId, message, detail, R.string.button_ok, true, null);
         }
@@ -1034,22 +1051,6 @@ public abstract class UIHelper<T> {
         @Override
         public int describeContents() {
             return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(id);
-            dest.writeInt(titleId);
-            dest.writeString(message);
-            dest.writeInt(positiveButtonTextId);
-            dest.writeValue(cancellable);
-            dest.writeString(detail);
-            try {
-                dest.writeSerializable(listener);
-            } catch(RuntimeException e) {
-                dest.writeString(null); // so we can still read the non serializable object in (as null)
-            }
-            dest.writeValue(listener != null); // has listener
         }
 
         public boolean isHasListener() {

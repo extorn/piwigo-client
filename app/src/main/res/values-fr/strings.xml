@@ -500,6 +500,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="tag_usage_count_pattern">(%1$d utilise)</string>
     <string name="progress_loading_tag_details">Récupérer les ressources correspondant à la balise</string>
     <string name="tags_menu_title">Étiquettes</string>
+    <string name="favorites_menu_title">Favoris</string>
     <string name="tag_empty_text">Aucun article marqué avec cette balise</string>
     <string name="tag_content_load_failed_text">N\'a pas réussi à charger les ressources liées à la balise</string>
     <string name="tag_heading">Tag</string>
@@ -591,4 +592,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_required_permissions_not_granted_action_cancelled">Les autorisations requises n\'ont pas été accordées. Action annulée.</string>
     <string name="default_str">défaut</string>
     <string name="copied_to_clipboard">Copié dans le Presse-papiers</string>
+    <string name="alert_plugin_required_pattern">%1$s Plugin serveur requis - Version %2$s ou plus récente</string>
 </resources>

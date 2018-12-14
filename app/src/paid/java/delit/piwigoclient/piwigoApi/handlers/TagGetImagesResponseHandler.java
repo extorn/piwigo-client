@@ -53,6 +53,12 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
         ArrayList<GalleryItem> resources = new ArrayList<>();
 
         JsonObject result = rsp.getAsJsonObject();
+
+        JsonObject pagingObj = result.get("paging").getAsJsonObject();
+        int page = pagingObj.get("page").getAsInt();
+        int pageSize = pagingObj.get("per_page").getAsInt();
+        int totalResourceCount = pagingObj.get("total_count").getAsInt();
+
         JsonArray images = result.get("images").getAsJsonArray();
 
         ImagesGetResponseHandler.ResourceParser resourceParser = new ImagesGetResponseHandler.ResourceParser(multimediaExtensionList);
@@ -66,7 +72,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
             }
         }
 
-        BaseImagesGetResponseHandler.PiwigoGetResourcesResponse r = new BaseImagesGetResponseHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, resources, isCached);
+        BaseImagesGetResponseHandler.PiwigoGetResourcesResponse r = new BaseImagesGetResponseHandler.PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalResourceCount, resources, isCached);
         storeResponse(r);
     }
 

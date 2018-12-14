@@ -1,16 +1,9 @@
-package delit.piwigoclient.ui.tags;
+package delit.piwigoclient.ui.favorites;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,29 +27,31 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.Basket;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.model.piwigo.PiwigoFavorites;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.model.piwigo.PiwigoTag;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImagesGetResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.FavoritesGetImagesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.FavoritesRemoveImageResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.GetMethodsAvailableResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.TagGetImagesResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
@@ -68,8 +64,7 @@ import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
-import delit.piwigoclient.ui.events.TagContentAlteredEvent;
-import delit.piwigoclient.ui.events.TagUpdatedEvent;
+import delit.piwigoclient.ui.events.FavoritesUpdatedEvent;
 import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
@@ -78,46 +73,43 @@ import static android.view.View.VISIBLE;
 /**
  * A fragment representing a list of Items.
  */
-public class ViewTagFragment extends MyFragment {
+public class ViewFavoritesFragment extends MyFragment {
 
-    private static final String ARG_TAG = "tag";
-    private static final String STATE_TAG_MODEL = "TagModel";
-    private static final String STATE_TAG_DIRTY = "isTagDirty";
-    private static final String STATE_TAG_ACTIVE_LOAD_THREADS = "activeLoadingThreads";
-    private static final String STATE_TAG_LOADS_TO_RETRY = "retryLoadList";
+    private static final String STATE_FAVORITES_MODEL = "FavModel";
+    private static final String STATE_FAVORITES_ACTIVE_LOAD_THREADS = "activeLoadingThreads";
+    private static final String STATE_FAVORITES_LOADS_TO_RETRY = "retryLoadList";
     private static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
+    private static final String STATE_FAVORITES_DIRTY = "favoritesIsDirty";
 
     private AlbumItemRecyclerViewAdapter viewAdapter;
     private FloatingActionButton retryActionButton;
     private RelativeLayout bulkActionsContainer;
     private FloatingActionButton bulkActionButtonDelete;
     // Start fields maintained in saved session state.
-    private Tag tag;
-    private PiwigoTag tagModel;
+    private PiwigoFavorites favoritesModel;
     private final HashMap<Long, String> loadingMessageIds = new HashMap<>(2);
     private final ArrayList<String> itemsToLoad = new ArrayList<>(0);
     private int colsOnScreen;
     private DeleteActionData deleteActionData;
     private long userGuid;
     private AppCompatImageView actionIndicatorImg;
-    private RecyclerView tagListView;
-    private TextView emptyTagLabel;
-    private boolean tagIsDirty;
+    private RecyclerView favoritesListView;
+    private TextView emptyFavoritesLabel;
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
+    private boolean favoritesIsDirty;
 
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ViewTagFragment() {
+    public ViewFavoritesFragment() {
     }
 
-    public static ViewTagFragment newInstance(Tag tag) {
-        ViewTagFragment fragment = new ViewTagFragment();
+    public static ViewFavoritesFragment newInstance() {
+        ViewFavoritesFragment fragment = new ViewFavoritesFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_TAG, tag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -127,9 +119,6 @@ public class ViewTagFragment extends MyFragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            if (getArguments().containsKey(ARG_TAG)) {
-                tag = getArguments().getParcelable(ARG_TAG);
-            }
         }
     }
 
@@ -153,17 +142,16 @@ public class ViewTagFragment extends MyFragment {
 
     @Override
     protected String buildPageHeading() {
-        return getString(R.string.tag_heading_pattern, tag.getName());
+        return getString(R.string.favorites_heading);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
-        outState.putParcelable(ARG_TAG, tag);
-        outState.putParcelable(STATE_TAG_MODEL, tagModel);
-        outState.putSerializable(STATE_TAG_ACTIVE_LOAD_THREADS, loadingMessageIds);
-        outState.putStringArrayList(STATE_TAG_LOADS_TO_RETRY, itemsToLoad);
+        outState.putParcelable(STATE_FAVORITES_MODEL, favoritesModel);
+        outState.putSerializable(STATE_FAVORITES_ACTIVE_LOAD_THREADS, loadingMessageIds);
+        outState.putStringArrayList(STATE_FAVORITES_LOADS_TO_RETRY, itemsToLoad);
         outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
     }
 
@@ -195,7 +183,7 @@ public class ViewTagFragment extends MyFragment {
     private boolean getMultiSelectionAllowed() {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean captureActionClicks = sessionDetails != null && sessionDetails.isAdminUser();
-        captureActionClicks |= (sessionDetails != null && sessionDetails.isFullyLoggedIn() && sessionDetails.isUseUserTagPluginForUpdate());
+        captureActionClicks |= (sessionDetails != null && sessionDetails.isFullyLoggedIn());
         captureActionClicks &= !isAppInReadOnlyMode();
         return captureActionClicks;
     }
@@ -206,7 +194,7 @@ public class ViewTagFragment extends MyFragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        return inflater.inflate(R.layout.fragment_tag, container, false);
+        return inflater.inflate(R.layout.fragment_favorites, container, false);
 
     }
 
@@ -216,20 +204,19 @@ public class ViewTagFragment extends MyFragment {
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if(sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
-            // force a reload of the tag if the session has been destroyed.
-            tagIsDirty = true;
+            // force a reload of the favorites if the session has been destroyed.
+            favoritesIsDirty = true;
         } else if (savedInstanceState != null) {
             //restore saved state
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
             viewPrefs.loadFromBundle(savedInstanceState);
-            tagModel = savedInstanceState.getParcelable(STATE_TAG_MODEL);
-            tag = savedInstanceState.getParcelable(ARG_TAG);
-            // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.
+            favoritesModel = savedInstanceState.getParcelable(STATE_FAVORITES_MODEL);
+            // if favoritesIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
-            tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
-            tagIsDirty = tagIsDirty || savedInstanceState.getBoolean(STATE_TAG_DIRTY);
-            SetUtils.setNotNull(loadingMessageIds,BundleUtils.getSerializable(savedInstanceState, STATE_TAG_ACTIVE_LOAD_THREADS, HashMap.class));
-            SetUtils.setNotNull(itemsToLoad,savedInstanceState.getStringArrayList(STATE_TAG_LOADS_TO_RETRY));
+            favoritesIsDirty = favoritesIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
+            favoritesIsDirty = favoritesIsDirty || savedInstanceState.getBoolean(STATE_FAVORITES_DIRTY);
+            SetUtils.setNotNull(loadingMessageIds,BundleUtils.getSerializable(savedInstanceState, STATE_FAVORITES_ACTIVE_LOAD_THREADS, HashMap.class));
+            SetUtils.setNotNull(itemsToLoad,savedInstanceState.getStringArrayList(STATE_FAVORITES_LOADS_TO_RETRY));
             if(deleteActionData != null && deleteActionData.isEmpty()) {
                 deleteActionData = null;
             } else {
@@ -237,34 +224,34 @@ public class ViewTagFragment extends MyFragment {
             }
         }
 
-        TagUpdatedEvent tagUpdatedEvent = EventBus.getDefault().getStickyEvent(TagUpdatedEvent.class);
-        if(tagUpdatedEvent != null && tag != null && tag.getId() == tagUpdatedEvent.getTag().getId()) {
-            // updated the items tagged with this tag.
-            // force reload of all tagged content.
-            tagModel = null;
+        FavoritesUpdatedEvent favoritesUpdatedEvent = EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class);
+        if(favoritesUpdatedEvent != null) {
+            // updated the favorite tagged items
+            // force reload of all favorites
+            favoritesModel = null;
         }
 
         updateViewPrefs();
 
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
-        if(tagModel == null) {
-            tagIsDirty = true;
-            tagModel = new PiwigoTag(tag);
+        if(favoritesModel == null) {
+            favoritesIsDirty = true;
+            favoritesModel = new PiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0));
         }
 
         if (isSessionDetailsChanged()) {
 
             if(!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile()) || (isSessionDetailsChanged() && !isServerConnectionChanged())){
                 //trigger total screen refresh. Any errors will result in screen being closed.
-                tagIsDirty = false;
-                reloadTagModel();
+                favoritesIsDirty = false;
+                reloadFavoritesModel();
             } else {
                 // immediately leave this screen.
                 getFragmentManager().popBackStack();
             }
         }
 
-        retryActionButton = view.findViewById(R.id.tag_retryAction_actionButton);
+        retryActionButton = view.findViewById(R.id.favorites_retryAction_actionButton);
 
         retryActionButton.hide();
         retryActionButton.setOnClickListener(new View.OnClickListener() {
@@ -275,11 +262,11 @@ public class ViewTagFragment extends MyFragment {
             }
         });
 
-        emptyTagLabel = view.findViewById(R.id.tag_empty_content);
-        emptyTagLabel.setText(R.string.tag_empty_text);
-        emptyTagLabel.setVisibility(GONE);
+        emptyFavoritesLabel = view.findViewById(R.id.favorites_empty_content);
+        emptyFavoritesLabel.setText(R.string.favorites_empty_text);
+        emptyFavoritesLabel.setVisibility(GONE);
 
-        bulkActionsContainer = view.findViewById(R.id.tag_actions_bulk_container);
+        bulkActionsContainer = view.findViewById(R.id.favorites_actions_bulk_container);
 
         int imagesOnScreen = AlbumViewPreferences.getImagesToDisplayPerRow(getActivity(), prefs);
         colsOnScreen = imagesOnScreen;
@@ -288,27 +275,27 @@ public class ViewTagFragment extends MyFragment {
 //        viewInOrientation = getResources().getConfiguration().orientation;
 
         // Set the adapter
-        tagListView = view.findViewById(R.id.tag_list);
+        favoritesListView = view.findViewById(R.id.favorites_list);
 
-        RecyclerView recyclerView = tagListView;
+        RecyclerView recyclerView = favoritesListView;
 
-        if (!tagIsDirty) {
-            emptyTagLabel.setVisibility(tagModel.getItemCount() == 0 ? VISIBLE : GONE);
+        if (!favoritesIsDirty) {
+            emptyFavoritesLabel.setVisibility(favoritesModel.getItemCount() == 0 ? VISIBLE : GONE);
         }
 
-        // need to wait for the tag model to be initialised.
+        // need to wait for the favorites model to be initialised.
         GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), colsOnScreen);
         int colsPerImage = colsOnScreen / imagesOnScreen;
-        gridLayoutMan.setSpanSizeLookup(new SpanSizeLookup(tagModel, colsPerImage));
+        gridLayoutMan.setSpanSizeLookup(new SpanSizeLookup(favoritesModel, colsPerImage));
 
         recyclerView.setLayoutManager(gridLayoutMan);
 
 
-        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), tagModel, new AlbumViewAdapterListener(), viewPrefs);
+        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), favoritesModel, new AlbumViewAdapterListener(), viewPrefs);
 
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
 
-        bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.tag_action_delete_bulk);
+        bulkActionButtonDelete = bulkActionsContainer.findViewById(R.id.favorites_action_delete_bulk);
         if(viewAdapter.isItemSelectionAllowed()) {
             bulkActionButtonDelete.show();
         } else {
@@ -331,8 +318,8 @@ public class ViewTagFragment extends MyFragment {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 int pageToLoad = page;
-                if (tagModel.isPageLoadedOrBeingLoaded(page) || tagModel.isFullyLoaded()) {
-                    Integer missingPage = tagModel.getAMissingPage();
+                if (favoritesModel.isPageLoadedOrBeingLoaded(page) || favoritesModel.isFullyLoaded()) {
+                    Integer missingPage = favoritesModel.getAMissingPage();
                     if(missingPage != null) {
                         pageToLoad = missingPage;
                     } else {
@@ -343,44 +330,13 @@ public class ViewTagFragment extends MyFragment {
                 loadAlbumResourcesPage(pageToLoad);
             }
         };
-        scrollListener.configure(tagModel.getPagesLoaded(), tagModel.getItemCount());
+        scrollListener.configure(favoritesModel.getPagesLoaded(), favoritesModel.getItemCount());
         recyclerView.addOnScrollListener(scrollListener);
     }
 
-    private void reloadTagModel() {
-        UIHelper.Action action = new UIHelper.Action<ViewTagFragment,TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
-
-            @Override
-            public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
-                boolean updated = false;
-                for(Tag t : response.getTags()) {
-                    if(t.getId() == tagModel.getId()) {
-                        // tag has been located!
-                        tagModel = new PiwigoTag(t);
-                        updated = true;
-                    }
-                }
-                if(!updated) {
-                    //Something wierd is going on - this should never happen
-                    Crashlytics.log(Log.ERROR, getTag(), "Closing tag - tag was not available after refreshing session");
-                    getFragmentManager().popBackStack();
-                    return false;
-                }
-                loadAlbumResourcesPage(0);
-                return false;
-            }
-
-            @Override
-            public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                getFragmentManager().popBackStack();
-                return false;
-            }
-        };
-        if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(1, Integer.MAX_VALUE), action);
-        } else {
-            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(0, Integer.MAX_VALUE), action);
-        }
+    private void reloadFavoritesModel() {
+        favoritesModel = new PiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0));
+        loadAlbumResourcesPage(0);
     }
 
     private void onBulkActionDeleteButtonPressed() {
@@ -427,15 +383,15 @@ public class ViewTagFragment extends MyFragment {
             trackedMessageIds = ParcelUtils.readLongArrayList(in, null);
         }
 
-        public static final Creator<DeleteActionData> CREATOR = new Creator<DeleteActionData>() {
+        public static final Creator<DeleteActionData> CREATOR = new Creator<ViewFavoritesFragment.DeleteActionData>() {
             @Override
-            public DeleteActionData createFromParcel(Parcel in) {
-                return new DeleteActionData(in);
+            public ViewFavoritesFragment.DeleteActionData createFromParcel(Parcel in) {
+                return new ViewFavoritesFragment.DeleteActionData(in);
             }
 
             @Override
-            public DeleteActionData[] newArray(int size) {
-                return new DeleteActionData[size];
+            public ViewFavoritesFragment.DeleteActionData[] newArray(int size) {
+                return new ViewFavoritesFragment.DeleteActionData[size];
             }
         };
 
@@ -547,13 +503,10 @@ public class ViewTagFragment extends MyFragment {
                     deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
                 } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
                     PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                    boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
+                    boolean allowFavoritesEdit = !isAppInReadOnlyMode() && sessionDetails != null;
                     for (ResourceItem item : deleteActionData.getSelectedItems()) {
-                        item.getTags().remove(tag);
-                        if (allowTagEdit) {
-                            addActiveServiceCall(R.string.progress_untag_resources_pattern, new PluginUserTagsUpdateResourceTagsListResponseHandler(item).invokeAsync(getContext()));
-                        } else {
-                            addActiveServiceCall(R.string.progress_untag_resources_pattern, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
+                        if (allowFavoritesEdit) {
+                            addActiveServiceCall(R.string.progress_remove_favorite_resources, new FavoritesRemoveImageResponseHandler(item).invokeAsync(getContext()));
                         }
                     }
                 } else {
@@ -563,16 +516,12 @@ public class ViewTagFragment extends MyFragment {
         };
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-        boolean isTagAlterationSupported = sessionDetails != null && (sessionDetails.isUseUserTagPluginForUpdate() || sessionDetails.isAdminUser());
+        boolean isFavoritesAlterationSupported = sessionDetails != null && sessionDetails.isPiwigoClientPluginInstalled();
 
-        if(isTagAlterationSupported) {
-            String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_tag_pattern, deleteActionData.getSelectedItemIds().size());
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_untag, R.string.button_cancel, R.string.button_delete, dialogListener);
-        } else {
-            String msg = getString(R.string.alert_confirm_delete_items_from_server_no_unlinking_from_tags_possible_pattern, deleteActionData.getSelectedItemIds().size());
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_cancel, R.string.button_delete, dialogListener);
+        if(isFavoritesAlterationSupported) {
+            String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern, deleteActionData.getSelectedItemIds().size());
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_unfavorite, R.string.button_cancel, R.string.button_delete, dialogListener);
         }
-
     }
 
     private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
@@ -592,12 +541,12 @@ public class ViewTagFragment extends MyFragment {
     public void onResume() {
         super.onResume();
 
-        if(tagListView == null) {
+        if(favoritesListView == null) {
             //Resumed, but fragment initialisation cancelled for whatever reason.
             return;
         }
 
-        if (tagIsDirty) {
+        if (favoritesIsDirty) {
             reloadAlbumContent();
         } else if(itemsToLoad.size() > 0) {
             onReloadAlbum();
@@ -605,14 +554,14 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private void reloadAlbumContent() {
-        if(tagIsDirty) {
-            tagIsDirty = false;
+        if(favoritesIsDirty) {
+            favoritesIsDirty = false;
             if(loadingMessageIds.size() > 0) {
                 // already a load in progress - ignore this call.
                 //TODO be cleverer - check the time the call was invoked and queue another if needed.
                 return;
             }
-            tagModel.clear();
+            favoritesModel.clear();
             viewAdapter.notifyDataSetChanged();
             loadAlbumResourcesPage(0);
 
@@ -621,20 +570,20 @@ public class ViewTagFragment extends MyFragment {
 
     private void loadAlbumResourcesPage(int pageToLoad) {
         synchronized (loadingMessageIds) {
-            tagModel.acquirePageLoadLock();
+            favoritesModel.acquirePageLoadLock();
             try {
-                if (tagModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+                if (favoritesModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
                     return;
                 }
 
                 String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
                 String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
                 int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
-                long loadingMessageId = new TagGetImagesResponseHandler(tag, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
-                tagModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
+                long loadingMessageId = new FavoritesGetImagesResponseHandler(sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
+                favoritesModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
                 loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
             } finally {
-                tagModel.releasePageLoadLock();
+                favoritesModel.releasePageLoadLock();
             }
         }
     }
@@ -660,10 +609,9 @@ public class ViewTagFragment extends MyFragment {
     public void onDetach() {
         super.onDetach();
         EventBus.getDefault().unregister(this);
-        tag = null;
-        tagModel = null;
-        if(tagListView != null) {
-            tagListView.setAdapter(null);
+        favoritesModel = null;
+        if(favoritesListView != null) {
+            favoritesListView.setAdapter(null);
         }
     }
 
@@ -672,15 +620,17 @@ public class ViewTagFragment extends MyFragment {
         return new CustomPiwigoResponseListener();
     }
 
-    private void onTagUpdateResponse(PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse rsp) {
-        if(rsp.hasError()) {
-            String errorMsg = getString(R.string.error_updating_tag_pattern, rsp.getPiwigoResource().getName(), rsp.getError());
+    private void onFavoritesUpdateResponse(FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse rsp) {
+        ResourceItem r = rsp.getPiwigoResource();
+        onItemRemovedFromFavorites(r);
+        /*if(rsp.hasError()) {
+            String errorMsg = getString(R.string.error_updating_favorites_pattern, rsp.getPiwigoResource().getName(), rsp.getError());
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, errorMsg);
-            rsp.getPiwigoResource().getTags().add(tag); // removal failed, re-add this tag.
+            rsp.getPiwigoResource().setFavorite(true); // removal failed, re-add this favorites.
         } else {
             ResourceItem r = rsp.getPiwigoResource();
-            onItemRemovedFromTag(r);
-        }
+            onItemRemovedFromFavorites(r);
+        }*/
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
@@ -707,19 +657,25 @@ public class ViewTagFragment extends MyFragment {
                     }
                 } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
                     ResourceItem r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) response).getPiwigoResource();
-                    onItemRemovedFromTag(r);
-                } else if (response instanceof PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) {
-                    onTagUpdateResponse(((PluginUserTagsUpdateResourceTagsListResponseHandler.PiwigoUserTagsUpdateTagsListResponse) response));
+                    onItemRemovedFromFavorites(r);
+                } else if (response instanceof FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse) {
+                    onFavoritesUpdateResponse(((FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse) response));
                 } else if (response instanceof GetMethodsAvailableResponseHandler.PiwigoGetMethodsAvailableResponse) {
                     viewPrefs.withAllowMultiSelect(getMultiSelectionAllowed());
                 } else {
                     String failedCall = loadingMessageIds.get(response.getMessageId());
                     synchronized (itemsToLoad) {
                         itemsToLoad.add(failedCall);
-                        emptyTagLabel.setText(R.string.tag_content_load_failed_text);
+                        emptyFavoritesLabel.setText(R.string.favorites_content_load_failed_text);
                         if (itemsToLoad.size() > 0) {
-                            emptyTagLabel.setVisibility(VISIBLE);
+                            emptyFavoritesLabel.setVisibility(VISIBLE);
                             retryActionButton.show();
+                            favoritesModel.acquirePageLoadLock();
+                            try {
+                                favoritesModel.recordPageLoadFailed(response.getMessageId());
+                            } finally {
+                                favoritesModel.releasePageLoadLock();
+                            }
                         }
                     }
                 }
@@ -729,25 +685,27 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private void onItemRemovedFromServer(ResourceItem r) {
-        onItemRemovedFromTag(r);
+        onItemRemovedFromFavorites(r);
         for(Long albumId : r.getLinkedAlbums()) {
             EventBus.getDefault().post(new AlbumAlteredEvent(albumId, r.getId(), true));
         }
     }
 
-    private void onItemRemovedFromTag(ResourceItem r) {
-        int itemIdx = tagModel.getItemIdx(r);
-        tagModel.remove(itemIdx);
+    private void onItemRemovedFromFavorites(ResourceItem r) {
+        int itemIdx = favoritesModel.getItemIdx(r);
+        favoritesModel.remove(itemIdx);
         viewAdapter.notifyItemRemoved(itemIdx);
         if(deleteActionData.removeProcessedResource(r)) {
             deleteActionData = null;
         }
-        EventBus.getDefault().post(new TagContentAlteredEvent(tag.getId(), -1));
+        for(Long albumId : r.getLinkedAlbums()) {
+            EventBus.getDefault().post(new AlbumAlteredEvent(albumId, r.getId(), true));
+        }
     }
 
     private void onReloadAlbum() {
         retryActionButton.hide();
-        emptyTagLabel.setVisibility(GONE);
+        emptyFavoritesLabel.setVisibility(GONE);
         synchronized (itemsToLoad) {
             while (itemsToLoad.size() > 0) {
                 String itemToLoad = itemsToLoad.remove(0);
@@ -759,7 +717,7 @@ public class ViewTagFragment extends MyFragment {
                             break;
                     }
                 } else {
-                    Crashlytics.log(Log.ERROR, getTag(), "User told tag page failed to load, but nothing to retry loading!");
+                    Crashlytics.log(Log.ERROR, getTag(), "User told favorites page failed to load, but nothing to retry loading!");
                 }
             }
         }
@@ -767,7 +725,8 @@ public class ViewTagFragment extends MyFragment {
 
     private void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
-            tagModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
+            favoritesModel.getContainerDetails().setPhotoCount(response.getTotalResourceCount());
+            favoritesModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
             viewAdapter.notifyDataSetChanged();
         }
     }
@@ -780,7 +739,7 @@ public class ViewTagFragment extends MyFragment {
             viewAdapter.setCaptureActionClicks(captureActionClicks);*/
         } else {
             // if not showing, just flush the state and rebuild the page
-            tagIsDirty = true;
+            favoritesIsDirty = true;
         }
     }
 
@@ -792,50 +751,29 @@ public class ViewTagFragment extends MyFragment {
             viewAdapter.setCaptureActionClicks(captureActionClicks);*/
         } else {
             // if not showing, just flush the state and rebuild the page
-            tagIsDirty = true;
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        // This is needed because a slideshow item currently only fires these events (tag unaware).
-        if (tag != null && tag.getId() == albumAlteredEvent.getAlbumAltered()) {
-            tagIsDirty = true;
-            if(isResumed()) {
-                reloadAlbumContent();
-            }
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(TagContentAlteredEvent event) {
-        if (tag != null && tag.getId() == event.getId()) {
-            tagIsDirty = true;
-            if(isResumed()) {
-                reloadAlbumContent();
-            }
+            favoritesIsDirty = true;
         }
     }
 
     private class SpanSizeLookup extends GridLayoutManager.SpanSizeLookup {
 
         private final int colsPerImage;
-        private final PiwigoTag tagModel;
+        private final PiwigoFavorites favoritesModel;
 
-        public SpanSizeLookup(PiwigoTag tagModel, int colsPerImage) {
+        public SpanSizeLookup(PiwigoFavorites favoritesModel, int colsPerImage) {
             this.colsPerImage = colsPerImage;
-            this.tagModel = tagModel;
+            this.favoritesModel = favoritesModel;
         }
 
         @Override
         public int getSpanSize(int position) {
             // ensure that app cannot crash due to position being out of bounds.
             //FIXME - why would position be outside model size? What happens next now it doesn't crash here?
-            if(position < 0 || tagModel.getItemCount() <= position) {
+            if(position < 0 || favoritesModel.getItemCount() <= position) {
                 return 1;
             }
 
-            int itemType = tagModel.getItemByIdx(position).getType();
+            int itemType = favoritesModel.getItemByIdx(position).getType();
             switch(itemType) {
                 case GalleryItem.PICTURE_RESOURCE_TYPE:
                     return colsPerImage;
