@@ -243,7 +243,7 @@ public abstract class UIHelper<T> {
                 clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
                 dismissHandled = true;
                 snackbar.dismiss();
-                CustomSnackbar snackbarNotification = TransientMsgUtils.makeSnackbar(getParentView(), R.string.copied_to_clipboard, null, CustomSnackbar.LENGTH_SHORT);
+                CustomSnackbar snackbarNotification = TransientMsgUtils.makeSnackbar(v, R.string.copied_to_clipboard, null, CustomSnackbar.LENGTH_SHORT);
                 snackbarNotification.getView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
                     @Override
                     public void onViewAttachedToWindow(View v) {

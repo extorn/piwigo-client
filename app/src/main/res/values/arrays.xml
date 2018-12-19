@@ -176,16 +176,22 @@
             - Add some sort of help to assist user in knowing the features
             - Animated gif support
          - Possibly (Paid App only):
-            - Viewing Favorites list
             - The random photos idea implemented on the piwigo web UI
             - Support for user comments
             - Notify user of server updates that are available
             - Support for editing EXIF and other image metadata formats
             - Add preference to allow showing/hiding the EXIF etc fields of or not of interest
             - Screen cast of some kind to allow mirror of device on a larger screen
-         - ? Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
+         - Anything Else:
+            - Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.98.2</item>
+        <item>"Changes:
+            - Paid: Viewing Favorites list (Needs latest version of PiwigoClientWsExt plugin)
+            Bugfix:
+            - Slideshow not corrupted after delete
+            - Other annoying bugs"</item>
         <item>1.3.98</item>
         <item>"Changes:
          - Update the list of top tips"

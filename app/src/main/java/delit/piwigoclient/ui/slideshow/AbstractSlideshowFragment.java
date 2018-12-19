@@ -91,6 +91,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     @Override
     public void onPause() {
         super.onPause();
+        // Need to unregister it now because if done in onDetach, it alters the UI after the saveInstanceState is called and thus crashes!
+        getUiHelper().deregisterFromActiveServiceCalls();
         EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(galleryModel));
     }
 

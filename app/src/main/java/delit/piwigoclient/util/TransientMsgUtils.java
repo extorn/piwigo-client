@@ -2,6 +2,7 @@ package delit.piwigoclient.util;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import android.view.LayoutInflater;
@@ -46,7 +47,7 @@ public class TransientMsgUtils {
         return toast;
     }
 
-    public static CustomSnackbar makeSnackbar(View parent, int titleResId, String message, int duration) {
+    public static CustomSnackbar makeSnackbar(@NonNull View parent, int titleResId, String message, int duration) {
         CustomSnackbar snackbar = CustomSnackbar.make(parent, duration);
         if(message == null) {
             snackbar.setTitle(null);
