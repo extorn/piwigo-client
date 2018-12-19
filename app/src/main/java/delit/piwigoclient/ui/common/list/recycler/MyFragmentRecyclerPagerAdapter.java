@@ -18,12 +18,6 @@ package delit.piwigoclient.ui.common.list.recycler;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager.widget.PagerAdapter;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +28,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.PagerAdapter;
 import delit.piwigoclient.ui.common.util.BundleUtils;
 
 /**
@@ -116,6 +116,12 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
         f = createNewItem(fragmentTypeNeeded, position);
 
+        addFragmentToTransaction(container, f, position);
+
+        return f;
+    }
+
+    protected void addFragmentToTransaction(ViewGroup container, Fragment f, int position) {
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
@@ -133,8 +139,6 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
         activeFragments.put(position, f);
         mCurTransaction.add(container.getId(), f);
-
-        return f;
     }
 
     protected abstract Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position);
@@ -142,26 +146,31 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     public void onDeleteItem(ViewGroup container, int position) {
 
         destroyItem(container, position, getActiveFragment(position));
-
-        // now shift the remaining active fragments by one position.
-        for(int activeAdapterPosition = position + 1; activeAdapterPosition < activeFragments.size(); activeAdapterPosition++) {
-            activeFragments.put(activeAdapterPosition -1, activeFragments.remove(activeAdapterPosition));
-        }
-
         // remove this item
         pageState.remove(position);
-        // shift all stored states lower by one.
-        int idx = position;
-        while(pageState.containsKey(idx+1)) {
-            pageState.put(idx, pageState.remove(idx+1));
-            idx++;
+
+        // now shift the remaining active fragments by one position.
+        int activeAdapterPosition = position;
+        Fragment f;
+        do {
+            f = activeFragments.remove(activeAdapterPosition + 1);
+            if(f != null) {
+                activeFragments.put(activeAdapterPosition, f);
+                // shift any page state too
+                Fragment.SavedState thisFragmentPageState = pageState.remove(activeAdapterPosition + 1);
+                if(thisFragmentPageState != null) {
+                    pageState.put(activeAdapterPosition, thisFragmentPageState);
+                }
+            }
+            activeAdapterPosition++;
+        } while(f != null);
+
+        if(getCount() > position && activeFragments.get(position) == null) {
+            // reinstantiate this item (the old item has been deleted now so this gets the fresh one)
+            instantiateItem(container, position);
         }
 
         notifyDataSetChanged();
-
-        if(getCount() > position + 1) {
-            instantiateItem(container, position + 1);
-        }
     }
 
     @Override

@@ -2,11 +2,6 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
-
 import android.util.Log;
 import android.view.ViewGroup;
 
@@ -15,8 +10,13 @@ import com.crashlytics.android.Crashlytics;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
@@ -32,6 +32,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     private final List<Integer> galleryResourceItems;
     private boolean shouldShowVideos;
     private ResourceContainer<T, GalleryItem> gallery;
+    private HashMap<Long, Integer> cachedItemPositions; // id of item, against position in slideshow pager
     private S container;
     private int lastPosition = -1;
 
@@ -53,6 +54,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
             }
             galleryResourceItems.add(i);
         }
+        cachedItemPositions = new HashMap<>(galleryResourceItems.size());
     }
 
 
@@ -65,10 +67,18 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     public int getItemPosition(@NonNull Object item) {
         ResourceItem model = ((SlideshowItemFragment) item).getModel();
         int fullGalleryIdx = gallery.getItemIdx(model);
+        if(fullGalleryIdx < 0) {
+            return POSITION_NONE;
+        }
         int newIndexPosition = galleryResourceItems.indexOf(fullGalleryIdx);
         if (newIndexPosition < 0) {
             return POSITION_NONE;
         }
+        Integer currentCachedPosition = cachedItemPositions.get(model.getId());
+        if(currentCachedPosition != null && currentCachedPosition == newIndexPosition) {
+            return POSITION_UNCHANGED;
+        }
+        cachedItemPositions.put(model.getId(), newIndexPosition);
         return newIndexPosition;
     }
 
@@ -175,6 +185,16 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
         deleteItem(slideshowIdxOfItemToDelete);
     }
 
+    @Override
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        SlideshowItemFragment selectedPage = (SlideshowItemFragment) getActiveFragment(position);
+        if(selectedPage == null || selectedPage.getPagerIndex() == position) {
+            // this if is needed because I am calling destroy item, but this is handled within the ViewPager too... I'm not sure why I am calling it any more, but
+            // things don't work if I don't.
+            super.destroyItem(container, position, object);
+        }
+    }
+
     private void deleteItem(int itemIdx) {
         if (itemIdx >= 0) {
             // remove the item from the list of items in the slideshow.
@@ -194,9 +214,11 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     public void onDeleteItem(ViewGroup container, int position) {
         SlideshowItemFragment selectedPage = (SlideshowItemFragment) getActiveFragment(position);
         selectedPage.onPageDeselected();
+        Integer cachedPosition = cachedItemPositions.remove(selectedPage.getModel().getId());
+
         super.onDeleteItem(container, position);
-        selectedPage = (SlideshowItemFragment) getActiveFragment(position);
-        selectedPage.onPageSelected();
+//        selectedPage = (SlideshowItemFragment) getActiveFragment(position);
+//        selectedPage.onPageSelected();
     }
 
     //
