@@ -145,7 +145,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
         shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
         if (galleryItemAdapter == null) {
             galleryItemAdapter = new GalleryItemAdapter<>(galleryModel, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
-            galleryItemAdapter.setMaxFragmentsToSaveInState(40);
+            galleryItemAdapter.setMaxFragmentsToSaveInState(15);
         } else {
             // update settings.
             galleryItemAdapter.setShouldShowVideos(shouldShowVideos);

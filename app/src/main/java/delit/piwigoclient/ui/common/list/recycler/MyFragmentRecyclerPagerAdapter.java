@@ -34,7 +34,10 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.util.CollectionUtils;
+import delit.piwigoclient.util.SetUtils;
 
 /**
  * Implementation of {@link PagerAdapter} that
@@ -170,6 +173,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
             instantiateItem(container, position);
         }
 
+        clearPageState();
         notifyDataSetChanged();
     }
 
@@ -201,17 +205,29 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         int minIdxToKeep = getMinIdxFragmentStateToKeep();
         int maxIdxToKeep = getMaxIdxFragmentStateToKeep();
         Iterator<Integer> iter = pageState.keySet().iterator();
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, String.format("Page State contents prior to trim : %1$s", CollectionUtils.toCsvList(pageState.keySet())));
+        }
         while(pageState.size() > maxFragmentsToSaveInState && iter.hasNext()) {
             int idx = iter.next();
             if(idx < minIdxToKeep || idx > maxIdxToKeep) {
                 iter.remove();
             }
         }
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, String.format("Page State Trimmed to those pages centered on %1$d, between %2$d - %3$d (%4$d items)", visibleItemIdx, minIdxToKeep, maxIdxToKeep, pageState.size()));
+        }
+    }
+
+    protected void clearPageState() {
+        pageState.clear();
     }
 
     @Override
     public void notifyDataSetChanged() {
-        pageState.clear();
+        if(BuildConfig.DEBUG) {
+            Log.d(TAG, "Page state cleared");
+        }
         super.notifyDataSetChanged();
     }
 
@@ -220,8 +236,17 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
             if (fragment.isAdded()) {
                 pageState.put(position, mFragmentManager.saveFragmentInstanceState(fragment));
             } else {
+                if(BuildConfig.DEBUG) {
+                    Log.d(TAG, String.format("Removing page state for removed fragment : %1$d", position));
+                }
                 pageState.remove(position);
             }
+        }
+
+        if(BuildConfig.DEBUG) {
+            Bundle b = new Bundle();
+            BundleUtils.writeMap(b, "pagesState", pageState);
+            BundleUtils.logSize("Slideshow items", b);
         }
     }
 
@@ -291,7 +316,9 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
         state.putInt("visibleItemIndex", visibleItemIdx);
 
-        BundleUtils.logSize("Slideshow", state);
+        if(BuildConfig.DEBUG) {
+            BundleUtils.logSize("Slideshow", state);
+        }
 
         return state;
     }

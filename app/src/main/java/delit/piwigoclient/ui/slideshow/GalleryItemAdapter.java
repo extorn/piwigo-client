@@ -32,7 +32,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     private final List<Integer> galleryResourceItems;
     private boolean shouldShowVideos;
     private ResourceContainer<T, GalleryItem> gallery;
-    private HashMap<Long, Integer> cachedItemPositions; // id of item, against position in slideshow pager
+    private HashMap<Long, Integer> cachedItemPositions; // id of item, against posiSlideshow itemstion in slideshow pager
     private S container;
     private int lastPosition = -1;
 
