@@ -100,6 +100,10 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             }
         }
 
+        if(canContinue) {
+            loadGalleryConfig();
+        }
+
         setError(getNestedFailure());
         storeResponse(loginResponse);
 
@@ -109,6 +113,24 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
 
         return null;
+    }
+
+    private boolean loadGalleryConfig() {
+        GalleryGetConfigResponseHandler handler = new GalleryGetConfigResponseHandler();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails.isMethodAvailable(handler.getPiwigoMethod())) {
+            handler.setPerformingLogin();
+            handler.invokeAndWait(getContext(), getConnectionPrefs());
+            if (!handler.isSuccess()) {
+                reportNestedFailure(handler);
+                return false;
+            } else {
+                GalleryGetConfigResponseHandler.PiwigoGalleryGetConfigResponse response = (GalleryGetConfigResponseHandler.PiwigoGalleryGetConfigResponse) handler.getResponse();
+                sessionDetails.setServerConfig(response.getServerConfig());
+            }
+        }
+        // we don't need this information (not always available) so lets not fail the login.
+        return true;
     }
 
     private boolean loadPiwigoClientPluginDetails() {

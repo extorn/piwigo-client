@@ -60,6 +60,7 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.model.piwigo.ServerConfig;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
@@ -865,6 +866,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     protected String buildPageHeading() {
         CategoryItem catItem = galleryModel.getContainerDetails();
         if(CategoryItem.ROOT_ALBUM.equals(catItem)) {
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+            if(sessionDetails != null) {
+                ServerConfig serverConfig = sessionDetails.getServerConfig();
+                if(serverConfig != null) {
+                    return serverConfig.getGalleryTitle();
+                }
+            }
             return getString(R.string.album_title_home);
         } else {
             String currentAlbumName = "... / " + galleryModel.getContainerDetails().getName();
@@ -1892,6 +1900,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         loadAlbumPermissionsIfNeeded();
         displayControlsBasedOnSessionState();
         setEditItemDetailsControlsStatus();
+        updatePageTitle();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

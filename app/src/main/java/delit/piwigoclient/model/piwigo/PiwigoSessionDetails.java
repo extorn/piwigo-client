@@ -42,6 +42,7 @@ public class PiwigoSessionDetails {
     private boolean sessionMayHaveExpired;
     private int loginStatus = NOT_LOGGED_IN;
     private Boolean useCommunityPlugin;
+    private ServerConfig serverConfig;
 
     public PiwigoSessionDetails(ConnectionPreferences.ProfilePreferences connectionPrefs, String serverUrl, long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
         this.connectionPrefs = connectionPrefs;
@@ -315,5 +316,13 @@ public class PiwigoSessionDetails {
         out.putString("user.type", getUserType());
         out.putInt("login.status", loginStatus);
         out.putString("piwigo.client.ws.ext.plugin.version", getPiwigoClientPluginVersion());
+    }
+
+    public void setServerConfig(ServerConfig serverConfig) {
+        this.serverConfig = serverConfig;
+    }
+
+    public ServerConfig getServerConfig() {
+        return serverConfig;
     }
 }

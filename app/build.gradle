@@ -24,12 +24,12 @@ android {
 
     buildToolsVersion '28.0.3'
     defaultConfig {
-        buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"1.0.8\""
+        buildConfigField "String", "PIWIGO_CLIENT_WS_VERSION", "\"1.0.9\""
         applicationId "delit.piwigoclient"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 185
-        versionName "1.3.98.3"
+        versionCode 186
+        versionName "1.3.98.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
@@ -116,7 +116,7 @@ dependencies {
     // vector graphics support
     implementation 'androidx.vectordrawable:vectordrawable:1.0.1'
     // annotations support
-    implementation 'androidx.annotation:annotation:1.0.0'
+    implementation 'androidx.annotation:annotation:1.0.1'
     // drawers, snackbars etc
     implementation 'com.google.android.material:material:1.0.0' //1.1.0-alpha01
     // parse exif information
@@ -143,18 +143,18 @@ dependencies {
     implementation 'androidx.transition:transition:1.0.1'
     implementation 'androidx.constraintlayout:constraintlayout-solver:1.1.3' //2.0.0-alpha2
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3' //2.0.0-alpha2
-    implementation 'com.google.firebase:firebase-core:16.0.5'
+    implementation 'com.google.firebase:firebase-core:16.0.6'
     //implementation com.google.firebase:firebase-analytics:16.0.3
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.6'
-    implementation 'com.google.firebase:firebase-ads:17.1.1'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.7'
+    implementation 'com.google.firebase:firebase-ads:17.1.2'
     implementation 'com.google.android.gms:play-services-base:16.0.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:16.0.1'
     // firebase-perf must be lower version than firebase-core and play-services*
-    implementation 'com.google.firebase:firebase-perf:16.2.1'
-    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'com.google.firebase:firebase-perf:16.2.2'
+    implementation 'androidx.multidex:multidex:2.0.1'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
-    androidTestImplementation 'androidx.test:rules:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation 'androidx.test:rules:1.1.1'
 }
 
 //apply plugin: 'com.google.android.gms.strict-version-matcher-plugin'
