@@ -933,8 +933,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     protected void onImageDeleted(HashSet<Long> deletedItemIds) {
         List<Long> resourceItemParentChain = model.getParentageChain();
         EventBus.getDefault().post(new AlbumItemDeletedEvent(model, albumItemIdx, albumLoadedItemCount));
-        for (int i = 1; i < resourceItemParentChain.size(); i++) {
-            EventBus.getDefault().post(new AlbumAlteredEvent(resourceItemParentChain.get(i), resourceItemParentChain.get(i-1)));
+        for (int i = 0; i < resourceItemParentChain.size() - 1; i++) {
+            // update all albums except the direct parent of the resource deleted
+            EventBus.getDefault().post(new AlbumAlteredEvent(resourceItemParentChain.get(i), resourceItemParentChain.get(i+1)));
         }
     }
 
