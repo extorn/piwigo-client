@@ -97,7 +97,11 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
         int slideshowIdx = galleryResourceItems.get(position);
         GalleryItem galleryItem = gallery.getItemByIdx(slideshowIdx);
         if (galleryItem instanceof PictureResourceItem) {
-            return AlbumPictureItemFragment.class;
+            if(((PictureResourceItem) galleryItem).getFileExtension().equalsIgnoreCase("gif")) {
+                return AlbumGifPictureItemFragment.class;
+            } else {
+                return  AlbumPictureItemFragment.class;
+            }
         } else if (galleryItem instanceof VideoResourceItem) {
             return AlbumVideoItemFragment.class;
         }
@@ -111,7 +115,11 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
         SlideshowItemFragment fragment = null;
         int totalSlideshowItems = getTotalSlideshowItems();
         if (galleryItem instanceof PictureResourceItem) {
-            fragment = new AlbumPictureItemFragment();
+            if(((PictureResourceItem) galleryItem).getFileExtension().equalsIgnoreCase("gif")) {
+                fragment = new AlbumGifPictureItemFragment();
+            } else {
+                fragment = new AlbumPictureItemFragment();
+            }
             Bundle b = AlbumPictureItemFragment.buildArgs((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems);
             fragment.setArguments(b);
         } else if (galleryItem instanceof VideoResourceItem) {

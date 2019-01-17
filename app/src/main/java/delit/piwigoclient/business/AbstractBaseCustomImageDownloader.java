@@ -66,8 +66,12 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
 
         ImageGetToByteArrayHandler handler = new ImageGetToByteArrayHandler(getUriString(uri));
         handler.setCallDetails(context, connectionPrefs, false);
-        handler.runCall();
-//        handler.invokeAndWait(context, connectionPrefs);
+        if (Looper.myLooper() == null || Looper.myLooper().getThread() != Looper.getMainLooper().getThread()) {
+            handler.runCall();
+        } else {
+            // invoke a separate thread if this was called on the main thread (this won't occur when called within Picasso)
+            handler.invokeAndWait(context, connectionPrefs);
+        }
 
         if (!handler.isSuccess()) {
             PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse) handler.getResponse();

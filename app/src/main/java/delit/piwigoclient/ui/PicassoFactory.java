@@ -66,7 +66,7 @@ public class PicassoFactory {
         }
     }
 
-    private Downloader getDownloader(Context context) {
+    public CustomImageDownloader getDownloader(Context context) {
         CustomImageDownloader dldr = new CustomImageDownloader(context);
         dldr.addErrorDrawable(HttpStatus.SC_UNAUTHORIZED, R.drawable.ic_image_locked_black_240dp);
         dldr.addErrorDrawable(HttpStatus.SC_NOT_FOUND, R.drawable.ic_broken_image_black_240dp);

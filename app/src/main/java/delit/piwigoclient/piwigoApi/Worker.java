@@ -128,18 +128,23 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
 
     @Override
     protected final Boolean doInBackground(Long... params) {
+        boolean result;
         try {
             if (params.length != 1) {
                 throw new IllegalArgumentException("Exactly one parameter must be passed - the id for this call");
             }
             long messageId = params[0];
-            return executeCall(messageId);
+            result = executeCall(messageId);
+            Log.d(tag, "Worker returning : " + result);
+            return result;
         } catch (RuntimeException e) {
             Crashlytics.logException(e);
             if (BuildConfig.DEBUG) {
                 Log.e(tag, "ASync code crashed unexpectedly", e);
             }
-            return false;
+            result = false;
+            Log.d(tag, "Worker returning : " + result);
+            return result;
         }
     }
 
@@ -215,6 +220,11 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         return handler.isSuccess();
     }
 
+    @Override
+    protected void onPostExecute(Boolean aBoolean) {
+        super.onPostExecute(aBoolean);
+    }
+
     protected @NonNull AbstractPiwigoDirectResponseHandler getHandler(SharedPreferences prefs) {
         return handler;
     }
@@ -245,12 +255,27 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         AsyncTask<Long, Integer, Boolean> task = executeOnExecutor(getExecutor(), messageId);
         //TODO collect a list of tasks and kill them all if the app exits.
         Boolean retVal = null;
-        while (!task.isCancelled() && !task.getStatus().equals(FINISHED)) {
+        boolean timedOut = false;
+        long timeoutAt = Long.MAX_VALUE;
+        while (!task.isCancelled() && !task.getStatus().equals(FINISHED) && !timedOut) {
+
+            if(retVal != null) {
+                timedOut = System.currentTimeMillis() > timeoutAt;
+            }
             try {
                 if (BuildConfig.DEBUG) {
                     Log.e(tag, "Thread " + Thread.currentThread().getName() + " starting to wait for response from handler " + handler.getClass().getSimpleName());
                 }
-                retVal = task.get();
+                if(retVal == null) {
+                    retVal = task.get();
+                    if (retVal != null) {
+                        timeoutAt = System.currentTimeMillis() + 1500;
+                    }
+                } else {
+                    synchronized (task) {
+                        task.wait(500);
+                    }
+                }
             } catch (InterruptedException e) {
                 // ignore unless the worker is cancelled.
                 if (BuildConfig.DEBUG) {
@@ -261,6 +286,12 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
                     Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Error retrieving result from handler " + handler.getClass().getSimpleName(), e);
                 }
             }
+        }
+        if(timedOut) {
+            if (BuildConfig.DEBUG) {
+                Log.e(tag, "Thread " + Thread.currentThread().getName() + ": Task not correctly being updated as finished from handler " + handler.getClass().getSimpleName());
+            }
+            task.cancel(true);
         }
         return retVal == null ? false : retVal;
     }

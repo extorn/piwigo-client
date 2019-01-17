@@ -390,7 +390,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
             } else {
                 client = getHttpClientFactory().getAsyncHttpClient(connectionPrefs, context);
             }
-            if (client == null) {
+           if (client == null) {
                 // unable to build a client from configuration properties.
                 sendFailureMessage(-1, null, null, new IllegalArgumentException(getContext().getString(R.string.error_server_configuration_invalid)));
             } else {

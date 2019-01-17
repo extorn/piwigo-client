@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -36,6 +37,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.DisplayUtils;
+import pl.droidsonroids.gif.GifImageView;
 
 import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_FLAG;
 
@@ -44,7 +46,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     private static final String STATE_CURRENT_IMAGE_URL = "currentImageUrl";
     private String currentImageUrlDisplayed;
     private PicassoLoader loader;
-    private TouchImageView imageView;
+    private ImageView imageView;
 
     public AbstractAlbumPictureItemFragment() {
     }
@@ -85,8 +87,75 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     @Override
     public View createItemContent(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-//        imageView = container.findViewById(R.id.slideshow_image);
-        imageView = new TouchImageView(getContext());
+        imageView = createImageViewer();
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (loader != null && !loader.isImageLoaded()) {
+                    loader.loadNoCache();
+                }
+            }
+        });
+
+        return imageView;
+    }
+
+    protected ImageView createImageViewer() {
+        return createStaticImageViewer();
+    }
+
+    protected ImageView createAnimatedGifViewer() {
+        final GifImageView imageView = new GifImageView(getContext());
+
+        imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
+        imageView.setMinimumWidth(DisplayUtils.dpToPx(getContext(), 120));
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        imageView.setLayoutParams(layoutParams);
+        //TODO allow zooming in on the image.... or scrap all of this and load the gif into the ExoPlayer as a movie (probably better!)
+//        imageView.setScaleType(ImageView.ScaleType.MATRIX);
+        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+
+        imageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                getOverlaysVisibilityControl().runWithDelay(imageView);
+                return false;
+            }
+        });
+
+        loader = new PicassoLoader(imageView) {
+
+            @Override
+            public void load() {
+                showProgressIndicator();
+                imageView.setBackgroundColor(Color.TRANSPARENT);
+                super.load();
+            }
+
+            @Override
+            protected void onImageLoad(boolean success) {
+                if (success) {
+                    // do nothing
+                } else {
+                    imageView.setBackgroundColor(Color.DKGRAY);
+                }
+                EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
+                hideProgressIndicator();
+                getOverlaysVisibilityControl().runWithDelay(imageView);
+            }
+
+            @Override
+            protected void onImageUnavailable() {
+                getLoadInto().setImageResource(R.drawable.ic_file_gray_24dp);
+            }
+        };
+        return imageView;
+    }
+
+    protected ImageView createStaticImageViewer() {
+        //        imageView = container.findViewById(R.id.slideshow_image);
+        final TouchImageView imageView = new TouchImageView(getContext());
         imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
         imageView.setMinimumWidth(DisplayUtils.dpToPx(getContext(), 120));
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -141,22 +210,13 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 getLoadInto().setImageResource(R.drawable.ic_file_gray_24dp);
             }
         };
-
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (loader != null && !loader.isImageLoaded()) {
-                    loader.loadNoCache();
-                }
-            }
-        });
-
         return imageView;
     }
 
     @Override
     protected void configureItemContent(@Nullable View itemContent, final PictureResourceItem model, @Nullable Bundle savedInstanceState) {
         super.configureItemContent(itemContent, model, savedInstanceState);
+
         imageView.setOnLongClickListener(new View.OnLongClickListener() {
 
 
@@ -177,7 +237,9 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                             loader.setRotation(0f);
                         }
                         loader.load();
-                        imageView.setMaxZoom(maxZoom);
+                        if(imageView instanceof TouchImageView) {
+                            ((TouchImageView)imageView).setMaxZoom(maxZoom);
+                        }
                     }
                 });
                 dialog.show();

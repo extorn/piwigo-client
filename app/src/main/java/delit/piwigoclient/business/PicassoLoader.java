@@ -1,12 +1,18 @@
 package delit.piwigoclient.business;
 
 import android.content.Context;
+import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Build;
 import androidx.annotation.DrawableRes;
 import androidx.core.content.ContextCompat;
+
+import android.util.Log;
 import android.widget.ImageView;
 
+import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.Downloader;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -14,9 +20,13 @@ import com.squareup.picasso.RequestCreator;
 import com.squareup.picasso.Transformation;
 
 import java.io.File;
+import java.io.IOException;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 import delit.piwigoclient.ui.PicassoFactory;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Created by gareth on 11/10/17.
@@ -115,19 +125,52 @@ public class PicassoLoader implements Callback {
                 onSuccess();
             } else {
                 PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
-                RequestCreator loader = customiseLoader(buildLoader());
-                if (forceServerRequest) {
-                    loader.memoryPolicy(MemoryPolicy.NO_CACHE);
-                    loader.networkPolicy(NetworkPolicy.NO_CACHE);
+                if(placeholderUri != null && placeholderLoaded && isLoadingGif()) {
+                    // load the gif straight into the image manually.
+                    CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader(loadInto.getContext());
+                    try {
+                        Downloader.Response rsp = downloader.load(Uri.parse(uriToLoad), -1);
+                        if(rsp != null) {
+                            //TODO create a custom video downloader that creates and uses a gif drawable as the basis for the stream decoder perhaps.
+                            GifDrawable drawable = new GifDrawable(rsp.getInputStream());
+                            loadInto.setImageDrawable(drawable);
+                            onSuccess();
+                        }
+                    } catch (IOException e) {
+                        Crashlytics.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
+                        Crashlytics.logException(e);
+                        loadInto.setImageResource(errorResourceId);
+                        onError();
+                    }
+
+                } else {
+                    RequestCreator loader = customiseLoader(buildLoader());
+                    if (forceServerRequest) {
+                        loader.memoryPolicy(MemoryPolicy.NO_CACHE);
+                        loader.networkPolicy(NetworkPolicy.NO_CACHE);
+                    }
+                    //                if(placeholderUri != null) {
+                    //                    Log.d("PicassoLoader", "Loading: " + placeholderUri, new Exception().fillInStackTrace());
+                    //                } else {
+                    //                    Log.d("PicassoLoader", "Loading: " + uriToLoad, new Exception().fillInStackTrace());
+                    //                }
+                    loader.into(loadInto, this);
                 }
-//                if(placeholderUri != null) {
-//                    Log.d("PicassoLoader", "Loading: " + placeholderUri, new Exception().fillInStackTrace());
-//                } else {
-//                    Log.d("PicassoLoader", "Loading: " + uriToLoad, new Exception().fillInStackTrace());
-//                }
-                loader.into(loadInto, this);
             }
         }
+    }
+
+    private boolean isLoadingGif() {
+        String uri = getUriToLoad();
+        if(uri == null) {
+            return false;
+        }
+        uri = uri.toLowerCase();
+        int idx = uri.lastIndexOf(".gif");
+        if(idx < 0) {
+            return false;
+        }
+        return uri.length() == idx + 4 || uri.charAt(idx+4) == '?';
     }
 
     public void cancelImageLoadIfRunning() {
