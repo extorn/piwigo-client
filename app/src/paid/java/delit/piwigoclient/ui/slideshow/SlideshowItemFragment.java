@@ -106,7 +106,11 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         super.populateResourceExtraFields();
 
         if(getModel().hasFavoriteInfo()) {
-            favoriteButton.setChecked(getModel().isFavorite());
+            boolean newVal = getModel().isFavorite();
+            if(newVal != favoriteButton.isChecked()) {
+                favoriteButton.setTag("noListener");
+                favoriteButton.setChecked(newVal);
+            }
         }
 
         setLinkedAlbumFieldText(tagsField, getLatestTagListForResource());
@@ -166,6 +170,10 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         favoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if("noListener".equals(buttonView.getTag())) {
+                    buttonView.setTag(null);
+                    return;
+                }
                 buttonView.setEnabled(false);
                 if(getModel().hasFavoriteInfo()) {
                     if (!getModel().isFavorite()) {
