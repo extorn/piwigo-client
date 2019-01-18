@@ -352,14 +352,13 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         }
 
         if(!canRetryCall) {
-            String errorMsg = HttpUtils.getHttpErrorMessage(statusCode, error);
+            String[] errorDetail = HttpUtils.getHttpErrorMessage(getContext(), statusCode, error);
             if (getNestedFailureMethod() != null) {
-                errorMsg = getNestedFailureMethod() + " : " + errorMsg;
+                errorDetail[0] = getNestedFailureMethod() + " : " + errorDetail[0];
             } else {
-                errorMsg = getPiwigoMethod() + " : " + errorMsg;
+                errorDetail[0] = getPiwigoMethod() + " : " + errorDetail[0];
             }
-            String errorDetail = error != null ? error.getMessage() : "";
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorMsg, errorDetail, isCached);
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorDetail[0], errorDetail[1], isCached);
             r.setResponse(responseBody != null ? new String(responseBody) : "");
             storeResponse(r);
         }

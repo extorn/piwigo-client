@@ -415,8 +415,8 @@ public class CategoryItem extends GalleryItem implements Cloneable {
             if(newMatchingItem != null) {
                 if(!preferExisting) {
                     // swap to the new copy. Note still need to merge old child albums across.
-                    childAlbums.remove(i);
-                    childAlbums.add(i, newMatchingItem);
+//                    childAlbums.remove(i);
+                    childAlbums.set(i, newMatchingItem);
                     mergeChildrenWith(i, newMatchingItem, existingMatchingItem, !preferExisting);
                 } else {
                     mergeChildrenWith(i, existingMatchingItem, newMatchingItem, preferExisting);

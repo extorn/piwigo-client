@@ -435,6 +435,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         int newLoginStatus = PiwigoSessionDetails.NOT_LOGGED_IN;
         boolean exit = false;
         LoginResponseHandler handler = new LoginResponseHandler();
+        boolean failureReported = false;
         do {
             handler.invokeAndWait(context, getConnectionPrefs());
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
@@ -458,11 +459,18 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                     newLoginStatus = PiwigoSessionDetails.LOGGED_IN;
                 }
             } else {
-                reportNestedFailure(handler);
+                if(!failureReported) {
+                    failureReported = true;
+                    reportNestedFailure(handler);
+                }
             }
             if (newLoginStatus == loginStatus) {
                 // no progression - fail call.
                 exit = true;
+                if(!failureReported) {
+                    failureReported = true;
+                    reportNestedFailure(handler);
+                }
                 onGetNewSessionAndOrUserDetailsFailed();
             }
             loginStatus = newLoginStatus;

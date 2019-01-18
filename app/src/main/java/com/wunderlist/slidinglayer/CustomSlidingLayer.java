@@ -1250,10 +1250,10 @@ public class CustomSlidingLayer extends FrameLayout {
                     layoutParams.gravity = Gravity.BOTTOM;
                     break;
                 case STICK_TO_LEFT:
-                    layoutParams.gravity = Gravity.LEFT;
+                    layoutParams.gravity = Gravity.START;
                     break;
                 case STICK_TO_RIGHT:
-                    layoutParams.gravity = Gravity.RIGHT;
+                    layoutParams.gravity = Gravity.END;
                     break;
                 case STICK_TO_TOP:
                     layoutParams.gravity = Gravity.TOP;

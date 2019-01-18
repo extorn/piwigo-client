@@ -71,7 +71,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/snackbar_text"
         android:layout_marginStart="@dimen/design_snackbar_extra_spacing_horizontal"
-        android:layout_marginLeft="@dimen/design_snackbar_extra_spacing_horizontal"
         android:layout_centerHorizontal="true"
         android:minWidth="48dp"
         android:textColor="?attr/colorAccent"

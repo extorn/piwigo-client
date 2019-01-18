@@ -747,6 +747,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         }
 
         if(sessionDetails.isPiwigoClientPluginInstalled() && !VersionUtils.versionExceeds(VersionUtils.parseVersionString(BuildConfig.PIWIGO_CLIENT_WS_VERSION), VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion()))) {
+            if(sessionDetails.getServerUrl().equalsIgnoreCase("https://piwigo.com"))
             getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_error_unsupported_piwigo_client_ws_ext_version_please_update_it));
         }
 

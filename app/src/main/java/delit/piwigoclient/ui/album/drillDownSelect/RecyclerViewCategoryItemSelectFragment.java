@@ -91,7 +91,9 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(ACTIVE_ITEM, getListAdapter().getActiveItem());
+        if(getListAdapter() != null) {
+            outState.putParcelable(ACTIVE_ITEM, getListAdapter().getActiveItem());
+        }
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
         outState.putSerializable(STATE_LIST_VIEW_STATE, listViewStates);
     }
