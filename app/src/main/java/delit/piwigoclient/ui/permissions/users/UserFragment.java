@@ -762,6 +762,7 @@ public class UserFragment extends MyFragment {
             availableItemsAdapter.linkToListView(albumPermissionsField, initialSelection, initialSelection);
         } else if (!SetUtils.equals(adapter.getSelectedItems(), initialSelection)) {
             adapter.setSelectedItems(initialSelection);
+            adapter.setIndirectlySelectedItems(indirectAlbumPermissions);
         }
     }
 
@@ -777,6 +778,7 @@ public class UserFragment extends MyFragment {
                 addActiveServiceCall(R.string.progress_reloading_album_permissions, new GroupGetPermissionsResponseHandler(newGroupsMembership).invokeAsync(getContext()));
             } else {
                 newIndirectAlbumPermissions = new HashSet<>(0);
+                populateAlbumPermissionsList(getLatestDirectAlbumPermissions(), getLatestIndirectAlbumPermissions());
             }
             selectGroupsActionId = -1;
         }
