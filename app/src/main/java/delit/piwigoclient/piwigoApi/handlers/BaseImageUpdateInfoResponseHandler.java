@@ -17,6 +17,7 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
 
     private static final String TAG = "UpdateResourceInfoRspHdlr";
     private final T piwigoResource;
+    private String filename;
 
     public BaseImageUpdateInfoResponseHandler(T piwigoResource) {
         super("pwg.images.setInfo", TAG);
@@ -32,15 +33,18 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
         params.put("image_id", String.valueOf(piwigoResource.getId()));
+        if(filename != null) {
+            params.put("file", filename);
+        }
         params.put("name", piwigoResource.getName());
         params.put("comment", piwigoResource.getDescription());
         params.put("level", String.valueOf(piwigoResource.getPrivacyLevel()));
-        params.put("single_value_mode", "replace");
         params.put("categories", getLinkedAlbumList(piwigoResource.getLinkedAlbums()));
         if (piwigoResource.getCreationDate() != null) {
-            SimpleDateFormat dateTimeOriginalFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+            SimpleDateFormat dateTimeOriginalFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             params.put("date_creation", dateTimeOriginalFormat.format(piwigoResource.getCreationDate()));
         }
+        params.put("single_value_mode", "replace");
         params.put("multiple_value_mode", "replace");
         return params;
     }
@@ -77,6 +81,14 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
         piwigoResource.markResourceDetailUpdated();
         PiwigoUpdateResourceInfoResponse<T> r = new PiwigoUpdateResourceInfoResponse<>(getMessageId(), getPiwigoMethod(), piwigoResource, isCached);
         storeResponse(r);
+    }
+
+    /**
+     * This is the filename (original) of the image. It is only set when uploading.
+     * @param filename
+     */
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {

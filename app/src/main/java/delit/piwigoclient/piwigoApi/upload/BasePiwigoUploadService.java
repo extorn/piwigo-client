@@ -941,6 +941,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
         // Don't update the tags because we aren't altering this aspect of the the image during upload and it (could) cause problems
         ImageUpdateInfoResponseHandler imageInfoUpdateHandler = new ImageUpdateInfoResponseHandler(uploadedResource, false);
+        imageInfoUpdateHandler.setFilename(fileForUpload.getName());
         invokeWithRetries(thisUploadJob, imageInfoUpdateHandler, 2);
         if (!imageInfoUpdateHandler.isSuccess()) {
             Iterator<Long> iter = uploadedResource.getLinkedAlbums().iterator();
