@@ -52,11 +52,11 @@
     </style>
 
     <style name="Custom.TextAppearance.AppCompat.Body1.Clickable" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:textColor">@color/text_color_clickable</item>
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
 
     <style name="Custom.TextAppearance.AppCompat.Body2.Clickable" parent="TextAppearance.AppCompat.Body2">
-        <item name="android:textColor">@color/text_color_clickable</item>
+        <item name="android:textColor">@color/clickable_text_color_selector</item>
     </style>
 
     <style name="Custom.Widget.AppCompat.CompoundButton.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">

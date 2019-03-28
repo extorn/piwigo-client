@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
+import com.drew.tools.FileUtil;
 import com.google.android.gms.common.util.ArrayUtils;
 
 import java.io.File;
@@ -27,6 +28,7 @@ import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
+import delit.piwigoclient.util.IOUtils;
 import delit.piwigoclient.util.ObjectUtils;
 
 public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemRecyclerViewAdapter.FolderItemViewHolder> {
@@ -280,6 +282,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
     protected class FolderItemFileViewHolder extends FolderItemViewHolder {
 
+        private TextView itemHeading;
+
         public FolderItemFileViewHolder(View view) {
             super(view);
         }
@@ -287,6 +291,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         public void fillValues(Context context, File newItem, boolean allowItemDeletion) {
             setItem(newItem);
+
+            long bytes = newItem.length();
+            double sizeMb = ((double)bytes)/1024/1024;
+            itemHeading.setVisibility(View.VISIBLE);
+            itemHeading.setText(String.format("%1$.2fMB", sizeMb));
+
             if (getAdapterPrefs().isShowFilenames()) {
                 getTxtTitle().setVisibility(View.VISIBLE);
                 getTxtTitle().setText(newItem.getName());
@@ -305,6 +315,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         @Override
         public void cacheViewFieldsAndConfigure() {
             super.cacheViewFieldsAndConfigure();
+            itemHeading = itemView.findViewById(R.id.list_item_heading);
             getIconViewLoader().withErrorDrawable(R.drawable.ic_file_gray_24dp);
             final ViewTreeObserver.OnPreDrawListener predrawListener = new ViewTreeObserver.OnPreDrawListener() {
                 @Override

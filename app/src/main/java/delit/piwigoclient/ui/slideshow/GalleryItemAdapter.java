@@ -97,7 +97,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
         int slideshowIdx = galleryResourceItems.get(position);
         GalleryItem galleryItem = gallery.getItemByIdx(slideshowIdx);
         if (galleryItem instanceof PictureResourceItem) {
-            if(((PictureResourceItem) galleryItem).getFileExtension().equalsIgnoreCase("gif")) {
+            if("gif".equalsIgnoreCase(((PictureResourceItem) galleryItem).getFileExtension())) {
                 return AlbumGifPictureItemFragment.class;
             } else {
                 return  AlbumPictureItemFragment.class;
@@ -115,7 +115,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
         SlideshowItemFragment fragment = null;
         int totalSlideshowItems = getTotalSlideshowItems();
         if (galleryItem instanceof PictureResourceItem) {
-            if(((PictureResourceItem) galleryItem).getFileExtension().equalsIgnoreCase("gif")) {
+            if("gif".equalsIgnoreCase(((PictureResourceItem) galleryItem).getFileExtension())) {
                 fragment = new AlbumGifPictureItemFragment();
             } else {
                 fragment = new AlbumPictureItemFragment();

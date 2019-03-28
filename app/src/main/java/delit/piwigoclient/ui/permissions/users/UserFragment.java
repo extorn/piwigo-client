@@ -639,6 +639,7 @@ public class UserFragment extends MyFragment {
     public void onEvent(AlbumPermissionsSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             newDirectAlbumPermissions = event.getSelectedAlbumIds();
+            populateAlbumPermissionsList(getLatestDirectAlbumPermissions(), getLatestIndirectAlbumPermissions());
         }
     }
 

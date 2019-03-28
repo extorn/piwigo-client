@@ -64,6 +64,7 @@
         <item>Rechts 180 Grad</item>
     </string-array>
     <string-array name="top_tips">
+        <item>"Du kannst nur Dateien sehen, die du für den Upload auswählen musst, die für den Upload auf deinen Server geeignet sind. Wenn du Videos hochladen möchtest, ändere deine Server config.inc.php-Datei so, dass sie $conf['upload_form_all_types'] = true; anstatt false enthält."</item>
         <item>Wenn ein Upload einfach nicht erfolgreich ist, versuchen Sie, die Präferenz auf der Upload-Seite der App-Einstellungen zu verwenden, um alle fehlgeschlagenen Uploads vom Server zu löschen</item>
         <item>Fehler tritt immer auf, wenn versucht wird, Tags zu aktualisieren. - \"You are not allowed to delete tags\" - Sicherstellen, dass Benutzer sowohl Tags hinzufügen als auch löschen können (Server-Plugin-Einstellung).</item>
         <item>Teilen Sie Dateien aus einer anderen Anwendung mit dieser Anwendung, um sie zum Upload-Bildschirm hinzuzufügen, der bereit ist, auf Ihren aktuellen Server zu gehen.</item>
@@ -103,6 +104,10 @@
          - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.98.8</item>
+        <item>"Änderungen:
+            - Verbesserungen bei der Fehlerbehandlung beim Hochladen von Dateien
+            - Kleine Korrekturen rund um die App"</item>
         <item>1.3.98.7</item>
         <item>"Bugfix: Uploads - Ändern Sie den Dateinamen so, dass er dem der Datei auf Ihrem Gerät entspricht"</item>
         <item>1.3.98.6</item>

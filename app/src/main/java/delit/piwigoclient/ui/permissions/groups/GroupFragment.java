@@ -635,6 +635,7 @@ public class GroupFragment extends MyFragment {
     public void onAlbumPermissionsSelectedEvent(AlbumPermissionsSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
             newAccessibleAlbumIds = event.getSelectedAlbumIds();
+            populateAlbumPermissionsList();
         }
     }
 
@@ -656,6 +657,7 @@ public class GroupFragment extends MyFragment {
             availableItemsAdapter.linkToListView(albumAccessRightsField, getLatestAlbumPermissions(), getLatestAlbumPermissions());
         } else {
             adapter.setSelectedItems(getLatestAlbumPermissions());
+            adapter.notifyDataSetChanged();
         }
     }
 

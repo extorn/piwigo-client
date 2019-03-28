@@ -10,6 +10,8 @@ import android.net.NetworkInfo;
 import android.os.FileObserver;
 import android.util.Log;
 
+import com.google.android.gms.common.util.ArrayUtils;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
@@ -24,6 +26,7 @@ import java.util.Map;
 import androidx.annotation.Nullable;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
@@ -156,7 +159,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                         // if there's an old incomplete job, try and finish that first.
                         unfinishedJob = getActiveBackgroundJob(context);
                         if (unfinishedJob != null) {
-                            boolean jobIsValid = unfinishedJob.getConnectionPrefs().isValid(getPrefs(), getApplicationContext());
+                            ConnectionPreferences.ProfilePreferences jobConnProfilePrefs = unfinishedJob.getConnectionPrefs();
+                            boolean jobIsValid = jobConnProfilePrefs != null && jobConnProfilePrefs.isValid(getPrefs(), getApplicationContext());
                             if(!jobIsValid) {
                                 new AutoUploadJobConfig(unfinishedJob.getJobConfigId()).setJobValid(getBaseContext(), false);
                             }
@@ -182,7 +186,8 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                         if (jobs.hasUploadJobs(context)) {
                             // remove all existing watchers (in case user has altered the monitored folders)
                             List<AutoUploadJobConfig> jobConfigList = jobs.getAutoUploadJobs(context);
-                            for(File key : runningObservers.keySet()) {
+                            List<File> keys = new ArrayList(runningObservers.keySet());
+                            for(File key : keys) {
                                 runningObservers.remove(key).stopWatching();
                             }
                             for (AutoUploadJobConfig jobConfig : jobConfigList) {

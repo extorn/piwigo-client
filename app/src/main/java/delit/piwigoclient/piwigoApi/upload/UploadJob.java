@@ -21,14 +21,15 @@ public class UploadJob implements Serializable {
 
     private static final long serialVersionUID = 2L;
 
-    public static final Integer CANCELLED = -1;
-    public static final Integer UPLOADING = 0;
-    public static final Integer UPLOADED = 1;
-    public static final Integer VERIFIED = 2;
-    public static final Integer CONFIGURED = 3;
-    public static final Integer PENDING_APPROVAL = 4;
-    public static final Integer REQUIRES_DELETE = 5;
-    public static final Integer DELETED = 6;
+    public static final Integer CANCELLED = -1; // file has been removed from the upload job
+    public static final Integer UPLOADING = 0; // file bytes transfer in process
+    public static final Integer UPLOADED = 1; // all file bytes uploaded but not checksum verified
+    public static final Integer VERIFIED = 2; // file bytes match those on the client device
+    public static final Integer CONFIGURED = 3; // all permissions etc sorted and file renamed
+    public static final Integer PENDING_APPROVAL = 4; // if community plugin in use and file is otherwise completely sorted
+    public static final Integer REQUIRES_DELETE = 5; // user cancels upload after file partially uploaded
+    public static final Integer DELETED = 6; // file has been deleted from the server
+    public static final Integer CORRUPT = 7; // (moves to this state if verification fails)
     private final long jobId;
     private final long responseHandlerId;
     private final ArrayList<File> filesForUpload;
@@ -79,6 +80,10 @@ public class UploadJob implements Serializable {
 
     public synchronized void markFileAsVerified(File fileForUpload) {
         fileUploadStatus.put(fileForUpload, VERIFIED);
+    }
+
+    public synchronized void markFileAsCorrupt(File fileForUpload) {
+        fileUploadStatus.put(fileForUpload, CORRUPT);
     }
 
     public synchronized void markFileAsConfigured(File fileForUpload) {
@@ -161,6 +166,10 @@ public class UploadJob implements Serializable {
         return REQUIRES_DELETE.equals(fileUploadStatus.get(fileForUpload));
     }
 
+    public synchronized boolean needsDeleteAndThenReUpload(File fileForUpload) {
+        return CORRUPT.equals(fileUploadStatus.get(fileForUpload));
+    }
+
     public synchronized boolean isFileUploadComplete(File fileForUpload) {
         Integer status = fileUploadStatus.get(fileForUpload);
         return PENDING_APPROVAL.equals(status) || CONFIGURED.equals(status);
@@ -212,6 +221,11 @@ public class UploadJob implements Serializable {
 
     public long getUploadToCategory() {
         return uploadToCategory;
+    }
+
+    public synchronized void clearUploadProgress(File f) {
+        fileUploadStatus.remove(f);
+        filePartialUploadProgress.remove(f);
     }
 
     public synchronized int getUploadProgress(File f) {

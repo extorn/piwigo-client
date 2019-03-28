@@ -6,6 +6,9 @@ import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+
+import delit.piwigoclient.model.piwigo.Tag;
 
 public class CollectionUtils {
 
@@ -71,6 +74,18 @@ public class CollectionUtils {
         String[] strValues = csvValue.split(",");
         for (String val : strValues) {
             value.add(Integer.valueOf(val));
+        }
+        return value;
+    }
+
+    public static ArrayList<String> stringsFromCsvList(String csvValue) {
+        ArrayList<String> value = new ArrayList<>();
+        if (csvValue == null) {
+            return value;
+        }
+        String[] strValues = csvValue.split(",");
+        for (String val : strValues) {
+            value.add(val);
         }
         return value;
     }

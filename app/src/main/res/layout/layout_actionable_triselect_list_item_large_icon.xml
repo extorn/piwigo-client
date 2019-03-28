@@ -39,6 +39,25 @@
         app:srcCompat="@drawable/ic_delete_black_24px" />
 
     <TextView
+        android:id="@+id/list_item_heading"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:layout_margin="0dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_alignTop="@id/list_item_icon_thumbnail"
+        android:layout_toEndOf="@id/list_item_checked"
+        android:layout_toStartOf="@id/list_item_delete_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Heading"
+        android:textAlignment="center"
+        android:background="@color/black_overlay"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+    <TextView
         android:id="@+id/list_item_name"
         android:layout_margin="0dp"
         android:paddingTop="4dp"

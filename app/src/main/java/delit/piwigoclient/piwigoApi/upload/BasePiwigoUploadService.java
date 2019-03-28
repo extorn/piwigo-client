@@ -508,7 +508,31 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if(handler.getError() != null) {
             sb.append(handler.getError().getMessage());
         } else {
-            sb.append("???");
+            boolean detailAdded = false;
+            if(handler.getResponse() != null && handler.getResponse() instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
+                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse errorResponse = (PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse)handler.getResponse();
+                if(errorResponse.getResponse() != null) {
+                    sb.append(errorResponse.getResponse());
+                    detailAdded = true;
+                }
+                if(errorResponse.getErrorMessage() != null && !"java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(errorResponse.getErrorMessage())) {
+                    if(detailAdded) {
+                        sb.append('\n');
+                    }
+                    sb.append(errorResponse.getErrorMessage());
+                    detailAdded = true;
+                }
+                if(errorResponse.getErrorDetail() != null) {
+                    if(detailAdded) {
+                        sb.append('\n');
+                    }
+                    sb.append(errorResponse.getErrorDetail());
+                    detailAdded = true;
+                }
+            }
+            if(!detailAdded){
+                sb.append("???");
+            }
         }
         return sb.toString();
     }
@@ -767,6 +791,15 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 }
             }
 
+            if (thisUploadJob.needsDeleteAndThenReUpload(fileForUpload)) {
+                if (deleteUploadedResourceFromServer(thisUploadJob, thisUploadJob.getUploadedFileResource(fileForUpload))) {
+                    thisUploadJob.clearUploadProgress(fileForUpload);
+                    //TODO notify user that the file bytes were deleted and upload must be started over
+                } else {
+                    //TODO notify user the uploaded file couldn't be deleted - needs manual intervention to remove it. Will be handled on Retry?
+                }
+            }
+
             saveStateToDisk(thisUploadJob);
 
         }
@@ -805,6 +838,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             } else if (verifiedUploadedFile) {
                 thisUploadJob.markFileAsVerified(fileForUpload);
                 postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fileForUpload, thisUploadJob.getUploadProgress(fileForUpload)));
+            } else {
+                // the file verification failed - this file is corrupt (needs delete but then re-upload).
+                thisUploadJob.markFileAsCorrupt(fileForUpload);
             }
         } else {
             thisUploadJob.markFileAsNeedsDelete(fileForUpload);

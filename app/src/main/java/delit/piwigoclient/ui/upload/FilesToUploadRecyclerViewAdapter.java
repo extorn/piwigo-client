@@ -200,6 +200,11 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         // configure the image loader
         holder.imageLoader.setFileToLoad(itemToView);
 
+        long bytes = holder.mItem.length();
+        double sizeMb = ((double)bytes)/1024/1024;
+        holder.itemHeading.setVisibility(View.VISIBLE);
+        holder.itemHeading.setText(String.format("%1$.2fMB", sizeMb));
+
     }
 
     @Override
@@ -249,6 +254,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         public final View mView;
         private final ProgressBar progressBar;
         private final TextView fileNameField;
+        private final TextView itemHeading;
         private final ImageButton deleteButton;
         private final AppCompatImageView fileForUploadImageView;
         private final ResizingPicassoLoader imageLoader;
@@ -260,6 +266,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             mView = view;
             progressBar = itemView.findViewById(R.id.file_for_upload_progress);
             fileNameField = itemView.findViewById(R.id.file_for_upload_txt);
+            itemHeading = itemView.findViewById(R.id.file_for_upload_heading_txt);
             deleteButton = itemView.findViewById(R.id.file_for_upload_delete_button);
             Context context = view.getContext();
             if (context == null) {

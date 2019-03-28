@@ -954,7 +954,7 @@ public abstract class UIHelper<T> {
             positiveButtonTextId = in.readInt();
             cancellable = ParcelUtils.readValue(in,null, boolean.class);
             detail = in.readString();
-            listener = (QuestionResultListener) in.readSerializable();
+            listener = ParcelUtils.readValue(in, QuestionResultListener.class.getClassLoader(), QuestionResultListener.class);
             hasListener = ParcelUtils.readValue(in,null, boolean.class);
         }
 
