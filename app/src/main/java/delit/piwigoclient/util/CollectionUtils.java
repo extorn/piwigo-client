@@ -6,9 +6,6 @@ import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-
-import delit.piwigoclient.model.piwigo.Tag;
 
 public class CollectionUtils {
 
