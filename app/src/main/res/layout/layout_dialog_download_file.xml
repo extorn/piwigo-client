@@ -1,19 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
+        android:layout_margin="5dp"
         android:id="@+id/alertMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        tools:text="Download File"/>
 
     <ListView
+        android:layout_margin="5dp"
         android:id="@+id/fileSelectList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:choiceMode="singleChoice" />
+
+    <TextView
+        android:layout_margin="5dp"
+        android:id="@+id/action"
+        android:text="@string/action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
+
+    <RadioGroup
+        android:layout_margin="5dp"
+        android:layoutDirection="rtl"
+        android:id="@+id/download_option"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/download_option_copy_link"
+            android:text="@string/copy_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <RadioButton
+            android:id="@+id/download_option_download_file"
+            android:text="@string/download_file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <RadioButton
+            android:id="@+id/download_option_share_with_an_app"
+            android:text="@string/share_with_an_app"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RadioGroup>
 
 </LinearLayout>

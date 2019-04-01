@@ -293,7 +293,11 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="files_for_upload_title">Dateien zum Hochladen</string>
     <string name="alert_information">Information</string>
     <string name="alert_image_download_title">Herunterladen</string>
-    <string name="alert_image_download_message">Bitte wählen Sie die Dateigröße, die Sie herunterladen möchten</string>
+    <string name="alert_image_download_message">Bitte wählen Sie die Dateigröße</string>
+    <string name="action">Aktion</string>
+    <string name="copy_link">Copy Link</string>
+    <string name="download_file">Datei herunterladen</string>
+    <string name="share_with_an_app">Mit einer App teilen</string>
     <string name="alert_image_show_image_title">Bildwiedergabesteuerung</string>
     <string name="alert_image_show_image_message">Bitte wählen Sie die Dateigröße, die Sie anzeigen möchten</string>
     <string name="alert_image_download_complete_message">Download abgeschlossen.</string>

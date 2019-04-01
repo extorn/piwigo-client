@@ -244,9 +244,11 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     protected void runPostJobCleanup(UploadJob uploadJob, boolean deleteUploadedFiles) {
-        if (deleteUploadedFiles) {
-            for (File f : uploadJob.getFilesSuccessfullyUploaded()) {
-                if (f.exists()) {
+        File tmp_upload_folder = new File(getApplicationContext().getExternalCacheDir(), "piwigo-upload");
+
+        for (File f : uploadJob.getFilesSuccessfullyUploaded()) {
+            if (f.exists()) {
+                if (deleteUploadedFiles || f.getParentFile().equals(tmp_upload_folder)) {
                     if (!f.getAbsoluteFile().delete()) {
                         if (BuildConfig.DEBUG) {
                             Log.e(tag, "Unable to delete uploaded file : " + f.getAbsolutePath());

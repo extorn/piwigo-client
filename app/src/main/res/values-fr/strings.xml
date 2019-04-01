@@ -321,7 +321,11 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="files_for_upload_title">Fichiers à télécharger</string>
     <string name="alert_information">Information</string>
     <string name="alert_image_download_title">Télécharger</string>
-    <string name="alert_image_download_message">Veuillez choisir la taille du fichier que vous souhaitez télécharger</string>
+    <string name="alert_image_download_message">Veuillez choisir la taille du fichier</string>
+    <string name="action">Action</string>
+    <string name="copy_link">Copier le lien</string>
+    <string name="download_file">Télécharger le fichier</string>
+    <string name="share_with_an_app">Partager avec une application</string>
     <string name="alert_image_show_image_title">Contrôle du rendu de l\'image</string>
     <string name="alert_image_show_image_message">Veuillez choisir la taille du fichier que vous souhaitez visualiser</string>
     <string name="alert_image_download_complete_message">Téléchargement terminé.</string>

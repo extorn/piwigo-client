@@ -5,16 +5,19 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 /**
@@ -23,21 +26,39 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 
 class DownloadSelectionDialog {
     private final Context context;
+    private RadioGroup downloadOptionGroup;
+    private DownloadSelectionListener downloadSelectionListener;
+    private AlertDialog dialog;
 
     public DownloadSelectionDialog(Context context) {
         this.context = context;
     }
 
-    public AlertDialog buildDialog(final String resourceName, ArrayList<ResourceItem.ResourceFile> availableFiles, final DownloadSelectionListener listener) {
-        AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+    public AlertDialog buildDialog(final String resourceName, String currentImageUrlDisplayed, ArrayList<ResourceItem.ResourceFile> availableFiles, final DownloadSelectionListener downloadSelectionListener) {
+        this.downloadSelectionListener = downloadSelectionListener;
+        final AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setTitle(R.string.alert_image_download_title);
         final DownloadItemsListAdapter adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, availableFiles);
 
         View view = LayoutInflater.from(context).inflate(R.layout.layout_dialog_download_file, null, false);
         ((TextView) view.findViewById(R.id.alertMessage)).setText(R.string.alert_image_download_message);
+        downloadOptionGroup = view.findViewById(R.id.download_option);
+        downloadOptionGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(true);
+            }
+        });
         final ListView fileSelectList = view.findViewById(R.id.fileSelectList);
         fileSelectList.setAdapter(adapter);
-        fileSelectList.setItemChecked(adapter.getCount() - 1, true);
+
+        int defaultFileSelectionPos = adapter.getPosition(currentImageUrlDisplayed);
+        if(defaultFileSelectionPos >= 0) {
+            fileSelectList.setItemChecked(defaultFileSelectionPos, true);
+        } else {
+            fileSelectList.setItemChecked(adapter.getCount() - 1, true);
+        }
+
         builder1.setView(view);
 //                builder1.setSingleChoiceItems(adapter, adapter.getCount() - 1, null);
         builder1.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
@@ -45,31 +66,60 @@ class DownloadSelectionDialog {
             public void onClick(DialogInterface dialog, int which) {
             }
         });
-        builder1.setNeutralButton(R.string.button_copy_link, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int pos = fileSelectList.getCheckedItemPosition();
-                ResourceItem.ResourceFile selectedItem = adapter.getItem(pos);
-                Uri uri = Uri.parse(selectedItem.getUrl());
-                ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
-                mgr.setPrimaryClip(clipData);
-            }
-        });
+
         builder1.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 //                        int pos = ((AlertDialog)dialog).getListView().getCheckedItemPosition();
                 int pos = fileSelectList.getCheckedItemPosition();
                 ResourceItem.ResourceFile selectedItem = adapter.getItem(pos);
-                listener.onSelection(selectedItem);
+
+
+                switch(downloadOptionGroup.getCheckedRadioButtonId()) {
+                    case R.id.download_option_copy_link:
+                        onCopyLink(selectedItem, resourceName);
+                        break;
+                    case R.id.download_option_download_file:
+                        onDownloadFile(selectedItem, resourceName);
+                        break;
+                    case R.id.download_option_share_with_an_app:
+                        onShareFile(selectedItem, resourceName);
+                        break;
+                    default:
+
+                        // no selection
+                }
+
             }
         });
         builder1.setCancelable(true);
-        return builder1.create();
+        dialog = builder1.create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                ((AlertDialog)dialog).getButton(DialogInterface.BUTTON_POSITIVE).setEnabled(false);
+            }
+        });
+        return dialog;
+    }
+
+    private void onShareFile(AbstractBaseResourceItem.ResourceFile selectedItem, String resourceName) {
+        downloadSelectionListener.onShare(selectedItem, resourceName);
+    }
+
+    private void onDownloadFile(AbstractBaseResourceItem.ResourceFile selectedItem, String resourceName) {
+        downloadSelectionListener.onDownload(selectedItem, resourceName);
+    }
+
+    private void onCopyLink(AbstractBaseResourceItem.ResourceFile selectedItem, String resourceName) {
+        Uri uri = Uri.parse(selectedItem.getUrl());
+        ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
+        mgr.setPrimaryClip(clipData);
     }
 
     public interface DownloadSelectionListener extends Serializable {
-        void onSelection(ResourceItem.ResourceFile selectedItem);
+        void onDownload(ResourceItem.ResourceFile selectedItem, String resourceName);
+        void onShare(ResourceItem.ResourceFile selectedItem, String resourceName);
     }
 }

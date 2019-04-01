@@ -1,6 +1,8 @@
 package delit.piwigoclient.ui;
 
 import android.Manifest;
+import android.content.ClipData;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,13 +13,17 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.drew.lang.StreamUtil;
 import com.google.android.material.appbar.AppBarLayout;
 
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -26,6 +32,10 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,6 +72,7 @@ import delit.piwigoclient.ui.permissions.users.UsernameSelectFragment;
 import delit.piwigoclient.ui.upload.UploadFragment;
 import delit.piwigoclient.ui.upload.UploadJobStatusDetailsFragment;
 import delit.piwigoclient.util.DisplayUtils;
+import delit.piwigoclient.util.IOUtils;
 
 /**
  * Created by gareth on 12/07/17.
@@ -226,11 +237,11 @@ public class UploadActivity extends MyActivity {
         try {
 
             if (Intent.ACTION_SEND.equals(action) && type != null) {
-                if (type.startsWith("image/") || type.startsWith("video/")) {
-                    return handleSendImage(intent); // Handle single image being sent
+                if (type == null || type.startsWith("image/") || type.startsWith("video/")) {
+                    return handleSendMultipleImages(intent); // Handle single image being sent
                 }
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-                if (type.startsWith("image/") || type.startsWith("video/")) {
+                if (type == null || type.startsWith("image/") || type.startsWith("video/")) {
                     return handleSendMultipleImages(intent); // Handle multiple images being sent
                 }
             }
@@ -262,39 +273,89 @@ public class UploadActivity extends MyActivity {
     }
 
     private ArrayList<File> handleSendMultipleImages(Intent intent) {
-        ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+
         ArrayList<File> filesToUpload;
-        if (imageUris != null) {
-            filesToUpload = new ArrayList<>(imageUris.size());
-            for (Uri imageUri : imageUris) {
-                if(imageUri != null) {
-                    handleSentImage(imageUri, filesToUpload);
+
+        ClipData clipData = intent.getClipData();
+        if(clipData != null && clipData.getItemCount() > 0) {
+            // process clip data
+            filesToUpload = new ArrayList<>(clipData.getItemCount());
+            for(int i = 0; i < clipData.getItemCount(); i++) {
+                ClipData.Item sharedItem = clipData.getItemAt(i);
+                Uri sharedUri = sharedItem.getUri();
+                String mimeType = clipData.getDescription().getMimeType(i);
+                if(mimeType.startsWith("image/") || mimeType.startsWith("video/")) {
+                    String fileExt = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+                    if (sharedUri != null) {
+                        handleSentImage(sharedUri, fileExt, filesToUpload);
+                    }
+                } else {
+                    Crashlytics.log("Unable to process received data with mime type : " + mimeType);
                 }
             }
         } else {
-            filesToUpload = new ArrayList<>(0);
+            // process the extra stream data
+            ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            String[] mimeTypes = intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
+            if (imageUris != null) {
+                filesToUpload = new ArrayList<>(imageUris.size());
+                int i = 0;
+                for (Uri imageUri : imageUris) {
+                    String mimeType;
+                    if(mimeTypes != null && mimeTypes.length >= i) {
+                        mimeType = mimeTypes[i];
+                        i++;
+                    } else {
+                        mimeType = intent.getType();
+                    }
+                    if (imageUri != null) {
+                        String fileExt = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+                        handleSentImage(imageUri, fileExt, filesToUpload);
+                    }
+                }
+            } else {
+                String mimeType = intent.getType();
+                Uri imageUri = intent.getData();
+                if(imageUri != null) {
+                    String fileExt = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+                    filesToUpload = new ArrayList<>(1);
+                    handleSentImage(imageUri, fileExt, filesToUpload);
+                } else {
+                    filesToUpload = new ArrayList<>(0);
+                }
+            }
+            intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[]) null);
         }
-        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[]) null);
         return filesToUpload;
     }
 
-    private ArrayList<File> handleSendImage(Intent intent) {
-        Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        ArrayList<File> filesToUpload;
-        if (imageUri != null) {
-            filesToUpload = new ArrayList<>(1);
-            handleSentImage(imageUri, filesToUpload);
-        } else {
-            filesToUpload = new ArrayList<>(0);
-        }
-        intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[]) null);
-        return filesToUpload;
-    }
-
-    private void handleSentImage(@NonNull Uri imageUri, ArrayList<File> filesToUpload) {
+    private void handleSentImage(@NonNull Uri imageUri, String fileExt, ArrayList<File> filesToUpload) {
         File f = new File(imageUri.getPath());
         if (!f.exists()) {
-            f = new File(getRealPathFromURI(imageUri));
+            try {
+                f = new File(getRealPathFromURI(imageUri));
+            } catch (IllegalArgumentException e) {
+                // thrown when the URI is not a place in data. (lets just create a tmp file)
+                try {
+                    File tmp_upload_folder = new File(getApplicationContext().getExternalCacheDir(), "piwigo-upload");
+                    tmp_upload_folder.mkdir();
+                    f = new File(tmp_upload_folder, imageUri.getLastPathSegment());
+                    int i = 0;
+                    while(f.exists()) {
+                        i++;
+                        int insertAt = imageUri.getLastPathSegment().lastIndexOf('.');
+                        String filename = imageUri.getLastPathSegment().substring(0, insertAt);
+                        String ext = imageUri.getLastPathSegment().substring(insertAt);
+                        f = new File(tmp_upload_folder, filename + '_' + i + ext);
+                    }
+                    f.deleteOnExit();
+                    IOUtils.write(getApplicationContext().getContentResolver().openInputStream(imageUri), f);
+                } catch(FileNotFoundException e1) {
+                    throw new RuntimeException("Unable to write shared data to a temporary file");
+                } catch(IOException e1) {
+                    throw new RuntimeException("Unable to write shared data to a temporary file");
+                }
+            }
         }
         if (f.exists() && f.isFile()) {
             filesToUpload.add(f);
@@ -309,6 +370,7 @@ public class UploadActivity extends MyActivity {
         String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = getApplicationContext().getContentResolver().query(contentUri, proj,
                 null, null, null);
+
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         String path = cursor.getString(column_index);

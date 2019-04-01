@@ -653,7 +653,11 @@ SOFTWARE.
     <string name="files_for_upload_title">Files for Upload</string>
     <string name="alert_information">Information</string>
     <string name="alert_image_download_title">Download</string>
-    <string name="alert_image_download_message">Please choose the file size you wish to download</string>
+    <string name="alert_image_download_message">Please choose a file size</string>
+    <string name="action">Action</string>
+    <string name="copy_link">Copy Link</string>
+    <string name="download_file">Download File</string>
+    <string name="share_with_an_app">Share with an App</string>
     <string name="alert_image_show_image_title">Image Render Control</string>
     <string name="alert_image_show_image_message">Please choose the file size you wish to view</string>
     <string name="alert_image_download_complete_message">Download complete.</string>

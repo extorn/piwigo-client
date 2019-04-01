@@ -3,9 +3,12 @@ package delit.piwigoclient.ui.slideshow;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -22,6 +25,9 @@ import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatSpinner;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +49,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -69,6 +78,7 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageAlterRatingResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.ProgressIndicator;
@@ -77,6 +87,7 @@ import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.dialogs.SelectAlbumDialog;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
@@ -130,7 +141,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private RatingBar ratingBar;
     private ImageButton downloadButton;
     private boolean allowDownload = true;
-    private Long activeDownloadActionId;
+    private DownloadAction activeDownloadAction;
     private CustomImageButton setAsAlbumThumbnail;
     private TextView linkedAlbumsField;
     private HashSet<CategoryItemStub> updatedLinkedAlbumSet;
@@ -146,6 +157,50 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private transient boolean doOnPageSelectedAndAddedRun;
     private ViewVisibleControl overlaysVisibilityControl;
     private TextView resourceTitleView;
+
+    private static class DownloadAction implements Parcelable {
+        private long activeDownloadActionId;
+        private boolean shareDownloadedResource;
+
+        public DownloadAction(long activeDownloadActionId, boolean shareDownloadedResource) {
+            this.activeDownloadActionId = activeDownloadActionId;
+            this.shareDownloadedResource = shareDownloadedResource;
+        }
+
+        public DownloadAction(Parcel in) {
+            activeDownloadActionId = in.readLong();
+            shareDownloadedResource = in.readInt() == 1;
+        }
+
+        public static final Creator<DownloadAction> CREATOR = new Creator<DownloadAction>() {
+            public DownloadAction createFromParcel(Parcel in) {
+                return new DownloadAction(in);
+            }
+
+            public DownloadAction[] newArray(int size) {
+                return new DownloadAction[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public long getActiveDownloadActionId() {
+            return activeDownloadActionId;
+        }
+
+        public boolean isShareDownloadedResource() {
+            return shareDownloadedResource;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(activeDownloadActionId);
+            dest.writeInt(shareDownloadedResource?1:0);
+        }
+    }
 
     public static <S extends ResourceItem> Bundle buildArgs(S model, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
@@ -194,8 +249,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         outState.putBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM, isPrimarySlideshowItem);
     }
 
-    public void addDownloadAction(long activeDownloadActionId) {
-        this.activeDownloadActionId = activeDownloadActionId;
+    public void addDownloadAction(long activeDownloadActionId, boolean shareWithAppAfterDownload) {
+        this.activeDownloadAction = new DownloadAction(activeDownloadActionId, shareWithAppAfterDownload);
         getUiHelper().addBackgroundServiceCall(activeDownloadActionId);
     }
 
@@ -719,6 +774,36 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         return model;
     }
 
+    private void shareFileDownloaded(final File downloadedFile) {
+//        File sharedFolder = new File(getContext().getExternalCacheDir(), "shared");
+//        sharedFolder.mkdir();
+//        File tmpFile = File.createTempFile(resourceFilename, resourceFileExt, sharedFolder);
+//        tmpFile.deleteOnExit();
+
+        //TODO implement this contentResolver to build uris that can be translated to a given server and login.
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        ContentResolver contentResolver = getContext().getContentResolver();
+        //TODO  build a content URI or delegate that. then insert the content at that uri (downloading?)
+        // finally, place retrieve that downloaded data in a content URI that can be put in the clip data below.
+//        intent.setClipData(ClipData.newUri(contentResolver, resourceName, contentResolver.getUri(selectedItem.getUrl())));
+
+        Uri uri = FileProvider.getUriForFile(
+                getContext(),
+                getContext().getApplicationContext()
+                        .getPackageName() + ".provider", downloadedFile);
+
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        String ext = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(downloadedFile).toString());
+        String mimeType = map.getMimeTypeFromExtension(ext);
+
+        intent.setDataAndType(uri, mimeType);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        startActivity(intent);
+    }
+
+
     private void notifyUserFileDownloadComplete(final File downloadedFile) {
 
         PicassoFactory.getInstance().getPicassoSingleton(getContext()).load(R.drawable.ic_notifications_black_24dp).into(new Target() {
@@ -741,6 +826,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                                 .getPackageName() + ".provider", downloadedFile);
                 notificationIntent.setDataAndType(apkURI, mimeType);
                 notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                notificationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
 //        } else {
                 // N.B.this only works with a very select few android apps - folder browsing seeminly isn't a standard thing in android.
@@ -798,8 +884,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     @Override
     public void onDetach() {
-        if (activeDownloadActionId != null) {
-            EventBus.getDefault().post(new CancelDownloadEvent(activeDownloadActionId));
+        if (activeDownloadAction != null) {
+            EventBus.getDefault().post(new CancelDownloadEvent(activeDownloadAction.getActiveDownloadActionId()));
         }
         super.onDetach();
     }
@@ -892,8 +978,13 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     public void onGetResource(final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
-        activeDownloadActionId = null;
-        notifyUserFileDownloadComplete(response.getFile());
+        if(activeDownloadAction.isShareDownloadedResource()) {
+            //TODO put in content provider
+            shareFileDownloaded(response.getFile());
+        } else {
+            notifyUserFileDownloadComplete(response.getFile());
+        }
+        activeDownloadAction = null;
     }
 
     private void onProgressUpdate(final PiwigoResponseBufferingHandler.UrlProgressResponse response) {
@@ -1035,7 +1126,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(CancelDownloadEvent event) {
-        activeDownloadActionId = null;
+        activeDownloadAction = null;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
