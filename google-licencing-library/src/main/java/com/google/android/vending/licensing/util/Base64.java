@@ -416,7 +416,7 @@ public class Base64 {
    * @since 1.4
    */
   public static byte[] decode(String s) throws Base64DecoderException {
-    byte[] bytes = s.getBytes();
+    byte[] bytes = s == null ? new byte[0] : s.getBytes();
     return decode(bytes, 0, bytes.length);
   }
 

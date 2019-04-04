@@ -65,13 +65,14 @@ public class LicenceCheckingHelper {
 
     private void showDialog(final boolean showRetryButton) {
         String msg = activity.getString(showRetryButton ? R.string.unlicensed_dialog_retry_body : R.string.unlicensed_dialog_body);
-        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new UIHelper.QuestionResultAdapter() {
+        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new UIHelper.QuestionResultAdapter(activity.getUiHelper()) {
 
             @Override
             public void onResult(androidx.appcompat.app.AlertDialog dialog, Boolean positiveAnswer) {
+                MyActivity activity = (MyActivity) getUiHelper().getParent();
                 if (Boolean.TRUE == positiveAnswer) {
                     if (showRetryButton) {
-                        doCheck();
+                        activity.getLicencingHelper().doCheck();
                     } else {
                         Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
                                 "http://market.android.com/details?id=" + activity.getPackageName()));

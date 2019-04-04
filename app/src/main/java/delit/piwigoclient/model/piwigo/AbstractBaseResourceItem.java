@@ -105,8 +105,17 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     }
 
     public String getFileExtension() {
-        int idx = fullSizeImage.url.lastIndexOf('.');
-        return fullSizeImage.url.substring(idx + 1);
+        ResourceFile usingFile = fullSizeImage;
+        if(usingFile == null) {
+            if(availableFiles.size() > 0) {
+                usingFile = availableFiles.get(0);
+            }
+        }
+        if(usingFile != null) {
+            int idx = fullSizeImage.url.lastIndexOf('.');
+            return fullSizeImage.url.substring(idx + 1);
+        }
+        return null;
     }
 
     public Date getCreationDate() {

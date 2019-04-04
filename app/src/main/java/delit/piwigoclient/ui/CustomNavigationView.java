@@ -161,7 +161,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(getContext());
             username = connectionPrefs.getPiwigoUsername(prefs, getContext());
         }
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new UIHelper.QuestionResultAdapter() {
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new UIHelper.QuestionResultAdapter(uiHelper) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -205,7 +205,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     }
 
     private void showLockDialog() {
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_lock, getContext().getString(R.string.alert_message_lock), R.string.button_cancel, R.string.button_lock, new UIHelper.QuestionResultAdapter() {
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_lock, getContext().getString(R.string.alert_message_lock), R.string.button_cancel, R.string.button_lock, new UIHelper.QuestionResultAdapter(uiHelper) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {

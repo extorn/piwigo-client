@@ -196,7 +196,26 @@ public abstract class UIHelper<T> {
     public synchronized void showDetailedMsg(@StringRes int titleResId, String message, int duration) {
         QueuedSimpleMessage newItem = new QueuedSimpleMessage(titleResId, message, duration);
         if(!simpleMessageQueue.contains(newItem)) {
-            simpleMessageQueue.add(newItem);
+            try {
+                simpleMessageQueue.add(newItem);
+            } catch(IllegalStateException e) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("SimpleMessageQueue Full : \n");
+                for(QueuedSimpleMessage item : simpleMessageQueue) {
+                    sb.append("title : ");
+                    sb.append(getContext().getString(item.titleResId));
+                    sb.append('\n');
+                    sb.append("msg : ");
+                    sb.append(item.message);
+                    sb.append('\n');
+                    sb.append("duration : ");
+                    sb.append(item.duration);
+                    sb.append('\n');
+                }
+                Crashlytics.log(Log.ERROR, TAG, sb.toString());
+                Crashlytics.logException(e);
+                throw e;
+            }
         }
         if(!toastShowing) {
             showQueuedMsg();
@@ -489,6 +508,11 @@ public abstract class UIHelper<T> {
 
                 BundleUtils.readQueue(savedInstanceState, STATE_SIMPLE_MESSAGE_QUEUE, simpleMessageQueue);
                 BundleUtils.readQueue(savedInstanceState, STATE_DIALOG_MESSAGE_QUEUE, dialogMessageQueue);
+                for(QueuedDialogMessage message : dialogMessageQueue) {
+                    if(message.getListener() != null) {
+                        message.getListener().setUiHelper(this);
+                    }
+                }
             }
         }
     }
@@ -687,7 +711,7 @@ public abstract class UIHelper<T> {
         }
         String message = sb.toString();
 
-        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
+        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(this) {
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
@@ -699,15 +723,15 @@ public abstract class UIHelper<T> {
                         X509Utils.saveTrustedCaKeystore(getContext(), trustStore);
                     } catch (KeyStoreException e) {
                         Crashlytics.logException(e);
-                        showOrQueueDialogMessage(R.string.alert_error, context.getString(R.string.alert_error_adding_certificate_to_truststore));
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, context.getString(R.string.alert_error_adding_certificate_to_truststore));
                     }
                     preNotifiedCerts.addAll(event.getUntrustedCerts().keySet());
-                    prefs.edit().putStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
+                    getUiHelper().prefs.edit().putStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
                     long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), context).start();
                     PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
                         @Override
                         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-                            showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
+                            getUiHelper().showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
                         }
                     });
                 }
@@ -851,6 +875,26 @@ public abstract class UIHelper<T> {
     }
 
     public static abstract class QuestionResultAdapter implements QuestionResultListener {
+
+        public QuestionResultAdapter(UIHelper uiHelper) {
+            this.uiHelper = uiHelper;
+        }
+
+        private UIHelper uiHelper;
+
+        @Override
+        public void setUiHelper(UIHelper uiHelper) {
+            this.uiHelper = uiHelper;
+        }
+
+        public UIHelper getUiHelper() {
+            return uiHelper;
+        }
+
+        public Context getContext() {
+            return uiHelper.getContext();
+        }
+
         @Override
         public void onShow(AlertDialog alertDialog) {
 
@@ -873,6 +917,8 @@ public abstract class UIHelper<T> {
         void onResult(AlertDialog dialog, Boolean positiveAnswer);
 
         void onShow(AlertDialog alertDialog);
+
+        void setUiHelper(UIHelper uiHelper);
     }
 
     private static class QueuedSimpleMessage implements Parcelable {

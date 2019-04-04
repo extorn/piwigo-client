@@ -166,7 +166,7 @@ public class FileSelectActivity extends MyActivity {
         final int trackingRequestId = TrackableRequestEvent.getNextEventId();
         getUiHelper().setTrackingRequest(trackingRequestId);
 
-        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultAdapter() {
+        getUiHelper().showOrQueueDialogMessage(titleId, getString(messageId), new UIHelper.QuestionResultAdapter(getUiHelper()) {
             @Override
             public void onDismiss(AlertDialog dialog) {
                 //exit the app.

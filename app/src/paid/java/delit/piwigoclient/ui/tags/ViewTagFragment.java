@@ -536,24 +536,25 @@ public class ViewTagFragment extends MyFragment {
             return;
         }
 
-        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter() {
+        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                viewAdapter.toggleItemSelection();
+                ViewTagFragment fragment = (ViewTagFragment) getUiHelper().getParent();
+                fragment.viewAdapter.toggleItemSelection();
                 if (Boolean.TRUE == positiveAnswer) {
-                    HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItemIds());
-                    HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItems());
-                    deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
+                    HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(fragment.deleteActionData.getSelectedItemIds());
+                    HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(fragment.deleteActionData.getSelectedItems());
+                    fragment.deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
                 } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
                     PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
                     boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
-                    for (ResourceItem item : deleteActionData.getSelectedItems()) {
-                        item.getTags().remove(tag);
+                    for (ResourceItem item : fragment.deleteActionData.getSelectedItems()) {
+                        item.getTags().remove(fragment.tag);
                         if (allowTagEdit) {
-                            addActiveServiceCall(R.string.progress_untag_resources_pattern, new PluginUserTagsUpdateResourceTagsListResponseHandler(item).invokeAsync(getContext()));
+                            getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new PluginUserTagsUpdateResourceTagsListResponseHandler(item).invokeAsync(getContext()));
                         } else {
-                            addActiveServiceCall(R.string.progress_untag_resources_pattern, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
+                            getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
                         }
                     }
                 } else {
@@ -577,12 +578,12 @@ public class ViewTagFragment extends MyFragment {
 
     private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if(Boolean.TRUE == positiveAnswer) {
-                    addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
+                    getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
                 }
             }
         });

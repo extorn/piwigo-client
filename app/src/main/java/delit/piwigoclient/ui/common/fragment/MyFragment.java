@@ -154,7 +154,7 @@ public class MyFragment extends Fragment {
         if(AdsManager.getInstance().hasAdvertLoadProblem(getContext())) {
             Crashlytics.log(Log.INFO, getTag(), "warning user that adverts are unavailable");
             prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 5000).commit();
-            uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, new AdLoadErrorDialogListener());
+            uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, new AdLoadErrorDialogListener(getUiHelper()));
         }
     }
 
@@ -171,7 +171,11 @@ public class MyFragment extends Fragment {
     private class AdLoadErrorDialogListener extends UIHelper.QuestionResultAdapter {
 
         private long shownAt;
-        LifecycleObserver observer;
+        private transient LifecycleObserver observer;
+
+        public AdLoadErrorDialogListener(UIHelper uiHelper) {
+            super(uiHelper);
+        }
 
         @Override
         public void onShow(AlertDialog alertDialog) {

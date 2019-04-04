@@ -72,6 +72,10 @@ public abstract class MyActivity extends AppCompatActivity {
         uiHelper.registerToActiveServiceCalls();
     }
 
+    public LicenceCheckingHelper getLicencingHelper() {
+        return licencingHelper;
+    }
+
     protected BasicPiwigoResponseListener buildPiwigoResponseListener() {
         return new BasicPiwigoResponseListener();
     }

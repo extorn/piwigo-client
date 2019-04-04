@@ -531,12 +531,13 @@ public class UserFragment extends MyFragment {
         } else {
 
             String message = getString(R.string.alert_confirm_really_delete_user);
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
                 @Override
                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                     if (Boolean.TRUE == positiveAnswer) {
-                        deleteUserNow(user);
+                        UserFragment fragment = (UserFragment) getUiHelper().getParent();
+                        fragment.deleteUserNow(user);
                     }
                 }
             });

@@ -197,6 +197,19 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             PiwigoJsonResponse piwigoResponse = getGson().fromJson(new InputStreamReader(jsonBis), PiwigoJsonResponse.class);
             processJsonResponse(getMessageId(), getPiwigoMethod(), piwigoResponse, responseBody, isCached);
 
+        } catch(IllegalStateException e) {
+            // some devices seem to cause this to be an illegal state exception not json syntax exception....
+            String responseBodyStr = responseBody != null ? new String(responseBody) : null;
+            Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
+            if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
+                Crashlytics.logException(e);
+            }
+            boolean handled = handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, new JsonSyntaxException(e.getMessage()), hasBrandNewSession);
+            if (!handled) {
+                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), isCached);
+                r.setResponse(responseBodyStr);
+                storeResponse(r);
+            }
         } catch (JsonSyntaxException e) {
             String responseBodyStr = responseBody != null ? new String(responseBody) : null;
             Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));

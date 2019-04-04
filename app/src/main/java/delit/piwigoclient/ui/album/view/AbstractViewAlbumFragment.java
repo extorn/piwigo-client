@@ -628,22 +628,24 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                         msgPatternId = R.string.alert_confirm_move_items_here_pattern;
                     }
                     String message = String.format(getString(msgPatternId), basket.getItemCount(), galleryModel.getContainerDetails().getName());
-
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
+                    final int basketAction = basket.getAction();
+                    final HashSet<ResourceItem> basketContent = basket.getContents();
+                    final CategoryItem containerDetails = galleryModel.getContainerDetails();
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
                         @Override
                         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                             if (Boolean.TRUE == positiveAnswer) {
-                                if (basket.getAction() == Basket.ACTION_COPY) {
-                                    HashSet<ResourceItem> itemsToCopy = basket.getContents();
-                                    CategoryItem copyToAlbum = galleryModel.getContainerDetails();
+                                if (basketAction == Basket.ACTION_COPY) {
+                                    HashSet<ResourceItem> itemsToCopy = basketContent;
+                                    CategoryItem copyToAlbum = containerDetails;
                                     for (ResourceItem itemToCopy : itemsToCopy) {
-                                        addActiveServiceCall(R.string.progress_copy_resources, new ImageCopyToAlbumResponseHandler<>(itemToCopy, copyToAlbum).invokeAsync(getContext()));
+                                        getUiHelper().addActiveServiceCall(R.string.progress_copy_resources, new ImageCopyToAlbumResponseHandler<>(itemToCopy, copyToAlbum).invokeAsync(getContext()));
                                     }
-                                } else if (basket.getAction() == Basket.ACTION_CUT) {
-                                    HashSet<ResourceItem> itemsToMove = basket.getContents();
-                                    CategoryItem moveToAlbum = galleryModel.getContainerDetails();
+                                } else if (basketAction == Basket.ACTION_CUT) {
+                                    HashSet<ResourceItem> itemsToMove = basketContent;
+                                    CategoryItem moveToAlbum = containerDetails;
                                     for (ResourceItem itemToMove : itemsToMove) {
-                                        addActiveServiceCall(R.string.progress_move_resources, new ImageChangeParentAlbumHandler(itemToMove, moveToAlbum).invokeAsync(getContext()));
+                                        getUiHelper().addActiveServiceCall(R.string.progress_move_resources, new ImageChangeParentAlbumHandler(itemToMove, moveToAlbum).invokeAsync(getContext()));
                                     }
                                 }
                             }
@@ -783,22 +785,22 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void onAlbumDeleteRequest(final CategoryItem album) {
         String msg = String.format(getString(R.string.alert_confirm_really_delete_album_from_server_pattern), album.getName());
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
                     if(album.getTotalPhotos() > 0 || album.getSubCategories() > 0) {
                         String msg = String.format(getString(R.string.alert_confirm_really_really_delete_album_from_server_pattern), album.getName(), album.getPhotoCount(), album.getSubCategories(), album.getTotalPhotos() - album.getPhotoCount());
-                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
+                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
                             @Override
                             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                                 if (Boolean.TRUE == positiveAnswer) {
-                                    addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()).invokeAsync(getContext()));
+                                    getUiHelper().addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()).invokeAsync(getContext()));
                                 }
                             }
                         });
                     } else {
-                        addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()).invokeAsync(getContext()));
+                        getUiHelper().addActiveServiceCall(R.string.progress_delete_album, new AlbumDeleteResponseHandler(album.getId()).invokeAsync(getContext()));
                     }
                 }
             }
@@ -824,39 +826,40 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
         if (sharedResources.size() > 0) {
             String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_unlink_them_from_this_album_pattern, sharedResources.size());
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new UIHelper.QuestionResultAdapter() {
+            final long currentAlbumId = galleryModel.getContainerDetails().getId();
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_unlink, R.string.button_cancel, R.string.button_delete, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
                 @Override
                 public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                     if (Boolean.TRUE == positiveAnswer) {
-                        addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(deleteActionData.getSelectedItemIds(), deleteActionData.selectedItems).invokeAsync(getContext()));
+                        getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(deleteActionData.getSelectedItemIds(), deleteActionData.selectedItems).invokeAsync(getContext()));
                     } else if (Boolean.FALSE == positiveAnswer) {
                         HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItemIds());
                         HashSet<ResourceItem> itemsForPermananentDelete = new HashSet<>(deleteActionData.getSelectedItems());
                         for (ResourceItem item : sharedResources) {
                             itemIdsForPermanentDelete.remove(item.getId());
                             itemsForPermananentDelete.remove(item);
-                            item.getLinkedAlbums().remove(galleryModel.getContainerDetails().getId());
-                            addActiveServiceCall(R.string.progress_unlink_resources, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
+                            item.getLinkedAlbums().remove(currentAlbumId);
+                            getUiHelper().addActiveServiceCall(R.string.progress_unlink_resources, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
                         }
                         //now we need to delete the rest.
-                        deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermananentDelete);
+                        deleteResourcesFromServerForever(getUiHelper(), itemIdsForPermanentDelete, itemsForPermananentDelete);
                     }
                 }
             });
         } else {
-            deleteResourcesFromServerForever(deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
+            deleteResourcesFromServerForever(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
         }
 
     }
 
-    private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
-        String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+    private static void deleteResourcesFromServerForever(UIHelper uiHelper, final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
+        String msg = uiHelper.getContext().getString(R.string.alert_confirm_really_delete_items_from_server);
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(uiHelper) {
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
-                    addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
+                    getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getUiHelper().getContext()));
                 }
             }
         });
@@ -1378,10 +1381,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             adminCategories = albumAdminList.getDirectChildrenOfAlbum(galleryModel.getContainerDetails().getParentageChain(), galleryModel.getContainerDetails().getId());
         } catch(IllegalStateException e) {
             Crashlytics.logException(e);
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_album_no_longer_on_server), new UIHelper.QuestionResultAdapter() {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_album_no_longer_on_server), new UIHelper.QuestionResultAdapter(getUiHelper()) {
                 @Override
                 public void onDismiss(AlertDialog dialog) {
                     super.onDismiss(dialog);
+                    //TODO getFragmentManager means this fragment needs to be serialised!
                     getFragmentManager().popBackStack();
                 }
             });
@@ -1686,12 +1690,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 // update the ui.
                 allowedUsersField.setText(String.format(getString(R.string.click_to_view_pattern), currentUsers.length));
                 int msgId = R.string.alert_information_own_user_readded_to_permissions_list;
-                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(msgId), R.string.button_ok, false, new UIHelper.QuestionResultAdapter() {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(msgId), R.string.button_ok, false, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
                     @Override
                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                         if (Boolean.TRUE == positiveAnswer) {
-                            addingAlbumPermissions();
+                            AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
+                            fragment.addingAlbumPermissions();
                         }
                     }
                 });
@@ -1701,29 +1706,31 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             if (newlyAddedGroups.size() > 0 || newlyAddedUsers.size() > 0) {
 
                 if (galleryModel.getContainerDetails().getSubCategories() > 0) {
+                    final CategoryItem currentCategoryDetails = galleryModel.getContainerDetails();
+
                     if (newlyAddedUsers.contains(currentLoggedInUserId)) {
                         //we're having to force add this user explicitly therefore for safety we need to apply the change recursively
                         String msg = String.format(getString(R.string.alert_information_add_album_permissions_recursively_pattern), galleryModel.getContainerDetails().getSubCategories());
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg, R.string.button_ok, false, new UIHelper.QuestionResultAdapter() {
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg, R.string.button_ok, false, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
                             @Override
                             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                                 if (Boolean.TRUE == positiveAnswer) {
-                                    addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(galleryModel.getContainerDetails(), newlyAddedGroups, newlyAddedUsers, true).invokeAsync(getContext()));
+                                    getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(currentCategoryDetails, newlyAddedGroups, newlyAddedUsers, true).invokeAsync(getContext()));
                                 }
                             }
                         });
                     } else {
 
                         String msg = String.format(getString(R.string.alert_confirm_add_album_permissions_recursively_pattern), newlyAddedGroups.size(), newlyAddedUsers.size(), galleryModel.getContainerDetails().getSubCategories());
-                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
+                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
                             @Override
                             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                                 if (Boolean.TRUE == positiveAnswer) {
-                                    addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(galleryModel.getContainerDetails(), newlyAddedGroups, newlyAddedUsers, true).invokeAsync(getContext()));
+                                    getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(currentCategoryDetails, newlyAddedGroups, newlyAddedUsers, true).invokeAsync(getContext()));
                                 } else {
-                                    addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(galleryModel.getContainerDetails(), newlyAddedGroups, newlyAddedUsers, false).invokeAsync(getContext()));
+                                    getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(currentCategoryDetails, newlyAddedGroups, newlyAddedUsers, false).invokeAsync(getContext()));
                                 }
                             }
                         });
@@ -1753,14 +1760,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
             if (galleryModel.getContainerDetails().getSubCategories() > 0) {
                 String message = String.format(getString(R.string.alert_confirm_really_remove_album_permissions_pattern), newlyRemovedGroups.size(), newlyRemovedUsers.size());
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
                     @Override
                     public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                         if (Boolean.TRUE == positiveAnswer) {
-                            addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers).invokeAsync(getContext()));
+                            getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers).invokeAsync(getContext()));
                         } else {
-                            onAlbumUpdateFinished();
+                            ((AbstractViewAlbumFragment)getUiHelper().getParent()).onAlbumUpdateFinished();
                         }
                     }
                 });
@@ -1948,12 +1955,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final BadRequestUsingHttpToHttpsServerEvent event) {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
+        final ConnectionPreferences.ProfilePreferences connectionPreferences = event.getConnectionPreferences();
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (positiveAnswer != null && positiveAnswer) {
-                    event.getConnectionPreferences().setForceHttps(prefs, getContext(), true);
+                    connectionPreferences.setForceHttps(prefs, getContext(), true);
                 }
             }
         });
@@ -1961,13 +1969,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final BadRequestUsesRedirectionServerEvent event) {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_follow_redirects), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter() {
+        final ConnectionPreferences.ProfilePreferences connectionPreferences = event.getConnectionPreferences();
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_follow_redirects), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (positiveAnswer != null && positiveAnswer) {
                     getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(event.getConnectionPreferences(), getContext()).start());
-                    event.getConnectionPreferences().setFollowHttpRedirects(prefs, getContext(), true);
+                    connectionPreferences.setFollowHttpRedirects(prefs, getContext(), true);
                 }
             }
         });

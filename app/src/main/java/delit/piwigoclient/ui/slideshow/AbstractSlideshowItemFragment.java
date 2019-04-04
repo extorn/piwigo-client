@@ -453,14 +453,14 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void onUseAsAlbumThumbnailForParent() {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
                     long albumId = model.getParentId();
                     Long albumParentId = model.getParentageChain().size() > 1 ? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
-                    addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(albumId, albumParentId, model.getId()).invokeAsync(getContext()));
+                    getUiHelper().addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(albumId, albumParentId, model.getId()).invokeAsync(getContext()));
                 }
             }
         });
@@ -756,7 +756,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private void onDeleteItem(final T model) {
         String message = getString(R.string.alert_confirm_really_delete_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
@@ -764,7 +764,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                     AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
                     getUiHelper().setTrackingRequest(event.getActionId());
                     EventBus.getDefault().post(event);
-                    addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler(model).invokeAsync(getContext()));
+                    getUiHelper().addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler(model).invokeAsync(getContext()));
                 }
             }
         });
@@ -780,23 +780,20 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 //        File tmpFile = File.createTempFile(resourceFilename, resourceFileExt, sharedFolder);
 //        tmpFile.deleteOnExit();
 
-        //TODO implement this contentResolver to build uris that can be translated to a given server and login.
-        Intent intent = new Intent(Intent.ACTION_SEND);
+        //Send multiple seems essential to allow to work with the other apps. Not clear why.
+        Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
         ContentResolver contentResolver = getContext().getContentResolver();
-        //TODO  build a content URI or delegate that. then insert the content at that uri (downloading?)
-        // finally, place retrieve that downloaded data in a content URI that can be put in the clip data below.
-//        intent.setClipData(ClipData.newUri(contentResolver, resourceName, contentResolver.getUri(selectedItem.getUrl())));
-
         Uri uri = FileProvider.getUriForFile(
                 getContext(),
-                getContext().getApplicationContext()
-                        .getPackageName() + ".provider", downloadedFile);
+                BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
 
         MimeTypeMap map = MimeTypeMap.getSingleton();
         String ext = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(downloadedFile).toString());
         String mimeType = map.getMimeTypeFromExtension(ext);
-
-        intent.setDataAndType(uri, mimeType);
+        intent.setType(mimeType);
+        ArrayList<Uri> files = new ArrayList<>(1);
+        files.add(uri);
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
@@ -822,11 +819,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
                 Uri apkURI = FileProvider.getUriForFile(
                         getContext(),
-                        getContext().getApplicationContext()
-                                .getPackageName() + ".provider", downloadedFile);
+                        BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
                 notificationIntent.setDataAndType(apkURI, mimeType);
                 notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 notificationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                notificationIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
 
 //        } else {
                 // N.B.this only works with a very select few android apps - folder browsing seeminly isn't a standard thing in android.

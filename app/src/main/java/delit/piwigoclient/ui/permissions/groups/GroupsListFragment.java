@@ -244,12 +244,13 @@ public class GroupsListFragment extends MyFragment {
 
     private void onDeleteGroup(final Group thisItem) {
         String message = getString(R.string.alert_confirm_really_delete_group);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if (Boolean.TRUE == positiveAnswer) {
-                    deleteGroupNow(thisItem);
+                    GroupsListFragment fragment = (GroupsListFragment) getUiHelper().getParent();
+                    fragment.deleteGroupNow(thisItem);
                 }
             }
         });

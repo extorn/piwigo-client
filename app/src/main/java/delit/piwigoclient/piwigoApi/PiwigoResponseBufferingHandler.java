@@ -9,6 +9,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonElement;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -275,6 +276,18 @@ public class PiwigoResponseBufferingHandler {
         return new HashSet<>(messageIdsToCheck);
     }
 
+    public PiwigoResponseListener getRegisteredHandler(long handlerId) {
+        return handlers.get(handlerId);
+    }
+
+    public PiwigoResponseListener getRegisteredHandlerByMessageId(long messageId) {
+        Long handlerId = handlerResponseMap.get(messageId);
+        if(handlerId == null) {
+            return null;
+        }
+        return handlers.get(handlerId);
+    }
+
     public interface PiwigoResponse extends Response {
         String getPiwigoMethod();
     }
@@ -304,7 +317,7 @@ public class PiwigoResponseBufferingHandler {
     /**
      * Marker interface
      */
-    public interface ErrorResponse extends Response {
+    public interface ErrorResponse extends Response, Serializable {
     }
 
     /**
@@ -344,7 +357,7 @@ public class PiwigoResponseBufferingHandler {
     }
 
     public static class PiwigoServerErrorResponse extends BasePiwigoResponse implements RemoteErrorResponse {
-        private final AbstractPiwigoWsResponseHandler requestHandler;
+        private final transient AbstractPiwigoWsResponseHandler requestHandler;
         private final int piwigoErrorCode;
         private final String piwigoErrorMessage;
 
@@ -376,7 +389,7 @@ public class PiwigoResponseBufferingHandler {
         public static final short OUTCOME_UNKNOWN = 0;
 
         private final String rawResponse;
-        private final AbstractPiwigoWsResponseHandler requestHandler;
+        private final transient AbstractPiwigoWsResponseHandler requestHandler;
         private short requestOutcome;
 
         public PiwigoUnexpectedReplyErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, short requestOutcome, String rawResponse, boolean isCached) {
@@ -413,7 +426,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class PiwigoHttpErrorResponse extends BasePiwigoResponse implements RemoteErrorResponse {
 
-        private final AbstractPiwigoWsResponseHandler requestHandler;
+        private final transient AbstractPiwigoWsResponseHandler requestHandler;
         private final int statusCode;
         private final String errorMessage;
         private final String errorDetail;
@@ -466,7 +479,7 @@ public class PiwigoResponseBufferingHandler {
 
     public static class UrlErrorResponse extends BaseUrlResponse implements RemoteErrorResponse {
 
-        private final AbstractPiwigoDirectResponseHandler requestHandler;
+        private final transient AbstractPiwigoDirectResponseHandler requestHandler;
         private final int statusCode;
         private final String errorMessage;
         private final String errorDetail;

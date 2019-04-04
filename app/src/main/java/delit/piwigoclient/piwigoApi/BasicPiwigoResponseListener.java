@@ -91,25 +91,38 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         }
     }
 
+    private static class ErrorRetryQuestionResultHandler extends UIHelper.QuestionResultAdapter {
+        private final transient AbstractPiwigoDirectResponseHandler handler;
+        private final transient PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse;
+        private final long handlerId;
+
+        public ErrorRetryQuestionResultHandler(UIHelper uiHelper, AbstractPiwigoDirectResponseHandler handler, PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, long handlerId) {
+            super(uiHelper);
+            this.handlerId = handlerId;
+            this.handler = handler;
+            this.errorResponse = errorResponse;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            //TODO fix NPE exception - will occur here because handler and errorResponse are both transient as non serializable.
+            if (Boolean.TRUE.equals(positiveAnswer)) {
+                if(handler.runInBackground()) {
+                    getUiHelper().addBackgroundServiceCall(handler.getMessageId());
+                } else {
+                    getUiHelper().addActiveServiceCall(handler.getMessageId());
+                }
+                handler.rerun(dialog.getContext().getApplicationContext());
+            } else {
+                BasicPiwigoResponseListener listener = (BasicPiwigoResponseListener) PiwigoResponseBufferingHandler.getDefault().getRegisteredHandler(handlerId);
+                listener.onAfterHandlePiwigoResponse(errorResponse);
+            }
+        }
+    }
+
     protected void handleErrorRetryPossible(final PiwigoResponseBufferingHandler.RemoteErrorResponse errorResponse, int title, String msg, String detail) {
         final AbstractPiwigoDirectResponseHandler handler = errorResponse.getHttpResponseHandler();
-
-        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter() {
-
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE.equals(positiveAnswer)) {
-                    if(handler.runInBackground()) {
-                        uiHelper.addBackgroundServiceCall(handler.getMessageId());
-                    } else {
-                        uiHelper.addActiveServiceCall(handler.getMessageId());
-                    }
-                    handler.rerun(dialog.getContext().getApplicationContext());
-                } else {
-                    onAfterHandlePiwigoResponse(errorResponse);
-                }
-            }
-        };
+        UIHelper.QuestionResultListener dialogListener = new ErrorRetryQuestionResultHandler(uiHelper, handler, errorResponse, handlerId);
 
         if(detail == null) {
             uiHelper.showOrQueueDialogQuestion(title, msg, R.string.button_cancel, R.string.button_retry, dialogListener);

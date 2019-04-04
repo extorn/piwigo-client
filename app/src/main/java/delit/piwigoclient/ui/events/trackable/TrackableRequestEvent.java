@@ -17,7 +17,7 @@ public class TrackableRequestEvent implements Serializable {
     }
 
     public synchronized static int getNextEventId() {
-        int id = actionIdGenerator.incrementAndGet();
+        short id = (short) actionIdGenerator.incrementAndGet();
         if (id < 0) {
             id = 0;
             actionIdGenerator.set(0);

@@ -48,7 +48,11 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             // get the parent (as we are using the selected item at the moment).... which is wrong incidentally.
             if(initiallyActiveItem != null) {
                 // this item might be null if the gallery structure has altered and this album doesn't exist any longer.
-                initiallyActiveItem = overallRoot.findChild(initiallyActiveItem.getParentId());
+                if(initiallyActiveItem.getParentId() != null) {
+                    initiallyActiveItem = overallRoot.findChild(initiallyActiveItem.getParentId());
+                } else {
+                    initiallyActiveItem = overallRoot;
+                }
             }
         }
         if(initiallyActiveItem == null) {

@@ -74,11 +74,13 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         JsonObject result = rsp.getAsJsonObject();
         JsonArray images;
 
-        JsonObject pagingObj = result.get("paging").getAsJsonObject();
-        int page = pagingObj.get("page").getAsInt();
-        int pageSize = pagingObj.get("per_page").getAsInt();
-        int totalResourceCount = pagingObj.get("count").getAsInt();
-
+        int totalResourceCount = pageSize + 1; // to ensure it tries getting the next page (if there's no paging info something is very odd!)
+        if(result.has("paging")) {
+            JsonObject pagingObj = result.get("paging").getAsJsonObject();
+            int page = pagingObj.get("page").getAsInt();
+            int pageSize = pagingObj.get("per_page").getAsInt();
+            totalResourceCount = pagingObj.get("count").getAsInt();
+        }
         if(result.has("images")) {
             images = result.get("images").getAsJsonArray();
         } else if(result.has("_content")) {

@@ -492,21 +492,22 @@ public class ViewFavoritesFragment extends MyFragment {
             return;
         }
 
-        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter() {
+        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                viewAdapter.toggleItemSelection();
+                ViewFavoritesFragment fragment = (ViewFavoritesFragment) getUiHelper().getParent();
+                fragment.getViewAdapter().toggleItemSelection();
                 if (Boolean.TRUE == positiveAnswer) {
                     HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItemIds());
                     HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItems());
-                    deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
+                    fragment.deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
                 } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
                     PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
                     boolean allowFavoritesEdit = !isAppInReadOnlyMode() && sessionDetails != null;
                     for (ResourceItem item : deleteActionData.getSelectedItems()) {
                         if (allowFavoritesEdit) {
-                            addActiveServiceCall(R.string.progress_remove_favorite_resources, new FavoritesRemoveImageResponseHandler(item).invokeAsync(getContext()));
+                            getUiHelper().addActiveServiceCall(R.string.progress_remove_favorite_resources, new FavoritesRemoveImageResponseHandler(item).invokeAsync(getContext()));
                         }
                     }
                 } else {
@@ -524,14 +525,18 @@ public class ViewFavoritesFragment extends MyFragment {
         }
     }
 
+    private BaseRecyclerViewAdapter getViewAdapter() {
+        return viewAdapter;
+    }
+
     private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
 
             @Override
             public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
                 if(Boolean.TRUE == positiveAnswer) {
-                    addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
+                    getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
                 }
             }
         });
