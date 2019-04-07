@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -333,6 +334,13 @@ public class UploadJob implements Serializable {
     public synchronized ArrayList<File> getFilesNotYetUploaded() {
         ArrayList<File> filesToUpload = new ArrayList<>(filesForUpload);
         filesToUpload.removeAll(getFilesProcessedToEnd());
+        Iterator<File> filesToUploadIter = filesToUpload.iterator();
+        while(filesToUploadIter.hasNext()) {
+            File f = filesToUploadIter.next();
+            if(f.isDirectory()) {
+                filesToUpload.remove(f);
+            }
+        }
         return filesToUpload;
     }
 

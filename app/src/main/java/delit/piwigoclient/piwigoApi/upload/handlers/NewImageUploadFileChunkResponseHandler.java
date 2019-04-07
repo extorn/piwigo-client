@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload.handlers;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -54,6 +55,15 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
         if (success) {
             fileChunk.incrementUploadAttempts();
         }
+    }
+
+    @Override
+    protected void logJsonSyntaxError(String responseBodyStr) {
+        if(responseBodyStr != null && responseBodyStr.contains("forbidden file type")) {
+            String fileType = fileChunk.getOriginalFile().isDirectory() ? "dir" : "file";
+            Crashlytics.log(String.format("Json Syntax error while trying to upload %1$s : %2$s", fileType, fileChunk.getOriginalFile().getAbsolutePath()));
+        }
+        super.logJsonSyntaxError(responseBodyStr);
     }
 
     @Override

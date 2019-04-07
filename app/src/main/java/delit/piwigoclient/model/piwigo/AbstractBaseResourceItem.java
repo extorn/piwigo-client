@@ -112,8 +112,8 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             }
         }
         if(usingFile != null) {
-            int idx = fullSizeImage.url.lastIndexOf('.');
-            return fullSizeImage.url.substring(idx + 1);
+            int idx = usingFile.url.lastIndexOf('.');
+            return usingFile.url.substring(idx + 1);
         }
         return null;
     }

@@ -237,11 +237,12 @@ public class UploadActivity extends MyActivity {
         try {
 
             if (Intent.ACTION_SEND.equals(action) && type != null) {
-                if (type == null || type.startsWith("image/") || type.startsWith("video/")) {
+                if (type.startsWith("image/") || type.startsWith("video/")) {
                     return handleSendMultipleImages(intent); // Handle single image being sent
                 }
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
-                if (type == null || type.startsWith("image/") || type.startsWith("video/")) {
+                // type is */* if it contains a mixture of file types
+                if (type.equals("*/*") || type.startsWith("image/") || type.startsWith("video/")) {
                     return handleSendMultipleImages(intent); // Handle multiple images being sent
                 }
             }
@@ -280,12 +281,15 @@ public class UploadActivity extends MyActivity {
         if(clipData != null && clipData.getItemCount() > 0) {
             // process clip data
             filesToUpload = new ArrayList<>(clipData.getItemCount());
+            boolean hasImages = clipData.getDescription().hasMimeType("image/*");
+            boolean hasVideos = clipData.getDescription().hasMimeType("video/*");
+            boolean mightHaveImagesOrVideos = clipData.getDescription().hasMimeType("*/*");
+            String mimeType = clipData.getDescription().getMimeTypeCount() == 1 ? clipData.getDescription().getMimeType(0) : null;
             for(int i = 0; i < clipData.getItemCount(); i++) {
                 ClipData.Item sharedItem = clipData.getItemAt(i);
                 Uri sharedUri = sharedItem.getUri();
-                String mimeType = clipData.getDescription().getMimeType(i);
-                if(mimeType.startsWith("image/") || mimeType.startsWith("video/")) {
-                    String fileExt = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+                if(hasImages || hasVideos || mightHaveImagesOrVideos) {
+                    String fileExt = (!mightHaveImagesOrVideos && mimeType != null) ? MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType) : null;
                     if (sharedUri != null) {
                         handleSentImage(sharedUri, fileExt, filesToUpload);
                     }
@@ -339,12 +343,16 @@ public class UploadActivity extends MyActivity {
                 try {
                     File tmp_upload_folder = new File(getApplicationContext().getExternalCacheDir(), "piwigo-upload");
                     tmp_upload_folder.mkdir();
-                    f = new File(tmp_upload_folder, imageUri.getLastPathSegment());
+                    String filename = imageUri.getLastPathSegment();
+                    if(fileExt != null && !filename.endsWith("." + fileExt)) {
+                        filename += '.' + fileExt;
+                    }
+                    f = new File(tmp_upload_folder, filename);
                     int i = 0;
                     while(f.exists()) {
                         i++;
                         int insertAt = imageUri.getLastPathSegment().lastIndexOf('.');
-                        String filename = imageUri.getLastPathSegment().substring(0, insertAt);
+                        filename = imageUri.getLastPathSegment().substring(0, insertAt);
                         String ext = imageUri.getLastPathSegment().substring(insertAt);
                         f = new File(tmp_upload_folder, filename + '_' + i + ext);
                     }

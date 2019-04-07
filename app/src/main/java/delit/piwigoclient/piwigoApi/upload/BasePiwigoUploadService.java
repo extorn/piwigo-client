@@ -960,6 +960,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     private boolean deleteUploadedResourceFromServer(UploadJob uploadJob, ResourceItem uploadedResource) {
 
+        if(uploadedResource == null) {
+            Log.w(TAG, "cannot delete uploaded resource from server, as we are missing a reference to it (presumably upload has not been started)!");
+            return true;
+        }
         ImageDeleteResponseHandler imageDeleteHandler = new ImageDeleteResponseHandler(uploadedResource);
         invokeWithRetries(uploadJob, imageDeleteHandler, 2);
         return imageDeleteHandler.isSuccess();

@@ -200,7 +200,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         } catch(IllegalStateException e) {
             // some devices seem to cause this to be an illegal state exception not json syntax exception....
             String responseBodyStr = responseBody != null ? new String(responseBody) : null;
-            Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
+            logJsonSyntaxError(responseBodyStr);
             if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
                 Crashlytics.logException(e);
             }
@@ -212,7 +212,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
         } catch (JsonSyntaxException e) {
             String responseBodyStr = responseBody != null ? new String(responseBody) : null;
-            Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
+            logJsonSyntaxError(responseBodyStr);
             if(!"Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(e.getMessage())) {
                 Crashlytics.logException(e);
             }
@@ -224,12 +224,16 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
         } catch (JsonIOException e) {
             String responseBodyStr = responseBody != null ? new String(responseBody) : null;
-            Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
+            logJsonSyntaxError(responseBodyStr);
             Crashlytics.logException(e);
             PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), isCached);
             r.setResponse(responseBodyStr);
             storeResponse(r);
         }
+    }
+
+    protected void logJsonSyntaxError(String responseBodyStr) {
+        Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
     }
 
     private boolean handleCombinedJsonAndHtmlResponse(int statusCode, Header[] headers, byte[] responseBody, JsonSyntaxException e, boolean hasBrandNewSession) {

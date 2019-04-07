@@ -149,7 +149,7 @@ public class AsyncHttpRequest implements Runnable {
         // Fixes #115
         if (request.getURI().getScheme() == null) {
             // subclass of IOException so processed in the caller
-            throw new MalformedURLException("No valid URI scheme was provided");
+            throw new MalformedURLException("No valid URI scheme was provided for uri " + request.getURI().toString());
         }
 
         if (responseHandler instanceof RangeFileAsyncHttpResponseHandler) {

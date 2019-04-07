@@ -81,11 +81,16 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             int pageSize = pagingObj.get("per_page").getAsInt();
             totalResourceCount = pagingObj.get("count").getAsInt();
         }
-        if(result.has("images")) {
+        if(result.has("images") && result.get("images").isJsonArray()) {
             images = result.get("images").getAsJsonArray();
-        } else if(result.has("_content")) {
+        } else if(result.has("_content") && result.get("_content").isJsonArray()) {
             images = result.get("_content").getAsJsonArray();
         } else {
+            if(isCached) {
+                Log.w(TAG, "Unable to find images in cached response " + rsp.getAsString());
+            } else {
+                Log.w(TAG, "Unable to find images in response " + rsp.getAsString());
+            }
             images = null;
         }
 
@@ -223,6 +228,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 //TODO why must we do something special for the privacy plugin?
                 // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
                 String mediaFile = originalResourceUrl.replaceFirst("^.*(/upload/.*)", "$1");
+
                 thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
                 if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");

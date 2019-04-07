@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1457,11 +1458,14 @@ public class CachingAsyncHttpClient implements Closeable {
             requestList.add(requestHandle);
 
             Iterator<RequestHandle> iterator = requestList.iterator();
+            List<RequestHandle> garbageCollect = new ArrayList<>();
             while (iterator.hasNext()) {
-                if (iterator.next().shouldBeGarbageCollected()) {
-                    iterator.remove();
+                RequestHandle thisItem = iterator.next();
+                if (thisItem.shouldBeGarbageCollected()) {
+                    garbageCollect.add(thisItem);
                 }
             }
+            requestList.removeAll(garbageCollect);
         }
 
         return requestHandle;
