@@ -104,104 +104,14 @@
          - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.3.99.2</item>
+        <item>"Änderungen:
+                - Kleine Korrekturen rund um die App"</item>
         <item>1.3.99.1</item>
         <item>"Änderungen:
                 - Kleine Korrekturen rund um die App"</item>
         <item>1.3.99.0</item>
         <item>"Änderungen:
                 - Kleine Korrekturen rund um die App"</item>
-        <item>1.3.98.9</item>
-        <item>"Änderungen:
-                - Offensichtlichere Unterstützung für die Dateifreigabe - beim Herunterladen von Dateien
-                - Umfassendere Unterstützung für die Freigabe von Dateien aus anderen Anwendungen zum Zwecke des Hochladens
-                - Löschen Sie Dateien, die temporär erstellt wurden, um den Upload nach der Freigabe aus anderen Anwendungen zu ermöglichen"</item>
-        <item>1.3.98.8</item>
-        <item>"Änderungen:
-            - Verbesserungen bei der Fehlerbehandlung beim Hochladen von Dateien
-            - Kleine Korrekturen rund um die App"</item>
-        <item>1.3.98.7</item>
-        <item>"Bugfix: Uploads - Ändern Sie den Dateinamen so, dass er dem der Datei auf Ihrem Gerät entspricht"</item>
-        <item>1.3.98.6</item>
-        <item>"Bugfix: Benutzerseite: Stellen Sie sicher, dass die Berechtigungen für das Benutzeralbum visuell aktualisiert werden, um die Gruppenzugehörigkeit bei Änderung der Gruppenzugehörigkeit anzupassen."</item>
-        <item>1.3.98.5</item>
-        <item>"Änderungen:
-            - Grundlegende Unterstützung für die Anzeige von animierten Gif-Dateien
-            - Mehr Übersichtlichkeit in den Nachrichten und i18n-Unterstützung bei Login-Fehlern
-            Fehlerbehebung:
-            - Wenn Sie einen Favoriten anzeigen, wird er nicht mehr als Favorit abgewählt"</item>
-        <item>1.3.98.4</item>
-        <item>"Änderungen:
-            - Unterstützung für die Anzeige des Gallerienamens (Benötigt die neueste Version des PiwigoClientWsExt Plugins)"</item>
-        <item>1.3.98.2</item>
-        <item>"Änderungen:
-            - Bezahlt: Favoritenliste anzeigen (Benötigt die neueste Version des PiwigoClientWsExt Plugins)
-            Fehlerbehebung:
-            - Diashow nach dem Löschen nicht beschädigt
-            - Andere lästige Fehler"</item>
-        <item>1.3.98</item>
-        <item>"Änderungen:
-         - Update Sie die Liste der wichtigsten Tipps"
-        </item>
-        <item>1.3.97.8</item>
-        <item>Bugfixes</item>
-        <item>1.3.97.7</item>
-        <item>"Änderungen:
-            - Weitere Popup-Dialoge wurden durch Snackbar-Meldungen ersetzt
-            Fehlerbehebung:
-            - Bezahlt: Favoriten jetzt wählbar
-            - Fehlgeschlagener Upload-Job konnte unter Umständen nicht gelöscht werden
-            - Bilddownload fehlerhaft"</item>
-        <item>1.3.97.6</item>
-        <item>"Änderungen:
-            - Schaltflächen im Vollbildmodus und in der Videoansicht nach 2 Sekunden ausblenden (berühren zum Anzeigen)
-            Fehlerbehebung:
-            - falsches Speichern der Albumansicht verursacht Absturz bei der App-Pause"</item>
-        <item>1.3.97.5</item>
-        <item>"Fehlerbehebung:
-            - Das seltsame Verhalten bei Verbindungsprofilen wurde korrigiert."</item>
-        <item>1.3.97.4</item>
-        <item>"Änderungen:
-            - Bezahlt: Überwachung des Dateisystems, Änderungen lösen automatischen Upload aus.
-            - Neue Diashow-Einstellung - transparenter Hintergrund des Bildinformationsfeldes
-            Fehlerbehebung:
-            - Zuverlässigerer Hintergrunddienst auf Android O und höher
-            - Es wurde ein Problem behoben, das bei der Fortsetzung der App für die Album- und Diashowansicht auftrat"
-        </item>
-        <item>1.3.97.3</item>
-        <item>"Änderungen:
-            - Unterstützung für den erweiterten Modus piwigo_privacy hinzugefügt"</item>
-        <item>1.3.97.2</item>
-        <item>"Änderungen:
-- Nur kostenpflichtige App: Einstellung hinzugefügt, um das Ignorieren von Server-Http-Cache-Kopfzeilen zu erlauben, um das Offline-Browsen der Galerie zu ermöglichen (Bitte aktualisieren Sie das PiwigoClientWsExt-Plugin).
-- Verwenden Sie nach Möglichkeit GET http-Requests, anstatt immer POST zu verwenden (um Caching zu ermöglichen)"
-        </item>
-        <item>1.3.97.1</item>
-        <item>"Fehlerbehebung:
-            - Die Gruppenzugehörigkeit wird nun für Benutzer korrekt angezeigt.
-            - Feldauswahl auf der Benutzerseite funktioniert jetzt
-            - Fehler erscheint nicht mehr zufällig während der Albumsuche.
-            Änderungen:
-            - aktualisiert auf die neuesten Android-Bibliotheken
-            - Hochladen - Dateien, die für die App freigegeben wurden, werden jetzt an die Liste angehängt, anstatt sie zu ersetzen"
-        </item>
-        <item>1.3.97</item>
-        <item>"Fehlerbehebung:
-            - Das Feld für das Benutzerpasswort kann nun wieder bearbeitet werden.
-            - Überprüfung und Fehlerbehebung bei Korbaktionen (Massenausschnitt oder Kopieren und Einfügen)
-            Änderungen:
-            - Neuer Auswahlbildschirm für das Album (derzeit nur für den Upload-Bildschirm)
-            - Kleine Verbesserungen der Benutzeroberfläche"
-        </item>
-        <item>1.3.96.12</item>
-        <item>"Fehlerbehebung:
-            - Fehler bei der Wiederherstellung von App-Daten führen zu Abstürzen"</item>
-        <item>1.3.96.11</item>
-        <item>"Fehlerbehebung:
-            - Fehler bei der Wiederherstellung von App-Daten führen zu Abstürzen
-            - Benutzer ohne Gruppen, die nicht richtig geladen werden können
-            - versehentliche Rekursion bei Fehler beim Abrufen von Bildern"</item>
-        <item>1.3.96.10</item>
-        <item>"Fehlerbehebung:
-            - Upload korrigiert - Danke Raphael und Alec"</item>
     </string-array>
 </resources>

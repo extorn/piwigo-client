@@ -3,6 +3,7 @@ package delit.piwigoclient.ui;
 import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.multidex.MultiDexApplication;
@@ -27,7 +28,12 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
+    protected transient static Resources resources;
     private transient SharedPreferences prefs;
+
+    public static Resources getAppResources() {
+        return resources;
+    }
 
     private void upgradeAnyPreferencesIfRequired() {
         SharedPreferences prefs = getPrefs();
@@ -110,6 +116,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         upgradeAnyPreferencesIfRequired();
         AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
+        resources = getResources();
         onAppCreate();
     }
 

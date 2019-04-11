@@ -577,5 +577,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="http_error_msg_pattern">HTTP-Fehlermeldung (%1$s)</string>
     <string name="unexpected_response_error_msg_pattern">Unerwartete Antwort : \nHTTP Status Code (%1$d)</string>
     <string name="connection_error_msg_pattern">Verbindung zum Server kann nicht hergestellt werden</string>
+    <string name="preference_corrupt_please_re_type_pattern">"Die Präferenz %1$s ist unwiederbringlich und wurde auf %2$s voreingestellt. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück."</string>
 </resources>
 

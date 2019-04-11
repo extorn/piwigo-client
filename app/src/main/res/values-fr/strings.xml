@@ -606,4 +606,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="http_error_msg_pattern">Message d\'erreur HTTP (%1$s)</string>
     <string name="unexpected_response_error_msg_pattern">Réponse inattendue : \nHTTP Status Code (%1$d)</string>
     <string name="connection_error_msg_pattern">Impossible de se connecter au serveur</string>
+    <string name="preference_corrupt_please_re_type_pattern">"La préférence %1$s est irrécupérable et a été fixée par défaut à %2$s. Veuillez réinitialiser cette valeur dans les paramètres de l'application"</string>
 </resources>

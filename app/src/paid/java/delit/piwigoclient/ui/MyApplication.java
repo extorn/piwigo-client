@@ -1,5 +1,7 @@
 package delit.piwigoclient.ui;
 
+import android.content.res.Resources;
+
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
 

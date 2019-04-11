@@ -938,4 +938,5 @@ SOFTWARE.
     <string name="http_error_msg_pattern">HTTP Error Message (%1$s)</string>
     <string name="unexpected_response_error_msg_pattern">Unexpected response : \nHTTP Status Code (%1$d)</string>
     <string name="connection_error_msg_pattern">Unable to connect to server</string>
+    <string name="preference_corrupt_please_re_type_pattern">"Preference %1$s is irretrievable and has been defaulted to %2$s. Please reset this value in the app settings"</string>
 </resources>

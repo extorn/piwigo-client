@@ -225,9 +225,16 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 }
             }
         } finally {
+            // unable to remove from keyset iterator hence the temporary list.
+            List<File> observersToRemove = new ArrayList<>();
             for(File key : runningObservers.keySet()) {
+                observersToRemove.add(key);
+            }
+            for(File key : observersToRemove) {
                 runningObservers.remove(key).stopWatching();
             }
+            observersToRemove.clear();
+
             unregisterBroadcastReceiver(context);
             EventBus.getDefault().post(new BackgroundUploadThreadTerminatedEvent());
         }

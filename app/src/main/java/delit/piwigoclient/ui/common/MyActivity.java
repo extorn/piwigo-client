@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.common;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,6 +11,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
@@ -25,6 +27,7 @@ import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
+import delit.piwigoclient.ui.events.ShowMessageEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
 /**
@@ -124,6 +127,26 @@ public abstract class MyActivity extends AppCompatActivity {
     }
 
     @Override
+    public void startActivityForResult(Intent intent, int requestCode, @Nullable Bundle options) {
+        try {
+            super.startActivityForResult(intent, requestCode, options);
+        } catch(IllegalArgumentException e) {
+            Crashlytics.log(String.format("Failed to start activity for result : %1$s (requestCode valid: %2$s)", intent.toString(), requestCode <= Short.MAX_VALUE));
+            throw e;
+        }
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        try {
+            super.startActivityForResult(intent, requestCode);
+        } catch(IllegalArgumentException e) {
+            Crashlytics.log(String.format("Failed to start activity for result : %1$s (requestCode valid: %2$s)", intent.toString(), requestCode <= Short.MAX_VALUE));
+            throw e;
+        }
+    }
+
+    @Override
     public void onDetachedFromWindow() {
         uiHelper.deregisterFromActiveServiceCalls();
         uiHelper.closeAllDialogs();
@@ -211,5 +234,10 @@ public abstract class MyActivity extends AppCompatActivity {
         } else {
             getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_msg_piwigo_method_not_available_pattern, event.getFailedOriginalMethod()));
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(ShowMessageEvent event) {
+        getUiHelper().showOrQueueDialogMessage(event.getTitleResId(), event.getMessage());
     }
 }
