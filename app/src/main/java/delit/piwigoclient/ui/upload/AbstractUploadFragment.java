@@ -211,10 +211,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         // check for login status as need to be logged in to get this information (supplied by server)
         ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
         if(PiwigoSessionDetails.getInstance(activeProfile) == null) {
+            fileSelectButton.setEnabled(false);
             String serverUri = activeProfile.getPiwigoServerAddress(getPrefs(), getContext());
             getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new UIHelper.Action() {
                 @Override
                 public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response) {
+                    fileSelectButton.setEnabled(true);
                     ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
                     String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
                     uploadableFilesView.setText(fileTypesStr);
@@ -432,8 +434,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             getUiHelper().getPiwigoResponseListener().switchHandlerId(uploadJob.getResponseHandlerId());
             getUiHelper().updateHandlerForAllMessages();
 
-            String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(uploadJob.getConnectionPrefs()).getAllowedFileTypes()));
-            uploadableFilesView.setText(fileTypesStr);
+            PiwigoSessionDetails piwigoSessionDetails = PiwigoSessionDetails.getInstance(uploadJob.getConnectionPrefs());
+            if(piwigoSessionDetails != null) {
+                String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(piwigoSessionDetails.getAllowedFileTypes()));
+                uploadableFilesView.setText(fileTypesStr);
+            }
             uploadJobId = uploadJob.getJobId();
             uploadToAlbum = new CategoryItemStub("???" ,uploadJob.getUploadToCategory());
             AlbumGetSubAlbumNamesResponseHandler hndler = new AlbumGetSubAlbumNamesResponseHandler(uploadJob.getUploadToCategory(), false);
