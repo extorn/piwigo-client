@@ -20,7 +20,7 @@ public class ShowMessageEvent extends SingleUseEvent {
      */
     public ShowMessageEvent(int type, @StringRes int titleResId, String message) {
         this.type = type;
-        if(type != TYPE_INFO || type != TYPE_ERROR || type != TYPE_WARN) {
+        if(type != TYPE_INFO && type != TYPE_ERROR && type != TYPE_WARN) {
             throw new IllegalArgumentException("Message type must be one of declared constants in ShowMessageEvent class");
         }
         this.titleResId = titleResId;
