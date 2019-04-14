@@ -1455,17 +1455,20 @@ public class CachingAsyncHttpClient implements Closeable {
                 }
             }
 
-            requestList.add(requestHandle);
+            synchronized (requestList) {
 
-            Iterator<RequestHandle> iterator = requestList.iterator();
-            List<RequestHandle> garbageCollect = new ArrayList<>();
-            while (iterator.hasNext()) {
-                RequestHandle thisItem = iterator.next();
-                if (thisItem.shouldBeGarbageCollected()) {
-                    garbageCollect.add(thisItem);
+                requestList.add(requestHandle);
+
+                Iterator<RequestHandle> iterator = requestList.iterator();
+                List<RequestHandle> garbageCollect = new ArrayList<>();
+                while (iterator.hasNext()) {
+                    RequestHandle thisItem = iterator.next();
+                    if (thisItem.shouldBeGarbageCollected()) {
+                        garbageCollect.add(thisItem);
+                    }
                 }
+                requestList.removeAll(garbageCollect);
             }
-            requestList.removeAll(garbageCollect);
         }
 
         return requestHandle;

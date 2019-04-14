@@ -1465,7 +1465,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void onResourceMoved(BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse response) {
-
+        Crashlytics.log(String.format("deleting 1 album items from the UI display after moving it to different album"));
         Basket basket = getBasket();
         if(basket == null) {
             Crashlytics.log("Basket is null when expecting to handle onResourceMoved event");
@@ -1499,6 +1499,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void onResourcesDeleted(ImageDeleteResponseHandler.PiwigoDeleteImageResponse response) {
+        Crashlytics.log(String.format("deleting %1$d album items from the UI display", response.getDeletedItemIds()));
         // clear the selection
         viewAdapter.clearSelectedItemIds();
         viewAdapter.toggleItemSelection();

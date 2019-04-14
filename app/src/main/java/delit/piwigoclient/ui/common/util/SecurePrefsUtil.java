@@ -15,6 +15,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.Random;
 
+import javax.crypto.BadPaddingException;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import delit.piwigoclient.R;
