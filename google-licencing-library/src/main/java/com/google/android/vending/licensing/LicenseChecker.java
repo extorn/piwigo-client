@@ -220,9 +220,7 @@ public class LicenseChecker implements ServiceConnection {
                     if (bindResult) {
                         mPendingChecks.offer(validator);
                     } else {
-                        if (BuildConfig.DEBUG) {
-                            Log.e(TAG, "Could not bind to service.");
-                        }
+                        Crashlytics.log(Log.ERROR, TAG, "Could not bind to service to check licence.");
                         handleServiceConnectionError(validator);
                     }
                 } catch (SecurityException e) {

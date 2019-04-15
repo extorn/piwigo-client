@@ -65,7 +65,7 @@ public class AutoUploadJobConfig implements Parcelable {
     public String getSummary(SharedPreferences appPrefs, Context c) {
         StringBuilder sb = new StringBuilder();
         sb.append("uploadFrom:\n");
-        sb.append(getLocalFolderToMonitor(c).getAbsolutePath());
+        sb.append(getLocalFolderToMonitor(c) == null ? "???" : getLocalFolderToMonitor(c).getAbsolutePath());
         sb.append('\n');
         sb.append("uploadTo:\n");
         ConnectionPreferences.ProfilePreferences cp = getConnectionPrefs(c, appPrefs);
