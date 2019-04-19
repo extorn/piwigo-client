@@ -100,29 +100,31 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
         if (availableAlbums == null) {
             addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
         } else if (getListAdapter() == null) {
-            AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), CategoryItem.ROOT_ALBUM, getContext());
-            availableGalleries.clear();
-            // leaving the root album out prevents it's selection (not wanted).
+            synchronized (this) {
+                AvailableAlbumsListAdapter availableGalleries = new AvailableAlbumsListAdapter(getViewPrefs(), CategoryItem.ROOT_ALBUM, getContext());
+                availableGalleries.clear();
+                // leaving the root album out prevents it's selection (not wanted).
 //            availableGalleries.add(CategoryItemStub.ROOT_GALLERY);
-            availableGalleries.addAll(availableAlbums);
-            ListView listView = getList();
-            listView.setAdapter(availableGalleries);
-            // clear checked items
-            listView.clearChoices();
-            if (isMultiSelectEnabled()) {
-                listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-            } else {
-                listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
-            }
-
-            for (Long selectedAlbum : getCurrentSelection()) {
-                int itemPos = availableGalleries.getPosition(selectedAlbum);
-                if (itemPos >= 0) {
-                    listView.setItemChecked(itemPos, true);
+                availableGalleries.addAll(availableAlbums);
+                ListView listView = getList();
+                listView.setAdapter(availableGalleries);
+                // clear checked items
+                listView.clearChoices();
+                if (isMultiSelectEnabled()) {
+                    listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+                } else {
+                    listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
                 }
+
+                for (Long selectedAlbum : getCurrentSelection()) {
+                    int itemPos = availableGalleries.getPosition(selectedAlbum);
+                    if (itemPos >= 0) {
+                        listView.setItemChecked(itemPos, true);
+                    }
+                }
+                setListAdapter(availableGalleries);
+                setAppropriateComponentState();
             }
-            setListAdapter(availableGalleries);
-            setAppropriateComponentState();
         }
     }
 
@@ -133,15 +135,18 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
 
     @Override
     protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
-        HashSet<CategoryItemStub> selectedAlbums = new HashSet<>(selectedIdsSet.size());
-        AvailableAlbumsListAdapter listAdapter = getListAdapter();
-        for (Long selectedId : selectedIdsSet) {
-            selectedAlbums.add(listAdapter.getItemById(selectedId));
-        }
-        EventBus.getDefault().post(new AlbumSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedAlbums));
-        // now pop this screen off the stack.
-        if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+        synchronized (this) {
+            // need to synchronise as the list adapter may be being rebuilt.
+            HashSet<CategoryItemStub> selectedAlbums = new HashSet<>(selectedIdsSet.size());
+            AvailableAlbumsListAdapter listAdapter = getListAdapter();
+            for (Long selectedId : selectedIdsSet) {
+                selectedAlbums.add(listAdapter.getItemById(selectedId));
+            }
+            EventBus.getDefault().post(new AlbumSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedAlbums));
+            // now pop this screen off the stack.
+            if (isVisible()) {
+                getFragmentManager().popBackStackImmediate();
+            }
         }
     }
 

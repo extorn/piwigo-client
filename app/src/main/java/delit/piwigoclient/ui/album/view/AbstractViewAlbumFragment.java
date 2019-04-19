@@ -1499,7 +1499,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void onResourcesDeleted(ImageDeleteResponseHandler.PiwigoDeleteImageResponse response) {
-        Crashlytics.log(String.format("deleting %1$d album items from the UI display", response.getDeletedItemIds()));
+        Crashlytics.log(String.format("deleting %1$d album items from the UI display", response.getDeletedItemIds().size()));
         // clear the selection
         viewAdapter.clearSelectedItemIds();
         viewAdapter.toggleItemSelection();

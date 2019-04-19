@@ -131,7 +131,7 @@ public abstract class MyActivity extends AppCompatActivity {
         try {
             super.startActivityForResult(intent, requestCode, options);
         } catch(IllegalArgumentException e) {
-            Crashlytics.log(String.format("Failed to start activity for result : %1$s (requestCode valid: %2$s)", intent.toString(), requestCode <= Short.MAX_VALUE));
+            Crashlytics.log(String.format("Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode <= Short.MAX_VALUE, requestCode));
             throw e;
         }
     }
@@ -141,7 +141,7 @@ public abstract class MyActivity extends AppCompatActivity {
         try {
             super.startActivityForResult(intent, requestCode);
         } catch(IllegalArgumentException e) {
-            Crashlytics.log(String.format("Failed to start activity for result : %1$s (requestCode valid: %2$s)", intent.toString(), requestCode <= Short.MAX_VALUE));
+            Crashlytics.log(String.format("Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode <= Short.MAX_VALUE, requestCode));
             throw e;
         }
     }
