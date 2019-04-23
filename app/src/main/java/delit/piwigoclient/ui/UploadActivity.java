@@ -128,6 +128,10 @@ public class UploadActivity extends MyActivity {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
         outState.putInt(STATE_FILE_SELECT_EVENT_ID, fileSelectionEventId);
+
+        if(BuildConfig.DEBUG) {
+            BundleUtils.logSize("Current Upload Activity", outState);
+        }
     }
 
     @Override

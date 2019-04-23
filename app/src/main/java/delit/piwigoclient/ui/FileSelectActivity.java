@@ -16,6 +16,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
@@ -72,6 +73,10 @@ public class FileSelectActivity extends MyActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_STARTED_ALREADY, startedWithPermissions);
+
+        if(BuildConfig.DEBUG) {
+            BundleUtils.logSize("Current File Select Activity", outState);
+        }
     }
 
     @Override

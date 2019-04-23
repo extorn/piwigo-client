@@ -135,7 +135,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         super.onSaveInstanceState(outState);
 
         if(BuildConfig.DEBUG) {
-            BundleUtils.logSize("Current Activity", outState);
+            BundleUtils.logSize("Current Main Activity", outState);
         }
     }
 
