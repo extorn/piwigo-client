@@ -558,16 +558,22 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                 videoPlaybackPosition = 0; // ensure it starts at the beginning again
                 configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
             }
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new ClearCachedContentAction(getUiHelper()));
+        }
+    }
 
-                @Override
-                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                    if (Boolean.TRUE == positiveAnswer) {
-                        AlbumVideoItemFragment fragment = (AlbumVideoItemFragment) getUiHelper().getParent();
-                        fragment.clearCacheAndRestartVideo();
-                    }
-                }
-            });
+    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter {
+
+        public ClearCachedContentAction(UIHelper uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AlbumVideoItemFragment fragment = (AlbumVideoItemFragment) getUiHelper().getParent();
+                fragment.clearCacheAndRestartVideo();
+            }
         }
     }
 }

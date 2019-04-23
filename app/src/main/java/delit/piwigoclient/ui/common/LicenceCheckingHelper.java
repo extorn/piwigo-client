@@ -6,7 +6,9 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.BuildConfig;
 import com.google.android.vending.licensing.LicenseChecker;
@@ -65,24 +67,36 @@ public class LicenceCheckingHelper {
 
     private void showDialog(final boolean showRetryButton) {
         String msg = activity.getString(showRetryButton ? R.string.unlicensed_dialog_retry_body : R.string.unlicensed_dialog_body);
-        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new UIHelper.QuestionResultAdapter(activity.getUiHelper()) {
+        activity.getUiHelper().showOrQueueDialogQuestion(R.string.unlicensed_dialog_title, msg, R.string.button_quit, showRetryButton ? R.string.button_retry : R.string.button_buy, new LicenceCheckAction(activity.getUiHelper(), showRetryButton) {
 
-            @Override
-            public void onResult(androidx.appcompat.app.AlertDialog dialog, Boolean positiveAnswer) {
-                MyActivity activity = (MyActivity) getUiHelper().getParent();
-                if (Boolean.TRUE == positiveAnswer) {
-                    if (showRetryButton) {
-                        activity.getLicencingHelper().doCheck();
-                    } else {
-                        Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                "http://market.android.com/details?id=" + activity.getPackageName()));
-                        activity.startActivity(marketIntent);
-                    }
-                } else {
-                    activity.finish();
-                }
-            }
+
         });
+    }
+
+    private static class LicenceCheckAction extends UIHelper.QuestionResultAdapter {
+        private final boolean allowRetry;
+
+        public LicenceCheckAction(UIHelper uiHelper, boolean allowRetry) {
+            super(uiHelper);
+            this.allowRetry = allowRetry;
+        }
+
+        @Override
+        public void onResult(androidx.appcompat.app.AlertDialog dialog, Boolean positiveAnswer) {
+            MyActivity activity = (MyActivity) getUiHelper().getParent();
+            if (Boolean.TRUE == positiveAnswer) {
+                if (allowRetry) {
+                    activity.getLicencingHelper().doCheck();
+                } else {
+                    Crashlytics.log(Log.DEBUG, TAG, "Starting Market Intent");
+                    Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                            "http://market.android.com/details?id=" + activity.getPackageName()));
+                    activity.startActivity(marketIntent);
+                }
+            } else {
+                activity.finish();
+            }
+        }
     }
 
     public void doSilentCheck() {

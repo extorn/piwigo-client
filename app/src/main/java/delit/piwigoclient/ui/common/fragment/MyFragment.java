@@ -168,7 +168,7 @@ public class MyFragment extends Fragment {
         return "Piwigo Client";
     }
 
-    private class AdLoadErrorDialogListener extends UIHelper.QuestionResultAdapter {
+    private static class AdLoadErrorDialogListener extends UIHelper.QuestionResultAdapter {
 
         private long shownAt;
         private transient LifecycleObserver observer;
@@ -186,7 +186,8 @@ public class MyFragment extends Fragment {
                     shownAt = System.currentTimeMillis();
                 }
             };
-            getActivity().getLifecycle().addObserver(observer);
+            FragmentActivity activity = ((MyFragment) getUiHelper().getParent()).getActivity();
+            activity.getLifecycle().addObserver(observer);
             shownAt = System.currentTimeMillis();
         }
 
@@ -196,10 +197,10 @@ public class MyFragment extends Fragment {
                 dialog.show();
 //                uiHelper.showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_message_advert_load_error), R.string.button_ok, false, this);
             } else {
-                FragmentActivity a = getActivity();
-                if(a != null) {
-                    a.getLifecycle().removeObserver(observer);
-                    prefs.edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 0).commit();
+                FragmentActivity activity = ((MyFragment) getUiHelper().getParent()).getActivity();
+                if(activity != null) {
+                    activity.getLifecycle().removeObserver(observer);
+                    getUiHelper().getPrefs().edit().putLong(AdsManager.BLOCK_MILLIS_PREF, 0).commit();
                 }
             }
         }

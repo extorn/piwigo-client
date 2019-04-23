@@ -536,32 +536,7 @@ public class ViewTagFragment extends MyFragment {
             return;
         }
 
-        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter(getUiHelper()) {
-
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                ViewTagFragment fragment = (ViewTagFragment) getUiHelper().getParent();
-                fragment.viewAdapter.toggleItemSelection();
-                if (Boolean.TRUE == positiveAnswer) {
-                    HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(fragment.deleteActionData.getSelectedItemIds());
-                    HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(fragment.deleteActionData.getSelectedItems());
-                    fragment.deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
-                } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
-                    PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                    boolean allowTagEdit = !isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
-                    for (ResourceItem item : fragment.deleteActionData.getSelectedItems()) {
-                        item.getTags().remove(fragment.tag);
-                        if (allowTagEdit) {
-                            getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new PluginUserTagsUpdateResourceTagsListResponseHandler(item).invokeAsync(getContext()));
-                        } else {
-                            getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
-                        }
-                    }
-                } else {
-                    // Neutral (cancel button) - do nothing
-                }
-            }
-        };
+        UIHelper.QuestionResultListener dialogListener = new OnDeleteTagsAction(getUiHelper());
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean isTagAlterationSupported = sessionDetails != null && (sessionDetails.isUseUserTagPluginForUpdate() || sessionDetails.isAdminUser());
@@ -576,17 +551,59 @@ public class ViewTagFragment extends MyFragment {
 
     }
 
+
+    private static class OnDeleteTagsAction extends UIHelper.QuestionResultAdapter {
+        public OnDeleteTagsAction(UIHelper uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            ViewTagFragment fragment = (ViewTagFragment) getUiHelper().getParent();
+            fragment.viewAdapter.toggleItemSelection();
+            if (Boolean.TRUE == positiveAnswer) {
+                HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(fragment.deleteActionData.getSelectedItemIds());
+                HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(fragment.deleteActionData.getSelectedItems());
+                fragment.deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
+            } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                boolean allowTagEdit = !fragment.isAppInReadOnlyMode() && sessionDetails != null && sessionDetails.isUseUserTagPluginForUpdate();
+                for (ResourceItem item : fragment.deleteActionData.getSelectedItems()) {
+                    item.getTags().remove(fragment.tag);
+                    if (allowTagEdit) {
+                        getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new PluginUserTagsUpdateResourceTagsListResponseHandler(item).invokeAsync(getContext()));
+                    } else {
+                        getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
+                    }
+                }
+            } else {
+                // Neutral (cancel button) - do nothing
+            }
+        }
+    }
+
     private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteTagsForeverAction(getUiHelper(), selectedItemIds, selectedItems));
+    }
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if(Boolean.TRUE == positiveAnswer) {
-                    getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
-                }
+    private static class OnDeleteTagsForeverAction extends UIHelper.QuestionResultAdapter {
+
+        private HashSet<Long> selectedItemIds;
+        private HashSet<? extends ResourceItem> selectedItems;
+
+        public OnDeleteTagsForeverAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
+            super(uiHelper);
+            this.selectedItemIds = selectedItemIds;
+            this.selectedItems = selectedItems;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if(Boolean.TRUE == positiveAnswer) {
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
             }
-        });
+        }
     }
 
     @Override

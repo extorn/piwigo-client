@@ -886,6 +886,7 @@ SOFTWARE.
     <string name="alert_temporary_upload_album_deleted">Temporary upload album deleted successfully</string>
     <string name="alert_deleting_temporary_upload_album">Deleting temporary upload album</string>
     <string name="alert_invalid_uri_pattern">Invalid URI. %1$s</string>
+    <string name="alert_invalid_uri_pattern_spaces">Invalid URI. There is a space character in the URI at position %1$d</string>
     <string name="album_section_heading_albums">albums</string>
     <string name="album_section_heading_resources">photos in this album</string>
     <string name="album_title_home">home</string>

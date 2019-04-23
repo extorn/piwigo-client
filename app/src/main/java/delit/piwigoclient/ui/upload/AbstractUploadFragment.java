@@ -316,24 +316,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return view;
     }
 
-    private void onDeleteUploadJobButtonClick() {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, getString(R.string.alert_really_delete_upload_job), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
+    public Long getUploadJobId() {
+        return uploadJobId;
+    }
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
-                UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
-                if (positiveAnswer != null && positiveAnswer && job != null) {
-                    if(job.getTemporaryUploadAlbum() > 0) {
-                        AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbum());
-                        getUiHelper().addNonBlockingActiveServiceCall(getString(R.string.alert_deleting_temporary_upload_album), albumDelHandler.invokeAsync(getContext(), job.getConnectionPrefs()));
-                    }
-                    ForegroundPiwigoUploadService.removeJob(job);
-                    ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), job);
-                    fragment.allowUserUploadConfiguration(null);
-                }
-            }
-        });
+    private void onDeleteUploadJobButtonClick() {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, getString(R.string.alert_really_delete_upload_job), R.string.button_no, R.string.button_yes, new OnDeleteJobQuestionAction(getUiHelper()));
     }
 
     private void onUploadJobStatusButtonClick() {
@@ -543,20 +531,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         }
         if (filesForReview.size() > 0) {
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
-
-                final Set<File> filesToDelete = filesForReview;
-
-                @Override
-                public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                    AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
-                    if (Boolean.TRUE == positiveAnswer) {
-                        for (File file : filesToDelete) {
-                            fragment.onRemove(filesToUploadAdapter, file, false);
-                        }
-                    }
-                }
-            });
+            getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview));
         }
 
         long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
@@ -668,16 +643,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (activeJob.isFinished()) {
                 if (activeJob.uploadItemRequiresAction(itemToRemove)) {
                     String message = getString(R.string.alert_message_remove_file_server_state_incorrect);
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
-
-                        @Override
-                        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                            if (Boolean.TRUE == positiveAnswer) {
-                                activeJob.cancelFileUpload(itemToRemove);
-                                adapter.remove(itemToRemove);
-                            }
-                        }
-                    });
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new PartialUploadFileAction(getUiHelper(), itemToRemove));
                 } else {
                     // job stopped, but upload of this file never got to the server.
                     activeJob.cancelFileUpload(itemToRemove);
@@ -693,18 +659,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         } else {
             if (longClick) {
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_delete_all_files_selected_for_upload), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
-
-                    @Override
-                    public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                        if (Boolean.TRUE == positiveAnswer) {
-                            AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
-                            fragment.getFilesForUploadViewAdapter().clear();
-                            fragment.uploadFilesNowButton.setEnabled(fragment.getFilesForUploadViewAdapter().getItemCount() > 0);
-                            fragment.updateActiveJobActionButtonsStatus();
-                        }
-                    }
-                });
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_delete_all_files_selected_for_upload), R.string.button_no, R.string.button_yes, new DeleteAllFilesSelectedAction(getUiHelper()));
             } else {
                 adapter.remove(itemToRemove);
                 uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
@@ -775,6 +730,99 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
+    private static class DeleteAllFilesSelectedAction extends UIHelper.QuestionResultAdapter {
+        public DeleteAllFilesSelectedAction(UIHelper uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+                fragment.getFilesForUploadViewAdapter().clear();
+                fragment.uploadFilesNowButton.setEnabled(fragment.getFilesForUploadViewAdapter().getItemCount() > 0);
+                fragment.updateActiveJobActionButtonsStatus();
+            }
+        }
+    }
+
+    private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter {
+
+        private final File itemToRemove;
+
+        public PartialUploadFileAction(UIHelper uiHelper, File itemToRemove) {
+            super(uiHelper);
+            this.itemToRemove = itemToRemove;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+                UploadJob activeJob = fragment.getActiveJob(getContext());
+                activeJob.cancelFileUpload(itemToRemove);
+                fragment.getFilesForUploadViewAdapter().remove(itemToRemove);
+            }
+        }
+    }
+
+    private static class FileSizeExceededAction extends UIHelper.QuestionResultAdapter {
+        private Set<File> filesToDelete;
+
+        public FileSizeExceededAction(UIHelper uiHelper, Set<File> filesForReview) {
+            super(uiHelper);
+            this.filesToDelete = filesForReview;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+
+            if (Boolean.TRUE == positiveAnswer) {
+                for (File file : filesToDelete) {
+                    fragment.onRemove(fragment.getFilesForUploadViewAdapter(), file, false);
+                }
+            }
+        }
+    }
+    private static class OnDeleteJobQuestionAction extends UIHelper.QuestionResultAdapter {
+        public OnDeleteJobQuestionAction(UIHelper uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+            UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), fragment.getUploadJobId());
+            if (positiveAnswer != null && positiveAnswer && job != null) {
+                if(job.getTemporaryUploadAlbum() > 0) {
+                    AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbum());
+                    getUiHelper().addNonBlockingActiveServiceCall(getContext().getString(R.string.alert_deleting_temporary_upload_album), albumDelHandler.invokeAsync(getContext(), job.getConnectionPrefs()));
+                }
+                ForegroundPiwigoUploadService.removeJob(job);
+                ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), job);
+                fragment.allowUserUploadConfiguration(null);
+            }
+        }
+    }
+
+    private static class ErrorUploadingQuestionAction extends UIHelper.QuestionResultAdapter {
+        public ErrorUploadingQuestionAction(UIHelper uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+            UploadJob activeJob = fragment.getActiveJob(getContext());
+            if (positiveAnswer != null && positiveAnswer) {
+                ForegroundPiwigoUploadService.removeJob(activeJob);
+                ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), activeJob);
+                fragment.allowUserUploadConfiguration(null);
+            }
+        }
+    }
+
     private class ForegroundPiwigoFileUploadResponseListener extends PiwigoFileUploadResponseListener {
 
         ForegroundPiwigoFileUploadResponseListener(Context context) {
@@ -819,18 +867,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     if (job.getFilesNotYetUploaded().size() == 0) {
                         errMsgResourceId = R.string.alert_message_error_uploading_end;
                     }
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_error_upload, getContext().getString(errMsgResourceId), R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(getUiHelper()) {
-
-                        @Override
-                        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                            if (positiveAnswer != null && positiveAnswer) {
-                                ForegroundPiwigoUploadService.removeJob(job);
-                                ForegroundPiwigoUploadService.deleteStateFromDisk(context, job);
-                                AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
-                                fragment.allowUserUploadConfiguration(null);
-                            }
-                        }
-                    });
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_error_upload, getContext().getString(errMsgResourceId), R.string.button_no, R.string.button_yes, new ErrorUploadingQuestionAction(getUiHelper()));
                 }
                 allowUserUploadConfiguration(job);
             }

@@ -453,17 +453,24 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     private void onUseAsAlbumThumbnailForParent() {
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UseAsAlbumThumbnailForParentAction(getUiHelper()));
+    }
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    long albumId = model.getParentId();
-                    Long albumParentId = model.getParentageChain().size() > 1 ? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
-                    getUiHelper().addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(albumId, albumParentId, model.getId()).invokeAsync(getContext()));
-                }
+    private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter {
+        public UseAsAlbumThumbnailForParentAction(UIHelper uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AbstractSlideshowItemFragment parent = (AbstractSlideshowItemFragment)getUiHelper().getParent();
+                ResourceItem model = parent.getModel();
+                long albumId = model.getParentId();
+                Long albumParentId = model.getParentageChain().size() > 1 ? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
+                getUiHelper().addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(albumId, albumParentId, model.getId()).invokeAsync(getContext()));
             }
-        });
+        }
     }
 
     private boolean onUseAsAlbumThumbnailSelectAlbum() {
@@ -756,18 +763,28 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private void onDeleteItem(final T model) {
         String message = getString(R.string.alert_confirm_really_delete_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteItemAction(getUiHelper()) {
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
-                    getUiHelper().setTrackingRequest(event.getActionId());
-                    EventBus.getDefault().post(event);
-                    getUiHelper().addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler(model).invokeAsync(getContext()));
-                }
-            }
+
         });
+    }
+
+    private static class OnDeleteItemAction extends UIHelper.QuestionResultAdapter {
+        public OnDeleteItemAction(UIHelper uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AbstractSlideshowItemFragment fragment = (AbstractSlideshowItemFragment) getUiHelper().getParent();
+                ResourceItem model = fragment.getModel();
+                AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
+                getUiHelper().setTrackingRequest(event.getActionId());
+                EventBus.getDefault().post(event);
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler(model).invokeAsync(getContext()));
+            }
+        }
     }
 
     public T getModel() {

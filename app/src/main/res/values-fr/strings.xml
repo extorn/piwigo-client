@@ -554,6 +554,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_temporary_upload_album_deleted">L\'album de téléchargement temporaire a été supprimé avec succès.</string>
     <string name="alert_deleting_temporary_upload_album">Suppression de l\'album de téléchargement temporaire</string>
     <string name="alert_invalid_uri_pattern">URI invalide. %1$s</string>
+    <string name="alert_invalid_uri_pattern_spaces">URI invalide. Il y a un espace dans l\'URI à la position %1$d</string>
     <string name="album_section_heading_albums">albums</string>
     <string name="album_section_heading_resources">photos dans cet album</string>
     <string name="album_title_home">accueil</string>

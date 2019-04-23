@@ -195,6 +195,10 @@ public abstract class UIHelper<T> {
 
     public synchronized void showDetailedMsg(@StringRes int titleResId, String message, int duration) {
         QueuedSimpleMessage newItem = new QueuedSimpleMessage(titleResId, message, duration);
+        if(!toastShowing) {
+            // do this here in case the queue is already full (will only occur if there is a bug in the display logic really).
+            showQueuedMsg();
+        }
         if(!simpleMessageQueue.contains(newItem)) {
             try {
                 simpleMessageQueue.add(newItem);
@@ -214,7 +218,6 @@ public abstract class UIHelper<T> {
                 }
                 Crashlytics.log(Log.ERROR, TAG, sb.toString());
                 Crashlytics.logException(e);
-                throw e;
             }
         }
         if(!toastShowing) {
@@ -230,6 +233,9 @@ public abstract class UIHelper<T> {
         View parentView = getParentView();
         if(parentView == null || !canShowDialog()) {
             return;
+        }
+        if(simpleMessageQueue.isEmpty()) {
+           return;
         }
         final CustomSnackbar snackbar;
         toastShowing = true;
@@ -248,7 +254,7 @@ public abstract class UIHelper<T> {
             @Override
             public void onDismissed(CustomSnackbar transientBottomBar, int event) {
                 super.onDismissed(transientBottomBar, event);
-                if(!dismissHandled && !simpleMessageQueue.isEmpty()) {
+                if(!dismissHandled) {
                     showQueuedMsg();
                 }
             }
@@ -271,9 +277,7 @@ public abstract class UIHelper<T> {
 
                     @Override
                     public void onViewDetachedFromWindow(View v) {
-                        if(!simpleMessageQueue.isEmpty()) {
-                            showQueuedMsg();
-                        }
+                        showQueuedMsg();
                     }
                 });
                 snackbarNotification.show();
@@ -654,7 +658,7 @@ public abstract class UIHelper<T> {
     }
 
     protected boolean canShowDialog() {
-        return alertDialog != null;
+        return true;
     }
 
     public void showProgressIndicator() {
@@ -711,37 +715,53 @@ public abstract class UIHelper<T> {
         }
         String message = sb.toString();
 
-        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new UIHelper.QuestionResultAdapter(this) {
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    KeyStore trustStore = X509Utils.loadTrustedCaKeystore(context);
-                    try {
-                        for (Map.Entry<String, X509Certificate> entry : event.getUntrustedCerts().entrySet()) {
-                            trustStore.setCertificateEntry(entry.getKey(), entry.getValue());
-                        }
-                        X509Utils.saveTrustedCaKeystore(getContext(), trustStore);
-                    } catch (KeyStoreException e) {
-                        Crashlytics.logException(e);
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, context.getString(R.string.alert_error_adding_certificate_to_truststore));
-                    }
-                    preNotifiedCerts.addAll(event.getUntrustedCerts().keySet());
-                    getUiHelper().prefs.edit().putStringSet(context.getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
-                    long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), context).start();
-                    PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
-                        @Override
-                        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-                            getUiHelper().showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
-                        }
-                    });
+        showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction(this, event.getUntrustedCerts()));
+    }
+
+    private static class NewUnTrustedCaCertificateReceivedAction extends UIHelper.QuestionResultAdapter {
+        private final HashMap<String, X509Certificate> untrustedCerts;
+
+        public NewUnTrustedCaCertificateReceivedAction(UIHelper uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
+            super(uiHelper);
+            this.untrustedCerts = untrustedCerts;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+
+                final Set<String> preNotifiedCerts = getUiHelper().prefs.getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>());
+                if (preNotifiedCerts.containsAll(untrustedCerts.keySet())) {
+                    // already dealt with this
+                    return;
                 }
-            }
 
-            @Override
-            public void onShow(AlertDialog alertDialog) {
-
+                KeyStore trustStore = X509Utils.loadTrustedCaKeystore(getContext());
+                try {
+                    for (Map.Entry<String, X509Certificate> entry : untrustedCerts.entrySet()) {
+                        trustStore.setCertificateEntry(entry.getKey(), entry.getValue());
+                    }
+                    X509Utils.saveTrustedCaKeystore(getContext(), trustStore);
+                } catch (KeyStoreException e) {
+                    Crashlytics.logException(e);
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.alert_error_adding_certificate_to_truststore));
+                }
+                preNotifiedCerts.addAll(untrustedCerts.keySet());
+                getUiHelper().prefs.edit().putStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
+                long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), getContext()).start();
+                PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
+                    @Override
+                    public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+                        getUiHelper().showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
+                    }
+                });
             }
-        });
+        }
+
+        @Override
+        public void onShow(AlertDialog alertDialog) {
+
+        }
     }
 
     public void showOrQueueEnhancedDialogQuestion(int titleId, String message, String detail, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
@@ -1266,6 +1286,9 @@ public abstract class UIHelper<T> {
         }
 
         protected void onNoDialogToShow() {
+            if(!toastShowing) {
+                showQueuedMsg();
+            }
         }
 
         public void setBuildNewDialogOnDismiss(boolean buildNewDialogOnDismiss) {

@@ -161,22 +161,27 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(getContext());
             username = connectionPrefs.getPiwigoUsername(prefs, getContext());
         }
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new UIHelper.QuestionResultAdapter(uiHelper) {
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_unlock, getContext().getString(R.string.alert_message_unlock, username), R.layout.layout_password_entry, R.string.button_cancel, R.string.button_unlock, new OnUnlockAction(uiHelper));
+    }
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    DisplayUtils.hideKeyboardFrom(getContext(), dialog);
-                    EditText passwordEdit = dialog.findViewById(R.id.password);
-                    if(passwordEdit != null) {
-                        String password = passwordEdit.getText().toString();
-                        EventBus.getDefault().post(new UnlockAppEvent(password));
-                    } else {
-                        Crashlytics.log("unable to find password field on dialog");
-                    }
+    private static class OnUnlockAction extends UIHelper.QuestionResultAdapter {
+        public OnUnlockAction(UIHelper uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                DisplayUtils.hideKeyboardFrom(getContext(), dialog);
+                EditText passwordEdit = dialog.findViewById(R.id.password);
+                if(passwordEdit != null) {
+                    String password = passwordEdit.getText().toString();
+                    EventBus.getDefault().post(new UnlockAppEvent(password));
+                } else {
+                    Crashlytics.log("unable to find password field on dialog");
                 }
             }
-        });
+        }
     }
 
     @Override
@@ -205,15 +210,20 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     }
 
     private void showLockDialog() {
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_lock, getContext().getString(R.string.alert_message_lock), R.string.button_cancel, R.string.button_lock, new UIHelper.QuestionResultAdapter(uiHelper) {
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_title_lock, getContext().getString(R.string.alert_message_lock), R.string.button_cancel, R.string.button_lock, new OnAppLockAction(uiHelper));
+    }
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    EventBus.getDefault().post(new LockAppEvent());
-                }
+    private static class OnAppLockAction extends UIHelper.QuestionResultAdapter {
+        public OnAppLockAction(UIHelper uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                EventBus.getDefault().post(new LockAppEvent());
             }
-        });
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

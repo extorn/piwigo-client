@@ -398,16 +398,24 @@ public class GroupFragment extends MyFragment {
 
     private void deleteGroup(final Group group) {
         String message = getString(R.string.alert_confirm_really_delete_group);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction(getUiHelper(), group));
+    }
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if (Boolean.TRUE == positiveAnswer) {
-                    GroupFragment fragment = (GroupFragment) getUiHelper().getParent();
-                    fragment.deleteGroupNow(group);
-                }
+    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter {
+        private final Group group;
+
+        public OnDeleteGroupAction(UIHelper uiHelper, Group group) {
+            super(uiHelper);
+            this.group = group;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                GroupFragment fragment = (GroupFragment) getUiHelper().getParent();
+                fragment.deleteGroupNow(group);
             }
-        });
+        }
     }
 
     private void deleteGroupNow(Group group) {

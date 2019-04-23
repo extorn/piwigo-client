@@ -492,29 +492,7 @@ public class ViewFavoritesFragment extends MyFragment {
             return;
         }
 
-        UIHelper.QuestionResultListener dialogListener = new UIHelper.QuestionResultAdapter(getUiHelper()) {
-
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                ViewFavoritesFragment fragment = (ViewFavoritesFragment) getUiHelper().getParent();
-                fragment.getViewAdapter().toggleItemSelection();
-                if (Boolean.TRUE == positiveAnswer) {
-                    HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItemIds());
-                    HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(deleteActionData.getSelectedItems());
-                    fragment.deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
-                } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
-                    PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                    boolean allowFavoritesEdit = !isAppInReadOnlyMode() && sessionDetails != null;
-                    for (ResourceItem item : deleteActionData.getSelectedItems()) {
-                        if (allowFavoritesEdit) {
-                            getUiHelper().addActiveServiceCall(R.string.progress_remove_favorite_resources, new FavoritesRemoveImageResponseHandler(item).invokeAsync(getContext()));
-                        }
-                    }
-                } else {
-                    // Neutral (cancel button) - do nothing
-                }
-            }
-        };
+        UIHelper.QuestionResultListener dialogListener = new OnDeleteFavoritesAction(getUiHelper(), deleteActionData.getSelectedItemIds(), deleteActionData.getSelectedItems());
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         boolean isFavoritesAlterationSupported = sessionDetails != null && sessionDetails.isPiwigoClientPluginInstalled();
@@ -525,21 +503,63 @@ public class ViewFavoritesFragment extends MyFragment {
         }
     }
 
+    private static class OnDeleteFavoritesAction extends UIHelper.QuestionResultAdapter {
+        private HashSet<Long> selectedItemIds;
+        private HashSet<ResourceItem> selectedItems;
+
+        public OnDeleteFavoritesAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
+            super(uiHelper);
+            this.selectedItemIds = selectedItemIds;
+            this.selectedItems = selectedItems;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            ViewFavoritesFragment fragment = (ViewFavoritesFragment) getUiHelper().getParent();
+            fragment.getViewAdapter().toggleItemSelection();
+            if (Boolean.TRUE == positiveAnswer) {
+                HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(selectedItemIds);
+                HashSet<ResourceItem> itemsForPermanentDelete = new HashSet<>(selectedItems);
+                fragment.deleteResourcesFromServerForever(itemIdsForPermanentDelete, itemsForPermanentDelete);
+            } else if (Boolean.FALSE == positiveAnswer) { // Negative answer
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                boolean allowFavoritesEdit = !fragment.isAppInReadOnlyMode() && sessionDetails != null;
+                for (ResourceItem item : selectedItems) {
+                    if (allowFavoritesEdit) {
+                        getUiHelper().addActiveServiceCall(R.string.progress_remove_favorite_resources, new FavoritesRemoveImageResponseHandler(item).invokeAsync(getContext()));
+                    }
+                }
+            } else {
+                // Neutral (cancel button) - do nothing
+            }
+        }
+    }
+
     private BaseRecyclerViewAdapter getViewAdapter() {
         return viewAdapter;
     }
 
     private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
         String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new UIHelper.QuestionResultAdapter(getUiHelper()) {
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteFavoritesForeverAction(getUiHelper(), selectedItemIds, selectedItems));
+    }
 
-            @Override
-            public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-                if(Boolean.TRUE == positiveAnswer) {
-                    getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
-                }
+    private static class OnDeleteFavoritesForeverAction extends UIHelper.QuestionResultAdapter {
+
+        private final HashSet<Long> selectedItemIds;
+        private final HashSet<? extends ResourceItem> selectedItems;
+
+        public OnDeleteFavoritesForeverAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
+            super(uiHelper);
+            this.selectedItemIds = selectedItemIds;
+            this.selectedItems = selectedItems;
+        }
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if(Boolean.TRUE == positiveAnswer) {
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
             }
-        });
+        }
     }
 
     @Override

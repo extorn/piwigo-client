@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.preferences;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -16,6 +17,7 @@ import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.Set;
 
+import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
@@ -40,6 +42,7 @@ import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.IOUtils;
 import delit.piwigoclient.util.ObjectUtils;
 import delit.piwigoclient.util.SetUtils;
+import delit.piwigoclient.util.SharedPreferencesPreferenceChangedListener;
 import delit.piwigoclient.util.X509Utils;
 
 public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragment {
@@ -449,11 +452,13 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
 
     private class ServerNamePreferenceListener implements Preference.OnPreferenceChangeListener {
         @Override
-        public boolean onPreferenceChange(Preference preference, Object value) {
+        public boolean onPreferenceChange(final Preference preference, Object value) {
             String stringValue = value.toString();
             String val = stringValue.toLowerCase();
             boolean isHttps = val.startsWith("https://");
             boolean isHttp = val.startsWith("http://");
+
+            boolean autoTweakPreference = false;
 
             if (!initialising) {
 
@@ -467,23 +472,54 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 }
 
                 if (!(isHttp || isHttps)) {
-                    getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_no_scheme_specified));
+                    autoTweakPreference = true;
                 } else if (isHttp) {
                     getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_http_scheme_specified));
                 } else {
                     try {
                         URI uri = URI.create(val);
                     } catch (IllegalArgumentException e) {
-                        getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_invalid_uri_pattern, e.getMessage()));
+                        if(val.indexOf(' ') >= 0) {
+                            autoTweakPreference = true;
+                        } else {
+                            getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_invalid_uri_pattern, e.getMessage()));
+                        }
                     }
                 }
 
-                // clear the existing session - it's not valid any more.
-                logoutSession();
-                AdsManager.getInstance().updateShowAdvertsSetting(getContext().getApplicationContext());
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                    getListView().getAdapter().notifyDataSetChanged();
+                if(!autoTweakPreference) {
+                    // clear the existing session - it's not valid any more.
+                    logoutSession();
+                    AdsManager.getInstance().updateShowAdvertsSetting(getContext().getApplicationContext());
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                        getListView().getAdapter().notifyDataSetChanged();
+                    }
                 }
+            }
+
+            if(autoTweakPreference) {
+
+                preference.getSharedPreferences().registerOnSharedPreferenceChangeListener(new SharedPreferencesPreferenceChangedListener(preference) {
+
+                    @Override
+                    public void onMonitoredPreferenceChanged(SharedPreferences sharedPreferences, Preference preference, String key) {
+                        // now remove this listener again.
+                        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
+
+                        // tweak user entered preference
+                        String prefValue = sharedPreferences.getString(key, "");
+                        prefValue = prefValue.replaceAll(" ", "");
+
+                        String lowerPref = prefValue.toLowerCase();
+                        if(!lowerPref.startsWith("http")) {
+                            prefValue = "http://" + prefValue;
+                        }
+
+                        if(preference.callChangeListener(prefValue)) {
+                            ((EditTextPreference)preference).setText(prefValue);
+                        }
+                    }
+                });
             }
 
             return true;
