@@ -235,7 +235,7 @@ public abstract class UIHelper<T> {
             return;
         }
         if(simpleMessageQueue.isEmpty()) {
-           return;
+            return;
         }
         final CustomSnackbar snackbar;
         toastShowing = true;
@@ -255,6 +255,7 @@ public abstract class UIHelper<T> {
             public void onDismissed(CustomSnackbar transientBottomBar, int event) {
                 super.onDismissed(transientBottomBar, event);
                 if(!dismissHandled) {
+                    toastShowing = false;
                     showQueuedMsg();
                 }
             }
@@ -277,6 +278,7 @@ public abstract class UIHelper<T> {
 
                     @Override
                     public void onViewDetachedFromWindow(View v) {
+                        toastShowing = false;
                         showQueuedMsg();
                     }
                 });
