@@ -4,13 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,6 +27,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -531,7 +531,7 @@ public class ViewTagFragment extends MyFragment {
         if (!deleteActionData.isResourceInfoAvailable()) {
             String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
-                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext())));
+                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList)));
             }
             return;
         }
@@ -551,6 +551,30 @@ public class ViewTagFragment extends MyFragment {
 
     }
 
+    private void loadAlbumResourcesPage(int pageToLoad) {
+        synchronized (loadingMessageIds) {
+            tagModel.acquirePageLoadLock();
+            try {
+                if (tagModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+                    return;
+                }
+
+                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
+                String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new TagGetImagesResponseHandler(tag, sortOrder, pageToLoad, pageSize, multimediaExtensionList));
+                tagModel.recordPageBeingLoaded(loadingMessageId, pageToLoad);
+                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
+            } finally {
+                tagModel.releasePageLoadLock();
+            }
+        }
+    }
+
+    private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
+        String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteTagsForeverAction(getUiHelper(), selectedItemIds, selectedItems));
+    }
 
     private static class OnDeleteTagsAction extends UIHelper.QuestionResultAdapter {
         public OnDeleteTagsAction(UIHelper uiHelper) {
@@ -571,37 +595,13 @@ public class ViewTagFragment extends MyFragment {
                 for (ResourceItem item : fragment.deleteActionData.getSelectedItems()) {
                     item.getTags().remove(fragment.tag);
                     if (allowTagEdit) {
-                        getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new PluginUserTagsUpdateResourceTagsListResponseHandler(item).invokeAsync(getContext()));
+                        getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new PluginUserTagsUpdateResourceTagsListResponseHandler(item));
                     } else {
-                        getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
+                        getUiHelper().addActiveServiceCall(R.string.progress_untag_resources_pattern, new ImageUpdateInfoResponseHandler(item, true));
                     }
                 }
             } else {
                 // Neutral (cancel button) - do nothing
-            }
-        }
-    }
-
-    private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
-        String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteTagsForeverAction(getUiHelper(), selectedItemIds, selectedItems));
-    }
-
-    private static class OnDeleteTagsForeverAction extends UIHelper.QuestionResultAdapter {
-
-        private HashSet<Long> selectedItemIds;
-        private HashSet<? extends ResourceItem> selectedItems;
-
-        public OnDeleteTagsForeverAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
-            super(uiHelper);
-            this.selectedItemIds = selectedItemIds;
-            this.selectedItems = selectedItems;
-        }
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if(Boolean.TRUE == positiveAnswer) {
-                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
             }
         }
     }
@@ -637,22 +637,21 @@ public class ViewTagFragment extends MyFragment {
         }
     }
 
-    private void loadAlbumResourcesPage(int pageToLoad) {
-        synchronized (loadingMessageIds) {
-            tagModel.acquirePageLoadLock();
-            try {
-                if (tagModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
-                    return;
-                }
+    private static class OnDeleteTagsForeverAction extends UIHelper.QuestionResultAdapter {
 
-                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
-                String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
-                long loadingMessageId = new TagGetImagesResponseHandler(tag, sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
-                tagModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
-                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
-            } finally {
-                tagModel.releasePageLoadLock();
+        private HashSet<Long> selectedItemIds;
+        private HashSet<? extends ResourceItem> selectedItems;
+
+        public OnDeleteTagsForeverAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
+            super(uiHelper);
+            this.selectedItemIds = selectedItemIds;
+            this.selectedItems = selectedItems;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems));
             }
         }
     }

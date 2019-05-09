@@ -1,20 +1,18 @@
 package delit.piwigoclient.ui;
 
-import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.crashlytics.android.Crashlytics;
@@ -24,13 +22,19 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.piwigoApi.HttpClientFactory;
+import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.ViewGroupUIHelper;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
@@ -38,7 +42,9 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
+import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.UnlockAppEvent;
+import delit.piwigoclient.ui.preferences.ConnectionPreferenceFragment;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
 
@@ -77,6 +83,14 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             appVersion = ProjectUtils.getVersionName(getContext());
         }
 
+        ImageView appIcon = headerView.findViewById(R.id.app_icon);
+        appIcon.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshPiwigoSession();
+            }
+        });
+
         TextView appName = headerView.findViewById(R.id.app_name);
         if (BuildConfig.PAID_VERSION) {
             appName.setText(String.format(getResources().getString(R.string.app_paid_name_and_version_pattern), appVersion));
@@ -94,6 +108,72 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         });
 
         return headerView;
+    }
+
+    private void refreshPiwigoSession() {
+        ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+        if (sessionDetails != null && sessionDetails.isLoggedIn()) {
+            uiHelper.invokeActiveServiceCall(String.format(getContext().getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction());
+        } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
+            long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
+            uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction());
+            uiHelper.addActiveServiceCall(getContext().getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
+        } else {
+            new OnHttpClientShutdownAction().onSuccess(uiHelper, null);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(final UnlockAppEvent event) {
+        String savedPassword = ConnectionPreferences.getActiveProfile().getPiwigoPasswordNotNull(prefs, getContext());
+        if (savedPassword.equals(event.getPassword())) {
+            lockAppInReadOnlyMode(false);
+            uiHelper.showDetailedMsg(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
+            EventBus.getDefault().post(new AppUnlockedEvent());
+        } else {
+            // attempt login to PIWIGO server using this password.
+            uiHelper.addActiveServiceCall(R.string.progress_checking_with_server, new LoginResponseHandler(event.getPassword()));
+        }
+    }
+
+    private static class OnLogoutAction extends UIHelper.Action<ConnectionPreferenceFragment, LogoutResponseHandler.PiwigoOnLogoutResponse> {
+
+        @Override
+        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getContext()).start();
+            uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction());
+            uiHelper.addActiveServiceCall(uiHelper.getContext().getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
+            return false;
+        }
+
+        @Override
+        public boolean onFailure(UIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getContext());
+            onSuccess(uiHelper, null);
+            return false;
+        }
+    }
+
+    private static class OnLoginAction extends UIHelper.Action<ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+        @Override
+        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
+                if (sessionDetails.getAvailableImageSizes().size() == 0) {
+                    msg += '\n' + uiHelper.getContext().getString(R.string.alert_message_no_available_image_sizes);
+                    uiHelper.showDetailedMsg(R.string.alert_title_connectionTest, msg);
+                } else {
+                    uiHelper.showDetailedMsg(R.string.alert_title_connectionTest, msg);
+                }
+                EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
+            }
+            return false;
+        }
     }
 
     private void sendEmail(String email) {
@@ -226,16 +306,19 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void onEvent(final UnlockAppEvent event) {
-        String savedPassword = ConnectionPreferences.getActiveProfile().getPiwigoPasswordNotNull(prefs, getContext());
-        if (savedPassword.equals(event.getPassword())) {
-            lockAppInReadOnlyMode(false);
-            uiHelper.showDetailedMsg(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
-            EventBus.getDefault().post(new AppUnlockedEvent());
-        } else {
-            // attempt login to PIWIGO server using this password.
-            uiHelper.addActiveServiceCall(R.string.progress_checking_with_server, new LoginResponseHandler(event.getPassword()).invokeAsync(getContext()));
+    private static class OnHttpClientShutdownAction extends UIHelper.Action<ConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> {
+
+        @Override
+        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getContext());
+            if ((serverUri == null || serverUri.trim().isEmpty())) {
+                uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getContext().getString(R.string.alert_warning_no_server_url_specified));
+            } else {
+                HttpClientFactory.getInstance(uiHelper.getContext()).clearCachedClients(connectionPrefs);
+                uiHelper.invokeActiveServiceCall(String.format(uiHelper.getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+            }
+            return false; // don't run standard listener code
         }
     }
 

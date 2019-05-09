@@ -1,16 +1,11 @@
 package delit.piwigoclient.ui.tags;
 
-import androidx.appcompat.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +13,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,6 +23,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -227,11 +229,11 @@ public class TagsListFragment extends MyFragment {
         int basePageToLoad = pageToLoad % tagsModel.getPageSources() == 0 ? pageToLoad : pageToLoad -1;
         try {
             if(!tagsModel.isPageLoadedOrBeingLoaded(basePageToLoad)) {
-                addActiveServiceCall(R.string.progress_loading_tags,new TagsGetListResponseHandler(basePageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
+                addActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(basePageToLoad, Integer.MAX_VALUE));
             }
             if(!tagsModel.isPageLoadedOrBeingLoaded(basePageToLoad + 1)) {
                 if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(basePageToLoad+1, Integer.MAX_VALUE).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(basePageToLoad + 1, Integer.MAX_VALUE));
                 }
             }
         } finally {
@@ -271,9 +273,14 @@ public class TagsListFragment extends MyFragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String tagName = s.toString();
-                addNewTagDialog.getButton(
-                        AlertDialog.BUTTON_POSITIVE).setEnabled(!tagsModel.containsTag(tagName));
+                try {
+                    String tagName = s.toString();
+                    addNewTagDialog.getButton(
+                            AlertDialog.BUTTON_POSITIVE).setEnabled(!tagsModel.containsTag(tagName));
+                } catch (RuntimeException e) {
+                    Crashlytics.log(Log.ERROR, getTag(), "Error in on tag name change");
+                    Crashlytics.logException(e);
+                }
             }
 
             @Override
@@ -313,7 +320,7 @@ public class TagsListFragment extends MyFragment {
     }
 
     private void createNewTag(String tagname) {
-        addActiveServiceCall(R.string.progress_creating_tag, new TagAddResponseHandler(tagname).invokeAsync(this.getContext()));
+        addActiveServiceCall(R.string.progress_creating_tag, new TagAddResponseHandler(tagname));
     }
 
     private void deleteTagNow(Tag thisItem) {

@@ -227,7 +227,7 @@ public class UsersListFragment extends MyFragment {
         try {
             if (!usersModel.isPageLoadedOrBeingLoaded(pageToLoad) && !usersModel.isFullyLoaded()) {
                 int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-                usersModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+                usersModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsersGetListResponseHandler(pageToLoad, pageSize)), pageToLoad);
             }
         } finally {
             usersModel.releasePageLoadLock();
@@ -273,9 +273,7 @@ public class UsersListFragment extends MyFragment {
     }
 
     private void deleteUserNow(User thisItem) {
-        long deleteActionId = new UserDeleteResponseHandler(thisItem.getId()).invokeAsync(this.getContext());
-        this.deleteActionsPending.put(deleteActionId, thisItem);
-        addActiveServiceCall(R.string.progress_delete_user, deleteActionId);
+        this.deleteActionsPending.put(addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId())), thisItem);
     }
 
     @Override

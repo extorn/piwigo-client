@@ -265,6 +265,8 @@
 
     <!-- prefs -->
 
+    <string name="preference_data_upload_default_local_folder_key" translatable="false">preference_data_upload_default_local_folder</string>
+
     <string name="preference_data_upload_chunkSizeKb_key" translatable="false">preference_data_upload_chunkSizeKb</string>
     <string name="preference_data_upload_chunkSizeKb_title">Max Upload Chunk Size (KB)</string>
     <string name="preference_data_upload_chunkSizeKb_summary">%1$d KB</string>

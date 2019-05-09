@@ -8,11 +8,9 @@ import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
-import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import com.squareup.picasso.Downloader;
 import com.squareup.picasso.MyPicasso;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
@@ -20,6 +18,7 @@ import com.squareup.picasso.RequestHandler;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import androidx.core.content.ContextCompat;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -132,6 +131,12 @@ public class PicassoFactory {
         @Override
         public Result load(Request data, int networkPolicy) {
             Bitmap bm = ThumbnailUtils.createVideoThumbnail(data.uri.getPath(), MediaStore.Images.Thumbnails.MINI_KIND);
+            if (bm == null) {
+                Log.e(TAG, "Unable to create a video thumbnail for file : " + data.uri.getPath());
+                return null;
+            } else {
+                Log.d(TAG, "Created a video thumbnail for file : " + data.uri.getPath());
+            }
             return new Result(bm, Picasso.LoadedFrom.DISK);
         }
     }

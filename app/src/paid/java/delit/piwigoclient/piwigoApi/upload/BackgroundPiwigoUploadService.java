@@ -10,8 +10,6 @@ import android.net.NetworkInfo;
 import android.os.FileObserver;
 import android.util.Log;
 
-import com.google.android.gms.common.util.ArrayUtils;
-
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
@@ -428,7 +426,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         //public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel, boolean useTempFolder) {
         CategoryItemStub category = jobConfig.getUploadToAlbum(context);
         UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(context, getPrefs()), filesToUpload, category,
-                jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId());
+                jobConfig.isCompressVideosBeforeUpload(context), jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId());
         uploadJob.setToRunInBackground();
         uploadJob.setJobConfigId(jobConfig.getJobId());
         return uploadJob;

@@ -115,6 +115,7 @@
 
     <string name="delete_upload_job_button_title">Supprimer job</string>
     <string name="upload_files_button_title">Télécharger</string>
+    <string name="upload_files_finish_job_button_title">Finir</string>
     <string name="upload_job_status_button">Statut</string>
     <string name="alert_really_delete_upload_job">Ceci supprimera l\'état du travail de cet appareil. Vous devrez nettoyer manuellement tous les fichiers partiellement téléchargés sur le serveur (ou utiliser la préférence dans cette application - upload settings page). Les travaux seront souvent terminés avec succès si vous les reprenez plus tard. Êtes-vous sûr de vouloir prendre cette mesure radicale ?</string>
     <string name="loading_please_wait">Chargement, Veuillez patienter</string>
@@ -477,6 +478,7 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Ces permissions sont nécessaires pour démarrer un processus de téléchargement, puis maintenir le processus de téléchargement en cours une fois l\'écran éteint.</string>
     <string name="alert_no_scheme_specified">Vous devez préfixer l\'adresse de votre serveur par http:// ou https://. Aucun autre régime n\'est soutenu. Le port est optionnel si par défaut - 80 pour http ou 443 pour https. Exemple http://piwigo.org/demo ou http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">Les fichiers %1$d suivants dépassaient le seuil d\'avertissement : %2$s. Souhaitez-vous les supprimer du téléchargement ?</string>
+    <string name="alert_files_larger_than_upload_threshold_compress">Souhaitez-vous compresser des vidéos avant de les télécharger ?</string>
     <string name="alert_trusted_certificates_polling">Les certificats non fiables fournis par le serveur lors de la connexion vous seront présentés afin que vous puissiez choisir de les ajouter au Trust Store. Si vous refusez, le système ne vous demandera pas de nouveau de fournir le même certificat. Pour être invité à nouveau, désélectionnez et ré-sélectionnez l\'option pour utiliser une liste de certificats de confiance personnalisée.</string>
     <string name="button_copy_link">Copier le lien</string>
     <string name="download_link_clipboard_data_desc">Lien de téléchargement pour %1$s</string>

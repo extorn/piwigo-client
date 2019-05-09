@@ -92,6 +92,7 @@
 
     <string name="delete_upload_job_button_title">Job löschen</string>
     <string name="upload_files_button_title">Hochladen</string>
+    <string name="upload_files_finish_job_button_title">Beenden</string>
     <string name="upload_job_status_button">Status</string>
     <string name="alert_really_delete_upload_job">Dadurch wird der Auftragsstatus von diesem Gerät gelöscht. Sie müssen alle Dateien, die teilweise auf den Server hochgeladen wurden, manuell bereinigen (oder die Präferenz in dieser App verwenden - Seite mit den Upload-Einstellungen). Jobs werden oft erfolgreich abgeschlossen, wenn Sie sie später wieder aufnehmen. Sind Sie sicher, dass Sie diesen drastischen Schritt machen wollen?</string>
     <string name="loading_please_wait">Laden, bitte warten</string>
@@ -449,6 +450,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">Diese Berechtigungen sind erforderlich, um einen Upload-Prozess zu starten und den Upload-Prozess nach dem Ausschalten des Bildschirms weiterzuführen</string>
     <string name="alert_no_scheme_specified">Sie müssen Ihrer Serveradresse entweder http:// oder https://. voranstellen. Andere Systeme werden nicht unterstützt. Port ist optional, wenn der Standard - 80 für http oder 443 für https. Beispiel http://piwigo.org/demo oder http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">Die folgenden %1$d-Dateien haben die Warnschwelle überschritten: %2$s. Möchten Sie diese aus dem Upload entfernen?</string>
+    <string name="alert_files_larger_than_upload_threshold_compress">Möchten Sie Videos vor dem Hochladen komprimieren?</string>
     <string name="alert_trusted_certificates_polling">Nicht vertrauenswürdige Zertifikate, die vom Server bei der Verbindung bereitgestellt werden, werden Ihnen angezeigt, damit Sie diese dem Vertrauensspeicher hinzufügen können. Wenn Sie ablehnen, werden Sie nicht erneut nach dem gleichen Zertifikat gefragt. Um erneut aufgefordert zu werden, deaktivieren Sie die Option, einen benutzerdefinierten vertrauenswürdigen Zertifikatsspeicher zu verwenden.</string>
     <string name="button_copy_link">Link kopieren</string>
     <string name="download_link_clipboard_data_desc">Download-Link für %1$s</string>

@@ -1,5 +1,7 @@
 package delit.piwigoclient.piwigoApi.upload;
 
+import android.webkit.MimeTypeMap;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,13 +18,15 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
+import delit.piwigoclient.util.IOUtils;
 import delit.piwigoclient.util.Md5SumUtils;
 
 public class UploadJob implements Serializable {
 
-    private static final long serialVersionUID = 2L;
+    public static final Integer COMPRESSED = 8; // file has been compressed successfully.
 
     public static final Integer CANCELLED = -1; // file has been removed from the upload job
+    private static final long serialVersionUID = 3L;
     public static final Integer UPLOADING = 0; // file bytes transfer in process
     public static final Integer UPLOADED = 1; // all file bytes uploaded but not checksum verified
     public static final Integer VERIFIED = 2; // file bytes match those on the client device
@@ -39,6 +43,7 @@ public class UploadJob implements Serializable {
     private final ArrayList<Long> uploadToCategoryParentage;
     private final long uploadToCategory;
     private final int privacyLevelWanted;
+    private final boolean compressVideosBeforeUpload;
     private int jobConfigId = -1;
     private boolean runInBackground;
     private ConnectionPreferences.ProfilePreferences connectionPrefs;
@@ -51,7 +56,7 @@ public class UploadJob implements Serializable {
     private transient File loadedFromFile;
     private LinkedHashMap<Date, String> errors = new LinkedHashMap<>();
 
-    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel) {
+    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, boolean compressVideosBeforeUpload, int uploadedFilePrivacyLevel) {
         this.jobId = jobId;
         this.connectionPrefs = connectionPrefs;
         this.responseHandlerId = responseHandlerId;
@@ -61,6 +66,7 @@ public class UploadJob implements Serializable {
         this.filesForUpload = new ArrayList<>(filesForUpload);
         this.fileUploadStatus = new HashMap<>(filesForUpload.size());
         this.filePartialUploadProgress = new HashMap<>(filesForUpload.size());
+        this.compressVideosBeforeUpload = compressVideosBeforeUpload;
     }
 
     public void setToRunInBackground() {
@@ -101,7 +107,7 @@ public class UploadJob implements Serializable {
 
     public synchronized boolean needsUpload(File fileForUpload) {
         Integer status = fileUploadStatus.get(fileForUpload);
-        return status == null || UPLOADING.equals(status);
+        return status == null || COMPRESSED.equals(status) || UPLOADING.equals(status);
     }
 
     public int getJobConfigId() {
@@ -155,8 +161,16 @@ public class UploadJob implements Serializable {
         return UPLOADED.equals(fileUploadStatus.get(fileForUpload));
     }
 
+    public boolean isUploadVerified(File fileForUpload) {
+        return VERIFIED.equals(fileUploadStatus.get(fileForUpload));
+    }
+
     public boolean isUploadingData(File fileForUpload) {
         return UPLOADING.equals(fileUploadStatus.get(fileForUpload));
+    }
+
+    public boolean isFileCompressed(File fileForUpload) {
+        return COMPRESSED.equals(fileUploadStatus.get(fileForUpload));
     }
 
     public synchronized boolean needsConfiguration(File fileForUpload) {
@@ -295,6 +309,11 @@ public class UploadJob implements Serializable {
         return fileChecksums.get(fileForUpload);
     }
 
+    public synchronized void addFileChecksum(File fileForUpload) {
+        String checksum = Md5SumUtils.calculateMD5(fileForUpload);
+        fileChecksums.put(fileForUpload, checksum);
+    }
+
     public synchronized boolean isFinished() {
         return finished && !isRunningNow();
     }
@@ -348,8 +367,7 @@ public class UploadJob implements Serializable {
         return uploadToCategoryParentage;
     }
 
-    public void markFileAsPartiallyUploaded(File fileForUpload, String uploadName, long bytesUploaded, long countChunksUploadedOkay) {
-        String fileChecksum = fileChecksums.get(fileForUpload);
+    public void markFileAsPartiallyUploaded(File fileForUpload, String uploadName, String fileChecksum, long bytesUploaded, long countChunksUploadedOkay) {
         PartialUploadData data = filePartialUploadProgress.get(fileForUpload);
         if (data == null) {
             filePartialUploadProgress.put(fileForUpload, new PartialUploadData(uploadName, fileChecksum, bytesUploaded, countChunksUploadedOkay));
@@ -451,6 +469,31 @@ public class UploadJob implements Serializable {
     public LinkedHashMap<Date, String> getErrors() {
         return errors;
     }
+
+    public boolean isCompressVideosBeforeUpload() {
+        return compressVideosBeforeUpload;
+    }
+
+    public ArrayList<File> getVideosForUpload() {
+        ArrayList<File> allFiles = getFilesForUpload();
+        if (allFiles == null || allFiles.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+
+
+        ArrayList<File> videoFilesToCompress = new ArrayList<>(allFiles.size());
+        for (File f : allFiles) {
+            String fileExt = IOUtils.getFileExt(f.getName());
+            String mimeType = map.getMimeTypeFromExtension(fileExt);
+            if (mimeType != null && mimeType.startsWith("video/")) {
+                videoFilesToCompress.add(f);
+            }
+        }
+        return videoFilesToCompress;
+    }
+
 
     protected static class PartialUploadData implements Serializable {
         private static final long serialVersionUID = 3574283238335920169L;

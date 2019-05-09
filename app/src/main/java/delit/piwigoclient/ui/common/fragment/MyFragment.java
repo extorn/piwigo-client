@@ -4,12 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +13,12 @@ import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
@@ -26,6 +26,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -46,23 +47,24 @@ public class MyFragment extends Fragment {
     private String piwigoServerConnected;
     private boolean onInitialCreate;
 
-    protected long addActiveServiceCall(@StringRes int titleStringId, long messageId) {
-        return addActiveServiceCall(getString(titleStringId), messageId);
+    protected long addActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
+        return addActiveServiceCall(getString(titleStringId), worker);
     }
 
-    protected long addNonBlockingActiveServiceCall(@StringRes int titleStringId, long messageId) {
-        uiHelper.addNonBlockingActiveServiceCall(getString(titleStringId), messageId);
-        return messageId;
+    protected long addNonBlockingActiveServiceCall(@StringRes int titleStringId, long messageId, String serviceDesc) {
+        return uiHelper.addNonBlockingActiveServiceCall(getString(titleStringId), messageId, serviceDesc);
     }
 
-    protected long addNonBlockingActiveServiceCall(String title, long messageId) {
-        uiHelper.addNonBlockingActiveServiceCall(title, messageId);
-        return messageId;
+    protected long addNonBlockingActiveServiceCall(@StringRes int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
+        return uiHelper.addNonBlockingActiveServiceCall(getString(titleStringId), worker);
     }
 
-    protected long addActiveServiceCall(String title, long messageId) {
-        uiHelper.addActiveServiceCall(title, messageId);
-        return messageId;
+    protected long addNonBlockingActiveServiceCall(String title, AbstractPiwigoDirectResponseHandler worker) {
+        return uiHelper.addNonBlockingActiveServiceCall(title, worker);
+    }
+
+    protected long addActiveServiceCall(String title, AbstractPiwigoDirectResponseHandler worker) {
+        return uiHelper.addActiveServiceCall(title, worker);
     }
 
     @Override
@@ -140,8 +142,9 @@ public class MyFragment extends Fragment {
 
         updatePageTitle();
 
+
         // This block wrapper is to hopefully protect against a WindowManager$BadTokenException when showing a dialog as part of this call.
-        if (getActivity().isDestroyed() || getActivity().isFinishing()) {
+        if (getFragmentManager().isDestroyed() || getActivity().isFinishing()) {
             return;
         }
 

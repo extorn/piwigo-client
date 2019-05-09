@@ -50,6 +50,11 @@
     <string name="preference_data_upload_automatic_job_delete_uploaded_title">Auto delete</string>
     <bool name="preference_data_upload_automatic_job_delete_uploaded_default">true</bool>
 
+    <string name="preference_data_upload_automatic_job_compress_videos_key" translatable="false">preference_data_upload_automatic_job_compress_videos</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_summary">Compress videos before upload</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_title">Compress videos (720p)</string>
+    <bool name="preference_data_upload_automatic_job_compress_videos_default">false</bool>
+
     <integer name="preference_data_upload_automatic_job_max_upload_size_mb_default">20</integer>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_key" translatable="false">preference_data_upload_automatic_max_upload_size</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize uploaded</string>

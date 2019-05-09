@@ -173,7 +173,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
             }
 
             int pageSize = prefs.getInt(getString(R.string.preference_users_request_pagesize_key), getResources().getInteger(R.integer.preference_users_request_pagesize_default));
-            usernamesModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+            usernamesModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(pageToLoad, pageSize)), pageToLoad);
         } finally {
             usernamesModel.releasePageLoadLock();
         }
@@ -213,7 +213,7 @@ public class UsernameSelectFragment extends RecyclerViewLongSetSelectFragment<Us
                 }
                 //TODO what if there are more than the max page size?! Paging needed :-(
                 // flag that this is a special one off load.
-                usernamesModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(usernamesNeededToBeLoaded).invokeAsync(getContext())), PagedList.MISSING_ITEMS_PAGE);
+                usernamesModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_users, new UsernamesGetListResponseHandler(usernamesNeededToBeLoaded)), PagedList.MISSING_ITEMS_PAGE);
                 return;
             } finally {
                 usernamesModel.releasePageLoadLock();

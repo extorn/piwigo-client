@@ -2,10 +2,6 @@ package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +31,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -375,7 +375,7 @@ public class UserFragment extends MyFragment {
         }
 
         if (availableGalleries == null) {
-            addActiveServiceCall(R.string.progress_loading_user_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_user_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
         }
 
         if (user.getId() < 0) {
@@ -385,14 +385,14 @@ public class UserFragment extends MyFragment {
         } else {
             if (currentGroupMembership == null) {
                 if (user.getGroups().size() > 0) {
-                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()));
                 } else {
                     currentGroupMembership = new HashSet<>();
                 }
             }
             fillGroupMembershipField();
             if (currentDirectAlbumPermissions == null) {
-                addActiveServiceCall(R.string.progress_loading_user_details, new UserGetPermissionsResponseHandler(user.getId()).invokeAsync(getContext()));
+                addActiveServiceCall(R.string.progress_loading_user_details, new UserGetPermissionsResponseHandler(user.getId()));
             }
         }
 
@@ -447,13 +447,9 @@ public class UserFragment extends MyFragment {
         newUser = setModelFromFields(new User());
         setFieldsEditable(false);
         if (newUser.getId() < 0) {
-            long saveActionId = new UserAddResponseHandler(newUser).invokeAsync(getContext());
-            saveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_adding_user, saveActionId);
+            saveActionIds.add(addActiveServiceCall(R.string.progress_adding_user, new UserAddResponseHandler(newUser)));
         } else {
-            long saveActionId = new UserUpdateInfoResponseHandler(newUser).invokeAsync(getContext());
-            saveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            saveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler(newUser)));
             saveUserPermissionsChangesIfRequired();
         }
 
@@ -555,7 +551,7 @@ public class UserFragment extends MyFragment {
 
     private void deleteUserNow(User thisItem) {
 
-        addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId()).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_delete_user, new UserDeleteResponseHandler(thisItem.getId()));
     }
 
     private void onUserSaved(UserUpdateInfoResponseHandler.PiwigoUpdateUserInfoResponse response) {
@@ -572,7 +568,7 @@ public class UserFragment extends MyFragment {
                 if (user.getGroups().size() == 0) {
                     currentGroupMembership = new HashSet<>(0);
                 } else {
-                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_user_details, new GroupsGetListResponseHandler(user.getGroups()));
                     currentGroupMembership = null;
                 }
             } else {
@@ -600,14 +596,11 @@ public class UserFragment extends MyFragment {
         HashSet<Long> userPermissionsToAdd = SetUtils.difference(newDirectAlbumPermissions, currentDirectAlbumPermissions);
 
         if (userPermissionsToRemove.size() > 0) {
-            long saveActionId = new UserPermissionsRemovedResponseHandler(newUser.getId(), userPermissionsToRemove).invokeAsync(getContext());
-            saveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            saveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new UserPermissionsRemovedResponseHandler(newUser.getId(), userPermissionsToRemove)));
+
         }
         if (userPermissionsToAdd.size() > 0) {
-            long saveActionId = new UserPermissionsAddResponseHandler(newUser.getId(), userPermissionsToAdd).invokeAsync(getContext());
-            saveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            saveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new UserPermissionsAddResponseHandler(newUser.getId(), userPermissionsToAdd)));
         }
     }
 
@@ -719,7 +712,7 @@ public class UserFragment extends MyFragment {
         newUser.setId(savedUser.getId());
         newUser.setPassword(null);
         setFieldsFromModel(newUser);
-        addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler(newUser).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_saving_changes, new UserUpdateInfoResponseHandler(newUser));
         saveUserPermissionsChangesIfRequired();
     }
 
@@ -786,7 +779,7 @@ public class UserFragment extends MyFragment {
 
             HashSet<Long> newGroupsMembership = new HashSet<>(groupSelectionCompleteEvent.getCurrentSelection());
             if (newGroupsMembership.size() > 0) {
-                addActiveServiceCall(R.string.progress_reloading_album_permissions, new GroupGetPermissionsResponseHandler(newGroupsMembership).invokeAsync(getContext()));
+                addActiveServiceCall(R.string.progress_reloading_album_permissions, new GroupGetPermissionsResponseHandler(newGroupsMembership));
             } else {
                 newIndirectAlbumPermissions = new HashSet<>(0);
                 populateAlbumPermissionsList(getLatestDirectAlbumPermissions(), getLatestIndirectAlbumPermissions());

@@ -285,7 +285,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
             String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
             int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
             long loadingMessageId = invokeResourcePageLoader(galleryModel, sortOrder, pageToLoad, pageSize, multimediaExtensionList);
-            galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
+            galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId, "loadResources"), pageToLoad);
         } finally {
             galleryModel.releasePageLoadLock();
         }

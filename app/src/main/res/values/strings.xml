@@ -116,6 +116,7 @@
 
     <string name="delete_upload_job_button_title">Delete Job</string>
     <string name="upload_files_button_title">Upload</string>
+    <string name="upload_files_finish_job_button_title">Hochladen</string>
     <string name="upload_job_status_button">Status</string>
     <string name="alert_really_delete_upload_job">This will delete the job status from this device. You will need to manually cleanup any files partially uploaded to the server (or use the preference in this app - upload settings page). Jobs will often complete successfully if you resume them later. Are you sure you wish to take this drastic step?</string>
     <string name="loading_please_wait">Loading, Please wait</string>
@@ -408,6 +409,29 @@ found in the LICENSE file (SKIA section).
 
 
 
+*** qtfaststart - https://github.com/ypresto/qtfaststart-java
+
+The MIT License (MIT)
+
+Copyright (c) 2014 Yuya Tanaka
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 *** Android-Rate - com.github.hotchemi:android-rate
 
@@ -440,7 +464,7 @@ SOFTWARE.
 *** play-services-oss-licenses
 *** com.android.support
 
-
+*** YPresto - https://github.com/ypresto/android-transcoder - Apache License 2.0
 *** GSON - https://github.com/google/gson - Apache License 2.0
 *** Picasso - http://square.github.io/picasso/ - Copyright 2013 Square, Inc. - Apache License 2.0
 *** Material Icons - https://material.io/icons - Apache License 2.0
@@ -809,6 +833,7 @@ SOFTWARE.
     <string name="alert_foreground_service_and_wake_lock_permission_needed_to_start_upload">These permissions are needed to start an upload process, and then keep the upload process running once the screen has switched off</string>
     <string name="alert_no_scheme_specified">You must prefix your server address with either http:// or https://. No other schemes are supported. Port is optional if the default - 80 for http or 443 for https. Example http://piwigo.org/demo or http://piwigo.org:80/demo</string>
     <string name="alert_files_larger_than_upload_threshold_pattern">The following %1$d files exceeded the warning threshold: %2$s. Would you like to remove these from the upload?</string>
+    <string name="alert_files_larger_than_upload_threshold_compress">Would you like to compress any videos before upload?</string>
     <string name="alert_trusted_certificates_polling">Untrusted certificates supplied by the server upon connection will be presented to you so as you may choose to add these to the trust store. If you decline, you will not be prompted again for the same certificate. In order to be prompted again, deselect and reselect the option to use a custom trusted certificate store.</string>
     <string name="button_copy_link">Copy Link</string>
     <string name="download_link_clipboard_data_desc">Download link for %1$s</string>

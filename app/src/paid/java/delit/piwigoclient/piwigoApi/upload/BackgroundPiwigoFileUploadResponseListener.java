@@ -47,6 +47,11 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
+    protected void onFileCompressionProgressUpdate(Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
+        // Do nothing for now.
+    }
+
+    @Override
     protected void onFileUploadProgressUpdate(Context context, BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
         if (response.getProgress() == 100) {
             onFileUploadComplete(context, response);

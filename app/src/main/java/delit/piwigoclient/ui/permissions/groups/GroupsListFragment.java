@@ -226,7 +226,7 @@ public class GroupsListFragment extends MyFragment {
         try {
             if (!groupsModel.isPageLoadedOrBeingLoaded(pageToLoad) && !groupsModel.isFullyLoaded()) {
                 int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
-                groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+                groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize)), pageToLoad);
             }
         } finally {
             groupsModel.releasePageLoadLock();
@@ -266,9 +266,7 @@ public class GroupsListFragment extends MyFragment {
     }
 
     private void deleteGroupNow(Group thisItem) {
-        long deleteActionId = new GroupDeleteResponseHandler(thisItem.getId()).invokeAsync(this.getContext());
-        this.deleteActionsPending.put(deleteActionId, thisItem);
-        addActiveServiceCall(R.string.progress_delete_group, deleteActionId);
+        this.deleteActionsPending.put(addActiveServiceCall(R.string.progress_delete_group, new GroupDeleteResponseHandler(thisItem.getId())), thisItem);
     }
 
     @Override

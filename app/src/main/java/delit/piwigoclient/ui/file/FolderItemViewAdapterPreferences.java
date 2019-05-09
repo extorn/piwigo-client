@@ -1,13 +1,13 @@
 package delit.piwigoclient.ui.file;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 
 public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
@@ -128,25 +128,31 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         return fileSortOrder;
     }
 
-    public FileFilter getFileFilter() {
-        return new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return !showFolderContents || (pathname.isDirectory() || filenameMatches(pathname));
-            }
+    public CustomFileFilter getFileFilter() {
+        return new CustomFileFilter();
+    }
 
-            private boolean filenameMatches(File pathname) {
-                if (visibleFileTypes == null) {
+    public ArrayList<String> getVisibleFileTypes() {
+        return visibleFileTypes;
+    }
+
+    public class CustomFileFilter implements FileFilter {
+        @Override
+        public boolean accept(File pathname) {
+            return !showFolderContents || (pathname.isDirectory() || filenameMatches(pathname));
+        }
+
+        private boolean filenameMatches(File pathname) {
+            if (visibleFileTypes == null) {
+                return true;
+            }
+            for (String fileExt : visibleFileTypes) {
+                if (pathname.getName().toLowerCase().endsWith(fileExt)) {
                     return true;
                 }
-                for (String fileExt : visibleFileTypes) {
-                    if (pathname.getName().toLowerCase().endsWith(fileExt)) {
-                        return true;
-                    }
-                }
-                return false;
             }
-        };
+            return false;
+        }
     }
 
     public ArrayList<String> getInitialSelection() {

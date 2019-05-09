@@ -3,7 +3,10 @@ package delit.piwigoclient.piwigoApi;
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.DialogPreference;
+import android.util.Log;
 import android.view.ViewGroup;
+
+import com.crashlytics.android.Crashlytics;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +21,7 @@ import delit.piwigoclient.ui.common.UIHelper;
 
 public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandler.PiwigoResponseListener {
 
+    private static final String TAG = "BasicPiwigoLsnr";
     private static final String HANDLER_ID = "handlerId";
     private long handlerId;
     private UIHelper uiHelper;
@@ -107,15 +111,26 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             //TODO fix NPE exception - will occur here because handler and errorResponse are both transient as non serializable.
             if (Boolean.TRUE.equals(positiveAnswer)) {
-                if(handler.runInBackground()) {
-                    getUiHelper().addBackgroundServiceCall(handler.getMessageId());
+                if (handler == null) {
+                    Crashlytics.log(Log.ERROR, TAG, "attempt to process alert message for handler after app pause resume (handler is now not available)");
+                    Crashlytics.logException(new NullPointerException("unable to handle positive dialog answer"));
                 } else {
-                    getUiHelper().addActiveServiceCall(handler.getMessageId());
+                    if (handler.runInBackground()) {
+                        getUiHelper().addBackgroundServiceCall(handler.getMessageId());
+                    } else {
+                        getUiHelper().addActiveServiceCall(handler);
+                    }
+                    handler.rerun(dialog.getContext().getApplicationContext());
                 }
-                handler.rerun(dialog.getContext().getApplicationContext());
+
             } else {
                 BasicPiwigoResponseListener listener = (BasicPiwigoResponseListener) PiwigoResponseBufferingHandler.getDefault().getRegisteredHandler(handlerId);
-                listener.onAfterHandlePiwigoResponse(errorResponse);
+                if (listener == null) {
+                    Crashlytics.log(Log.ERROR, TAG, "attempt to process alert message for handler after app pause resume (listener is now not available)");
+                    Crashlytics.logException(new NullPointerException("unable to handle negative dialog answer"));
+                } else {
+                    listener.onAfterHandlePiwigoResponse(errorResponse);
+                }
             }
         }
     }

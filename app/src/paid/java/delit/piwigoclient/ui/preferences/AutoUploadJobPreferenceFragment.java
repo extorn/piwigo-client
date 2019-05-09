@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.CheckBoxPreference;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -60,6 +62,12 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
         getPreferenceManager().setSharedPreferencesName(AutoUploadJobConfig.getSharedPreferencesName(jobId));
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.pref_auto_upload_job, rootKey);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            Preference p = findPreference(R.string.preference_data_upload_automatic_job_compress_videos_key);
+            p.setEnabled(false);
+            p.setVisible(false);
+        }
     }
 
 

@@ -2,10 +2,6 @@ package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.NestedScrollView;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +24,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -347,12 +347,10 @@ public class GroupFragment extends MyFragment {
         boolean isDefault = isDefaultField.isChecked();
         newGroup = new Group(currentGroup.getId(), name, isDefault);
         if (newGroup.getId() < 0) {
-            long saveActionId = new GroupAddResponseHandler(newGroup).invokeAsync(getContext());
-            addActiveServiceCall(R.string.progress_adding_group, saveActionId);
+            addActiveServiceCall(R.string.progress_adding_group, new GroupAddResponseHandler(newGroup));
 
         } else {
-            long saveActionId = new GroupUpdateInfoResponseHandler(currentGroup, newGroup).invokeAsync(getContext());
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            addActiveServiceCall(R.string.progress_saving_changes, new GroupUpdateInfoResponseHandler(currentGroup, newGroup));
         }
     }
 
@@ -378,15 +376,15 @@ public class GroupFragment extends MyFragment {
         if (currentGroupMembers == null) {
             ArrayList<Long> groups = new ArrayList<>(1);
             groups.add(group.getId());
-            addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(groups, 0, 100).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(groups, 0, 100));
         }
 
         if (availableGalleries == null) {
-            addActiveServiceCall(R.string.progress_loading_group_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
         }
 
         if (currentAccessibleAlbumIds == null) {
-            addActiveServiceCall(R.string.progress_loading_group_details, new GroupGetPermissionsResponseHandler(group.getId()).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_group_details, new GroupGetPermissionsResponseHandler(group.getId()));
         }
 
         if (availableGalleries != null) {
@@ -419,7 +417,7 @@ public class GroupFragment extends MyFragment {
     }
 
     private void deleteGroupNow(Group group) {
-        addActiveServiceCall(R.string.progress_delete_group, new GroupDeleteResponseHandler(group.getId()).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_delete_group, new GroupDeleteResponseHandler(group.getId()));
     }
 
     private void setFieldsEditable(boolean editable) {
@@ -518,14 +516,10 @@ public class GroupFragment extends MyFragment {
         boolean hasRemovedPermissions = oldGroupMembersSet.size() > 0;
 
         if (hasRemovedPermissions) {
-            long saveActionId = new GroupRemoveMembersResponseHandler(currentGroup.getId(), new ArrayList<>(oldGroupMembersSet)).invokeAsync(getContext());
-            memberSaveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            memberSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupRemoveMembersResponseHandler(currentGroup.getId(), new ArrayList<>(oldGroupMembersSet))));
         }
         if (hasAddedNewPermissions) {
-            long saveActionId = new GroupAddMembersResponseHandler(currentGroup.getId(), new ArrayList<>(newGroupMembersSet)).invokeAsync(getContext());
-            memberSaveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            memberSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupAddMembersResponseHandler(currentGroup.getId(), new ArrayList<>(newGroupMembersSet))));
         }
     }
 
@@ -544,14 +538,11 @@ public class GroupFragment extends MyFragment {
         boolean hasRemovedPermissions = oldPermissionsSet.size() > 0;
 
         if (hasRemovedPermissions) {
-            long saveActionId = new GroupPermissionsRemovedResponseHandler(currentGroup.getId(), new ArrayList<>(oldPermissionsSet)).invokeAsync(getContext());
-            permissionsSaveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            permissionsSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupPermissionsRemovedResponseHandler(currentGroup.getId(), new ArrayList<>(oldPermissionsSet))));
+
         }
         if (hasAddedNewPermissions) {
-            long saveActionId = new GroupPermissionsAddResponseHandler(currentGroup.getId(), new ArrayList<>(newPermissionsSet)).invokeAsync(getContext());
-            permissionsSaveActionIds.add(saveActionId);
-            addActiveServiceCall(R.string.progress_saving_changes, saveActionId);
+            permissionsSaveActionIds.add(addActiveServiceCall(R.string.progress_saving_changes, new GroupPermissionsAddResponseHandler(currentGroup.getId(), new ArrayList<>(newPermissionsSet))));
         }
     }
 

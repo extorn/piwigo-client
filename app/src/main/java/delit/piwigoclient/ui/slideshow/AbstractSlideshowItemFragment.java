@@ -3,12 +3,10 @@ package delit.piwigoclient.ui.slideshow;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -16,18 +14,8 @@ import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatSpinner;
-
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,10 +37,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -60,6 +45,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -78,7 +71,6 @@ import delit.piwigoclient.piwigoApi.handlers.BaseImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageAlterRatingResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
-import delit.piwigoclient.piwigoApi.handlers.ImageGetToFileHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.ProgressIndicator;
@@ -87,7 +79,6 @@ import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.common.util.BundleUtils;
-import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.dialogs.SelectAlbumDialog;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
@@ -456,27 +447,17 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_title_set_album_thumbnail, getString(R.string.alert_message_set_album_thumbnail), R.string.button_cancel, R.string.button_ok, new UseAsAlbumThumbnailForParentAction(getUiHelper()));
     }
 
-    private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter {
-        public UseAsAlbumThumbnailForParentAction(UIHelper uiHelper) {
-            super(uiHelper);
-        }
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-                AbstractSlideshowItemFragment parent = (AbstractSlideshowItemFragment)getUiHelper().getParent();
-                ResourceItem model = parent.getModel();
-                long albumId = model.getParentId();
-                Long albumParentId = model.getParentageChain().size() > 1 ? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
-                getUiHelper().addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(albumId, albumParentId, model.getId()).invokeAsync(getContext()));
-            }
-        }
-    }
-
     private boolean onUseAsAlbumThumbnailSelectAlbum() {
         // Invoke call to retrieve all album names (will show a dialog once this is done).
-        addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true));
         return true;
+    }
+
+    private void onAlterRating(T model, float rating) {
+        AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
+        getUiHelper().setTrackingRequest(event.getActionId());
+        EventBus.getDefault().post(event);
+        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageAlterRatingResponseHandler(model, rating));
     }
 
     protected boolean isEditingItemDetails() {
@@ -754,11 +735,31 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         EventBus.getDefault().post(event);
     }
 
-    private void onAlterRating(T model, float rating) {
-        AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
-        getUiHelper().setTrackingRequest(event.getActionId());
-        EventBus.getDefault().post(event);
-        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageAlterRatingResponseHandler(model, rating).invokeAsync(getContext()));
+    private void onGetSubAlbumNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+        Activity activity = getActivity();
+        ArrayList<CategoryItemStub> albumNames = response.getAlbumNames();
+        if (albumNames == null || albumNames.isEmpty()) {
+            // should never occur, but to be sure...
+            return;
+        }
+
+        Long defaultAlbumSelectionId = model.getParentId();
+        if (defaultAlbumSelectionId == null) {
+            if (BuildConfig.DEBUG) {
+                Log.e(getTag(), "ERROR: No parent id available for resource!");
+            }
+            defaultAlbumSelectionId = albumNames.get(0).getId();
+        }
+        final SelectAlbumDialog dialogFact = new SelectAlbumDialog(activity, defaultAlbumSelectionId);
+        AlertDialog dialog = dialogFact.buildDialog(albumNames, CategoryItem.ROOT_ALBUM, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                long selectedAlbumId = dialogFact.getSelectedAlbumId();
+                Long selectedAlbumParentId = dialogFact.getSelectedAlbumParentId();
+                addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(selectedAlbumId, selectedAlbumParentId, model.getId()));
+            }
+        });
+        dialog.show();
     }
 
     private void onDeleteItem(final T model) {
@@ -769,20 +770,19 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
     }
 
-    private static class OnDeleteItemAction extends UIHelper.QuestionResultAdapter {
-        public OnDeleteItemAction(UIHelper uiHelper) {
+    private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter {
+        public UseAsAlbumThumbnailForParentAction(UIHelper uiHelper) {
             super(uiHelper);
         }
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractSlideshowItemFragment fragment = (AbstractSlideshowItemFragment) getUiHelper().getParent();
-                ResourceItem model = fragment.getModel();
-                AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
-                getUiHelper().setTrackingRequest(event.getActionId());
-                EventBus.getDefault().post(event);
-                getUiHelper().addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler(model).invokeAsync(getContext()));
+                AbstractSlideshowItemFragment parent = (AbstractSlideshowItemFragment) getUiHelper().getParent();
+                ResourceItem model = parent.getModel();
+                long albumId = model.getParentId();
+                Long albumParentId = model.getParentageChain().size() > 1 ? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
+                getUiHelper().addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(albumId, albumParentId, model.getId()));
             }
         }
     }
@@ -964,31 +964,22 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         EventBus.getDefault().post(new AlbumAlteredEvent(response.getAlbumParentIdAltered(), response.getAlbumIdAltered()));
     }
 
-    private void onGetSubAlbumNames(AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
-        Activity activity = getActivity();
-        ArrayList<CategoryItemStub> albumNames = response.getAlbumNames();
-        if (albumNames == null || albumNames.isEmpty()) {
-            // should never occur, but to be sure...
-            return;
+    private static class OnDeleteItemAction extends UIHelper.QuestionResultAdapter {
+        public OnDeleteItemAction(UIHelper uiHelper) {
+            super(uiHelper);
         }
 
-        Long defaultAlbumSelectionId = model.getParentId();
-        if (defaultAlbumSelectionId == null) {
-            if (BuildConfig.DEBUG) {
-                Log.e(getTag(), "ERROR: No parent id available for resource!");
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AbstractSlideshowItemFragment fragment = (AbstractSlideshowItemFragment) getUiHelper().getParent();
+                ResourceItem model = fragment.getModel();
+                AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
+                getUiHelper().setTrackingRequest(event.getActionId());
+                EventBus.getDefault().post(event);
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler(model));
             }
-            defaultAlbumSelectionId = albumNames.get(0).getId();
         }
-        final SelectAlbumDialog dialogFact = new SelectAlbumDialog(activity, defaultAlbumSelectionId);
-        AlertDialog dialog = dialogFact.buildDialog(albumNames, CategoryItem.ROOT_ALBUM, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                long selectedAlbumId = dialogFact.getSelectedAlbumId();
-                Long selectedAlbumParentId = dialogFact.getSelectedAlbumParentId();
-                addActiveServiceCall(R.string.progress_resource_details_updating, new AlbumThumbnailUpdatedResponseHandler(selectedAlbumId, selectedAlbumParentId, model.getId()).invokeAsync(getContext()));
-            }
-        });
-        dialog.show();
     }
 
     public void onGetResource(final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {

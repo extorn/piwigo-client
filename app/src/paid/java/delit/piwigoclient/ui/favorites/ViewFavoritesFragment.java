@@ -487,7 +487,7 @@ public class ViewFavoritesFragment extends MyFragment {
         if (!deleteActionData.isResourceInfoAvailable()) {
             String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
-                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext())));
+                deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList)));
             }
             return;
         }
@@ -501,6 +501,35 @@ public class ViewFavoritesFragment extends MyFragment {
             String msg = getString(R.string.alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern, deleteActionData.getSelectedItemIds().size());
             getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, Integer.MIN_VALUE, R.string.button_unfavorite, R.string.button_cancel, R.string.button_delete, dialogListener);
         }
+    }
+
+    private void loadAlbumResourcesPage(int pageToLoad) {
+        synchronized (loadingMessageIds) {
+            favoritesModel.acquirePageLoadLock();
+            try {
+                if (favoritesModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+                    return;
+                }
+
+                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
+                String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new FavoritesGetImagesResponseHandler(sortOrder, pageToLoad, pageSize, multimediaExtensionList));
+                favoritesModel.recordPageBeingLoaded(loadingMessageId, pageToLoad);
+                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
+            } finally {
+                favoritesModel.releasePageLoadLock();
+            }
+        }
+    }
+
+    private BaseRecyclerViewAdapter getViewAdapter() {
+        return viewAdapter;
+    }
+
+    private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
+        String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
+        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteFavoritesForeverAction(getUiHelper(), selectedItemIds, selectedItems));
     }
 
     private static class OnDeleteFavoritesAction extends UIHelper.QuestionResultAdapter {
@@ -526,38 +555,11 @@ public class ViewFavoritesFragment extends MyFragment {
                 boolean allowFavoritesEdit = !fragment.isAppInReadOnlyMode() && sessionDetails != null;
                 for (ResourceItem item : selectedItems) {
                     if (allowFavoritesEdit) {
-                        getUiHelper().addActiveServiceCall(R.string.progress_remove_favorite_resources, new FavoritesRemoveImageResponseHandler(item).invokeAsync(getContext()));
+                        getUiHelper().addActiveServiceCall(R.string.progress_remove_favorite_resources, new FavoritesRemoveImageResponseHandler(item));
                     }
                 }
             } else {
                 // Neutral (cancel button) - do nothing
-            }
-        }
-    }
-
-    private BaseRecyclerViewAdapter getViewAdapter() {
-        return viewAdapter;
-    }
-
-    private void deleteResourcesFromServerForever(final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
-        String msg = getString(R.string.alert_confirm_really_delete_items_from_server);
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteFavoritesForeverAction(getUiHelper(), selectedItemIds, selectedItems));
-    }
-
-    private static class OnDeleteFavoritesForeverAction extends UIHelper.QuestionResultAdapter {
-
-        private final HashSet<Long> selectedItemIds;
-        private final HashSet<? extends ResourceItem> selectedItems;
-
-        public OnDeleteFavoritesForeverAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
-            super(uiHelper);
-            this.selectedItemIds = selectedItemIds;
-            this.selectedItems = selectedItems;
-        }
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if(Boolean.TRUE == positiveAnswer) {
-                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems).invokeAsync(getContext()));
             }
         }
     }
@@ -593,22 +595,21 @@ public class ViewFavoritesFragment extends MyFragment {
         }
     }
 
-    private void loadAlbumResourcesPage(int pageToLoad) {
-        synchronized (loadingMessageIds) {
-            favoritesModel.acquirePageLoadLock();
-            try {
-                if (favoritesModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
-                    return;
-                }
+    private static class OnDeleteFavoritesForeverAction extends UIHelper.QuestionResultAdapter {
 
-                String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
-                String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
-                long loadingMessageId = new FavoritesGetImagesResponseHandler(sortOrder, pageToLoad, pageSize, multimediaExtensionList).invokeAsync(getContext());
-                favoritesModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId), pageToLoad);
-                loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
-            } finally {
-                favoritesModel.releasePageLoadLock();
+        private final HashSet<Long> selectedItemIds;
+        private final HashSet<? extends ResourceItem> selectedItems;
+
+        public OnDeleteFavoritesForeverAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
+            super(uiHelper);
+            this.selectedItemIds = selectedItemIds;
+            this.selectedItems = selectedItems;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems));
             }
         }
     }

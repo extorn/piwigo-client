@@ -2,9 +2,6 @@ package delit.piwigoclient.ui.album.create;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +22,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -273,7 +273,7 @@ public class CreateAlbumFragment extends MyFragment {
                     for (Group g : selectedGroups) {
                         selectedGroupIds.add(g.getId());
                     }
-                    addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_group_details, new UsernamesGetListResponseHandler(selectedGroupIds, 0, 100));
                 }
             }
         });
@@ -327,8 +327,7 @@ public class CreateAlbumFragment extends MyFragment {
 
         newAlbum = new PiwigoGalleryDetails(parentGallery, null, galleryName, galleryDescription, userCommentsAllowed, isPrivate);
 
-        createGalleryMessageId = new AlbumCreateResponseHandler(newAlbum).invokeAsync(getContext());
-        addActiveServiceCall(R.string.progress_creating_album, createGalleryMessageId);
+        createGalleryMessageId = addActiveServiceCall(R.string.progress_creating_album, new AlbumCreateResponseHandler(newAlbum));
     }
 
     @Override
@@ -363,12 +362,11 @@ public class CreateAlbumFragment extends MyFragment {
             HashSet<Long> allowedGroups = PiwigoUtils.toSetOfIds(selectedGroups);
 
             // don't need the call to be recursive since it is a leaf node already.
-            setGalleryPermissionsMessageId = new AlbumAddPermissionsResponseHandler(newAlbum, allowedGroups, allowedUsers, false).invokeAsync(getContext());
-            addActiveServiceCall(R.string.progress_setting_permissions, setGalleryPermissionsMessageId);
+            setGalleryPermissionsMessageId = addActiveServiceCall(R.string.progress_setting_permissions, new AlbumAddPermissionsResponseHandler(newAlbum, allowedGroups, allowedUsers, false));
+
         } else {
             //TODO why are we doing this unnecessary call?
-            setGalleryPermissionsMessageId = new AlbumSetStatusResponseHandler(newAlbum).invokeAsync(getContext());
-            addActiveServiceCall(R.string.progress_setting_permissions, setGalleryPermissionsMessageId);
+            setGalleryPermissionsMessageId = addActiveServiceCall(R.string.progress_setting_permissions, new AlbumSetStatusResponseHandler(newAlbum));
         }
 
     }

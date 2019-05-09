@@ -100,7 +100,7 @@ public abstract class UIHelper<T> {
     private Context context;
     private DismissListener dismissListener;
     private AlertDialog alertDialog;
-    private Set<Long> activeServiceCalls = Collections.synchronizedSet(new HashSet<Long>(3));
+    private Map<Long, String> activeServiceCalls = Collections.synchronizedMap(new HashMap<Long, String>(3));
     private HashMap<Integer, PermissionsWantedRequestEvent> runWithPermissions = new HashMap<>();
     private int trackedRequest = -1;
     private BasicPiwigoResponseListener piwigoResponseListener;
@@ -332,24 +332,37 @@ public abstract class UIHelper<T> {
     /**
      * Called when retrying a failed call.
      */
-    public void addActiveServiceCall(long messageId) {
-        activeServiceCalls.add(messageId);
+    public long addActiveServiceCall(AbstractPiwigoDirectResponseHandler handler) {
+        long messageId = handler.invokeAsync(getContext());
+        synchronized (activeServiceCalls) {
+            activeServiceCalls.put(messageId, handler.getTag());
+        }
         if (!isProgressIndicatorVisible()) {
             // assume it still has the correct text... (fingers crossed)
             showProgressIndicator();
         }
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        return messageId;
     }
 
-    public void addNonBlockingActiveServiceCall(String titleString, long messageId) {
+    public long addNonBlockingActiveServiceCall(String titleString, AbstractPiwigoDirectResponseHandler handler) {
 //        activeServiceCalls.add(messageId);
 //        showShortMsg(titleString);
 //        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
-        addActiveServiceCall(titleString, messageId);
+        return addActiveServiceCall(titleString, handler);
     }
 
-    public void addActiveServiceCall(String titleString, long messageId) {
-        activeServiceCalls.add(messageId);
+    public long addNonBlockingActiveServiceCall(String titleString, long messageId, String serviceDesc) {
+//        activeServiceCalls.add(messageId);
+//        showShortMsg(titleString);
+//        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        return addActiveServiceCall(titleString, messageId, serviceDesc);
+    }
+
+    public long addActiveServiceCall(String titleString, long messageId, String serviceDesc) {
+        synchronized (activeServiceCalls) {
+            activeServiceCalls.put(messageId, serviceDesc);
+        }
         if (!isProgressIndicatorVisible()) {
             if(progressIndicator == null) {
                 Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
@@ -358,6 +371,23 @@ public abstract class UIHelper<T> {
             }
         }
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        return messageId;
+    }
+
+    public long addActiveServiceCall(String titleString, AbstractPiwigoDirectResponseHandler handler) {
+        long messageId = handler.invokeAsync(getContext());
+        synchronized (activeServiceCalls) {
+            activeServiceCalls.put(messageId, handler.getTag());
+        }
+        if (!isProgressIndicatorVisible()) {
+            if (progressIndicator == null) {
+                Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
+            } else {
+                progressIndicator.showProgressIndicator(titleString, -1);
+            }
+        }
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        return messageId;
     }
 
     private void setupDialogBoxes() {
@@ -443,13 +473,13 @@ public abstract class UIHelper<T> {
     }
 
     public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker) {
-        addActiveServiceCall(progressMsg, worker.getMessageId());
+        addActiveServiceCall(progressMsg, worker);
         worker.invokeAsync(context);
     }
 
     public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
         addActionOnResponse(worker.getMessageId(), actionOnResponse);
-        addActiveServiceCall(progressMsg, worker.getMessageId());
+        addActiveServiceCall(progressMsg, worker);
         worker.invokeAsync(context);
     }
 
@@ -457,8 +487,8 @@ public abstract class UIHelper<T> {
         invokeActiveServiceCall(context.getString(progressMsgId), worker, actionOnResponse);
     }
 
-    public void addActiveServiceCall(int titleStringId, long messageId) {
-        addActiveServiceCall(context.getString(titleStringId), messageId);
+    public void addActiveServiceCall(int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
+        addActiveServiceCall(context.getString(titleStringId), worker);
     }
 
     public BasicPiwigoResponseListener getPiwigoResponseListener() {
@@ -470,20 +500,24 @@ public abstract class UIHelper<T> {
     }
 
     public boolean isServiceCallInProgress() {
-        return activeServiceCalls.size() > 0;
+        synchronized (activeServiceCalls) {
+            return activeServiceCalls.size() > 0;
+        }
     }
 
     public void deregisterFromActiveServiceCalls() {
 
         EventBus.getDefault().unregister(this);
-        for (long activeCall : activeServiceCalls) {
-            PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(activeCall);
+        synchronized (activeServiceCalls) {
+            for (long activeCall : activeServiceCalls.keySet()) {
+                PiwigoResponseBufferingHandler.getDefault().deRegisterResponseHandler(activeCall);
+            }
         }
     }
 
     public void onSaveInstanceState(Bundle outState) {
         Bundle thisBundle = new Bundle();
-        BundleUtils.putLongHashSet(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls);
+        BundleUtils.writeMap(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls);
         thisBundle.putInt(STATE_TRACKED_REQUESTS, trackedRequest);
         thisBundle.putSerializable(STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
         thisBundle.putSerializable(STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
@@ -500,7 +534,7 @@ public abstract class UIHelper<T> {
         if (savedInstanceState != null) {
             Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
             if (thisBundle != null) {
-                activeServiceCalls = Collections.synchronizedSet(BundleUtils.getLongHashSet(thisBundle, ACTIVE_SERVICE_CALLS));
+                activeServiceCalls = Collections.synchronizedMap(BundleUtils.<Long, String>readMap(thisBundle, ACTIVE_SERVICE_CALLS, getClass().getClassLoader()));
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
                 runWithPermissions = BundleUtils.getSerializable(thisBundle, STATE_RUN_WITH_PERMS_LIST, HashMap.class);
                 try {
@@ -825,16 +859,20 @@ public abstract class UIHelper<T> {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        for (long activeCall : activeServiceCalls) {
-            PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(activeCall, piwigoResponseListener);
+        synchronized (activeServiceCalls) {
+            for (long activeCall : activeServiceCalls.keySet()) {
+                PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(activeCall, piwigoResponseListener);
+            }
         }
     }
 
     public void onServiceCallComplete(long messageId) {
         actionOnServerCallComplete.remove(messageId);
-        activeServiceCalls.remove(messageId);
-        if (activeServiceCalls.size() == 0) {
-            hideProgressIndicator();
+        synchronized (activeServiceCalls) {
+            activeServiceCalls.remove(messageId);
+            if (activeServiceCalls.size() == 0) {
+                hideProgressIndicator();
+            }
         }
     }
 

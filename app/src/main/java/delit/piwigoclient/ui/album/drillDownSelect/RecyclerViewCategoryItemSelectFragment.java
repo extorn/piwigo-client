@@ -248,21 +248,21 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             //NOTE: No thumbnail url is provided with this call... Maybe need to run a standard call too as for the main albums then merge?
             AbstractPiwigoWsResponseHandler handler = new AlbumGetSubAlbumsAdminResponseHandler();
             handler.withConnectionPreferences(connectionPrefs);
-            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, handler);
             String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
 
             handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
-            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, handler);
         } else if (sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
             CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true);
             handler.withConnectionPreferences(connectionPrefs);
-            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, handler);
         } else {
             String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
             AlbumGetSubAlbumsResponseHandler handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
-            addActiveServiceCall(R.string.progress_loading_albums, handler.invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_loading_albums, handler);
         }
     }
 

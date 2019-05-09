@@ -2,9 +2,6 @@ package delit.piwigoclient.ui.upload;
 
 import android.content.Context;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +17,12 @@ import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
@@ -41,6 +42,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public static final int SCALING_QUALITY_VLOW = 60;
     private final ArrayList<File> filesToUpload;
     private final HashMap<File, Integer> fileUploadProgress = new HashMap<>();
+    private final HashSet<File> filesBeingCompressed = new HashSet<>();
     private final RemoveListener listener;
     private final int scalingQuality = SCALING_QUALITY_MEDIUM;
     private boolean useDarkMode;
@@ -175,15 +177,25 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
 
         // Configure the progress bar
         Integer progress = fileUploadProgress.get(itemToView);
+        boolean isCompressing = filesBeingCompressed.contains(itemToView);
 
         if (progress != null) {
             holder.progressBar.setVisibility(View.VISIBLE);
-            holder.progressBar.setIndeterminate(false);
-            holder.progressBar.setProgress(progress);
+            if (progress < 0) {
+                holder.progressBar.setIndeterminate(true);
+            } else {
+                holder.progressBar.setIndeterminate(false);
+                if (isCompressing) {
+                    holder.progressBar.setSecondaryProgress(progress);
+                } else {
+                    holder.progressBar.setProgress(progress);
+                }
+            }
         } else {
             holder.progressBar.setVisibility(View.GONE);
             holder.progressBar.setIndeterminate(false);
             holder.progressBar.setProgress(0);
+            holder.progressBar.setSecondaryProgress(0);
         }
 
         // Now we've updated the progress bar, we can return, no need to reload the remainder of the fields as they won't have altered.
@@ -220,6 +232,14 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public void updateProgressBar(File fileBeingUploaded, int percentageComplete) {
         fileUploadProgress.put(fileBeingUploaded, percentageComplete);
         notifyDataSetChanged();
+    }
+
+    public void setIsCompressing(File fileBeingUploaded, boolean isCompressing) {
+        if (isCompressing) {
+            filesBeingCompressed.add(fileBeingUploaded);
+        } else {
+            filesBeingCompressed.remove(fileBeingUploaded);
+        }
     }
 
     public ArrayList<File> getFiles() {

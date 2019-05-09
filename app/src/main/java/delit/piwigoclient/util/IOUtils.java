@@ -4,8 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
-import androidx.core.content.ContextCompat;
-import androidx.core.os.EnvironmentCompat;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -30,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.os.EnvironmentCompat;
 import delit.piwigoclient.BuildConfig;
 
 /**
@@ -264,5 +264,10 @@ public class IOUtils {
                 return file.getAbsolutePath();
             file=parentFile;
         }
+    }
+
+    public static String getFileExt(String filename) {
+        int extStartAtIdx = filename.lastIndexOf('.');
+        return filename.substring(extStartAtIdx + 1);
     }
 }

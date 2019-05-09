@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -19,6 +17,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -167,9 +167,9 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
 
                 for(ResourceItem item : tagMembershipChangesAction.resourcesReadyToProcess) {
                     if (allowTagEdit) {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(item).invokeAsync(getContext()));
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new PluginUserTagsUpdateResourceTagsListResponseHandler(item));
                     } else {
-                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(item, true).invokeAsync(getContext()));
+                        addActiveServiceCall(R.string.progress_resource_details_updating, new ImageUpdateInfoResponseHandler(item, true));
                     }
                 }
             }
@@ -180,7 +180,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     private void getResourceInfo(HashSet<ResourceItem> selectedResources) {
         String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
         for(ResourceItem item : selectedResources) {
-            addActiveServiceCall(R.string.progress_resource_details_updating,new ImageGetInfoResponseHandler(item, multimediaExtensionList).invokeAsync(getContext()));
+            addActiveServiceCall(R.string.progress_resource_details_updating, new ImageGetInfoResponseHandler(item, multimediaExtensionList));
         }
     }
 

@@ -169,7 +169,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
             }
 
             int pageSize = prefs.getInt(getString(R.string.preference_groups_request_pagesize_key), getResources().getInteger(R.integer.preference_groups_request_pagesize_default));
-            groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize).invokeAsync(getContext())), pageToLoad);
+            groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(pageToLoad, pageSize)), pageToLoad);
         } finally {
             groupsModel.releasePageLoadLock();
         }
@@ -208,7 +208,7 @@ public class GroupSelectFragment extends RecyclerViewLongSetSelectFragment<Group
                 }
                 //TODO what if there are more than the max page size?! Paging needed :-(
                 // flag that this is a special one off load.
-                groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(groupsNeededToBeLoaded).invokeAsync(getContext())), PagedList.MISSING_ITEMS_PAGE);
+                groupsModel.recordPageBeingLoaded(addActiveServiceCall(R.string.progress_loading_groups, new GroupsGetListResponseHandler(groupsNeededToBeLoaded)), PagedList.MISSING_ITEMS_PAGE);
                 return;
             } finally {
                 groupsModel.releasePageLoadLock();

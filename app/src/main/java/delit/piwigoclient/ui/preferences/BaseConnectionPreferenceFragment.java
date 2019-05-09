@@ -268,7 +268,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
             getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction(null));
-            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId);
+            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
 
             return true;
         }
@@ -283,7 +283,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
             getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction(loginAsProfileAfterLogout));
-            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId);
+            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpShutdown");
         } else {
             new OnHttpClientShutdownAction(loginAsProfileAfterLogout).onSuccess(getUiHelper(), null);
             reloadConnectionProfilePrefs();
@@ -307,7 +307,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
             getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction());
-            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId);
+            getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
             return true;
         }
         return false;
@@ -339,7 +339,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             } else {
                 uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction(loginAsProfileAfterLogout));
             }
-            uiHelper.addActiveServiceCall(uiHelper.getContext().getString(R.string.loading_new_server_configuration), msgId);
+            uiHelper.addActiveServiceCall(uiHelper.getContext().getString(R.string.loading_new_server_configuration), msgId, "httpShutdown");
             return false;
         }
 

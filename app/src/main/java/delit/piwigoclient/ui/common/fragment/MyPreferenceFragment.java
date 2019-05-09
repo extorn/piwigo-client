@@ -3,6 +3,10 @@ package delit.piwigoclient.ui.common.fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+
+import com.crashlytics.android.Crashlytics;
+
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
@@ -11,10 +15,6 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import android.view.View;
-
-import com.crashlytics.android.Crashlytics;
-
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
@@ -30,11 +30,11 @@ import delit.piwigoclient.ui.common.preference.MappedListPreferenceDialogFragmen
 import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 import delit.piwigoclient.ui.common.preference.NumberPickerPreferenceDialogFragmentCompat;
 import delit.piwigoclient.ui.common.preference.SecureEditTextPreference;
-import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreferenceDialogFragmentCompat;
 import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
 import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreferenceDialogFragmentCompat;
+import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
 
 /**
  * Created by gareth on 26/05/17.
@@ -76,7 +76,7 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
     }
 
     protected void callServer(@StringRes int callDescriptionResId, AbstractPiwigoDirectResponseHandler handler) {
-        uiHelper.addActiveServiceCall(callDescriptionResId, handler.invokeAsync(getContext()));
+        uiHelper.addActiveServiceCall(callDescriptionResId, handler);
     }
 
     @Override

@@ -3,13 +3,9 @@ package delit.piwigoclient.ui.tags;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +13,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashSet;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -184,7 +187,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     private void createNewTag(String tagname) {
-        addActiveServiceCall(R.string.progress_creating_tag,new TagAddResponseHandler(tagname).invokeAsync(this.getContext()));
+        addActiveServiceCall(R.string.progress_creating_tag, new TagAddResponseHandler(tagname));
     }
 
     private void addNewTag() {
@@ -271,13 +274,18 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String tagName = s.toString();
-                if(dialog.getButton(
-                        AlertDialog.BUTTON_NEUTRAL).isShown()) {
-                    dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(tagName.length() > 0);
+                try {
+                    String tagName = s.toString();
+                    if (dialog.getButton(
+                            AlertDialog.BUTTON_NEUTRAL).isShown()) {
+                        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setEnabled(tagName.length() > 0);
+                    }
+                    dialog.getButton(
+                            AlertDialog.BUTTON_POSITIVE).setEnabled(tagName.length() > 0 && !tagsModel.containsTag(tagName));
+                } catch (RuntimeException e) {
+                    Crashlytics.log(Log.ERROR, getTag(), "Error in on tag name change");
+                    Crashlytics.logException(e);
                 }
-                dialog.getButton(
-                        AlertDialog.BUTTON_POSITIVE).setEnabled(tagName.length() > 0 && !tagsModel.containsTag(tagName));
             }
 
             @Override
@@ -288,7 +296,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
     }
 
     private void addMatchingTagsForSelection(String tagName) {
-        addActiveServiceCall(R.string.progress_loading_tags, new PluginUserTagsGetListResponseHandler(tagName).invokeAsync(getContext()));
+        addActiveServiceCall(R.string.progress_loading_tags, new PluginUserTagsGetListResponseHandler(tagName));
     }
 
     private void addNewTagForSelection(String tagName) {
@@ -326,11 +334,11 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         int basePageToLoad = pageToLoad % 2 == 0 ? pageToLoad : pageToLoad -1;
         try {
             if(!tagsModel.isPageLoadedOrBeingLoaded(basePageToLoad)) {
-                addActiveServiceCall(R.string.progress_loading_tags,new TagsGetListResponseHandler(basePageToLoad, Integer.MAX_VALUE).invokeAsync(getContext()));
+                addActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(basePageToLoad, Integer.MAX_VALUE));
             }
             if(!tagsModel.isPageLoadedOrBeingLoaded(basePageToLoad + 1)) {
                 if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-                    addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(basePageToLoad+1, Integer.MAX_VALUE).invokeAsync(getContext()));
+                    addActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(basePageToLoad + 1, Integer.MAX_VALUE));
                 }
             }
         } finally {

@@ -4,10 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.BoolRes;
-import androidx.annotation.IntegerRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 
 import java.io.File;
 import java.io.Serializable;
@@ -19,6 +15,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import androidx.annotation.BoolRes;
+import androidx.annotation.IntegerRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -195,7 +195,9 @@ public class AutoUploadJobConfig implements Parcelable {
         return 0;
     }
 
-    
+    public boolean isCompressVideosBeforeUpload(Context c) {
+        return getBooleanValue(c, R.string.preference_data_upload_automatic_job_compress_videos_key, R.bool.preference_data_upload_automatic_job_compress_videos_default);
+    }
 
     public static class PriorUploads implements Serializable {
 
