@@ -50,6 +50,7 @@
     <string name="alert_title_connectionTest">Test de connexion</string>
     <string name="alert_message_success_connectionTest">Success\nUser Type : %1$s.</string>
     <string name="alert_message_no_available_image_sizes">Avertissement @nServer n\'a pas signalé les tailles d\'image disponibles.</string>
+    <string name="alert_title_login">Connexion</string>
     <string name="alert_success">SUCCÈS !</string>
     <string name="alert_partial_success">INCOMPLETE</string>
     <string name="alert_error">Erreur</string>

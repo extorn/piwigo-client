@@ -16,6 +16,7 @@ import net.ypresto.qtfaststart.QtFastStart;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import androidx.annotation.RequiresApi;
@@ -36,6 +37,18 @@ public class YPrestoCompressor {
         Log.d(TAG, "transcoding into " + outputFile);
         mFuture = MediaTranscoder.getInstance().transcodeVideo(inputFileParcelFileDescriptor.getFileDescriptor(), outputFile.getAbsolutePath(),
                 MediaFormatStrategyPresets.createAndroid720pStrategy(8000 * 250/*8000 * 1000*/, AUDIO_BITRATE_AS_IS/*128 * 1000*/, AUDIO_CHANNELS_AS_IS /*1*/), transcodeListener);
+    }
+
+    public void waitForCompressorToFinish() {
+        while (!mFuture.isCancelled() && !mFuture.isDone()) {
+            try {
+                mFuture.get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void cancel() {

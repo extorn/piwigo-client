@@ -157,23 +157,11 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    private static class OnLoginAction extends UIHelper.Action<ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
-        @Override
-        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
-            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
-                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
-                if (sessionDetails.getAvailableImageSizes().size() == 0) {
-                    msg += '\n' + uiHelper.getContext().getString(R.string.alert_message_no_available_image_sizes);
-                    uiHelper.showDetailedMsg(R.string.alert_title_connectionTest, msg);
-                } else {
-                    uiHelper.showDetailedMsg(R.string.alert_title_connectionTest, msg);
-                }
-                EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
-            }
-            return false;
-        }
+    private void onLoginAfterAppUnlockEvent(PiwigoSessionDetails oldCredentials) {
+        lockAppInReadOnlyMode(false);
+        uiHelper.closeAllDialogs();
+        uiHelper.showDetailedMsg(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
+        EventBus.getDefault().post(new AppUnlockedEvent());
     }
 
     private void sendEmail(String email) {
@@ -282,11 +270,23 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         super.onRestoreInstanceState(((SavedState) savedState).getSuperState());
     }
 
-    private void onLogin(PiwigoSessionDetails oldCredentials) {
-        lockAppInReadOnlyMode(false);
-        uiHelper.closeAllDialogs();
-        uiHelper.showDetailedMsg(R.string.alert_success, getContext().getString(R.string.alert_app_unlocked_message));
-        EventBus.getDefault().post(new AppUnlockedEvent());
+    private static class OnLoginAction extends UIHelper.Action<ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
+        @Override
+        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
+                if (sessionDetails.getAvailableImageSizes().size() == 0) {
+                    msg += '\n' + uiHelper.getContext().getString(R.string.alert_message_no_available_image_sizes);
+                    uiHelper.showDetailedMsg(R.string.alert_title_login, msg);
+                } else {
+                    uiHelper.showDetailedMsg(R.string.alert_title_login, msg);
+                }
+                EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
+            }
+            return false;
+        }
     }
 
     private void showLockDialog() {
@@ -358,12 +358,12 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
     class CustomPiwigoListener extends BasicPiwigoResponseListener {
         @Override
-        public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+        public void onBeforeHandlePiwigoResponseInListener(PiwigoResponseBufferingHandler.Response response) {
             // invokeAndWait the chained call before hiding the progress dialog to avoid flicker.
             if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
                 LoginResponseHandler.PiwigoOnLoginResponse rsp = (LoginResponseHandler.PiwigoOnLoginResponse) response;
                 if (PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
-                    onLogin(rsp.getOldCredentials());
+                    onLoginAfterAppUnlockEvent(rsp.getOldCredentials());
                 }
             }
         }

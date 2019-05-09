@@ -79,6 +79,7 @@ import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.ArrayUtils;
 import delit.piwigoclient.util.CollectionUtils;
+import delit.piwigoclient.util.IOUtils;
 
 import static android.view.View.GONE;
 
@@ -541,77 +542,87 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private void uploadFiles() {
-
-        UploadJob activeJob = null;
-        if (uploadJobId != null) {
-            activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
-        }
-
-        if (activeJob == null) {
-            activeJob = buildNewUploadJob();
-            if (activeJob != null) {
-                uploadJobId = activeJob.getJobId();
-            }
-        }
-
-        if (activeJob != null) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, new String[]{Manifest.permission.FOREGROUND_SERVICE, Manifest.permission.WAKE_LOCK}, getString(R.string.alert_foreground_service_and_wake_lock_permission_needed_to_start_upload));
-            } else {
-                getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, new String[]{Manifest.permission.WAKE_LOCK}, getString(R.string.alert_foreground_service_and_wake_lock_permission_needed_to_start_upload));
-            }
-        }
+        buildAndSubmitNewUploadJob();
     }
 
-    private UploadJob buildNewUploadJob() {
+    private void buildAndSubmitNewUploadJob() {
+        buildAndSubmitNewUploadJob(false, false);
+    }
+
+    private void buildAndSubmitNewUploadJob(boolean filesizesChecked, boolean multimediaChecked) {
         FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
 
         if (fileListAdapter == null || uploadToAlbum == null || uploadToAlbum == CategoryItemStub.ROOT_GALLERY) {
             getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
-            return null;
+            return;
         }
 
         ArrayList<File> filesForUpload = fileListAdapter.getFiles();
 
+        boolean userInputRequested = false;
 
-        final Set<File> filesForReview = getFilesExceedingMaxDesiredUploadThreshold();
-        StringBuilder filenameListStrB = new StringBuilder();
-        for (File f : filesForReview) {
-            double fileLengthMB = ((double) f.length()) / 1024 / 1024;
-            if (filesForReview.size() > 0) {
-                filenameListStrB.append(", ");
-            }
-            filenameListStrB.append(f);
-            filenameListStrB.append(String.format(Locale.getDefault(), "(%1$.1fMB)", fileLengthMB));
-        }
-        if (filesForReview.size() > 0) {
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview));
-        }
-
-        Collection<File> revisedFilesForReview = filesForUpload;//getFilesExceedingMaxDesiredUploadThreshold();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            //Compression needs minimum of API v18
-
-            List<String> multimediaExts = CollectionUtils.stringsFromCsvList(AlbumViewPreferences.getKnownMultimediaExtensions(getPrefs(), getContext()));
-            boolean uploadingMultimedia = false;
-            for (File f : revisedFilesForReview) {
-                String ext = f.getName().substring(f.getName().lastIndexOf('.'));
-                if (multimediaExts.contains(ext)) {
-                    // uploading multimedia
-                    uploadingMultimedia = true;
-                    break;
+        if (!filesizesChecked) {
+            final Set<File> filesForReview = getFilesExceedingMaxDesiredUploadThreshold();
+            StringBuilder filenameListStrB = new StringBuilder();
+            for (File f : filesForReview) {
+                double fileLengthMB = ((double) f.length()) / 1024 / 1024;
+                if (filesForReview.size() > 0) {
+                    filenameListStrB.append(", ");
                 }
+                filenameListStrB.append(f);
+                filenameListStrB.append(String.format(Locale.getDefault(), "(%1$.1fMB)", fileLengthMB));
             }
-
-            if (uploadingMultimedia /*&& revisedFilesForReview.size() > 0*/) {
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_files_larger_than_upload_threshold_compress), R.string.button_no, R.string.button_yes, new ShouldCompressVideosAction(getUiHelper()));
+            if (filesForReview.size() > 0) {
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview));
+                userInputRequested = true;
             }
-
         }
 
-        long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
-        return ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, compressVideosBeforeUpload, (int) privacyLevelWanted, handlerId);
+        if (!multimediaChecked && !userInputRequested) {
+            Collection<File> revisedFilesForReview = filesForUpload;//getFilesExceedingMaxDesiredUploadThreshold();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                //Compression needs minimum of API v18
+
+                List<String> multimediaExts = CollectionUtils.stringsFromCsvList(AlbumViewPreferences.getKnownMultimediaExtensions(getPrefs(), getContext()));
+                boolean uploadingMultimedia = false;
+                for (File f : revisedFilesForReview) {
+                    if (multimediaExts.contains(IOUtils.getFileExt(f.getName()))) {
+                        // uploading multimedia
+                        uploadingMultimedia = true;
+                        break;
+                    }
+                }
+
+                if (uploadingMultimedia /*&& revisedFilesForReview.size() > 0*/) {
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_files_larger_than_upload_threshold_compress), R.string.button_no, R.string.button_yes, new ShouldCompressVideosAction(getUiHelper()));
+                    userInputRequested = true;
+                }
+
+            }
+        }
+
+        if (!userInputRequested) {
+            long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
+            UploadJob activeJob = null;
+            if (uploadJobId != null) {
+                activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
+            }
+            if (activeJob == null) {
+                activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, compressVideosBeforeUpload, (int) privacyLevelWanted, handlerId);
+            }
+            submitUploadJob(activeJob);
+        }
+    }
+
+    private void submitUploadJob(UploadJob activeJob) {
+        uploadJobId = activeJob.getJobId();
+        // the job will be submitted within the onEvent(PermissionsWantedResponse event) method.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, new String[]{Manifest.permission.FOREGROUND_SERVICE, Manifest.permission.WAKE_LOCK}, getString(R.string.alert_foreground_service_and_wake_lock_permission_needed_to_start_upload));
+        } else {
+            getUiHelper().runWithExtraPermissions(this, Build.VERSION.SDK_INT, Build.VERSION.SDK_INT, new String[]{Manifest.permission.WAKE_LOCK}, getString(R.string.alert_foreground_service_and_wake_lock_permission_needed_to_start_upload));
+        }
     }
 
     @Override
@@ -910,6 +921,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             super.onResult(dialog, positiveAnswer);
             AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
             fragment.setCompressVideosBeforeUpload(Boolean.TRUE.equals(positiveAnswer));
+            fragment.buildAndSubmitNewUploadJob(true, true);
         }
     }
 
@@ -930,6 +942,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     fragment.onRemove(fragment.getFilesForUploadViewAdapter(), file, false);
                 }
             }
+            fragment.buildAndSubmitNewUploadJob(true, false);
         }
     }
 

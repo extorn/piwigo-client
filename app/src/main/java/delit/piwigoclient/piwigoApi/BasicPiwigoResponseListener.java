@@ -149,6 +149,9 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
     public void onBeforeHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
     }
 
+    public void onBeforeHandlePiwigoResponseInListener(PiwigoResponseBufferingHandler.Response response) {
+    }
+
     public <T extends PiwigoResponseBufferingHandler.Response> void onAfterHandlePiwigoResponse(T response) {
     }
 
@@ -171,6 +174,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         uiHelper.onServiceCallComplete(response);
 
         if(runListenerHandlerCode) {
+            onBeforeHandlePiwigoResponseInListener(response);
             if (response instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
                 handlePiwigoHttpErrorResponse((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) response);
             } else if (response instanceof PiwigoResponseBufferingHandler.PiwigoUnexpectedReplyErrorResponse) {

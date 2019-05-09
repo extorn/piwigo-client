@@ -93,6 +93,10 @@ public class UploadJob implements Serializable {
         fileUploadStatus.put(fileForUpload, CORRUPT);
     }
 
+    public synchronized void markFileAsCompressed(File fileForUpload) {
+        fileUploadStatus.put(fileForUpload, COMPRESSED);
+    }
+
     public synchronized void markFileAsConfigured(File fileForUpload) {
         fileUploadStatus.put(fileForUpload, CONFIGURED);
     }
@@ -171,6 +175,10 @@ public class UploadJob implements Serializable {
 
     public boolean isFileCompressed(File fileForUpload) {
         return COMPRESSED.equals(fileUploadStatus.get(fileForUpload));
+    }
+
+    public boolean isUploadedFileVerified(File fileForUpload) {
+        return VERIFIED.equals(fileUploadStatus.get(fileForUpload));
     }
 
     public synchronized boolean needsConfiguration(File fileForUpload) {

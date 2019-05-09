@@ -2,6 +2,8 @@ package delit.piwigoclient.piwigoApi.handlers;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -19,6 +21,7 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     private boolean publishResponses = true;
     private Worker worker;
     private boolean runAsync;
+    private static List<Long> blockedMessageIds = new ArrayList<>();
 
     public AbstractPiwigoDirectResponseHandler(String tag) {
         super(tag);
@@ -26,13 +29,23 @@ public abstract class AbstractPiwigoDirectResponseHandler extends AbstractBasicP
     }
 
     public static synchronized long getNextMessageId() {
-        long id;
-        id = nextMessageId.incrementAndGet();
-        if (id < 0) {
-            nextMessageId.set(0);
-            id = 0;
-        }
+        long id = -1;
+        do {
+            id = nextMessageId.incrementAndGet();
+            if (id < 0) {
+                nextMessageId.set(0);
+                id = 0;
+            }
+        } while (blockedMessageIds.contains(id));
         return id;
+    }
+
+    public static synchronized void unblockMessageId(long messageId) {
+        blockedMessageIds.remove(messageId);
+    }
+
+    public static synchronized void blockMessageId(long messageId) {
+        blockedMessageIds.add(messageId);
     }
 
     public long getMessageId() {

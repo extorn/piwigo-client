@@ -50,7 +50,6 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         this.piwigoMethod = piwigoMethod;
     }
 
-
     public String getPiwigoMethod() {
         return piwigoMethod;
     }
