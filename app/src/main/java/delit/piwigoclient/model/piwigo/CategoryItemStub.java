@@ -88,7 +88,7 @@ public class CategoryItemStub implements Parcelable, Identifiable {
     }
 
     public CategoryItemStub markNonUserSelectable() {
-        if (this == ROOT_GALLERY) {
+        if (this.equals(ROOT_GALLERY)) {
             return ROOT_GALLERY_NON_SELECTABLE;
         }
         this.isUserSelectable = false;

@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.upload;
 
+import android.content.Context;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
@@ -251,7 +252,19 @@ public class UploadJob implements Serializable {
         filePartialUploadProgress.remove(f);
     }
 
-    public synchronized int getUploadProgress(File f) {
+    public synchronized int getCompressionProgress(File uploadJobKey) {
+        Integer status = fileUploadStatus.get(uploadJobKey);
+        if (COMPRESSED.equals(status)) {
+            return 100;
+        }
+        if (compressVideosBeforeUpload && canCompressVideoFile(uploadJobKey)) {
+            // if we've started uploading this file it must have been compressed first!
+            return getUploadProgress(uploadJobKey) > 0 ? 100 : 0;
+        }
+        return 0;
+    }
+
+    public synchronized int getUploadProgress(File uploadJobKey) {
 
 //        private static final Integer CANCELLED = -1;
 //        private static final Integer UPLOADING = 0;
@@ -261,18 +274,18 @@ public class UploadJob implements Serializable {
 //        private static final Integer PENDING_APPROVAL = 4;
 //        private static final Integer REQUIRES_DELETE = 5;
 //        private static final Integer DELETED = 6;
-        Integer status = fileUploadStatus.get(f);
+        Integer status = fileUploadStatus.get(uploadJobKey);
         if (status == null) {
             status = Integer.MIN_VALUE;
         }
         int progress = 0;
         if (UPLOADING.equals(status)) {
 
-            PartialUploadData progressData = filePartialUploadProgress.get(f);
+            PartialUploadData progressData = filePartialUploadProgress.get(uploadJobKey);
             if (progressData == null) {
                 progress = 0;
             } else {
-                progress = Math.round((float) (((double) progressData.getBytesUploaded()) / f.length() * 90));
+                progress = Math.round((float) (((double) progressData.getBytesUploaded()) / progressData.getTotalBytesToUpload() * 90));
             }
         }
         if (status >= UPLOADED) {
@@ -317,9 +330,9 @@ public class UploadJob implements Serializable {
         return fileChecksums.get(fileForUpload);
     }
 
-    public synchronized void addFileChecksum(File fileForUpload) {
+    public synchronized void addFileChecksum(File uploadJobKey, File fileForUpload) {
         String checksum = Md5SumUtils.calculateMD5(fileForUpload);
-        fileChecksums.put(fileForUpload, checksum);
+        fileChecksums.put(uploadJobKey, checksum);
     }
 
     public synchronized boolean isFinished() {
@@ -375,10 +388,10 @@ public class UploadJob implements Serializable {
         return uploadToCategoryParentage;
     }
 
-    public void markFileAsPartiallyUploaded(File fileForUpload, String uploadName, String fileChecksum, long bytesUploaded, long countChunksUploadedOkay) {
-        PartialUploadData data = filePartialUploadProgress.get(fileForUpload);
+    public void markFileAsPartiallyUploaded(File uploadJobKey, String uploadName, String fileChecksum, long totalBytesToUpload, long bytesUploaded, long countChunksUploadedOkay) {
+        PartialUploadData data = filePartialUploadProgress.get(uploadJobKey);
         if (data == null) {
-            filePartialUploadProgress.put(fileForUpload, new PartialUploadData(uploadName, fileChecksum, bytesUploaded, countChunksUploadedOkay));
+            filePartialUploadProgress.put(uploadJobKey, new PartialUploadData(uploadName, fileChecksum, totalBytesToUpload, bytesUploaded, countChunksUploadedOkay));
         } else {
             data.setUploadStatus(fileChecksum, bytesUploaded, countChunksUploadedOkay);
         }
@@ -502,10 +515,32 @@ public class UploadJob implements Serializable {
         return videoFilesToCompress;
     }
 
+    public File getCompressedFile(Context c, File f) {
+        return new File(getCompressedVideosFolder(c), f.getName());
+    }
+
+    private File getCompressedVideosFolder(Context c) {
+        File f = new File(c.getExternalCacheDir(), "compressed_vids_for_upload");
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+        return f;
+    }
+
+    public boolean canCompressVideoFile(File rawVideo) {
+        String fileExt = IOUtils.getFileExt(rawVideo.getName());
+        if (fileExt == null) {
+            return false;
+        }
+        fileExt = fileExt.toLowerCase();
+        return fileExt.equals("mp4");
+    }
+
 
     protected static class PartialUploadData implements Serializable {
         private static final long serialVersionUID = 3574283238335920169L;
         private final String uploadName;
+        private long totalBytesToUpload;
         private long bytesUploaded;
         private long countChunksUploaded;
         private String fileChecksum;
@@ -516,11 +551,16 @@ public class UploadJob implements Serializable {
             this.uploadedItem = uploadedItem;
         }
 
-        public PartialUploadData(String uploadName, String fileChecksum, long bytesUploaded, long countChunksUploaded) {
+        public PartialUploadData(String uploadName, String fileChecksum, long totalBytesToUpload, long bytesUploaded, long countChunksUploaded) {
             this.fileChecksum = fileChecksum;
             this.uploadName = uploadName;
             this.bytesUploaded = bytesUploaded;
             this.countChunksUploaded = countChunksUploaded;
+            this.totalBytesToUpload = totalBytesToUpload;
+        }
+
+        public long getTotalBytesToUpload() {
+            return totalBytesToUpload;
         }
 
         public ResourceItem getUploadedItem() {

@@ -38,7 +38,6 @@ import java.util.TimeZone;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -298,15 +297,18 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         });
 
         if (BuildConfig.DEBUG) {
-            Button compressVideosButton = new Button(getContext());
-            compressVideosButton.setText("Compress");
-            compressVideosButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    compressVideos();
-                }
-            });
-            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton);
+//            Button compressVideosButton = new Button(getContext());
+//            compressVideosButton.setText("Compress");
+//            compressVideosButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    compressVideos();
+//                }
+//            });
+//            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+//            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
+//            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+//            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
         }
 
         if (savedInstanceState != null) {
@@ -443,6 +445,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                         if(uploadToAlbum.getId() == response.getAlbumNames().get(0).getId()) {
                             uploadToAlbum = response.getAlbumNames().get(0);
                             selectedGallerySpinner.setText(uploadToAlbum.getName());
+                        } else if (uploadToAlbum.getId() == CategoryItemStub.ROOT_GALLERY.getId()) {
+                            uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
+                            selectedGallerySpinner.setText(uploadToAlbum.getName());
                         }
                     }
                     return super.onSuccess(uiHelper, response);
@@ -462,7 +467,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
             for (File f : filesForUploadAdapter.getFiles()) {
                 int progress = uploadJob.getUploadProgress(f);
-                filesForUploadAdapter.updateProgressBar(f, progress);
+                int compressionProgress = uploadJob.getCompressionProgress(f);
+                if (compressionProgress == 100) {
+                    File compressedFile = uploadJob.getCompressedFile(getContext(), f);
+                    filesForUploadAdapter.updateCompressionProgress(f, compressedFile, 100);
+                }
+                filesForUploadAdapter.updateUploadProgress(f, progress);
             }
 
             boolean jobIsComplete = uploadJob.isFinished();
@@ -550,65 +560,70 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private void buildAndSubmitNewUploadJob(boolean filesizesChecked, boolean multimediaChecked) {
-        FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
+        UploadJob activeJob = null;
 
-        if (fileListAdapter == null || uploadToAlbum == null || uploadToAlbum == CategoryItemStub.ROOT_GALLERY) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
-            return;
+        if (uploadJobId != null) {
+            activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
         }
-
-        ArrayList<File> filesForUpload = fileListAdapter.getFiles();
 
         boolean userInputRequested = false;
 
-        if (!filesizesChecked) {
-            final Set<File> filesForReview = getFilesExceedingMaxDesiredUploadThreshold();
-            StringBuilder filenameListStrB = new StringBuilder();
-            for (File f : filesForReview) {
-                double fileLengthMB = ((double) f.length()) / 1024 / 1024;
-                if (filesForReview.size() > 0) {
-                    filenameListStrB.append(", ");
-                }
-                filenameListStrB.append(f);
-                filenameListStrB.append(String.format(Locale.getDefault(), "(%1$.1fMB)", fileLengthMB));
+        if (activeJob == null) {
+            FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
+
+            if (fileListAdapter == null || uploadToAlbum == null || CategoryItemStub.ROOT_GALLERY.equals(uploadToAlbum)) {
+                getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
+                deleteUploadJobButton.setEnabled(true);
+                return;
             }
-            if (filesForReview.size() > 0) {
-                getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview));
-                userInputRequested = true;
-            }
-        }
 
-        if (!multimediaChecked && !userInputRequested) {
-            Collection<File> revisedFilesForReview = filesForUpload;//getFilesExceedingMaxDesiredUploadThreshold();
+            filesForUpload = fileListAdapter.getFiles();
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                //Compression needs minimum of API v18
-
-                List<String> multimediaExts = CollectionUtils.stringsFromCsvList(AlbumViewPreferences.getKnownMultimediaExtensions(getPrefs(), getContext()));
-                boolean uploadingMultimedia = false;
-                for (File f : revisedFilesForReview) {
-                    if (multimediaExts.contains(IOUtils.getFileExt(f.getName()))) {
-                        // uploading multimedia
-                        uploadingMultimedia = true;
-                        break;
+            if (!filesizesChecked) {
+                final Set<File> filesForReview = getFilesExceedingMaxDesiredUploadThreshold();
+                StringBuilder filenameListStrB = new StringBuilder();
+                for (File f : filesForReview) {
+                    double fileLengthMB = ((double) f.length()) / 1024 / 1024;
+                    if (filesForReview.size() > 0) {
+                        filenameListStrB.append(", ");
                     }
+                    filenameListStrB.append(f);
+                    filenameListStrB.append(String.format(Locale.getDefault(), "(%1$.1fMB)", fileLengthMB));
                 }
-
-                if (uploadingMultimedia /*&& revisedFilesForReview.size() > 0*/) {
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_files_larger_than_upload_threshold_compress), R.string.button_no, R.string.button_yes, new ShouldCompressVideosAction(getUiHelper()));
+                if (filesForReview.size() > 0) {
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview));
                     userInputRequested = true;
                 }
+            }
 
+            if (!multimediaChecked && !userInputRequested) {
+                Collection<File> revisedFilesForReview = filesForUpload;//getFilesExceedingMaxDesiredUploadThreshold();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    //Compression needs minimum of API v18
+
+                    List<String> multimediaExts = CollectionUtils.stringsFromCsvList(AlbumViewPreferences.getKnownMultimediaExtensions(getPrefs(), getContext()));
+                    boolean uploadingMultimedia = false;
+                    for (File f : revisedFilesForReview) {
+                        if (multimediaExts.contains(IOUtils.getFileExt(f.getName()))) {
+                            // uploading multimedia
+                            uploadingMultimedia = true;
+                            break;
+                        }
+                    }
+
+                    if (uploadingMultimedia /*&& revisedFilesForReview.size() > 0*/) {
+                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_files_larger_than_upload_threshold_compress), R.string.button_no, R.string.button_yes, new ShouldCompressVideosAction(getUiHelper()));
+                        userInputRequested = true;
+                    }
+
+                }
             }
         }
 
         if (!userInputRequested) {
-            long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
-            UploadJob activeJob = null;
-            if (uploadJobId != null) {
-                activeJob = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), uploadJobId);
-            }
             if (activeJob == null) {
+                long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
                 activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, compressVideosBeforeUpload, (int) privacyLevelWanted, handlerId);
             }
             submitUploadJob(activeJob);
@@ -1063,8 +1078,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         protected void onFileUploadProgressUpdate(Context context, final BasePiwigoUploadService.PiwigoUploadProgressUpdateResponse response) {
             if (isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
-                adapter.setIsCompressing(response.getFileForUpload(), false);
-                adapter.updateProgressBar(response.getFileForUpload(), response.getProgress());
+                adapter.updateUploadProgress(response.getFileForUpload(), response.getProgress());
             }
             if (response.getProgress() == 100) {
                 onFileUploadComplete(context, response);
@@ -1075,8 +1089,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         protected void onFileCompressionProgressUpdate(Context context, BasePiwigoUploadService.PiwigoVideoCompressionProgressUpdateResponse response) {
             if (isAdded()) {
                 FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
-                adapter.setIsCompressing(response.getFileForUpload(), true);
-                adapter.updateProgressBar(response.getFileForUpload(), response.getProgress());
+                adapter.updateCompressionProgress(response.getFileForUpload(), response.getCompressedFileUpload(), response.getProgress());
             }
             if (response.getProgress() == 100) {
                 onFileCompressionComplete(context, response);
@@ -1114,7 +1127,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
                     for (File existingFile : response.getExistingFiles()) {
                         int progress = uploadJob.getUploadProgress(existingFile);
-                        adapter.updateProgressBar(existingFile, progress);
+                        adapter.updateUploadProgress(existingFile, progress);
 //                    adapter.remove(existingFile);
                     }
                 }

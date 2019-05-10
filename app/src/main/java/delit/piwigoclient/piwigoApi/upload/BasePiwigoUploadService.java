@@ -228,7 +228,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if (sourceFile.exists()) {
             loadedJobState = IOUtils.readObjectFromFile(sourceFile);
         }
-        AbstractPiwigoDirectResponseHandler.blockMessageId(loadedJobState.getJobId());
+        if (loadedJobState != null) {
+            AbstractPiwigoDirectResponseHandler.blockMessageId(loadedJobState.getJobId());
+        }
         return loadedJobState;
     }
 
@@ -445,7 +447,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 // remove any videos that are going to be compressed - we can't use checksum to check these because the file will change.
                 if (thisUploadJob.isCompressVideosBeforeUpload()) {
                     for (File video : thisUploadJob.getVideosForUpload()) {
-                        if (canCompressVideoFile(video) && thisUploadJob.needsUpload(video)) {
+                        if (thisUploadJob.canCompressVideoFile(video) && thisUploadJob.needsUpload(video)) {
                             // don't remove the checksum if the file has been uploaded since that is the checksum for the uploaded file.
                             uniqueIdsMap.remove(video);
                         }
@@ -779,29 +781,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         postNewResponse(jobId, r1);
     }
 
-    private boolean canCompressVideoFile(File rawVideo) {
-        String fileExt = IOUtils.getFileExt(rawVideo.getName());
-        if (fileExt == null) {
-            return false;
-        }
-        fileExt = fileExt.toLowerCase();
-        return fileExt.equals("mp4");
-    }
-
-
-    private File getCompressedVideosFolder() {
-        File f = new File(getApplicationContext().getExternalCacheDir(), "compressed_vids_for_upload");
-        if (!f.exists()) {
-            f.mkdirs();
-        }
-        return f;
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private File compressVideo(UploadJob uploadJob, File rawVideo) {
-        File outputFolder = getCompressedVideosFolder();
-        File outputVideo = new File(outputFolder, rawVideo.getName());
-        CompressionListener listener = new CompressionListener(this, uploadJob.getJobId(), rawVideo);
+        File outputVideo = uploadJob.getCompressedFile(getApplicationContext(), rawVideo);
+        CompressionListener listener = new CompressionListener(this, uploadJob.getJobId(), rawVideo, outputVideo);
 
         try {
             YPrestoCompressor compressor = new YPrestoCompressor();
@@ -857,10 +840,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     // compression only possible for Android API 18 and up.
 
-                    if (videosForUpload.contains(fileForUpload) && canCompressVideoFile(fileForUpload)) {
+                    if (videosForUpload.contains(fileForUpload) && thisUploadJob.canCompressVideoFile(fileForUpload)) {
                         // it is a video and it is compressible.
                         //Check if we've already compressed it
-                        File compressedVideoFile = new File(getCompressedVideosFolder(), fileForUpload.getName());
+                        File compressedVideoFile = thisUploadJob.getCompressedFile(getApplicationContext(), fileForUpload);
                         if (compressedVideoFile.exists() && !thisUploadJob.isFileCompressed(fileForUpload)) {
                             if (!compressedVideoFile.delete()) { // the compression failed - delete file and allow restart
                                 onFileDeleteFailed(tag, compressedVideoFile, "compressed video - pre upload");
@@ -870,8 +853,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         if (compressedVideoFile == null || !compressedVideoFile.exists()) {
                             // need to compress this file
                             compressedVideoFile = compressVideo(thisUploadJob, fileForUpload);
-                            thisUploadJob.addFileChecksum(fileForUpload);
+                            thisUploadJob.addFileChecksum(fileForUpload, compressedVideoFile);
                             thisUploadJob.markFileAsCompressed(fileForUpload);
+                            saveStateToDisk(thisUploadJob);
                         }
 
                         //NOTE: at this point, if error during compression, file will be removed from list to upload.
@@ -882,11 +866,11 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             if (thisUploadJob.needsUpload(fileForUpload)) {
                 if (thisUploadJob.isFileCompressed(fileForUpload)) {
-                    File compressedVideoFile = new File(getCompressedVideosFolder(), fileForUpload.getName());
-                    uploadFileData(thisUploadJob, compressedVideoFile, chunkBuffer, maxChunkUploadAutoRetries);
+                    File compressedVideoFile = thisUploadJob.getCompressedFile(getApplicationContext(), fileForUpload);
+                    uploadFileData(thisUploadJob, fileForUpload, compressedVideoFile, chunkBuffer, maxChunkUploadAutoRetries);
                     uploadedCompressedVideo = thisUploadJob.needsVerification(fileForUpload); // if the file uploaded all chunks
                 } else {
-                    uploadFileData(thisUploadJob, fileForUpload, chunkBuffer, maxChunkUploadAutoRetries);
+                    uploadFileData(thisUploadJob, fileForUpload, fileForUpload, chunkBuffer, maxChunkUploadAutoRetries);
                 }
 
             }
@@ -899,9 +883,11 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 uploadedCompressedVideo &= thisUploadJob.isUploadedFileVerified(fileForUpload);
             }
 
+            saveStateToDisk(thisUploadJob);
+
             if (uploadedCompressedVideo && thisUploadJob.isUploadVerified(fileForUpload)) {
                 // delete the temporarily created compressed file.
-                File compressedVideoFile = new File(getCompressedVideosFolder(), fileForUpload.getName());
+                File compressedVideoFile = thisUploadJob.getCompressedFile(getApplicationContext(), fileForUpload);
                 if (!compressedVideoFile.delete()) {
                     onFileDeleteFailed(tag, compressedVideoFile, "compressed video - post upload");
                 }
@@ -942,7 +928,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
-    private ResourceItem uploadFileInChunks(UploadJob thisUploadJob, byte[] streamBuffer, File fileForUpload, String uploadName, int maxChunkUploadAutoRetries) throws IOException {
+    private ResourceItem uploadFileInChunks(UploadJob thisUploadJob, byte[] streamBuffer, File uploadJobKey, File fileForUpload, String uploadName, int maxChunkUploadAutoRetries) throws IOException {
 
         long totalBytesInFile = fileForUpload.length();
         long fileBytesUploaded = 0;
@@ -954,14 +940,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         long chunksUploadedAlready = 0;
 
 
-        String newChecksum = thisUploadJob.getFileChecksum(fileForUpload);
+        String newChecksum = thisUploadJob.getFileChecksum(uploadJobKey);
         if (isUseFilenamesOverMd5ChecksumForUniqueness()) {
-            fileForUpload.getName();
+            newChecksum = fileForUpload.getName();
         }
         // pre-set the upload progress through file to where we got to last time.
-        UploadJob.PartialUploadData skipChunksData = thisUploadJob.getChunksAlreadyUploadedData(fileForUpload);
+        UploadJob.PartialUploadData skipChunksData = thisUploadJob.getChunksAlreadyUploadedData(uploadJobKey);
         if (skipChunksData != null) {
-            thisUploadJob.deleteChunksAlreadyUploadedData(fileForUpload);
+            thisUploadJob.deleteChunksAlreadyUploadedData(uploadJobKey);
             if (skipChunksData.getFileChecksum().equals(newChecksum)) {
                 // If the checksums still match (file to upload hasn't been altered)
                 chunksUploadedAlready = skipChunksData.getCountChunksUploaded();
@@ -988,7 +974,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
 
             do {
-                if (!thisUploadJob.isCancelUploadAsap() && thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
+                if (!thisUploadJob.isCancelUploadAsap() && thisUploadJob.isFileUploadStillWanted(uploadJobKey)) {
 
                     bytesOfDataInChunk = bis.read(uploadChunkBuffer);
 
@@ -1003,19 +989,19 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         }
 
                         UploadFileChunk currentUploadFileChunk = new UploadFileChunk(thisUploadJob.getJobId(), fileForUpload, uploadToFilename, uploadToAlbumId, data, chunkId, chunkCount, fileMimeType);
-                        lastChunkUploadResult = uploadStreamChunk(thisUploadJob, currentUploadFileChunk, maxChunkUploadAutoRetries);
+                        lastChunkUploadResult = uploadStreamChunk(thisUploadJob, uploadJobKey, currentUploadFileChunk, maxChunkUploadAutoRetries);
 
                         chunkId++;
                         @SuppressWarnings("ConstantConditions") boolean chunkUploadedOk = lastChunkUploadResult.first;
                         if (chunkUploadedOk) {
                             fileBytesUploaded += bytesOfDataInChunk;
-                            String fileChecksum = thisUploadJob.getFileChecksum(fileForUpload);
+                            String fileChecksum = thisUploadJob.getFileChecksum(uploadJobKey);
                             if (isUseFilenamesOverMd5ChecksumForUniqueness()) {
                                 fileChecksum = fileForUpload.getName();
                             }
-                            thisUploadJob.markFileAsPartiallyUploaded(fileForUpload, uploadToFilename, fileChecksum, fileBytesUploaded, chunkId);
+                            thisUploadJob.markFileAsPartiallyUploaded(uploadJobKey, uploadToFilename, fileChecksum, fileForUpload.length(), fileBytesUploaded, chunkId);
                             saveStateToDisk(thisUploadJob);
-                            postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadProgressUpdateResponse(getNextMessageId(), currentUploadFileChunk.getOriginalFile(), thisUploadJob.getUploadProgress(currentUploadFileChunk.getOriginalFile())));
+                            postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadProgressUpdateResponse(getNextMessageId(), uploadJobKey, thisUploadJob.getUploadProgress(uploadJobKey)));
                         } else {
                             bytesOfDataInChunk = -1; // don't upload the rest of the chunks.
                         }
@@ -1028,9 +1014,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             } while (bytesOfDataInChunk >= 0);
 
             if (fileBytesUploaded < totalBytesInFile) {
-                if (!thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
+                if (!thisUploadJob.isFileUploadStillWanted(uploadJobKey)) {
                     // notify the listener that upload has been cancelled for this file (at user's request)
-                    postNewResponse(thisUploadJob.getJobId(), new FileUploadCancelledResponse(getNextMessageId(), fileForUpload));
+                    postNewResponse(thisUploadJob.getJobId(), new FileUploadCancelledResponse(getNextMessageId(), uploadJobKey));
                 }
             }
         } finally {
@@ -1091,32 +1077,32 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
     }
 
-    private void uploadFileData(UploadJob thisUploadJob, File fileForUpload, byte[] chunkBuffer, int maxChunkUploadAutoRetries) {
+    private void uploadFileData(UploadJob thisUploadJob, File uploadJobKey, File fileForUpload, byte[] chunkBuffer, int maxChunkUploadAutoRetries) {
         long jobId = thisUploadJob.getJobId();
 
-        if (!thisUploadJob.isCancelUploadAsap() && thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
+        if (!thisUploadJob.isCancelUploadAsap() && thisUploadJob.isFileUploadStillWanted(uploadJobKey)) {
 
-            postNewResponse(jobId, new PiwigoStartUploadFileResponse(getNextMessageId(), fileForUpload));
+            postNewResponse(jobId, new PiwigoStartUploadFileResponse(getNextMessageId(), uploadJobKey));
 
             try {
                 String filename = fileForUpload.getName();
-                String ext = null;
-                int dotPos = filename.lastIndexOf('.');
-                if (0 <= dotPos) {
-                    ext = filename.substring(dotPos + 1);
-                }
+                String ext = IOUtils.getFileExt(filename);
+
+
+
+
 
                 if (ext == null) {
-                    thisUploadJob.cancelFileUpload(fileForUpload);
+                    thisUploadJob.cancelFileUpload(uploadJobKey);
                     // notify the listener of the final error we received from the server
                     String errorMsg = String.format(getString(R.string.error_upload_file_ext_missing_pattern), fileForUpload.getName());
-                    notifyListenersOfCustomErrorUploadingFile(thisUploadJob, fileForUpload, errorMsg);
+                    notifyListenersOfCustomErrorUploadingFile(thisUploadJob, uploadJobKey, errorMsg);
                 }
 
-                if (thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
+                if (thisUploadJob.isFileUploadStillWanted(uploadJobKey)) {
                     String tempUploadName = "PiwigoClient_Upload_" + random.nextLong() + '.' + ext;
 
-                    ResourceItem uploadedResource = uploadFileInChunks(thisUploadJob, chunkBuffer, fileForUpload, tempUploadName, maxChunkUploadAutoRetries);
+                    ResourceItem uploadedResource = uploadFileInChunks(thisUploadJob, chunkBuffer, uploadJobKey, fileForUpload, tempUploadName, maxChunkUploadAutoRetries);
 
                     if (uploadedResource != null) {
                         // this should ALWAYS be the case!
@@ -1124,9 +1110,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         uploadedResource.setName(fileForUpload.getName());
                         uploadedResource.setParentageChain(thisUploadJob.getUploadToCategoryParentage(), thisUploadJob.getUploadToCategory());
                         uploadedResource.setPrivacyLevel(thisUploadJob.getPrivacyLevelWanted());
-                        uploadedResource.setFileChecksum(thisUploadJob.getFileChecksum(fileForUpload));
+                        uploadedResource.setFileChecksum(thisUploadJob.getFileChecksum(uploadJobKey));
 
-                        long lastModifiedTime = fileForUpload.lastModified();
+                        long lastModifiedTime = uploadJobKey.lastModified();
                         if (lastModifiedTime > 0) {
                             Date lastModDate = new Date(lastModifiedTime);
                             uploadedResource.setCreationDate(lastModDate);
@@ -1134,22 +1120,22 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
                         setUploadedImageDetailsFromExifData(fileForUpload, uploadedResource);
 
-                        thisUploadJob.addFileUploaded(fileForUpload, uploadedResource);
+                        thisUploadJob.addFileUploaded(uploadJobKey, uploadedResource);
 
-                    } else if (!thisUploadJob.isFileUploadStillWanted(fileForUpload)) {
+                    } else if (!thisUploadJob.isFileUploadStillWanted(uploadJobKey)) {
                         //This block gets entered when the upload is cancelled for a file
                     } else {
                         // notify the listener of the final error we received from the server
                         String errorMsg = getString(R.string.error_upload_file_chunk_upload_failed_after_retries, maxChunkUploadAutoRetries);
-                        notifyListenersOfCustomErrorUploadingFile(thisUploadJob, fileForUpload, errorMsg);
+                        notifyListenersOfCustomErrorUploadingFile(thisUploadJob, uploadJobKey, errorMsg);
                     }
                 }
             } catch (FileNotFoundException e) {
                 Crashlytics.logException(e);
-                postNewResponse(jobId, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUpload, e));
+                postNewResponse(jobId, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), uploadJobKey, e));
             } catch (final IOException e) {
                 Crashlytics.logException(e);
-                postNewResponse(jobId, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), fileForUpload, e));
+                postNewResponse(jobId, new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), uploadJobKey, e));
             }
         }
     }
@@ -1252,18 +1238,43 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return new byte[bufferSizeBytes];
     }
 
+    private Pair<Boolean, ResourceItem> uploadStreamChunk(UploadJob thisUploadJob, File uploadJobKey, UploadFileChunk currentUploadFileChunk, int maxChunkUploadAutoRetries) {
+
+        // Attempt to upload this chunk of the file
+        NewImageUploadFileChunkResponseHandler imageChunkUploadHandler = new NewImageUploadFileChunkResponseHandler(currentUploadFileChunk);
+        invokeWithRetries(thisUploadJob, imageChunkUploadHandler, maxChunkUploadAutoRetries);
+
+        ResourceItem uploadedResource = null;
+        if (imageChunkUploadHandler.isSuccess()) {
+            uploadedResource = ((NewImageUploadFileChunkResponseHandler.PiwigoUploadFileChunkResponse) imageChunkUploadHandler.getResponse()).getUploadedResource();
+        }
+
+        if (!imageChunkUploadHandler.isSuccess()) {
+            // notify listener of failure
+            postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileChunkFailedResponse(getNextMessageId(), uploadJobKey, imageChunkUploadHandler.getResponse()));
+        } else {
+            if (currentUploadFileChunk.getChunkId() == 0) {
+                thisUploadJob.markFileAsUploading(uploadJobKey);
+            }
+        }
+
+        return new Pair<>(imageChunkUploadHandler.isSuccess(), uploadedResource);
+    }
+
     private static class CompressionListener implements ExoPlayerCompression.CompressionListener {
 
         private final File rawVideo;
+        private final File compressedVideo;
         private boolean compressionComplete;
         private BasePiwigoUploadService uploadService;
         private long jobId;
         private Exception compressionError;
 
-        public CompressionListener(BasePiwigoUploadService uploadService, long jobId, File rawVideo) {
+        public CompressionListener(BasePiwigoUploadService uploadService, long jobId, File rawVideo, File compressedVideo) {
             this.uploadService = uploadService;
             this.jobId = jobId;
             this.rawVideo = rawVideo;
+            this.compressedVideo = compressedVideo;
         }
 
         @Override
@@ -1273,7 +1284,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         @Override
         public void onCompressionComplete() {
-            uploadService.postNewResponse(jobId, new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), rawVideo, 100));
+            uploadService.postNewResponse(jobId, new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), rawVideo, compressedVideo, 100));
             compressionComplete = true;
             // wake the main upload thread.
             synchronized (this) {
@@ -1288,7 +1299,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         @Override
         public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
             int intCompProgress = (int) Math.round(compressionProgress);
-            uploadService.postNewResponse(jobId, new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), rawVideo, intCompProgress));
+            uploadService.postNewResponse(jobId, new PiwigoVideoCompressionProgressUpdateResponse(getNextMessageId(), rawVideo, compressedVideo, intCompProgress));
         }
 
         @Override
@@ -1303,29 +1314,6 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         public Exception getCompressionError() {
             return compressionError;
         }
-    }
-
-    private Pair<Boolean, ResourceItem> uploadStreamChunk(UploadJob thisUploadJob, UploadFileChunk currentUploadFileChunk, int maxChunkUploadAutoRetries) {
-
-        // Attempt to upload this chunk of the file
-        NewImageUploadFileChunkResponseHandler imageChunkUploadHandler = new NewImageUploadFileChunkResponseHandler(currentUploadFileChunk);
-        invokeWithRetries(thisUploadJob, imageChunkUploadHandler, maxChunkUploadAutoRetries);
-
-        ResourceItem uploadedResource = null;
-        if (imageChunkUploadHandler.isSuccess()) {
-            uploadedResource = ((NewImageUploadFileChunkResponseHandler.PiwigoUploadFileChunkResponse) imageChunkUploadHandler.getResponse()).getUploadedResource();
-        }
-
-        if (!imageChunkUploadHandler.isSuccess()) {
-            // notify listener of failure
-            postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadFileChunkFailedResponse(getNextMessageId(), currentUploadFileChunk.getOriginalFile(), imageChunkUploadHandler.getResponse()));
-        } else {
-            if (currentUploadFileChunk.getChunkId() == 0) {
-                thisUploadJob.markFileAsUploading(currentUploadFileChunk.getOriginalFile());
-            }
-        }
-
-        return new Pair<>(imageChunkUploadHandler.isSuccess(), uploadedResource);
     }
 
     public interface JobUploadListener {
@@ -1396,15 +1384,21 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         private final int progress;
         private final File fileForUpload;
+        private final File compressedFileUpload;
 
-        public PiwigoVideoCompressionProgressUpdateResponse(long jobId, File fileForUpload, int progress) {
+        public PiwigoVideoCompressionProgressUpdateResponse(long jobId, File fileForUpload, File compressedFileUpload, int progress) {
             super(jobId, true);
             this.progress = progress;
             this.fileForUpload = fileForUpload;
+            this.compressedFileUpload = compressedFileUpload;
         }
 
         public File getFileForUpload() {
             return fileForUpload;
+        }
+
+        public File getCompressedFileUpload() {
+            return compressedFileUpload;
         }
 
         public int getProgress() {
