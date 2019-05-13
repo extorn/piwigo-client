@@ -178,6 +178,9 @@
     <string name="preference_gallery_sortOrder_summary">%1$s</string>
 
 
+    <string name="preference_gallery_sortOrder_inverted_title">Album-Sortierreihenfolge umkehren</string>
+    <string name="preference_gallery_sortOrder_inverted_summary">Wenn aktiviert, kehren Sie die ausgewählte Sortierreihenfolge der Albumressourcen um.</string>
+
 
     <string name="preference_gallery_unique_id_title">Eindeutiger Bezeichner für Bilder</string>
     <string name="preference_gallery_unique_id_summary">%1$s</string>

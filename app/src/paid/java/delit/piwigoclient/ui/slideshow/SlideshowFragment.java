@@ -14,6 +14,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
+import delit.piwigoclient.model.piwigo.PhotoContainer;
 import delit.piwigoclient.model.piwigo.PiwigoFavorites;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoTag;
@@ -32,9 +33,9 @@ import delit.piwigoclient.ui.events.TagContentAlteredEvent;
  * Created by gareth on 14/05/17.
  */
 
-public class SlideshowFragment<T extends Identifiable&Parcelable> extends AbstractSlideshowFragment<T> {
+public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<T> {
 
-    public static <S extends Identifiable&Parcelable> SlideshowFragment<S> newInstance(ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
+    public static <S extends Identifiable & Parcelable & PhotoContainer> SlideshowFragment<S> newInstance(ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         SlideshowFragment<S> fragment = new SlideshowFragment<>();
         fragment.setArguments(buildArgs(gallery, currentGalleryItem));
         return fragment;

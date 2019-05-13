@@ -15,6 +15,14 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -35,13 +43,6 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.NotificationCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -591,7 +592,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     filenameListStrB.append(String.format(Locale.getDefault(), "(%1$.1fMB)", fileLengthMB));
                 }
                 if (filesForReview.size() > 0) {
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview));
+                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview));
                     userInputRequested = true;
                 }
             }
@@ -613,7 +614,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     }
 
                     if (uploadingMultimedia /*&& revisedFilesForReview.size() > 0*/) {
-                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_files_larger_than_upload_threshold_compress), R.string.button_no, R.string.button_yes, new ShouldCompressVideosAction(getUiHelper()));
+                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_files_larger_than_upload_threshold_compress), R.string.button_no, R.string.button_cancel, R.string.button_yes, new ShouldCompressVideosAction(getUiHelper()));
                         userInputRequested = true;
                     }
 
@@ -936,7 +937,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             super.onResult(dialog, positiveAnswer);
             AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
             fragment.setCompressVideosBeforeUpload(Boolean.TRUE.equals(positiveAnswer));
-            fragment.buildAndSubmitNewUploadJob(true, true);
+
+            if (positiveAnswer != null) {
+                fragment.buildAndSubmitNewUploadJob(true, true);
+            }
         }
     }
 
@@ -957,7 +961,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     fragment.onRemove(fragment.getFilesForUploadViewAdapter(), file, false);
                 }
             }
-            fragment.buildAndSubmitNewUploadJob(true, false);
+            if (positiveAnswer != null) {
+                fragment.buildAndSubmitNewUploadJob(true, false);
+            }
         }
     }
 

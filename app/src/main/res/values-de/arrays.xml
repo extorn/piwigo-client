@@ -104,8 +104,13 @@
          - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.3.99.5</item>
+        <item>1.4.0.0</item>
         <item>"Änderungen:
-                - Kleine Korrekturen rund um die App"</item>
+                - Hinzufügen einer optionalen Vorabversion (derzeit nicht konfigurierbar) der Videokompression aller mp4-Videos (16:9-Format)
+                - Filterung der Dateitypen im Dateiauswahlfenster aktiviert
+                - Sie können nun auf das App-Icon in der Navigationsleiste klicken, um die Benutzeranmeldung zu aktualisieren
+                - Einstellung hinzugefügt, um die Sortierreihenfolge der Albenfotos umzukehren
+               Fehlerbehebung:
+                - Mehrere Störungen im Upload-Prozess"</item>
     </string-array>
 </resources>

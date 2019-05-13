@@ -33,6 +33,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     private final HashSet<Integer> pagesFailedToLoad = new HashSet<>();
     private boolean fullyLoaded;
     private transient ReentrantLock pageLoadLock;
+    private boolean retrieveItemsInReverseOrder;
 
     public PagedList(String itemType) {
         this(itemType, 10);
@@ -48,6 +49,14 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return itemType;
     }
 
+    public boolean isRetrieveItemsInReverseOrder() {
+        return retrieveItemsInReverseOrder;
+    }
+
+    public void setRetrieveItemsInReverseOrder(boolean retrieveItemsInReverseOrder) {
+        this.retrieveItemsInReverseOrder = retrieveItemsInReverseOrder;
+    }
+
     public Integer getAMissingPage() {
         if(!pagesFailedToLoad.isEmpty()) {
             return getNextPageToReload();
@@ -55,7 +64,15 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         if(!fullyLoaded) {
             int page = 0;
             if(pagesLoaded.size() > 0) {
-                page = pagesLoaded.last() + 1;
+                if (pagesLoaded.first() == 0) {
+                    page = pagesLoaded.last() + 1;
+                } else {
+                    page = pagesLoaded.first() - 1;
+                    if (page < 0) {
+                        Crashlytics.log(Log.ERROR, TAG, "Model thinks a negative page is missing! - This should be impossible");
+                        return null;
+                    }
+                }
             }
             if(!pagesBeingLoaded.containsValue(page)) {
                 return page;
@@ -165,7 +182,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return earlierLoadedPages(page) * pageSize;
     }
 
-    public int addItemPage(int page, int pageSize, Collection<T> newItems) {
+    public int addItemPage(int page, /*int pages, */ int pageSize, Collection<T> newItems) {
 
         int firstInsertPos = 0;
         try {
@@ -174,7 +191,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
                 items.addAll(firstInsertPos, newItems);
             }
             pagesLoaded.add(page);
-            if (newItems.size() < pageSize) {
+            if (newItems.size() < pageSize && pagesLoaded.size() == page + 1) {
                 fullyLoaded = true;
             }
         } catch(IllegalStateException e) {
@@ -205,8 +222,15 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         throw new UnsupportedOperationException("Implement this if needed");
     }
 
+    protected int getAdjustedIdx(int idx) {
+        return items.size() - 1 - idx;
+    }
+
     @Override
     public T getItemByIdx(int idx) {
+        if (retrieveItemsInReverseOrder) {
+            return items.get(getAdjustedIdx(idx));
+        }
         return items.get(idx);
     }
 

@@ -9,6 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.viewpager.widget.ViewPager;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -17,15 +21,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
+import delit.piwigoclient.model.piwigo.PhotoContainer;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
@@ -52,7 +54,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 14/05/17.
  */
 
-public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelable> extends MyFragment {
+public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends MyFragment {
 
     private static final String STATE_GALLERY = "galleryModel";
     private static final String ARG_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
@@ -277,18 +279,36 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable&Parcelabl
     private void loadAlbumResourcesPage(int pageToLoad) {
         galleryModel.acquirePageLoadLock();
         try {
-            if (galleryModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+            int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
+            if (pageToActuallyLoad < 0) {
+                // the sort order is inverted so we know for a fact this page is invalid.
+                return;
+            }
+
+            if (galleryModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad)) {
                 return;
             }
 
             String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
             String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
-            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs,getContext());
-            long loadingMessageId = invokeResourcePageLoader(galleryModel, sortOrder, pageToLoad, pageSize, multimediaExtensionList);
-            galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId, "loadResources"), pageToLoad);
+
+            long loadingMessageId = invokeResourcePageLoader(galleryModel, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList);
+            galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId, "loadResources"), pageToActuallyLoad);
         } finally {
             galleryModel.releasePageLoadLock();
         }
+    }
+
+    private int getPageToActuallyLoad(int pageRequested, int pageSize) {
+        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+        galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder);
+        int pageToActuallyLoad = pageRequested;
+        if (invertSortOrder) {
+            int pagesOfPhotos = galleryModel.getContainerDetails().getPagesOfPhotos(pageSize);
+            pageToActuallyLoad = pagesOfPhotos - pageRequested;
+        }
+        return pageToActuallyLoad;
     }
 
     protected abstract long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> containerDetails, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList);

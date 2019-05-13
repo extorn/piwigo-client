@@ -181,6 +181,9 @@
     <string name="preference_gallery_sortOrder_summary">%1$s</string>
 
 
+    <string name="preference_gallery_sortOrder_inverted_title">Inverser l\'ordre de tri de l\'album</string>
+    <string name="preference_gallery_sortOrder_inverted_summary">Lorsque cette option est activée, inversez l\'ordre de tri des ressources de l\'album sélectionné.</string>
+
 
     <string name="preference_gallery_unique_id_title">Identificateur unique pour les images</string>
     <string name="preference_gallery_unique_id_summary">%1$s</string>

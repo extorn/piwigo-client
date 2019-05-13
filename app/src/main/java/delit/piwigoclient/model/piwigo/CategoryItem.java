@@ -19,7 +19,7 @@ import delit.piwigoclient.util.CollectionUtils;
 /**
  * An item representing a piece of content.
  */
-public class CategoryItem extends GalleryItem implements Cloneable {
+public class CategoryItem extends GalleryItem implements Cloneable, PhotoContainer {
     private static final String TAG = "CategoryItem";
     private static final String BLANK_TAG = "PIWIGO_CLIENT_INTERNAL_BLANK";
     public static final CategoryItem ROOT_ALBUM = new CategoryItem(0, "--------", null, false, null, 0, 0, 0, null);
@@ -456,5 +456,11 @@ public class CategoryItem extends GalleryItem implements Cloneable {
     public CategoryItem withId(long newId) {
         this.setId(newId);
         return this;
+    }
+
+    @Override
+    public int getPagesOfPhotos(int pageSize) {
+        int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 0 : -1));
+        return pages < 0 ? 0 : pages;
     }
 }

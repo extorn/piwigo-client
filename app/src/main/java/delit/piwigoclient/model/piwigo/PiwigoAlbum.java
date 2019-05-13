@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> implements Parcelable {
 
-    private transient Comparator<GalleryItem> itemComparator = new AlbumComparator();
+    private transient AlbumComparator itemComparator = new AlbumComparator();
     private int subAlbumCount;
     private int spacerAlbums;
     private int bannerCount;
@@ -47,33 +47,18 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         dest.writeInt(bannerCount);
     }
 
-    private static class AlbumComparator implements Comparator<GalleryItem> {
-        @Override
-        public int compare(GalleryItem o1, GalleryItem o2) {
-            boolean firstIsCategory = o1 instanceof CategoryItem;
-            boolean secondIsCategory = o2 instanceof CategoryItem;
-            if (firstIsCategory && secondIsCategory) {
-                if (o1 == CategoryItem.ALBUM_HEADING) {
-                    return -1;
-                } else if (o2 == CategoryItem.ALBUM_HEADING) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            } else if (!firstIsCategory && !secondIsCategory) {
-                if (o1 == GalleryItem.PICTURE_HEADING) {
-                    return -1;
-                } else if (o2 == GalleryItem.PICTURE_HEADING) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            } else if (firstIsCategory) {
-                return -1;
-            } else {
-                return 1;
+    @Override
+    public GalleryItem getItemByIdx(int idx) {
+        if (isRetrieveItemsInReverseOrder()) {
+            // albums should not be reversed as their ordering is static
+            int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
+            if (idx >= bannerOffset && idx < bannerOffset + subAlbumCount + spacerAlbums) {
+                // retrieving a category item - sub album or banner (heading / advert)
+                int newIdx = subAlbumCount + spacerAlbums + bannerOffset - idx;
+                idx = newIdx;
             }
         }
+        return super.getItemByIdx(idx);
     }
 
     @Override
@@ -83,6 +68,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
             bannerCount++;
         }
         // ensure these are always placed above other resources.
+        itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
         Collections.sort(getItems(), itemComparator);
 //        Log.d("Order", getItems().toString());
     }
@@ -95,8 +81,23 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         }
         super.addItem(item);
         // ensure these are always placed first.
+        itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
         Collections.sort(getItems(), itemComparator);
 //        Log.d("Order", getItems().toString());
+    }
+
+    public void addItemPage(int page, int pageSize, List<GalleryItem> newItems) {
+        super.addItemPage(page, pageSize, newItems);
+        for (GalleryItem item : newItems) {
+            if (item == CategoryItem.ALBUM_HEADING || item == GalleryItem.PICTURE_HEADING) {
+                bannerCount++;
+            }
+        }
+        if (isRetrieveItemsInReverseOrder()) {
+            // need to resort the list to bubble the albums back to the end!
+            itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
+            Collections.sort(getItems(), itemComparator);
+        }
     }
 
     protected int getPageInsertPosition(int page, int pageSize) {
@@ -107,12 +108,21 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         return insertPosition;
     }
 
-    public void addItemPage(int page, int pageSize, List<GalleryItem> newItems) {
-        super.addItemPage(page, pageSize, newItems);
-        for (GalleryItem item : newItems) {
-            if (item == CategoryItem.ALBUM_HEADING || item == GalleryItem.PICTURE_HEADING) {
-                bannerCount++;
+    public void setSpacerAlbumCount(int spacerAlbumsNeeded) {
+        // remove all spacers
+        ArrayList<GalleryItem> items = getItems();
+        while (items.remove(CategoryItem.BLANK)) {
+        }
+        spacerAlbums = spacerAlbumsNeeded;
+        if (spacerAlbumsNeeded > 0) {
+            // add correct number of spacers
+            long blankId = CategoryItem.BLANK.getId();
+            for (int i = 0; i < spacerAlbumsNeeded; i++) {
+                items.add(CategoryItem.BLANK.clone().withId(blankId++));
             }
+            // ensure spacers are always placed before images etc.
+            itemComparator.setSortInReverseOrder(isRetrieveItemsInReverseOrder());
+            Collections.sort(items, itemComparator);
         }
     }
 
@@ -132,21 +142,50 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         return subAlbumCount;
     }
 
-    public void setSpacerAlbumCount(int spacerAlbumsNeeded) {
-        // remove all spacers
-        ArrayList<GalleryItem> items = getItems();
-        while (items.remove(CategoryItem.BLANK)) {
+    private static class AlbumComparator implements Comparator<GalleryItem> {
+
+        private boolean sortInReverseOrder;
+
+        public void setSortInReverseOrder(boolean sortInReverseOrder) {
+            this.sortInReverseOrder = sortInReverseOrder;
         }
-        spacerAlbums = spacerAlbumsNeeded;
-        if (spacerAlbumsNeeded > 0) {
-            // add correct number of spacers
-            long blankId = CategoryItem.BLANK.getId();
-            for (int i = 0; i < spacerAlbumsNeeded; i++) {
-                items.add(CategoryItem.BLANK.clone().withId(blankId++));
+
+        @Override
+        public int compare(GalleryItem o1, GalleryItem o2) {
+            if (sortInReverseOrder) {
+                return compareReverseOrdering(o1, o2);
+            } else {
+                return -compareReverseOrdering(o1, o2);
             }
-            // ensure spacers are always placed before images etc.
-            Collections.sort(items, itemComparator);
         }
+
+        private int compareReverseOrdering(GalleryItem o1, GalleryItem o2) {
+            boolean firstIsCategory = o1 instanceof CategoryItem;
+            boolean secondIsCategory = o2 instanceof CategoryItem;
+
+            if (firstIsCategory && secondIsCategory) {
+                if (o1 == CategoryItem.ALBUM_HEADING) {
+                    return 1; // push album heading to the end of albums
+                } else if (o2 == CategoryItem.ALBUM_HEADING) {
+                    return -1; // push album heading to the end of albums
+                } else {
+                    return 0; // don't change the individual album order (we'll do this once they're all added)
+                }
+            } else if (!firstIsCategory && !secondIsCategory) {
+                if (o1 == GalleryItem.PICTURE_HEADING) {
+                    return 1; // push pictures heading to the end of pictures
+                } else if (o2 == GalleryItem.PICTURE_HEADING) {
+                    return -1; // push pictures heading to the end of pictures
+                } else {
+                    return 0; // don't change the actual picture ordering
+                }
+            } else if (firstIsCategory) {
+                return 1; // push categories to the very end
+            } else {
+                return -1; // push categories to the very end
+            }
+        }
+
     }
 
     public boolean addMissingAlbums(List<CategoryItem> adminCategories) {

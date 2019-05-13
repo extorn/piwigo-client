@@ -33,7 +33,7 @@ public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.Favorites
         }
     };
 
-    public static class FavoritesSummaryDetails implements Identifiable, Parcelable {
+    public static class FavoritesSummaryDetails implements Identifiable, Parcelable, PhotoContainer {
 
         private int photoCount;
 
@@ -78,6 +78,12 @@ public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.Favorites
 
         public int getPhotoCount() {
             return photoCount;
+        }
+
+        @Override
+        public int getPagesOfPhotos(int pageSize) {
+            int pages = ((getPhotoCount() / pageSize) + (getPhotoCount() % pageSize > 0 ? 0 : -1));
+            return pages < 0 ? 0 : pages;
         }
     }
 }

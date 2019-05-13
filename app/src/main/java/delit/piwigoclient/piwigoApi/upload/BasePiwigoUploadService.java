@@ -13,6 +13,11 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.Pair;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.app.JobIntentService;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -42,10 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import androidx.annotation.RequiresApi;
-import androidx.core.app.JobIntentService;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -836,7 +837,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 thisUploadJob.cancelFileUpload(fileForUpload);
             }
 
-            if (thisUploadJob.needsUpload(fileForUpload)) {
+            if (thisUploadJob.isCompressVideosBeforeUpload() && thisUploadJob.needsUpload(fileForUpload)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     // compression only possible for Android API 18 and up.
 
@@ -862,7 +863,6 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     }
                 }
             }
-
 
             if (thisUploadJob.needsUpload(fileForUpload)) {
                 if (thisUploadJob.isFileCompressed(fileForUpload)) {

@@ -18,6 +18,15 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -38,14 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatCheckBox;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -496,9 +497,13 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         galleryListViewScrollListener = new EndlessRecyclerViewScrollListener(gridLayoutMan) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = page;
-                if (galleryModel.isPageLoadedOrBeingLoaded(pageToLoad) || galleryModel.isFullyLoaded()) {
+            public void onLoadMore(int requestedPage, int totalItemsCount, RecyclerView view) {
+                int pageToLoad = requestedPage;
+
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+                int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
+
+                if (galleryModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad) || galleryModel.isFullyLoaded()) {
                     Integer missingPage = galleryModel.getAMissingPage();
                     if(missingPage != null) {
                         pageToLoad = missingPage;
@@ -791,20 +796,39 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         synchronized (loadingMessageIds) {
             galleryModel.acquirePageLoadLock();
             try {
-                if (galleryModel.isPageLoadedOrBeingLoaded(pageToLoad)) {
+                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+                int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
+                if (pageToActuallyLoad < 0) {
+                    // the sort order is inverted so we know for a fact this page is invalid.
+                    return;
+                }
+
+                if (galleryModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad)) {
                     return;
                 }
 
                 String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
                 String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
-                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new ImagesGetResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToLoad, pageSize, multimediaExtensionList));
-                galleryModel.recordPageBeingLoaded(loadingMessageId, pageToLoad);
+
+
+                long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new ImagesGetResponseHandler(galleryModel.getContainerDetails(), sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
+                galleryModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);
                 loadingMessageIds.put(loadingMessageId, String.valueOf(pageToLoad));
             } finally {
                 galleryModel.releasePageLoadLock();
             }
         }
+    }
+
+    private int getPageToActuallyLoad(int pageRequested, int pageSize) {
+        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+        galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder);
+        int pageToActuallyLoad = pageRequested;
+        if (invertSortOrder) {
+            int pagesOfPhotos = galleryModel.getContainerDetails().getPagesOfPhotos(pageSize);
+            pageToActuallyLoad = pagesOfPhotos - pageRequested;
+        }
+        return pageToActuallyLoad;
     }
 
     private void onAlbumDeleteRequest(final CategoryItem album) {
@@ -1672,7 +1696,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
         synchronized (this) {
-            if(response.getPage() == 0 && response.getResources().size() > 0) {
+            boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+            int firstPage = invertSortOrder ? galleryModel.getContainerDetails().getPagesOfPhotos(pageSize) : 0;
+
+            if (response.getPage() == firstPage && response.getResources().size() > 0) {
                 if(!galleryModel.containsItem(CategoryItem.PICTURE_HEADING)) {
                     galleryModel.addItem(CategoryItem.PICTURE_HEADING);
                 }

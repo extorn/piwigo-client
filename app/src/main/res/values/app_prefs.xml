@@ -200,6 +200,11 @@
     <string name="preference_gallery_sortOrder_summary">%1$s</string>
     <string name="preference_gallery_sortOrder_default" translatable="false">name</string>
 
+    <string name="preference_gallery_sortOrder_inverted_key" translatable="false">preference_gallery_sortOrder_inverted</string>
+    <string name="preference_gallery_sortOrder_inverted_title">Invert Album sort order</string>
+    <string name="preference_gallery_sortOrder_inverted_summary">When enabled, reverse the selected sort order of album resources</string>
+    <bool name="preference_gallery_sortOrder_inverted_default">false</bool>
+
     <string name="preference_gallery_unique_id_key" translatable="false">preference_gallery_unique_id</string>
     <string name="preference_gallery_unique_id_title">Unique Identifier for images</string>
     <string name="preference_gallery_unique_id_summary">%1$s</string>
