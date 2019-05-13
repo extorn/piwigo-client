@@ -2,8 +2,9 @@ package delit.piwigoclient.ui.common.util;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -198,5 +199,13 @@ public class ParcelUtils {
     public static <S, T> HashMap<S,T> readMap(Parcel in, ClassLoader loader) {
         HashMap<S,T> map = new HashMap<>(0);
         return readMap(in, map, loader);
+    }
+
+    public static Boolean readBoolean(Parcel in) {
+        return readValue(in, null, boolean.class);
+    }
+
+    public static void writeBoolean(Parcel out, Boolean value) {
+        out.writeValue(value);
     }
 }

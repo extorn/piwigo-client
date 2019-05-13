@@ -188,10 +188,11 @@
     <string-array name="release_history" translatable="true">
         <item>1.4.0.0</item>
         <item>"Changements :
-                - Ajout de la compression vidéo optionnelle de toutes les vidéos mp4 (format 16:9) en pré-téléchargement (non configurable actuellement)
+                - Ajout de la compression vidéo optionnelle de toutes les vidéos mp4 (format 16:9 seulement) en pré-téléchargement (non configurable actuellement)
                 - Filtrage des types de fichiers activé dans la fenêtre de sélection de fichiers
                 - Vous pouvez maintenant cliquer sur l'icône de l'application dans la barre de navigation pour rafraîchir la connexion de l'utilisateur
                 - Ajout d'une préférence pour permettre d'inverser l'ordre de tri des photos de l'album
+                - Permet de masquer et d'afficher les sous-albums à l'intérieur d'un album (cliquez sur l'en-tête des albums)
                Correction d'un bug :
                 - Problèmes multiples dans le processus de téléchargement"</item>
     </string-array>

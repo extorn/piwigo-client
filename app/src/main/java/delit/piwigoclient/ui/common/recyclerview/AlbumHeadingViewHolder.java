@@ -14,6 +14,8 @@ import delit.piwigoclient.ui.album.view.AlbumItemViewHolder;
 public class AlbumHeadingViewHolder<S extends Identifiable&Parcelable> extends AlbumItemViewHolder<S> {
 
     private TextView headingView;
+    private int subAlbumCount;
+    private boolean showAlbumCount;
 
     public AlbumHeadingViewHolder(View view, AlbumItemRecyclerViewAdapter<S> parentAdapter, int viewType) {
         super(view, parentAdapter, viewType);
@@ -28,11 +30,23 @@ public class AlbumHeadingViewHolder<S extends Identifiable&Parcelable> extends A
         headingView = itemView.findViewById(R.id.heading_text);
     }
 
+    public void setSubAlbumCount(int subAlbumCount) {
+        this.subAlbumCount = subAlbumCount;
+    }
+
+    public void setShowAlbumCount(boolean showAlbumCount) {
+        this.showAlbumCount = showAlbumCount;
+    }
+
     @Override
     public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
         switch(viewType) {
             case GalleryItem.ALBUM_HEADING_TYPE:
-                headingView.setText(R.string.album_section_heading_albums);
+                if (showAlbumCount) {
+                    headingView.setText(context.getString(R.string.album_section_heading_albums_pattern, subAlbumCount));
+                } else {
+                    headingView.setText(R.string.album_section_heading_albums);
+                }
                 break;
             case GalleryItem.PICTURE_HEADING_TYPE:
                 headingView.setText(R.string.album_section_heading_resources);

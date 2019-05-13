@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import delit.piwigoclient.ui.common.util.ParcelUtils;
+
 /**
  * Helper class for providing sample content for user interfaces created by
  * Android template wizards.
@@ -19,6 +21,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     private int subAlbumCount;
     private int spacerAlbums;
     private int bannerCount;
+    private boolean hideAlbums;
 
     public PiwigoAlbum(CategoryItem albumDetails) {
         super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));
@@ -32,6 +35,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         if(itemComparator == null) {
             itemComparator = new AlbumComparator();
         }
+        hideAlbums = ParcelUtils.readBoolean(in);
     }
     
     @Override
@@ -45,10 +49,26 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         dest.writeInt(subAlbumCount);
         dest.writeInt(spacerAlbums);
         dest.writeInt(bannerCount);
+        dest.writeValue(hideAlbums);
+    }
+
+    @Override
+    public int getItemCount() {
+        int itemCount = super.getItemCount();
+        if (hideAlbums) {
+            itemCount -= subAlbumCount + spacerAlbums;
+        }
+        return itemCount;
     }
 
     @Override
     public GalleryItem getItemByIdx(int idx) {
+        if (hideAlbums) {
+            int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
+            if (idx > 0) {
+                idx += subAlbumCount + spacerAlbums;
+            }
+        }
         if (isRetrieveItemsInReverseOrder()) {
             // albums should not be reversed as their ordering is static
             int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
@@ -59,6 +79,14 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
             }
         }
         return super.getItemByIdx(idx);
+    }
+
+    public boolean isHideAlbums() {
+        return hideAlbums;
+    }
+
+    public void setHideAlbums(boolean hideAlbums) {
+        this.hideAlbums = hideAlbums;
     }
 
     @Override

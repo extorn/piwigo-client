@@ -88,7 +88,8 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
             items = in.readArrayList(getClass().getClassLoader());
             ParcelUtils.readMap(in, pagesBeingLoaded, getClass().getClassLoader());
             ParcelUtils.readIntSet(in, pagesFailedToLoad, null);
-            fullyLoaded = ParcelUtils.readValue(in, null, boolean.class);
+            fullyLoaded = ParcelUtils.readBoolean(in);
+            retrieveItemsInReverseOrder = ParcelUtils.readBoolean(in);
 
             if (pageLoadLock == null) {
                 this.pageLoadLock = new ReentrantLock();
@@ -113,6 +114,7 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         ParcelUtils.writeMap(dest, pagesBeingLoaded);
         ParcelUtils.writeIntSet(dest, pagesFailedToLoad);
         dest.writeValue(fullyLoaded);
+        dest.writeValue(retrieveItemsInReverseOrder);
     }
 
     public void updateMaxExpectedItemCount(int newCount) {

@@ -242,7 +242,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
             int subCategoryPhotoCount = 0;
             for (CategoryItem childAlbum : childAlbums) {
                 childAlbum.updateTotalPhotoAndSubAlbumCount();
-                subCategoryCount += childAlbum.getSubCategories() + 1;
+                subCategoryCount += 1; //childAlbum.getSubCategories() + 1;
                 subCategoryPhotoCount += childAlbum.getTotalPhotos();
             }
             totalPhotoCount = photoCount + subCategoryPhotoCount;

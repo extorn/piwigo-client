@@ -530,6 +530,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_invalid_uri_pattern">Ungültige URI. %1$s</string>
     <string name="alert_invalid_uri_pattern_spaces">Ungültige URI. Es gibt ein Leerzeichen im URI an der Position %1$d</string>
     <string name="album_section_heading_albums">Alben</string>
+    <string name="album_section_heading_albums_pattern">Alben (%1$d)</string>
     <string name="album_section_heading_resources">Fotos in diesem Album</string>
     <string name="album_title_home">home</string>
     <string name="upload_file_rating">Meine Bewertung</string>

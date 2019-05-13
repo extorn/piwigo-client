@@ -2,11 +2,12 @@ package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
 import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -14,6 +15,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.ui.common.recyclerview.AlbumHeadingViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
@@ -113,6 +115,10 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> ext
                 case GalleryItem.VIDEO_RESOURCE_TYPE:
                 case GalleryItem.PICTURE_RESOURCE_TYPE:
                     ((ResourceItemViewHolder) holder).updateCheckableStatus();
+                    break;
+                case GalleryItem.ALBUM_HEADING_TYPE:
+                    ((AlbumHeadingViewHolder) holder).setShowAlbumCount(((PiwigoAlbum) getItemStore()).isHideAlbums());
+                    break;
                 default:
             }
 
@@ -210,7 +216,34 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> ext
                     } else {
                         onNonCategoryClick();
                     }
+                } else {
+                    switch (getViewHolder().getItemViewType()) {
+                        case GalleryItem.ALBUM_HEADING_TYPE:
+                            onAlbumsHeadingClick();
+                            break;
+                        case GalleryItem.PICTURE_HEADING_TYPE:
+                            onPicturesHeadingClick();
+                            break;
+                        default:
+                            // do nothing.
+                    }
                 }
+            }
+        }
+
+        private void onPicturesHeadingClick() {
+            // do nothing for now.
+        }
+
+        private void onAlbumsHeadingClick() {
+            ResourceContainer<T, GalleryItem> itemStore = getParentAdapter().getItemStore();
+            if (itemStore instanceof PiwigoAlbum) {
+                boolean hideAlbums = !((PiwigoAlbum) itemStore).isHideAlbums();
+                ((PiwigoAlbum) itemStore).setHideAlbums(hideAlbums);
+                AlbumHeadingViewHolder viewHolder = (AlbumHeadingViewHolder) getViewHolder();
+                viewHolder.setSubAlbumCount(((PiwigoAlbum) itemStore).getSubAlbumCount());
+                viewHolder.setShowAlbumCount(hideAlbums);
+                getParentAdapter().notifyDataSetChanged();
             }
         }
 
