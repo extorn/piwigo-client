@@ -3,8 +3,14 @@ package delit.piwigoclient.ui.preferences;
 import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.SwitchPreference;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -17,10 +23,6 @@ import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.preference.EditTextPreference;
-import androidx.preference.ListPreference;
-import androidx.preference.Preference;
-import androidx.preference.SwitchPreference;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
@@ -52,6 +54,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     private transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
     private boolean initialising = false;
     private String preferencesKey;
+    private ResponseCacheButtonTextRetriever responseCacheButtonTextRetriever;
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
@@ -176,7 +179,6 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         findPreference(R.string.preference_caching_max_cache_entry_size_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
         Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
-        setResponseCacheButtonText(responseCacheFlushButton);
         responseCacheFlushButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
@@ -189,11 +191,12 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                     Crashlytics.logException(e);
                     getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheClearFailed_message));
                 }
-                setResponseCacheButtonText(preference);
+                setResponseCacheButtonText();
                 return true;
 
             }
         });
+        setResponseCacheButtonText();
 
         findPreference(R.string.preference_server_connection_timeout_secs_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
         findPreference(R.string.preference_server_connection_retries_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
@@ -214,10 +217,20 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         });
     }
 
-    private void setResponseCacheButtonText(Preference responseCacheFlushButton) {
-        double cacheBytes = CacheUtils.getResponseCacheSize(getContext());
-        String spaceSuffix = "(" + IOUtils.toNormalizedText(cacheBytes) + ")";
-        responseCacheFlushButton.setTitle(getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
+    private void setResponseCacheButtonText() {
+        if (responseCacheButtonTextRetriever != null && responseCacheButtonTextRetriever.getStatus() != AsyncTask.Status.FINISHED) {
+            responseCacheButtonTextRetriever.cancel(true);
+        }
+        responseCacheButtonTextRetriever = UIHelper.submitAsyncTask(new ResponseCacheButtonTextRetriever(), this);
+    }
+
+    @Override
+    public void onPause() {
+        if (responseCacheButtonTextRetriever != null && responseCacheButtonTextRetriever.getStatus() != AsyncTask.Status.FINISHED) {
+            responseCacheButtonTextRetriever.cancel(true);
+        }
+        initialising = true;
+        super.onPause();
     }
 
     @Override
@@ -226,10 +239,28 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         initialising = false;
     }
 
-    @Override
-    public void onPause() {
-        initialising = true;
-        super.onPause();
+    private static class ResponseCacheButtonTextRetriever extends AsyncTask<BaseConnectionPreferenceFragment, Void, Double> {
+
+        private Preference responseCacheFlushButton;
+        private Context context;
+        private BaseConnectionPreferenceFragment fragment;
+
+        @Override
+        protected Double doInBackground(BaseConnectionPreferenceFragment[] params) {
+            this.fragment = params[0];
+            this.responseCacheFlushButton = fragment.findPreference(R.string.preference_caching_clearResponseCache_key);
+            context = responseCacheFlushButton.getContext();
+            final double cacheBytes = CacheUtils.getResponseCacheSize(context);
+            return cacheBytes;
+        }
+
+        @Override
+        protected void onPostExecute(Double cacheBytes) {
+            if (!isCancelled() && fragment.isVisible()) {
+                String spaceSuffix = "(" + IOUtils.toNormalizedText(cacheBytes) + ")";
+                responseCacheFlushButton.setTitle(context.getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
+            }
+        }
     }
 
     @Override
@@ -417,7 +448,9 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             boolean valueChanged = (newValue != null && !newValue.equals(currentPersistedValue));
 
             if ("disk".equals(newValue) || valueChanged) {
-                getUiHelper().runWithExtraPermissions(BaseConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
+                if (!initialising) {
+                    getUiHelper().runWithExtraPermissions(BaseConnectionPreferenceFragment.this, Build.VERSION_CODES.BASE, Build.VERSION_CODES.KITKAT, Manifest.permission.WRITE_EXTERNAL_STORAGE, getString(R.string.alert_write_permission_needed_for_caching_to_disk));
+                }
             } else if(valueChanged) {
                 if (!initialising) {
                     // clear the existing session - it's not valid any more.

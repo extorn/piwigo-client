@@ -592,7 +592,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     filenameListStrB.append(String.format(Locale.getDefault(), "(%1$.1fMB)", fileLengthMB));
                 }
                 if (filesForReview.size() > 0) {
-                    getUiHelper().showOrQueueDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview));
+                    getUiHelper().showOrQueueCancellableDialogQuestion(R.string.alert_warning, getString(R.string.alert_files_larger_than_upload_threshold_pattern, filesForReview.size(), filenameListStrB.toString()), R.string.button_no, R.string.button_cancel, R.string.button_yes, new FileSizeExceededAction(getUiHelper(), filesForReview));
                     userInputRequested = true;
                 }
             }
@@ -614,7 +614,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     }
 
                     if (uploadingMultimedia /*&& revisedFilesForReview.size() > 0*/) {
-                        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_files_larger_than_upload_threshold_compress), R.string.button_no, R.string.button_cancel, R.string.button_yes, new ShouldCompressVideosAction(getUiHelper()));
+                        getUiHelper().showOrQueueCancellableDialogQuestion(R.string.alert_question_title, getString(R.string.alert_files_larger_than_upload_threshold_compress), R.string.button_no, R.string.button_cancel, R.string.button_yes, new ShouldCompressVideosAction(getUiHelper()));
                         userInputRequested = true;
                     }
 

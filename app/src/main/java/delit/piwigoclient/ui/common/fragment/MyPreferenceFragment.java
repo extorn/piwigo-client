@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
-import com.crashlytics.android.Crashlytics;
-
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
@@ -15,6 +13,9 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+
+import com.crashlytics.android.Crashlytics;
+
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
@@ -45,6 +46,14 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
     private Context c;
     protected static final String DIALOG_FRAGMENT_TAG =
             "androidx.preference.PreferenceFragment.DIALOG";
+
+    public static final class DummyPreferencesFragment extends MyPreferenceFragment {
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+
+        }
+    }
 
     protected UIHelper getUiHelper() {
         return uiHelper;

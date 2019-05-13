@@ -12,6 +12,12 @@ import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.widget.TextViewCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
 
@@ -26,11 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.TextViewCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
@@ -173,11 +174,11 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     }
 
     private void buildFileExtFilterControls() {
-        if (allPossiblyVisibleFileExts == null) {
+        if (allPossiblyVisibleFileExts == null && getViewPrefs().getVisibleFileTypes() != null) {
             allPossiblyVisibleFileExts = new ArrayList<>(getViewPrefs().getVisibleFileTypes());
         }
         // initialise local cached set of selected items
-        if (selectedVisibleFileExts == null) {
+        if (selectedVisibleFileExts == null && allPossiblyVisibleFileExts != null) {
             selectedVisibleFileExts = new ArrayList<>(allPossiblyVisibleFileExts);
         }
         // clear all the existing filters
@@ -192,7 +193,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         TreeSet<String> visibleFileExts = listAdapter.getFileExtsInCurrentFolder();
 
         // for each file type visible, show a checkbox and set it according to out local model
-        if (visibleFileExts != null) {
+        if (visibleFileExts != null && selectedVisibleFileExts != null) {
             boolean updateViewRequired = false;
             for (String fileExt : visibleFileExts) {
                 FlowLayout.LayoutParams layoutParams = new FlowLayout.LayoutParams(FlowLayout.LayoutParams.WRAP_CONTENT, FlowLayout.LayoutParams.WRAP_CONTENT);

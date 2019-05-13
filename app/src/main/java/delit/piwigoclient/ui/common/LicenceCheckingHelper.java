@@ -91,7 +91,7 @@ public class LicenceCheckingHelper {
                     Crashlytics.log(Log.DEBUG, TAG, "Starting Market Intent");
                     Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
                             "http://market.android.com/details?id=" + activity.getPackageName()));
-                    activity.startActivity(marketIntent);
+                    activity.startActivity(Intent.createChooser(marketIntent, ""));
                 }
             } else {
                 activity.finish();

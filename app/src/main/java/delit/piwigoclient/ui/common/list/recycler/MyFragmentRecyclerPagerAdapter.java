@@ -22,22 +22,22 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.util.CollectionUtils;
-import delit.piwigoclient.util.SetUtils;
 
 /**
  * Implementation of {@link PagerAdapter} that
@@ -267,6 +267,11 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
     @Override
     public void finishUpdate(@NonNull ViewGroup container) {
+        commitFragmentTransaction();
+
+    }
+
+    private void commitFragmentTransaction() {
         if (mCurTransaction != null) {
             mCurTransaction.commitNow();
             mCurTransaction = null;
@@ -294,6 +299,8 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
     @Override
     public Parcelable saveState() {
+
+        commitFragmentTransaction();
 
         int minIdxToKeep = getMinIdxFragmentStateToKeep();
         int maxIdxToKeep = getMaxIdxFragmentStateToKeep();

@@ -10,6 +10,8 @@ import android.net.NetworkInfo;
 import android.os.FileObserver;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
@@ -21,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -190,7 +191,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                             }
                             for (AutoUploadJobConfig jobConfig : jobConfigList) {
                                 File monitoringFolder = jobConfig.getLocalFolderToMonitor(context);
-                                if(!runningObservers.containsKey(monitoringFolder)) {
+                                if (monitoringFolder != null && !runningObservers.containsKey(monitoringFolder)) {
                                     FileObserver monitorProcess = new CustomFileObserver(this, monitoringFolder);
                                     monitorProcess.startWatching();
                                     runningObservers.put(monitoringFolder, monitorProcess);

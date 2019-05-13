@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -25,6 +26,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -48,16 +57,11 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -92,6 +96,7 @@ public abstract class UIHelper<T> {
     private static final String STATE_PERMS_FOR_REASON = "UIHelper.reasonForPermissionsRequired";
     private static final String STATE_SIMPLE_MESSAGE_QUEUE = "UIHelper.simpleMessageQueue";
     private static final String STATE_DIALOG_MESSAGE_QUEUE = "UIHelper.dialogMessageQueue";
+    private static ExecutorService executors;
     private final T parent;
     private final SharedPreferences prefs;
     private final Queue<QueuedDialogMessage> dialogMessageQueue = new LinkedBlockingQueue<>(20);
@@ -359,19 +364,12 @@ public abstract class UIHelper<T> {
         return addActiveServiceCall(titleString, messageId, serviceDesc);
     }
 
-    public long addActiveServiceCall(String titleString, long messageId, String serviceDesc) {
-        synchronized (activeServiceCalls) {
-            activeServiceCalls.put(messageId, serviceDesc);
+    public static <T extends AsyncTask, S extends Object> T submitAsyncTask(T task, S... params) {
+        if (executors == null) {
+            executors = Executors.newCachedThreadPool();
         }
-        if (!isProgressIndicatorVisible()) {
-            if(progressIndicator == null) {
-                Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
-            } else {
-                progressIndicator.showProgressIndicator(titleString, -1);
-            }
-        }
-        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
-        return messageId;
+        task.executeOnExecutor(executors, params);
+        return task;
     }
 
     public long addActiveServiceCall(String titleString, AbstractPiwigoDirectResponseHandler handler) {
@@ -754,6 +752,24 @@ public abstract class UIHelper<T> {
         showOrQueueDialogQuestion(R.string.alert_information, message, R.string.button_no, R.string.button_yes, new NewUnTrustedCaCertificateReceivedAction(this, event.getUntrustedCerts()));
     }
 
+    public long addActiveServiceCall(String titleString, long messageId, String serviceDesc) {
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, titleString);
+        }
+        synchronized (activeServiceCalls) {
+            activeServiceCalls.put(messageId, serviceDesc);
+        }
+        if (!isProgressIndicatorVisible()) {
+            if (progressIndicator == null) {
+                Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
+            } else {
+                progressIndicator.showProgressIndicator(titleString, -1);
+            }
+        }
+        PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
+        return messageId;
+    }
+
     private static class NewUnTrustedCaCertificateReceivedAction extends UIHelper.QuestionResultAdapter {
         private final HashMap<String, X509Certificate> untrustedCerts;
 
@@ -810,6 +826,10 @@ public abstract class UIHelper<T> {
 
     public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int neutralButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
         showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, null, layoutId, positiveButtonTextId, negativeButtonTextId, neutralButtonTextId, listener));
+    }
+
+    public void showOrQueueCancellableDialogQuestion(int titleId, String message, int negativeButtonTextId, int cancellableButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
+        showOrQueueDialogMessage(new QueuedQuestionMessage(titleId, message, null, Integer.MIN_VALUE, positiveButtonTextId, negativeButtonTextId, cancellableButtonTextId, listener));
     }
 
     public void showOrQueueDialogQuestion(int titleId, String message, int layoutId, int negativeButtonTextId, int positiveButtonTextId, final QuestionResultListener listener) {
