@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -145,6 +146,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
             }
             externallyTriggeredSelectFilesActionId = getArguments().getInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID);
+            setArguments(null); // use the saved state from here.
         }
     }
 
@@ -975,7 +977,12 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
-            UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), fragment.getUploadJobId());
+            Long currentJobId = fragment.getUploadJobId();
+            if (currentJobId == null) {
+                Crashlytics.log(Log.WARN, TAG, "User attempted to delete job that was no longer exists");
+                return;
+            }
+            UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), currentJobId);
             if (positiveAnswer != null && positiveAnswer && job != null) {
                 if(job.getTemporaryUploadAlbum() > 0) {
                     AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbum());

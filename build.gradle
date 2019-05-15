@@ -7,7 +7,6 @@ buildscript {
         maven {
             url 'https://maven.fabric.io/public'
         }
-
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.0'
@@ -31,6 +30,11 @@ allprojects {
         maven {
             url "https://repo1.maven.org/maven2"
         }
+        /*
+          // Needed for the TooLargeTool only
+          maven {
+            url 'https://dl.bintray.com/guardian/android'
+        }*/
     }
     gradle.projectsEvaluated {
         tasks.withType(JavaCompile) {

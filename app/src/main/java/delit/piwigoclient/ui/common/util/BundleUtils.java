@@ -192,6 +192,22 @@ public class BundleUtils {
         bundle.putBundle(key, b);
     }
 
+    public static void logSizeVerbose(String bundleId, Bundle bundle) {
+
+        for (String bundleItemKey : bundle.keySet()) {
+            Parcel parcel = Parcel.obtain();
+            try {
+                Object item = bundle.get(bundleItemKey);
+                parcel.writeValue(item);
+                int sizeInBytes = parcel.dataSize(); // This is what you want to check
+                Log.v("BundleUtils", String.format("BundleSize(%1$s:%2$s) %3$.02fKb", bundleId, bundleItemKey, ((double) sizeInBytes) / 1024));
+            } finally {
+                parcel.recycle();
+            }
+        }
+        logSize(bundleId, bundle);
+    }
+
     public static void logSize(String bundleId, Bundle bundle) {
         Parcel parcel = Parcel.obtain();
         try {

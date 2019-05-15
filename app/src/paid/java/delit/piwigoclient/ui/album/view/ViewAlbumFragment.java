@@ -7,6 +7,9 @@ import android.os.Parcelable;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -17,8 +20,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -212,7 +213,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
             selectedResources = ParcelUtils.readHashSet(in, getClass().getClassLoader());
             resourcesReadyToProcess = ParcelUtils.readHashSet(in, getClass().getClassLoader());
             tagMembershipChangesPending = ParcelUtils.readMap(in, getClass().getClassLoader());
-            tagUpdateEvents = ParcelUtils.readValue(in,getClass().getClassLoader(), ArrayList.class);
+            tagUpdateEvents = ParcelUtils.readArrayList(in, Tag.class.getClassLoader());
             tagsToAdd = ParcelUtils.readHashSet(in, getClass().getClassLoader());
         }
 
@@ -233,7 +234,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
             ParcelUtils.writeSet(dest, selectedResources);
             ParcelUtils.writeSet(dest,resourcesReadyToProcess);
             ParcelUtils.writeMap(dest, tagMembershipChangesPending);
-            dest.writeValue(tagUpdateEvents);
+            ParcelUtils.writeArrayList(dest, tagUpdateEvents);
             ParcelUtils.writeSet(dest, tagsToAdd);
         }
 

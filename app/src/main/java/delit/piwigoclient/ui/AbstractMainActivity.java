@@ -9,6 +9,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.loader.app.LoaderManager;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.appbar.AppBarLayout;
@@ -25,13 +34,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -130,12 +132,16 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        LoaderManager.getInstance(this).getLoader(0);
         outState.putParcelable(STATE_CURRENT_ALBUM, currentAlbum);
         outState.putParcelable(STATE_BASKET, basket);
+//        if(BuildConfig.DEBUG) {
+//            getSupportFragmentManager().enableDebugLogging(true);
+//        }
         super.onSaveInstanceState(outState);
-
         if(BuildConfig.DEBUG) {
-            BundleUtils.logSize("Current Main Activity", outState);
+//            getSupportFragmentManager().enableDebugLogging(false);
+            BundleUtils.logSizeVerbose("Current Main Activity", outState);
         }
     }
 

@@ -381,11 +381,11 @@ public class ViewFavoritesFragment extends MyFragment {
         }
 
         public DeleteActionData(Parcel in) {
-            selectedItemIds = ParcelUtils.readLongSet(in, null);
-            itemsUpdated = ParcelUtils.readLongSet(in, null);
+            selectedItemIds = ParcelUtils.readLongSet(in);
+            itemsUpdated = ParcelUtils.readLongSet(in);
             selectedItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
-            resourceInfoAvailable = ParcelUtils.readValue(in,null, boolean.class);
-            trackedMessageIds = ParcelUtils.readLongArrayList(in, null);
+            resourceInfoAvailable = ParcelUtils.readBool(in);
+            trackedMessageIds = ParcelUtils.readLongArrayList(in);
         }
 
         public static final Creator<DeleteActionData> CREATOR = new Creator<ViewFavoritesFragment.DeleteActionData>() {
@@ -405,7 +405,7 @@ public class ViewFavoritesFragment extends MyFragment {
             ParcelUtils.writeLongSet(dest, selectedItemIds);
             ParcelUtils.writeLongSet(dest, itemsUpdated);
             ParcelUtils.writeSet(dest, selectedItems);
-            dest.writeValue(resourceInfoAvailable);
+            ParcelUtils.writeBool(dest, resourceInfoAvailable);
             ParcelUtils.writeLongArrayList(dest, trackedMessageIds);
         }
 

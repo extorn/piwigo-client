@@ -4,6 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.crashlytics.android.Crashlytics;
 
 import java.io.Serializable;
@@ -12,7 +14,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import delit.piwigoclient.ui.common.util.ParcelUtils;
 
 /**
@@ -70,7 +71,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         name = in.readString();
         description = in.readString();
         lastAltered = ParcelUtils.readDate(in);
-        parentageChain = ParcelUtils.readLongArrayList(in, null);
+        parentageChain = ParcelUtils.readLongArrayList(in);
         loadedAt = in.readLong();
     }
 

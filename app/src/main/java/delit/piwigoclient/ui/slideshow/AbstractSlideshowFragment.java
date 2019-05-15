@@ -21,6 +21,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -39,6 +40,7 @@ import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomViewPager;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
+import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
@@ -77,6 +79,9 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         super.onSaveInstanceState(outState);
         outState.putParcelable(STATE_GALLERY, galleryModel);
         outState.putInt(ARG_GALLERY_ITEM_DISPLAYED, rawCurrentGalleryItemPosition);
+        if (BuildConfig.DEBUG) {
+            BundleUtils.logSize("SlideshowFragment", outState);
+        }
     }
 
 //    @Override
@@ -110,6 +115,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         Bundle configurationBundle = savedInstanceState;
         if (configurationBundle == null) {
             configurationBundle = getArguments();
+            setArguments(null); // remove the args (we'll use the state from this point forward)
         }
         if (configurationBundle != null && galleryModel == null) {
             galleryModel = configurationBundle.getParcelable(STATE_GALLERY);
@@ -147,7 +153,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
         if (galleryItemAdapter == null) {
             galleryItemAdapter = new GalleryItemAdapter<>(galleryModel, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
-            galleryItemAdapter.setMaxFragmentsToSaveInState(15);
+            galleryItemAdapter.setMaxFragmentsToSaveInState(5); //TODO increase to 15 again once keep PiwigoAlbum model separate to the fragments.
         } else {
             // update settings.
             galleryItemAdapter.setShouldShowVideos(shouldShowVideos);

@@ -208,14 +208,20 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         if(BuildConfig.DEBUG) {
             Log.d(TAG, String.format("Page State contents prior to trim : %1$s", CollectionUtils.toCsvList(pageState.keySet())));
         }
+        boolean trimmed = false;
         while(pageState.size() > maxFragmentsToSaveInState && iter.hasNext()) {
             int idx = iter.next();
             if(idx < minIdxToKeep || idx > maxIdxToKeep) {
                 iter.remove();
+                trimmed = true;
             }
         }
         if(BuildConfig.DEBUG) {
-            Log.d(TAG, String.format("Page State Trimmed to those pages centered on %1$d, between %2$d - %3$d (%4$d items)", visibleItemIdx, minIdxToKeep, maxIdxToKeep, pageState.size()));
+            if (trimmed) {
+                Log.d(TAG, String.format("Page State Trimmed to those pages centered on %1$d, between %2$d - %3$d (%4$d items)", visibleItemIdx, minIdxToKeep, maxIdxToKeep, pageState.size()));
+            } else {
+                Log.d(TAG, String.format("Page State Not Trimmed contains %1$d items with max of %2$d items", pageState.size(), maxFragmentsToSaveInState));
+            }
         }
     }
 
@@ -234,6 +240,9 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     protected void recordPageState(Fragment fragment, int position) {
         if(position >= 0) {
             if (fragment.isAdded()) {
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, String.format("Building page state for fragment at position : %1$d", position));
+                }
                 pageState.put(position, mFragmentManager.saveFragmentInstanceState(fragment));
             } else {
                 if(BuildConfig.DEBUG) {
@@ -241,12 +250,6 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
                 }
                 pageState.remove(position);
             }
-        }
-
-        if(BuildConfig.DEBUG) {
-            Bundle b = new Bundle();
-            BundleUtils.writeMap(b, "pagesState", pageState);
-            BundleUtils.logSize("Slideshow items", b);
         }
     }
 
@@ -324,7 +327,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         state.putInt("visibleItemIndex", visibleItemIdx);
 
         if(BuildConfig.DEBUG) {
-            BundleUtils.logSize("Slideshow", state);
+            BundleUtils.logSize("Complete Slideshow (Adapter)", state);
         }
 
         return state;

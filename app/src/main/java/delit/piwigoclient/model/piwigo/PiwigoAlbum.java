@@ -35,7 +35,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         if(itemComparator == null) {
             itemComparator = new AlbumComparator();
         }
-        hideAlbums = ParcelUtils.readBoolean(in);
+        hideAlbums = ParcelUtils.readBool(in);
     }
     
     @Override
@@ -49,7 +49,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         dest.writeInt(subAlbumCount);
         dest.writeInt(spacerAlbums);
         dest.writeInt(bannerCount);
-        dest.writeValue(hideAlbums);
+        ParcelUtils.writeBool(dest, hideAlbums);
     }
 
     @Override

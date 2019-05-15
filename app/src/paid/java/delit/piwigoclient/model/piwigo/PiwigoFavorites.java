@@ -45,6 +45,11 @@ public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.Favorites
             photoCount = in.readInt();
         }
 
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(photoCount);
+        }
+
         public static final Creator<FavoritesSummaryDetails> CREATOR = new Creator<FavoritesSummaryDetails>() {
             @Override
             public FavoritesSummaryDetails createFromParcel(Parcel in) {
@@ -62,10 +67,6 @@ public class PiwigoFavorites extends ResourceContainer<PiwigoFavorites.Favorites
             return 0;
         }
 
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(photoCount);
-        }
 
         @Override
         public long getId() {

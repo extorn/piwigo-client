@@ -2,6 +2,7 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
 import java.io.Serializable;
@@ -42,7 +43,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         privacyLevel = in.readInt();
         availableFiles = in.createTypedArrayList(ResourceFile.CREATOR);
         fullSizeImage = in.readParcelable(getClass().getClassLoader());
-        linkedAlbums = ParcelUtils.readLongSet(in, null);
+        linkedAlbums = ParcelUtils.readLongSet(in);
         fileChecksum = in.readString();
         creationDate = ParcelUtils.readDate(in);
         score = in.readFloat();

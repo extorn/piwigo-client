@@ -1076,28 +1076,28 @@ public abstract class UIHelper<T> {
         public QueuedDialogMessage(Parcel in) {
             id = in.readInt();
             titleId = in.readInt();
-            message = in.readString();
+            message = ParcelUtils.readString(in);
             positiveButtonTextId = in.readInt();
-            cancellable = ParcelUtils.readValue(in,null, boolean.class);
-            detail = in.readString();
+            cancellable = ParcelUtils.readBool(in);
+            detail = ParcelUtils.readString(in);
             listener = ParcelUtils.readValue(in, QuestionResultListener.class.getClassLoader(), QuestionResultListener.class);
-            hasListener = ParcelUtils.readValue(in,null, boolean.class);
+            hasListener = ParcelUtils.readBool(in);
         }
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(id);
             dest.writeInt(titleId);
-            dest.writeString(message);
+            dest.writeValue(message);
             dest.writeInt(positiveButtonTextId);
-            dest.writeValue(cancellable);
-            dest.writeString(detail);
+            ParcelUtils.writeBool(dest, cancellable);
+            dest.writeValue(detail);
             try {
                 dest.writeSerializable(listener);
             } catch(RuntimeException e) {
                 dest.writeSerializable(null); // so we can still read the non serializable object in (as null)
             }
-            dest.writeValue(listener != null); // has listener
+            ParcelUtils.writeBool(dest, listener != null); // has listener
         }
 
         public QueuedDialogMessage(int titleId, String message, String detail) {

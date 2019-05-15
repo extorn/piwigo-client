@@ -6,14 +6,15 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -194,6 +195,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             playVideoAutomatically = getArguments().getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
             videoIsPlayingWhenVisible = playVideoAutomatically;
             showingOutsideSlideshow = getArguments().getBoolean(STATE_SHOWING_STANDALONE);
+            setArguments(null);
         }
         if (savedInstanceState != null) {
             logStatus("loading saved state");

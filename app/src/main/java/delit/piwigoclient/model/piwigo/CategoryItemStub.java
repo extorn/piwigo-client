@@ -31,17 +31,17 @@ public class CategoryItemStub implements Parcelable, Identifiable {
 
     public CategoryItemStub(Parcel in) {
         id = in.readLong();
-        name = in.readString();
-        parentageChain = ParcelUtils.readLongArrayList(in, null);
-        isUserSelectable = ParcelUtils.readValue(in,null, boolean.class);
+        name = ParcelUtils.readString(in);
+        parentageChain = ParcelUtils.readLongArrayList(in);
+        isUserSelectable = ParcelUtils.readBool(in);
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
-        dest.writeString(name);
+        dest.writeValue(name);
         ParcelUtils.writeLongArrayList(dest,parentageChain);
-        dest.writeValue(isUserSelectable);
+        ParcelUtils.writeBool(dest, isUserSelectable);
     }
 
     public Long getParentId() {

@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -15,8 +18,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -121,6 +122,9 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         super.onSaveInstanceState(outState);
         BundleUtils.putHashSet(outState, STATE_UPDATED_TAGS_SET, updatedTagsSet);
         BundleUtils.putHashSet(outState, STATE_CHANGED_TAGS_SET, changedTagsEvents);
+        if (BuildConfig.DEBUG) {
+            BundleUtils.logSize("SlideshowItemFragment", outState);
+        }
     }
 
     @Override

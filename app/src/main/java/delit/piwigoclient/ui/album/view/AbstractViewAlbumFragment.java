@@ -226,6 +226,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 galleryModel = new PiwigoAlbum(albumDetails);
                 galleryIsDirty = true;
             }
+            setArguments(null); // use the saved state from here out.
         }
     }
 
@@ -294,6 +295,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         outState.putLong(STATE_USER_GUID, userGuid);
         outState.putParcelable(STATE_RECYCLER_LAYOUT, galleryListView.getLayoutManager().onSaveInstanceState());
         outState.putInt(STATE_ALBUMS_PER_ROW, albumsPerRow);
+
+        if (BuildConfig.DEBUG) {
+            BundleUtils.logSize("ViewAlbumFragment", outState);
+        }
     }
 
     protected AlbumItemRecyclerViewAdapterPreferences updateViewPrefs() {
@@ -2154,11 +2159,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
 
         public DeleteActionData(Parcel in) {
-            selectedItemIds = ParcelUtils.readLongSet(in, null);
-            itemsUpdated = ParcelUtils.readLongSet(in, null);
+            selectedItemIds = ParcelUtils.readLongSet(in);
+            itemsUpdated = ParcelUtils.readLongSet(in);
             selectedItems = ParcelUtils.readHashSet(in, getClass().getClassLoader());
-            resourceInfoAvailable = ParcelUtils.readValue(in,null, boolean.class);
-            trackedMessageIds = ParcelUtils.readLongArrayList(in, null);
+            resourceInfoAvailable = ParcelUtils.readBool(in);
+            trackedMessageIds = ParcelUtils.readLongArrayList(in);
         }
 
         public static final Creator<DeleteActionData> CREATOR = new Creator<DeleteActionData>() {
@@ -2178,7 +2183,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             ParcelUtils.writeLongSet(dest, selectedItemIds);
             ParcelUtils.writeLongSet(dest, itemsUpdated);
             ParcelUtils.writeSet(dest, selectedItems);
-            dest.writeValue(resourceInfoAvailable);
+            ParcelUtils.writeBool(dest, resourceInfoAvailable);
             ParcelUtils.writeLongArrayList(dest, trackedMessageIds);
         }
 

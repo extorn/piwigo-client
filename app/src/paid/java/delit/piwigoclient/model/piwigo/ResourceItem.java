@@ -24,14 +24,14 @@ public class ResourceItem extends AbstractBaseResourceItem {
     public ResourceItem(Parcel in) {
         super(in);
         tags = ParcelUtils.readHashSet(in, Tag.class.getClassLoader());
-        isFavorite = ParcelUtils.readValue(in,null, Boolean.class);
+        isFavorite = ParcelUtils.readBoolean(in);
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
         ParcelUtils.writeSet(out, tags);
-        out.writeValue(isFavorite);
+        ParcelUtils.writeBoolean(out, isFavorite);
     }
 
 

@@ -62,8 +62,8 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         photoCount = in.readInt();
         totalPhotoCount = in.readLong();
         subCategories = in.readLong();
-        isPrivate = ParcelUtils.readValue(in,null, boolean.class);
-        representativePictureId = ParcelUtils.readValue(in,null, Long.class);
+        isPrivate = ParcelUtils.readBool(in);
+        representativePictureId = ParcelUtils.readLong(in);
         users = in.createLongArray();
         groups = in.createLongArray();
         permissionLoadedAt = in.readLong();
@@ -84,7 +84,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         out.writeInt(photoCount);
         out.writeLong(totalPhotoCount);
         out.writeLong(subCategories);
-        out.writeValue(isPrivate);
+        ParcelUtils.writeBool(out, isPrivate);
         out.writeValue(representativePictureId);
         out.writeLongArray(users);
         out.writeLongArray(groups);

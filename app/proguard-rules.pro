@@ -43,8 +43,8 @@
 -keep class com.google.android.exoplayer2.** { public *; }
 #-dontwarn com.google.android.exoplayer2.**
 
--keep class com.google.android.gms.** { public *; }
-#-dontwarn com.google.android.gms.**
+-keep public class com.google.android.gms.** { public *; }
+-dontwarn com.google.android.gms.**
 
 #-keep class delit.piwigoclient.ui.common.SlidingTabLayout* { public *; }
 -keep class delit.piwigoclient.ui.common.SlidingTabLayout$TabColorizer { public *; }

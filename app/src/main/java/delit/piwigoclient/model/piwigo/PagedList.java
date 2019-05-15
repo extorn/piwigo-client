@@ -84,12 +84,12 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     public PagedList(Parcel in) {
         try {
             itemType = in.readString();
-            ParcelUtils.readIntSet(in, pagesLoaded, null);
-            items = in.readArrayList(getClass().getClassLoader());
+            ParcelUtils.readIntSet(in, pagesLoaded);
+            items = ParcelUtils.readArrayList(in, getClass().getClassLoader());
             ParcelUtils.readMap(in, pagesBeingLoaded, getClass().getClassLoader());
-            ParcelUtils.readIntSet(in, pagesFailedToLoad, null);
-            fullyLoaded = ParcelUtils.readBoolean(in);
-            retrieveItemsInReverseOrder = ParcelUtils.readBoolean(in);
+            ParcelUtils.readIntSet(in, pagesFailedToLoad);
+            fullyLoaded = ParcelUtils.readBool(in);
+            retrieveItemsInReverseOrder = ParcelUtils.readBool(in);
 
             if (pageLoadLock == null) {
                 this.pageLoadLock = new ReentrantLock();
@@ -110,11 +110,11 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(itemType);
         ParcelUtils.writeIntSet(dest, pagesLoaded);
-        dest.writeList(items);
+        ParcelUtils.writeArrayList(dest, items);
         ParcelUtils.writeMap(dest, pagesBeingLoaded);
         ParcelUtils.writeIntSet(dest, pagesFailedToLoad);
-        dest.writeValue(fullyLoaded);
-        dest.writeValue(retrieveItemsInReverseOrder);
+        ParcelUtils.writeBool(dest, fullyLoaded);
+        ParcelUtils.writeBool(dest, retrieveItemsInReverseOrder);
     }
 
     public void updateMaxExpectedItemCount(int newCount) {

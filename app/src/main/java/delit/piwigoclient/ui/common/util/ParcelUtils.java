@@ -16,9 +16,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.util.ClassUtils;
 
 public class ParcelUtils {
+
+    public static <T extends Parcelable> ArrayList<T> readArrayList(@NonNull Parcel in, ClassLoader loader) {
+        ArrayList<T> store = readValue(in, loader, ArrayList.class);
+        return store;
+    }
+
     public static <T extends Parcelable> HashSet<T> readHashSet(@NonNull Parcel in, ClassLoader loader) {
         ArrayList<T> store = readValue(in, loader, ArrayList.class);
         if(store != null) {
@@ -64,8 +71,8 @@ public class ParcelUtils {
         }
     }
 
-    public static Set<Integer> readIntSet(@NonNull Parcel in, @NonNull Set<Integer> destSet, ClassLoader loader) {
-        ArrayList<Integer> dataWrapper = readIntArrayList(in, loader);
+    public static Set<Integer> readIntSet(@NonNull Parcel in, @NonNull Set<Integer> destSet) {
+        ArrayList<Integer> dataWrapper = readIntArrayList(in);
         if(dataWrapper != null) {
             destSet.addAll(dataWrapper);
         }
@@ -80,8 +87,8 @@ public class ParcelUtils {
         writeLongArrayList(dest, dataWrapper);
     }
 
-    public static HashSet<Long> readLongSet(Parcel in, ClassLoader loader) {
-        ArrayList<Long> dataWrapper = readLongArrayList(in, loader);
+    public static HashSet<Long> readLongSet(Parcel in) {
+        ArrayList<Long> dataWrapper = readLongArrayList(in);
         HashSet<Long> wrapper = new HashSet<>(dataWrapper.size());
         if(dataWrapper != null) {
             wrapper = new HashSet<>(wrapper.size());
@@ -90,16 +97,16 @@ public class ParcelUtils {
         return wrapper;
     }
 
-    public static ArrayList<Long> readLongArrayList(Parcel in, ClassLoader loader) {
-        return readValue(in, loader, ArrayList.class);
+    public static ArrayList<Long> readLongArrayList(Parcel in) {
+        return readValue(in, null, ArrayList.class);
     }
 
     public static void writeLongArrayList(Parcel out, ArrayList<Long> value) {
         out.writeValue(value);
     }
 
-    public static ArrayList<Integer> readIntArrayList(Parcel in, ClassLoader loader) {
-        return readValue(in, loader, ArrayList.class);
+    public static ArrayList<Integer> readIntArrayList(Parcel in) {
+        return readValue(in, null, ArrayList.class);
     }
 
     public static void writeIntArrayList(Parcel out, ArrayList<Integer> value) {
@@ -170,19 +177,45 @@ public class ParcelUtils {
 //        return retVal;
 //    }
 
+    public static <T> void writeArrayList(Parcel p, ArrayList<T> data) {
+        p.writeValue(data);
+    }
+
     public static <S, T> void writeMap(Parcel p, Map<S, T> data) {
         ArrayList<S> keys = null;
         ArrayList<T> values = null;
         if(data != null) {
             keys = new ArrayList<>(data.size());
             values = new ArrayList<>(data.size());
+            if (BuildConfig.DEBUG && data.size() > 0 && !(data.values().iterator().next() instanceof Number)) {
+                Log.v("ParcelUtils", String.format("Start writing map to parcel with keys : %1$s", data.keySet()));
+            }
             for (Map.Entry<S, T> entry : data.entrySet()) {
                 keys.add(entry.getKey());
-                values.add(entry.getValue());
+                T value = entry.getValue();
+                values.add(value);
+                if (BuildConfig.DEBUG && !((value instanceof Number) || (value instanceof String))) {
+                    ParcelUtils.logSize(entry.getKey(), entry.getValue());
+                }
             }
         }
         p.writeValue(keys);
         p.writeValue(values);
+        if (BuildConfig.DEBUG) {
+            Log.v("ParcelUtils", String.format("Finished writing map to parcel with keys : %1$s", keys));
+        }
+    }
+
+    private static <Object> void logSize(Object id, Object value) {
+        Parcel p = Parcel.obtain();
+
+        try {
+            p.writeValue(value);
+            int sizeInBytes = p.marshall().length;
+            Log.v("ParcelUtils", String.format("ParcelItemSize(%1$s:%2$s) %3$.02fKb", id, value.getClass().getName(), ((double) sizeInBytes) / 1024));
+        } finally {
+            p.recycle();
+        }
     }
 
     public static <S,T,V extends Map<S, T>> V readMap(Parcel in, V dest, ClassLoader loader) {
@@ -201,11 +234,27 @@ public class ParcelUtils {
         return readMap(in, map, loader);
     }
 
+    public static Boolean readBool(Parcel in) {
+        return in.readInt() == 1;
+    }
+
     public static Boolean readBoolean(Parcel in) {
         return readValue(in, null, boolean.class);
     }
 
     public static void writeBoolean(Parcel out, Boolean value) {
         out.writeValue(value);
+    }
+
+    public static void writeBool(Parcel out, boolean value) {
+        out.writeInt(value ? 1 : 0);
+    }
+
+    public static String readString(Parcel in) {
+        return readValue(in, null, String.class);
+    }
+
+    public static Long readLong(Parcel in) {
+        return readValue(in, null, Long.class);
     }
 }

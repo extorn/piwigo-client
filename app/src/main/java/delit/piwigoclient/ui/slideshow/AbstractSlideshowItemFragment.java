@@ -29,6 +29,15 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatSpinner;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.wunderlist.slidinglayer.CustomSlidingLayer;
@@ -45,14 +54,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatSpinner;
-import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -79,6 +80,7 @@ import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.dialogs.SelectAlbumDialog;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
@@ -149,47 +151,21 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private ViewVisibleControl overlaysVisibilityControl;
     private TextView resourceTitleView;
 
-    private static class DownloadAction implements Parcelable {
-        private long activeDownloadActionId;
-        private boolean shareDownloadedResource;
-
-        public DownloadAction(long activeDownloadActionId, boolean shareDownloadedResource) {
-            this.activeDownloadActionId = activeDownloadActionId;
-            this.shareDownloadedResource = shareDownloadedResource;
-        }
-
-        public DownloadAction(Parcel in) {
-            activeDownloadActionId = in.readLong();
-            shareDownloadedResource = in.readInt() == 1;
-        }
-
-        public static final Creator<DownloadAction> CREATOR = new Creator<DownloadAction>() {
-            public DownloadAction createFromParcel(Parcel in) {
-                return new DownloadAction(in);
-            }
-
-            public DownloadAction[] newArray(int size) {
-                return new DownloadAction[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        public long getActiveDownloadActionId() {
-            return activeDownloadActionId;
-        }
-
-        public boolean isShareDownloadedResource() {
-            return shareDownloadedResource;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeLong(activeDownloadActionId);
-            dest.writeInt(shareDownloadedResource?1:0);
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
+        outState.putBoolean(STATE_INFORMATION_SHOWING, informationShowing);
+        outState.putParcelable(ARG_GALLERY_ITEM, model);
+        outState.putBoolean(ALLOW_DOWNLOAD, isAllowDownload());
+        BundleUtils.putHashSet(outState, STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
+        BundleUtils.putLongHashSet(outState, STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
+        outState.putInt(ARG_ALBUM_ITEM_IDX, albumItemIdx);
+        outState.putInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
+        outState.putLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, albumTotalItemCount);
+        outState.putBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM, isPrimarySlideshowItem);
+        if (BuildConfig.DEBUG) {
+            BundleUtils.logSize("AbstractSlideshowItemFragment", outState);
         }
     }
 
@@ -226,52 +202,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
-        outState.putBoolean(STATE_INFORMATION_SHOWING, informationShowing);
-        outState.putParcelable(ARG_GALLERY_ITEM, model);
-        outState.putBoolean(ALLOW_DOWNLOAD, isAllowDownload());
-        BundleUtils.putHashSet(outState, STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
-        BundleUtils.putLongHashSet(outState, STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
-        outState.putInt(ARG_ALBUM_ITEM_IDX, albumItemIdx);
-        outState.putInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
-        outState.putLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, albumTotalItemCount);
-        outState.putBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM, isPrimarySlideshowItem);
-    }
-
-    public void addDownloadAction(long activeDownloadActionId, boolean shareWithAppAfterDownload) {
-        this.activeDownloadAction = new DownloadAction(activeDownloadActionId, shareWithAppAfterDownload);
-        getUiHelper().addBackgroundServiceCall(activeDownloadActionId);
-    }
-
-    private void loadArgsFromBundle(Bundle b) {
-        if(b == null) {
-            return;
-        }
-        model = b.getParcelable(ARG_GALLERY_ITEM);
-        albumItemIdx = b.getInt(ARG_ALBUM_ITEM_IDX);
-        albumLoadedItemCount = b.getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
-        albumTotalItemCount = b.getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
-    }
-
-    private void restoreSavedInstanceState(Bundle b) {
-        if(b == null) {
-            return;
-        }
-        editingItemDetails = b.getBoolean(STATE_EDITING_ITEM_DETAILS);
-        informationShowing = b.getBoolean(STATE_INFORMATION_SHOWING);
-        allowDownload = b.getBoolean(ALLOW_DOWNLOAD);
-        updatedLinkedAlbumSet = BundleUtils.getHashSet(b, STATE_UPDATED_LINKED_ALBUM_SET);
-        albumsRequiringReload = BundleUtils.getLongHashSet(b, STATE_ALBUMS_REQUIRING_UPDATE);
-        isPrimarySlideshowItem = b.getBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM);
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         intialiseFields();
         loadArgsFromBundle(getArguments());
+        setArguments(null); // use the saved state from here.
         // override values with saved state
         loadArgsFromBundle(savedInstanceState);
         restoreSavedInstanceState(savedInstanceState);
@@ -312,6 +247,77 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
             long messageId = new ImageGetInfoResponseHandler(model, multimediaExtensionList).invokeAsync(getContext());
             getUiHelper().addBackgroundServiceCall(messageId);
+        }
+    }
+
+    public void addDownloadAction(long activeDownloadActionId, boolean shareWithAppAfterDownload) {
+        this.activeDownloadAction = new DownloadAction(activeDownloadActionId, shareWithAppAfterDownload);
+        getUiHelper().addBackgroundServiceCall(activeDownloadActionId);
+    }
+
+    private void loadArgsFromBundle(Bundle b) {
+        if (b == null) {
+            return;
+        }
+        model = b.getParcelable(ARG_GALLERY_ITEM);
+        albumItemIdx = b.getInt(ARG_ALBUM_ITEM_IDX);
+        albumLoadedItemCount = b.getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
+        albumTotalItemCount = b.getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
+    }
+
+    private void restoreSavedInstanceState(Bundle b) {
+        if (b == null) {
+            return;
+        }
+        editingItemDetails = b.getBoolean(STATE_EDITING_ITEM_DETAILS);
+        informationShowing = b.getBoolean(STATE_INFORMATION_SHOWING);
+        allowDownload = b.getBoolean(ALLOW_DOWNLOAD);
+        updatedLinkedAlbumSet = BundleUtils.getHashSet(b, STATE_UPDATED_LINKED_ALBUM_SET);
+        albumsRequiringReload = BundleUtils.getLongHashSet(b, STATE_ALBUMS_REQUIRING_UPDATE);
+        isPrimarySlideshowItem = b.getBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM);
+    }
+
+    private static class DownloadAction implements Parcelable {
+        private long activeDownloadActionId;
+        private boolean shareDownloadedResource;
+
+        public DownloadAction(long activeDownloadActionId, boolean shareDownloadedResource) {
+            this.activeDownloadActionId = activeDownloadActionId;
+            this.shareDownloadedResource = shareDownloadedResource;
+        }
+
+        public DownloadAction(Parcel in) {
+            activeDownloadActionId = in.readLong();
+            shareDownloadedResource = ParcelUtils.readBool(in);
+        }
+
+        public static final Creator<DownloadAction> CREATOR = new Creator<DownloadAction>() {
+            public DownloadAction createFromParcel(Parcel in) {
+                return new DownloadAction(in);
+            }
+
+            public DownloadAction[] newArray(int size) {
+                return new DownloadAction[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public long getActiveDownloadActionId() {
+            return activeDownloadActionId;
+        }
+
+        public boolean isShareDownloadedResource() {
+            return shareDownloadedResource;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeLong(activeDownloadActionId);
+            ParcelUtils.writeBool(dest, shareDownloadedResource);
         }
     }
 

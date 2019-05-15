@@ -6,8 +6,9 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.multidex.MultiDexApplication;
+
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.multidex.MultiDexApplication;
 
 import java.net.URI;
 import java.util.Set;
@@ -118,6 +119,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         registerActivityLifecycleCallbacks(this);
         resources = getResources();
         onAppCreate();
+//        TooLargeTool.startLogging(this);
     }
 
     protected abstract void onAppCreate();
