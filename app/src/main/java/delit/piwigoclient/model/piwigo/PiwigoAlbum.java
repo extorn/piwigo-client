@@ -62,6 +62,12 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     }
 
     @Override
+    public int getDisplayIdx(GalleryItem item) {
+        //TODO add offsets for the headers etc?
+        return super.getDisplayIdx(item);
+    }
+
+    @Override
     public GalleryItem getItemByIdx(int idx) {
         if (hideAlbums) {
             int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
@@ -130,9 +136,16 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
 
     protected int getPageInsertPosition(int page, int pageSize) {
         int insertPosition = super.getPageInsertPosition(page, pageSize);
+
         insertPosition += subAlbumCount;
         insertPosition += spacerAlbums;
-        insertPosition += bannerCount;
+
+        if (!isRetrieveItemsInReverseOrder()) {
+            insertPosition += bannerCount;
+        } else {
+            int bannerOffset = (subAlbumCount > 0 ? 1 : 0);
+            insertPosition += bannerOffset; // there will be one or two banners - one for pictures one for albums (ignoring adverts!)
+        }
         return insertPosition;
     }
 

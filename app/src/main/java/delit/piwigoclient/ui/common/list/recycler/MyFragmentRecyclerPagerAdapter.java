@@ -354,7 +354,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         pageState.clear();
     }
 
-    public void onDataAppended(int itemsAddedCount) {
+    public void onDataAppended(int firstPositionAddedAt, int itemsAddedCount) {
         throw new UnsupportedOperationException("please implement this if it is needed");
     }
 

@@ -70,7 +70,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     public static <T extends Identifiable&Parcelable> Bundle buildArgs(ResourceContainer<T, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         Bundle args = new Bundle();
         args.putParcelable(STATE_GALLERY, gallery);
-        args.putInt(ARG_GALLERY_ITEM_DISPLAYED, gallery.getItemIdx(currentGalleryItem));
+        args.putInt(ARG_GALLERY_ITEM_DISPLAYED, gallery.getDisplayIdx(currentGalleryItem));
         return args;
     }
 
@@ -344,8 +344,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         public void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
             galleryModel.acquirePageLoadLock();
             try {
-                galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
-                ((GalleryItemAdapter)viewPager.getAdapter()).onDataAppended(response.getResources().size());
+                int firstPositionAddedAt = galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
+                ((GalleryItemAdapter) viewPager.getAdapter()).onDataAppended(firstPositionAddedAt, response.getResources().size());
             } finally {
                 galleryModel.releasePageLoadLock();
             }

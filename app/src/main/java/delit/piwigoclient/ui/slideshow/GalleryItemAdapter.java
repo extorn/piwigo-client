@@ -5,6 +5,11 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
+
 import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
@@ -13,10 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.viewpager.widget.ViewPager;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
@@ -32,7 +33,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     private final List<Integer> galleryResourceItems;
     private boolean shouldShowVideos;
     private ResourceContainer<T, GalleryItem> gallery;
-    private HashMap<Long, Integer> cachedItemPositions; // id of item, against posiSlideshow itemstion in slideshow pager
+    private HashMap<Long, Integer> cachedItemPositions; // id of item, against Slideshow item's position in slideshow pager
     private S container;
     private int lastPosition = -1;
 
@@ -41,20 +42,29 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
         this.gallery = gallery;
         galleryResourceItems = new ArrayList<>(gallery.getResourcesCount());
         this.shouldShowVideos = shouldShowVideos;
-        addResourcesToIndex(0, selectedItem);
+        addResourcesToIndex(0, gallery.getItemCount(), selectedItem);
     }
 
-    private void addResourcesToIndex(int fromIdx, int selectedItem) {
-        for (int i = fromIdx; i < gallery.getItemCount(); i++) {
-            if (!(gallery.getItemByIdx(i) instanceof ResourceItem)) {
+    private void addResourcesToIndex(int fromIdx, int items, int selectedItem) {
+        if (fromIdx == 0) {
+            // need to reload all items.
+            galleryResourceItems.clear();
+            fromIdx = 0;
+            items = gallery.getItemCount();
+        }
+        for (int i = fromIdx; i < fromIdx + items; i++) {
+            GalleryItem currentItem = gallery.getItemByIdx(i);
+            if (!(currentItem instanceof ResourceItem)) {
                 continue;
             }
-            if (!shouldShowVideos && gallery.getItemByIdx(i) instanceof VideoResourceItem && i != selectedItem) {
+            if (!shouldShowVideos && currentItem instanceof VideoResourceItem && i != selectedItem) {
                 continue;
             }
             galleryResourceItems.add(i);
         }
-        cachedItemPositions = new HashMap<>(galleryResourceItems.size());
+        if (cachedItemPositions == null) {
+            cachedItemPositions = new HashMap<>(galleryResourceItems.size());
+        }
     }
 
 
@@ -66,7 +76,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     @Override
     public int getItemPosition(@NonNull Object item) {
         ResourceItem model = ((SlideshowItemFragment) item).getModel();
-        int fullGalleryIdx = gallery.getItemIdx(model);
+        int fullGalleryIdx = gallery.getDisplayIdx(model);
         if(fullGalleryIdx < 0) {
             return POSITION_NONE;
         }
@@ -259,8 +269,8 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     }
 
     @Override
-    public void onDataAppended(int itemsAddedCount) {
-        addResourcesToIndex(gallery.getItemCount() - itemsAddedCount, -1);
+    public void onDataAppended(int firstPositionAddedAt, int itemsAddedCount) {
+        addResourcesToIndex(firstPositionAddedAt, itemsAddedCount, -1);
         notifyDataSetChanged();
     }
 

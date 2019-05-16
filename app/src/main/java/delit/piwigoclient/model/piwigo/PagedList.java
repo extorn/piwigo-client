@@ -228,6 +228,14 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
         return items.size() - 1 - idx;
     }
 
+    public int getDisplayIdx(T item) {
+        int rawIdx = getItemIdx(item);
+        if (retrieveItemsInReverseOrder) {
+            return getAdjustedIdx(rawIdx);
+        }
+        return rawIdx;
+    }
+
     @Override
     public T getItemByIdx(int idx) {
         if (retrieveItemsInReverseOrder) {
@@ -310,8 +318,8 @@ public abstract class PagedList<T extends Parcelable> implements IdentifiableIte
     }
 
     @Override
-    public int getItemIdx(T newTag) {
-        return items.indexOf(newTag);
+    public int getItemIdx(T item) {
+        return items.indexOf(item);
     }
 
     public boolean isPageLoaded(int pageNum) {
