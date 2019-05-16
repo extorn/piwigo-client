@@ -104,6 +104,10 @@
          - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.1</item>
+        <item>"Änderungen:
+                - Die Reihenfolge der Diashows spiegelt nun die Reihenfolge der Albumsortierung wider, wenn sie umgekehrt wird
+                - Diashow Element Cache-Größe reduziert, um die Änderung des Absturzes auf der App zu reduzieren minimieren"</item>
         <item>1.4.0.0</item>
         <item>"Änderungen:
                 - Hinzufügen einer optionalen Vorabversion (derzeit nicht konfigurierbar) der Videokompression aller mp4-Videos (nur 16:9-Format)

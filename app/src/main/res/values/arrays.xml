@@ -187,6 +187,10 @@
             - Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.1</item>
+        <item>"Changes:
+                - Slideshow order now reflects the album sort order when reversed
+                - slideshow item cache size reduced to reduce change of crash on app minimise"</item>
         <item>1.4.0.0</item>
         <item>"Changes:
                 - Addition of optional pre-upload (non configurable presently) video compression of all mp4 videos (16:9 format only)
