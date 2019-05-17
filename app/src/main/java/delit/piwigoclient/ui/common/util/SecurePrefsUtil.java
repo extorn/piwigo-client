@@ -1,6 +1,5 @@
 package delit.piwigoclient.ui.common.util;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.provider.Settings;
@@ -9,21 +8,13 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.AESObfuscator;
 import com.google.android.vending.licensing.ValidationException;
-import com.squareup.picasso.MyPicasso;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.Random;
 
-import javax.crypto.BadPaddingException;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import delit.piwigoclient.R;
-import delit.piwigoclient.model.piwigo.PiwigoUtils;
 import delit.piwigoclient.ui.MyApplication;
-import delit.piwigoclient.ui.PicassoFactory;
-import delit.piwigoclient.ui.common.MyActivity;
 import delit.piwigoclient.ui.events.ShowMessageEvent;
 
 /**
@@ -76,7 +67,7 @@ public class SecurePrefsUtil {
             return obfuscator.unobfuscate(encryptedVal, key);
         } catch (ValidationException e) {
             String message = MyApplication.getAppResources().getString(R.string.preference_corrupt_please_re_type_pattern, key, defaultValue);
-            Crashlytics.log(Log.DEBUG, TAG, message);
+            Crashlytics.log(Log.DEBUG, TAG, message + " encypted value : BEGIN_" + encryptedVal + "_END");
             EventBus.getDefault().post(new ShowMessageEvent(ShowMessageEvent.TYPE_WARN, R.string.alert_warning, message));
             return defaultValue;
         }

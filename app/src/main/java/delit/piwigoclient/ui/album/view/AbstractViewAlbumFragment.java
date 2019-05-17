@@ -399,8 +399,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
 
-        galleryModel.setAlbumSortOrder(AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, getContext()));
-
         updateViewPrefs();
 
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
@@ -414,6 +412,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 galleryModel = eventModel;
             }
         }
+
+        galleryModel.setAlbumSortOrder(AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, getContext()));
 
         // store references and initialise anything vital to the page (and used when loading data for example)
         retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);

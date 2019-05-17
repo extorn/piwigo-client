@@ -9,10 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.crashlytics.android.Crashlytics;
-
-import org.greenrobot.eventbus.EventBus;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -22,6 +18,11 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
+
+import com.crashlytics.android.Crashlytics;
+
+import org.greenrobot.eventbus.EventBus;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -144,7 +145,7 @@ public class MyFragment extends Fragment {
 
 
         // This block wrapper is to hopefully protect against a WindowManager$BadTokenException when showing a dialog as part of this call.
-        if (getFragmentManager().isDestroyed() || getActivity().isFinishing()) {
+        if ((getFragmentManager() != null && getFragmentManager().isDestroyed()) || getActivity().isFinishing()) {
             return;
         }
 

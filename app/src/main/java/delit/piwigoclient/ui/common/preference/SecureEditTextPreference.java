@@ -2,8 +2,9 @@ package delit.piwigoclient.ui.common.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import androidx.preference.PreferenceManager;
 import android.util.AttributeSet;
+
+import androidx.preference.PreferenceManager;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
@@ -63,15 +64,10 @@ public class SecureEditTextPreference extends CustomEditTextPreference implement
 
     @Override
     public String decrypt(String encryptedVal, String defaultReturnValue) {
-        if (defaultReturnValue == null) {
-            if (encryptedVal == null) {
-                return null;
-            }
-        } else if (defaultReturnValue.equals(encryptedVal)) {
-            return defaultReturnValue;
-        } else if (encryptedVal == null) {
-            return defaultReturnValue;
+        if (encryptedVal == null || encryptedVal.equals(encryptedVal)) {
+            return defaultReturnValue; // no way the value is encrypted if it is null or matches the default value (logically unencrypted)
         }
+        // should theoretically always have a valid encrypyted value at this point
         return SecurePrefsUtil.getInstance(getContext()).decryptValue(getKey(), encryptedVal, defaultReturnValue);
     }
 
