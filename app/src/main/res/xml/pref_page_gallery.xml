@@ -48,6 +48,15 @@
             android:summary="@string/preference_gallery_album_thumbnail_size_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+        <delit.piwigoclient.ui.common.preference.IntListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@integer/preference_album_subalbum_sort_order_default"
+            android:key="@string/preference_album_subalbum_sort_order_key"
+            android:summary="@string/preference_album_subalbum_sort_order_summary"
+            android:title="@string/preference_album_subalbum_sort_order_title"
+            app:entries="@array/preference_album_subalbum_sort_order_items"
+            app:entryValues="@array/preference_album_subalbum_sort_order_values" />
         <androidx.preference.SwitchPreference
             android:defaultValue="@bool/preference_gallery_show_album_thumbnail_zoomed_default"
             android:key="@string/preference_gallery_show_album_thumbnail_zoomed_key"
@@ -96,21 +105,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <ListPreference
-            android:defaultValue="@string/preference_gallery_sortOrder_default"
-            android:entries="@array/preference_gallery_sortOrder_entries"
-            android:entryValues="@array/preference_gallery_sortOrder_entryValues"
-            android:key="@string/preference_gallery_sortOrder_key"
-            android:title="@string/preference_gallery_sortOrder_title"
-            android:summary="@string/preference_gallery_sortOrder_summary"
+            android:defaultValue="@string/preference_gallery_sort_order_default"
+            android:entries="@array/preference_gallery_sort_order_entries"
+            android:entryValues="@array/preference_gallery_sort_order_entryValues"
+            android:key="@string/preference_gallery_sort_order_key"
+            android:summary="@string/preference_gallery_sort_order_summary"
+            android:title="@string/preference_gallery_sort_order_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:defaultValue="@bool/preference_gallery_sortOrder_inverted_default"
-            android:key="@string/preference_gallery_sortOrder_inverted_key"
-            android:summary="@string/preference_gallery_sortOrder_inverted_summary"
-            android:title="@string/preference_gallery_sortOrder_inverted_title" />
+            android:defaultValue="@bool/preference_gallery_sort_order_inverted_default"
+            android:key="@string/preference_gallery_sort_order_inverted_key"
+            android:summary="@string/preference_gallery_sort_order_inverted_summary"
+            android:title="@string/preference_gallery_sort_order_inverted_title" />
         <delit.piwigoclient.ui.common.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"

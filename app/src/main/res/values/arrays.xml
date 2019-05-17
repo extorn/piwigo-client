@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <integer-array name="preference_album_subalbum_sort_order_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </integer-array>
+
+    <string-array name="preference_album_subalbum_sort_order_items">
+        <item>Default</item>
+        <item>Album Name A-Z</item>
+        <item>Last Updated</item>
+    </string-array>
     <string-array name="preference_caching_level_values" translatable="false">
         <item>disabled</item>
         <item>memory</item>
@@ -51,7 +62,7 @@
         <item>xsmall</item>
         <item>small</item>
     </string-array>
-    <string-array name="preference_gallery_sortOrder_entries">
+    <string-array name="preference_gallery_sort_order_entries">
         <item>Resource ID</item>
         <item>Resource Filename</item>
         <item>Resource Name</item>
@@ -61,7 +72,7 @@
         <item>Date available</item>
         <item>random</item>
     </string-array>
-    <string-array name="preference_gallery_sortOrder_entryValues" translatable="false">
+    <string-array name="preference_gallery_sort_order_entryValues" translatable="false">
         <item>id</item>
         <item>file</item>
         <item>name</item>

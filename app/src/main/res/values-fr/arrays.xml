@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="preference_caching_level_values" translatable="false">
-        <item>disabled</item>
-        <item>memory</item>
-        <item>disk</item>
+    <string-array name="preference_album_subalbum_sort_order_items">
+        <item>Default</item>
+        <item>Nom de l\'album A-Z</item>
+        <item>Dernière mise à jour</item>
     </string-array>
+
     <string-array name="preference_caching_level_items">
         <item>Mise en cache désactivée</item>
         <item>Cache en mémoire</item>
         <item>Cache sur disque</item>
     </string-array>
+
     <string-array name="preference_gallery_item_slideshow_image_size_array">
         <item>meilleur ajustement</item>
         <item>carré</item>
@@ -23,18 +25,6 @@
         <item>xxlarge</item>
     </string-array>
 
-    <string-array name="preference_gallery_item_slideshow_image_size_array_values" translatable="false">
-        <item>best-fit</item>
-        <item>square</item>
-        <item>thumb</item>
-        <item>2small</item>
-        <item>xsmall</item>
-        <item>small</item>
-        <item>medium</item>
-        <item>large</item>
-        <item>xlarge</item>
-        <item>xxlarge</item>
-    </string-array>
 
     <string-array name="preference_gallery_item_thumbnail_size_array">
         <item>carré</item>
@@ -44,14 +34,7 @@
         <item>petit</item>
     </string-array>
 
-    <string-array name="preference_gallery_item_thumbnail_size_array_values" translatable="false">
-        <item>square</item>
-        <item>thumb</item>
-        <item>2small</item>
-        <item>xsmall</item>
-        <item>small</item>
-    </string-array>
-    <string-array name="preference_gallery_sortOrder_entries">
+    <string-array name="preference_gallery_sort_order_entries">
         <item>ID de la ressource</item>
         <item>Nom de fichier de la ressource</item>
         <item>Nom de la ressource</item>
@@ -61,26 +44,12 @@
         <item>Date disponible</item>
         <item>au hasard</item>
     </string-array>
-    <string-array name="preference_gallery_sortOrder_entryValues" translatable="false">
-        <item>id</item>
-        <item>file</item>
-        <item>name</item>
-        <item>hit</item>
-        <item>rating_score</item>
-        <item>date_creation</item>
-        <item>date_available</item>
-        <item>random</item>
-    </string-array>
     <string-array name="server_ssl_certificate_hostname_verification_entries">
         <item>Strict</item>
         <item>Compatible avec les navigateurs</item>
         <item>Arrêt</item>
     </string-array>
-    <string-array name="server_ssl_certificate_hostname_verification_values" translatable="false">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-    </string-array>
+
     <string-array name="user_types_array">
         <item>webmaster</item>
         <item>admin</item>
@@ -89,13 +58,6 @@
         <item>invité</item>
     </string-array>
 
-    <string-array name="user_types_values_array" translatable="false">
-        <item>webmaster</item>
-        <item>admin</item>
-        <item>normal</item>
-        <item>generic</item>
-        <item>guest</item>
-    </string-array>
 
     <string-array name="privacy_levels_groups_array">
         <item>Admins</item>
@@ -105,30 +67,9 @@
         <item>Tout le monde</item>
     </string-array>
 
-    <string-array name="privacy_levels_array" translatable="false">
-        <item>Admins</item>
-        <item>Family</item>
-        <item>Friends</item>
-        <item>Contacts</item>
-        <item>Everybody</item>
-    </string-array>
-
-    <integer-array name="privacy_levels_values_array" translatable="false">
-        <item>8</item>
-        <item>4</item>
-        <item>2</item>
-        <item>1</item>
-        <item>0</item>
-    </integer-array>
-
     <string-array name="preference_gallery_unique_id_entries">
         <item>md5sum</item>
         <item>nom</item>
-    </string-array>
-
-    <string-array name="preference_gallery_unique_id_entryValues" translatable="false">
-        <item>md5sum</item>
-        <item>name</item>
     </string-array>
 
     <string-array name="rotation_array">
@@ -137,13 +78,6 @@
         <item>90 degrés à droite</item>
         <item>180 degrés à droite</item>
     </string-array>
-
-    <integer-array name="rotation_values_array" translatable="false">
-        <item>-90</item>
-        <item>0</item>
-        <item>90</item>
-        <item>180</item>
-    </integer-array>
 
     <string-array name="top_tips" translatable="true">
         <item>"Vous ne pouvez voir que les fichiers à sélectionner pour le téléchargement qui sont acceptables pour le téléchargement sur votre serveur. Si vous souhaitez télécharger des vidéos, veillez à modifier le fichier config.inc.php de votre serveur pour inclure $conf['upload_form_all_types'] = true ; plutôt que false"</item>

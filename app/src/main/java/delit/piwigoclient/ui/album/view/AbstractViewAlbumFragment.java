@@ -399,7 +399,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
 
-
+        galleryModel.setAlbumSortOrder(AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, getContext()));
 
         updateViewPrefs();
 

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="preference_album_subalbum_sort_order_items">
+        <item>Default</item>
+        <item>Albumname A-Z</item>
+        <item>Letzte Aktualisierung</item>
+    </string-array>
     <string-array name="preference_caching_level_items">
         <item>Caching deaktiviert</item>
         <item>Cache in den Speicher</item>
@@ -24,7 +29,7 @@
         <item>xklein</item>
         <item>klein</item>
     </string-array>
-    <string-array name="preference_gallery_sortOrder_entries">
+    <string-array name="preference_gallery_sort_order_entries">
         <item>Ressourcen-ID</item>
         <item>Ressource Dateiname</item>
         <item>Name der Ressource</item>

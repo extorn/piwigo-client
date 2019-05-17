@@ -17,14 +17,25 @@ import delit.piwigoclient.ui.common.util.ParcelUtils;
  */
 public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> implements Parcelable {
 
-    private transient AlbumComparator itemComparator = new AlbumComparator();
+    public static final int DEFAULT_ALBUM_SORT_ORDER = 0;
+    public static final int NAME_ALBUM_SORT_ORDER = 1;
+    public static final int DATE_ALBUM_SORT_ORDER = 2;
+
+    private transient AlbumComparator itemComparator;
     private int subAlbumCount;
     private int spacerAlbums;
     private int bannerCount;
     private boolean hideAlbums;
+    private int albumSortOrder;
 
     public PiwigoAlbum(CategoryItem albumDetails) {
+        this(albumDetails, DEFAULT_ALBUM_SORT_ORDER);
+    }
+
+    public PiwigoAlbum(CategoryItem albumDetails, int albumSortOrder) {
         super(albumDetails, "GalleryItem", (int) (albumDetails.getPhotoCount() + albumDetails.getSubCategories()));
+        this.albumSortOrder = albumSortOrder;
+        itemComparator = new AlbumComparator(albumSortOrder);
     }
     
     public PiwigoAlbum(Parcel in) {
@@ -32,8 +43,9 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         subAlbumCount = in.readInt();
         spacerAlbums = in.readInt();
         bannerCount = in.readInt();
+        albumSortOrder = in.readInt();
         if(itemComparator == null) {
-            itemComparator = new AlbumComparator();
+            itemComparator = new AlbumComparator(albumSortOrder);
         }
         hideAlbums = ParcelUtils.readBool(in);
     }
@@ -49,6 +61,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
         dest.writeInt(subAlbumCount);
         dest.writeInt(spacerAlbums);
         dest.writeInt(bannerCount);
+        dest.writeInt(albumSortOrder);
         ParcelUtils.writeBool(dest, hideAlbums);
     }
 
@@ -59,6 +72,14 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
             itemCount -= subAlbumCount + spacerAlbums;
         }
         return itemCount;
+    }
+
+    public void setAlbumSortOrder(int albumSortOrder) {
+        this.albumSortOrder = albumSortOrder;
+        if (albumSortOrder != itemComparator.getAlbumSortOrder()) {
+            itemComparator.setAlbumSortOrder(albumSortOrder);
+            Collections.sort(getItems(), itemComparator);
+        }
     }
 
     @Override
@@ -186,9 +207,22 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
     private static class AlbumComparator implements Comparator<GalleryItem> {
 
         private boolean sortInReverseOrder;
+        private int albumSortOrder;
+
+        public AlbumComparator(int albumSortOrder) {
+            this.albumSortOrder = albumSortOrder;
+        }
 
         public void setSortInReverseOrder(boolean sortInReverseOrder) {
             this.sortInReverseOrder = sortInReverseOrder;
+        }
+
+        public int getAlbumSortOrder() {
+            return albumSortOrder;
+        }
+
+        public void setAlbumSortOrder(int albumSortOrder) {
+            this.albumSortOrder = albumSortOrder;
         }
 
         @Override
@@ -210,7 +244,15 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
                 } else if (o2 == CategoryItem.ALBUM_HEADING) {
                     return -1; // push album heading to the end of albums
                 } else {
-                    return 0; // don't change the individual album order (we'll do this once they're all added)
+                    switch (albumSortOrder) {
+                        case DATE_ALBUM_SORT_ORDER:
+                            return o1.getLastAltered().compareTo(o2.getLastAltered());
+                        case NAME_ALBUM_SORT_ORDER:
+                            return o1.getName().compareTo(o2.getName());
+                        case DEFAULT_ALBUM_SORT_ORDER:
+                        default:
+                            return 0; // don't change the individual album order (we'll do this once they're all added)
+                    }
                 }
             } else if (!firstIsCategory && !secondIsCategory) {
                 if (o1 == GalleryItem.PICTURE_HEADING) {

@@ -70,11 +70,11 @@ public class AlbumViewPreferences {
     }
 
     public static String getResourceSortOrder(SharedPreferences prefs, Context context) {
-        return prefs.getString(context.getString(R.string.preference_gallery_sortOrder_key), context.getString(R.string.preference_gallery_sortOrder_default));
+        return prefs.getString(context.getString(R.string.preference_gallery_sort_order_key), context.getString(R.string.preference_gallery_sort_order_default));
     }
 
     public static boolean getResourceSortOrderInverted(SharedPreferences prefs, Context context) {
-        return prefs.getBoolean(context.getString(R.string.preference_gallery_sortOrder_inverted_key), context.getResources().getBoolean(R.bool.preference_gallery_sortOrder_inverted_default));
+        return prefs.getBoolean(context.getString(R.string.preference_gallery_sort_order_inverted_key), context.getResources().getBoolean(R.bool.preference_gallery_sort_order_inverted_default));
     }
 
     public static int getResourceRequestPageSize(SharedPreferences prefs, Context context) {
@@ -98,4 +98,7 @@ public class AlbumViewPreferences {
     }
 
 
+    public static int getAlbumChildAlbumsSortOrder(SharedPreferences prefs, Context context) {
+        return prefs.getInt(context.getString(R.string.preference_album_subalbum_sort_order_key), context.getResources().getInteger(R.integer.preference_album_subalbum_sort_order_default));
+    }
 }
