@@ -198,6 +198,9 @@
             - Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.2</item>
+        <item>"Changes:
+                - Support for sorting child albums by name, last updated date, or the default server order"</item>
         <item>1.4.0.1</item>
         <item>"Changes:
                 - Slideshow order now reflects the album sort order when reversed
