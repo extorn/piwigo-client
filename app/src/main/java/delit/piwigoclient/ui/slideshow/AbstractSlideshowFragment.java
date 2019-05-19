@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.crashlytics.android.Crashlytics;
@@ -47,6 +48,7 @@ import delit.piwigoclient.ui.events.PiwigoAlbumUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 import static android.view.View.GONE;
@@ -58,27 +60,26 @@ import static android.view.View.VISIBLE;
 
 public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends MyFragment {
 
-    private static final String STATE_GALLERY = "galleryModel";
-    private static final String ARG_GALLERY_ITEM_DISPLAYED = "galleryIndexOfItemToDisplay";
+    private static final String STATE_GALLERY_TYPE = "containerModelType";
+    private static final String STATE_GALLERY_ID = "containerId";
+    private static final String ARG_GALLERY_ITEM_DISPLAYED = "indexOfItemInContainerToDisplay";
     private CustomViewPager viewPager;
-    private ResourceContainer<T, GalleryItem> galleryModel;
-    private int rawCurrentGalleryItemPosition;
+    private ResourceContainer<T, GalleryItem> resourceContainer;
     private View progressIndicator;
     private GalleryItemAdapter<T, CustomViewPager> galleryItemAdapter;
     private AdView adView;
 
-    public static <T extends Identifiable&Parcelable> Bundle buildArgs(ResourceContainer<T, GalleryItem> gallery, GalleryItem currentGalleryItem) {
+    public static <T extends Identifiable & Parcelable> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, ResourceContainer<T, GalleryItem> resourceContainer, GalleryItem currentItem) {
         Bundle args = new Bundle();
-        args.putParcelable(STATE_GALLERY, gallery);
-        args.putInt(ARG_GALLERY_ITEM_DISPLAYED, gallery.getDisplayIdx(currentGalleryItem));
+        args.putSerializable(STATE_GALLERY_TYPE, modelType);
+        args.putLong(STATE_GALLERY_ID, resourceContainer.getId());
+        args.putInt(ARG_GALLERY_ITEM_DISPLAYED, resourceContainer.getDisplayIdx(currentItem));
         return args;
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(STATE_GALLERY, galleryModel);
-        outState.putInt(ARG_GALLERY_ITEM_DISPLAYED, rawCurrentGalleryItemPosition);
         if (BuildConfig.DEBUG) {
             BundleUtils.logSize("SlideshowFragment", outState);
         }
@@ -100,7 +101,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         super.onPause();
         // Need to unregister it now because if done in onDetach, it alters the UI after the saveInstanceState is called and thus crashes!
         getUiHelper().deregisterFromActiveServiceCalls();
-        EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(galleryModel));
+        EventBus.getDefault().postSticky(new PiwigoAlbumUpdatedEvent(resourceContainer));
     }
 
     @Override
@@ -117,8 +118,14 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             configurationBundle = getArguments();
             setArguments(null); // remove the args (we'll use the state from this point forward)
         }
-        if (configurationBundle != null && galleryModel == null) {
-            galleryModel = configurationBundle.getParcelable(STATE_GALLERY);
+
+        int rawCurrentGalleryItemPosition = 0;
+
+        if (configurationBundle != null && resourceContainer == null) {
+            Class<? extends ViewModelContainer> galleryModelClass = (Class) configurationBundle.getSerializable(STATE_GALLERY_TYPE);
+            long galleryModelId = configurationBundle.getLong(STATE_GALLERY_ID);
+            ViewModelContainer viewModelContainer = ViewModelProviders.of(getActivity()).get("" + galleryModelId, galleryModelClass);
+            resourceContainer = viewModelContainer.getModel();
             rawCurrentGalleryItemPosition = configurationBundle.getInt(ARG_GALLERY_ITEM_DISPLAYED);
         }
 
@@ -152,7 +159,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, getContext());
         shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
         if (galleryItemAdapter == null) {
-            galleryItemAdapter = new GalleryItemAdapter<>(galleryModel, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
+            galleryItemAdapter = new GalleryItemAdapter<>(resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(5); //TODO increase to 15 again once keep PiwigoAlbum model separate to the fragments.
         } else {
             // update settings.
@@ -188,7 +195,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     private void reloadSlideshowModel() {
         String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
-        T album = galleryModel.getContainerDetails();
+        T album = resourceContainer.getContainerDetails();
         reloadSlideshowModel(album, preferredAlbumThumbnailSize);
     }
 
@@ -211,12 +218,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         progressIndicator.setVisibility(VISIBLE);
     }
 
-    protected ResourceContainer<T, GalleryItem> getGalleryModel() {
-        return galleryModel;
+    protected ResourceContainer<T, GalleryItem> getResourceContainer() {
+        return resourceContainer;
     }
 
-    protected void setContainerDetails(ResourceContainer<T, GalleryItem> piwigoTag) {
-        galleryModel = piwigoTag;
+    protected void setContainerDetails(ResourceContainer<T, GalleryItem> model) {
+        resourceContainer = model;
     }
 
     /**
@@ -242,7 +249,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemActionStartedEvent event) {
-        if (event.getItem().getParentId().equals(galleryModel.getId())) {
+        if (event.getItem().getParentId().equals(resourceContainer.getId())) {
             getUiHelper().setTrackingRequest(event.getActionId());
             viewPager.setEnabled(false);
         }
@@ -252,7 +259,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     public void onEvent(AlbumItemActionFinishedEvent event) {
         //TODO this is rubbish, store a reference to the parent in the resource items so we can test if this screen is relevant.
         // parentId will be null if the parent is a Tag not an Album (viewing contents of a Tag).
-        if ((event.getItem().getParentId() == null || event.getItem().getParentId().equals(galleryModel.getId()))
+        if ((event.getItem().getParentId() == null || event.getItem().getParentId().equals(resourceContainer.getId()))
                 && getUiHelper().isTrackingRequest(event.getActionId())) {
             viewPager.setEnabled(true);
         }
@@ -260,7 +267,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumItemDeletedEvent event) {
-        if(galleryModel.getId() == event.item.getParentId()) {
+        if (resourceContainer.getId() == event.item.getParentId()) {
             GalleryItemAdapter adapter = ((GalleryItemAdapter) viewPager.getAdapter());
             int fullGalleryIdx = adapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
             adapter.deleteGalleryItem(fullGalleryIdx);
@@ -273,17 +280,17 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     @Subscribe
     public void onEvent(AlbumAlteredEvent albumAlteredEvent) {
-        if (galleryModel instanceof PiwigoAlbum && galleryModel.getId() == albumAlteredEvent.getAlbumAltered()) {
+        if (resourceContainer instanceof PiwigoAlbum && resourceContainer.getId() == albumAlteredEvent.getAlbumAltered()) {
         }
     }
 
     protected void loadMoreGalleryResources() {
-        int pageToLoad = galleryModel.getPagesLoaded();
+        int pageToLoad = resourceContainer.getPagesLoaded();
         loadAlbumResourcesPage(pageToLoad);
     }
 
     private void loadAlbumResourcesPage(int pageToLoad) {
-        galleryModel.acquirePageLoadLock();
+        resourceContainer.acquirePageLoadLock();
         try {
             int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
             int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
@@ -292,26 +299,26 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 return;
             }
 
-            if (galleryModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad)) {
+            if (resourceContainer.isPageLoadedOrBeingLoaded(pageToActuallyLoad)) {
                 return;
             }
 
             String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
             String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs,getContext());
 
-            long loadingMessageId = invokeResourcePageLoader(galleryModel, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList);
-            galleryModel.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId, "loadResources"), pageToActuallyLoad);
+            long loadingMessageId = invokeResourcePageLoader(resourceContainer, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList);
+            resourceContainer.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId, "loadResources"), pageToActuallyLoad);
         } finally {
-            galleryModel.releasePageLoadLock();
+            resourceContainer.releasePageLoadLock();
         }
     }
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
         boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
-        galleryModel.setRetrieveItemsInReverseOrder(invertSortOrder);
+        resourceContainer.setRetrieveItemsInReverseOrder(invertSortOrder);
         int pageToActuallyLoad = pageRequested;
         if (invertSortOrder) {
-            int pagesOfPhotos = galleryModel.getContainerDetails().getPagesOfPhotos(pageSize);
+            int pagesOfPhotos = resourceContainer.getContainerDetails().getPagesOfPhotos(pageSize);
             pageToActuallyLoad = pagesOfPhotos - pageRequested;
         }
         return pageToActuallyLoad;
@@ -322,6 +329,36 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new CustomPiwigoResponseListener();
+    }
+
+    private static class AlbumLoadResponseAction extends UIHelper.Action<AbstractSlideshowFragment, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
+
+        @Override
+        public boolean onSuccess(UIHelper uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+            AbstractSlideshowFragment fragment = getActionParent(uiHelper);
+            if (response.getAlbums().isEmpty()) {
+                // will occur if the album no longer exists.
+                fragment.getFragmentManager().popBackStack();
+                return false;
+            }
+            CategoryItem currentAlbum = response.getAlbums().get(0);
+            if (currentAlbum.getId() != fragment.resourceContainer.getId()) {
+                //Something wierd is going on - this should never happen
+                Crashlytics.log(Log.ERROR, fragment.getTag(), "Closing slideshow - reloaded album had different id to that expected!");
+                fragment.getFragmentManager().popBackStack();
+                return false;
+            }
+            fragment.setContainerDetails(new PiwigoAlbum(currentAlbum));
+            fragment.loadMoreGalleryResources();
+            return true;
+        }
+
+        @Override
+        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            AbstractSlideshowFragment fragment = getActionParent(uiHelper);
+            fragment.getFragmentManager().popBackStack();
+            return false;
+        }
     }
 
     private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
@@ -342,12 +379,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
 
         public void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
-            galleryModel.acquirePageLoadLock();
+            resourceContainer.acquirePageLoadLock();
             try {
-                int firstPositionAddedAt = galleryModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
+                int firstPositionAddedAt = resourceContainer.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
                 ((GalleryItemAdapter) viewPager.getAdapter()).onDataAppended(firstPositionAddedAt, response.getResources().size());
             } finally {
-                galleryModel.releasePageLoadLock();
+                resourceContainer.releasePageLoadLock();
             }
         }
     }
@@ -363,7 +400,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
         @Override
         public void onPageSelected(int position) {
-            if (!galleryModel.isFullyLoaded()) {
+            if (!resourceContainer.isFullyLoaded()) {
                 if ((viewPager.getAdapter()).getCount() - position < 10) {
                     //if within 10 items of the end of those items currently loaded, load some more.
                     loadMoreGalleryResources();
@@ -384,36 +421,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         @Override
         public void onPageScrollStateChanged(int state) {
 
-        }
-    }
-
-    private static class AlbumLoadResponseAction extends UIHelper.Action<AbstractSlideshowFragment,AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
-
-        @Override
-        public boolean onSuccess(UIHelper uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
-            AbstractSlideshowFragment fragment = getActionParent(uiHelper);
-            if(response.getAlbums().isEmpty()) {
-                // will occur if the album no longer exists.
-                fragment.getFragmentManager().popBackStack();
-                return false;
-            }
-            CategoryItem currentAlbum = response.getAlbums().get(0);
-            if(currentAlbum.getId() != fragment.galleryModel.getId()) {
-                //Something wierd is going on - this should never happen
-                Crashlytics.log(Log.ERROR, fragment.getTag(), "Closing slideshow - reloaded album had different id to that expected!");
-                fragment.getFragmentManager().popBackStack();
-                return false;
-            }
-            fragment.setContainerDetails(new PiwigoAlbum(currentAlbum));
-            fragment.loadMoreGalleryResources();
-            return true;
-        }
-
-        @Override
-        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            AbstractSlideshowFragment fragment = getActionParent(uiHelper);
-            fragment.getFragmentManager().popBackStack();
-            return false;
         }
     }
 }

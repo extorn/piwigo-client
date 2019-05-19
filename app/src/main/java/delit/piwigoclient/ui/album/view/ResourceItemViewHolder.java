@@ -2,9 +2,10 @@ package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
 import android.os.Parcelable;
+import android.view.View;
+
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatImageView;
-import android.view.View;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
@@ -61,9 +62,9 @@ public class ResourceItemViewHolder<S extends Identifiable&Parcelable> extends A
             imageLoader.cancelImageLoadIfRunning();
         }
         ResourceItem resItem = (ResourceItem) newItem;
-        ResourceItem.ResourceFile rf = resItem.getFile(parentAdapter.getAdapterPrefs().getPreferredThumbnailSize());
+        String rf = resItem.getFileUrl(parentAdapter.getAdapterPrefs().getPreferredThumbnailSize());
         if (rf != null) {
-            imageLoader.setUriToLoad(rf.getUrl());
+            imageLoader.setUriToLoad(rf);
         } else {
             if (newItem.getThumbnailUrl() != null) {
                 // this is really bizarre - but show something for now.

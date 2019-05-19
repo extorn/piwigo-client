@@ -39,6 +39,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     private long[] users;
     private long[] groups;
     private long permissionLoadedAt;
+    private String thumbnailUrl;
 
     public CategoryItem(CategoryItemStub stub) {
         super(stub.getId(), stub.getName(), null, null, null);
@@ -49,7 +50,8 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
     }
 
     public CategoryItem(long id, String name, String description, boolean isPrivate, Date lastAltered, int photoCount, long totalPhotoCount, long subCategories, String thumbnailUrl) {
-        super(id, name, description, lastAltered, thumbnailUrl);
+        super(id, name, description, lastAltered, null);
+        this.thumbnailUrl = getRelativePath(thumbnailUrl);
         this.photoCount = photoCount;
         this.isPrivate = isPrivate;
         this.totalPhotoCount = totalPhotoCount;
@@ -67,6 +69,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         users = in.createLongArray();
         groups = in.createLongArray();
         permissionLoadedAt = in.readLong();
+        thumbnailUrl = in.readString();
     }
 
     public static ArrayList<CategoryItem> newListFromStubs(ArrayList<CategoryItemStub> albumNames) {
@@ -89,6 +92,16 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
         out.writeLongArray(users);
         out.writeLongArray(groups);
         out.writeLong(permissionLoadedAt);
+        out.writeString(thumbnailUrl);
+    }
+
+    @Override
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl == null ? null : thumbnailUrl.substring(getBaseResourceUrl().length());
     }
 
     public void setChildAlbums(ArrayList<CategoryItem> childAlbums) {

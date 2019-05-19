@@ -17,8 +17,8 @@ public class ResourceItem extends AbstractBaseResourceItem {
     private HashSet<Tag> tags;
     private Boolean isFavorite;
 
-    public ResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
-        super(id, name, description, creationDate, lastAltered, thumbnailUrl);
+    public ResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String baseResourceUrl) {
+        super(id, name, description, creationDate, lastAltered, baseResourceUrl);
     }
 
     public ResourceItem(Parcel in) {

@@ -28,7 +28,7 @@ android {
         applicationId "delit.piwigoclient"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 205
+        versionCode 206
         versionName "1.4.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -159,6 +159,7 @@ dependencies {
     implementation 'net.ypresto.androidtranscoder:android-transcoder:0.3.0'
     // android mp4 streaming header generator library
     implementation 'net.ypresto.qtfaststartjava:qtfaststart:0.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
 
 
     // test too large bundle sizes!

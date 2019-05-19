@@ -1,13 +1,15 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 
 import java.util.HashSet;
 
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.IdentifiableItemStore;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link T}
@@ -15,11 +17,17 @@ import delit.piwigoclient.model.piwigo.IdentifiableItemStore;
 public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdapterPreferences, T extends Identifiable, V extends IdentifiableItemStore<T>, S extends CustomViewHolder<P, T>> extends BaseRecyclerViewAdapter<P, T, S> {
 
     private final V itemStore;
+    private final Class<? extends ViewModelContainer> modelType;
 
 
-    public IdentifiableListViewAdapter(final V itemStore, MultiSelectStatusListener multiSelectStatusListener, P prefs) {
+    public IdentifiableListViewAdapter(final Class<? extends ViewModelContainer> modelType, final V itemStore, MultiSelectStatusListener multiSelectStatusListener, P prefs) {
         super(multiSelectStatusListener, prefs);
         this.itemStore = itemStore;
+        this.modelType = modelType;
+    }
+
+    public Class<? extends ViewModelContainer> getModelType() {
+        return modelType;
     }
 
     @Override

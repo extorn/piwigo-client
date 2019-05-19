@@ -1,9 +1,10 @@
 package delit.piwigoclient.ui.permissions.groups;
 
 import android.content.Context;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.Group;
@@ -18,7 +19,7 @@ import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 public class GroupRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Group, PiwigoGroups, GroupRecyclerViewAdapter.GroupViewHolder> {
 
     public GroupRecyclerViewAdapter(final PiwigoGroups groups, MultiSelectStatusListener multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
-        super(groups, multiSelectStatusListener, prefs);
+        super(null, groups, multiSelectStatusListener, prefs);
     }
 
     @NonNull

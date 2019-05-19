@@ -8,6 +8,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -17,11 +24,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
@@ -44,6 +46,7 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.GroupDeletedEvent;
 import delit.piwigoclient.ui.events.GroupUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;
+import delit.piwigoclient.ui.model.PiwigoGroupsModel;
 
 /**
  * Created by gareth on 26/05/17.
@@ -54,7 +57,7 @@ public class GroupsListFragment extends MyFragment {
     private static final String GROUPS_MODEL = "groupsModel";
     private final ConcurrentHashMap<Long, Group> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
-    private PiwigoGroups groupsModel = new PiwigoGroups();
+    private PiwigoGroups groupsModel;
     private GroupRecyclerViewAdapter viewAdapter;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
 
@@ -110,9 +113,12 @@ public class GroupsListFragment extends MyFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
+        groupsModel = ViewModelProviders.of(this).get(PiwigoGroupsModel.class).getPiwigoGroups().getValue();
 
-        if (savedInstanceState != null && !isSessionDetailsChanged()) {
-            groupsModel = savedInstanceState.getParcelable(GROUPS_MODEL);
+        if (isSessionDetailsChanged()) {
+            groupsModel.clear();
+        } else if (savedInstanceState != null) {
+            viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
 
         View view = inflater.inflate(R.layout.layout_fullsize_recycler_list, container, false);

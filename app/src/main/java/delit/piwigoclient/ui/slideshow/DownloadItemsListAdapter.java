@@ -1,12 +1,12 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import android.widget.ArrayAdapter;
 
-import java.util.List;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 
+import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 /**
@@ -14,13 +14,16 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
  */
 
 public class DownloadItemsListAdapter extends ArrayAdapter<ResourceItem.ResourceFile> {
-    public DownloadItemsListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<ResourceItem.ResourceFile> objects) {
-        super(context, resource, objects);
+    private final PictureResourceItem item;
+
+    public DownloadItemsListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull PictureResourceItem item) {
+        super(context, resource, item.getAvailableFiles());
+        this.item = item;
     }
 
     public int getPosition(@NonNull String urlSought) {
         for (int i = 0; i < getCount(); i++) {
-            if (urlSought.equals(getItem(i).getUrl())) {
+            if (urlSought.equals(item.getFileUrl(getItem(i).getName()))) {
                 return i;
             }
         }

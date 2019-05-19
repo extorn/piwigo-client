@@ -4,11 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.IntRange;
+
 import com.crashlytics.android.Crashlytics;
 
 import java.util.Date;
-
-import androidx.annotation.IntRange;
 
 /**
  * Created by gareth on 12/07/17.
@@ -17,8 +17,8 @@ public class PictureResourceItem extends ResourceItem {
     private static final String TAG = "PicResItem";
     private static final long serialVersionUID = 4954838188004567936L;
 
-    public PictureResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String thumbnailUrl) {
-        super(id, name, description, dateCreated, lastAltered, thumbnailUrl);
+    public PictureResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String baseResourceUrl) {
+        super(id, name, description, dateCreated, lastAltered, baseResourceUrl);
     }
 
     public PictureResourceItem(Parcel in) {
@@ -63,6 +63,11 @@ public class PictureResourceItem extends ResourceItem {
 
     public void copyFrom(PictureResourceItem other, boolean copyParentage) {
         super.copyFrom(other, copyParentage);
+    }
+
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        super.writeToParcel(out, flags);
     }
 
     public static final Parcelable.Creator<PictureResourceItem> CREATOR

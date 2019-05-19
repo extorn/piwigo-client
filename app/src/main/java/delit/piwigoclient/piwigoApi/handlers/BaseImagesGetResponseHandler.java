@@ -94,7 +94,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             images = null;
         }
 
-        BasicCategoryImageResourceParser resourceParser = buildResourceParser(multimediaExtensionList);
+        BasicCategoryImageResourceParser resourceParser = buildResourceParser(multimediaExtensionList, getPiwigoServerUrl());
 
         if(images != null) {
             for (int i = 0; i < images.size(); i++) {
@@ -113,8 +113,8 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         storeResponse(r);
     }
 
-    protected BasicCategoryImageResourceParser buildResourceParser(String multimediaExtensionList) {
-        return new BasicCategoryImageResourceParser(multimediaExtensionList);
+    protected BasicCategoryImageResourceParser buildResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
+        return new BasicCategoryImageResourceParser(multimediaExtensionList, basePiwigoUrl);
     }
 
     public static class BasicCategoryImageResourceParser {
@@ -122,9 +122,10 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         private final Pattern p;
         private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         private Matcher m;
+        private String basePiwigoUrl;
 
-        public BasicCategoryImageResourceParser(String multimediaExtensionList) {
-
+        public BasicCategoryImageResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
+            this.basePiwigoUrl = basePiwigoUrl;
             StringTokenizer st = new StringTokenizer(multimediaExtensionList, ",");
             StringBuilder multimediaRegexpBuilder = new StringBuilder(".*\\.(");
             String token;
@@ -238,22 +239,15 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                         originalResourceUrl = originalResourceUrl.replaceFirst("/upload", "/"+id+"/upload");
                     }
                 }
-                item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, thumbnail);
-                ResourceItem.ResourceFile originalImage = new ResourceItem.ResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
-                item.addResourceFile(originalImage);
-                item.setFullSizeImage(originalImage);
+                item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
+                item.setThumbnailUrl(thumbnail);
+                item.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
 
             } else {
 
-                ResourceItem.ResourceFile originalImage = null;
-                if(originalResourceUrl != null) {
-                    originalImage = new ResourceItem.ResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
-                }
-
                 Iterator<String> imageSizeKeys = derivatives.keySet().iterator();
-                thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
 
-                PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateCreated, dateLastAltered, fixUrl(thumbnail));
+                PictureResourceItem picItem = new PictureResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
 
                 while (imageSizeKeys.hasNext()) {
                     String imageSizeKey = imageSizeKeys.next();
@@ -276,14 +270,14 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                     }
                     int thisImageHeight = jsonElem.getAsInt();
 
-                    ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(imageSizeKey, fixUrl(url), thisImageWidth, thisImageHeight);
-                    picItem.addResourceFile(img);
+                    picItem.addResourceFile(imageSizeKey, fixUrl(url), thisImageWidth, thisImageHeight);
 
                 }
-                if(originalImage != null) {
-                    picItem.addResourceFile(originalImage);
-                    picItem.setFullSizeImage(originalImage);
+
+                if (originalResourceUrl != null) {
+                    picItem.addResourceFile("original", fixUrl(originalResourceUrl), originalResourceUrlWidth, originalResourceUrlHeight);
                 }
+
                 item = picItem;
             }
 

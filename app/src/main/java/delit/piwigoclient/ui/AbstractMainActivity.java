@@ -422,7 +422,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
         Fragment newFragment = null;
 
-        ResourceContainer albumOpen = event.getResourceContainer();
+        ResourceContainer<?, GalleryItem> albumOpen = event.getResourceContainer();
         GalleryItem selectedItem = event.getSelectedItem();
 
         if (selectedItem instanceof CategoryItem) {
@@ -434,7 +434,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
             if (selectedItem instanceof VideoResourceItem) {
                 if (showVideosInSlideshow) {
                     newFragment = new SlideshowFragment();
-                    newFragment.setArguments(SlideshowFragment.buildArgs(albumOpen, selectedItem));
+                    newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
                 } else if (allowVideoPlayback) {
                     newFragment = new AlbumVideoItemFragment();
                     newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs((VideoResourceItem) selectedItem, 1, 1, 1, true));
@@ -442,7 +442,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 }
             } else if (selectedItem instanceof PictureResourceItem) {
                 newFragment = new SlideshowFragment();
-                newFragment.setArguments(SlideshowFragment.buildArgs(albumOpen, selectedItem));
+                newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
             }
         }
 

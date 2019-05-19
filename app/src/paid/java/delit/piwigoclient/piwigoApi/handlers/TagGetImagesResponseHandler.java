@@ -61,7 +61,7 @@ public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler
 
         JsonArray images = result.get("images").getAsJsonArray();
 
-        ImagesGetResponseHandler.ResourceParser resourceParser = new ImagesGetResponseHandler.ResourceParser(multimediaExtensionList);
+        ImagesGetResponseHandler.ResourceParser resourceParser = new ImagesGetResponseHandler.ResourceParser(multimediaExtensionList, getPiwigoServerUrl());
 
         if(images != null) {
             for (int i = 0; i < images.size(); i++) {

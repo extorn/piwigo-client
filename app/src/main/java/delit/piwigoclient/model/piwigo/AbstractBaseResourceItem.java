@@ -2,8 +2,11 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,20 +21,20 @@ import delit.piwigoclient.ui.common.util.ParcelUtils;
  * Created by gareth on 12/07/17.
  */
 public abstract class AbstractBaseResourceItem extends GalleryItem {
+    private static final String TAG = "AbstractBaseResItem";
     private float myRating = 0;
     private float averageRating = 0;
     private int ratingsGiven = 0;
-    private int privacyLevel = 0;
+    private byte privacyLevel = 0;
     private ArrayList<ResourceFile> availableFiles = new ArrayList<>();
-    private ResourceFile fullSizeImage;
     private HashSet<Long> linkedAlbums;
     private String fileChecksum;
     private Date creationDate;
     private float score;
     private long resourceDetailsLoadedAt;
 
-    public AbstractBaseResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String thumbnailUrl) {
-        super(id, name, description, lastAltered, thumbnailUrl);
+    public AbstractBaseResourceItem(long id, String name, String description, Date creationDate, Date lastAltered, String baseResourceUrl) {
+        super(id, name, description, lastAltered, baseResourceUrl);
         this.creationDate = creationDate;
     }
 
@@ -40,9 +43,8 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         myRating = in.readFloat();
         averageRating = in.readFloat();
         ratingsGiven = in.readInt();
-        privacyLevel = in.readInt();
+        privacyLevel = in.readByte();
         availableFiles = in.createTypedArrayList(ResourceFile.CREATOR);
-        fullSizeImage = in.readParcelable(getClass().getClassLoader());
         linkedAlbums = ParcelUtils.readLongSet(in);
         fileChecksum = in.readString();
         creationDate = ParcelUtils.readDate(in);
@@ -58,12 +60,16 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         out.writeInt(ratingsGiven);
         out.writeInt(privacyLevel);
         out.writeTypedList(availableFiles);
-        out.writeParcelable(fullSizeImage, flags);
         ParcelUtils.writeLongSet(out, linkedAlbums);
         out.writeString(fileChecksum);
         ParcelUtils.writeDate(out, creationDate);
         out.writeFloat(score);
         out.writeLong(resourceDetailsLoadedAt);
+    }
+
+    @Override
+    public String getThumbnailUrl() {
+        return getFileUrl("thumb");
     }
 
     public String getFileChecksum() {
@@ -78,16 +84,23 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         return availableFiles;
     }
 
+    public void setThumbnailUrl(String thumbnailUrl) {
+        if (getFile("thumb") == null) {
+            addResourceFile("thumb", thumbnailUrl, -1, -1);
+        }
+    }
+
     public ResourceFile getFile(String name) {
+        byte wantedId = ResourceFile.getId(name);
         for (ResourceFile rf : availableFiles) {
-            if (rf.name.equals(name)) {
+            if (rf.id == wantedId) {
                 return rf;
             }
         }
         return null;
     }
 
-    public void addResourceFile(ResourceFile img) {
+    private void addResourceFile(ResourceFile img) {
         if (availableFiles.size() > 0) {
             ResourceFile last = availableFiles.get(availableFiles.size() - 1);
             if (last.width == img.width && last.height == img.height) {
@@ -98,23 +111,10 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     }
 
     public ResourceFile getFullSizeFile() {
-        return fullSizeImage;
-    }
-
-    public void setFullSizeImage(ResourceFile fullSizeImage) {
-        this.fullSizeImage = fullSizeImage;
-    }
-
-    public String getFileExtension() {
-        ResourceFile usingFile = fullSizeImage;
-        if(usingFile == null) {
-            if(availableFiles.size() > 0) {
-                usingFile = availableFiles.get(0);
+        for (ResourceFile f : availableFiles) {
+            if ("original".equals(f.getName())) {
+                return f;
             }
-        }
-        if(usingFile != null) {
-            int idx = usingFile.url.lastIndexOf('.');
-            return usingFile.url.substring(idx + 1);
         }
         return null;
     }
@@ -137,30 +137,19 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         return other instanceof GalleryItem && ((GalleryItem) other).getId() == this.getId();
     }
 
-    public String getDownloadFileName(ResourceFile selectedItem) {
-        // calculate filename from URI
-        Pattern p = Pattern.compile("^.*/([^?]*).*$");
-        Matcher m = p.matcher(selectedItem.url);
-        if (!m.matches()) {
-            throw new IllegalArgumentException("Filename pattern is not working for url " + selectedItem.url);
-        }
-        String filenameInUrl = m.group(1);
-
-        String ext = filenameInUrl.substring(filenameInUrl.lastIndexOf('.'));
-        String filenameRoot = getName();
-        if (filenameRoot == null) {
-            filenameRoot = filenameInUrl.substring(0, filenameInUrl.lastIndexOf('.'));
-        } else {
-            if (filenameRoot.endsWith(ext)) {
-                filenameRoot = getName().substring(0, getName().lastIndexOf(ext));
+    public String getFileExtension() {
+        ResourceFile usingFile = getFullSizeFile();
+        if (usingFile == null) {
+            if (availableFiles.size() > 0) {
+                usingFile = availableFiles.get(0);
             }
         }
-        String filesystemSafeFilenameRoot = filenameRoot.replaceAll("[:\\\\/*\"?|<>']", "_");
-        int maxLen = 127 - selectedItem.name.length() - ext.length();
-        if (filesystemSafeFilenameRoot.length() > maxLen) {
-            filesystemSafeFilenameRoot = filesystemSafeFilenameRoot.substring(0, 127);
+        if (usingFile != null) {
+            String url = usingFile.getUrl();
+            int idx = url.lastIndexOf('.');
+            return url.substring(idx + 1);
         }
-        return filesystemSafeFilenameRoot + '_' + selectedItem.name + ext;
+        return null;
     }
 
     public HashSet<Long> getLinkedAlbums() {
@@ -187,12 +176,36 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         this.averageRating = averageRating;
     }
 
-    public int getPrivacyLevel() {
-        return privacyLevel;
+    public String getDownloadFileName(ResourceFile selectedItem) {
+        // calculate filename from URI
+        Pattern p = Pattern.compile("^.*/([^?]*).*$");
+        String url = getFullPath(selectedItem.getUrl());
+        Matcher m = p.matcher(url);
+        if (!m.matches()) {
+            throw new IllegalArgumentException("Filename pattern is not working for url " + url);
+        }
+        String filenameInUrl = m.group(1);
+
+        String ext = filenameInUrl.substring(filenameInUrl.lastIndexOf('.'));
+        String filenameRoot = getName();
+        if (filenameRoot == null) {
+            filenameRoot = filenameInUrl.substring(0, filenameInUrl.lastIndexOf('.'));
+        } else {
+            if (filenameRoot.endsWith(ext)) {
+                filenameRoot = getName().substring(0, getName().lastIndexOf(ext));
+            }
+        }
+        String fileType = selectedItem.getName();
+        String filesystemSafeFilenameRoot = filenameRoot.replaceAll("[:\\\\/*\"?|<>']", "_");
+        int maxLen = 127 - fileType.length() - ext.length();
+        if (filesystemSafeFilenameRoot.length() > maxLen) {
+            filesystemSafeFilenameRoot = filesystemSafeFilenameRoot.substring(0, 127);
+        }
+        return filesystemSafeFilenameRoot + '_' + fileType + ext;
     }
 
-    public void setPrivacyLevel(int privacyLevel) {
-        this.privacyLevel = privacyLevel;
+    public byte getPrivacyLevel() {
+        return privacyLevel;
     }
 
     public int getRatingsGiven() {
@@ -211,7 +224,6 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         ratingsGiven = other.ratingsGiven;
         privacyLevel = other.privacyLevel;
         availableFiles = other.availableFiles;
-        fullSizeImage = other.fullSizeImage;
         linkedAlbums = other.linkedAlbums;
         fileChecksum = other.fileChecksum;
         resourceDetailsLoadedAt = other.resourceDetailsLoadedAt;
@@ -229,38 +241,122 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         resourceDetailsLoadedAt = System.currentTimeMillis();
     }
 
+    public void setPrivacyLevel(byte privacyLevel) {
+        this.privacyLevel = privacyLevel;
+    }
+
+    public String getFileUrl(String fileId) {
+        ResourceFile rf = getFile(fileId);
+        if (rf != null) {
+            return getFullPath(rf.getUrl());
+        }
+        return null;
+    }
+
+    public void addResourceFile(String name, String url, int originalResourceUrlWidth, int originalResourceUrlHeight) {
+        ResourceItem.ResourceFile img = new ResourceItem.ResourceFile(name, getRelativePath(url), originalResourceUrlWidth, originalResourceUrlHeight);
+        if (getFile(name) != null) {
+            Crashlytics.log(Log.ERROR, TAG, "attempting to add duplicate resource file of type " + name);
+        }
+        addResourceFile(img);
+    }
+
     public static class ResourceFile implements Comparable<ResourceFile>, Parcelable, Serializable {
 
         private static final long serialVersionUID = 2807336261739692481L;
+        private static final String TAG = "ResourceFile";
 
-        private final String name;
+        private final byte id;
         private final String url;
         private final int width;
         private final int height;
 
         public ResourceFile(String name, String url, int width, int height) {
-            this.name = name;
+            this.id = getId(name);
             this.url = url;
             this.width = width;
             this.height = height;
         }
 
         public ResourceFile(Parcel in) {
-            name = in.readString();
+            id = in.readByte();
             url = in.readString();
             width = in.readInt();
             height = in.readInt();
         }
 
+        private static final String getName(byte id) {
+            switch (id) {
+                case 0:
+                    return "original";
+                case 1:
+                    return "best-fit";
+                case 2:
+                    return "xxlarge";
+                case 3:
+                    return "xlarge";
+                case 4:
+                    return "large";
+                case 5:
+                    return "medium";
+                case 6:
+                    return "small";
+                case 7:
+                    return "xsmall";
+                case 8:
+                    return "2small";
+                case 9:
+                    return "thumb";
+                case 10:
+                    return "square";
+                default:
+                    Crashlytics.log(Log.ERROR, TAG, "Unsupported resource id encountered : " + id);
+                    return "unknown";
+            }
+        }
+
+        private static final byte getId(String name) {
+            if (name == null) {
+                name = "null";
+            }
+            switch (name) {
+                case "original":
+                    return 0;
+                case "best-fit":
+                    return 1;
+                case "xxlarge":
+                    return 2;
+                case "xlarge":
+                    return 3;
+                case "large":
+                    return 4;
+                case "medium":
+                    return 5;
+                case "small":
+                    return 6;
+                case "xsmall":
+                    return 7;
+                case "2small":
+                    return 8;
+                case "thumb":
+                    return 9;
+                case "square":
+                    return 10;
+                default:
+                    Crashlytics.log(Log.ERROR, TAG, "Unsupported resource name encountered : " + name);
+                    return -1;
+            }
+        }
+
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(name);
+            dest.writeByte(id);
             dest.writeString(url);
             dest.writeInt(width);
             dest.writeInt(height);
         }
 
-        public String getUrl() {
+        private String getUrl() {
             return url;
         }
 
@@ -273,12 +369,12 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         }
 
         public String getName() {
-            return name;
+            return getName(id);
         }
 
         @Override
         public String toString() {
-            return name + " (" + width + " * " + height + ')';
+            return getName(id) + " (" + width + " * " + height + ')';
         }
 
         @Override
@@ -289,7 +385,13 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
             if (this.width < o.width) {
                 return -1;
             }
-            return this.name.compareTo(o.name);
+            if (this.id > o.id) {
+                return 1;
+            }
+            if (this.id < o.id) {
+                return -1;
+            }
+            return 0;
         }
 
         @Override

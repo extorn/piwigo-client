@@ -107,7 +107,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private TextView selectedGallerySpinner;
     private Spinner privacyLevelSpinner;
     private CustomImageButton fileSelectButton;
-    private long privacyLevelWanted;
+    private byte privacyLevelWanted;
     private CategoryItemStub uploadToAlbum;
     private Long uploadJobId;
     private long externallyTriggeredSelectFilesActionId;
@@ -129,7 +129,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(SAVED_STATE_CURRENT_GALLERY, uploadToAlbum);
-        outState.putLong(SAVED_STATE_PRIVACY_LEVEL_WANTED, privacyLevelWanted);
+        outState.putByte(SAVED_STATE_PRIVACY_LEVEL_WANTED, privacyLevelWanted);
         BundleUtils.putFileArrayList(outState, SAVED_STATE_FILES_BEING_UPLOADED, filesForUpload);
         if (uploadJobId != null) {
             outState.putLong(SAVED_STATE_UPLOAD_JOB_ID, uploadJobId);
@@ -259,7 +259,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         privacyLevelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                privacyLevelWanted = id;
+                privacyLevelWanted = (byte) id;
             }
 
             @Override
@@ -317,7 +317,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (savedInstanceState != null) {
             // update view with saved data
             uploadToAlbum = savedInstanceState.getParcelable(SAVED_STATE_CURRENT_GALLERY);
-            privacyLevelWanted = savedInstanceState.getLong(SAVED_STATE_PRIVACY_LEVEL_WANTED);
+            privacyLevelWanted = savedInstanceState.getByte(SAVED_STATE_PRIVACY_LEVEL_WANTED);
             if (savedInstanceState.containsKey(SAVED_STATE_UPLOAD_JOB_ID)) {
                 uploadJobId = savedInstanceState.getLong(SAVED_STATE_UPLOAD_JOB_ID);
             }
@@ -627,7 +627,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (!userInputRequested) {
             if (activeJob == null) {
                 long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
-                activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, compressVideosBeforeUpload, (int) privacyLevelWanted, handlerId);
+                activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, compressVideosBeforeUpload, privacyLevelWanted, handlerId);
             }
             submitUploadJob(activeJob);
         }

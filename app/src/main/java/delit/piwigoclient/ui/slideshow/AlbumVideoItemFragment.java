@@ -291,7 +291,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         player.stop(); // this is terminal.
         videoPlaybackPosition = 0; // ensure it starts at the beginning again
         try {
-            CacheUtils.deleteCachedContent(getContext(), getModel().getFullSizeFile().getUrl());
+            CacheUtils.deleteCachedContent(getContext(), getModel().getFileUrl(getModel().getFullSizeFile().getName()));
             // now update stored state and UI display
             setAllowDownload(false);
             displayItemDetailsControlsBasedOnSessionState();
@@ -324,7 +324,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                         File downloadsFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
                         File toFile = new File(downloadsFolder, originalVideoFilename.replaceAll(".*/", "").replaceAll("(\\.[^.]*$)", "_" + getModel().getId() + "$1"));
                         IOUtils.copy(cachedVideoFile, toFile);
-                        onGetResource(new PiwigoResponseBufferingHandler.UrlToFileSuccessResponse(0, getModel().getFullSizeFile().getUrl(), toFile));
+                        onGetResource(new PiwigoResponseBufferingHandler.UrlToFileSuccessResponse(0, getModel().getFileUrl(getModel().getFullSizeFile().getName()), toFile));
                         getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
                     } catch (IOException e) {
                         Crashlytics.logException(e);
@@ -396,7 +396,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
         if (player.getPlaybackState() == Player.STATE_IDLE) {
             logStatus("configuring the player with a brand new datasource from factory");
-            Uri videoUri = Uri.parse(getModel().getFullSizeFile().getUrl());
+            Uri videoUri = Uri.parse(getModel().getFileUrl(getModel().getFullSizeFile().getName()));
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             if (connectionPrefs.isForceHttps(prefs, getContext()) && "http".equalsIgnoreCase(videoUri.getScheme())) {

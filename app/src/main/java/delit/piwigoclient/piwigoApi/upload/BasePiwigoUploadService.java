@@ -100,7 +100,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     public static @NotNull
-    UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, ArrayList<File> filesForUpload, CategoryItemStub category, boolean compressVideosBeforeUpload, int uploadedFilePrivacyLevel, long responseHandlerId) {
+    UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, ArrayList<File> filesForUpload, CategoryItemStub category, boolean compressVideosBeforeUpload, byte uploadedFilePrivacyLevel, long responseHandlerId) {
         long jobId = getNextMessageId();
         UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, filesForUpload, category, compressVideosBeforeUpload, uploadedFilePrivacyLevel);
         synchronized (activeUploadJobs) {

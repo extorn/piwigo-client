@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -66,6 +67,7 @@ import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.FavoritesUpdatedEvent;
+import delit.piwigoclient.ui.model.PiwigoFavoritesModel;
 import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
@@ -76,7 +78,6 @@ import static android.view.View.VISIBLE;
  */
 public class ViewFavoritesFragment extends MyFragment {
 
-    private static final String STATE_FAVORITES_MODEL = "FavModel";
     private static final String STATE_FAVORITES_ACTIVE_LOAD_THREADS = "activeLoadingThreads";
     private static final String STATE_FAVORITES_LOADS_TO_RETRY = "retryLoadList";
     private static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
@@ -150,7 +151,6 @@ public class ViewFavoritesFragment extends MyFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
-        outState.putParcelable(STATE_FAVORITES_MODEL, favoritesModel);
         outState.putSerializable(STATE_FAVORITES_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putStringArrayList(STATE_FAVORITES_LOADS_TO_RETRY, itemsToLoad);
         outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
@@ -211,7 +211,7 @@ public class ViewFavoritesFragment extends MyFragment {
             //restore saved state
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
             viewPrefs.loadFromBundle(savedInstanceState);
-            favoritesModel = savedInstanceState.getParcelable(STATE_FAVORITES_MODEL);
+
             // if favoritesIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             favoritesIsDirty = favoritesIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
@@ -225,6 +225,8 @@ public class ViewFavoritesFragment extends MyFragment {
             }
         }
 
+        favoritesModel = ViewModelProviders.of(getActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites().getValue();
+
         FavoritesUpdatedEvent favoritesUpdatedEvent = EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class);
         if(favoritesUpdatedEvent != null) {
             // updated the favorite tagged items
@@ -237,7 +239,7 @@ public class ViewFavoritesFragment extends MyFragment {
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(favoritesModel == null) {
             favoritesIsDirty = true;
-            favoritesModel = new PiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0));
+            favoritesModel = ViewModelProviders.of(getActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
         }
 
         if (isSessionDetailsChanged()) {
@@ -292,7 +294,7 @@ public class ViewFavoritesFragment extends MyFragment {
         recyclerView.setLayoutManager(gridLayoutMan);
 
 
-        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), favoritesModel, new AlbumViewAdapterListener(), viewPrefs);
+        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), PiwigoFavoritesModel.class, favoritesModel, new AlbumViewAdapterListener(), viewPrefs);
 
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
 
@@ -340,7 +342,7 @@ public class ViewFavoritesFragment extends MyFragment {
     }
 
     private void reloadFavoritesModel() {
-        favoritesModel = new PiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0));
+        favoritesModel = ViewModelProviders.of(getActivity()).get("0", PiwigoFavoritesModel.class).getPiwigoFavorites(new PiwigoFavorites.FavoritesSummaryDetails(0)).getValue();
         loadAlbumResourcesPage(0);
     }
 
@@ -776,6 +778,10 @@ public class ViewFavoritesFragment extends MyFragment {
         synchronized (this) {
             favoritesModel.getContainerDetails().setPhotoCount(response.getTotalResourceCount());
             favoritesModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
+            if (favoritesModel.isFullyLoaded() && favoritesModel.getItemCount() == 0) {
+                emptyFavoritesLabel.setText(R.string.favorites_empty_text);
+                emptyFavoritesLabel.setVisibility(VISIBLE);
+            }
             viewAdapter.notifyDataSetChanged();
         }
     }

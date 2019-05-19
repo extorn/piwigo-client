@@ -8,6 +8,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -17,11 +24,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.OtherPreferences;
@@ -44,6 +46,7 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.UserDeletedEvent;
 import delit.piwigoclient.ui.events.UserUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewUserEvent;
+import delit.piwigoclient.ui.model.PiwigoUsersModel;
 
 /**
  * Created by gareth on 26/05/17.
@@ -51,10 +54,9 @@ import delit.piwigoclient.ui.events.ViewUserEvent;
 
 public class UsersListFragment extends MyFragment {
 
-    private static final String USERS_MODEL = "usersModel";
     private final ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
-    private PiwigoUsers usersModel = new PiwigoUsers();
+    private PiwigoUsers usersModel;
     private UserRecyclerViewAdapter viewAdapter;
     private BaseRecyclerViewAdapterPreferences viewPrefs;
 
@@ -96,7 +98,6 @@ public class UsersListFragment extends MyFragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(USERS_MODEL, usersModel);
         viewPrefs.storeToBundle(outState);
     }
 
@@ -111,9 +112,11 @@ public class UsersListFragment extends MyFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
+        usersModel = ViewModelProviders.of(this).get(PiwigoUsersModel.class).getPiwigoUsers().getValue();
 
-        if (savedInstanceState != null && !isSessionDetailsChanged()) {
-            usersModel = savedInstanceState.getParcelable(USERS_MODEL);
+        if (isSessionDetailsChanged()) {
+            usersModel.clear();
+        } else if (savedInstanceState != null) {
             viewPrefs = new BaseRecyclerViewAdapterPreferences().loadFromBundle(savedInstanceState);
         }
 

@@ -1,9 +1,10 @@
 package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import android.view.View;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,7 @@ public class UserRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRec
     private final List<String> userTypeValues;
 
     public UserRecyclerViewAdapter(final Context context, final PiwigoUsers users, MultiSelectStatusListener multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
-        super(users, multiSelectStatusListener, prefs);
+        super(null, users, multiSelectStatusListener, prefs);
         userTypes = Arrays.asList(context.getResources().getStringArray(R.array.user_types_array));
         userTypeValues = Arrays.asList(context.getResources().getStringArray(R.array.user_types_values_array));
     }

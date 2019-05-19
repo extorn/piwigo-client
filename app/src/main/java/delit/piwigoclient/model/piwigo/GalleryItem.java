@@ -47,43 +47,57 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     };
     private static final long serialVersionUID = 7684159305897923971L;
     private long id; // this is final... except blank category items need to alter it
-    private String thumbnailUrl;
     private String name;
     private String description;
     private Date lastAltered;
     private ArrayList<Long> parentageChain;
     private long loadedAt;
+    private String baseResourceUrl;
 
 
-    public GalleryItem(long id, String name, String description, Date lastAltered, String thumbnailUrl) {
+    public GalleryItem(long id, String name, String description, Date lastAltered, String baseResourceUrl) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.thumbnailUrl = thumbnailUrl;
         this.lastAltered = lastAltered;
         parentageChain = new ArrayList<>();
         this.loadedAt = System.currentTimeMillis();
+        this.baseResourceUrl = baseResourceUrl;
     }
 
     public GalleryItem(Parcel in) {
         id = in.readLong();
-        thumbnailUrl = in.readString();
         name = in.readString();
         description = in.readString();
         lastAltered = ParcelUtils.readDate(in);
         parentageChain = ParcelUtils.readLongArrayList(in);
         loadedAt = in.readLong();
+        baseResourceUrl = in.readString();
+    }
+
+    protected final String getFullPath(String urlPath) {
+        if (urlPath != null && baseResourceUrl != null) {
+            return baseResourceUrl + urlPath;
+        }
+        return urlPath;
+    }
+
+    protected final String getRelativePath(String urlPath) {
+        if (urlPath != null && baseResourceUrl != null) {
+            return urlPath.substring(baseResourceUrl.length());
+        }
+        return urlPath;
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeLong(id);
-        out.writeString(thumbnailUrl);
         out.writeString(name);
         out.writeString(description);
         ParcelUtils.writeDate(out, lastAltered);
         ParcelUtils.writeLongArrayList(out, parentageChain);
         out.writeLong(loadedAt);
+        out.writeString(baseResourceUrl);
     }
 
     public long getId() {
@@ -92,6 +106,10 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
 
     public Long getParentId() {
         return parentageChain.size() == 0 ? null : parentageChain.get(parentageChain.size() - 1);
+    }
+
+    protected String getBaseResourceUrl() {
+        return baseResourceUrl;
     }
 
     public void setParentageChain(List<Long> parentageChain, long directParent) {
@@ -171,11 +189,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     }
 
     public String getThumbnailUrl() {
-        return thumbnailUrl;
-    }
-
-    public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
+        return null;
     }
 
     public void copyFrom(GalleryItem other, boolean copyParentage) {
@@ -184,7 +198,6 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
         }
         this.name = other.name;
         this.description = other.description;
-        this.thumbnailUrl = other.thumbnailUrl;
         this.lastAltered = other.lastAltered;
         if (copyParentage) {
             parentageChain = other.parentageChain;

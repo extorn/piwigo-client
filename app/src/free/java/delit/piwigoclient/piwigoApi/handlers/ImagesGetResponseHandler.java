@@ -9,14 +9,14 @@ public class ImagesGetResponseHandler extends BaseImagesGetResponseHandler {
     }
 
     @Override
-    protected ResourceParser buildResourceParser(String multimediaExtensionList) {
-        return new ResourceParser(multimediaExtensionList);
+    protected ResourceParser buildResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
+        return new ResourceParser(multimediaExtensionList, basePiwigoUrl);
     }
 
     public static class ResourceParser extends BasicCategoryImageResourceParser {
 
-        public ResourceParser(String multimediaExtensionList) {
-            super(multimediaExtensionList);
+        public ResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
+            super(multimediaExtensionList, basePiwigoUrl);
         }
     }
 }

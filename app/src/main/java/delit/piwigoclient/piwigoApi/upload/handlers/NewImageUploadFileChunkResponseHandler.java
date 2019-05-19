@@ -79,7 +79,8 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
             String thumbnailUrl = result.get("src").getAsString();
             JsonObject categeoryObj = result.get("category").getAsJsonObject();
             long albumId = categeoryObj.get("id").getAsLong();
-            uploadedResource = new ResourceItem(imageId, imageName, null, null, null, thumbnailUrl);
+            uploadedResource = new ResourceItem(imageId, imageName, null, null, null, null);
+            uploadedResource.setThumbnailUrl(thumbnailUrl);
             HashSet<Long> linkedAlbums = new HashSet<>(1);
             linkedAlbums.add(albumId);
             uploadedResource.setLinkedAlbums(linkedAlbums);

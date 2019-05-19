@@ -203,11 +203,13 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        intialiseFields();
-        loadArgsFromBundle(getArguments());
-        setArguments(null); // use the saved state from here.
-        // override values with saved state
+        Bundle args = getArguments();
+        if (args != null) {
+            intialiseFields(); // if we are opening this page for the first time with new data, wipe any old values.
+            loadArgsFromBundle(args);
+            setArguments(null); // use the saved state from here.
+        }
+        // override page default values with any saved state
         loadArgsFromBundle(savedInstanceState);
         restoreSavedInstanceState(savedInstanceState);
 
@@ -709,9 +711,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         discardButton.setEnabled(editingItemDetails);
     }
 
-    private int getPrivacyLevelValue() {
+    private byte getPrivacyLevelValue() {
         int selectedIdx = privacyLevelSpinner.getSelectedItemPosition();
-        return getContext().getResources().getIntArray(R.array.privacy_levels_values_array)[selectedIdx];
+        return (byte) getContext().getResources().getIntArray(R.array.privacy_levels_values_array)[selectedIdx];
     }
 
     private int getPrivacyLevelIndexPositionFromValue(int value) {

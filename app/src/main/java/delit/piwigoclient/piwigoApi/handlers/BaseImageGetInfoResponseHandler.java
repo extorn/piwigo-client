@@ -66,8 +66,8 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
 
         private final boolean usingPiwigoClientOveride;
 
-        public BaseImageGetInfoResourceParser(String multimediaExtensionList, boolean usingPiwigoClientOveride) {
-            super(multimediaExtensionList);
+        public BaseImageGetInfoResourceParser(String multimediaExtensionList, String basePiwigoUrl, boolean usingPiwigoClientOveride) {
+            super(multimediaExtensionList, basePiwigoUrl);
             this.usingPiwigoClientOveride = usingPiwigoClientOveride;
         }
 
@@ -75,7 +75,7 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
         public ResourceItem parseAndProcessResourceData(JsonObject image) throws JSONException {
             ResourceItem resourceItem = super.parseAndProcessResourceData(image);
 
-            int privacyLevel = image.get("level").getAsInt();
+            byte privacyLevel = image.get("level").getAsByte();
             resourceItem.setPrivacyLevel(privacyLevel);
 
             JsonObject rates = image.get("rates").getAsJsonObject();

@@ -1,27 +1,21 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.Manifest;
-import android.content.ClipData;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.ortiz.touchview.TouchImageView;
 
@@ -29,16 +23,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.PicassoLoader;
-import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -234,7 +224,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             @Override
             public boolean onLongClick(View v) {
                 final SelectImageRenderDetailsDialog dialogFactory = new SelectImageRenderDetailsDialog(getContext());
-                AlertDialog dialog = dialogFactory.buildDialog(getCurrentImageUrlDisplayed(), model.getAvailableFiles(), new SelectImageRenderDetailsDialog.RenderDetailSelectListener() {
+                AlertDialog dialog = dialogFactory.buildDialog(getCurrentImageUrlDisplayed(), model, new SelectImageRenderDetailsDialog.RenderDetailSelectListener() {
                     @Override
                     public void onSelection(String selectedUrl, float rotateDegrees, float maxZoom) {
                         currentImageUrlDisplayed = selectedUrl;
@@ -286,7 +276,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             String preferredImageSize = AlbumViewPreferences.getPreferredSlideshowImageSize(prefs, getContext());
             for (ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
                 if (rf.getName().equals(preferredImageSize)) {
-                    currentImageUrlDisplayed = rf.getUrl();
+                    currentImageUrlDisplayed = model.getFileUrl(rf.getName());
                     break;
                 }
             }
@@ -301,10 +291,10 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 }
                 ResourceItem.ResourceFile fullscreenImage = model.getBestFitFile(appWidth, appHeight);
                 if (fullscreenImage != null) {
-                    currentImageUrlDisplayed = fullscreenImage.getUrl();
+                    currentImageUrlDisplayed = model.getFileUrl(fullscreenImage.getName());
                 } else {
                     // this is theoretically never going to happen. Only if bug in the image selection code.
-                    currentImageUrlDisplayed = model.getFile("original").getUrl();
+                    currentImageUrlDisplayed = model.getFileUrl("original");
                 }
             }
         }
@@ -330,7 +320,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             if (event.areAllPermissionsGranted()) {
                 //Granted
                 DownloadSelectionDialog dialogFactory = new DownloadSelectionDialog(getContext());
-                AlertDialog dialog = dialogFactory.buildDialog(getModel().getName(), getCurrentImageUrlDisplayed(), getModel().getAvailableFiles(), new DownloadSelectionDialog.DownloadSelectionListener() {
+                AlertDialog dialog = dialogFactory.buildDialog(getModel().getName(), getCurrentImageUrlDisplayed(), getModel(), new DownloadSelectionDialog.DownloadSelectionListener() {
 
                     @Override
                     public void onDownload(ResourceItem.ResourceFile selectedItem, String resourceName) {
@@ -338,7 +328,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                         File outputFile = new File(downloadsFolder, getModel().getDownloadFileName(selectedItem));
                         //TODO check what happens if file exists
                         //NOTE: Don't add to active service calls (we want control over the dialog displayed).
-                        addDownloadAction(getUiHelper().invokeSilentServiceCall(new ImageGetToFileHandler(selectedItem.getUrl(), outputFile)), false);
+                        addDownloadAction(getUiHelper().invokeSilentServiceCall(new ImageGetToFileHandler(getModel().getFileUrl(selectedItem.getName()), outputFile)), false);
                     }
 
                     @Override
@@ -348,7 +338,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                         File outputFile = new File(downloadsFolder, getModel().getDownloadFileName(selectedItem));
                         //TODO check what happens if file exists
                         //NOTE: Don't add to active service calls (we want control over the dialog displayed).
-                        addDownloadAction(getUiHelper().invokeSilentServiceCall(new ImageGetToFileHandler(selectedItem.getUrl(), outputFile)), true);
+                        addDownloadAction(getUiHelper().invokeSilentServiceCall(new ImageGetToFileHandler(getModel().getFileUrl(selectedItem.getName()), outputFile)), true);
                     }
                 });
                 dialog.show();

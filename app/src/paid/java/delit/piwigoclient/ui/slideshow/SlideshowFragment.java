@@ -28,6 +28,7 @@ import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 /**
  * Created by gareth on 14/05/17.
@@ -35,9 +36,9 @@ import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 
 public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends AbstractSlideshowFragment<T> {
 
-    public static <S extends Identifiable & Parcelable & PhotoContainer> SlideshowFragment<S> newInstance(ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
+    public static <S extends Identifiable & Parcelable & PhotoContainer> SlideshowFragment<S> newInstance(Class<ViewModelContainer> modelType, ResourceContainer<S, GalleryItem> gallery, GalleryItem currentGalleryItem) {
         SlideshowFragment<S> fragment = new SlideshowFragment<>();
-        fragment.setArguments(buildArgs(gallery, currentGalleryItem));
+        fragment.setArguments(buildArgs(modelType, gallery, currentGalleryItem));
         return fragment;
     }
 
@@ -57,7 +58,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
             public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
                 boolean updated = false;
                 for(Tag t : response.getTags()) {
-                    if(t.getId() == getGalleryModel().getId()) {
+                    if (t.getId() == getResourceContainer().getId()) {
                         // tag has been located!
                         setContainerDetails((ResourceContainer<T, GalleryItem>) new PiwigoTag(t));
                         updated = true;
@@ -124,7 +125,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
 
     @Subscribe
     public void onEvent(TagContentAlteredEvent tagContentAlteredEvent) {
-        ResourceContainer<T,GalleryItem> gallery = getGalleryModel();
+        ResourceContainer<T, GalleryItem> gallery = getResourceContainer();
         if(gallery instanceof PiwigoTag && gallery.getId() == tagContentAlteredEvent.getId()) {
             getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_slideshow_out_of_sync_with_tag));
         }

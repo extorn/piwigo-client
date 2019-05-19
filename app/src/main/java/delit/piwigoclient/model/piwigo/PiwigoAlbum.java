@@ -244,11 +244,20 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
                 } else if (o2 == CategoryItem.ALBUM_HEADING) {
                     return -1; // push album heading to the end of albums
                 } else {
+                    int order;
                     switch (albumSortOrder) {
                         case DATE_ALBUM_SORT_ORDER:
-                            return o1.getLastAltered().compareTo(o2.getLastAltered());
+                            if (o1 == null) {
+                                return 1;
+                            }
+                            if (o2 == null) {
+                                return -1;
+                            }
+                            order = o1.getLastAltered().compareTo(o2.getLastAltered());
+                            return sortInReverseOrder ? -order : order; // internal album ordering is static
                         case NAME_ALBUM_SORT_ORDER:
-                            return o1.getName().compareTo(o2.getName());
+                            order = o1.getName().compareToIgnoreCase(o2.getName());
+                            return sortInReverseOrder ? order : -order; // internal album ordering is static
                         case DEFAULT_ALBUM_SORT_ORDER:
                         default:
                             return 0; // don't change the individual album order (we'll do this once they're all added)

@@ -22,6 +22,7 @@ import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
@@ -29,8 +30,8 @@ import delit.piwigoclient.ui.events.AlbumItemSelectedEvent;
  */
 public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> extends IdentifiableListViewAdapter<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, ResourceContainer<T, GalleryItem>, AlbumItemViewHolder<T>> {
 
-    public AlbumItemRecyclerViewAdapter(final Context context, final ResourceContainer<T, GalleryItem> gallery, MultiSelectStatusListener multiSelectStatusListener, AlbumItemRecyclerViewAdapterPreferences prefs) {
-        super(gallery, multiSelectStatusListener, prefs);
+    public AlbumItemRecyclerViewAdapter(final Context context, final Class<ViewModelContainer> modelType, final ResourceContainer<T, GalleryItem> gallery, MultiSelectStatusListener multiSelectStatusListener, AlbumItemRecyclerViewAdapterPreferences prefs) {
+        super(modelType, gallery, multiSelectStatusListener, prefs);
     }
 
     @NonNull
@@ -142,7 +143,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> ext
 
     @Override
     protected CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<T>> buildCustomClickListener(AlbumItemViewHolder<T> viewHolder) {
-        return new AlbumItemCustomClickListener(viewHolder, this);
+        return new AlbumItemCustomClickListener(getModelType(), viewHolder, this);
     }
 
     public abstract static class MultiSelectStatusAdapter extends BaseRecyclerViewAdapter.MultiSelectStatusAdapter {
@@ -167,10 +168,12 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> ext
     private static class AlbumItemCustomClickListener<T extends Identifiable&Parcelable> extends CustomClickListener<AlbumItemRecyclerViewAdapterPreferences, GalleryItem, AlbumItemViewHolder<T>> {
 
         private final int maxManualRetries = 2;
+        private final Class<ViewModelContainer> modelType;
         private int manualRetries = 0;
 
-        public AlbumItemCustomClickListener(AlbumItemViewHolder<T> viewHolder, AlbumItemRecyclerViewAdapter<T> adapter) {
+        public AlbumItemCustomClickListener(Class<ViewModelContainer> modelType, AlbumItemViewHolder<T> viewHolder, AlbumItemRecyclerViewAdapter<T> adapter) {
             super(viewHolder, adapter);
+            this.modelType = modelType;
         }
 
         @Override
@@ -181,7 +184,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> ext
         private void onCategoryClick() {
             if (!getParentAdapter().getAdapterPrefs().isAllowItemSelection()) {
                 //If not currently in multiselect mode
-                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(getParentAdapter().getItemStore(), getViewHolder().getItem());
+                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(modelType, getParentAdapter().getItemStore(), getViewHolder().getItem());
                 EventBus.getDefault().post(event);
             }
         }
@@ -189,7 +192,7 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> ext
         private void onNonCategoryClick() {
             if (!getParentAdapter().getAdapterPrefs().isAllowItemSelection()) {
                 //If not currently in multiselect mode
-                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(getParentAdapter().getItemStore(), getViewHolder().getItem());
+                AlbumItemSelectedEvent event = new AlbumItemSelectedEvent(modelType, getParentAdapter().getItemStore(), getViewHolder().getItem());
                 EventBus.getDefault().post(event);
             } else if (getParentAdapter().getAdapterPrefs().isMultiSelectionEnabled()) {
                 // Are allowing access to admin functions within the album

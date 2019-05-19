@@ -13,17 +13,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashSet;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -41,6 +42,7 @@ import delit.piwigoclient.ui.common.list.recycler.RecyclerViewMargin;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
+import delit.piwigoclient.ui.model.PiwigoTagModel;
 import delit.piwigoclient.util.DisplayUtils;
 
 /**
@@ -134,7 +136,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
             getViewPrefs().readonly();
         }
 
-        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
+        TagRecyclerViewAdapter viewAdapter = new TagRecyclerViewAdapter(PiwigoTagModel.class, tagsModel, new TagRecyclerViewAdapter.MultiSelectStatusAdapter<Tag>() {
         }, getViewPrefs());
         /*if(!viewAdapter.isItemSelectionAllowed()) {
             viewAdapter.toggleItemSelection();

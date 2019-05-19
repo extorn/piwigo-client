@@ -171,27 +171,18 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         favoriteButton = v.findViewById(R.id.slideshow_image_favorite);
-        favoriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if("noListener".equals(buttonView.getTag())) {
-                    buttonView.setTag(null);
-                    return;
-                }
-                buttonView.setEnabled(false);
-                if(getModel().hasFavoriteInfo()) {
-                    if (!getModel().isFavorite()) {
-                        getUiHelper().invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(getModel()), new FavoriteAddAction());
-                    } else {
-                        getUiHelper().invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(getModel()), new FavoriteRemoveAction());
-                    }
-                }
-            }
-        });
+        favoriteButton.setOnCheckedChangeListener(new FavoriteCheckedListener(getUiHelper(), getModel()));
 
         addViewVisibleControl(favoriteButton);
 
         return v;
+    }
+
+    private void onFavoriteUpdateFailed() {
+        favoriteButton.setOnCheckedChangeListener(null);
+        favoriteButton.setChecked(!favoriteButton.isChecked());
+        favoriteButton.setOnCheckedChangeListener(new FavoriteCheckedListener(getUiHelper(), getModel()));
+        favoriteButton.setEnabled(true);
     }
 
     @Override
@@ -339,8 +330,30 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         favoriteButton.setEnabled(true);
     }
 
-    private void onFavoriteUpdateFailed() {
-        favoriteButton.setChecked(!favoriteButton.isChecked());
-        favoriteButton.setEnabled(true);
+    private static class FavoriteCheckedListener implements CompoundButton.OnCheckedChangeListener {
+
+        private final UIHelper helper;
+        private final ResourceItem item;
+
+        public FavoriteCheckedListener(UIHelper helper, ResourceItem item) {
+            this.helper = helper;
+            this.item = item;
+        }
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if ("noListener".equals(buttonView.getTag())) {
+                buttonView.setTag(null);
+                return;
+            }
+            buttonView.setEnabled(false);
+            if (item.hasFavoriteInfo()) {
+                if (!item.isFavorite()) {
+                    helper.invokeActiveServiceCall(R.string.adding_favorite, new FavoritesAddImageResponseHandler(item), new FavoriteAddAction());
+                } else {
+                    helper.invokeActiveServiceCall(R.string.removing_favorite, new FavoritesRemoveImageResponseHandler(item), new FavoriteRemoveAction());
+                }
+            }
+        }
     }
 }

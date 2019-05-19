@@ -24,6 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -113,6 +114,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
+import delit.piwigoclient.ui.model.PiwigoAlbumModel;
 import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
@@ -223,7 +225,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             if (getArguments().containsKey(ARG_GALLERY)) {
                 CategoryItem albumDetails = getArguments().getParcelable(ARG_GALLERY);
                 albumDetails.forcePermissionsReload();
-                galleryModel = new PiwigoAlbum(albumDetails);
+                galleryModel = ViewModelProviders.of(getActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+                galleryModel.setContainerDetails(albumDetails);
                 galleryIsDirty = true;
             }
             setArguments(null); // use the saved state from here out.
@@ -280,7 +283,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         if(viewPrefs != null) {
             viewPrefs.storeToBundle(outState);
         }
-        outState.putParcelable(STATE_GALLERY_MODEL, galleryModel);
+        if (BuildConfig.DEBUG) {
+            ParcelUtils.logSize("galleryModel", galleryModel);
+        }
+        //outState.putParcelable(STATE_GALLERY_MODEL, galleryModel);
+        outState.putLong(STATE_GALLERY_MODEL, galleryModel.getId());
         outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
         outState.putBoolean(STATE_INFORMATION_SHOWING, informationShowing);
         outState.putLongArray(STATE_CURRENT_GROUPS, currentGroups);
@@ -353,6 +360,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        cacheViewComponentReferences(view);
 
         if (!PiwigoSessionDetails.isFullyLoggedIn(ConnectionPreferences.getActiveProfile())) {
             // force a reload of the gallery if the session has been destroyed.
@@ -367,7 +375,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
             currentGroups = savedInstanceState.getLongArray(STATE_CURRENT_GROUPS);
-            galleryModel = savedInstanceState.getParcelable(STATE_GALLERY_MODEL);
+            long currentAlbumId = savedInstanceState.getParcelable(STATE_GALLERY_MODEL);
+            galleryModel = ViewModelProviders.of(getActivity()).get("" + currentAlbumId, PiwigoAlbumModel.class).getPiwigoAlbum().getValue();
             // if galleryIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
@@ -388,9 +397,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             } else {
                 deleteActionData = savedInstanceState.getParcelable(STATE_DELETE_ACTION_DATA);
             }
-            if(galleryListView != null) {
-                galleryListView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(STATE_RECYCLER_LAYOUT));
-            }
+            galleryListView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(STATE_RECYCLER_LAYOUT));
             albumsPerRow = savedInstanceState.getInt(STATE_ALBUMS_PER_ROW);
         } else {
             // fresh view of the root of the gallery - reset the admin list
@@ -413,10 +420,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         }
 
-        galleryModel.setAlbumSortOrder(AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, getContext()));
-
-        // store references and initialise anything vital to the page (and used when loading data for example)
-        retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
+        if (galleryModel != null) {
+            galleryModel.setAlbumSortOrder(AlbumViewPreferences.getAlbumChildAlbumsSortOrder(prefs, getContext()));
+        } else {
+            Crashlytics.log(Log.WARN, getTag(), "Attempt to set album sort order but album model is still null");
+        }
 
         retryActionButton.hide();
         retryActionButton.setOnClickListener(new View.OnClickListener() {
@@ -427,23 +435,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
         });
 
-        emptyGalleryLabel = view.findViewById(R.id.album_empty_content);
         emptyGalleryLabel.setText(R.string.gallery_empty_text);
         if (!galleryIsDirty) {
             emptyGalleryLabel.setVisibility(galleryModel.getItemCount() == 0 ? VISIBLE : GONE);
         }
-
-        bulkActionsContainer = view.findViewById(R.id.gallery_actions_bulk_container);
-
-        galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
-
-        galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
-        descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
-
-        bottomSheet = view.findViewById(R.id.slidingDetailBottomSheet);
-
-        // Set the adapter
-        galleryListView = view.findViewById(R.id.gallery_list);
 
         initialiseBasketView(view);
 
@@ -491,7 +486,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         viewAdapterListener = new AlbumViewAdapterListener();
 
-        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), galleryModel, viewAdapterListener, viewPrefs);
+        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), PiwigoAlbumModel.class, galleryModel, viewAdapterListener, viewPrefs);
 
         Basket basket = getBasket();
 
@@ -542,6 +537,25 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 }
             }
         }
+    }
+
+    protected void cacheViewComponentReferences(@NonNull View view) {
+        // store references and initialise anything vital to the page (and used when loading data for example)
+        retryActionButton = view.findViewById(R.id.gallery_retryAction_actionButton);
+
+        emptyGalleryLabel = view.findViewById(R.id.album_empty_content);
+
+        bulkActionsContainer = view.findViewById(R.id.gallery_actions_bulk_container);
+
+        galleryNameHeader = view.findViewById(R.id.gallery_details_name_header);
+
+        galleryDescriptionHeader = view.findViewById(R.id.gallery_details_description_header);
+        descriptionDropdownButton = view.findViewById(R.id.gallery_details_description_dropdown_button);
+
+        bottomSheet = view.findViewById(R.id.slidingDetailBottomSheet);
+
+        // Set the adapter
+        galleryListView = view.findViewById(R.id.gallery_list);
     }
 
     private boolean showBulkDeleteAction(Basket basket) {

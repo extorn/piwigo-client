@@ -1,9 +1,10 @@
 package delit.piwigoclient.ui.permissions.users;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -28,7 +29,7 @@ public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<Bas
 
 
     public UsernameRecyclerViewAdapter(final Context context, final PiwigoUsernames usernames, HashSet<Long> indirectlySelectedItems, MultiSelectStatusListener multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
-        super(usernames, multiSelectStatusListener, prefs);
+        super(null, usernames, multiSelectStatusListener, prefs);
         setContext(context);
         this.indirectlySelectedItems = indirectlySelectedItems;
         userTypes = Arrays.asList(context.getResources().getStringArray(R.array.user_types_array));

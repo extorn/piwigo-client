@@ -43,7 +43,7 @@ public class UploadJob implements Serializable {
     private final HashMap<File, PartialUploadData> filePartialUploadProgress;
     private final ArrayList<Long> uploadToCategoryParentage;
     private final long uploadToCategory;
-    private final int privacyLevelWanted;
+    private final byte privacyLevelWanted;
     private final boolean compressVideosBeforeUpload;
     private int jobConfigId = -1;
     private boolean runInBackground;
@@ -57,7 +57,7 @@ public class UploadJob implements Serializable {
     private transient File loadedFromFile;
     private LinkedHashMap<Date, String> errors = new LinkedHashMap<>();
 
-    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, boolean compressVideosBeforeUpload, int uploadedFilePrivacyLevel) {
+    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, boolean compressVideosBeforeUpload, byte uploadedFilePrivacyLevel) {
         this.jobId = jobId;
         this.connectionPrefs = connectionPrefs;
         this.responseHandlerId = responseHandlerId;
@@ -226,7 +226,7 @@ public class UploadJob implements Serializable {
         return filesForUpload;
     }
 
-    public int getPrivacyLevelWanted() {
+    public byte getPrivacyLevelWanted() {
         return privacyLevelWanted;
     }
 

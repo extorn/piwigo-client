@@ -16,8 +16,8 @@ public class VideoResourceItem extends ResourceItem {
     private static final String TAG = "VidResItem";
     private static final long serialVersionUID = 1917026684526700745L;
 
-    public VideoResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String thumbnailUrl) {
-        super(id, name, description, dateCreated, lastAltered, thumbnailUrl);
+    public VideoResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String baseResourceUrl) {
+        super(id, name, description, dateCreated, lastAltered, baseResourceUrl);
     }
 
     public VideoResourceItem(Parcel in) {

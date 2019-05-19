@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -71,6 +72,7 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.TagUpdatedEvent;
+import delit.piwigoclient.ui.model.PiwigoTagModel;
 import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
@@ -82,7 +84,6 @@ import static android.view.View.VISIBLE;
 public class ViewTagFragment extends MyFragment {
 
     private static final String ARG_TAG = "tag";
-    private static final String STATE_TAG_MODEL = "TagModel";
     private static final String STATE_TAG_DIRTY = "isTagDirty";
     private static final String STATE_TAG_ACTIVE_LOAD_THREADS = "activeLoadingThreads";
     private static final String STATE_TAG_LOADS_TO_RETRY = "retryLoadList";
@@ -162,7 +163,6 @@ public class ViewTagFragment extends MyFragment {
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
         outState.putParcelable(ARG_TAG, tag);
-        outState.putParcelable(STATE_TAG_MODEL, tagModel);
         outState.putSerializable(STATE_TAG_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putStringArrayList(STATE_TAG_LOADS_TO_RETRY, itemsToLoad);
         outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
@@ -174,8 +174,11 @@ public class ViewTagFragment extends MyFragment {
 
         boolean showAlbumThumbnailsZoomed = AlbumViewPreferences.isShowAlbumThumbnailsZoomed(prefs, getContext());
 
-
         boolean showResourceNames = AlbumViewPreferences.isShowResourceNames(prefs, getContext());
+
+        String preferredThumbnailSize = AlbumViewPreferences.getPreferredResourceThumbnailSize(prefs, getContext());
+
+        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
 
         int recentlyAlteredThresholdAge = AlbumViewPreferences.getRecentlyAlteredMaxAgeMillis(prefs, getContext());
         Date recentlyAlteredThresholdDate = new Date(System.currentTimeMillis() - recentlyAlteredThresholdAge);
@@ -186,6 +189,8 @@ public class ViewTagFragment extends MyFragment {
 
         viewPrefs.selectable(getMultiSelectionAllowed(), false);
         viewPrefs.setAllowItemSelection(false); // prevent selection until a long click enables it.
+        viewPrefs.withPreferredThumbnailSize(preferredThumbnailSize);
+        viewPrefs.withPreferredAlbumThumbnailSize(preferredAlbumThumbnailSize);
         viewPrefs.withShowingAlbumNames(showResourceNames);
         viewPrefs.withShowAlbumThumbnailsZoomed(showAlbumThumbnailsZoomed);
 //        viewPrefs.withAlbumWidth(getScreenWidth() / albumsPerRow);
@@ -223,8 +228,8 @@ public class ViewTagFragment extends MyFragment {
             //restore saved state
             viewPrefs = new AlbumItemRecyclerViewAdapterPreferences();
             viewPrefs.loadFromBundle(savedInstanceState);
-            tagModel = savedInstanceState.getParcelable(STATE_TAG_MODEL);
             tag = savedInstanceState.getParcelable(ARG_TAG);
+            tagModel = ViewModelProviders.of(getActivity()).get(PiwigoTagModel.class).getPiwigoTag().getValue();
             // if tagIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
@@ -250,7 +255,7 @@ public class ViewTagFragment extends MyFragment {
         userGuid = PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile());
         if(tagModel == null) {
             tagIsDirty = true;
-            tagModel = new PiwigoTag(tag);
+            tagModel = ViewModelProviders.of(getActivity()).get("" + tag.getId(), PiwigoTagModel.class).getPiwigoTag(tag).getValue();
         }
 
         if (isSessionDetailsChanged()) {
@@ -305,7 +310,7 @@ public class ViewTagFragment extends MyFragment {
         recyclerView.setLayoutManager(gridLayoutMan);
 
 
-        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), tagModel, new AlbumViewAdapterListener(), viewPrefs);
+        viewAdapter = new AlbumItemRecyclerViewAdapter(getContext(), PiwigoTagModel.class, tagModel, new AlbumViewAdapterListener(), viewPrefs);
 
         bulkActionsContainer.setVisibility(viewAdapter.isItemSelectionAllowed()?VISIBLE:GONE);
 
@@ -352,39 +357,30 @@ public class ViewTagFragment extends MyFragment {
         recyclerView.addOnScrollListener(scrollListener);
     }
 
+    private void reloadTagModel(Tag tag) {
+        tagModel = ViewModelProviders.of(getActivity()).get("" + tag.getId(), PiwigoTagModel.class).getPiwigoTag(tag).getValue();
+    }
+
+    private PiwigoTag getTagModel() {
+        return tagModel;
+    }
+
     private void reloadTagModel() {
-        UIHelper.Action action = new UIHelper.Action<ViewTagFragment,TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse>() {
-
-            @Override
-            public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
-                boolean updated = false;
-                for(Tag t : response.getTags()) {
-                    if(t.getId() == tagModel.getId()) {
-                        // tag has been located!
-                        tagModel = new PiwigoTag(t);
-                        updated = true;
-                    }
-                }
-                if(!updated) {
-                    //Something wierd is going on - this should never happen
-                    Crashlytics.log(Log.ERROR, getTag(), "Closing tag - tag was not available after refreshing session");
-                    getFragmentManager().popBackStack();
-                    return false;
-                }
-                loadAlbumResourcesPage(0);
-                return false;
-            }
-
-            @Override
-            public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-                getFragmentManager().popBackStack();
-                return false;
-            }
-        };
         if(PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
-            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(1, Integer.MAX_VALUE), action);
+            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetAdminListResponseHandler(1, Integer.MAX_VALUE), new TagLoadedAction());
         } else {
-            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(0, Integer.MAX_VALUE), action);
+            getUiHelper().invokeActiveServiceCall(R.string.progress_loading_tags, new TagsGetListResponseHandler(0, Integer.MAX_VALUE), new TagLoadedAction());
+        }
+    }
+
+    private void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
+        synchronized (this) {
+            tagModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
+            if (tagModel.isFullyLoaded() && tagModel.getItemCount() == 0) {
+                emptyTagLabel.setText(R.string.tag_empty_text);
+                emptyTagLabel.setVisibility(VISIBLE);
+            }
+            viewAdapter.notifyDataSetChanged();
         }
     }
 
@@ -806,10 +802,34 @@ public class ViewTagFragment extends MyFragment {
         }
     }
 
-    private void onGetResources(final BaseImagesGetResponseHandler.PiwigoGetResourcesResponse response) {
-        synchronized (this) {
-            tagModel.addItemPage(response.getPage(), response.getPageSize(), response.getResources());
-            viewAdapter.notifyDataSetChanged();
+    static class TagLoadedAction extends UIHelper.Action<ViewTagFragment, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse> {
+
+        @Override
+        public boolean onSuccess(UIHelper uiHelper, TagsGetListResponseHandler.PiwigoGetTagsListRetrievedResponse response) {
+            boolean updated = false;
+            ViewTagFragment fragment = ((ViewTagFragment) uiHelper.getParent());
+            for (Tag t : response.getTags()) {
+                if (t.getId() == fragment.getTagModel().getId()) {
+                    // tag has been located!
+                    fragment.reloadTagModel(t);
+                    updated = true;
+                }
+            }
+            if (!updated) {
+                //Something wierd is going on - this should never happen
+                Crashlytics.log(Log.ERROR, fragment.getTag(), "Closing tag - tag was not available after refreshing session");
+                fragment.getFragmentManager().popBackStack();
+                return false;
+            }
+            fragment.loadAlbumResourcesPage(0);
+            return false;
+        }
+
+        @Override
+        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            ViewTagFragment fragment = ((ViewTagFragment) uiHelper.getParent());
+            fragment.getFragmentManager().popBackStack();
+            return false;
         }
     }
 

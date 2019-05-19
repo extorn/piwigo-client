@@ -1,11 +1,9 @@
 package delit.piwigoclient.ui.slideshow;
 
-import androidx.appcompat.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +11,13 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+
 import java.io.Serializable;
-import java.util.ArrayList;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.AbstractBaseResourceItem;
+import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 
 /**
@@ -29,16 +29,18 @@ class DownloadSelectionDialog {
     private RadioGroup downloadOptionGroup;
     private DownloadSelectionListener downloadSelectionListener;
     private AlertDialog dialog;
+    private PictureResourceItem item;
 
     public DownloadSelectionDialog(Context context) {
         this.context = context;
     }
 
-    public AlertDialog buildDialog(final String resourceName, String currentImageUrlDisplayed, ArrayList<ResourceItem.ResourceFile> availableFiles, final DownloadSelectionListener downloadSelectionListener) {
+    public AlertDialog buildDialog(final String resourceName, String currentImageUrlDisplayed, final PictureResourceItem item, final DownloadSelectionListener downloadSelectionListener) {
         this.downloadSelectionListener = downloadSelectionListener;
         final AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
         builder1.setTitle(R.string.alert_image_download_title);
-        final DownloadItemsListAdapter adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, availableFiles);
+        this.item = item;
+        final DownloadItemsListAdapter adapter = new DownloadItemsListAdapter(context, R.layout.layout_dialog_select_singlechoice_compressed, item);
 
         View view = LayoutInflater.from(context).inflate(R.layout.layout_dialog_download_file, null, false);
         ((TextView) view.findViewById(R.id.alertMessage)).setText(R.string.alert_image_download_message);
@@ -112,7 +114,7 @@ class DownloadSelectionDialog {
     }
 
     private void onCopyLink(AbstractBaseResourceItem.ResourceFile selectedItem, String resourceName) {
-        Uri uri = Uri.parse(selectedItem.getUrl());
+        Uri uri = Uri.parse(item.getFileUrl(selectedItem.getName()));
         ClipboardManager mgr = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clipData = ClipData.newRawUri(context.getString(R.string.download_link_clipboard_data_desc, resourceName), uri);
         mgr.setPrimaryClip(clipData);

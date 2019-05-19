@@ -13,6 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -23,11 +29,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -51,6 +52,7 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.TagUpdatedEvent;
 import delit.piwigoclient.ui.events.ViewTagEvent;
+import delit.piwigoclient.ui.model.PiwigoTagModel;
 
 /**
  * Created by gareth on 26/05/17.
@@ -165,7 +167,7 @@ public class TagsListFragment extends MyFragment {
 
         recyclerView.setLayoutManager(layoutMan);
 
-        viewAdapter = new TagRecyclerViewAdapter(tagsModel, new TagListSelectListener(), viewPrefs);
+        viewAdapter = new TagRecyclerViewAdapter(PiwigoTagModel.class, tagsModel, new TagListSelectListener(), viewPrefs);
 
         recyclerView.setAdapter(viewAdapter);
         recyclerView.addItemDecoration(new RecyclerViewMargin(getContext(), RecyclerViewMargin.DEFAULT_MARGIN_DP, 1));
@@ -173,6 +175,9 @@ public class TagsListFragment extends MyFragment {
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutMan) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                if (page >= 1) {
+                    return; // tags aren't paged so no call to make!
+                }
                 int pageToLoad = page * tagsModel.getPageSources();
                 if (tagsModel.isPageLoadedOrBeingLoaded(pageToLoad) || tagsModel.isFullyLoaded()) {
                     Integer missingPage = tagsModel.getAMissingPage();
@@ -402,12 +407,6 @@ public class TagsListFragment extends MyFragment {
         try {
             retryActionButton.hide();
             boolean isAdminPage = response instanceof TagsGetAdminListResponseHandler.PiwigoGetTagsAdminListRetrievedResponse;
-            if(!isAdminPage && tagsModel.getPagesLoaded() == 0) {
-                boolean needToLoadAdminList = setTagsModelPageSourceCount();
-                if(needToLoadAdminList) {
-                    loadTagsPage(response.getPage());
-                }
-            }
             tagsModel.addItemPage(isAdminPage?1:0, isAdminPage, response.getPage(), response.getPageSize(), response.getTags());
             // Will this code play nicely with the tags plugin? Testing needed
 //            if(tagsModel.getPageSources() == tagsModel.getPagesLoaded()) {

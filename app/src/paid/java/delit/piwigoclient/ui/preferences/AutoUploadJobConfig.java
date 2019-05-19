@@ -5,6 +5,11 @@ import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.BoolRes;
+import androidx.annotation.IntegerRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -15,10 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import androidx.annotation.BoolRes;
-import androidx.annotation.IntegerRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -174,8 +175,8 @@ public class AutoUploadJobConfig implements Parcelable {
         return getBooleanValue(c, R.string.preference_data_upload_automatic_job_is_valid_key, false);
     }
 
-    public int getUploadedFilePrivacyLevel(Context c) {
-        return getIntValue(c, R.string.preference_data_upload_automatic_job_privacy_level_key, R.integer.preference_data_upload_automatic_job_privacy_level_default);
+    public byte getUploadedFilePrivacyLevel(Context c) {
+        return (byte) getIntValue(c, R.string.preference_data_upload_automatic_job_privacy_level_key, R.integer.preference_data_upload_automatic_job_privacy_level_default);
     }
 
     public int getMaxUploadSize(Context c) {

@@ -21,6 +21,8 @@ import delit.piwigoclient.util.ClassUtils;
 
 public class ParcelUtils {
 
+    private static final String TAG = "ParcelUtils";
+
     public static <T extends Parcelable> ArrayList<T> readArrayList(@NonNull Parcel in, ClassLoader loader) {
         ArrayList<T> store = readValue(in, loader, ArrayList.class);
         return store;
@@ -61,11 +63,11 @@ public class ParcelUtils {
             }
             T val = valueType.cast(o);
             if(val == null && valueType.isPrimitive()) {
-                Crashlytics.log(Log.ERROR, "ParcelUtils", "read null, but expected value of type : " + expectedType.getName());
+                Crashlytics.log(Log.ERROR, TAG, "read null, but expected value of type : " + expectedType.getName());
             }
             return val;
         } catch(ClassCastException e) {
-            Crashlytics.log(Log.ERROR, "ParcelUtils", "returning null as value of unexpected type : " + o);
+            Crashlytics.log(Log.ERROR, TAG, "returning null as value of unexpected type : " + o);
             Crashlytics.logException(e);
             return null;
         }
@@ -188,7 +190,7 @@ public class ParcelUtils {
             keys = new ArrayList<>(data.size());
             values = new ArrayList<>(data.size());
             if (BuildConfig.DEBUG && data.size() > 0 && !(data.values().iterator().next() instanceof Number)) {
-                Log.v("ParcelUtils", String.format("Start writing map to parcel with keys : %1$s", data.keySet()));
+                Crashlytics.log(Log.VERBOSE, TAG, String.format("Start writing map to parcel with keys : %1$s", data.keySet()));
             }
             for (Map.Entry<S, T> entry : data.entrySet()) {
                 keys.add(entry.getKey());
@@ -202,17 +204,17 @@ public class ParcelUtils {
         p.writeValue(keys);
         p.writeValue(values);
         if (BuildConfig.DEBUG) {
-            Log.v("ParcelUtils", String.format("Finished writing map to parcel with keys : %1$s", keys));
+            Crashlytics.log(Log.VERBOSE, TAG, String.format("Finished writing map to parcel with keys : %1$s", keys));
         }
     }
 
-    private static <Object> void logSize(Object id, Object value) {
+    public static <Object> void logSize(Object id, Object value) {
         Parcel p = Parcel.obtain();
 
         try {
             p.writeValue(value);
             int sizeInBytes = p.marshall().length;
-            Log.v("ParcelUtils", String.format("ParcelItemSize(%1$s:%2$s) %3$.02fKb", id, value.getClass().getName(), ((double) sizeInBytes) / 1024));
+            Crashlytics.log(Log.VERBOSE, TAG, String.format("ParcelItemSize(%1$s:%2$s) %3$.02fKb", id, value.getClass().getName(), ((double) sizeInBytes) / 1024));
         } finally {
             p.recycle();
         }
