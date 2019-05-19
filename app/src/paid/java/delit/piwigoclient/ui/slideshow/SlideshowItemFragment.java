@@ -2,6 +2,7 @@ package delit.piwigoclient.ui.slideshow;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -107,10 +110,10 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         super.populateResourceExtraFields();
 
         if(getModel().hasFavoriteInfo()) {
-            boolean newVal = getModel().isFavorite();
-            if(newVal != favoriteButton.isChecked()) {
+            boolean modelVal = getModel().hasFavoriteInfo() && getModel().isFavorite();
+            if (modelVal != favoriteButton.isChecked()) {
                 favoriteButton.setTag("noListener");
-                favoriteButton.setChecked(newVal);
+                favoriteButton.setChecked(modelVal);
             }
         }
 
@@ -171,17 +174,16 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         favoriteButton = v.findViewById(R.id.slideshow_image_favorite);
-        favoriteButton.setOnCheckedChangeListener(new FavoriteCheckedListener(getUiHelper(), getModel()));
-
         addViewVisibleControl(favoriteButton);
-
         return v;
     }
 
     private void onFavoriteUpdateFailed() {
-        favoriteButton.setOnCheckedChangeListener(null);
-        favoriteButton.setChecked(!favoriteButton.isChecked());
-        favoriteButton.setOnCheckedChangeListener(new FavoriteCheckedListener(getUiHelper(), getModel()));
+        if (getModel().isFavorite() != favoriteButton.isChecked()) {
+            // change the button to match the model.
+            favoriteButton.setTag("noListener");
+            favoriteButton.setChecked(!getModel().isFavorite());
+        }
         favoriteButton.setEnabled(true);
     }
 
@@ -201,6 +203,7 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             changedTagsEvents = BundleUtils.getHashSet(savedInstanceState, STATE_CHANGED_TAGS_SET);
         }
         super.onViewCreated(view, savedInstanceState);
+        favoriteButton.setOnCheckedChangeListener(new SlideshowItemFragment.FavoriteCheckedListener(getUiHelper(), getModel()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -332,12 +335,18 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
     private static class FavoriteCheckedListener implements CompoundButton.OnCheckedChangeListener {
 
-        private final UIHelper helper;
-        private final ResourceItem item;
+        private static final String TAG = "FavoriteCheckedListener";
+        private final @NonNull
+        UIHelper helper;
+        private final @NonNull
+        ResourceItem item;
 
-        public FavoriteCheckedListener(UIHelper helper, ResourceItem item) {
+        public FavoriteCheckedListener(@NonNull UIHelper helper, @NonNull ResourceItem item) {
             this.helper = helper;
             this.item = item;
+            if (item == null) {
+                Crashlytics.log(Log.ERROR, TAG, "Model item is null");
+            }
         }
 
         @Override

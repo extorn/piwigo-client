@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.piwigoclient.util.ObjectUtils;
 
 /**
  * Helper class for providing sample content for user interfaces created by
@@ -247,13 +248,7 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
                     int order;
                     switch (albumSortOrder) {
                         case DATE_ALBUM_SORT_ORDER:
-                            if (o1 == null) {
-                                return 1;
-                            }
-                            if (o2 == null) {
-                                return -1;
-                            }
-                            order = o1.getLastAltered().compareTo(o2.getLastAltered());
+                            order = ObjectUtils.compare(o1.getLastAltered(), o2.getLastAltered());
                             return sortInReverseOrder ? -order : order; // internal album ordering is static
                         case NAME_ALBUM_SORT_ORDER:
                             order = o1.getName().compareToIgnoreCase(o2.getName());

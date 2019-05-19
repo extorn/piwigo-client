@@ -198,6 +198,10 @@
             - Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.4</item>
+        <item>"Bugfix:
+            - Crash when marking image as a Favorite
+            - Crash when using date sort order with folder containing a brand new unused folder"</item>
         <item>1.4.0.3</item>
         <item>"Changes:
             - Better management of view model data"</item>
