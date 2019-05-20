@@ -7,9 +7,10 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import androidx.annotation.DrawableRes;
 import android.util.SparseIntArray;
 import android.widget.Toast;
+
+import androidx.annotation.DrawableRes;
 
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
@@ -111,9 +112,12 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         byte[] imageData = ((PiwigoResponseBufferingHandler.UrlSuccessResponse) handler.getResponse()).getData();
 
         ByteArrayInputStream imageDataStream = new ByteArrayInputStream(imageData);
-        Metadata exifMetadata = loadExifMetadata(uri, imageDataStream);
-        imageDataStream.reset();
-        int exitRotationDegrees = getExifRotationDegrees(exifMetadata);
+        int exitRotationDegrees = 0;
+        if (handler.isSuccess()) {
+            Metadata exifMetadata = loadExifMetadata(uri, imageDataStream);
+            imageDataStream.reset();
+            exitRotationDegrees = getExifRotationDegrees(exifMetadata);
+        }
         return new CustomNetworkRequestHandler.DownloaderResponse(imageDataStream, false, imageData.length, exitRotationDegrees);
     }
 

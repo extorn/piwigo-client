@@ -51,8 +51,6 @@ public class LicenceCheckingHelper {
 
         // Library calls this when it's done.
         mLicenseCheckerCallback = new MyLicenseCheckerCallback();
-        // Construct the LicenseChecker with a policy
-        String myPackageName = activity.getPackageName();
 
         //Force the licence response to be invalidated every time a new version is installed.
         byte[] salt = new byte[20];
@@ -60,7 +58,7 @@ public class LicenceCheckingHelper {
 
         mChecker = new LicenseChecker(
                 activity, new ServerManagedPolicy(activity.getApplicationContext(),
-                new AESObfuscator(salt, myPackageName, deviceId)),
+                new AESObfuscator(salt, delit.piwigoclient.BuildConfig.APPLICATION_ID, deviceId, true)),
                 BASE64_PUBLIC_KEY);
         doVisualCheck(activity.getApplicationContext());
     }

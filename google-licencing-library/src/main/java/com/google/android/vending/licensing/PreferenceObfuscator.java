@@ -59,7 +59,7 @@ public class PreferenceObfuscator {
             try {
                 result = mObfuscator.unobfuscate(value, key);
             } catch (ValidationException e) {
-Crashlytics.logException(e);
+                Crashlytics.logException(e);
                 // Unable to unobfuscate, data corrupt or tampered
                 if(BuildConfig.DEBUG) {
                     Log.w(TAG, "Validation error while reading preference: " + key);

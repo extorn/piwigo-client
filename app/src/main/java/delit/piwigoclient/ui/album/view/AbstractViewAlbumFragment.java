@@ -126,8 +126,7 @@ import static android.view.View.VISIBLE;
  */
 public abstract class AbstractViewAlbumFragment extends MyFragment {
 
-    private static final String ARG_GALLERY = "gallery";
-    private static final String STATE_GALLERY_MODEL = "GalleryModel";
+    private static final String ARG_ALBUM = "album";
     private static final String STATE_EDITING_ITEM_DETAILS = "editingItemDetails";
     private static final String STATE_INFORMATION_SHOWING = "informationShowing";
     private static final String STATE_CURRENT_USERS = "currentUsers";
@@ -140,7 +139,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private static final String STATE_USERNAME_SELECTION_WANTED_NEXT = "usernameSelectionWantedNext";
     private static final String STATE_DELETE_ACTION_DATA = "deleteActionData";
     private static final String STATE_USER_GUID = "userGuid";
-    private static final String STATE_RECYCLER_LAYOUT = "recyclerLayout";
     private static final String STATE_ALBUMS_PER_ROW = "albumsPerRow";
 
     private static final int UPDATE_IN_PROGRESS = 1;
@@ -201,6 +199,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     private AlbumItemRecyclerViewAdapterPreferences viewPrefs;
     private CustomSlidingLayer bottomSheet;
     private EndlessRecyclerViewScrollListener galleryListViewScrollListener;
+    private CategoryItem albumDetails;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -209,10 +208,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     public AbstractViewAlbumFragment() {
     }
 
-    public static AbstractViewAlbumFragment newInstance(CategoryItem gallery) {
+    public static AbstractViewAlbumFragment newInstance(CategoryItem album) {
         AbstractViewAlbumFragment fragment = new ViewAlbumFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_GALLERY, gallery);
+        args.putParcelable(ARG_ALBUM, album);
         fragment.setArguments(args);
         return fragment;
     }
@@ -222,14 +221,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            if (getArguments().containsKey(ARG_GALLERY)) {
-                CategoryItem albumDetails = getArguments().getParcelable(ARG_GALLERY);
-                albumDetails.forcePermissionsReload();
-                galleryModel = ViewModelProviders.of(getActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
-                galleryModel.setContainerDetails(albumDetails);
-                galleryIsDirty = true;
-            }
-            setArguments(null); // use the saved state from here out.
+            albumDetails = getArguments().getParcelable(ARG_ALBUM);
+            albumDetails.forcePermissionsReload();
+            galleryModel = ViewModelProviders.of(getActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum(albumDetails).getValue();
+            galleryModel.setContainerDetails(albumDetails);
+            galleryIsDirty = true;
         }
     }
 
@@ -283,11 +279,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         if(viewPrefs != null) {
             viewPrefs.storeToBundle(outState);
         }
-        if (BuildConfig.DEBUG) {
-            ParcelUtils.logSize("galleryModel", galleryModel);
-        }
-        //outState.putParcelable(STATE_GALLERY_MODEL, galleryModel);
-        outState.putLong(STATE_GALLERY_MODEL, galleryModel.getId());
         outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
         outState.putBoolean(STATE_INFORMATION_SHOWING, informationShowing);
         outState.putLongArray(STATE_CURRENT_GROUPS, currentGroups);
@@ -300,7 +291,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         outState.putBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT, usernameSelectionWantedNext);
         outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
         outState.putLong(STATE_USER_GUID, userGuid);
-        outState.putParcelable(STATE_RECYCLER_LAYOUT, galleryListView.getLayoutManager().onSaveInstanceState());
         outState.putInt(STATE_ALBUMS_PER_ROW, albumsPerRow);
 
         if (BuildConfig.DEBUG) {
@@ -375,8 +365,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             informationShowing = savedInstanceState.getBoolean(STATE_INFORMATION_SHOWING);
             currentUsers = savedInstanceState.getLongArray(STATE_CURRENT_USERS);
             currentGroups = savedInstanceState.getLongArray(STATE_CURRENT_GROUPS);
-            long currentAlbumId = savedInstanceState.getParcelable(STATE_GALLERY_MODEL);
-            galleryModel = ViewModelProviders.of(getActivity()).get("" + currentAlbumId, PiwigoAlbumModel.class).getPiwigoAlbum().getValue();
+            galleryModel = ViewModelProviders.of(getActivity()).get("" + albumDetails.getId(), PiwigoAlbumModel.class).getPiwigoAlbum().getValue();
             // if galleryIsDirty then this fragment was updated while on the backstack - need to refresh it.
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
@@ -397,7 +386,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             } else {
                 deleteActionData = savedInstanceState.getParcelable(STATE_DELETE_ACTION_DATA);
             }
-            galleryListView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(STATE_RECYCLER_LAYOUT));
             albumsPerRow = savedInstanceState.getInt(STATE_ALBUMS_PER_ROW);
         } else {
             // fresh view of the root of the gallery - reset the admin list
@@ -462,11 +450,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 //        viewInOrientation = getResources().getConfiguration().orientation;
 
 
-
-        RecyclerView recyclerView = galleryListView;
-
-
-
         // need to wait for the gallery model to be initialised.
 
         int imagesDisplayedPerRow = AlbumViewPreferences.getImagesToDisplayPerRow(getActivity(), prefs);
@@ -482,7 +465,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), totalSpans);
         gridLayoutMan.setSpanSizeLookup(new SpanSizeLookup(galleryModel, totalSpans, colsSpannedByAlbum, colsSpannedByImage));
 
-        recyclerView.setLayoutManager(gridLayoutMan);
+        galleryListView.setLayoutManager(gridLayoutMan);
 
         viewAdapterListener = new AlbumViewAdapterListener();
 
@@ -492,31 +475,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         setupBulkActionsControls(basket);
 
-        recyclerView.setAdapter(viewAdapter);
+        galleryListView.setAdapter(viewAdapter);
 
 
-        galleryListViewScrollListener = new EndlessRecyclerViewScrollListener(gridLayoutMan) {
-            @Override
-            public void onLoadMore(int requestedPage, int totalItemsCount, RecyclerView view) {
-                int pageToLoad = requestedPage;
-
-                int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
-                int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
-
-                if (galleryModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad) || galleryModel.isFullyLoaded()) {
-                    Integer missingPage = galleryModel.getAMissingPage();
-                    if(missingPage != null) {
-                        pageToLoad = missingPage;
-                    } else {
-                        // already load this one by default so lets not double load it (or we've already loaded all items).
-                        return;
-                    }
-                }
-                loadAlbumResourcesPage(pageToLoad);
-            }
-        };
+        galleryListViewScrollListener = new AlbumScrollListener(gridLayoutMan);
         galleryListViewScrollListener.configure(galleryModel.getPagesLoaded(), galleryModel.getItemCount());
-        recyclerView.addOnScrollListener(galleryListViewScrollListener);
+        galleryListView.addOnScrollListener(galleryListViewScrollListener);
 
         //display bottom sheet if needed
         updateInformationShowingStatus();
@@ -536,6 +500,32 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     getFragmentManager().popBackStack();
                 }
             }
+        }
+    }
+
+    private final class AlbumScrollListener extends EndlessRecyclerViewScrollListener {
+
+        public AlbumScrollListener(GridLayoutManager gridLayoutMan) {
+            super(gridLayoutMan);
+        }
+
+        @Override
+        public void onLoadMore(int requestedPage, int totalItemsCount, RecyclerView view) {
+            int pageToLoad = requestedPage;
+
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+            int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
+
+            if (galleryModel.isPageLoadedOrBeingLoaded(pageToActuallyLoad) || galleryModel.isFullyLoaded()) {
+                Integer missingPage = galleryModel.getAMissingPage();
+                if (missingPage != null) {
+                    pageToLoad = missingPage;
+                } else {
+                    // already load this one by default so lets not double load it (or we've already loaded all items).
+                    return;
+                }
+            }
+            loadAlbumResourcesPage(pageToLoad);
         }
     }
 

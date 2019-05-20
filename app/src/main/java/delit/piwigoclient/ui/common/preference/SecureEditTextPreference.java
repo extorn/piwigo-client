@@ -64,11 +64,15 @@ public class SecureEditTextPreference extends CustomEditTextPreference implement
 
     @Override
     public String decrypt(String encryptedVal, String defaultReturnValue) {
-        if (encryptedVal == null || encryptedVal.equals(encryptedVal)) {
+        if (encryptedVal == null || encryptedVal.equals(defaultReturnValue)) {
             return defaultReturnValue; // no way the value is encrypted if it is null or matches the default value (logically unencrypted)
         }
         // should theoretically always have a valid encrypyted value at this point
-        return SecurePrefsUtil.getInstance(getContext()).decryptValue(getKey(), encryptedVal, defaultReturnValue);
+        if (getPreferenceDataStore() != null) {
+            return SecurePrefsUtil.getInstance(getContext()).decryptValue(getPreferenceDataStore(), getKey(), encryptedVal, defaultReturnValue);
+        } else {
+            return SecurePrefsUtil.getInstance(getContext()).decryptValue(getPreferenceManager().getSharedPreferences(), getKey(), encryptedVal, defaultReturnValue);
+        }
     }
 
     /**

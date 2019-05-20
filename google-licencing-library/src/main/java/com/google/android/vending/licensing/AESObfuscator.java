@@ -25,6 +25,7 @@ import com.google.android.vending.licensing.util.Base64DecoderException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -55,6 +56,7 @@ public class AESObfuscator implements Obfuscator {
 
     private static final SecureRandom random = new SecureRandom();
     private final SecretKeySpec secret;
+    private boolean recordErrors;
 
     /**
      * @param salt an array of random bytes to use for each (un)obfuscation
@@ -62,7 +64,8 @@ public class AESObfuscator implements Obfuscator {
      * @param deviceId device identifier. Use as many sources as possible to
      *    create this unique identifier.
      */
-    public AESObfuscator(byte[] salt, String applicationId, String deviceId) {
+    public AESObfuscator(byte[] salt, String applicationId, String deviceId, boolean recordErrors) {
+        this.recordErrors = recordErrors;
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance(KEYGEN_ALGORITHM);
             KeySpec keySpec =
@@ -101,7 +104,7 @@ Crashlytics.logException(e);
         try {
             // Header is appended as an integrity check
             Cipher cipher = buildEncrypter();
-            byte[] data = cipher.doFinal((header + key + original).getBytes(UTF8));
+            byte[] data = cipher.doFinal((header + key + original).getBytes(StandardCharsets.UTF_8));
             ByteArrayOutputStream baos = new ByteArrayOutputStream(data.length + 16);
             byte[] iv = cipher.getIV();
             if(iv == null || iv.length != 16) {
@@ -111,13 +114,13 @@ Crashlytics.logException(e);
             baos.write(data);
             return Base64.encode(baos.toByteArray());
         } catch (UnsupportedEncodingException e) {
-Crashlytics.logException(e);
+            Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         } catch (GeneralSecurityException e) {
-Crashlytics.logException(e);
+            Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         } catch (IOException e) {
-Crashlytics.logException(e);
+            Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         }
     }
@@ -131,7 +134,7 @@ Crashlytics.logException(e);
             byte[] ivBytes = Arrays.copyOf(bytes, 16);
             byte[] dataBytes = Arrays.copyOfRange(bytes, 16, bytes.length);
             Cipher cipher = buildDecrypter(ivBytes);
-            String result = new String(cipher.doFinal(dataBytes), UTF8);
+            String result = new String(cipher.doFinal(dataBytes), StandardCharsets.UTF_8);
             // Check for presence of header. This serves as a final integrity check, for cases
             // where the block size is correct during decryption.
             int headerIndex = result.indexOf(header+key);
@@ -142,36 +145,51 @@ Crashlytics.logException(e);
                 }
                 throw new ValidationException("Unable to decrypt - header not found (invalid data or key)" + ":" + obfuscated);
             }
-            return result.substring(header.length()+key.length(), result.length());
+            return result.substring(header.length() + key.length());
         } catch (Base64DecoderException e) {
-Crashlytics.logException(e);
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch (IllegalBlockSizeException e) {
-Crashlytics.logException(e);
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch(ArrayIndexOutOfBoundsException e) {
-Crashlytics.logException(e);
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch(IllegalArgumentException e) {
-Crashlytics.logException(e);
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
         } catch(BadPaddingException e) {
-Crashlytics.logException(e);
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
             throw new ValidationException(e.getMessage() + ":" + obfuscated);
-        } catch (UnsupportedEncodingException e) {
-Crashlytics.logException(e);
-            throw new RuntimeException("Invalid environment", e);
         } catch (NoSuchPaddingException e) {
-Crashlytics.logException(e);
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
             throw new RuntimeException("Invalid environment", e);
         } catch (InvalidKeyException e) {
-Crashlytics.logException(e);
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
             throw new RuntimeException("Invalid environment", e);
         } catch (NoSuchAlgorithmException e) {
-Crashlytics.logException(e);
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
             throw new RuntimeException("Invalid environment", e);
         } catch (InvalidAlgorithmParameterException e) {
-Crashlytics.logException(e);
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
             throw new RuntimeException("Invalid environment", e);
         }
     }

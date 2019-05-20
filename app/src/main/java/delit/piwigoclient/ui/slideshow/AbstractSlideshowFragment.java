@@ -60,8 +60,8 @@ import static android.view.View.VISIBLE;
 
 public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcelable & PhotoContainer> extends MyFragment {
 
-    private static final String STATE_GALLERY_TYPE = "containerModelType";
-    private static final String STATE_GALLERY_ID = "containerId";
+    private static final String ARG_GALLERY_TYPE = "containerModelType";
+    private static final String ARG_GALLERY_ID = "containerId";
     private static final String ARG_GALLERY_ITEM_DISPLAYED = "indexOfItemInContainerToDisplay";
     private CustomViewPager viewPager;
     private ResourceContainer<T, GalleryItem> resourceContainer;
@@ -71,8 +71,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     public static <T extends Identifiable & Parcelable> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, ResourceContainer<T, GalleryItem> resourceContainer, GalleryItem currentItem) {
         Bundle args = new Bundle();
-        args.putSerializable(STATE_GALLERY_TYPE, modelType);
-        args.putLong(STATE_GALLERY_ID, resourceContainer.getId());
+        args.putSerializable(ARG_GALLERY_TYPE, modelType);
+        args.putLong(ARG_GALLERY_ID, resourceContainer.getId());
         args.putInt(ARG_GALLERY_ITEM_DISPLAYED, resourceContainer.getDisplayIdx(currentItem));
         return args;
     }
@@ -113,21 +113,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        Bundle configurationBundle = savedInstanceState;
-        if (configurationBundle == null) {
-            configurationBundle = getArguments();
-            setArguments(null); // remove the args (we'll use the state from this point forward)
-        }
+        Class<? extends ViewModelContainer> galleryModelClass = (Class) getArguments().getSerializable(ARG_GALLERY_TYPE);
+        long galleryModelId = getArguments().getLong(ARG_GALLERY_ID);
+        int rawCurrentGalleryItemPosition = getArguments().getInt(ARG_GALLERY_ITEM_DISPLAYED);
 
-        int rawCurrentGalleryItemPosition = 0;
-
-        if (configurationBundle != null && resourceContainer == null) {
-            Class<? extends ViewModelContainer> galleryModelClass = (Class) configurationBundle.getSerializable(STATE_GALLERY_TYPE);
-            long galleryModelId = configurationBundle.getLong(STATE_GALLERY_ID);
-            ViewModelContainer viewModelContainer = ViewModelProviders.of(getActivity()).get("" + galleryModelId, galleryModelClass);
-            resourceContainer = viewModelContainer.getModel();
-            rawCurrentGalleryItemPosition = configurationBundle.getInt(ARG_GALLERY_ITEM_DISPLAYED);
-        }
+        ViewModelContainer viewModelContainer = ViewModelProviders.of(getActivity()).get("" + galleryModelId, galleryModelClass);
+        resourceContainer = viewModelContainer.getModel();
 
         super.onCreateView(inflater, container, savedInstanceState);
 
@@ -162,12 +153,13 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             galleryItemAdapter = new GalleryItemAdapter<>(resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(5); //TODO increase to 15 again once keep PiwigoAlbum model separate to the fragments.
         } else {
-            // update settings.
+            // update settings with newest values.
             galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
         }
 
         galleryItemAdapter.setContainer(viewPager);
         viewPager.setAdapter(galleryItemAdapter);
+
 
         ViewPager.OnPageChangeListener slideshowPageChangeListener = new CustomPageChangeListener();
         viewPager.clearOnPageChangeListeners();
@@ -175,6 +167,17 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         int pagerItemsIdx = galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition);
         viewPager.setCurrentItem(pagerItemsIdx);
         return view;
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        // overrride the gallery item adapter settings restored with up to date user choices
+        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, getContext());
+        // update settings with newest values.
+        galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
+
     }
 
     @Override
