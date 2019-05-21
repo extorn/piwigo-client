@@ -232,7 +232,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     protected void logJsonSyntaxError(String responseBodyStr) {
-        Crashlytics.log(String.format("Json Syntax error: %1$s : %2$s", getPiwigoMethod(), responseBodyStr));
+        Crashlytics.log(String.format("Json Syntax error: %1$s (%2$s) : %3$s", getPiwigoMethod(), getRequestParameters(), responseBodyStr));
     }
 
     private boolean handleCombinedJsonAndHtmlResponse(int statusCode, Header[] headers, byte[] responseBody, JsonSyntaxException e, boolean hasBrandNewSession) {

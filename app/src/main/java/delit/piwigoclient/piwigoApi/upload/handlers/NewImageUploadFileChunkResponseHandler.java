@@ -44,7 +44,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
         params.put("chunks", String.valueOf(fileChunk.getChunkCount()));
         params.put("category", fileChunk.getUploadToAlbumId());
         params.put("file", fileChunk.getChunkData(), null, fileChunk.getMimeType(), true);
-        params.put("name", fileChunk.getFilenameOnServer());
+        params.put("name", fileChunk.getFilenameOnServer().replace('/', '_'));
         params.put("pwg_token", sessionToken);
         return params;
     }

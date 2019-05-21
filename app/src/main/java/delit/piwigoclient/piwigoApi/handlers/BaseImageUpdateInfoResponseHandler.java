@@ -34,7 +34,7 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
         params.put("method", getPiwigoMethod());
         params.put("image_id", String.valueOf(piwigoResource.getId()));
         if(filename != null) {
-            params.put("file", filename);
+            params.put("file", filename.replace('/', '_')); // attempt to make uploads safe
         }
         params.put("name", piwigoResource.getName());
         params.put("comment", piwigoResource.getDescription());
