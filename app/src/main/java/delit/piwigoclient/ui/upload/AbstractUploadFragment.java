@@ -18,7 +18,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -290,20 +289,20 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         });
 
-        if (BuildConfig.DEBUG) {
-            Button compressVideosButton = new Button(getContext());
-            compressVideosButton.setText("Compress");
-            compressVideosButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    compressVideos();
-                }
-            });
-            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
-            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
-        }
+//        if (BuildConfig.DEBUG) {
+//            Button compressVideosButton = new Button(getContext());
+//            compressVideosButton.setText("Compress");
+//            compressVideosButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    compressVideos();
+//                }
+//            });
+//            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+//            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
+//            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+//            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
+//        }
 
         if (savedInstanceState != null) {
             // update view with saved data
