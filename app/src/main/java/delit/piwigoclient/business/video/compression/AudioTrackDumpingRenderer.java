@@ -29,7 +29,7 @@ import java.nio.ByteBuffer;
 public class AudioTrackDumpingRenderer extends MediaCodecAudioRenderer {
 
     private static final String TAG = "WorkingAudioCompressor";
-    private final boolean VERBOSE = true;
+    private final boolean VERBOSE = false;
     private final MediaMuxerControl mediaMuxerControl;
 
     public AudioTrackDumpingRenderer(Context context, MediaCodecSelector mediaCodecSelector, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable AudioRendererEventListener eventListener, MediaMuxerControl mediaMuxerControl) {
@@ -66,7 +66,9 @@ public class AudioTrackDumpingRenderer extends MediaCodecAudioRenderer {
     @Override
     protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) {
         if (bufferPresentationTimeUs > positionUs + 500000) {
-            Log.e(TAG, "Audio Processor - Giving up render to video at position " + positionUs);
+            if (VERBOSE) {
+                Log.e(TAG, "Audio Processor - Giving up render to video at position " + positionUs);
+            }
             return false;
         }
         codec.releaseOutputBuffer(bufferIndex, false);

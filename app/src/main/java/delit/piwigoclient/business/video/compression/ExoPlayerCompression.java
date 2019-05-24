@@ -39,6 +39,7 @@ import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
 public class ExoPlayerCompression {
 
     private static final String TAG = "ExoPlayerCompression";
+    private static final boolean VERBOSE = false;
 
     public ExoPlayerCompression() {
     }
@@ -96,7 +97,9 @@ public class ExoPlayerCompression {
     }
 
     private void makeTranscodedFileStreamable(File input) {
-        Crashlytics.log(Log.ERROR, TAG, "Enabling streaming for transcoded MP4");
+        if (VERBOSE) {
+            Log.d(TAG, "Enabling streaming for transcoded MP4");
+        }
         File tmpFile = new File(input.getParentFile(), input.getName() + ".streaming.mp4");
         try {
             boolean wroteFastStartFile = QtFastStart.fastStart(input, tmpFile);

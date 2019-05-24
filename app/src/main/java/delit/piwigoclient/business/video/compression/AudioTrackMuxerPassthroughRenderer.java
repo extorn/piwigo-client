@@ -144,7 +144,9 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
 
         if (bufferPresentationTimeUs > maxRenderItemUs) {
             writeTranscodedAudioToCache(codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs);
-            Log.e(TAG, "Audio Processor - Giving up render to video at position " + positionUs);
+            if (VERBOSE) {
+                Log.e(TAG, "Audio Processor - Giving up render to video at position " + positionUs);
+            }
             return true;
         }
 
@@ -160,7 +162,9 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
                 return;
             }
             cachedItem = cachedAudioBufferQueue.poll();
-            Log.d(TAG, String.format("Audio Renderer: Processing deferred sample audio data for track %1$d from buffer %2$d at [%3$d]", mediaMuxerControl.getAudioTrackId(), cachedItem.bufferIndex, cachedItem.bufferPresentationTimeUs));
+            if (VERBOSE) {
+                Log.d(TAG, String.format("Audio Renderer: Processing deferred sample audio data for track %1$d from buffer %2$d at [%3$d]", mediaMuxerControl.getAudioTrackId(), cachedItem.bufferIndex, cachedItem.bufferPresentationTimeUs));
+            }
             writeTranscodedAudioToMuxer(cachedItem.codec, cachedItem.buffer, cachedItem.bufferIndex, cachedItem.bufferFlags, cachedItem.bufferPresentationTimeUs, false);
         }
     }
@@ -220,7 +224,9 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
 
     @Override
     protected void releaseCodec() {
-        Log.e(TAG, "releasing decoding codec");
+        if (VERBOSE) {
+            Log.e(TAG, "releasing decoding codec");
+        }
         super.releaseCodec();
 
     }

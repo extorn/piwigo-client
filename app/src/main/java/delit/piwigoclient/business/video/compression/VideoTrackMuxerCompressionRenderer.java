@@ -88,7 +88,9 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
 
     @Override
     protected void dropOutputBuffer(MediaCodec codec, int index, long presentationTimeUs) {
-        Log.w(TAG, "Dropping output buffer at position " + presentationTimeUs);
+        if (VERBOSE) {
+            Log.w(TAG, "Dropping output buffer at position " + presentationTimeUs);
+        }
         super.dropOutputBuffer(codec, index, presentationTimeUs);
     }
 
@@ -105,7 +107,9 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     protected void skipOutputBuffer(MediaCodec codec, int index, long presentationTimeUs) {
         if (compressionSettings.isAllowSkippingFrames()) {
             super.skipOutputBuffer(codec, index, presentationTimeUs);
-            Log.w(TAG, "Skipping output buffer at position " + presentationTimeUs);
+            if (VERBOSE) {
+                Log.w(TAG, "Skipping output buffer at position " + presentationTimeUs);
+            }
         }
         // never skip a buffer
     }

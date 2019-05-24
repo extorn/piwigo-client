@@ -75,7 +75,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     public void markAudioConfigured() {
         if (!audioConfigured) {
             audioConfigured = true;
-            Log.d(TAG, "Muxer : Audio Input configured");
+            if (VERBOSE) {
+                Log.d(TAG, "Muxer : Audio Input configured");
+            }
         }
     }
 
@@ -90,12 +92,16 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     public void markVideoConfigured() {
         if (!videoConfigured) {
             videoConfigured = true;
-            Log.d(TAG, "Muxer : Video Input configured");
+            if (VERBOSE) {
+                Log.d(TAG, "Muxer : Video Input configured");
+            }
         }
     }
 
     public void reset() {
-        Log.d(TAG, "resetting media muxer");
+        if (VERBOSE) {
+            Log.d(TAG, "resetting media muxer");
+        }
         audioConfigured = false;
         videoConfigured = false;
         mediaMuxerStarted = false;
@@ -112,11 +118,14 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         if (isConfigured() && !mediaMuxerStarted) {
             try {
                 // the media muxer is ready to start accepting data now from the encoder
-                Log.d(TAG, "starting media muxer");
+                if (VERBOSE) {
+                    Log.d(TAG, "starting media muxer");
+                }
                 mediaMuxer.start();
                 mediaMuxerStarted = true;
             } catch (IllegalStateException e) {
-                Log.d(TAG, "Error starting media muxer", e);
+                Crashlytics.log(Log.ERROR, TAG, "Error starting media muxer");
+                Crashlytics.logException(e);
             }
             return true;
         }
@@ -128,7 +137,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     }
 
     public boolean stopMediaMuxer() {
-        Log.d(TAG, "stopping media muxer");
+        if (VERBOSE) {
+            Log.d(TAG, "stopping media muxer");
+        }
         if (mediaMuxerStarted) {
             mediaMuxer.stop();
             return true;
@@ -139,7 +150,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     public void writeSampleData(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info, Long originalBytes) {
 
         if (info.presentationTimeUs < lastWrittenDataTimeUs) {
-            Log.e(TAG, "Muxing tracks out of step with each other! - this time : " + info.presentationTimeUs + " last time : " + lastWrittenDataTimeUs);
+            if (VERBOSE) {
+                Log.w(TAG, "Muxing tracks out of step with each other! - this time : " + info.presentationTimeUs + " last time : " + lastWrittenDataTimeUs);
+            }
         } else {
             if (VERBOSE) {
                 Log.d(TAG, String.format("Writing data for track %1$d at time %2$d", outputTrackIndex, info.presentationTimeUs));
@@ -192,7 +205,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     }
 
     private MediaMuxer buildMediaMuxer() {
-        Log.d(TAG, "Building new MediaMuxer");
+        if (VERBOSE) {
+            Log.d(TAG, "Building new MediaMuxer");
+        }
         try {
             MediaMuxer mediaMuxer = buildMediaMuxer(outputFile);
             if (trackFormats.containsKey("video")) {
@@ -209,7 +224,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     }
 
     public void addAudioTrack(MediaFormat outputFormat) {
-        Log.d(TAG, "Muxer : Adding Audio track");
+        if (VERBOSE) {
+            Log.d(TAG, "Muxer : Adding Audio track");
+        }
         if (null != trackFormats.put("audio", outputFormat)) {
             // rebuild needed
             release();
@@ -220,7 +237,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     }
 
     public void addVideoTrack(MediaFormat outputFormat) {
-        Log.d(TAG, "Muxer : Adding Video track");
+        if (VERBOSE) {
+            Log.d(TAG, "Muxer : Adding Video track");
+        }
         if (null != trackFormats.put("video", outputFormat)) {
             // rebuild needed
             release();
@@ -235,7 +254,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     }
 
     public void release() {
-        Log.d(TAG, "Muxer : releasing old muxer");
+        if (VERBOSE) {
+            Log.d(TAG, "Muxer : releasing old muxer");
+        }
         mediaMuxer.release();
     }
 
@@ -265,7 +286,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     public void videoRendererStopped() {
         if (hasVideo) {
-            Log.d(TAG, "Video Rendering stopped");
+            if (VERBOSE) {
+                Log.d(TAG, "Video Rendering stopped");
+            }
             hasVideo = false;
             videoConfigured = false;
             if (!hasAudio) {
@@ -278,7 +301,9 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     public void audioRendererStopped() {
         if (hasAudio) {
-            Log.d(TAG, "Audio Rendering stopped");
+            if (VERBOSE) {
+                Log.d(TAG, "Audio Rendering stopped");
+            }
             hasAudio = false;
             audioConfigured = false;
             if (!hasVideo) {

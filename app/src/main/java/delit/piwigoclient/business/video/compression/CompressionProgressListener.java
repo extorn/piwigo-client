@@ -15,6 +15,7 @@ import com.google.android.exoplayer2.Timeline;
 public class CompressionProgressListener implements Runnable {
 
     private static final String TAG = "CompressionListener";
+    private static final boolean VERBOSE = false;
     private final ExoPlayer player;
     private final Handler eventHandler;
     private MediaMuxerControl mediaMuxerControl;
@@ -79,7 +80,9 @@ public class CompressionProgressListener implements Runnable {
         if (progressMeasurementPeriod > 0) {
             progressPerSecond = (progress - compressionProgress) / progressMeasurementPeriod;
         }
-        Log.d(TAG, String.format("%1$02f%%", 100 * progress));
+        if (VERBOSE) {
+            Log.d(TAG, String.format("%1$02f%%", 100 * progress));
+        }
         if (progress - compressionProgress > minReportedChange || progress + 0.00001 > 1 || mediaMuxerControl.isFinished()) {
             compressionProgress = progress;
             progressListener.onCompressionProgress(100 * compressionProgress, durationMs);
