@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -28,8 +30,6 @@ import net.ypresto.qtfaststart.QtFastStart;
 import java.io.File;
 import java.io.IOException;
 
-import androidx.annotation.RequiresApi;
-
 import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
 
 /**
@@ -45,33 +45,46 @@ public class ExoPlayerCompression {
 
     public void compressFile(Context context, File inputFile, final File outputFile, CompressionListener listener) throws IOException {
 
-        Looper eventLooper = Looper.myLooper() != null ? Looper.myLooper() : Looper.getMainLooper();
-        Handler eventHandler = new Handler(eventLooper);
-
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        LoadControl loadControl = new DefaultLoadControl();
-        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         if (outputFile.exists()) {
             outputFile.delete();
         }
-        MediaMuxerControl mediaMuxerControl = new MediaMuxerControl(outputFile);
+
+        Looper eventLooper = Looper.myLooper() != null ? Looper.myLooper() : Looper.getMainLooper();
+        Handler eventHandler = new Handler(eventLooper);
+
+        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
+        LoadControl loadControl = new DefaultLoadControl();
+        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+
+        CompressionListener listenerWrapper = new CompressionListenerWrapper(listener) {
+
+            private long mediaDurationMs;
+
+            @Override
+            public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
+                super.onCompressionProgress(compressionProgress, mediaDurationMs);
+                this.mediaDurationMs = mediaDurationMs;
+            }
+
+            @Override
+            public void onCompressionComplete() {
+                makeTranscodedFileStreamable(outputFile);
+                super.onCompressionProgress(100d, mediaDurationMs);
+                super.onCompressionComplete();
+            }
+        };
+
+        MediaMuxerControl mediaMuxerControl = new MediaMuxerControl(inputFile, outputFile, eventHandler, listenerWrapper);
+
         CompressionParameters compressionSettings = new CompressionParameters();
-//        compressionSettings.getVideoCompressionParameters().setAllowSkippingFrames(true); // render every frame (slow!)
-        compressionSettings.setAddAudioTrack(false);
+
         CompressionRenderersFactory renderersFactory = new CompressionRenderersFactory(context, mediaMuxerControl, compressionSettings);
         SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
         ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new FileDataSourceFactory());
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         factory.setExtractorsFactory(extractorsFactory);
 
-        CompressionListener listenerWrapper = new CompressionListenerWrapper(listener) {
-            @Override
-            public void onCompressionComplete() {
-                makeTranscodedFileStreamable(outputFile);
-                super.onCompressionComplete();
-            }
-        };
+
         listenerWrapper.onCompressionStarted();
         Uri videoUri = Uri.fromFile(inputFile);
         ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
@@ -79,17 +92,15 @@ public class ExoPlayerCompression {
         PlaybackParameters playbackParams = new PlaybackParameters(1.0f);
         player.setPlaybackParameters(playbackParams);
         player.setPlayWhenReady(true);
-        player.addListener(mediaMuxerControl.getPlaybackListener(listenerWrapper));
         eventHandler.postDelayed(new CompressionProgressListener(eventHandler, player, mediaMuxerControl, listenerWrapper), 1000);
-
-        //TODO load data file into player and play it (ideally fast forwarded) to the compression renderer
     }
 
     private void makeTranscodedFileStreamable(File input) {
+        Crashlytics.log(Log.ERROR, TAG, "Enabling streaming for transcoded MP4");
         File tmpFile = new File(input.getParentFile(), input.getName() + ".streaming.mp4");
         try {
-            QtFastStart.fastStart(input, tmpFile);
-            if (tmpFile.exists()) {
+            boolean wroteFastStartFile = QtFastStart.fastStart(input, tmpFile);
+            if (wroteFastStartFile) {
                 boolean deletedOriginal = input.delete();
                 if (!deletedOriginal) {
                     Crashlytics.log(Log.ERROR, TAG, "Error deleting streaming input file");
@@ -98,8 +109,6 @@ public class ExoPlayerCompression {
                 if (!renamed) {
                     Crashlytics.log(Log.ERROR, TAG, "Error renaming streaming output file");
                 }
-            } else {
-                Crashlytics.log(Log.ERROR, TAG, "Error enabling streaming for MP4");
             }
         } catch (IOException e) {
             Crashlytics.log(Log.ERROR, TAG, "Error enabling streaming for transcoded MP4");
@@ -125,10 +134,14 @@ public class ExoPlayerCompression {
     }
 
     private static class CompressionListenerWrapper implements CompressionListener {
-        CompressionListener wrapped;
+        private final CompressionListener wrapped;
 
         public CompressionListenerWrapper(CompressionListener wrapped) {
             this.wrapped = wrapped;
+        }
+
+        public CompressionListener getWrapped() {
+            return wrapped;
         }
 
         @Override
@@ -152,7 +165,21 @@ public class ExoPlayerCompression {
         }
     }
 
+
+    public static class AudioCompressionParameters {
+
+        private final long maxInterleavingIntervalUs;
+
+        public AudioCompressionParameters(final long maxInterleavingIntervalUs) {
+            this.maxInterleavingIntervalUs = maxInterleavingIntervalUs;
+        }
+
+        public long getMaxInterleavingIntervalUs() {
+            return maxInterleavingIntervalUs;
+        }
+    }
     public static class VideoCompressionParameters {
+        private final long maxInterleavingIntervalUs;
         private int wantedWidthPx = -1;
         private int wantedHeightPx = -1;
         private int wantedKeyFrameRate = 30; //30
@@ -162,11 +189,16 @@ public class ExoPlayerCompression {
         private boolean isAllowSkippingFrames;
         private boolean needMediaClock;
 
-        public VideoCompressionParameters() {
+        public VideoCompressionParameters(final long maxInterleavingIntervalMs) {
+            this.maxInterleavingIntervalUs = maxInterleavingIntervalMs;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 //KEY_BITRATE_MODE api21+ - BITRATE_MODE_VBR / BITRATE_MODE_CBR / BITRATE_MODE_CQ
                 wantedBitRateModeV21 = BITRATE_MODE_CBR;
             }
+        }
+
+        public long getMaxInterleavingIntervalUs() {
+            return maxInterleavingIntervalUs;
         }
 
         public int getWantedWidthPx() {
@@ -229,25 +261,20 @@ public class ExoPlayerCompression {
         public void setAllowSkippingFrames(boolean allowSkippingFrames) {
             isAllowSkippingFrames = allowSkippingFrames;
         }
-
-        public boolean isNeedMediaClock() {
-            return needMediaClock;
-        }
-
-        public void setNeedMediaClock(boolean needMediaClock) {
-            this.needMediaClock = needMediaClock;
-        }
     }
 
     public static class CompressionParameters {
+        private final AudioCompressionParameters audioCompressionParameters;
+        private long maxInterleavingIntervalUs = 500000; // 500ms
         private boolean addAudioTrack;
         private boolean addVideoTrack;
         private VideoCompressionParameters videoCompressionParameters;
 
         public CompressionParameters() {
-            addAudioTrack = true;
-            addVideoTrack = true;
-            videoCompressionParameters = new VideoCompressionParameters();
+            setAddVideoTrack(true);
+            setAddAudioTrack(true);
+            videoCompressionParameters = new VideoCompressionParameters(maxInterleavingIntervalUs);
+            audioCompressionParameters = new AudioCompressionParameters(maxInterleavingIntervalUs);
         }
 
         public boolean isAddVideoTrack() {
@@ -256,7 +283,6 @@ public class ExoPlayerCompression {
 
         public void setAddVideoTrack(boolean addVideoTrack) {
             this.addVideoTrack = addVideoTrack;
-            videoCompressionParameters.setNeedMediaClock(addVideoTrack && !addAudioTrack);
         }
 
         public boolean isAddAudioTrack() {
@@ -265,11 +291,14 @@ public class ExoPlayerCompression {
 
         public void setAddAudioTrack(boolean addAudioTrack) {
             this.addAudioTrack = addAudioTrack;
-            videoCompressionParameters.setNeedMediaClock(addVideoTrack && !addAudioTrack);
         }
 
         public VideoCompressionParameters getVideoCompressionParameters() {
             return videoCompressionParameters;
+        }
+
+        public AudioCompressionParameters getAudioCompressionParameters() {
+            return audioCompressionParameters;
         }
     }
 

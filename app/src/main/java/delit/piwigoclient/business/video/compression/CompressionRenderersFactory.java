@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.audio.AudioCapabilities;
@@ -18,9 +21,6 @@ import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.util.ArrayList;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class CompressionRenderersFactory extends DefaultRenderersFactory {
@@ -43,7 +43,7 @@ public class CompressionRenderersFactory extends DefaultRenderersFactory {
     @Override
     protected void buildVideoRenderers(Context context, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, long allowedVideoJoiningTimeMs, Handler eventHandler, VideoRendererEventListener eventListener, int extensionRendererMode, final ArrayList<Renderer> out) {
         if (compressionParameters.isAddVideoTrack()) {
-            out.add(new WorkingVideoCompressor(
+            out.add(new VideoTrackMuxerCompressionRenderer(
                     context,
                     MediaCodecSelector.DEFAULT,
                     allowedVideoJoiningTimeMs,
@@ -58,14 +58,29 @@ public class CompressionRenderersFactory extends DefaultRenderersFactory {
     @Override
     protected void buildAudioRenderers(Context context, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, AudioProcessor[] audioProcessors, Handler eventHandler, AudioRendererEventListener eventListener, int extensionRendererMode, ArrayList<Renderer> out) {
         if (compressionParameters.isAddAudioTrack()) {
-            out.add(new WorkingAudioMuxingPassthrough(context,
+            out.add(new AudioTrackMuxerPassthroughRenderer(context,
                     MediaCodecSelector.DEFAULT,
                     drmSessionManager,
-                    /* playClearSamplesWithoutKeys= */ false,
+                    false,
                     eventHandler,
                     eventListener,
                     mediaMuxerControl,
-                    new DefaultAudioSink(AudioCapabilities.getCapabilities(context), audioProcessors)));
+                    new DefaultAudioSink(AudioCapabilities.getCapabilities(context), audioProcessors),
+                    compressionParameters.getAudioCompressionParameters()));
+        } else {
+            // needed to empty the buffered data extracted from the source else the extractor will block as the buffers fill.
+            out.add(new AudioTrackDumpingRenderer(context,
+                    MediaCodecSelector.DEFAULT,
+                    drmSessionManager,
+                    false,
+                    eventHandler,
+                    eventListener,
+                    mediaMuxerControl));
         }
     }
+
+//    @Override
+//    protected void buildMetadataRenderers(Context context, MetadataOutput output, Looper outputLooper, int extensionRendererMode, ArrayList<Renderer> out) {
+//        out.add(new MetadataRenderer(mediaMuxerControl, null));
+//    }
 }

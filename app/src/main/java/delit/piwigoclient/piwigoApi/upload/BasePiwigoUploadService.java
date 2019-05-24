@@ -54,7 +54,6 @@ import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
-import delit.piwigoclient.business.video.compression.YPrestoCompressor;
 import delit.piwigoclient.model.UploadFileChunk;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -788,9 +787,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         CompressionListener listener = new CompressionListener(this, uploadJob.getJobId(), rawVideo, outputVideo);
 
         try {
-            YPrestoCompressor compressor = new YPrestoCompressor();
+//            YPrestoCompressor compressor = new YPrestoCompressor();
+            ExoPlayerCompression compressor = new ExoPlayerCompression();
             compressor.compressFile(getApplicationContext(), rawVideo, outputVideo, listener);
         } catch (FileNotFoundException e) {
+            Crashlytics.logException(e);
+            postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, e));
+            uploadJob.cancelFileUpload(rawVideo);
+        } catch (IOException e) {
             Crashlytics.logException(e);
             postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, e));
             uploadJob.cancelFileUpload(rawVideo);

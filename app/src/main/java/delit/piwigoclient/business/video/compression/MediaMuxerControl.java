@@ -2,29 +2,34 @@ package delit.piwigoclient.business.video.compression;
 
 import android.media.MediaCodec;
 import android.media.MediaFormat;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaMuxer;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 
-import com.google.android.exoplayer2.Player;
+import androidx.annotation.RequiresApi;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.RequiresApi;
-
-import static com.google.android.exoplayer2.Player.STATE_BUFFERING;
-import static com.google.android.exoplayer2.Player.STATE_ENDED;
-import static com.google.android.exoplayer2.Player.STATE_IDLE;
-import static com.google.android.exoplayer2.Player.STATE_READY;
-
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-public class MediaMuxerControl {
+public class MediaMuxerControl /*implements MetadataOutput*/ {
     private static final String TAG = "MediaMuxerControl";
+    private static final boolean VERBOSE = false;
+    private final File inputFile;
+    private final ExoPlayerCompression.CompressionListener listener;
+    private final Handler eventHandler;
     private Map<String, MediaFormat> trackFormats;
+    private Map<String, TrackStats> trackStatistics;
     private MediaMuxer mediaMuxer;
     private boolean audioConfigured;
     private boolean videoConfigured;
@@ -33,11 +38,38 @@ public class MediaMuxerControl {
     private boolean hasAudio;
     private boolean hasVideo;
     private long lastWrittenDataTimeUs;
+    private boolean isFinished;
 
-    public MediaMuxerControl(File outputFile) throws IOException {
+    public MediaMuxerControl(File inputFile, File outputFile, Handler eventHandler, ExoPlayerCompression.CompressionListener listener) throws IOException {
+        this.inputFile = inputFile;
         this.outputFile = outputFile;
         mediaMuxer = buildMediaMuxer(outputFile);
         trackFormats = new HashMap<>(2);
+        trackStatistics = new HashMap<>(2);
+        this.listener = listener;
+        this.eventHandler = eventHandler;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            extractAndAddMetaDataToMuxer();
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.KITKAT)
+    private final void extractAndAddMetaDataToMuxer() {
+        MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
+        metadataRetriever.setDataSource(inputFile.getPath());
+        String location = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
+        if (location != null) {
+            try {
+                //Lat = ±DDMM.MMMM & Lon = ±DDDMM.MMMM
+                int splitAt = Math.max(location.lastIndexOf('-'), location.lastIndexOf('+'));
+                float latitude = Float.valueOf(location.substring(0, splitAt));
+                float longitude = Float.valueOf(location.substring(splitAt));
+                mediaMuxer.setLocation(latitude, longitude);
+            } catch (IllegalArgumentException e) {
+                Crashlytics.log(Log.ERROR, TAG, "Location data out of range - cannot copy to transcoded file");
+                Crashlytics.logException(e);
+            }
+        }
     }
 
     public void markAudioConfigured() {
@@ -49,6 +81,10 @@ public class MediaMuxerControl {
 
     public long getLastWrittenDataTimeMs() {
         return Math.round(Math.floor(((double) lastWrittenDataTimeUs) / 1000));
+    }
+
+    public long getLastWrittenDataTimeUs() {
+        return lastWrittenDataTimeUs;
     }
 
     public void markVideoConfigured() {
@@ -67,7 +103,9 @@ public class MediaMuxerControl {
         hasVideo = false;
         outputFile = null;
         trackFormats.clear();
+        trackStatistics.clear();
         mediaMuxer = null;
+        isFinished = false;
     }
 
     public boolean startMediaMuxer() {
@@ -85,6 +123,10 @@ public class MediaMuxerControl {
         return mediaMuxerStarted;
     }
 
+    public boolean isMediaMuxerStarted() {
+        return mediaMuxerStarted;
+    }
+
     public boolean stopMediaMuxer() {
         Log.d(TAG, "stopping media muxer");
         if (mediaMuxerStarted) {
@@ -94,14 +136,45 @@ public class MediaMuxerControl {
         return false;
     }
 
-    public void writeSampleData(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info) {
+    public void writeSampleData(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info, Long originalBytes) {
+
         if (info.presentationTimeUs < lastWrittenDataTimeUs) {
-            Log.e(TAG, "Muxing tracks out of step with each other!");
+            Log.e(TAG, "Muxing tracks out of step with each other! - this time : " + info.presentationTimeUs + " last time : " + lastWrittenDataTimeUs);
         } else {
-            Log.d(TAG, String.format("Writing data for track %1$d at time %2$d", outputTrackIndex, lastWrittenDataTimeUs));
+            if (VERBOSE) {
+                Log.d(TAG, String.format("Writing data for track %1$d at time %2$d", outputTrackIndex, info.presentationTimeUs));
+            }
         }
+        TrackStats thisTrackStats = trackStatistics.get(getTrackName(outputTrackIndex));
+        thisTrackStats.addOriginalBytesTranscoded(originalBytes);
+        thisTrackStats.addTranscodedBytesWritten(encodedData.remaining());
         lastWrittenDataTimeUs = info.presentationTimeUs;
         mediaMuxer.writeSampleData(outputTrackIndex, encodedData, info);
+    }
+
+    private String getTrackName(int outputTrackIndex) {
+        return outputTrackIndex == getVideoTrackId() ? "video" : "audio";
+    }
+
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    /**
+     * @return percentage 0 - 1
+     */
+    public double getOverallProgress() {
+        long bytesTranscoded = 0;
+        TrackStats trackStats = trackStatistics.get("video");
+        if (trackStats != null) {
+            bytesTranscoded += trackStats.getOriginalBytesTranscoded();
+        }
+        trackStats = trackStatistics.get("audio");
+        if (trackStats != null) {
+            bytesTranscoded += trackStats.getOriginalBytesTranscoded();
+        }
+        double value = BigDecimal.valueOf(bytesTranscoded).divide(BigDecimal.valueOf(inputFile.length()), new MathContext(2, RoundingMode.DOWN)).doubleValue();
+        return value;
     }
 
     public int getVideoTrackId() {
@@ -140,6 +213,8 @@ public class MediaMuxerControl {
         if (null != trackFormats.put("audio", outputFormat)) {
             // rebuild needed
             release();
+        } else {
+            trackStatistics.put("audio", new TrackStats());
         }
         mediaMuxer = buildMediaMuxer();
     }
@@ -149,6 +224,8 @@ public class MediaMuxerControl {
         if (null != trackFormats.put("video", outputFormat)) {
             // rebuild needed
             release();
+        } else {
+            trackStatistics.put("video", new TrackStats());
         }
         mediaMuxer = buildMediaMuxer();
     }
@@ -193,7 +270,8 @@ public class MediaMuxerControl {
             videoConfigured = false;
             if (!hasAudio) {
                 release();
-                reset();
+                isFinished = true;
+                onCompressionComplete();
             }
         }
     }
@@ -205,9 +283,20 @@ public class MediaMuxerControl {
             audioConfigured = false;
             if (!hasVideo) {
                 release();
-                reset();
+                isFinished = true;
+                onCompressionComplete();
             }
         }
+    }
+
+    private void onCompressionComplete() {
+
+        eventHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onCompressionComplete();
+            }
+        });
     }
 
     public boolean isAudioConfigured() {
@@ -218,45 +307,36 @@ public class MediaMuxerControl {
         return videoConfigured;
     }
 
-    public PlaybackListener getPlaybackListener(ExoPlayerCompression.CompressionListener listener) {
-        return new PlaybackListener(listener, this);
+    public void setOrientationHint(int rotationDegrees) {
+        mediaMuxer.setOrientationHint(rotationDegrees);
     }
 
-    public boolean isReadyForAudio(long bufferPresentationTimeUs) {
-        return bufferPresentationTimeUs - lastWrittenDataTimeUs <= 1000;
-    }
+    /*@Override
+    public void onMetadata(Metadata metadata) {
+        for(int i = 0; i < metadata.length(); i++) {
+            Metadata.Entry e = metadata.get(i);
+            Log.e(TAG, "Metadata Entry : " + e.toString());
+        }
+    }*/
 
+    private static class TrackStats {
+        long originalBytesTranscoded;
+        long transcodedBytesWritten;
 
-    public static class PlaybackListener extends Player.DefaultEventListener {
-
-        private final MediaMuxerControl mediaMuxerControl;
-        private ExoPlayerCompression.CompressionListener listener;
-
-        public PlaybackListener(ExoPlayerCompression.CompressionListener listener, MediaMuxerControl mediaMuxerControl) {
-            this.listener = listener;
-            this.mediaMuxerControl = mediaMuxerControl;
+        public void addTranscodedBytesWritten(long transcodedBytesWritten) {
+            this.transcodedBytesWritten += transcodedBytesWritten;
         }
 
-        @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            switch (playbackState) {
-                case STATE_READY:
-                    Log.e(TAG, "PLAYER STATE : READY");
-                    break;
-                case STATE_BUFFERING:
-                    Log.e(TAG, "PLAYER STATE : BUFFERING");
-                    break;
-                case STATE_IDLE:
-                    Log.e(TAG, "PLAYER STATE : IDLE");
-                    break;
-                case STATE_ENDED:
-                    Log.e(TAG, "PLAYER STATE : ENDED");
-                    break;
-            }
+        public void addOriginalBytesTranscoded(long originalBytesTranscoded) {
+            this.originalBytesTranscoded += originalBytesTranscoded;
+        }
 
-            if (playbackState == Player.STATE_ENDED) {
-                listener.onCompressionComplete();
-            }
+        public long getOriginalBytesTranscoded() {
+            return originalBytesTranscoded;
+        }
+
+        public double getCompression() {
+            return transcodedBytesWritten / originalBytesTranscoded;
         }
     }
 }

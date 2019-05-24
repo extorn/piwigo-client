@@ -2,23 +2,27 @@ package delit.piwigoclient.business.video.compression;
 
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Timeline;
 
-import androidx.annotation.RequiresApi;
-
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class CompressionProgressListener implements Runnable {
 
+    private static final String TAG = "CompressionListener";
     private final ExoPlayer player;
     private final Handler eventHandler;
     private MediaMuxerControl mediaMuxerControl;
     private ExoPlayerCompression.CompressionListener progressListener;
     private double compressionProgress;
-    private float minReportedChange = 3f;
+    private double progressPerSecond;
+    private float minReportedChange = 0.03f; // 3%
+    private long progressMeasurementPeriod;
 
     public CompressionProgressListener(Handler eventHandler, ExoPlayer player, MediaMuxerControl mediaMuxerControl, ExoPlayerCompression.CompressionListener progressListener) {
         this.player = player;
@@ -38,69 +42,47 @@ public class CompressionProgressListener implements Runnable {
 
     private void calculateProgress() {
 
-        long position = 0;
-        long bufferedPosition = 0;
-        long duration = 0;
+        long durationUs = 0;
         if (player != null) {
-            long currentWindowTimeBarOffsetUs = 0;
-            long durationUs = 0;
-            int adGroupCount = 0;
             Timeline timeline = player.getCurrentTimeline();
-            Timeline.Window window = new Timeline.Window();
-            Timeline.Period period = new Timeline.Period();
             if (!timeline.isEmpty()) {
-                int currentWindowIndex = player.getCurrentWindowIndex();
-                currentWindowTimeBarOffsetUs = durationUs;
-                timeline.getWindow(currentWindowIndex, window);
-
-                for (int j = window.firstPeriodIndex; j <= window.lastPeriodIndex; j++) {
-                    timeline.getPeriod(j, period);
+                int windows = timeline.getWindowCount();
+                Timeline.Window window = new Timeline.Window();
+                for (int i = 0; i < windows; i++) {
+                    timeline.getWindow(i, window);
+                    durationUs += window.getDurationUs();
                 }
-                durationUs += window.durationUs;
             }
-            duration = C.usToMs(durationUs);
-            position = C.usToMs(currentWindowTimeBarOffsetUs);
-            bufferedPosition = position;
-            position += player.getCurrentPosition();
-            bufferedPosition += player.getBufferedPosition();
         }
-
-        withProgress(position, bufferedPosition, duration);
 
         // Cancel any pending updates and schedule a new one if necessary.
         eventHandler.removeCallbacks(this);
 
-        int playbackState = player == null ? Player.STATE_IDLE : player.getPlaybackState();
-        if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_ENDED) {
-            long delayMs;
-            if (player.getPlayWhenReady() && playbackState == Player.STATE_READY) {
-                float playbackSpeed = player.getPlaybackParameters().speed;
-                if (playbackSpeed <= 0.1f) {
-                    delayMs = 1000;
-                } else if (playbackSpeed <= 5f) {
-                    long mediaTimeUpdatePeriodMs = 1000 / Math.max(1, Math.round(1 / playbackSpeed));
-                    long mediaTimeDelayMs = mediaTimeUpdatePeriodMs - (position % mediaTimeUpdatePeriodMs);
-                    if (mediaTimeDelayMs < (mediaTimeUpdatePeriodMs / 5)) {
-                        mediaTimeDelayMs += mediaTimeUpdatePeriodMs;
-                    }
-                    delayMs =
-                            playbackSpeed == 1 ? mediaTimeDelayMs : (long) (mediaTimeDelayMs / playbackSpeed);
+        if (!mediaMuxerControl.isFinished()) {
+            withProgress(C.usToMs(durationUs));
+
+            int playbackState = player == null ? Player.STATE_IDLE : player.getPlaybackState();
+            if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_ENDED) {
+                if (progressMeasurementPeriod == 0) {
+                    progressMeasurementPeriod = 1000; // presume it takes a second to achieve something useful
                 } else {
-                    delayMs = 200;
+                    progressMeasurementPeriod = (long) Math.rint(minReportedChange / progressPerSecond);
+                    progressMeasurementPeriod = Math.max(500, progressMeasurementPeriod);
                 }
-            } else {
-                delayMs = 1000;
+                eventHandler.postDelayed(this, progressMeasurementPeriod);
             }
-            eventHandler.postDelayed(this, delayMs);
         }
     }
 
-    private void withProgress(long position, long bufferedPosition, long duration) {
-        double currentPosition = mediaMuxerControl.getLastWrittenDataTimeMs();
-        double newCompressionProgress = ((currentPosition) / duration) * 100;
-        if (newCompressionProgress - compressionProgress > minReportedChange) {
-            compressionProgress = newCompressionProgress;
-            progressListener.onCompressionProgress(compressionProgress, duration);
+    private void withProgress(long durationMs) {
+        double progress = mediaMuxerControl.getOverallProgress();
+        if (progressMeasurementPeriod > 0) {
+            progressPerSecond = (progress - compressionProgress) / progressMeasurementPeriod;
+        }
+        Log.d(TAG, String.format("%1$02f%%", 100 * progress));
+        if (progress - compressionProgress > minReportedChange || progress + 0.00001 > 1 || mediaMuxerControl.isFinished()) {
+            compressionProgress = progress;
+            progressListener.onCompressionProgress(100 * compressionProgress, durationMs);
         }
     }
 

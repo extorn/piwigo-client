@@ -1,5 +1,6 @@
 package delit.piwigoclient.business.video.compression;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.MediaCodec;
 import android.media.MediaCodecList;
@@ -7,18 +8,23 @@ import android.media.MediaCrypto;
 import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.view.Surface;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.mediacodec.MediaCodecInfo;
 import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil;
-import com.google.android.exoplayer2.source.SampleStream;
 import com.google.android.exoplayer2.util.MediaClock;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
@@ -26,18 +32,20 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 
 /**
  * This doesn't seem to work - issue with the link to exoplayer I think... It's kind of there, but not completely. Very weird error.
  */
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements MediaClock {
+public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer implements MediaClock {
 
-    private static final String MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_MPEG4; //MIMETYPE_VIDEO_AVC;    // H.264 Advanced Video Coding
-    private final static boolean VERBOSE = true;
+    private static final String MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_AVC;    // H.264 Advanced Video Coding
+    //    private static final String MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_MPEG4; // MPEG4 format
+    private final static boolean VERBOSE = false;
     private static final String KEY_CROP_LEFT = "crop-left";
     private static final String KEY_CROP_RIGHT = "crop-right";
     private static final String KEY_CROP_BOTTOM = "crop-bottom";
@@ -53,18 +61,17 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
     private int pendingRotationDegrees;
     private float pendingPixelWidthHeightRatio;
     private Integer scalingMode;
-    private long samplesTranscoded;
-    private OutputSurface outputSurface;
-    private InputSurface inputSurface;
+    Map<Long, Integer> sampleTimeSizeMap = new HashMap<>(100);
+    private OutputSurface decoderOutputSurface;
     private boolean mediaMuxerStarted;
     private MediaCodec encoder;
     private MediaFormat inputMediaFormat;
-    private int encodedBytes;
     private boolean encoderInputEndedSignalled;
-    private long currentPositionUs;
     private PlaybackParameters playbackParameters;
+    private InputSurface encoderInputSurface;
+    private Queue<Long> framesQueuedInEncoder = new LinkedList<>();
 
-    public WorkingVideoCompressor(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify, MediaMuxerControl mediaMuxerControl, ExoPlayerCompression.VideoCompressionParameters compressionSettings) {
+    public VideoTrackMuxerCompressionRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify, MediaMuxerControl mediaMuxerControl, ExoPlayerCompression.VideoCompressionParameters compressionSettings) {
         super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
         this.mediaMuxerControl = mediaMuxerControl;
         this.compressionSettings = compressionSettings;
@@ -104,11 +111,6 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
     }
 
     @Override
-    protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) throws ExoPlaybackException {
-        return super.processOutputBuffer(positionUs, elapsedRealtimeUs, codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs, shouldSkip && compressionSettings.isAllowSkippingFrames());
-    }
-
-    @Override
     protected boolean shouldForceRenderOutputBuffer(long earlyUs, long elapsedSinceLastRenderUs) {
         if (compressionSettings.isAllowSkippingFrames()) {
             return super.shouldForceRenderOutputBuffer(earlyUs, elapsedSinceLastRenderUs);
@@ -117,8 +119,116 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
     }
 
     @Override
+    protected void releaseCodec() {
+        if (VERBOSE) {
+            Log.d(TAG, "releasing decoding codec");
+        }
+        super.releaseCodec();
+    }
+
+    @Override
+    protected void onQueueInputBuffer(DecoderInputBuffer buffer) {
+        sampleTimeSizeMap.put(buffer.timeUs, buffer.data.remaining());
+        super.onQueueInputBuffer(buffer);
+    }
+
+    /**
+     * cloned from MediaCodecVideoRenderer
+     *
+     * @param newFormat
+     * @throws ExoPlaybackException
+     */
+    @Override
+    protected void onInputFormatChanged(Format newFormat) throws ExoPlaybackException {
+        // now do the normal call
+        super.onInputFormatChanged(newFormat);
+        pendingPixelWidthHeightRatio = newFormat.pixelWidthHeightRatio;
+        pendingRotationDegrees = newFormat.rotationDegrees;
+    }
+
+    /**
+     * Method cloned verbartim from the Parent class
+     * <p>
+     * Returns the first codec capable of encoding the specified MIME type, or null if no
+     * match was found.
+     */
+    private android.media.MediaCodecInfo selectCodec(String mimeType) {
+        int numCodecs = MediaCodecList.getCodecCount();
+        for (int i = 0; i < numCodecs; i++) {
+            android.media.MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
+            if (!codecInfo.isEncoder()) {
+                continue;
+            }
+            String[] types = codecInfo.getSupportedTypes();
+            for (int j = 0; j < types.length; j++) {
+                if (types[j].equalsIgnoreCase(mimeType)) {
+                    return codecInfo;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void handleMessage(int messageType, Object message) throws ExoPlaybackException {
+        if (messageType == C.MSG_SET_SCALING_MODE) {
+            scalingMode = (Integer) message;
+        }
+        // now do the normal call
+        super.handleMessage(messageType, message);
+    }
+
+    /**
+     * Renders the output buffer with the specified index. This method is only called if the platform
+     * API version of the device is less than 21.
+     *
+     * @param codec              The codec that owns the output buffer.
+     * @param index              The index of the output buffer to drop.
+     * @param presentationTimeUs The presentation time of the output buffer, in microseconds.
+     */
+    protected void renderOutputBuffer(MediaCodec codec, int index, long presentationTimeUs) {
+        processEncoderOutput();
+        super.renderOutputBuffer(codec, index, presentationTimeUs);
+        moveDecoderOutputToEncoderInput(presentationTimeUs);
+    }
+
+    /**
+     * Renders the output buffer with the specified index. This method is only called if the platform
+     * API version of the device is 21 or later.
+     *
+     * @param codec              The codec that owns the output buffer.
+     * @param index              The index of the output buffer to drop.
+     * @param presentationTimeUs The presentation time of the output buffer, in microseconds.
+     * @param releaseTimeNs      The wallclock time at which the frame should be displayed, in nanoseconds.
+     */
+    @TargetApi(21)
+    protected void renderOutputBufferV21(
+            MediaCodec codec, int index, long presentationTimeUs, long releaseTimeNs) {
+        if (VERBOSE) {
+            Log.e(TAG, "Rendering to encoder input surface " + presentationTimeUs + " " + releaseTimeNs);
+        }
+        processEncoderOutput();
+        super.renderOutputBufferV21(codec, index, presentationTimeUs, releaseTimeNs);
+        moveDecoderOutputToEncoderInput(presentationTimeUs);
+//        renderOutputBuffer(codec, index, presentationTimeUs);
+    }
+
+    @Override
+    protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) throws ExoPlaybackException {
+        if (mediaMuxerControl.isVideoConfigured() && !mediaMuxerControl.isConfigured()) {
+            return false;
+        }
+        if (bufferPresentationTimeUs > positionUs + compressionSettings.getMaxInterleavingIntervalUs()) {
+            Log.e(TAG, "Video Processor - Giving up render to audio at position " + positionUs);
+            return false;
+        }
+        return super.processOutputBuffer(positionUs, elapsedRealtimeUs, codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs, shouldSkip && compressionSettings.isAllowSkippingFrames());
+    }
+
+
+    @Override
     public boolean isReady() {
-        return /*isEncoderReadyForData() && */super.isReady();
+        return super.isReady() || mediaMuxerControl.isMediaMuxerStarted();
     }
 
     @Override
@@ -126,29 +236,22 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
         super.onStopped();
     }
 
-    @Override
-    protected void releaseCodec() {
-        if (VERBOSE) {
-            Log.d(TAG, "releasing decoding codec");
-        }
-        super.releaseCodec();
 
-    }
 
     private void releaseTranscoder() {
         if (VERBOSE) {
             Log.d(TAG, "stopping and releasing encoder");
         }
-        if (outputSurface != null) {
-            if (outputSurface.isFrameAvailable()) {
+        if (decoderOutputSurface != null && mediaMuxerControl.isHasVideo()) {
+            if (decoderOutputSurface.isFrameAvailable()) {
                 Log.e(TAG, "output surface has unexpected frame available");
             }
-            outputSurface.release();
-            outputSurface = null;
+            decoderOutputSurface.release();
+            decoderOutputSurface = null;
         }
-        if (inputSurface != null) {
-            inputSurface.release();
-            inputSurface = null;
+        if (encoderInputSurface != null) {
+            encoderInputSurface.release();
+            encoderInputSurface = null;
         }
         if (encoder != null) {
             encoder.stop();
@@ -172,99 +275,62 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
         }
     }
 
-    private boolean isEncoderReadyForData() {
-        return encoder != null;
-    }
-
-    @Override
-    public void render(long positionUs, long elapsedRealtimeUs) throws ExoPlaybackException {
-        if (VERBOSE) {
-            Log.d(TAG, String.format("Checking video buffer at positionUs %1$d", positionUs));
-        }
-
-        if (processEncoderOutput()) {
-            this.samplesTranscoded++;
-        }
-
-        /*if (isEncoderReadyForData()) */
-        {
-            super.render(positionUs, elapsedRealtimeUs);
-        }
-
-        if (processEncoderOutput()) {
-            this.samplesTranscoded++;
-        }
-    }
-
-    @Override
-    protected void renderOutputBuffer(MediaCodec codec, int index, long presentationTimeUs) {
-        if (VERBOSE) {
-            Log.d(TAG, String.format("Rendering output buffer with presentation time %1$d", presentationTimeUs));
-        }
-        super.renderOutputBuffer(codec, index, presentationTimeUs);
-        moveDecoderOutputToEncoderInput(presentationTimeUs);
-    }
-
-    @Override
-    protected void renderOutputBufferV21(MediaCodec codec, int index, long presentationTimeUs, long releaseTimeNs) {
-        renderOutputBuffer(codec, index, presentationTimeUs);
-//        if (VERBOSE) {
-//            Log.d(TAG, String.format("Rendering output buffer with presentation time %1$d and release time %2$d", presentationTimeUs, releaseTimeNs));
-//        }
-//        super.renderOutputBufferV21(codec, index, presentationTimeUs, releaseTimeNs);
-//        moveDecoderOutputToEncoderInput(presentationTimeUs);
-    }
-
     private void moveDecoderOutputToEncoderInput(long presentationTimeUs) {
-//        if (presentationTimeUs >= 0)
-//        {
+
+        framesQueuedInEncoder.add(presentationTimeUs);
+
         if (VERBOSE) {
             Log.d(TAG, String.format("Moving Sample to encoder - render time %1$d", presentationTimeUs));
         }
 
         try {
             // await for new data from the decoder
-            outputSurface.awaitNewImage(10000);
+            decoderOutputSurface.awaitNewImage(10000);
         } catch (RuntimeException e) {
             //TODO this will occur if the thread is killed off - need to deal with this cleaning the mess left on file system!
             Log.w(TAG, "Timeout waiting for image to become available was interrupted");
         }
 
         // try and render what has been sent so far to the decoder.
-        outputSurface.drawImage();
+        decoderOutputSurface.drawImage();
 
-        // publish the frame to the encoder surface from the decoder outputSurface
-        inputSurface.setPresentationTime(presentationTimeUs * 1000);
+        // publish the frame to the encoder surface from the decoder decoderOutputSurface
+        encoderInputSurface.setPresentationTime(presentationTimeUs * 1000);
 
         // move the frame to encoder
-        inputSurface.swapBuffers();
+        encoderInputSurface.swapBuffers();
+
 //        }
     }
 
     @Override
-    protected void onStreamChanged(Format[] formats, long offsetUs) throws ExoPlaybackException {
-        SampleStream stream = getStream();
-        if (!(stream instanceof SampleStreamWrapper)) {
-            replaceStream(formats, new SampleStreamWrapper(stream, mediaMuxerControl) {
-                @Override
-                boolean isMediaMuxerBeingConfigured(MediaMuxerControl mediaMuxerControl) {
-                    return mediaMuxerControl.isVideoConfigured() && !mediaMuxerControl.isConfigured();
-                }
-            }, offsetUs);
+    public void render(long positionUs, long elapsedRealtimeUs) throws ExoPlaybackException {
+        if (isEnded()) {
+            return;
         }
-        super.onStreamChanged(formats, offsetUs);
+
+        if (encoder != null) {
+            if (VERBOSE) {
+                Log.d(TAG, "Trying to render position " + positionUs + " isEnded : " + isEnded() + " isSuperEnded : " + super.isEnded());
+            }
+            processEncoderOutput();
+        } else {
+            Log.d(TAG, "Examining stream for format etc at position [" + positionUs + "].  isEnded : " + isEnded() + " isSuperEnded : " + super.isEnded());
+        }
+        if (!super.isEnded()) {
+            super.render(positionUs, elapsedRealtimeUs);
+        } else {
+            Log.d(TAG, "Extractor and decoder have already ended! Nothing to do for position : " + positionUs);
+        }
     }
 
     private boolean processEncoderOutput() {
-
-        final int TIMEOUT_USEC = 1000;
 
         if (encoder == null) {
             Log.d(TAG, "No encoder to pass data to");
             return false;
         }
 
-        ByteBuffer[] encoderOutputBuffers = encoder.getOutputBuffers();
         MediaCodec.BufferInfo info = new MediaCodec.BufferInfo();
 
 
@@ -272,28 +338,23 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
         boolean encoderOutputAvailable = true;
         int loopCnt = 0;
         boolean outputDone = false;
-        while (encoderOutputAvailable) {
-            loopCnt++;
+        ByteBuffer encodedDataBuffer;
+        while (encoderOutputAvailable || framesQueuedInEncoder.size() > 2) {
             if (VERBOSE) {
-                Log.d(TAG, "reading output from encoder if available [" + loopCnt + "]");
+                Log.d(TAG, "reading output from encoder if available");
             }
             // Start by draining any pending output from the encoder.  It's important to
             // do this before we try to stuff any more data in.
-            int encoderOutputBufferId = encoder.dequeueOutputBuffer(info, TIMEOUT_USEC);
+            int encoderOutputBufferId = encoder.dequeueOutputBuffer(info, 10 * framesQueuedInEncoder.size()); // vary the timeout to stop the decoder rushing ahead
+
+
             //MediaFormat bufferFormat = encoder.getOutputFormat(outputBufferId);
-
-
             if (encoderOutputBufferId == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 // no output available yet
-                if (VERBOSE) {
-                    Log.d(TAG, "no output from encoder available [" + loopCnt + "]");
-                }
+//                if (VERBOSE) {
+//                    Log.d(TAG, "no output from encoder available");
+//                }
                 encoderOutputAvailable = false;
-            } else if (encoderOutputBufferId == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                encoderOutputBuffers = encoder.getOutputBuffers();
-                if (VERBOSE) {
-                    Log.d(TAG, "encoder output buffers changed [" + loopCnt + "]");
-                }
             } else if (encoderOutputBufferId == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 MediaFormat newFormat = encoder.getOutputFormat();
                 if (VERBOSE) {
@@ -303,66 +364,65 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
                     if (VERBOSE) {
                         Log.e(TAG, "Skipping encoder output format swap to : " + newFormat);
                     }
+                } else {
+                    mediaMuxerControl.addVideoTrack(newFormat);
+                    mediaMuxerControl.setOrientationHint(currentUnappliedRotationDegrees);
+                    mediaMuxerControl.markVideoConfigured();
                 }
-            } else if (encoderOutputBufferId < 0) {
+            } else if (encoderOutputBufferId < 0 && encoderOutputBufferId != MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
                 throw new RuntimeException("unexpected result from encoder.dequeueOutputBuffer: " + encoderOutputBufferId + " [" + loopCnt + "]");
-            } else { // encoderStatus >= 0
+            }
 
-                // There is data available to read from the encoder output buffer.
-                if (VERBOSE) {
-                    Log.d(TAG, "Output from encoder available [" + loopCnt + "]");
+            if (encoderOutputBufferId > 0) {
+                // have data to process.
+
+                if (!mediaMuxerStarted) {
+                    try {
+                        mediaMuxerStarted = true;
+                        // the media muxer is ready to start accepting data now from the encoder
+                        mediaMuxerControl.startMediaMuxer();
+                    } catch (IllegalStateException e) {
+                        Log.d(TAG, "video: error starting media muxer", e);
+                    }
                 }
 
-                ByteBuffer encodedData = encoderOutputBuffers[encoderOutputBufferId];
-                if (encodedData == null) {
-                    throw new RuntimeException("encoderOutputBuffer " + encoderOutputBufferId + " was null  [" + loopCnt + "]");
-                }
+                // get the data buffer
+                encodedDataBuffer = getEncoderOutputBuffer(encoder, encoderOutputBufferId);
+
                 // Write the data to the output media muxer
                 if (info.size != 0) {
-                    encodedData.position(info.offset);
-                    encodedData.limit(info.offset + info.size);
 
-                    if (!mediaMuxerControl.hasVideoTrack()) {
-                        mediaMuxerControl.addVideoTrack(encoder.getOutputFormat());
-                        mediaMuxerControl.markVideoConfigured();
+                    Long lastFrameQueued = framesQueuedInEncoder.remove();
+                    if (lastFrameQueued != info.presentationTimeUs) {
+                        throw new RuntimeException(String.format("Expected to retrieve frame %1$d but was frame %2$d", lastFrameQueued, info.presentationTimeUs));
                     }
 
-                    if (!mediaMuxerStarted) {
-                        try {
-                            mediaMuxerStarted = true;
-                            // the media muxer is ready to start accepting data now from the encoder
-                            mediaMuxerControl.startMediaMuxer();
-                        } catch (IllegalStateException e) {
-                            Log.d(TAG, "video: error starting media muxer", e);
-                        }
-                    }
                     if (VERBOSE) {
-                        Log.d(TAG, String.format("writing sample video data for frame %1$d : [%2$d]", samplesTranscoded, info.presentationTimeUs));
+                        Log.d(TAG, String.format("writing sample video data (%2$dbytes) for frame at time [%1$d]", info.presentationTimeUs, info.size));
                     }
-                    currentPositionUs = info.presentationTimeUs;
 
-
-                    encodedBytes += encodedData.remaining();
-                    mediaMuxerControl.writeSampleData(mediaMuxerControl.getVideoTrackId(), encodedData, info);
+                    long originalBytes = sampleTimeSizeMap.get(info.presentationTimeUs);
+                    mediaMuxerControl.writeSampleData(mediaMuxerControl.getVideoTrackId(), encodedDataBuffer, info, originalBytes);
                     wroteData = true;
-
-                    //TODO do something with the encoder output! Maybe save it to disk? It will need to go to a Muxer to add the audio back!
-                    if (VERBOSE) {
-                        Log.d(TAG, "encoder output " + info.size + " bytes");
+                } else {
+                    if (!outputDone) {
+                        outputDone = (info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0;
                     }
-                }
-
-                if (!outputDone) {
-                    outputDone = (info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0;
+                    if (!outputDone) {
+                        Log.e(TAG, "No Data in Buffer returned from encoder!");
+                    }
                 }
                 encoder.releaseOutputBuffer(encoderOutputBufferId, false);
+
+            }
+            if (!outputDone) {
+                outputDone = (info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0;
             }
         }
 
+        //Got to here!
+
         if (outputDone) {
-            if (outputSurface.isFrameAvailable()) {
-                Log.w(TAG, "warning - output surface has unexpected frame available");
-            }
             if (VERBOSE) {
                 Log.d(TAG, "video encoder: EOS");
             }
@@ -370,17 +430,29 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
         }
 
         if (VERBOSE) {
-            Log.d(TAG, "finished rendering and processing frame");
+            Log.d(TAG, "finished checking and processing encoder output");
         }
 
         if (isEnded()) {
-            if (VERBOSE) {
-                Log.d(TAG, "Has ended : " + encodedBytes);
-            }
             releaseTranscoder();
             inputMediaFormat = null;
         }
         return wroteData;
+    }
+
+    private ByteBuffer getEncoderOutputBuffer(MediaCodec encoder, int encoderOutputBufferId) {
+        ByteBuffer encodedDataBuffer = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            encodedDataBuffer = encoder.getOutputBuffer(encoderOutputBufferId);
+        }
+        if (encodedDataBuffer == null && encoderOutputBufferId == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
+            ByteBuffer[] encoderOutputBuffers = encoder.getOutputBuffers();
+            encodedDataBuffer = encoderOutputBuffers[encoderOutputBufferId];
+            if (VERBOSE) {
+                Log.d(TAG, "encoder output buffers changed");
+            }
+        }
+        return encodedDataBuffer;
     }
 
     @Override
@@ -391,34 +463,16 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
 
     @Override
     public boolean isEnded() {
-        return super.isEnded() && !mediaMuxerControl.isHasVideo();
+        return super.isEnded() && !mediaMuxerControl.isVideoConfigured();
     }
 
-    /**
-     * cloned from MediaCodecVideoRenderer
-     *
-     * @param newFormat
-     * @throws ExoPlaybackException
-     */
-    @Override
-    protected void onInputFormatChanged(Format newFormat) throws ExoPlaybackException {
-        // now do the normal call
-        super.onInputFormatChanged(newFormat);
-        pendingPixelWidthHeightRatio = newFormat.pixelWidthHeightRatio;
-        pendingRotationDegrees = newFormat.rotationDegrees;
-    }
 
-    @Override
-    public void handleMessage(int messageType, Object message) throws ExoPlaybackException {
-        if (messageType == C.MSG_SET_SCALING_MODE) {
-            scalingMode = (Integer) message;
-        }
-        // now do the normal call
-        super.handleMessage(messageType, message);
-    }
 
     @Override
     protected void onOutputFormatChanged(MediaCodec codec, MediaFormat outputFormat) {
+
+        // called when the decoder is configured!
+
         boolean hasCrop = outputFormat.containsKey(KEY_CROP_RIGHT)
                 && outputFormat.containsKey(KEY_CROP_LEFT) && outputFormat.containsKey(KEY_CROP_BOTTOM)
                 && outputFormat.containsKey(KEY_CROP_TOP);
@@ -444,9 +498,9 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
             currentUnappliedRotationDegrees = pendingRotationDegrees;
         }
         if (VERBOSE) {
-            Log.d(TAG, "media format changing to : " + outputFormat);
+            Log.d(TAG, "decoder output media format changing to : " + outputFormat);
         }
-        releaseTranscoder();
+
         try {
             configureCompressor(new CodecMaxValues(currentWidth, currentHeight, currentCodecMaxValues.inputSize));
         } catch (IOException e) {
@@ -467,21 +521,13 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
     @Override
     protected void configureCodec(MediaCodecInfo codecInfo, MediaCodec codec, Format format, MediaCrypto crypto) throws MediaCodecUtil.DecoderQueryException {
         super.configureCodec(codecInfo, codec, format, crypto);
-        try {
-            configureCompressor(getCodecMaxValues(codecInfo, format, getStreamFormats()));
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to find desired video compression codec");
-        } catch (ExoPlaybackException e) {
-            throw new RuntimeException("Unable to set surface to that tied to the transcoder");
-        }
+        currentCodecMaxValues = getCodecMaxValues(codecInfo, format, getStreamFormats());
     }
 
     private boolean configureCompressor(CodecMaxValues codecMaxValues) throws IOException, ExoPlaybackException {
         if (VERBOSE) {
             Log.d(TAG, "configuring compressor using thread : " + Thread.currentThread().getName());
         }
-
-        currentCodecMaxValues = codecMaxValues;
         int wantedWidthPx = compressionSettings.getWantedWidthPx();
         if (wantedWidthPx < 0) {
             wantedWidthPx = codecMaxValues.width;
@@ -498,8 +544,6 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
         }
         int wantedBitRateModeV21 = compressionSettings.getWantedBitRateModeV21();
 
-
-        DecodeEditEncodeTest.VideoChunks outputData = new DecodeEditEncodeTest.VideoChunks();
         android.media.MediaCodecInfo codecInfo = selectCodec(MIME_TYPE);
         if (codecInfo == null) {
             if (VERBOSE) {
@@ -511,11 +555,6 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
         if (VERBOSE) {
             Log.d(TAG, "found codec: " + codecInfo.getName());
         }
-
-//                            MediaFormat trackInputTrackFormat = null;
-//                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-//                                trackInputTrackFormat = getCodec().getInputFormat();
-//                            }
 
         // Create an encoder format that matches the input format.  (Might be able to just
         // re-use the format used to generate the video, since we want it to be the same.)
@@ -551,79 +590,101 @@ public class WorkingVideoCompressor extends MediaCodecVideoRenderer implements M
             }
         }
 
-
-        outputData.setMediaFormat(outputFormat);
         encoder = MediaCodec.createEncoderByType(MIME_TYPE);
         encoder.configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-        encodedBytes = 0;
 
-
-//                            mediaMuxer.setOrientationHint(0);
-        //mediaMuxer.setLocation(lat, long);
-
-        if (inputSurface != null) {
-            inputSurface.release();
+        if (encoderInputSurface != null) {
+            encoderInputSurface.release();
         }
-        if (outputSurface != null) {
-            outputSurface.release();
+        if (decoderOutputSurface != null) {
+            decoderOutputSurface.release();
         }
-        inputSurface = new InputSurface(encoder.createInputSurface());
-        inputSurface.makeCurrent();
+        encoderInputSurface = new InputSurface(encoder.createInputSurface());//new InputSurfaceBuilder().getInputSurface(context, encoder.createInputSurface());
+        encoderInputSurface.makeCurrent(); // must occur on same thread as the new OutputSurface() call!
         // the encoder is now ready to start accepting data from the input surface as it arrives (one frame at a time)
         encoder.start();
 
-        outputSurface = new OutputSurface();
+        decoderOutputSurface = new OutputSurface(new Handler(Looper.getMainLooper()));//new OutputSurfaceBuilder().getOutputSurface(context);
         // ensure the decoded data gets written to this surface
-        handleMessage(C.MSG_SET_SURFACE, outputSurface.getSurface());
-
+        handleMessage(C.MSG_SET_SURFACE, decoderOutputSurface.getSurface());
         return true;
-    }
-
-    /**
-     * Method cloned verbartim from the Parent class
-     * <p>
-     * Returns the first codec capable of encoding the specified MIME type, or null if no
-     * match was found.
-     */
-    private android.media.MediaCodecInfo selectCodec(String mimeType) {
-        int numCodecs = MediaCodecList.getCodecCount();
-        for (int i = 0; i < numCodecs; i++) {
-            android.media.MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
-            if (!codecInfo.isEncoder()) {
-                continue;
-            }
-            String[] types = codecInfo.getSupportedTypes();
-            for (int j = 0; j < types.length; j++) {
-                if (types[j].equalsIgnoreCase(mimeType)) {
-                    return codecInfo;
-                }
-            }
-        }
-        return null;
     }
 
     @Override
     public MediaClock getMediaClock() {
-        if (compressionSettings.isNeedMediaClock()) {
-            return this;
-        } else {
-            return super.getMediaClock();
-        }
+        return this;
     }
 
-    @Override
+    @Override //MediaClock
     public long getPositionUs() {
-        return currentPositionUs;
+        return mediaMuxerControl.getLastWrittenDataTimeUs();
     }
 
-    @Override
+    @Override //MediaClock
     public PlaybackParameters setPlaybackParameters(PlaybackParameters playbackParameters) {
         this.playbackParameters = playbackParameters;
         return this.playbackParameters;
     }
 
-    @Override
+    @Override //MediaClock
     public PlaybackParameters getPlaybackParameters() {
         return playbackParameters;
+    }
+
+    private static class InputSurfaceBuilder implements Runnable {
+
+        private InputSurface inputSurface;
+        private Surface encoderInputSurface;
+
+        public InputSurface getInputSurface(Context context, Surface encoderInputSurface) {
+            this.encoderInputSurface = encoderInputSurface;
+            Handler mainHandler = new Handler(context.getMainLooper());
+            mainHandler.post(this);
+            synchronized (this) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Thread was interrupted - probably wants to die");
+                }
+            }
+
+            return this.inputSurface;
+        }
+
+        @Override
+        public void run() {
+            inputSurface = new InputSurface(encoderInputSurface);
+            inputSurface.makeCurrent();
+            synchronized (this) {
+                notifyAll();
+            }
+        }
+    }
+
+    private static class OutputSurfaceBuilder implements Runnable {
+
+        private OutputSurface outputSurface;
+
+        public OutputSurface getOutputSurface(Context context) {
+            Handler mainHandler = new Handler(context.getMainLooper());
+            mainHandler.post(this);
+            synchronized (this) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Thread was interrupted - probably wants to die");
+                }
+            }
+
+            return outputSurface;
+        }
+
+        @Override
+        public void run() {
+            outputSurface = new OutputSurface(new Handler(Looper.getMainLooper()));
+            synchronized (this) {
+                notifyAll();
+            }
+        }
     }
 }

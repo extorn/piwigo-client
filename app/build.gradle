@@ -43,6 +43,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
+            versionNameSuffix = "-DEBUG"
+            // disable Crashlytics (couple this with uncommenting line in AbstractMyApplication onCreate method )
+//            ext.enableCrashlytics = false
+            
 //            minifyEnabled true
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -50,7 +51,6 @@ import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.UploadPreferences;
 import delit.piwigoclient.business.video.compression.ExoPlayerCompression;
-import delit.piwigoclient.business.video.compression.YPrestoCompressor;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -300,18 +300,18 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         });
 
         if (BuildConfig.DEBUG) {
-//            Button compressVideosButton = new Button(getContext());
-//            compressVideosButton.setText("Compress");
-//            compressVideosButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    compressVideos();
-//                }
-//            });
-//            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-//            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
-//            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-//            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
+            Button compressVideosButton = new Button(getContext());
+            compressVideosButton.setText("Compress");
+            compressVideosButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    compressVideos();
+                }
+            });
+            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
+            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
         }
 
         if (savedInstanceState != null) {
@@ -356,8 +356,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             File outputVideo = new File(moviesFolder, "compressed_" + inputVideo.getName());
             try {
                 //TODO this compressor is very basic - need to use my own.
-                new YPrestoCompressor().compressFile(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
-//                new ExoPlayerCompression().compressFile(getContext(), inputVideo, outputVideo, new CompressionListener(getUiHelper()));
+//                new YPrestoCompressor().compressFile(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
+                new ExoPlayerCompression().compressFile(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
             } catch (IOException e) {
                 getUiHelper().showDetailedMsg(R.string.alert_error, "Error compressing video " + e.getMessage());
             }
@@ -911,6 +911,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         @Override
         public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
+            AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
+            File f = fragment.getFilesForUploadViewAdapter().getFiles().get(0);
+            fragment.getFilesForUploadViewAdapter().updateUploadProgress(f, (int) Math.rint(compressionProgress));
+
             long currentTime = System.currentTimeMillis();
             long elapsedTime = currentTime - startCompressionAt;
             long estimateTotalCompressionTime = Math.round(100 * (elapsedTime / compressionProgress));

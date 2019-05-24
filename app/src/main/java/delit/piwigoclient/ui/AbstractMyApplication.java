@@ -113,6 +113,9 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     @Override
     public final void onCreate() {
         super.onCreate();
+
+        //Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build());
+
         PicassoFactory.initialise();
         upgradeAnyPreferencesIfRequired();
         AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
