@@ -142,7 +142,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             uploadToAlbum = getArguments().getParcelable(SAVED_STATE_CURRENT_GALLERY);
-            if(uploadToAlbum == null) {
+            if (uploadToAlbum == null) {
                 uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
             }
             externallyTriggeredSelectFilesActionId = getArguments().getInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID);
@@ -175,8 +175,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     @Override
     protected String buildPageHeading() {
-        if(BuildConfig.DEBUG) {
-            return getString(R.string.upload_page_title) + " ("+BuildConfig.FLAVOR+')';
+        if (BuildConfig.DEBUG) {
+            return getString(R.string.upload_page_title) + " (" + BuildConfig.FLAVOR + ')';
         } else {
             return getString(R.string.upload_page_title);
         }
@@ -222,19 +222,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         // check for login status as need to be logged in to get this information (supplied by server)
         ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
-        if(PiwigoSessionDetails.getInstance(activeProfile) == null) {
+        if (PiwigoSessionDetails.getInstance(activeProfile) == null) {
             fileSelectButton.setEnabled(false);
             String serverUri = activeProfile.getPiwigoServerAddress(getPrefs(), getContext());
-            getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new UIHelper.Action() {
-                @Override
-                public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response) {
-                    fileSelectButton.setEnabled(true);
-                    ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
-                    String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
-                    uploadableFilesView.setText(fileTypesStr);
-                    return super.onSuccess(uiHelper, response);
-                }
-            });
+            getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
         } else {
             String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
             uploadableFilesView.setText(fileTypesStr);
@@ -334,7 +325,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), columnsToShow);
         filesForUploadView.setLayoutManager(gridLayoutMan);
 
-        if(filesToUploadAdapter == null) {
+        if (filesToUploadAdapter == null) {
             filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(filesForUpload, getContext(), this);
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
         }
@@ -343,6 +334,15 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesToUploadAdapter);
 
         return view;
+    }
+
+    private CustomImageButton getFileSelectButton() {
+        return fileSelectButton;
+    }
+
+
+    private TextView getUploadableFilesView() {
+        return uploadableFilesView;
     }
 
     private void compressVideos() {
@@ -383,7 +383,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     private void onUploadJobStatusButtonClick() {
         UploadJob uploadJob = getActiveJob(getContext());
-        if(uploadJob != null) {
+        if (uploadJob != null) {
             EventBus.getDefault().post(new ViewJobStatusDetailsEvent(uploadJob));
         } else {
             getUiHelper().showDetailedMsg(R.string.alert_error, R.string.job_not_found);
@@ -405,7 +405,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             String serverUri = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
             getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler());
         } else {
-            if(sessionDetails.getAllowedFileTypes() == null) {
+            if (sessionDetails.getAllowedFileTypes() == null) {
                 fileSelectButton.setEnabled(false);
                 Bundle b = new Bundle();
                 sessionDetails.writeToBundle(b);
@@ -434,28 +434,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             getUiHelper().updateHandlerForAllMessages();
 
             PiwigoSessionDetails piwigoSessionDetails = PiwigoSessionDetails.getInstance(uploadJob.getConnectionPrefs());
-            if(piwigoSessionDetails != null) {
+            if (piwigoSessionDetails != null) {
                 String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(piwigoSessionDetails.getAllowedFileTypes()));
                 uploadableFilesView.setText(fileTypesStr);
             }
             uploadJobId = uploadJob.getJobId();
-            uploadToAlbum = new CategoryItemStub("???" ,uploadJob.getUploadToCategory());
+            uploadToAlbum = new CategoryItemStub("???", uploadJob.getUploadToCategory());
             AlbumGetSubAlbumNamesResponseHandler hndler = new AlbumGetSubAlbumNamesResponseHandler(uploadJob.getUploadToCategory(), false);
-            getUiHelper().addActionOnResponse(getUiHelper().addActiveServiceCall(hndler), new UIHelper.Action<Fragment, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse>() {
-                @Override
-                public boolean onSuccess(UIHelper<Fragment> uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
-                    if(response.getAlbumNames().size() > 0) {
-                        if(uploadToAlbum.getId() == response.getAlbumNames().get(0).getId()) {
-                            uploadToAlbum = response.getAlbumNames().get(0);
-                            selectedGallerySpinner.setText(uploadToAlbum.getName());
-                        } else if (uploadToAlbum.getId() == CategoryItemStub.ROOT_GALLERY.getId()) {
-                            uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
-                            selectedGallerySpinner.setText(uploadToAlbum.getName());
-                        }
-                    }
-                    return super.onSuccess(uiHelper, response);
-                }
-            });
+            getUiHelper().addActionOnResponse(getUiHelper().addActiveServiceCall(hndler), new OnGetSubAlbumNamesAction());
             selectedGallerySpinner.setText(uploadToAlbum.getName());
 
             privacyLevelWanted = uploadJob.getPrivacyLevelWanted();
@@ -527,6 +513,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return (FilesToUploadRecyclerViewAdapter) filesForUploadView.getAdapter();
     }
 
+    private CategoryItemStub getUploadToAlbum() {
+        return uploadToAlbum;
+    }
+
     protected void updateFilesForUploadList(ArrayList<File> filesToBeUploaded) {
         if (filesToBeUploaded.size() > 0) {
             String lastOpenedFolder = filesToBeUploaded.get(0).getParentFile().getAbsolutePath();
@@ -535,7 +525,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         FilesToUploadRecyclerViewAdapter adapter = getFilesForUploadViewAdapter();
         List<File> addedFiles = adapter.addAll(filesToBeUploaded);
         int filesAlreadyPresent = filesToBeUploaded.size() - addedFiles.size();
-        if(filesAlreadyPresent > 0) {
+        if (filesAlreadyPresent > 0) {
             getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.files_already_set_for_upload_skipped_pattern, filesAlreadyPresent));
         }
         uploadFilesNowButton.setEnabled(adapter.getItemCount() > 0);
@@ -827,8 +817,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ExpandingAlbumSelectionCompleteEvent event) {
-        if(getUiHelper().isTrackingRequest(event.getActionId())) {
-            if(event.getSelectedItems() != null && event.getSelectedItems().size() > 0) {
+        if (getUiHelper().isTrackingRequest(event.getActionId())) {
+            if (event.getSelectedItems() != null && event.getSelectedItems().size() > 0) {
                 CategoryItem selectedAlbum = event.getSelectedItems().iterator().next();
                 uploadToAlbum = selectedAlbum.toStub();
                 selectedGallerySpinner.setText(uploadToAlbum.getName());
@@ -840,6 +830,26 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     public void onEvent(AppLockedEvent event) {
         if (isVisible()) {
             getFragmentManager().popBackStackImmediate();
+        }
+    }
+
+    private void onAlbumDeleted(AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse response) {
+        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_temporary_upload_album_deleted));
+    }
+
+    private TextView getSelectedGallerySpinner() {
+        return selectedGallerySpinner;
+    }
+
+    private static class OnLoginAction extends UIHelper.Action {
+        @Override
+        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response) {
+            AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
+            fragment.getFileSelectButton().setEnabled(true);
+            ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
+            String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
+            fragment.getUploadableFilesView().setText(fileTypesStr);
+            return super.onSuccess(uiHelper, response);
         }
     }
 
@@ -988,7 +998,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
             UploadJob job = ForegroundPiwigoUploadService.getActiveForegroundJob(getContext(), currentJobId);
             if (positiveAnswer != null && positiveAnswer && job != null) {
-                if(job.getTemporaryUploadAlbum() > 0) {
+                if (job.getTemporaryUploadAlbum() > 0) {
                     AlbumDeleteResponseHandler albumDelHandler = new AlbumDeleteResponseHandler(job.getTemporaryUploadAlbum());
                     getUiHelper().addNonBlockingActiveServiceCall(getContext().getString(R.string.alert_deleting_temporary_upload_album), albumDelHandler.invokeAsync(getContext(), job.getConnectionPrefs()), albumDelHandler.getTag());
                 }
@@ -1013,6 +1023,24 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 ForegroundPiwigoUploadService.deleteStateFromDisk(getContext(), activeJob);
                 fragment.allowUserUploadConfiguration(null);
             }
+        }
+    }
+
+    private static class OnGetSubAlbumNamesAction extends UIHelper.Action<Fragment, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> {
+        @Override
+        public boolean onSuccess(UIHelper<Fragment> uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+            if (response.getAlbumNames().size() > 0) {
+                AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
+                CategoryItemStub uploadToAlbum = fragment.getUploadToAlbum();
+                if (uploadToAlbum.getId() == response.getAlbumNames().get(0).getId()) {
+                    uploadToAlbum = response.getAlbumNames().get(0);
+                    fragment.getSelectedGallerySpinner().setText(uploadToAlbum.getName());
+                } else if (uploadToAlbum.getId() == CategoryItemStub.ROOT_GALLERY.getId()) {
+                    uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
+                    fragment.getSelectedGallerySpinner().setText(uploadToAlbum.getName());
+                }
+            }
+            return super.onSuccess(uiHelper, response);
         }
     }
 
@@ -1162,7 +1190,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (error instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) {
                 PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse err = ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) error);
                 String msg = err.getErrorMessage();
-                if("java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(msg)) {
+                if ("java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $".equals(msg)) {
                     msg = err.getResponse();
                 }
                 errorMessage = String.format(context.getString(R.string.alert_upload_file_failed_webserver_message_pattern), fileForUpload.getName(), err.getStatusCode(), msg);
@@ -1181,7 +1209,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
             if (response instanceof AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) {
-                onAlbumDeleted((AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse)response);
+                onAlbumDeleted((AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) response);
             } else {
                 super.onAfterHandlePiwigoResponse(response);
             }
@@ -1222,9 +1250,5 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 notifyUser(context, R.string.alert_error, errorMessage);
             }
         }
-    }
-
-    private void onAlbumDeleted(AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse response) {
-        getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_temporary_upload_album_deleted));
     }
 }

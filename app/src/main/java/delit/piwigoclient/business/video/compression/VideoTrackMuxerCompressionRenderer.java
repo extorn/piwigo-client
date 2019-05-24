@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.Surface;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -319,12 +318,16 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
             }
             processEncoderOutput();
         } else {
-            Log.d(TAG, "Examining stream for format etc at position [" + positionUs + "].  isEnded : " + isEnded() + " isSuperEnded : " + super.isEnded());
+            if (VERBOSE) {
+                Log.d(TAG, "Examining stream for format etc at position [" + positionUs + "].  isEnded : " + isEnded() + " isSuperEnded : " + super.isEnded());
+            }
         }
         if (!super.isEnded()) {
             super.render(positionUs, elapsedRealtimeUs);
         } else {
-            Log.d(TAG, "Extractor and decoder have already ended! Nothing to do for position : " + positionUs);
+            if (VERBOSE) {
+                Log.d(TAG, "Extractor and decoder have already ended! Nothing to do for position : " + positionUs);
+            }
         }
     }
 
@@ -634,7 +637,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     public PlaybackParameters getPlaybackParameters() {
         return playbackParameters;
     }
-
+/*
     private static class InputSurfaceBuilder implements Runnable {
 
         private InputSurface inputSurface;
@@ -690,5 +693,5 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
                 notifyAll();
             }
         }
-    }
+    }*/
 }
