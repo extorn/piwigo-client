@@ -35,6 +35,10 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
         PiwigoSessionDetails oldCredentials = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         PiwigoSessionDetails newCredentials = parseSessionDetails(rsp);
+        if (isCached) {
+            // try and ensure it gets a new one before doing anything vital!
+            newCredentials.setSessionMayHaveExpired();
+        }
         PiwigoSessionDetails.setInstance(getConnectionPrefs(), newCredentials);
 
         PiwigoSessionStatusRetrievedResponse r = new PiwigoSessionStatusRetrievedResponse(getMessageId(), getPiwigoMethod(), oldCredentials, newCredentials, isCached);
@@ -105,9 +109,5 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         public PiwigoSessionDetails getNewCredentials() {
             return newCredentials;
         }
-    }
-
-    public boolean isUseHttpGet() {
-        return true;
     }
 }

@@ -33,7 +33,7 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
     }
 
     @Override
-    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
+    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
         Header contentTypeHeader = HttpUtils.getContentTypeHeader(headers);
         if(contentTypeHeader != null && !contentTypeHeader.getValue().startsWith("image/")) {
             boolean newLoginAcquired = false;

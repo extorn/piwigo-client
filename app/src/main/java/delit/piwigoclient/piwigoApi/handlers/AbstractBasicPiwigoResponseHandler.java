@@ -140,7 +140,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     public final void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
         this.isSuccess = true;
         try {
-            onSuccess(statusCode, headers, responseBody, triedLoggingInAgain);
+            onSuccess(statusCode, headers, responseBody, triedLoggingInAgain, isResponseCached(headers));
         } catch(RuntimeException e) {
             Crashlytics.logException(e);
             throw e;
@@ -158,7 +158,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         }
     }
 
-    protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
+    protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
     }
 
     protected boolean onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error, boolean triedToGetNewSession, boolean isCached) {
@@ -483,8 +483,8 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         boolean isCached = false;
         if(headers != null) {
             for (Header h : headers) {
-                if (HeaderConstants.VIA.equals(h.getName())) {
-                    isCached = h.getValue().contains("(cache)");
+                if (HeaderConstants.WARNING.equals(h.getName())) {
+                    isCached = h.getValue().contains("111 localhost \"Revalidation failed\""); // set internally when hostname not found is returned when trying to revalidate a cache entry.
                     break;
                 }
             }

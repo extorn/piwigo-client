@@ -202,7 +202,7 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
     }
 
     @Override
-    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
+    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
         PiwigoResponseBufferingHandler.UrlToFileSuccessResponse r = new PiwigoResponseBufferingHandler.UrlToFileSuccessResponse(getMessageId(), resourceUrl, outputFile);
         storeResponse(r);
     }

@@ -104,4 +104,8 @@ public class GalleryGetConfigResponseHandler<T extends ResourceItem> extends Abs
             return serverConfig;
         }
     }
+
+    public boolean isUseHttpGet() {
+        return true;
+    }
 }

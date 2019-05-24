@@ -82,4 +82,8 @@ public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponse
             return album;
         }
     }
+
+    public boolean isUseHttpGet() {
+        return true;
+    }
 }

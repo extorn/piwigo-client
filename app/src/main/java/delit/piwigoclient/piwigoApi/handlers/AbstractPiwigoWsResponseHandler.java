@@ -128,7 +128,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     }
 
     @Override
-    protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession) {
+    protected void onSuccess(int statusCode, Header[] headers, byte[] responseBody, boolean hasBrandNewSession, boolean isResponseCached) {
         if (BuildConfig.DEBUG) {
             String responseBodyStr = "<NONE PRESENT>";
             if (responseBody != null) {
@@ -246,7 +246,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
             if (idx > 0) {
                 byte[] actualJson = Arrays.copyOfRange(responseBody, idx, responseBody.length);
-                onSuccess(statusCode, headers, actualJson, hasBrandNewSession);
+                onSuccess(statusCode, headers, actualJson, hasBrandNewSession, isResponseCached(headers));
                 // skip remaining method code.
                 return true;
             }
