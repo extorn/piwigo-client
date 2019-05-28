@@ -245,6 +245,13 @@ public class PiwigoAlbum extends ResourceContainer<CategoryItem, GalleryItem> im
                 } else if (o2 == CategoryItem.ALBUM_HEADING) {
                     return -1; // push album heading to the end of albums
                 } else {
+                    if (CategoryItem.BLANK.equals(o1)) {
+                        if (!CategoryItem.BLANK.equals(o2)) {
+                            return sortInReverseOrder ? 1 : -1;
+                        } else {
+                            return 0;
+                        }
+                    }
                     int order;
                     switch (albumSortOrder) {
                         case DATE_ALBUM_SORT_ORDER:
