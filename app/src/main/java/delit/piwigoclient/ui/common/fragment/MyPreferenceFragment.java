@@ -90,9 +90,24 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onDetach() {
-        uiHelper.deregisterFromActiveServiceCalls();
-        uiHelper.closeAllDialogs();
+        onFragmentHidden();
         super.onDetach();
+    }
+
+    public void onFragmentHidden() {
+        if (uiHelper != null) {
+            uiHelper.deregisterFromActiveServiceCalls();
+            uiHelper.closeAllDialogs();
+        }
+    }
+
+    public void onFragmentShown() {
+        //TODO try force always hiding the keyboard
+        if (uiHelper != null) {
+            uiHelper.registerToActiveServiceCalls();
+            uiHelper.handleAnyQueuedPiwigoMessages();
+            uiHelper.showNextQueuedMessage();
+        }
     }
 
     @Override
@@ -165,9 +180,7 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
     @Override
     public void onResume() {
         super.onResume();
-//        TODO try force allways hiding the keyboard
-        uiHelper.handleAnyQueuedPiwigoMessages();
-        uiHelper.showNextQueuedMessage();
+        onFragmentShown();
     }
 
     protected DialogFragment onDisplayCustomPreferenceDialog(Preference preference) {

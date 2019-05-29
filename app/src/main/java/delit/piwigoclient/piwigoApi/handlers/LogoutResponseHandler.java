@@ -56,4 +56,8 @@ public class LogoutResponseHandler extends AbstractPiwigoWsResponseHandler {
             super(messageId, piwigoMethod, true, isCached);
         }
     }
+
+    public boolean isUseHttpGet() {
+        return true;
+    }
 }

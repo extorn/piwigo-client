@@ -112,8 +112,10 @@
         <item>1.4.0.6</item>
         <item>"Fehlerbehebung:
                  - Ein paar kleine Änderungen
+                 - Bilder werden auf alten Geräten wieder korrekt angezeigt
+                 - Korrekturen bei der Offline-Betrachtung - dieser Fix ist jedoch noch nicht vollständig abgeschlossen
                Änderungen:
-                 - Migration auf neue Videokompression - sollte nun jedes Video komprimieren, das die App abspielen kann"</item>
+                 - Migration zu einer neuen Videokompressionsroutine - sollte nun ein Video in jedem Format komprimieren, das die App abspielen kann"</item>
         <item>1.4.0.5</item>
         <item>"Fehlerbehebung:
                 - Vital-Fix"</item>

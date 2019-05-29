@@ -174,17 +174,23 @@ public class PiwigoResponseBufferingHandler {
                     if (h.canHandlePiwigoResponseNow(r)) {
                         h.handlePiwigoResponse(r);
                     } else {
-                        //Trying to replace the handler and the response back on the queue for later processing.
-                        //TODO think this through more - thread safe? Think so... be sure.
-                        if (r.isEndResponse()) {
-                            handlerResponseMap.put(r.getMessageId(), h.getHandlerId());
-                        }
-                        responses.put(r.getMessageId(), r);
+                        requeueResponseForLaterProcessing(r, h);
                     }
                 }
             });
         }
         return oldHandler;
+    }
+
+    private synchronized void requeueResponseForLaterProcessing(Response r, PiwigoResponseListener h) {
+        //Trying to replace the handler and the response back on the queue for later processing.
+        if (BuildConfig.DEBUG) {
+            Log.e("PiwigoResponseHandler", String.format("Unable to handle message response of type %1$s at this time - queuing for later", r.getClass().getName()));
+        }
+        if (r.isEndResponse()) {
+            handlerResponseMap.put(r.getMessageId(), h.getHandlerId());
+        }
+        responses.put(r.getMessageId(), r);
     }
 
     public synchronized void processResponse(final Response response) {
@@ -199,7 +205,7 @@ public class PiwigoResponseBufferingHandler {
             handler = handlers.get(handlerId);
         } else {
             if (BuildConfig.DEBUG) {
-                Log.e(TAG, "No handler registered for message with id " + response.getMessageId());
+                Log.e(TAG, String.format("No handler registered for message of type %1$s with id %2$d", response.getClass().getName(), response.getMessageId()));
             }
             handler = null;
         }
@@ -211,12 +217,7 @@ public class PiwigoResponseBufferingHandler {
                         if (handler.canHandlePiwigoResponseNow(response)) {
                             handler.handlePiwigoResponse(response);
                         } else {
-                            //Trying to replace the handler and the response back on the queue for later processing.
-                            //TODO think this through more - thread safe? Think so... be sure.
-                            if (response.isEndResponse()) {
-                                handlerResponseMap.put(response.getMessageId(), handlerId);
-                            }
-                            responses.put(response.getMessageId(), response);
+                            requeueResponseForLaterProcessing(response, handler);
                         }
                     } catch (IllegalArgumentException e) {
                         Crashlytics.logException(e);
@@ -430,10 +431,12 @@ public class PiwigoResponseBufferingHandler {
         private final int statusCode;
         private final String errorMessage;
         private final String errorDetail;
+        private final Throwable error;
         private String response;
 
-        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, String errorDetail, boolean isCached) {
+        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, String errorDetail, Throwable error, boolean isCached) {
             super(requestHandler.getMessageId(), requestHandler.getPiwigoMethod(), isCached);
+            this.error = error;
             this.requestHandler = requestHandler;
             this.statusCode = statusCode;
             this.errorMessage = errorMessage;
@@ -448,8 +451,8 @@ public class PiwigoResponseBufferingHandler {
             return response;
         }
 
-        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, boolean isCached) {
-            this(requestHandler, statusCode, errorMessage, null, isCached);
+        public PiwigoHttpErrorResponse(AbstractPiwigoWsResponseHandler requestHandler, int statusCode, String errorMessage, Throwable error, boolean isCached) {
+            this(requestHandler, statusCode, errorMessage, null, error, isCached);
         }
 
         public int getStatusCode() {

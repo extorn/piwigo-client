@@ -3,7 +3,6 @@ package delit.piwigoclient.piwigoApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -86,6 +85,32 @@ public class HttpClientFactory {
         PersistentProfileCookieStore cookieStore = cookieStoreMap.get(profile);
         if (cookieStore != null) {
             cookieStore.clear();
+        }
+    }
+
+    public synchronized void cancelAllRunningHttpRequests(ConnectionPreferences.ProfilePreferences profile) {
+        if (profile == null) {
+            // clear ALL.
+            HashSet<ConnectionPreferences.ProfilePreferences> keys = new HashSet<>();
+            keys.addAll(asyncClientMap.keySet());
+            keys.addAll(syncClientMap.keySet());
+            keys.addAll(videoDownloadClientMap.keySet());
+            keys.addAll(videoDownloadSyncClientMap.keySet());
+            for (ConnectionPreferences.ProfilePreferences aProfile : keys) {
+                cancelAllRunningHttpRequests(aProfile);
+            }
+            return;
+        }
+        cancelAllRequests(asyncClientMap.get(profile));
+        cancelAllRequests(syncClientMap.get(profile));
+        cancelAllRequests(videoDownloadClientMap.get(profile));
+        cancelAllRequests(videoDownloadSyncClientMap.get(profile));
+        flushCookies(profile);
+    }
+
+    private void cancelAllRequests(CachingAsyncHttpClient client) {
+        if (client != null) {
+            client.cancelAllRequests(true);
         }
     }
 

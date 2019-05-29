@@ -123,8 +123,10 @@
         <item>1.4.0.6</item>
         <item>"Correction d'un bug :
                  - Quelques changements mineurs
+                 - Les images s'affichent à nouveau correctement sur les anciens appareils
+                 - Corrections à l'affichage hors ligne - ce correctif n'est pas encore tout à fait complet
                Changements :
-                 - Migration vers une nouvelle compression vidéo - devrait maintenant compresser toute vidéo que l'application est capable de lire"</item>
+                 - Migration vers une nouvelle routine de compression vidéo - devrait maintenant compresser une vidéo dans n'importe quel format que l'application est capable de lire"</item>
         <item>1.4.0.5</item>
         <item>"Correction d'un bug :
                 - Correction vitale"</item>

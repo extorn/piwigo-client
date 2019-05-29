@@ -10,6 +10,8 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
+import java.net.UnknownHostException;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -18,6 +20,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
@@ -171,6 +174,12 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         newSessionKeyHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         newSessionKeyHandler.invokeAndWait(getContext(), getConnectionPrefs());
         if (!newSessionKeyHandler.isSuccess()) {
+            if (newSessionKeyHandler.getError().getCause() instanceof UnknownHostException) {
+                BlockingUserInteractionQuestion userQuestion = new BlockingUserInteractionQuestion(R.string.switch_to_cached_mode);
+                userQuestion.askQuestion();
+                boolean userWantsCachedMode = userQuestion.getResponse();
+                return userWantsCachedMode;
+            }
             reportNestedFailure(newSessionKeyHandler);
             return false;
         }

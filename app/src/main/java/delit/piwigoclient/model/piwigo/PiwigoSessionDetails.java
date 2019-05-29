@@ -43,6 +43,7 @@ public class PiwigoSessionDetails {
     private int loginStatus = NOT_LOGGED_IN;
     private Boolean useCommunityPlugin;
     private ServerConfig serverConfig;
+    private boolean isCached;
 
     public PiwigoSessionDetails(ConnectionPreferences.ProfilePreferences connectionPrefs, String serverUrl, long userGuid, String username, String userType, String piwigoVersion, Set<String> availableImageSizes, String sessionToken) {
         this.connectionPrefs = connectionPrefs;
@@ -71,6 +72,14 @@ public class PiwigoSessionDetails {
         // extra params
         this.allowedFileTypes = allowedFileTypes;
         this.webInterfaceUploadChunkSizeKB = webInterfaceUploadChunkSizeKB;
+    }
+
+    public boolean isCached() {
+        return isCached;
+    }
+
+    public void setCached(boolean cached) {
+        isCached = cached;
     }
 
     public static boolean isLoggedInAndHaveSessionAndUserDetails(ConnectionPreferences.ProfilePreferences connectionPrefs) {

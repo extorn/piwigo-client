@@ -26,7 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.viewpager.widget.ViewPager;
 
@@ -42,6 +41,8 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.SlidingTabLayout;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
+import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
+import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 
 /**
@@ -92,6 +93,22 @@ public class CommonPreferencesFragment extends MyFragment {
      */
         ViewPager mViewPager = view.findViewById(R.id.viewpager);
         mViewPager.setAdapter(buildPagerAdapter(getChildFragmentManager()));
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
         // it's PagerAdapter set.
@@ -125,7 +142,7 @@ public class CommonPreferencesFragment extends MyFragment {
         }
     }
 
-    protected FragmentStatePagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
+    protected MyFragmentRecyclerPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
         return new CommonPreferencesPagerAdapter(childFragmentManager);
     }
 
@@ -135,7 +152,9 @@ public class CommonPreferencesFragment extends MyFragment {
      * this class is the {@link #getPageTitle(int)} method which controls what is displayed in the
      * {@link SlidingTabLayout}.
      */
-    protected class CommonPreferencesPagerAdapter extends FragmentStatePagerAdapter {
+    protected class CommonPreferencesPagerAdapter extends MyFragmentRecyclerPagerAdapter {
+
+        private int lastPosition;
 
         public CommonPreferencesPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -157,8 +176,41 @@ public class CommonPreferencesFragment extends MyFragment {
             }
         }
 
+        @NonNull
         @Override
-        public PreferenceFragmentCompat getItem(int position) {
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+            PreferenceFragmentCompat fragment = (PreferenceFragmentCompat) super.instantiateItem(container, position);
+            if (position == ((ViewPager) container).getCurrentItem()) {
+                if (lastPosition >= 0 && lastPosition != position) {
+                    onPageDeselected(lastPosition);
+                }
+                lastPosition = position;
+            }
+            return fragment;
+        }
+
+        @Override
+        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            super.setPrimaryItem(container, position, object);
+            MyPreferenceFragment activeFragment = ((MyPreferenceFragment) getActiveFragment(position));
+            if (activeFragment == null) {
+                activeFragment = (MyPreferenceFragment) instantiateItem(container, position);
+//            activeFragment.onPageSelected();
+            }
+            activeFragment.onFragmentShown();
+        }
+
+        public void onPageDeselected(int position) {
+            Fragment managedFragment = getActiveFragment(position);
+            if (managedFragment != null) {
+                // if this slideshow item still exists (not been deleted by user)
+                MyPreferenceFragment selectedPage = (MyPreferenceFragment) managedFragment;
+                selectedPage.onFragmentHidden();
+            }
+        }
+
+        @Override
+        protected Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
             switch (position) {
                 case 0:
                     return new ConnectionPreferenceFragment();

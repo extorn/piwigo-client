@@ -15,6 +15,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.navigation.NavigationView;
 
@@ -22,9 +26,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -44,7 +45,6 @@ import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.UnlockAppEvent;
-import delit.piwigoclient.ui.preferences.ConnectionPreferenceFragment;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
 
@@ -57,6 +57,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     private SharedPreferences prefs;
     private UIHelper uiHelper;
     private ViewGroup headerView;
+    private boolean refreshSessionInProgress;
 
     public CustomNavigationView(Context context) {
         this(context, null);
@@ -87,7 +88,12 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         appIcon.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                refreshPiwigoSession();
+                synchronized (v) {
+                    if (!refreshSessionInProgress) {
+                        refreshSessionInProgress = true;
+                        refreshPiwigoSession();
+                    }
+                }
             }
         });
 
@@ -116,12 +122,18 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
             uiHelper.invokeActiveServiceCall(String.format(getContext().getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction());
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
-            long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
-            uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction());
-            uiHelper.addActiveServiceCall(getContext().getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
+            runHttpClientCleanup(connectionPrefs);
         } else {
-            new OnHttpClientShutdownAction().onSuccess(uiHelper, null);
+            new OnHttpConnectionsCleanedAction().onSuccess(uiHelper, null);
         }
+    }
+
+    private void runHttpClientCleanup(ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        HttpConnectionCleanup cleanup = new HttpConnectionCleanup(connectionPrefs, getContext());
+        long msgId = cleanup.getMessageId();
+        uiHelper.addActionOnResponse(msgId, new OnHttpConnectionsCleanedAction());
+        uiHelper.addActiveServiceCall(getContext().getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
+        cleanup.start();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -137,24 +149,8 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    private static class OnLogoutAction extends UIHelper.Action<ConnectionPreferenceFragment, LogoutResponseHandler.PiwigoOnLogoutResponse> {
-
-        @Override
-        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
-            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            long msgId = new HttpConnectionCleanup(connectionPrefs, uiHelper.getContext()).start();
-            uiHelper.addActionOnResponse(msgId, new OnHttpClientShutdownAction());
-            uiHelper.addActiveServiceCall(uiHelper.getContext().getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
-            return false;
-        }
-
-        @Override
-        public boolean onFailure(UIHelper<ConnectionPreferenceFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getContext());
-            onSuccess(uiHelper, null);
-            return false;
-        }
+    private void markRefreshSessionComplete() {
+        refreshSessionInProgress = false;
     }
 
     private void onLoginAfterAppUnlockEvent(PiwigoSessionDetails oldCredentials) {
@@ -270,23 +266,9 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         super.onRestoreInstanceState(((SavedState) savedState).getSuperState());
     }
 
-    private static class OnLoginAction extends UIHelper.Action<ConnectionPreferenceFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
-        @Override
-        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
-            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-            if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
-                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-                String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
-                if (sessionDetails.getAvailableImageSizes().size() == 0) {
-                    msg += '\n' + uiHelper.getContext().getString(R.string.alert_message_no_available_image_sizes);
-                    uiHelper.showDetailedMsg(R.string.alert_title_login, msg);
-                } else {
-                    uiHelper.showDetailedMsg(R.string.alert_title_login, msg);
-                }
-                EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
-            }
-            return false;
-        }
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(final PiwigoLoginSuccessEvent event) {
+        markRefreshSessionComplete();
     }
 
     private void showLockDialog() {
@@ -306,16 +288,67 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         }
     }
 
-    private static class OnHttpClientShutdownAction extends UIHelper.Action<ConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> {
+    private static class OnLogoutAction extends UIHelper.Action<CustomNavigationView, LogoutResponseHandler.PiwigoOnLogoutResponse> {
 
         @Override
-        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
+        public boolean onSuccess(UIHelper<CustomNavigationView> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            uiHelper.getParent().runHttpClientCleanup(connectionPrefs);
+            return false;
+        }
+
+        @Override
+        public boolean onFailure(UIHelper<CustomNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            PiwigoSessionDetails.logout(connectionPrefs, uiHelper.getContext());
+            onSuccess(uiHelper, null);
+            return false;
+        }
+    }
+
+    private static class OnLoginAction extends UIHelper.Action<CustomNavigationView, LoginResponseHandler.PiwigoOnLoginResponse> {
+
+        @Override
+        public boolean onFailure(UIHelper<CustomNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            uiHelper.getParent().markRefreshSessionComplete();
+            return super.onFailure(uiHelper, response);
+        }
+
+        @Override
+        public boolean onSuccess(UIHelper<CustomNavigationView> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+            uiHelper.getParent().markRefreshSessionComplete();
+            if (PiwigoSessionDetails.isFullyLoggedIn(connectionPrefs)) {
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+                String msg = uiHelper.getContext().getString(R.string.alert_message_success_connectionTest, sessionDetails.getUserType());
+                if (sessionDetails.getAvailableImageSizes().size() == 0) {
+                    msg += '\n' + uiHelper.getContext().getString(R.string.alert_message_no_available_image_sizes);
+                    uiHelper.showDetailedMsg(R.string.alert_title_login, msg);
+                } else {
+                    uiHelper.showDetailedMsg(R.string.alert_title_login, msg);
+                }
+                EventBus.getDefault().post(new PiwigoLoginSuccessEvent(response.getOldCredentials(), false));
+            }
+            return false;
+        }
+    }
+
+    private static class OnHttpConnectionsCleanedAction extends UIHelper.Action<CustomNavigationView, HttpConnectionCleanup.HttpClientsShutdownResponse> {
+
+        @Override
+        public boolean onFailure(UIHelper<CustomNavigationView> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+            uiHelper.getParent().markRefreshSessionComplete();
+            return super.onFailure(uiHelper, response);
+        }
+
+        @Override
+        public boolean onSuccess(UIHelper<CustomNavigationView> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             String serverUri = connectionPrefs.getPiwigoServerAddress(uiHelper.getPrefs(), uiHelper.getContext());
             if ((serverUri == null || serverUri.trim().isEmpty())) {
                 uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getContext().getString(R.string.alert_warning_no_server_url_specified));
+                uiHelper.getParent().markRefreshSessionComplete();
             } else {
-                HttpClientFactory.getInstance(uiHelper.getContext()).clearCachedClients(connectionPrefs);
                 uiHelper.invokeActiveServiceCall(String.format(uiHelper.getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
             }
             return false; // don't run standard listener code

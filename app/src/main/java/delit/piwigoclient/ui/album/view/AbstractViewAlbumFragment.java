@@ -2114,8 +2114,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             if (positiveAnswer != null && positiveAnswer) {
                 AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
                 SharedPreferences prefs = fragment.getPrefs();
-                getUiHelper().addActiveServiceCall(getContext().getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(connectionPreferences, getContext()).start(), "httpCleanup");
                 connectionPreferences.setFollowHttpRedirects(prefs, getContext(), true);
+                //hard reset all http clients! No other solution sadly.
+                getUiHelper().addActiveServiceCall(getContext().getString(R.string.loading_new_server_configuration), new HttpConnectionCleanup(connectionPreferences, getContext()).start(), "httpCleanup");
             }
         }
     }

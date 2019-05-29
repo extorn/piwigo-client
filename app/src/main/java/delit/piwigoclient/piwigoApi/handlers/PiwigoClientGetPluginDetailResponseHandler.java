@@ -50,7 +50,6 @@ public class PiwigoClientGetPluginDetailResponseHandler extends AbstractPiwigoWs
     }
 
     public boolean isUseHttpGet() {
-        //TODO update the plugin and then set this true!
-        return false;
+        return true;
     }
 }

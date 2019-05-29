@@ -840,10 +840,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return selectedGallerySpinner;
     }
 
-    private static class OnLoginAction extends UIHelper.Action {
+    private static class OnLoginAction extends UIHelper.Action<AbstractUploadFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
         @Override
-        public boolean onSuccess(UIHelper uiHelper, PiwigoResponseBufferingHandler.Response response) {
-            AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
+        public boolean onSuccess(UIHelper<AbstractUploadFragment> uiHelper, LoginResponseHandler.PiwigoOnLoginResponse response) {
+            AbstractUploadFragment fragment = uiHelper.getParent();
             fragment.getFileSelectButton().setEnabled(true);
             ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
             String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
@@ -1025,11 +1025,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class OnGetSubAlbumNamesAction extends UIHelper.Action<Fragment, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> {
+    private static class OnGetSubAlbumNamesAction extends UIHelper.Action<UploadFragment, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse> {
         @Override
-        public boolean onSuccess(UIHelper<Fragment> uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
+        public boolean onSuccess(UIHelper<UploadFragment> uiHelper, AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse response) {
             if (response.getAlbumNames().size() > 0) {
-                AbstractUploadFragment fragment = (AbstractUploadFragment) uiHelper.getParent();
+                AbstractUploadFragment fragment = uiHelper.getParent();
                 CategoryItemStub uploadToAlbum = fragment.getUploadToAlbum();
                 if (uploadToAlbum.getId() == response.getAlbumNames().get(0).getId()) {
                     uploadToAlbum = response.getAlbumNames().get(0);

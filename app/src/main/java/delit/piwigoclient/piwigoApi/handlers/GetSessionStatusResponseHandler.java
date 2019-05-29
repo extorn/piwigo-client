@@ -37,6 +37,7 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         PiwigoSessionDetails newCredentials = parseSessionDetails(rsp);
         if (isCached) {
             // try and ensure it gets a new one before doing anything vital!
+            newCredentials.setCached(isCached);
             newCredentials.setSessionMayHaveExpired();
         }
         PiwigoSessionDetails.setInstance(getConnectionPrefs(), newCredentials);
@@ -109,5 +110,9 @@ public class GetSessionStatusResponseHandler extends AbstractPiwigoWsResponseHan
         public PiwigoSessionDetails getNewCredentials() {
             return newCredentials;
         }
+    }
+
+    public boolean isUseHttpGet() {
+        return true;
     }
 }

@@ -8,6 +8,7 @@ import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Observable;
@@ -34,11 +35,27 @@ public class UntrustedCaCertificateInterceptingTrustStrategy extends TrustSelfSi
         observable.addObserver(this);
     }
 
+    public static void updateAddingNewlyTrustedCertificateThumbprints(Set<String> trustedCertificateThumbprints) {
+        observable.notifyObservers(trustedCertificateThumbprints);
+    }
+
+    public static void updateRemovingNewlyUntrustedCertificateThumbprints(Set<String> removedCertThumbprints) {
+        observable.notifyObservers(new ArrayList<>(removedCertThumbprints));
+    }
+
     @Override
     public void update(Observable o, Object arg) {
-        String thumbprint = (String) arg;
-        synchronized (preNotifiedCerts) {
-            preNotifiedCerts.add(thumbprint);
+        if (arg instanceof String) {
+            String thumbprint = (String) arg;
+            synchronized (preNotifiedCerts) {
+                preNotifiedCerts.add(thumbprint);
+            }
+        } else if (arg instanceof Set) {
+            Set<String> trustedCertificateThumbprints = (Set) arg;
+            certThumbprints.addAll(trustedCertificateThumbprints);
+        } else if (arg instanceof ArrayList) {
+            ArrayList<String> untrustedCertificateThumbprints = (ArrayList) arg;
+            certThumbprints.removeAll(untrustedCertificateThumbprints);
         }
     }
 

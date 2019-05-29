@@ -4,13 +4,17 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
-
-import com.crashlytics.android.Crashlytics;
+import android.view.ViewParent;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+
+import com.crashlytics.android.Crashlytics;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
@@ -161,6 +165,8 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
 
         onBeforeHandlePiwigoResponse(response);
 
+        uiHelper.onServiceCallComplete(response);
+
         UIHelper.Action action = uiHelper.getActionOnResponse(response);
         boolean runListenerHandlerCode = true;
         if(action != null) {
@@ -169,9 +175,9 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             } else {
                 runListenerHandlerCode = action.onSuccess(uiHelper, response);
             }
+            uiHelper.removeActionForResponse(response);
         }
 
-        uiHelper.onServiceCallComplete(response);
 
         if(runListenerHandlerCode) {
             onBeforeHandlePiwigoResponseInListener(response);
@@ -239,7 +245,12 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         } else if (parent instanceof AppCompatActivity) {
             retVal = !((AppCompatActivity) parent).isFinishing();
         } else if (parent instanceof ViewGroup) {
-            retVal = ((ViewGroup) parent).isShown();
+            DrawerLayout dl = getParentOfType((View) parent, DrawerLayout.class);
+            if (dl != null) {
+                retVal = true; // the drawer is attached regardless of whether visible or not.
+            } else {
+                retVal = ((ViewGroup) parent).isShown();
+            }
         } else if (parent instanceof DialogPreference) {
             retVal = ((DialogPreference) parent).getDialog() != null;
         } else if (parent == null) {
@@ -249,5 +260,13 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             throw new IllegalArgumentException("Unsupported parent type " + parent);
         }
         return retVal;
+    }
+
+    private <T extends View> T getParentOfType(View item, Class<T> type) {
+        ViewParent currentItem = item.getParent();
+        while (currentItem != null && !type.isAssignableFrom(currentItem.getClass())) {
+            currentItem = currentItem.getParent();
+        }
+        return (T) currentItem;
     }
 }

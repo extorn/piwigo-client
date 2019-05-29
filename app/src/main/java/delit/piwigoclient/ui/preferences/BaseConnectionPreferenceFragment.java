@@ -297,7 +297,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     private boolean forceHttpConnectionCleanupAndRebuild() {
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
-            long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
+            long msgId = new HttpConnectionCleanup(connectionPrefs, getContext(), true).start();
             getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction(null));
             getUiHelper().addActiveServiceCall(getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
 
@@ -402,7 +402,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private static class OnHttpClientShutdownAction extends UIHelper.Action<ConnectionPreferenceFragment,HttpConnectionCleanup.HttpClientsShutdownResponse> {
+    private static class OnHttpClientShutdownAction extends UIHelper.Action<BaseConnectionPreferenceFragment, HttpConnectionCleanup.HttpClientsShutdownResponse> {
         private String loginAsProfileAfterLogout;
         private boolean loginAgain = true;
 
@@ -415,7 +415,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
 
         @Override
-        public boolean onSuccess(UIHelper<ConnectionPreferenceFragment> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
+        public boolean onSuccess(UIHelper<BaseConnectionPreferenceFragment> uiHelper, HttpConnectionCleanup.HttpClientsShutdownResponse response) {
             boolean retVal = false;
             if(loginAsProfileAfterLogout != null) {
                 // copy those profile values to the working app copy of prefs
@@ -432,7 +432,6 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                         uiHelper.showOrQueueDialogMessage(R.string.alert_error, uiHelper.getContext().getString(R.string.alert_warning_no_server_url_specified));
                     }
                 } else {
-                    HttpClientFactory.getInstance(uiHelper.getContext()).clearCachedClients(connectionPrefs);
                     uiHelper.invokeActiveServiceCall(String.format(uiHelper.getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
                 }
             }

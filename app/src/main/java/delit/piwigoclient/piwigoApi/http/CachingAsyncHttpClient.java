@@ -357,13 +357,8 @@ public class CachingAsyncHttpClient implements Closeable {
         this.maxConcurrentConnections = maxConcurrentConnections;
     }
 
-    protected HttpClient buildHttpClient() {
-        CacheConfig cacheConfig = CacheConfig.custom()
-                .setMaxCacheEntries(maxCacheEntries)
-                .setSharedCache(false)
-                .setMaxObjectSize(maxCachedObjectSizeBytes)
-                .build();
-        RequestConfig requestConfig = RequestConfig.custom()
+    protected RequestConfig buildRequestConfig() {
+        return RequestConfig.custom()
                 .setConnectTimeout(connectTimeout)
                 .setSocketTimeout(responseTimeout)
                 .setConnectionRequestTimeout(connectTimeout)
@@ -372,6 +367,15 @@ public class CachingAsyncHttpClient implements Closeable {
                 .setRelativeRedirectsAllowed(enableRelativeRedirects)
                 .setCircularRedirectsAllowed(enableCircularRedirects)
                 .build();
+    }
+
+    protected HttpClient buildHttpClient() {
+        CacheConfig cacheConfig = CacheConfig.custom()
+                .setMaxCacheEntries(maxCacheEntries)
+                .setSharedCache(false)
+                .setMaxObjectSize(maxCachedObjectSizeBytes)
+                .build();
+        RequestConfig requestConfig = buildRequestConfig();
 
         this.retryHandler = new RetryHandler(maxRetries, retrySleep);
 // These are the defaults
@@ -383,6 +387,7 @@ public class CachingAsyncHttpClient implements Closeable {
         final HttpClientConnectionManager cm = createConnectionManager();
         Utils.asserts(cm != null, "Custom implementation of HttpClientConnectionManager returned null");
         CloseableHttpClient cachingClient = new MyCachingHttpClientBuilder(ignoreServerCacheDirectives)
+//                .setHttpCacheStorage(new PersistentHttpManagedCacheStorage(cacheConfig)) - Make this so that the cache persists between app restarts properly.
                 .setCacheConfig(cacheConfig)
                 .setCacheDir(cacheFolder)
 //TODO custom cache control - offline access etc                .setHttpCacheInvalidator()

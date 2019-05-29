@@ -201,8 +201,10 @@
         <item>1.4.0.6</item>
         <item>"Bugfix:
                  - A few minor changes
+                 - Images display correctly on old devices again
+                 - Corrections to offline viewing - this fix isn't fully complete yet though
                Changes:
-                 - Migration to new video compression - should now compress any video that the app is able to play"</item>
+                 - Migration to new video compression routine - should now compress a video in any format that the app is able to play"</item>
         <item>1.4.0.5</item>
         <item>"Bugfix:
                 - Vital fix"</item>

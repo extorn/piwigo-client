@@ -1,14 +1,14 @@
 package delit.piwigoclient.ui.preferences;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.preference.PreferenceFragmentCompat;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 
 public class PreferencesFragment extends CommonPreferencesFragment {
 
-    protected FragmentStatePagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
+    protected MyFragmentRecyclerPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
         return new PaidPreferencesPagerAdapter(childFragmentManager);
     }
 
@@ -29,12 +29,12 @@ public class PreferencesFragment extends CommonPreferencesFragment {
         }
 
         @Override
-        public PreferenceFragmentCompat getItem(int position) {
+        protected Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
             switch (position) {
                 case 4:
                     return AutoUploadJobsPreferenceFragment.newInstance();
                 default:
-                    return super.getItem(position);
+                    return super.createNewItem(fragmentTypeNeeded, position);
             }
         }
 

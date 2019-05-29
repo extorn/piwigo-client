@@ -465,7 +465,6 @@ SOFTWARE.
 *** play-services-oss-licenses
 *** com.android.support
 
-*** YPresto - https://github.com/ypresto/android-transcoder - Apache License 2.0
 *** GSON - https://github.com/google/gson - Apache License 2.0
 *** Picasso - http://square.github.io/picasso/ - Copyright 2013 Square, Inc. - Apache License 2.0
 *** Material Icons - https://material.io/icons - Apache License 2.0
@@ -967,4 +966,5 @@ SOFTWARE.
     <string name="unexpected_response_error_msg_pattern">Unexpected response : \nHTTP Status Code (%1$d)</string>
     <string name="connection_error_msg_pattern">Unable to connect to server</string>
     <string name="preference_corrupt_please_re_type_pattern">"Preference %1$s is irretrievable and has been defaulted to %2$s. Please reset this value in the app settings"</string>
+    <string name="switch_to_cached_mode">The server is presently not available. Use cached data?</string>
 </resources>

@@ -205,7 +205,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
             boolean handled = handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, new JsonSyntaxException(e.getMessage()), hasBrandNewSession);
             if (!handled) {
-                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), isCached);
+                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), e, isCached);
                 r.setResponse(responseBodyStr);
                 storeResponse(r);
             }
@@ -217,7 +217,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             }
             boolean handled = handleCombinedJsonAndHtmlResponse(statusCode, headers, responseBody, e, hasBrandNewSession);
             if (!handled) {
-                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), isCached);
+                PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), e, isCached);
                 r.setResponse(responseBodyStr);
                 storeResponse(r);
             }
@@ -225,7 +225,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             String responseBodyStr = responseBody != null ? new String(responseBody) : null;
             logJsonSyntaxError(responseBodyStr);
             Crashlytics.logException(e);
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), isCached);
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, e.getMessage(), e, isCached);
             r.setResponse(responseBodyStr);
             storeResponse(r);
         }
@@ -305,6 +305,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
     // When the response returned by REST has Http response code other than '200'
     @Override
     protected boolean onFailure(final int statusCode, Header[] headers, byte[] responseBody, final Throwable error, boolean triedToGetNewSession, boolean isCached) {
+
         if (BuildConfig.DEBUG) {
             String errorBody = "<NONE PRESENT>";
             if (responseBody != null) {
@@ -374,7 +375,7 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             } else {
                 errorDetail[0] = getPiwigoMethod() + " : " + errorDetail[0];
             }
-            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorDetail[0], errorDetail[1], isCached);
+            PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse r = new PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse(this, statusCode, errorDetail[0], errorDetail[1], error, isCached);
             r.setResponse(responseBody != null ? new String(responseBody) : "");
             storeResponse(r);
         }

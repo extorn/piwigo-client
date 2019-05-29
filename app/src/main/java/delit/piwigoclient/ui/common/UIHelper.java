@@ -51,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -59,6 +60,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -99,7 +101,7 @@ public abstract class UIHelper<T> {
     private static ExecutorService executors;
     private final T parent;
     private final SharedPreferences prefs;
-    private final Queue<QueuedDialogMessage> dialogMessageQueue = new LinkedBlockingQueue<>(20);
+    private final Deque<QueuedDialogMessage> dialogMessageQueue = new LinkedBlockingDeque<>(20);
     private final Queue<QueuedSimpleMessage> simpleMessageQueue = new LinkedBlockingQueue<>(50);
     private boolean toastShowing = false;
     private Context context;
@@ -458,7 +460,7 @@ public abstract class UIHelper<T> {
             public void onClick(DialogInterface dialog, int which) {
                 QuestionResultListener l = nextMessage.getListener();
                 if (l != null) {
-                    l.onResult(alertDialog, true);
+                    l.onResultInternal(alertDialog, true);
                 }
             }
         });
@@ -568,13 +570,15 @@ public abstract class UIHelper<T> {
     }
 
     public void showNextQueuedMessage() {
-        if (dialogMessageQueue.size() > 0 && !isDialogShowing()) {
-            // show the dialog now we're able.
-            QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
-            if (nextMessage instanceof QueuedQuestionMessage) {
-                showDialog((QueuedQuestionMessage) nextMessage);
-            } else if (nextMessage != null) {
-                showDialog(nextMessage);
+        synchronized (dialogMessageQueue) {
+            if (dialogMessageQueue.size() > 0 && !isDialogShowing()) {
+                // show the dialog now we're able.
+                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                if (nextMessage instanceof QueuedQuestionMessage) {
+                    showDialog((QueuedQuestionMessage) nextMessage);
+                } else if (nextMessage != null) {
+                    showDialog(nextMessage);
+                }
             }
         }
     }
@@ -709,6 +713,27 @@ public abstract class UIHelper<T> {
         }
     }
 
+    public boolean showMessageImmediatelyIfPossible(QueuedDialogMessage message) {
+        if (!canShowDialog()) {
+            return false;
+        }
+        synchronized (dialogMessageQueue) {
+            if (!dialogMessageQueue.contains(message)) {
+                if (isDialogShowing()) {
+                    dismissListener.setDialogClosingForUrgentMessage(true);
+                    alertDialog.dismiss();
+                }
+                dialogMessageQueue.addFirst(message);
+                showNextQueuedMessage();
+                return true;
+            } else {
+                QueuedDialogMessage msg = dialogMessageQueue.peek();
+                msg.getListener().chainResult(message.getListener());
+                return true;
+            }
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final NewUnTrustedCaCertificateReceivedEvent event) {
 
@@ -770,49 +795,28 @@ public abstract class UIHelper<T> {
         return messageId;
     }
 
-    private static class NewUnTrustedCaCertificateReceivedAction extends UIHelper.QuestionResultAdapter {
-        private final HashMap<String, X509Certificate> untrustedCerts;
-
-        public NewUnTrustedCaCertificateReceivedAction(UIHelper uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
-            super(uiHelper);
-            this.untrustedCerts = untrustedCerts;
-        }
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-
-                final Set<String> preNotifiedCerts = getUiHelper().prefs.getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>());
-                if (preNotifiedCerts.containsAll(untrustedCerts.keySet())) {
-                    // already dealt with this
-                    return;
+    public <S extends QueuedDialogMessage> void showOrQueueDialogMessage(S message) {
+        synchronized (dialogMessageQueue) {
+            if (!isDialogShowing() && canShowDialog()) {
+                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                if (nextMessage instanceof QueuedQuestionMessage) {
+                    showDialog((QueuedQuestionMessage) nextMessage);
+                } else if (nextMessage != null) {
+                    showDialog(nextMessage);
                 }
-
-                KeyStore trustStore = X509Utils.loadTrustedCaKeystore(getContext());
-                try {
-                    for (Map.Entry<String, X509Certificate> entry : untrustedCerts.entrySet()) {
-                        trustStore.setCertificateEntry(entry.getKey(), entry.getValue());
-                    }
-                    X509Utils.saveTrustedCaKeystore(getContext(), trustStore);
-                } catch (KeyStoreException e) {
-                    Crashlytics.logException(e);
-                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.alert_error_adding_certificate_to_truststore));
-                }
-                preNotifiedCerts.addAll(untrustedCerts.keySet());
-                getUiHelper().prefs.edit().putStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
-                long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), getContext()).start();
-                PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
-                    @Override
-                    public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-                        getUiHelper().showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
-                    }
-                });
             }
-        }
 
-        @Override
-        public void onShow(AlertDialog alertDialog) {
-
+            if (!dialogMessageQueue.contains(message)) {
+                dialogMessageQueue.add(message);
+            }
+            if (!isDialogShowing() && canShowDialog()) {
+                QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
+                if (nextMessage instanceof QueuedQuestionMessage) {
+                    showDialog((QueuedQuestionMessage) nextMessage);
+                } else if (nextMessage != null) {
+                    showDialog(nextMessage);
+                }
+            }
         }
     }
 
@@ -852,27 +856,8 @@ public abstract class UIHelper<T> {
         showOrQueueDialogMessage(new QueuedDialogMessage(titleId, message, null));
     }
 
-    public <S extends QueuedDialogMessage> void showOrQueueDialogMessage(S message) {
-        if (!isDialogShowing() && canShowDialog()) {
-            QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
-            if (nextMessage instanceof QueuedQuestionMessage) {
-                showDialog((QueuedQuestionMessage) nextMessage);
-            } else if (nextMessage != null) {
-                showDialog(nextMessage);
-            }
-        }
-
-        if (!dialogMessageQueue.contains(message)) {
-            dialogMessageQueue.add(message);
-        }
-        if (!isDialogShowing() && canShowDialog()) {
-            QueuedDialogMessage nextMessage = dialogMessageQueue.peek();
-            if (nextMessage instanceof QueuedQuestionMessage) {
-                showDialog((QueuedQuestionMessage) nextMessage);
-            } else if (nextMessage != null) {
-                showDialog(nextMessage);
-            }
-        }
+    public void removeActionForResponse(PiwigoResponseBufferingHandler.Response response) {
+        actionOnServerCallComplete.remove(response.getMessageId());
     }
 
     public void registerToActiveServiceCalls() {
@@ -887,7 +872,6 @@ public abstract class UIHelper<T> {
     }
 
     public void onServiceCallComplete(long messageId) {
-        actionOnServerCallComplete.remove(messageId);
         synchronized (activeServiceCalls) {
             activeServiceCalls.remove(messageId);
             if (activeServiceCalls.size() == 0) {
@@ -946,6 +930,20 @@ public abstract class UIHelper<T> {
         return progressIndicator;
     }
 
+    public interface QuestionResultListener extends Serializable {
+        void onDismiss(AlertDialog dialog);
+
+        void onResultInternal(AlertDialog dialog, Boolean positiveAnswer);
+
+        void onResult(AlertDialog dialog, Boolean positiveAnswer);
+
+        void onShow(AlertDialog alertDialog);
+
+        void setUiHelper(UIHelper uiHelper);
+
+        void chainResult(QuestionResultListener listener);
+    }
+
     public Action getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
         return actionOnServerCallComplete.get(response.getMessageId());
     }
@@ -954,7 +952,55 @@ public abstract class UIHelper<T> {
         actionOnServerCallComplete.put(msgId, loginAction);
     }
 
+    private static class NewUnTrustedCaCertificateReceivedAction extends UIHelper.QuestionResultAdapter {
+        private final HashMap<String, X509Certificate> untrustedCerts;
+
+        public NewUnTrustedCaCertificateReceivedAction(UIHelper uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
+            super(uiHelper);
+            this.untrustedCerts = untrustedCerts;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+
+                final Set<String> preNotifiedCerts = getUiHelper().prefs.getStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), new HashSet<String>());
+                if (preNotifiedCerts.containsAll(untrustedCerts.keySet())) {
+                    // already dealt with this
+                    return;
+                }
+
+                KeyStore trustStore = X509Utils.loadTrustedCaKeystore(getContext());
+                try {
+                    for (Map.Entry<String, X509Certificate> entry : untrustedCerts.entrySet()) {
+                        trustStore.setCertificateEntry(entry.getKey(), entry.getValue());
+                    }
+                    X509Utils.saveTrustedCaKeystore(getContext(), trustStore);
+                } catch (KeyStoreException e) {
+                    Crashlytics.logException(e);
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getContext().getString(R.string.alert_error_adding_certificate_to_truststore));
+                }
+                preNotifiedCerts.addAll(untrustedCerts.keySet());
+                getUiHelper().prefs.edit().putStringSet(getContext().getString(R.string.preference_pre_user_notified_certificates_key), preNotifiedCerts).commit();
+                long messageId = new HttpConnectionCleanup(ConnectionPreferences.getActiveProfile(), getContext(), true).start();
+                PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, new BasicPiwigoResponseListener() {
+                    @Override
+                    public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+                        getUiHelper().showDetailedMsg(R.string.alert_information, getContext().getString(R.string.alert_http_engine_shutdown));
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onShow(AlertDialog alertDialog) {
+
+        }
+    }
+
     public static abstract class QuestionResultAdapter implements QuestionResultListener {
+
+        private QuestionResultListener chainedListener;
 
         public QuestionResultAdapter(UIHelper uiHelper) {
             this.uiHelper = uiHelper;
@@ -977,9 +1023,15 @@ public abstract class UIHelper<T> {
 
         @Override
         public void onShow(AlertDialog alertDialog) {
-
         }
 
+        @Override
+        public void onResultInternal(AlertDialog dialog, Boolean positiveAnswer) {
+            onResult(dialog, positiveAnswer);
+            if (chainedListener != null) {
+                chainedListener.onResult(dialog, positiveAnswer);
+            }
+        }
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
 
@@ -989,16 +1041,11 @@ public abstract class UIHelper<T> {
         public void onDismiss(AlertDialog dialog) {
 
         }
-    }
 
-    public interface QuestionResultListener extends Serializable {
-        void onDismiss(AlertDialog dialog);
-
-        void onResult(AlertDialog dialog, Boolean positiveAnswer);
-
-        void onShow(AlertDialog alertDialog);
-
-        void setUiHelper(UIHelper uiHelper);
+        @Override
+        public void chainResult(QuestionResultListener listener) {
+            chainedListener = listener;
+        }
     }
 
     private static class QueuedSimpleMessage implements Parcelable {
@@ -1184,7 +1231,7 @@ public abstract class UIHelper<T> {
         }
     }
 
-    private static class QueuedQuestionMessage extends QueuedDialogMessage {
+    protected static class QueuedQuestionMessage extends QueuedDialogMessage {
 
         private final int negativeButtonTextId;
         private final int layoutId;
@@ -1300,13 +1347,27 @@ public abstract class UIHelper<T> {
 
         private QuestionResultListener listener;
         private boolean buildNewDialogOnDismiss;
+        private boolean dialogClosingForUrgentMessage;
 
         public void setListener(QuestionResultListener listener) {
             this.listener = listener;
         }
 
+        public void setDialogClosingForUrgentMessage(boolean dialogClosingForUrgentMessage) {
+            this.dialogClosingForUrgentMessage = dialogClosingForUrgentMessage;
+        }
+
         @Override
         public void onDismiss(DialogInterface dialog) {
+            if (dialogClosingForUrgentMessage) {
+                dialogClosingForUrgentMessage = false;
+                if (buildNewDialogOnDismiss) {
+                    // build a new dialog (needed if the view was altered)
+                    buildAlertDialog();
+                }
+                return;
+            }
+
             // remove the item we've just shown.
             if (dialogMessageQueue.size() > 0) {
                 dialogMessageQueue.remove();
