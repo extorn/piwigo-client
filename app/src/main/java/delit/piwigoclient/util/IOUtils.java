@@ -6,6 +6,9 @@ import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.os.EnvironmentCompat;
+
 import com.crashlytics.android.Crashlytics;
 
 import java.io.BufferedInputStream;
@@ -28,8 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.core.content.ContextCompat;
-import androidx.core.os.EnvironmentCompat;
 import delit.piwigoclient.BuildConfig;
 
 /**
@@ -115,7 +116,7 @@ public class IOUtils {
         return null;
     }
 
-    public static void saveObjectToFile(File destinationFile, Serializable o) {
+    public static boolean saveObjectToFile(File destinationFile, Serializable o) {
         boolean canContinue = true;
         if (destinationFile.isDirectory()) {
             throw new RuntimeException("Not designed to work with a folder as a destination!");
@@ -152,7 +153,7 @@ public class IOUtils {
         }
 
         if (!canContinue) {
-            return;
+            return false;
         }
 
         ObjectOutputStream oos = null;
@@ -187,8 +188,9 @@ public class IOUtils {
             }
         }
         if (canWrite) {
-            tmpFile.renameTo(destinationFile);
+            return tmpFile.renameTo(destinationFile);
         }
+        return false;
     }
 
     public static String toNormalizedText(double cacheBytes) {

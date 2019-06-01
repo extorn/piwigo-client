@@ -147,13 +147,19 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         }
     }
 
-    protected Header[] buildOfflineAccessHeaders() {
+    protected Header[] buildOfflineAccessHeaders(boolean onlyUseCache) {
         if(getConnectionPrefs().isOfflineMode(getSharedPrefs(), getContext())) {
-            Header[] headers = new Header[2];
+            Header[] headers = new Header[/*onlyUseCache ? 3 :*/ 2];
             headers[0] = new BasicHeader(HeaderConstants.STALE_IF_ERROR, String.valueOf(Long.MAX_VALUE));
             headers[1] = new BasicHeader(HeaderConstants.STALE_WHILE_REVALIDATE, String.valueOf(Long.MAX_VALUE));
+            if (onlyUseCache) {
+//TODO                headers[2] = new BasicHeader("only-if-cached", Boolean.TRUE.toString());
+            }
             return headers;
-        } else {
+        } /*else if(onlyUseCache ){
+            Header[] headers = new Header[]{new BasicHeader("only-if-cached", Boolean.TRUE.toString())};
+            return headers;
+        }*/ else {
             return new Header[0];
         }
     }
@@ -403,9 +409,17 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         } catch (RuntimeException e) {
             Crashlytics.logException(e);
             if (client == null) {
-                sendFailureMessage(-1, null, null, new IllegalStateException(getContext().getString(R.string.error_building_http_engine), e));
+                String errorMsg = getContext().getString(R.string.error_building_http_engine);
+                if (BuildConfig.DEBUG) {
+                    Log.e(getTag(), errorMsg, e);
+                }
+                sendFailureMessage(-1, null, null, new IllegalStateException(errorMsg, e));
             } else {
-                sendFailureMessage(-1, null, null, new RuntimeException(getContext().getString(R.string.error_unexpected_error_calling_server), e));
+                String errorMsg = getContext().getString(R.string.error_unexpected_error_calling_server);
+                if (BuildConfig.DEBUG) {
+                    Log.e(getTag(), errorMsg, e);
+                }
+                sendFailureMessage(-1, null, null, new RuntimeException(errorMsg, e));
             }
         } finally {
             if (requestHandle == null) {

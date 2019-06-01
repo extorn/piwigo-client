@@ -10,6 +10,6 @@ public class ConnectionPreferenceFragment extends BaseConnectionPreferenceFragme
     @Override
     protected void buildPreferencesViewAndInitialise(String rootKey) {
         super.buildPreferencesViewAndInitialise(rootKey);
-        findPreference(R.string.preference_server_alter_cache_directives_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        findPreference(R.string.preference_server_alter_cache_directives_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
     }
 }

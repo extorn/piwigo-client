@@ -23,6 +23,7 @@ import cz.msebera.android.httpclient.StatusLine;
 import cz.msebera.android.httpclient.client.HttpResponseException;
 import cz.msebera.android.httpclient.util.ByteArrayBuffer;
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
@@ -226,7 +227,9 @@ public class ImageGetToFileHandler extends AbstractPiwigoDirectResponseHandler {
         if (getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext()) && resourceUrl.startsWith("http://")) {
             resourceUrl = resourceUrl.replaceFirst("://", "s://");
         }
-        return client.get(getContext(), resourceUrl, buildOfflineAccessHeaders(), null, handler);
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
+        return client.get(getContext(), resourceUrl, buildOfflineAccessHeaders(onlyUseCache), null, handler);
     }
 
     @Subscribe

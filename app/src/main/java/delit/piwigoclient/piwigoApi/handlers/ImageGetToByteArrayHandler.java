@@ -6,6 +6,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import cz.msebera.android.httpclient.Header;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
@@ -64,7 +65,9 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
         if (getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext()) && resourceUrl.toLowerCase().startsWith("http://")) {
             resourceUrl = resourceUrl.replaceFirst("://", "s://");
         }
-        return client.get(getContext(), resourceUrl, buildOfflineAccessHeaders(), null, handler);
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
+        return client.get(getContext(), resourceUrl, buildOfflineAccessHeaders(onlyUseCache), null, handler);
     }
 
     @Subscribe

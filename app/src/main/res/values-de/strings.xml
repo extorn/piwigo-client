@@ -49,6 +49,7 @@
 
     <string name="upload_file_privacy_level_title">Datei-Datenschutzstufe</string>
     <string name="cacheCleared_title">Cache</string>
+    <string name="cacheClearingStarted_message">Cache leeren</string>
     <string name="cacheCleared_message">Cache gelöscht. Alle Bilder werden bei der nächsten Anforderung vom Remote-Server heruntergeladen.</string>
     <string name="cacheClearFailed_message">Der Cache konnte zu diesem Zeitpunkt nicht gelöscht werden. Wenn das Problem weiterhin besteht, melden Sie bitte den Fehler.</string>
     <string name="videoCacheCleared_message">Video Cache gelöscht. Alle Videos werden bei der nächsten Anforderung vom Remote-Server heruntergeladen.</string>

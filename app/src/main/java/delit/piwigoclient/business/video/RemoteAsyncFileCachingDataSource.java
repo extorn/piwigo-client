@@ -30,6 +30,7 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
@@ -134,7 +135,8 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         if (retrieveMaxBytes == 0) {
             return;
         }
-        CachingAsyncHttpClient client = HttpClientFactory.getInstance(context).getVideoDownloadASyncHttpClient(ConnectionPreferences.getPreferences(null, sharedPrefs, context), context);
+        ConnectionPreferences.ProfilePreferences activeConnectionPreferences = ConnectionPreferences.getPreferences(null, sharedPrefs, context);
+        CachingAsyncHttpClient client = HttpClientFactory.getInstance(context).getVideoDownloadASyncHttpClient(activeConnectionPreferences, context);
         RequestParams requestParams = new RequestParams(defaultRequestProperties);
 
         List<Header> headers = new ArrayList<>();
@@ -158,6 +160,12 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         headers.add(new BasicHeader("User-Agent", userAgent));
         if (!allowGzip) {
             headers.add(new BasicHeader("Accept-Encoding", "identity"));
+        }
+
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(activeConnectionPreferences);
+        boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
+        if (onlyUseCache) {
+//TODO            headers.add(new BasicHeader("only-if-cached", Boolean.TRUE.toString()));
         }
 
         client.setConnectTimeout(connectTimeoutMillis);

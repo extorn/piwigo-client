@@ -49,6 +49,7 @@ import delit.piwigoclient.util.X509Utils;
 
 public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragment {
     private static final String TAG = "Connection Settings";
+    protected transient Preference.OnPreferenceChangeListener httpConnectionEngineInvalidListener = new HttpConnectionEngineInvalidListener();
     private transient Preference.OnPreferenceChangeListener cacheLevelPrefListener = new CacheLevelPreferenceListener();
     protected transient Preference.OnPreferenceChangeListener sessionInvalidationPrefListener = new SessionInvalidatingPrefListener();
     private transient Preference.OnPreferenceChangeListener serverAddressPrefListener = new ServerNamePreferenceListener();
@@ -96,10 +97,9 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         findPreference(R.string.preference_piwigo_server_password_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
 
         Preference basicAuthPref = findPreference(R.string.preference_server_use_basic_auth_key);
-        basicAuthPref.setOnPreferenceChangeListener(sessionInvalidationPrefListener);
-        sessionInvalidationPrefListener.onPreferenceChange(basicAuthPref, getBooleanPreferenceValue(basicAuthPref.getKey(), R.bool.preference_server_use_basic_auth_default));
-        findPreference(R.string.preference_server_basic_auth_username_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
-        findPreference(R.string.preference_server_basic_auth_password_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        basicAuthPref.setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
+        findPreference(R.string.preference_server_basic_auth_username_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
+        findPreference(R.string.preference_server_basic_auth_password_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         EditableListPreference connectionProfilePref = (EditableListPreference) findPreference(R.string.preference_piwigo_connection_profile_key);
         String value = connectionProfilePref.getValue();
@@ -144,12 +144,11 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
 
         Preference clientCertPref = findPreference(R.string.preference_server_use_client_certs_key);
-        clientCertPref.setOnPreferenceChangeListener(sessionInvalidationPrefListener);
-        sessionInvalidationPrefListener.onPreferenceChange(clientCertPref, getBooleanPreferenceValue(clientCertPref.getKey(), R.bool.preference_server_use_client_certs_default));
-//            ClientCertificatePreference clientCertsPref = (ClientCertificatePreference) findPreference(R.string.preference_select_client_certificate_key);
+        clientCertPref.setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
+        //ClientCertificatePreference clientCertsPref = (ClientCertificatePreference) findPreference(R.string.preference_select_client_certificate_key);
 
         Preference useCustomTrustedCertsPref = findPreference(R.string.preference_server_use_custom_trusted_ca_certs_key);
-        useCustomTrustedCertsPref.setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        useCustomTrustedCertsPref.setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         TrustedCaCertificatesPreference trustedCertsPref = (TrustedCaCertificatesPreference) findPreference(R.string.preference_select_trusted_certificate_key);
         trustedCertsPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -171,40 +170,32 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             }
         });
         ClientCertificatePreference clientCertificatePreference = (ClientCertificatePreference) findPreference(R.string.preference_select_client_certificate_key);
-        clientCertificatePreference.setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        clientCertificatePreference.setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
-        findPreference(R.string.preference_server_ssl_certificate_hostname_verification_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
-        findPreference(R.string.preference_caching_level_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
-        findPreference(R.string.preference_caching_max_cache_entries_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
-        findPreference(R.string.preference_caching_max_cache_entry_size_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        findPreference(R.string.preference_server_ssl_certificate_hostname_verification_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
+        findPreference(R.string.preference_caching_level_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
+        findPreference(R.string.preference_caching_max_cache_entries_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
+        findPreference(R.string.preference_caching_max_cache_entry_size_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
         responseCacheFlushButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                try {
-                    CacheUtils.clearResponseCache(preference.getContext());
-                    ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
-                    refreshSession(null);
-                    getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
-                } catch (SecurityException e) {
-                    Crashlytics.logException(e);
-                    getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheClearFailed_message));
-                }
-                setResponseCacheButtonText();
+                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheClearingStarted_message));
+                new ClearCacheInBackgroundTask().execute(preference.getContext());
                 return true;
 
             }
         });
         setResponseCacheButtonText();
 
-        findPreference(R.string.preference_server_connection_timeout_secs_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
-        findPreference(R.string.preference_server_connection_retries_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        findPreference(R.string.preference_server_connection_timeout_secs_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
+        findPreference(R.string.preference_server_connection_retries_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         Preference allowRedirectsPref = findPreference(R.string.preference_server_connection_allow_redirects_key);
-        allowRedirectsPref.setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        allowRedirectsPref.setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
-        findPreference(R.string.preference_server_connection_max_redirects_key).setOnPreferenceChangeListener(sessionInvalidationPrefListener);
+        findPreference(R.string.preference_server_connection_max_redirects_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         Preference button = findPreference(R.string.preference_test_server_connection_key);
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -215,6 +206,20 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
                 return true;
             }
         });
+    }
+
+    private class HttpConnectionEngineInvalidListener implements Preference.OnPreferenceChangeListener {
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            if (!initialising) {
+                forceHttpConnectionCleanupAndRebuild();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                    getListView().getAdapter().notifyDataSetChanged();
+                }
+            }
+            return true;
+        }
     }
 
     private void setResponseCacheButtonText() {
@@ -567,6 +572,32 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
             if (response instanceof HttpConnectionCleanup.HttpClientsShutdownResponse) {
                 reloadConnectionProfilePrefs();
             }
+        }
+    }
+
+    private class ClearCacheInBackgroundTask extends AsyncTask<Context, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Context... contexts) {
+            try {
+                CacheUtils.clearResponseCache(contexts[0]);
+                forceHttpConnectionCleanupAndRebuild();
+                return Boolean.TRUE;
+            } catch (SecurityException e) {
+                Crashlytics.logException(e);
+                return Boolean.FALSE;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if (Boolean.TRUE.equals(aBoolean)) {
+                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
+            } else {
+                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheClearFailed_message));
+            }
+            setResponseCacheButtonText();
         }
     }
 }

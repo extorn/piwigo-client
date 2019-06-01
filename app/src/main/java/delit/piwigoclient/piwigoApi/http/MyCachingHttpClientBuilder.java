@@ -1,9 +1,12 @@
 package delit.piwigoclient.piwigoApi.http;
 
+import java.io.Closeable;
+
+import cz.msebera.android.httpclient.client.cache.HttpCacheStorage;
 import cz.msebera.android.httpclient.impl.client.cache.CachingHttpClientBuilder;
 import cz.msebera.android.httpclient.impl.execchain.ClientExecChain;
 
-class MyCachingHttpClientBuilder extends CachingHttpClientBuilder {
+public class MyCachingHttpClientBuilder extends CachingHttpClientBuilder {
 
     private final boolean ignoreServerCacheDirectives;
 
@@ -18,6 +21,12 @@ class MyCachingHttpClientBuilder extends CachingHttpClientBuilder {
         } else {
             return super.decorateMainExec(mainExec);
         }
+    }
+
+    public <T extends HttpCacheStorage & Closeable> MyCachingHttpClientBuilder setCloseableHttpCacheStorage(T cacheStorage) {
+        setHttpCacheStorage(cacheStorage);
+        addCloseable(cacheStorage);
+        return this;
     }
 
 }

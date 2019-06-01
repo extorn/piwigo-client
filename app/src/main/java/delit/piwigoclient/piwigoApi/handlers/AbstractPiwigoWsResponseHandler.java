@@ -64,8 +64,10 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
                     sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
                 }
             }
-            if(sessionDetails != null && sessionDetails.isMethodAvailable(overrideMethod)) {
-                piwigoMethodToUse = overrideMethod;
+            if (sessionDetails != null) {
+                if (sessionDetails.isMethodAvailable(overrideMethod)) {
+                    piwigoMethodToUse = overrideMethod;
+                }
             }
         }
         return piwigoMethodToUse;
@@ -390,7 +392,9 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
             Log.e(getTag(), "Invoking call to server (" + getRequestParameters() + ") thread from thread " + Thread.currentThread().getName());
         }
         if(isUseHttpGet()) {
-            return client.get(getContext(), getPiwigoWsApiUri(), buildOfflineAccessHeaders(), getRequestParameters(), handler);
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+            boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
+            return client.get(getContext(), getPiwigoWsApiUri(), buildOfflineAccessHeaders(onlyUseCache), getRequestParameters(), handler);
         } else {
             return client.post(getContext(), getPiwigoWsApiUri(), getRequestParameters(), handler);
         }

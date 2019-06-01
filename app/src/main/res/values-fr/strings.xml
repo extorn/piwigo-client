@@ -72,6 +72,7 @@
 
     <string name="upload_file_privacy_level_title">Niveau de confidentialité des fichiers</string>
     <string name="cacheCleared_title">Cache</string>
+    <string name="cacheClearingStarted_message">Effacer le cache</string>
     <string name="cacheCleared_message">Cache effacé. Toutes les images seront téléchargées à partir du serveur distant à la prochaine demande.</string>
     <string name="cacheClearFailed_message">Le cache n\'a pas pu être effacé pour le moment. Si le problème persiste, veuillez signaler l\'erreur.</string>
     <string name="videoCacheCleared_message">Le cache vidéo est effacé. Toutes les vidéos seront téléchargées à partir du serveur distant à la prochaine demande.</string>

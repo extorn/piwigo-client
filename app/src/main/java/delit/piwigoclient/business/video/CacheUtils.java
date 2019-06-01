@@ -20,6 +20,7 @@ import java.util.List;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
+import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.util.IOUtils;
 
 /**
@@ -62,6 +63,9 @@ public class CacheUtils {
     }
 
     public static void clearResponseCache(Context c) {
+        // do an incremental clean
+        HttpClientFactory.getInstance(c).clearCache();
+        // now delete the theoretically empty folder.
         File cacheDir = getBasicCacheFolder(c);
         deleteQuietly(cacheDir);
     }

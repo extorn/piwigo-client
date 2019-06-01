@@ -87,6 +87,7 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
     private boolean enableRedirects;
     private long lastSentNotification;
     private long downloadedBytesSinceLastReport;
+    private ConnectionPreferences.ProfilePreferences activeConnectionPreferences;
 
 
     /**
@@ -165,7 +166,8 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
 
     private void startClient() {
         if (client == null) {
-            client = HttpClientFactory.getInstance(context).getVideoDownloadSyncHttpClient(ConnectionPreferences.getPreferences(null, sharedPrefs, context), context);
+            activeConnectionPreferences = ConnectionPreferences.getPreferences(null, sharedPrefs, context);
+            client = HttpClientFactory.getInstance(context).getVideoDownloadSyncHttpClient(activeConnectionPreferences, context);
         }
     }
 
@@ -414,6 +416,13 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         if (!allowGzip) {
             headers.add(new BasicHeader("Accept-Encoding", "identity"));
         }
+
+//        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(activeConnectionPreferences);
+//        boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
+//        if(onlyUseCache) {
+//            headers.add(new BasicHeader("only-if-cached", Boolean.TRUE.toString()));
+//        }
+
         client.setEnableRedirects(enableRedirects, maxRedirects);
         CustomResponseHandler responseHandler = new CustomResponseHandler();
 
