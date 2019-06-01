@@ -204,11 +204,20 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.nav_lock) {
-            showLockDialog();
-        } else if (item.getItemId() == R.id.nav_unlock) {
-            showUnlockDialog();
-        } else {
+        switch (item.getItemId()) {
+            case R.id.nav_lock:
+                showLockDialog();
+                break;
+            case R.id.nav_unlock:
+                showUnlockDialog();
+                break;
+            case R.id.nav_online_mode:
+                configureNetworkAccess(true);
+                break;
+            case R.id.nav_offline_mode:
+                configureNetworkAccess(false);
+                break;
+            default:
             EventBus.getDefault().post(new NavigationItemSelectEvent(item.getItemId()));
         }
         return true;
@@ -361,18 +370,21 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         EventBus.getDefault().post(new AppLockedEvent());
     }
 
-    private void lockAppInReadOnlyMode(boolean lockApp) {
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-        prefsEditor.putBoolean(getContext().getString(R.string.preference_app_read_only_mode_key), lockApp);
-        prefsEditor.commit();
-        setMenuVisibilityToMatchSessionState(lockApp);
+    private void configureNetworkAccess(boolean accessAllowed) {
+        String message;
+        if (accessAllowed) {
+            message = getContext().getString(R.string.alert_question_enable_network_access);
+        } else {
+            message = getContext().getString(R.string.alert_question_disable_network_access);
+        }
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_question_title, message, R.string.button_no, R.string.button_yes, new ConfigureNetworkAccessQuestionResult(uiHelper, accessAllowed));
     }
 
     private void setMenuVisibilityToMatchSessionState(boolean isReadOnly) {
         Menu m = getMenu();
         if (m != null) {
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
-            boolean isAdminUser = PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile());
+            boolean isAdminUser = sessionDetails != null && sessionDetails.isAdminUser();
             boolean hasCommunityPlugin = sessionDetails != null && sessionDetails.isUseCommunityPlugin();
 //            m.findItem(R.id.nav_gallery).setVisible(PiwigoSessionDetails.isLoggedInAndHaveSessionAndUserDetails());
             m.findItem(R.id.nav_upload).setVisible((isAdminUser || hasCommunityPlugin) && !isReadOnly);
@@ -383,6 +395,47 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             // only allow locking of the app if we've got an active login to PIWIGO.
             m.findItem(R.id.nav_lock).setVisible(!isReadOnly && sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isGuest());
             m.findItem(R.id.nav_unlock).setVisible(isReadOnly);
+
+            m.findItem(R.id.nav_offline_mode).setVisible(sessionDetails == null || !sessionDetails.isCached());
+            m.findItem(R.id.nav_online_mode).setVisible(sessionDetails != null && sessionDetails.isCached());
+        }
+    }
+
+    private void lockAppInReadOnlyMode(boolean lockApp) {
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        prefsEditor.putBoolean(getContext().getString(R.string.preference_app_read_only_mode_key), lockApp);
+        prefsEditor.commit();
+        setMenuVisibilityToMatchSessionState(lockApp);
+    }
+
+    private static class ConfigureNetworkAccessQuestionResult extends UIHelper.QuestionResultAdapter<CustomNavigationView> {
+
+        private final boolean networkAccessDesired;
+
+        public ConfigureNetworkAccessQuestionResult(UIHelper uiHelper, boolean networkAccessDesired) {
+            super(uiHelper);
+            this.networkAccessDesired = networkAccessDesired;
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            super.onResult(dialog, positiveAnswer);
+            if (Boolean.TRUE.equals(positiveAnswer)) {
+                ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
+                PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+                if (sessionDetails != null) {
+                    sessionDetails.setCached(!networkAccessDesired);
+                    if (networkAccessDesired) {
+                        PiwigoSessionDetails.logout(connectionPrefs, getUiHelper().getContext());
+                        String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getContext());
+                        getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                    }
+                    getUiHelper().getParent().setMenuVisibilityToMatchSessionState();
+                } else if (!networkAccessDesired) {
+                    String serverUri = connectionPrefs.getPiwigoServerAddress(getUiHelper().getPrefs(), getUiHelper().getContext());
+                    getUiHelper().invokeActiveServiceCall(String.format(getUiHelper().getContext().getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler().withCachedResponsesAllowed(true), new OnLoginAction());
+                }
+            }
         }
     }
 

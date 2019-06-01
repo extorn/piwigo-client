@@ -14,6 +14,11 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
 
@@ -31,10 +36,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.widget.NestedScrollView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -531,7 +532,7 @@ public class UserFragment extends MyFragment {
         }
     }
 
-    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<UserFragment> {
 
         private final User user;
 
@@ -543,7 +544,7 @@ public class UserFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                UserFragment fragment = (UserFragment) getUiHelper().getParent();
+                UserFragment fragment = getUiHelper().getParent();
                 fragment.deleteUserNow(user);
             }
         }

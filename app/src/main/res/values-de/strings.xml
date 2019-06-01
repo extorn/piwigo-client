@@ -42,10 +42,15 @@
     <string name="tools_menu_title">Werkzeuge</string>
     <string name="settings_menu_title">App Einstellungen</string>
     <string name="gallery_menu_title">Galerie</string>
+    <string name="offline_mode_menu_title">Offline-Modus</string>
+    <string name="online_mode_menu_title">Online-Modus</string>
     <string name="upload_menu_title">Hochladen</string>
     <string name="upload_page_title">Piwigo Hochladen</string>
     <string name="gallery_to_alter_title">Hochladen auf</string>
     <string name="login_button_title">Anmeldung</string>
+
+    <string name="alert_question_enable_network_access">Datenabruf vom Server zulassen?</string>
+    <string name="alert_question_disable_network_access">Nur Daten verwenden, die bereits auf diesem Gerät zwischengespeichert sind?</string>
 
     <string name="upload_file_privacy_level_title">Datei-Datenschutzstufe</string>
     <string name="cacheCleared_title">Cache</string>

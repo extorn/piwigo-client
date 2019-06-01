@@ -930,7 +930,7 @@ public abstract class UIHelper<T> {
         return progressIndicator;
     }
 
-    public interface QuestionResultListener extends Serializable {
+    public interface QuestionResultListener<T> extends Serializable {
         void onDismiss(AlertDialog dialog);
 
         void onResultInternal(AlertDialog dialog, Boolean positiveAnswer);
@@ -939,7 +939,7 @@ public abstract class UIHelper<T> {
 
         void onShow(AlertDialog alertDialog);
 
-        void setUiHelper(UIHelper uiHelper);
+        void setUiHelper(UIHelper<T> uiHelper);
 
         void chainResult(QuestionResultListener listener);
     }
@@ -998,23 +998,23 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static abstract class QuestionResultAdapter implements QuestionResultListener {
+    public static abstract class QuestionResultAdapter<T> implements QuestionResultListener<T> {
 
         private QuestionResultListener chainedListener;
 
-        public QuestionResultAdapter(UIHelper uiHelper) {
+        private UIHelper<T> uiHelper;
+
+        public QuestionResultAdapter(UIHelper<T> uiHelper) {
             this.uiHelper = uiHelper;
         }
 
-        private UIHelper uiHelper;
+        public UIHelper<T> getUiHelper() {
+            return uiHelper;
+        }
 
         @Override
-        public void setUiHelper(UIHelper uiHelper) {
+        public void setUiHelper(UIHelper<T> uiHelper) {
             this.uiHelper = uiHelper;
-        }
-
-        public UIHelper getUiHelper() {
-            return uiHelper;
         }
 
         public Context getContext() {

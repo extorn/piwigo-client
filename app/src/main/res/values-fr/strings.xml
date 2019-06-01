@@ -65,10 +65,15 @@
     <string name="tools_menu_title">Outils</string>
     <string name="settings_menu_title">Paramètres de l\'application</string>
     <string name="gallery_menu_title">Galerie</string>
+    <string name="offline_mode_menu_title">Mode hors ligne</string>
+    <string name="online_mode_menu_title">Mode en ligne</string>
     <string name="upload_menu_title">Télécharger</string>
     <string name="upload_page_title">Piwigo Télécharger</string>
     <string name="gallery_to_alter_title">Télécharger sur</string>
     <string name="login_button_title">Connexion</string>
+
+    <string name="alert_question_enable_network_access">Autoriser l\'extraction de données depuis le serveur?</string>
+    <string name="alert_question_disable_network_access">N\'utilisez que des données déjà mises en cache sur cet appareil?</string>
 
     <string name="upload_file_privacy_level_title">Niveau de confidentialité des fichiers</string>
     <string name="cacheCleared_title">Cache</string>

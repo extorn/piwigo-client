@@ -596,14 +596,14 @@ public class ViewTagFragment extends MyFragment {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteTagsForeverAction(getUiHelper(), selectedItemIds, selectedItems));
     }
 
-    private static class OnDeleteTagsAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteTagsAction extends UIHelper.QuestionResultAdapter<ViewTagFragment> {
         public OnDeleteTagsAction(UIHelper uiHelper) {
             super(uiHelper);
         }
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            ViewTagFragment fragment = (ViewTagFragment) getUiHelper().getParent();
+            ViewTagFragment fragment = getUiHelper().getParent();
             fragment.viewAdapter.toggleItemSelection();
             if (Boolean.TRUE == positiveAnswer) {
                 HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(fragment.deleteActionData.getSelectedItemIds());

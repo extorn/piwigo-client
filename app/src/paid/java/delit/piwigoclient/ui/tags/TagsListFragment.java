@@ -307,7 +307,7 @@ public class TagsListFragment extends MyFragment {
         });
     }
 
-    private static class OnDeleteTagAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteTagAction extends UIHelper.QuestionResultAdapter<TagsListFragment> {
         private final Tag tag;
 
         public OnDeleteTagAction(UIHelper uiHelper, Tag tag) {
@@ -318,7 +318,7 @@ public class TagsListFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if(Boolean.TRUE == positiveAnswer) {
-                TagsListFragment fragment = (TagsListFragment) getUiHelper().getParent();
+                TagsListFragment fragment = getUiHelper().getParent();
                 fragment.deleteTagNow(tag);
             }
         }

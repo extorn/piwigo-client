@@ -71,17 +71,17 @@ public class LicenceCheckingHelper {
         });
     }
 
-    private static class LicenceCheckAction extends UIHelper.QuestionResultAdapter {
+    private static class LicenceCheckAction extends UIHelper.QuestionResultAdapter<MyActivity> {
         private final boolean allowRetry;
 
-        public LicenceCheckAction(UIHelper uiHelper, boolean allowRetry) {
+        public LicenceCheckAction(UIHelper<MyActivity> uiHelper, boolean allowRetry) {
             super(uiHelper);
             this.allowRetry = allowRetry;
         }
 
         @Override
         public void onResult(androidx.appcompat.app.AlertDialog dialog, Boolean positiveAnswer) {
-            MyActivity activity = (MyActivity) getUiHelper().getParent();
+            MyActivity activity = getUiHelper().getParent();
             if (Boolean.TRUE == positiveAnswer) {
                 if (allowRetry) {
                     activity.getLicencingHelper().doCheck();

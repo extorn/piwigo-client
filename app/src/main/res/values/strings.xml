@@ -65,11 +65,16 @@
     <string name="button_close">Close</string>
     <string name="tools_menu_title">Tools</string>
     <string name="settings_menu_title">App Settings</string>
+    <string name="offline_mode_menu_title">Offline Mode</string>
+    <string name="online_mode_menu_title">Online Mode</string>
     <string name="gallery_menu_title">Gallery</string>
     <string name="upload_menu_title">Upload</string>
     <string name="upload_page_title">Piwigo Upload</string>
     <string name="gallery_to_alter_title">Upload to</string>
     <string name="login_button_title">Login</string>
+
+    <string name="alert_question_enable_network_access">Allow data retrieval from the server?</string>
+    <string name="alert_question_disable_network_access">Only use data already cached on this device?</string>
 
     <string name="upload_file_privacy_level_title">File Privacy Level</string>
     <string name="cacheCleared_title">Cache</string>

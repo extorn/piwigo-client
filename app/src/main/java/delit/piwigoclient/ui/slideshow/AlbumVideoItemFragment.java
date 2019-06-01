@@ -564,7 +564,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter {
+    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter<AlbumVideoItemFragment> {
 
         public ClearCachedContentAction(UIHelper uiHelper) {
             super(uiHelper);
@@ -573,8 +573,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AlbumVideoItemFragment fragment = (AlbumVideoItemFragment) getUiHelper().getParent();
-                fragment.clearCacheAndRestartVideo();
+                getUiHelper().getParent().clearCacheAndRestartVideo();
             }
         }
     }

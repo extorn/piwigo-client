@@ -778,7 +778,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
     }
 
-    private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter {
+    private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter<AbstractSlideshowItemFragment> {
         public UseAsAlbumThumbnailForParentAction(UIHelper uiHelper) {
             super(uiHelper);
         }
@@ -786,7 +786,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractSlideshowItemFragment parent = (AbstractSlideshowItemFragment) getUiHelper().getParent();
+                AbstractSlideshowItemFragment parent = getUiHelper().getParent();
                 ResourceItem model = parent.getModel();
                 long albumId = model.getParentId();
                 Long albumParentId = model.getParentageChain().size() > 1 ? model.getParentageChain().get(model.getParentageChain().size() - 2) : null;
@@ -972,7 +972,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         EventBus.getDefault().post(new AlbumAlteredEvent(response.getAlbumParentIdAltered(), response.getAlbumIdAltered()));
     }
 
-    private static class OnDeleteItemAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteItemAction extends UIHelper.QuestionResultAdapter<AbstractSlideshowItemFragment> {
         public OnDeleteItemAction(UIHelper uiHelper) {
             super(uiHelper);
         }
@@ -980,7 +980,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractSlideshowItemFragment fragment = (AbstractSlideshowItemFragment) getUiHelper().getParent();
+                AbstractSlideshowItemFragment fragment = getUiHelper().getParent();
                 ResourceItem model = fragment.getModel();
                 AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
                 getUiHelper().setTrackingRequest(event.getActionId());

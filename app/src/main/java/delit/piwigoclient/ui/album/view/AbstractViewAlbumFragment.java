@@ -90,7 +90,6 @@ import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.PicassoFactory;
-import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -1474,7 +1473,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class AlbumNoLongerExistsAction extends UIHelper.QuestionResultAdapter {
+    private static class AlbumNoLongerExistsAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
         public AlbumNoLongerExistsAction(UIHelper uiHelper) {
             super(uiHelper);
         }
@@ -1482,7 +1481,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         @Override
         public void onDismiss(AlertDialog dialog) {
             super.onDismiss(dialog);
-            AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
+            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
             //TODO getFragmentManager means this fragment needs to be serialised!
             fragment.getFragmentManager().popBackStack();
         }
@@ -1611,14 +1610,14 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     }
 
-    private static class BasketAction extends UIHelper.QuestionResultAdapter {
+    private static class BasketAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
         public BasketAction(UIHelper uiHelper) {
             super(uiHelper);
         }
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
+            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
             Basket basket = fragment.getBasket();
             final int basketAction = basket.getAction();
             final HashSet<ResourceItem> basketContent = basket.getContents();
@@ -1815,7 +1814,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class DeleteSharedResourcesAction extends UIHelper.QuestionResultAdapter {
+    private static class DeleteSharedResourcesAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
 
         private HashSet<ResourceItem> sharedResources;
 
@@ -1826,7 +1825,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
+            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
             DeleteActionData deleteActionData = fragment.getDeleteActionData();
 
             if (Boolean.TRUE == positiveAnswer) {
@@ -1866,7 +1865,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class AddAccessToAlbumAction extends UIHelper.QuestionResultAdapter {
+    private static class AddAccessToAlbumAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
         private HashSet<Long> newlyAddedGroups;
         private HashSet<Long> newlyAddedUsers;
 
@@ -1878,7 +1877,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
+            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
             final CategoryItem currentCategoryDetails = fragment.getGalleryModel().getContainerDetails();
             if (Boolean.TRUE == positiveAnswer) {
                 getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(currentCategoryDetails, newlyAddedGroups, newlyAddedUsers, true));
@@ -1888,7 +1887,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class AddingChildPermissionsAction extends UIHelper.QuestionResultAdapter {
+    private static class AddingChildPermissionsAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
         private HashSet<Long> newlyAddedGroups;
         private HashSet<Long> newlyAddedUsers;
 
@@ -1901,7 +1900,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
                 final CategoryItem currentCategoryDetails = fragment.getGalleryModel().getContainerDetails();
                 getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumAddPermissionsResponseHandler(currentCategoryDetails, newlyAddedGroups, newlyAddedUsers, true));
             }
@@ -2004,7 +2003,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class RemoveAccessToAlbumAction extends UIHelper.QuestionResultAdapter {
+    private static class RemoveAccessToAlbumAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
         private HashSet<Long> newlyRemovedGroups;
         private HashSet<Long> newlyRemovedUsers;
 
@@ -2017,11 +2016,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
                 PiwigoAlbum galleryModel = fragment.getGalleryModel();
                 getUiHelper().addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers));
             } else {
-                ((AbstractViewAlbumFragment) getUiHelper().getParent()).onAlbumUpdateFinished();
+                getUiHelper().getParent().onAlbumUpdateFinished();
             }
         }
     }
@@ -2083,10 +2082,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), R.string.button_no, R.string.button_yes, new BadHttpProtocolAction(getUiHelper(), connectionPreferences));
     }
 
-    private static class BadHttpProtocolAction extends UIHelper.QuestionResultAdapter {
+    private static class BadHttpProtocolAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
         private final ConnectionPreferences.ProfilePreferences connectionPreferences;
 
-        public BadHttpProtocolAction(FragmentUIHelper uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
+        public BadHttpProtocolAction(UIHelper uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
             super(uiHelper);
             this.connectionPreferences = connectionPreferences;
         }
@@ -2094,17 +2093,17 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (positiveAnswer != null && positiveAnswer) {
-                AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
                 SharedPreferences prefs = fragment.getPrefs();
                 connectionPreferences.setForceHttps(prefs, getContext(), true);
             }
         }
     }
 
-    private static class BadRequestRedirectionAction extends UIHelper.QuestionResultAdapter {
+    private static class BadRequestRedirectionAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
         private final ConnectionPreferences.ProfilePreferences connectionPreferences;
 
-        public BadRequestRedirectionAction(FragmentUIHelper uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
+        public BadRequestRedirectionAction(UIHelper uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
             super(uiHelper);
             this.connectionPreferences = connectionPreferences;
         }
@@ -2112,7 +2111,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (positiveAnswer != null && positiveAnswer) {
-                AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
                 SharedPreferences prefs = fragment.getPrefs();
                 connectionPreferences.setFollowHttpRedirects(prefs, getContext(), true);
                 //hard reset all http clients! No other solution sadly.
@@ -2451,7 +2450,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         return galleryModel;
     }
 
-    private static class AddingAlbumPermissionsAction extends UIHelper.QuestionResultAdapter {
+    private static class AddingAlbumPermissionsAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
         public AddingAlbumPermissionsAction(UIHelper uiHelper) {
             super(uiHelper);
         }
@@ -2459,7 +2458,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractViewAlbumFragment fragment = (AbstractViewAlbumFragment) getUiHelper().getParent();
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
                 fragment.addingAlbumPermissions();
             }
         }

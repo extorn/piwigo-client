@@ -97,6 +97,11 @@ public class PiwigoSessionDetails {
         return instance != null && instance.isLoggedIn();
     }
 
+    public static boolean isCached(ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        PiwigoSessionDetails instance = getInstance(connectionPrefs);
+        return instance != null && instance.isCached();
+    }
+
     public synchronized static PiwigoSessionDetails getInstance(ConnectionPreferences.ProfilePreferences activeProfile) {
         return sessionDetailsMap.get(activeProfile);
     }

@@ -253,7 +253,7 @@ public class GroupsListFragment extends MyFragment {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction(getUiHelper(), thisItem));
     }
 
-    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<GroupsListFragment> {
 
         private final Group group;
 
@@ -265,7 +265,7 @@ public class GroupsListFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                GroupsListFragment fragment = (GroupsListFragment) getUiHelper().getParent();
+                GroupsListFragment fragment = getUiHelper().getParent();
                 fragment.deleteGroupNow(group);
             }
         }

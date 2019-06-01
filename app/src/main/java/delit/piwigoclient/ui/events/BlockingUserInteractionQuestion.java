@@ -34,7 +34,7 @@ public class BlockingUserInteractionQuestion {
     }
 
     public void respondNo() {
-        userResponse = Boolean.TRUE;
+        userResponse = Boolean.FALSE;
         synchronized (this) {
             this.notifyAll();
         }

@@ -9,6 +9,11 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
+
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -24,10 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.widget.NestedScrollView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -399,7 +400,7 @@ public class GroupFragment extends MyFragment {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction(getUiHelper(), group));
     }
 
-    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<GroupFragment> {
         private final Group group;
 
         public OnDeleteGroupAction(UIHelper uiHelper, Group group) {
@@ -410,7 +411,7 @@ public class GroupFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                GroupFragment fragment = (GroupFragment) getUiHelper().getParent();
+                GroupFragment fragment = getUiHelper().getParent();
                 fragment.deleteGroupNow(group);
             }
         }

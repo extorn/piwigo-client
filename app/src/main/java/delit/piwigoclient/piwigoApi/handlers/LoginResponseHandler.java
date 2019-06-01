@@ -29,6 +29,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
     private static final String TAG = "LoginRspHdlr";
     private String password = null;
     private boolean haveValidSessionKey;
+    private boolean acceptCachedResponse;
 
     public LoginResponseHandler() {
         super("n/a", TAG);
@@ -39,6 +40,11 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         super(null, TAG);
         this.password = password;
         setPerformingLogin();
+    }
+
+    public LoginResponseHandler withCachedResponsesAllowed(boolean acceptCachedResponse) {
+        this.acceptCachedResponse = acceptCachedResponse;
+        return this;
     }
 
     @Override
@@ -175,6 +181,9 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         newSessionKeyHandler.invokeAndWait(getContext(), getConnectionPrefs());
         if (!newSessionKeyHandler.isSuccess()) {
             if (newSessionKeyHandler.getError().getCause() instanceof UnknownHostException) {
+                if (acceptCachedResponse) {
+                    return true;
+                }
                 BlockingUserInteractionQuestion userQuestion = new BlockingUserInteractionQuestion(R.string.switch_to_cached_mode);
                 userQuestion.askQuestion();
                 boolean userWantsCachedMode = userQuestion.getResponse();

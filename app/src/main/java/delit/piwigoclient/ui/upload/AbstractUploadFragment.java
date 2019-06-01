@@ -852,7 +852,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class DeleteAllFilesSelectedAction extends UIHelper.QuestionResultAdapter {
+    private static class DeleteAllFilesSelectedAction extends UIHelper.QuestionResultAdapter<AbstractUploadFragment> {
         public DeleteAllFilesSelectedAction(UIHelper uiHelper) {
             super(uiHelper);
         }
@@ -860,7 +860,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+                AbstractUploadFragment fragment = getUiHelper().getParent();
                 fragment.getFilesForUploadViewAdapter().clear();
                 fragment.uploadFilesNowButton.setEnabled(fragment.getFilesForUploadViewAdapter().getItemCount() > 0);
                 fragment.updateActiveJobActionButtonsStatus();
@@ -868,7 +868,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter {
+    private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter<AbstractUploadFragment> {
 
         private final File itemToRemove;
 
@@ -880,7 +880,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+                AbstractUploadFragment fragment = getUiHelper().getParent();
                 UploadJob activeJob = fragment.getActiveJob(getContext());
                 activeJob.cancelFileUpload(itemToRemove);
                 fragment.getFilesForUploadViewAdapter().remove(itemToRemove);
@@ -941,7 +941,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class ShouldCompressVideosAction extends UIHelper.QuestionResultAdapter {
+    private static class ShouldCompressVideosAction extends UIHelper.QuestionResultAdapter<AbstractUploadFragment> {
 
         public ShouldCompressVideosAction(UIHelper uiHelper) {
             super(uiHelper);
@@ -950,7 +950,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             super.onResult(dialog, positiveAnswer);
-            AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+            AbstractUploadFragment fragment = getUiHelper().getParent();
             fragment.setCompressVideosBeforeUpload(Boolean.TRUE.equals(positiveAnswer));
 
             if (positiveAnswer != null) {
@@ -959,7 +959,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class FileSizeExceededAction extends UIHelper.QuestionResultAdapter {
+    private static class FileSizeExceededAction extends UIHelper.QuestionResultAdapter<AbstractUploadFragment> {
         private Set<File> filesToDelete;
 
         public FileSizeExceededAction(UIHelper uiHelper, Set<File> filesForReview) {
@@ -969,7 +969,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+            AbstractUploadFragment fragment = getUiHelper().getParent();
 
             if (Boolean.TRUE == positiveAnswer) {
                 for (File file : filesToDelete) {
@@ -982,14 +982,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class OnDeleteJobQuestionAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteJobQuestionAction extends UIHelper.QuestionResultAdapter<AbstractUploadFragment> {
         public OnDeleteJobQuestionAction(UIHelper uiHelper) {
             super(uiHelper);
         }
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+            AbstractUploadFragment fragment = getUiHelper().getParent();
             Long currentJobId = fragment.getUploadJobId();
             if (currentJobId == null) {
                 Crashlytics.log(Log.WARN, TAG, "User attempted to delete job that was no longer exists");
@@ -1008,14 +1008,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class ErrorUploadingQuestionAction extends UIHelper.QuestionResultAdapter {
+    private static class ErrorUploadingQuestionAction extends UIHelper.QuestionResultAdapter<AbstractUploadFragment> {
         public ErrorUploadingQuestionAction(UIHelper uiHelper) {
             super(uiHelper);
         }
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            AbstractUploadFragment fragment = (AbstractUploadFragment) getUiHelper().getParent();
+            AbstractUploadFragment fragment = getUiHelper().getParent();
             UploadJob activeJob = fragment.getActiveJob(getContext());
             if (positiveAnswer != null && positiveAnswer) {
                 ForegroundPiwigoUploadService.removeJob(activeJob);

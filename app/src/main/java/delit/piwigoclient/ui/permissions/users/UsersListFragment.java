@@ -257,7 +257,7 @@ public class UsersListFragment extends MyFragment {
         }
     }
 
-    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<UsersListFragment> {
 
         private final User user;
 
@@ -269,7 +269,7 @@ public class UsersListFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                UsersListFragment fragment = (UsersListFragment) getUiHelper().getParent();
+                UsersListFragment fragment = getUiHelper().getParent();
                 fragment.deleteUserNow(user);
             }
         }

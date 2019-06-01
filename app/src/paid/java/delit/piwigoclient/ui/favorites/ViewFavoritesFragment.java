@@ -557,7 +557,7 @@ public class ViewFavoritesFragment extends MyFragment {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteFavoritesForeverAction(getUiHelper(), selectedItemIds, selectedItems));
     }
 
-    private static class OnDeleteFavoritesAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteFavoritesAction extends UIHelper.QuestionResultAdapter<ViewFavoritesFragment> {
         private HashSet<Long> selectedItemIds;
         private HashSet<ResourceItem> selectedItems;
 
@@ -569,7 +569,7 @@ public class ViewFavoritesFragment extends MyFragment {
 
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            ViewFavoritesFragment fragment = (ViewFavoritesFragment) getUiHelper().getParent();
+            ViewFavoritesFragment fragment = getUiHelper().getParent();
             fragment.getViewAdapter().toggleItemSelection();
             if (Boolean.TRUE == positiveAnswer) {
                 HashSet<Long> itemIdsForPermanentDelete = new HashSet<>(selectedItemIds);
