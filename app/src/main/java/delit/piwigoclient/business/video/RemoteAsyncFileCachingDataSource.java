@@ -27,7 +27,10 @@ import java.util.List;
 import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.message.BasicHeaderElement;
+import cz.msebera.android.httpclient.message.BasicHeaderValueFormatter;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -165,7 +168,10 @@ public class RemoteAsyncFileCachingDataSource implements HttpDataSource {
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(activeConnectionPreferences);
         boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
         if (onlyUseCache) {
-//TODO            headers.add(new BasicHeader("only-if-cached", Boolean.TRUE.toString()));
+            BasicHeaderElement[] headerElems = new BasicHeaderElement[]{new BasicHeaderElement("only-if-cached", Boolean.TRUE.toString()),
+                    new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_MAX_STALE, "" + Integer.MAX_VALUE)};
+            String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
+            headers.add(new BasicHeader(HeaderConstants.CACHE_CONTROL, value));
         }
 
         client.setConnectTimeout(connectTimeoutMillis);

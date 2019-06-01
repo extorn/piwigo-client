@@ -25,6 +25,8 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpStatus;
 import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.message.BasicHeaderElement;
+import cz.msebera.android.httpclient.message.BasicHeaderValueFormatter;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -149,17 +151,23 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
 
     protected Header[] buildOfflineAccessHeaders(boolean onlyUseCache) {
         if(getConnectionPrefs().isOfflineMode(getSharedPrefs(), getContext())) {
-            Header[] headers = new Header[/*onlyUseCache ? 3 :*/ 2];
+            Header[] headers = new Header[onlyUseCache ? 3 : 2];
             headers[0] = new BasicHeader(HeaderConstants.STALE_IF_ERROR, String.valueOf(Long.MAX_VALUE));
             headers[1] = new BasicHeader(HeaderConstants.STALE_WHILE_REVALIDATE, String.valueOf(Long.MAX_VALUE));
             if (onlyUseCache) {
-//TODO                headers[2] = new BasicHeader("only-if-cached", Boolean.TRUE.toString());
+                BasicHeaderElement[] headerElems = new BasicHeaderElement[]{new BasicHeaderElement("only-if-cached", Boolean.TRUE.toString()),
+                        new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_MAX_STALE, "" + Integer.MAX_VALUE)};
+                String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
+                headers[2] = new BasicHeader(HeaderConstants.CACHE_CONTROL, value);
             }
             return headers;
-        } /*else if(onlyUseCache ){
-            Header[] headers = new Header[]{new BasicHeader("only-if-cached", Boolean.TRUE.toString())};
+        } else if (onlyUseCache) {
+            BasicHeaderElement[] headerElems = new BasicHeaderElement[]{new BasicHeaderElement("only-if-cached", Boolean.TRUE.toString()),
+                    new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_MAX_STALE, "" + Integer.MAX_VALUE)};
+            String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
+            Header[] headers = new Header[]{new BasicHeader(HeaderConstants.CACHE_CONTROL, value)};
             return headers;
-        }*/ else {
+        } else {
             return new Header[0];
         }
     }

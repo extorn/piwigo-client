@@ -34,9 +34,13 @@ import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.cache.HeaderConstants;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.message.BasicHeaderElement;
+import cz.msebera.android.httpclient.message.BasicHeaderValueFormatter;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 
@@ -417,11 +421,14 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
             headers.add(new BasicHeader("Accept-Encoding", "identity"));
         }
 
-//        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(activeConnectionPreferences);
-//        boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
-//        if(onlyUseCache) {
-//            headers.add(new BasicHeader("only-if-cached", Boolean.TRUE.toString()));
-//        }
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(activeConnectionPreferences);
+        boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
+        if (onlyUseCache) {
+            BasicHeaderElement[] headerElems = new BasicHeaderElement[]{new BasicHeaderElement("only-if-cached", Boolean.TRUE.toString()),
+                    new BasicHeaderElement(HeaderConstants.CACHE_CONTROL_MAX_STALE, "" + Integer.MAX_VALUE)};
+            String value = BasicHeaderValueFormatter.formatElements(headerElems, false, BasicHeaderValueFormatter.INSTANCE);
+            headers.add(new BasicHeader(HeaderConstants.CACHE_CONTROL, value));
+        }
 
         client.setEnableRedirects(enableRedirects, maxRedirects);
         CustomResponseHandler responseHandler = new CustomResponseHandler();
