@@ -91,7 +91,9 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
         this.morque = new ReferenceQueue<HttpCacheEntry>();
         this.resources = new HashSet<ResourceReference>();
         this.active = new AtomicBoolean(true);
-        new CachePersister(this, h, 30000).start();
+        if (cacheFolder != null) {
+            new CachePersister(this, h, 30000).start();
+        }
     }
 
     private boolean isActive() {
@@ -159,17 +161,20 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
     }
 
     public boolean cacheSaveToDiskRequired() {
-        return ((double) unsavedUpdates) / entries.size() > .2 || unsavedUpdates > 20 && (System.currentTimeMillis() - lastSavedAtMillis) > minPreferredSaveInterval;
+        return cacheFolder != null && (((double) unsavedUpdates) / entries.size() > .2 || (unsavedUpdates > 20 && (System.currentTimeMillis() - lastSavedAtMillis) > minPreferredSaveInterval));
     }
 
     public CacheMap loadCacheFromDisk(int maxCacheEntries) {
         synchronized (this) {
-            File sourceFile = new File(cacheFolder, cacheFilename);
-            if (sourceFile.exists()) {
-                if (sourceFile.length() > 1024 * 512) { // 512KB
-                    Crashlytics.logException(new Exception("Cache index size larger than anticipated! - " + IOUtils.toNormalizedText(sourceFile.length())));
+            if (cacheFolder != null) {
+                File sourceFile = new File(cacheFolder, cacheFilename);
+                if (sourceFile.exists()) {
+                    if (sourceFile.length() > 1024 * 512) { // 512KB
+                        Crashlytics.logException(new Exception("Cache index size larger than anticipated! - " + IOUtils.toNormalizedText(sourceFile.length())));
+                    }
+                    entries = IOUtils.readObjectFromFile(sourceFile);
+
                 }
-                entries = IOUtils.readObjectFromFile(sourceFile);
             }
             if (entries != null) {
                 if (BuildConfig.DEBUG) {
@@ -187,6 +192,9 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
     }
 
     public boolean deleteOnDiskCache() {
+        if (cacheFolder == null) {
+            return true;
+        }
         synchronized (this) {
             File destination = new File(cacheFolder, cacheFilename);
             if (destination.exists()) {
@@ -198,6 +206,9 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
     }
 
     public void saveCacheToDisk() {
+        if (cacheFolder == null) {
+            return;
+        }
         synchronized (this) {
             File destination = new File(cacheFolder, cacheFilename);
             boolean savedOkay = IOUtils.saveObjectToFile(destination, entries);
