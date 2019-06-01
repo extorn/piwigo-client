@@ -314,4 +314,8 @@ public class CacheUtils {
         }
         return length;
     }
+
+    public static long getItemsInResponseCache(Context context) {
+        return HttpClientFactory.getInstance(context).getItemsInResponseCache();
+    }
 }

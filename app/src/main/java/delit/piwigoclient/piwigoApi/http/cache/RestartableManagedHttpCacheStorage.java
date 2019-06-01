@@ -93,6 +93,8 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
         this.active = new AtomicBoolean(true);
         if (cacheFolder != null) {
             new CachePersister(this, h, 30000).start();
+        } else {
+            new CacheTidier(this, h, 120000).start(); // run every 2 minutes
         }
     }
 
@@ -239,6 +241,18 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
         }
     }
 
+    public void tidy() {
+        if (this.active.get()) {
+            ResourceReference ref;
+            while ((ref = (ResourceReference) this.morque.poll()) != null) {
+                synchronized (this) {
+                    this.resources.remove(ref);
+                }
+                ref.getResource().dispose();
+            }
+        }
+    }
+
     /**
      * Flush all items from both in-memory and on-filesystem data.
      * Leaves cache active
@@ -290,37 +304,72 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
         saveCacheToDisk();
         this.entries.clear();
         this.resources.clear();
+        this.active.set(false);
         while (this.morque.poll() != null) {
         } // remove all items from morque
     }
 
-    private static class CachePersister implements Runnable {
+    public long getEntryCount() {
+        synchronized (this) {
+            return entries == null ? 0 : entries.size();
+        }
+    }
+
+    private static class CacheTidier extends CacheTask {
+        private CacheTidier(RestartableManagedHttpCacheStorage cacheStorage, Handler h, long delayMillis) {
+            super("CacheTidier - in memory cache will slowly grow and grow!", cacheStorage, h, delayMillis);
+        }
+
+        @Override
+        public void runTask(RestartableManagedHttpCacheStorage cacheStorage) {
+            cacheStorage.tidy();
+        }
+    }
+
+    private static class CachePersister extends CacheTask {
+
+
+        private CachePersister(RestartableManagedHttpCacheStorage cacheStorage, Handler h, long delayMillis) {
+            super("cache persistence updater - cache will drift out of sync with disk until shutdown!", cacheStorage, h, delayMillis);
+        }
+
+        @Override
+        public void runTask(RestartableManagedHttpCacheStorage cacheStorage) {
+            if (cacheStorage.cacheSaveToDiskRequired()) {
+                cacheStorage.saveCacheToDisk();
+            }
+        }
+    }
+
+    private static abstract class CacheTask implements Runnable {
 
         private final Handler handler;
         private final RestartableManagedHttpCacheStorage cacheStorage;
         private final long delayMillis;
+        private final String tag;
 
-        private CachePersister(RestartableManagedHttpCacheStorage cacheStorage, Handler h, long delayMillis) {
+        private CacheTask(String tag, RestartableManagedHttpCacheStorage cacheStorage, Handler h, long delayMillis) {
+            this.tag = tag;
             this.cacheStorage = cacheStorage;
             this.handler = h;
             this.delayMillis = delayMillis;
         }
 
         @Override
-        public void run() {
+        public final void run() {
             synchronized (cacheStorage) {
-                if (cacheStorage.cacheSaveToDiskRequired()) {
-                    cacheStorage.saveCacheToDisk();
-                }
+                runTask(cacheStorage);
                 if (cacheStorage.isActive()) {
                     handler.removeCallbacks(this);
                     boolean posted = handler.postDelayed(this, delayMillis);
                     if (!posted && BuildConfig.DEBUG) {
-                        Crashlytics.log(Log.ERROR, TAG, "Error attempting to reschedule cache persistence updater - cache will drift out of sync with disk until shutdown!");
+                        Crashlytics.log(Log.ERROR, TAG, "Error attempting to reschedule " + tag);
                     }
                 }
             }
         }
+
+        protected abstract void runTask(RestartableManagedHttpCacheStorage cacheStorage);
 
         public void start() {
             handler.postDelayed(this, delayMillis);

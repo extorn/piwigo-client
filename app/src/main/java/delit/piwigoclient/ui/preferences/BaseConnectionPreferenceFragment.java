@@ -263,6 +263,10 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         protected void onPostExecute(Double cacheBytes) {
             if (!isCancelled() && fragment.isVisible()) {
                 String spaceSuffix = "(" + IOUtils.toNormalizedText(cacheBytes) + ")";
+//                String cacheLevel = ConnectionPreferences.getCacheLevel(fragment.getPrefs(), context);
+//                if("memory".equals(cacheLevel)) {
+//                    spaceSuffix += String.format(" + %1$d", CacheUtils.getItemsInResponseCache(context));
+//                }
                 responseCacheFlushButton.setTitle(context.getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
             }
         }

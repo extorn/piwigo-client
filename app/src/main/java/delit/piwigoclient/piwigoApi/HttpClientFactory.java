@@ -435,4 +435,11 @@ public class HttpClientFactory {
             cacheStorage.shutdown();
         }
     }
+
+    public long getItemsInResponseCache() {
+        if (cacheStorage == null) {
+            return 0;
+        }
+        return cacheStorage.getEntryCount();
+    }
 }
