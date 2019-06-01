@@ -301,12 +301,15 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
     }
 
     public void close() {
-        saveCacheToDisk();
-        this.entries.clear();
-        this.resources.clear();
-        this.active.set(false);
-        while (this.morque.poll() != null) {
-        } // remove all items from morque
+        if (this.active.compareAndSet(true, false)) {
+            synchronized (this) {
+                saveCacheToDisk();
+                this.entries.clear();
+                this.resources.clear();
+                while (this.morque.poll() != null) {
+                } // remove all items from morque
+            }
+        }
     }
 
     public long getEntryCount() {
