@@ -294,7 +294,7 @@ public class HttpClientFactory {
     }
 
     private RestartableManagedHttpCacheStorage getCacheStorage(File cacheFolder, CacheConfig cacheConfig) {
-        if (this.cacheStorage == null) {
+        if (this.cacheStorage == null || !cacheStorage.isActive()) {
             this.cacheStorage = new RestartableManagedHttpCacheStorage(cacheFolder, cacheConfig, handler);
         } else if (cacheConfig.getMaxCacheEntries() != cacheStorage.getMaxCacheEntries()) {
             cacheStorage.setMaxCacheEntries(cacheConfig.getMaxCacheEntries());

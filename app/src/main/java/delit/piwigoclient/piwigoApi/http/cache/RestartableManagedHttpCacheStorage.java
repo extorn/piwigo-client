@@ -98,7 +98,7 @@ public class RestartableManagedHttpCacheStorage implements HttpCacheStorage, Clo
         }
     }
 
-    private boolean isActive() {
+    public boolean isActive() {
         return active.get();
     }
 
