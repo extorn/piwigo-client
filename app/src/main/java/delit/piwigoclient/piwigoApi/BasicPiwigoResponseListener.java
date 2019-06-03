@@ -6,7 +6,6 @@ import android.preference.DialogPreference;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +20,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.util.DisplayUtils;
 
 /**
  * Created by gareth on 15/10/17.
@@ -252,7 +252,7 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
         } else if (parent instanceof AppCompatActivity) {
             retVal = !((AppCompatActivity) parent).isFinishing();
         } else if (parent instanceof ViewGroup) {
-            DrawerLayout dl = getParentOfType((View) parent, DrawerLayout.class);
+            DrawerLayout dl = DisplayUtils.getParentOfType((View) parent, DrawerLayout.class);
             if (dl != null) {
                 retVal = true; // the drawer is attached regardless of whether visible or not.
             } else {
@@ -267,13 +267,5 @@ public class BasicPiwigoResponseListener implements PiwigoResponseBufferingHandl
             throw new IllegalArgumentException("Unsupported parent type " + parent);
         }
         return retVal;
-    }
-
-    private <T extends View> T getParentOfType(View item, Class<T> type) {
-        ViewParent currentItem = item.getParent();
-        while (currentItem != null && !type.isAssignableFrom(currentItem.getClass())) {
-            currentItem = currentItem.getParent();
-        }
-        return (T) currentItem;
     }
 }

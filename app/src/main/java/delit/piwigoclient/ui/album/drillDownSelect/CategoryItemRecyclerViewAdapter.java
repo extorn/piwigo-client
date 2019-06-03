@@ -4,15 +4,16 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.widget.ImageViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -21,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
@@ -302,7 +304,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         }
     }
 
-    protected abstract class CategoryItemViewHolder extends CustomViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> {
+    protected abstract class CategoryItemViewHolder extends CustomViewHolder<CategoryItemViewAdapterPreferences, CategoryItem> implements PicassoLoader.PictureItemImageLoaderListener {
         private TextView txtTitle;
         private TextView detailTxt;
         private View deleteButton;
@@ -367,7 +369,8 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
             detailTxt = itemView.findViewById(R.id.list_item_details);
 
             iconView = itemView.findViewById(R.id.list_item_icon_thumbnail);
-            iconViewLoader = new ResizingPicassoLoader(getIconView(), 0, 0);
+            iconView.setContentDescription("cat thumb");
+            iconViewLoader = new ResizingPicassoLoader(getIconView(), this, 0, 0);
 
             deleteButton = itemView.findViewById(R.id.list_item_delete_button);
             deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -380,6 +383,21 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
 
         private void onDeleteItemButtonClick(View v) {
             getItemActionListener().getParentAdapter().onDeleteItem(this, v);
+        }
+
+        @Override
+        public void onBeforeImageLoad(PicassoLoader loader) {
+            getIconView().setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        @Override
+        public void onImageLoaded(PicassoLoader loader, boolean success) {
+            getIconView().setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        @Override
+        public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
+            getIconView().setBackgroundColor(Color.DKGRAY);
         }
     }
 

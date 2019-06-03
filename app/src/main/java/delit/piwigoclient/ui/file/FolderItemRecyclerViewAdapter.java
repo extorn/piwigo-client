@@ -1,6 +1,7 @@
 package delit.piwigoclient.ui.file;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,9 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
@@ -20,9 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
@@ -392,7 +395,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    protected abstract class FolderItemViewHolder extends CustomViewHolder<FolderItemViewAdapterPreferences, File> {
+    protected abstract class FolderItemViewHolder extends CustomViewHolder<FolderItemViewAdapterPreferences, File> implements PicassoLoader.PictureItemImageLoaderListener {
         private TextView txtTitle;
         private View deleteButton;
         private AppCompatCheckboxTriState checkBox;
@@ -450,7 +453,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             txtTitle = itemView.findViewById(R.id.list_item_name);
 
             iconView = itemView.findViewById(R.id.list_item_icon_thumbnail);
-            iconViewLoader = new ResizingPicassoLoader(getIconView(), 0, 0);
+            iconView.setContentDescription("folder item thumb");
+            iconViewLoader = new ResizingPicassoLoader(getIconView(), this, 0, 0);
 
             deleteButton = itemView.findViewById(R.id.list_item_delete_button);
             deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -463,6 +467,21 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
         private void onDeleteItemButtonClick(View v) {
             getItemActionListener().getParentAdapter().onDeleteItem(this, v);
+        }
+
+        @Override
+        public void onBeforeImageLoad(PicassoLoader loader) {
+            getIconView().setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        @Override
+        public void onImageLoaded(PicassoLoader loader, boolean success) {
+            getIconView().setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        @Override
+        public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
+            getIconView().setBackgroundColor(Color.DKGRAY);
         }
     }
 

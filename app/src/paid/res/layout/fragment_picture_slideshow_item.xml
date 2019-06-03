@@ -80,6 +80,19 @@
             tools:visibility="visible" tools:targetApi="lollipop"/>
 
 
+        <ImageView
+            android:id="@+id/image_load_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@+id/slideshow_image_average_ratingBar"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/slideshow_image_favorite"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_file_gray_24dp"
+            tools:visibility="visible" />
+
         <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
             android:id="@+id/slideshow_image_favorite"
             android:layout_below="@+id/slideshow_image_average_ratingBar"

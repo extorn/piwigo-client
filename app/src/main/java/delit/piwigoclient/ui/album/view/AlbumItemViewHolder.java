@@ -1,17 +1,20 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Parcelable;
-import androidx.appcompat.widget.AppCompatImageView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 import com.crashlytics.android.Crashlytics;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
@@ -22,7 +25,7 @@ import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 import static android.view.View.GONE;
 import static delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences.SCALING_QUALITY_VLOW;
 
-public abstract class AlbumItemViewHolder<S extends Identifiable&Parcelable> extends CustomViewHolder<AlbumItemRecyclerViewAdapterPreferences, GalleryItem> {
+public abstract class AlbumItemViewHolder<S extends Identifiable & Parcelable> extends CustomViewHolder<AlbumItemRecyclerViewAdapterPreferences, GalleryItem> implements PicassoLoader.PictureItemImageLoaderListener {
     protected final int viewType;
     public AppCompatImageView mImageView;
     public TextView mNameView;
@@ -90,13 +93,14 @@ public abstract class AlbumItemViewHolder<S extends Identifiable&Parcelable> ext
                 mImageView.getViewTreeObserver().removeOnPreDrawListener(predrawListener);
             }
         });
+        mImageView.setContentDescription("resource thumb");
         mImageView.setOnClickListener(getItemActionListener());
         mImageView.setOnLongClickListener(getItemActionListener());
 
     }
 
     protected ViewTreeObserver.OnPreDrawListener configureNonMasonryThumbnailLoader(final ImageView target) {
-        imageLoader = new ResizingPicassoLoader(target, 0, 0);
+        imageLoader = new ResizingPicassoLoader(target, this, 0, 0);
         return new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -135,5 +139,20 @@ public abstract class AlbumItemViewHolder<S extends Identifiable&Parcelable> ext
 
     public void onRecycled() {
         UIHelper.recycleImageViewContent(mImageView);
+    }
+
+    @Override
+    public void onBeforeImageLoad(PicassoLoader loader) {
+        mImageView.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    @Override
+    public void onImageLoaded(PicassoLoader loader, boolean success) {
+        mImageView.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    @Override
+    public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
+        mImageView.setBackgroundColor(Color.DKGRAY);
     }
 }

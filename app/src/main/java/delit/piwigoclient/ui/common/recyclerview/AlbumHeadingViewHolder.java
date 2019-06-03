@@ -8,6 +8,7 @@ import android.widget.TextView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
+import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemViewHolder;
 
@@ -40,6 +41,8 @@ public class AlbumHeadingViewHolder<S extends Identifiable&Parcelable> extends A
 
     @Override
     public void fillValues(Context context, GalleryItem newItem, boolean allowItemDeletion) {
+        setSubAlbumCount(((PiwigoAlbum) getParentAdapter().getItemStore()).getSubAlbumCount());
+        showAlbumCount = ((PiwigoAlbum) getParentAdapter().getItemStore()).isHideAlbums();
         switch(viewType) {
             case GalleryItem.ALBUM_HEADING_TYPE:
                 if (showAlbumCount) {

@@ -118,8 +118,6 @@ public class AlbumItemRecyclerViewAdapter<T extends Identifiable&Parcelable> ext
                     ((ResourceItemViewHolder) holder).updateCheckableStatus();
                     break;
                 case GalleryItem.ALBUM_HEADING_TYPE:
-                    ((AlbumHeadingViewHolder) holder).setShowAlbumCount(((PiwigoAlbum) getItemStore()).isHideAlbums());
-                    ((AlbumHeadingViewHolder) holder).setSubAlbumCount(((PiwigoAlbum) getItemStore()).getSubAlbumCount());
                     break;
                 default:
             }

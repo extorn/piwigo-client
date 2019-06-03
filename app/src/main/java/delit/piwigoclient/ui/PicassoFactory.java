@@ -11,14 +11,16 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import androidx.core.content.ContextCompat;
+
+import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.MyPicasso;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Request;
 import com.squareup.picasso.RequestHandler;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
-import androidx.core.content.ContextCompat;
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -80,18 +82,34 @@ public class PicassoFactory {
         }
     }
 
-    public synchronized void registerListener(Context context, Uri uri, Picasso.Listener listener) {
+    public synchronized void registerListener(Context context, Uri uri, EnhancedPicassoListener listener) {
         if (errorHandler == null) {
             getPicassoSingleton(context);
         }
-        errorHandler.addListener(uri, listener);
+        EnhancedPicassoListener old = errorHandler.addListener(uri, listener);
+        if (old != null) {
+            Crashlytics.log(Log.ERROR, TAG, String.format("There was already a Uri Load Listener registered for Uri %1$s", uri));
+        }
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, String.format("There are %1$d Uri Load Listeners registered", errorHandler.listeners.size()));
+        }
     }
 
     public synchronized void deregisterListener(Context context, Uri uri) {
         if (errorHandler == null) {
             getPicassoSingleton(context);
         }
-        errorHandler.removeListener(uri);
+        if (errorHandler.removeListener(uri)) {
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, String.format("There are %1$d Uri Load Listeners registered", errorHandler.listeners.size()));
+            }
+        }
+    }
+
+    public interface EnhancedPicassoListener extends Picasso.Listener {
+        boolean isLikelyStillNeeded();
+
+        String getListenerPurpose();
     }
 
     public boolean clearPicassoCache(Context context, boolean forceClear) {
@@ -185,27 +203,39 @@ public class PicassoFactory {
 
     private class PicassoErrorHandler implements Picasso.Listener {
 
-        private final ConcurrentHashMap<Uri, Picasso.Listener> listeners = new ConcurrentHashMap<>();
+        private final HashMap<Uri, EnhancedPicassoListener> listeners = new HashMap<>();
 
-        public void addListener(Uri uri, Picasso.Listener listener) {
-            listeners.put(uri, listener);
+        public EnhancedPicassoListener addListener(Uri uri, EnhancedPicassoListener listener) {
+            synchronized (this) {
+                EnhancedPicassoListener old = listeners.put(uri, listener);
+                for (EnhancedPicassoListener l : listeners.values()) {
+                    if (!l.isLikelyStillNeeded()) {
+                        Crashlytics.log(Log.ERROR, TAG, String.format("Listener is probably obsolete: %1$s", l.getListenerPurpose()));
+                    }
+                }
+                return old;
+            }
         }
 
-        public void removeListener(Uri uri) {
-            listeners.remove(uri);
+        public boolean removeListener(Uri uri) {
+            synchronized (this) {
+                return null != listeners.remove(uri);
+            }
         }
 
         @Override
         public void onImageLoadFailed(Picasso picasso, Uri uri, Exception e) {
-            if (uri != null) {
-                Picasso.Listener listener = listeners.get(uri);
-                if (listener != null) {
-                    listener.onImageLoadFailed(picasso, uri, e);
+            synchronized (this) {
+                if (uri != null) {
+                    EnhancedPicassoListener listener = listeners.get(uri);
+                    if (listener != null) {
+                        listener.onImageLoadFailed(picasso, uri, e);
+                    } else if (BuildConfig.DEBUG) {
+                        Log.e(TAG, String.format("Error loading uri %1$s", uri), e);
+                    }
                 } else if (BuildConfig.DEBUG) {
-                    Log.e(TAG, String.format("Error loading uri %1$s", uri), e);
+                    Log.e(TAG, "Error loading uri null", e);
                 }
-            } else if (BuildConfig.DEBUG) {
-                Log.e(TAG, "Error loading uri null", e);
             }
         }
     }

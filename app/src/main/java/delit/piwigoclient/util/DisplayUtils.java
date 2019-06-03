@@ -7,17 +7,19 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.os.Looper;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AlertDialog;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by gareth on 30/05/17.
@@ -44,6 +46,14 @@ public class DisplayUtils {
     public static int getScreenRotation(Context context) {
         Display display = ((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         return display.getRotation();
+    }
+
+    public static <T extends View> T getParentOfType(View item, Class<T> type) {
+        ViewParent currentItem = item.getParent();
+        while (currentItem != null && !type.isAssignableFrom(currentItem.getClass())) {
+            currentItem = currentItem.getParent();
+        }
+        return (T) currentItem;
     }
 
     public static int getCurrentScreenOrientation(Context context) {

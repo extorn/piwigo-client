@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.SparseIntArray;
-import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 
@@ -27,13 +25,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import cz.msebera.android.httpclient.HttpStatus;
-import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.events.BadRequestUsesRedirectionServerEvent;
 import delit.piwigoclient.ui.events.BadRequestUsingHttpToHttpsServerEvent;
-import delit.piwigoclient.util.TransientMsgUtils;
 
 /**
  * Created by gareth on 18/05/17.
@@ -47,6 +43,8 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
     private final Context context;
     private final SparseIntArray errorDrawables = new SparseIntArray();
     private final ConnectionPreferences.ProfilePreferences connectionPrefs;
+    private DownloaderListener listener;
+
 
     public AbstractBaseCustomImageDownloader(Context context, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         this.context = context;
@@ -60,6 +58,10 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
     public AbstractBaseCustomImageDownloader addErrorDrawable(int statusCode, @DrawableRes int drawable) {
         errorDrawables.put(statusCode, drawable);
         return this;
+    }
+
+    public void setListener(DownloaderListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -94,17 +96,17 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             if (errorResponse.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
                 EventBus.getDefault().post(new BadRequestUsesRedirectionServerEvent(connectionPrefs));
             }
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    TransientMsgUtils.makeDetailedToast(context, R.string.alert_error, toastMessage, Toast.LENGTH_LONG).show();
-                }
-            });
+            if (listener != null) {
+                listener.onImageDownloadError(toastMessage);
+            }
             int drawableId = errorDrawables.get(errorResponse.getStatusCode());
             if (drawableId > 0) {
                 //return locked padlock image.
                 Bitmap icon = PicassoFactory.getInstance().getPicassoSingleton(context).load(drawableId).get();
                 return new Downloader.Response(icon, true);
+            }
+            if (listener == null) { // these are going to be caught by listeners registered on a uri basis with the PicassoFactory.
+                throw new ResponseException(toastMessage, networkPolicy, errorResponse.getStatusCode());
             }
             return null;
 //            throw new ResponseException("Error downloading " + uri.toString() + " : " + handler.getError(), networkPolicy, errorResponse.getStatusCode());

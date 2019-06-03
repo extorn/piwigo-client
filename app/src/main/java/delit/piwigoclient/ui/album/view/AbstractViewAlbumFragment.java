@@ -1669,7 +1669,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private void onGetSubGalleries(final AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+    private void onListOfAlbumsLoaded(final AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
 
         synchronized (this) {
             if (galleryModel.getContainerDetails().isRoot()) {
@@ -2286,7 +2286,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 if (response instanceof ImageDeleteResponseHandler.PiwigoDeleteImageResponse) {
                     onResourcesDeleted((ImageDeleteResponseHandler.PiwigoDeleteImageResponse) response);
                 } else if (response instanceof AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) {
-                    onGetSubGalleries((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response);
+                    onListOfAlbumsLoaded((AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse) response);
                 } else if (response instanceof BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) {
                     onGetResources((BaseImagesGetResponseHandler.PiwigoGetResourcesResponse) response);
                 } else if (response instanceof AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse) {

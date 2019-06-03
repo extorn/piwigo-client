@@ -1,14 +1,13 @@
 package delit.piwigoclient.business;
 
 import android.content.Context;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
-import androidx.annotation.DrawableRes;
-import androidx.core.content.ContextCompat;
-
 import android.util.Log;
 import android.widget.ImageView;
+
+import androidx.annotation.DrawableRes;
+import androidx.core.content.ContextCompat;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Callback;
@@ -23,20 +22,18 @@ import java.io.File;
 import java.io.IOException;
 
 import delit.piwigoclient.R;
-import delit.piwigoclient.piwigoApi.handlers.ImageGetToByteArrayHandler;
 import delit.piwigoclient.ui.PicassoFactory;
 import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Created by gareth on 11/10/17.
  */
-public class PicassoLoader implements Callback {
+public class PicassoLoader<T extends ImageView> implements Callback, DownloaderListener, PicassoFactory.EnhancedPicassoListener {
 
     public final static int INFINITE_AUTO_RETRIES = -1;
     public static final String PICASSO_REQUEST_TAG = "PIWIGO";
     private final static int DEFAULT_AUTO_RETRIES = 1;
-    private final ImageView loadInto;
+    private final T loadInto;
     private String uriToLoad;
     private File fileToLoad;
     private int maxRetries = DEFAULT_AUTO_RETRIES;
@@ -51,9 +48,75 @@ public class PicassoLoader implements Callback {
     private @DrawableRes
     int errorResourceId = R.drawable.ic_error_black_240px;
     private Transformation transformation;
+    private PictureItemImageLoaderListener listener;
+    private boolean usePlaceholderIfError = false;
+    private String lastLoadError;
+    private boolean waitForErrorMessage;
 
-    public PicassoLoader(ImageView loadInto) {
+    public PicassoLoader(T loadInto) {
+        this(loadInto, null);
+    }
+
+    public PicassoLoader(T loadInto, PictureItemImageLoaderListener listener) {
         this.loadInto = loadInto;
+        this.listener = listener;
+    }
+
+    @Override
+    public void onImageDownloadError(String message) {
+        lastLoadError = message;
+    }
+
+    public String getLastLoadError() {
+        return lastLoadError;
+    }
+
+    /**
+     * Called by the Loader registered with the PicassoFactory only! Otherwise we extract the error direct from the response handler
+     *
+     * @param picasso
+     * @param uri
+     * @param exception
+     */
+    @Override
+    public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+        lastLoadError = exception.getMessage();
+        waitForErrorMessage = false;
+        onError();
+        if (!(exception instanceof Downloader.ResponseException)) {
+            Crashlytics.log(Log.ERROR, "PicassoLoader", "Unexpected error loading image");
+            Crashlytics.logException(exception);
+        }
+    }
+
+    @Override
+    public boolean isLikelyStillNeeded() {
+        return loadInto != null;
+    }
+
+    @Override
+    public String getListenerPurpose() {
+        if (!placeholderLoaded && placeholderUri != null) {
+            return "placeholder for " + loadInto.getContentDescription();
+        }
+        return "real image for " + loadInto.getContentDescription();
+    }
+
+    public void setUsePlaceholderIfError(boolean usePlaceholderIfError) {
+        this.usePlaceholderIfError = usePlaceholderIfError;
+    }
+
+    @Override
+    public final void onSuccess() {
+        imageLoading = false;
+
+        if (deregisterUriLoadListener(true)) {
+            load();
+            return;
+        }
+        imageLoaded = true;
+        onImageLoad(true);
+
     }
 
     public void setMaxRetries(int maxRetries) {
@@ -61,29 +124,13 @@ public class PicassoLoader implements Callback {
     }
 
     @Override
-    public final void onSuccess() {
-        imageLoading = false;
-
-        if (placeholderUri != null && !placeholderLoaded) {
-            placeholderLoaded = true;
-            load();
+    public final void onError() {
+        if (waitForErrorMessage) {
+            // this means we're registered as a listener with picasso to allow us to
+            // extract the error message (will call onError once that is available)
             return;
         }
-
-        imageLoaded = true;
-        onImageLoad(true);
-    }
-
-    public void withErrorDrawable(@DrawableRes int errorDrawable) {
-        this.errorResourceId = errorDrawable;
-    }
-
-    public boolean isImageLoaded() {
-        return imageLoaded;
-    }
-
-    @Override
-    public final void onError() {
+        deregisterUriLoadListener(false);
         imageLoading = false;
         onImageLoad(false);
         if (maxRetries >= 0 && retries >= maxRetries) {
@@ -95,25 +142,53 @@ public class PicassoLoader implements Callback {
         }
     }
 
+    public void withErrorDrawable(@DrawableRes int errorDrawable) {
+        this.errorResourceId = errorDrawable;
+    }
+
+    public boolean hasPlaceholder() {
+        return placeholderLoaded;
+    }
+
+    public boolean isImageLoaded() {
+        return imageLoaded;
+    }
+
+    public final void load() {
+        if (listener != null) {
+            listener.onBeforeImageLoad(this);
+        }
+        load(false);
+    }
+
     public void setRotation(float rotation) {
         this.rotation = rotation;
-    }
-
-    protected void onImageLoad(boolean success) {
-    }
-
-    protected void onImageUnavailable() {
     }
 
     public boolean isImageLoading() {
         return imageLoading;
     }
 
-    public void load() {
-        load(false);
+    public void loadNoCache() {
+        if (listener != null) {
+            listener.onBeforeImageLoad(this);
+        }
+        load(true);
     }
 
-    public void load(boolean forceServerRequest) {
+    protected final void onImageLoad(boolean success) {
+        if (listener != null) {
+            listener.onImageLoaded(this, success);
+        }
+    }
+
+    protected void onImageUnavailable() {
+        if (listener != null) {
+            listener.onImageUnavailable(this, lastLoadError);
+        }
+    }
+
+    protected final void load(boolean forceServerRequest) {
         synchronized (this) {
             if (imageLoading) {
                 return;
@@ -126,8 +201,10 @@ public class PicassoLoader implements Callback {
             } else {
                 PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
                 if(placeholderUri != null && placeholderLoaded && isLoadingGif()) {
+                    waitForErrorMessage = false;
                     // load the gif straight into the image manually.
                     CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader(loadInto.getContext());
+                    downloader.setListener(this);
                     try {
                         Downloader.Response rsp = downloader.load(Uri.parse(uriToLoad), -1);
                         if(rsp != null) {
@@ -144,6 +221,7 @@ public class PicassoLoader implements Callback {
                     }
 
                 } else {
+                    waitForErrorMessage = true;
                     RequestCreator loader = customiseLoader(buildLoader());
                     if (forceServerRequest) {
                         loader.memoryPolicy(MemoryPolicy.NO_CACHE);
@@ -154,9 +232,23 @@ public class PicassoLoader implements Callback {
                     //                } else {
                     //                    Log.d("PicassoLoader", "Loading: " + uriToLoad, new Exception().fillInStackTrace());
                     //                }
+                    registerUriLoadListener();
                     loader.into(loadInto, this);
                 }
             }
+        }
+    }
+
+    public void cancelImageLoadIfRunning() {
+        synchronized (this) {
+            deregisterUriLoadListener(false);
+            if (!imageLoading) {
+                return;
+            }
+            if (loadInto != null) {
+                PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
+            }
+            imageLoading = false;
         }
     }
 
@@ -173,28 +265,11 @@ public class PicassoLoader implements Callback {
         return uri.length() == idx + 4 || uri.charAt(idx+4) == '?';
     }
 
-    public void cancelImageLoadIfRunning() {
-        synchronized (this) {
-            if(!imageLoading) {
-                return;
-            }
-            if (loadInto != null) {
-                PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
-            }
-            imageLoading = false;
+    protected final RequestCreator buildLoader() {
+        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext()));
+        if (!placeholderLoaded || !usePlaceholderIfError) {
+            rc.error(errorResourceId);
         }
-    }
-
-    private Context getContext() {
-        Context context = loadInto.getContext();
-        if (context == null) {
-            throw new IllegalStateException("Context is not available in the view at this time");
-        }
-        return context;
-    }
-
-    protected RequestCreator buildLoader() {
-        RequestCreator rc = buildRequestCreator(PicassoFactory.getInstance().getPicassoSingleton(getContext())).error(errorResourceId);
         if (transformation != null) {
             rc.transform(transformation);
         }
@@ -213,6 +288,20 @@ public class PicassoLoader implements Callback {
         }
         rc.tag(PICASSO_REQUEST_TAG);
         return rc;
+    }
+
+    private Context getContext() {
+        Context context = loadInto.getContext();
+        if (context == null) {
+            throw new IllegalStateException("Context is not available in the view at this time");
+        }
+        return context;
+    }
+
+    public void resetAll() {
+        resetLoadState();
+        resetImageToLoad();
+        maxRetries = DEFAULT_AUTO_RETRIES;
     }
 
     private RequestCreator buildRequestCreator(Picasso picassoSingleton) {
@@ -240,22 +329,24 @@ public class PicassoLoader implements Callback {
         rotation = 0;
     }
 
-    public void resetAll() {
-        resetImageToLoad();
-        maxRetries = DEFAULT_AUTO_RETRIES;
-        resetLoadState();
+    public void resetLoadState() {
+        cancelImageLoadIfRunning();
+        retries = 0;
+        imageLoaded = false;
+        imageUnavailable = false;
+        placeholderLoaded = false;
+        lastLoadError = null;
     }
 
     public boolean isImageUnavailable() {
         return imageUnavailable;
     }
 
-    public void resetLoadState() {
-        retries = 0;
-        imageLoaded = false;
-        imageUnavailable = false;
-        placeholderLoaded = false;
-        cancelImageLoadIfRunning();
+    public void setUriToLoad(String uriToLoad) {
+        resetLoadState();
+        this.uriToLoad = uriToLoad;
+        this.resourceToLoad = Integer.MIN_VALUE;
+        this.fileToLoad = null;
     }
 
     protected int getResourceToLoad() {
@@ -284,19 +375,27 @@ public class PicassoLoader implements Callback {
         return uriToLoad;
     }
 
-    public void setUriToLoad(String uriToLoad) {
-        this.uriToLoad = uriToLoad;
-        this.resourceToLoad = Integer.MIN_VALUE;
-        this.fileToLoad = null;
-        resetLoadState();
+    protected T getLoadInto() {
+        return loadInto;
     }
 
     public boolean hasResourceToLoad() {
         return uriToLoad != null || fileToLoad != null || resourceToLoad > Integer.MIN_VALUE;
     }
 
-    protected ImageView getLoadInto() {
-        return loadInto;
+    /**
+     * @return true if the placeholder was loaded so need to re-call load
+     */
+    private boolean deregisterUriLoadListener(boolean success) {
+        if (placeholderUri != null && !placeholderLoaded) {
+            placeholderLoaded = success;
+            PicassoFactory.getInstance().deregisterListener(getContext(), Uri.parse(placeholderUri));
+            return true;
+        }
+        if (uriToLoad != null) {
+            PicassoFactory.getInstance().deregisterListener(getContext(), Uri.parse(uriToLoad));
+        }
+        return false;
     }
 
     public void setPlaceholderImageUri(String placeholderUri) {
@@ -307,8 +406,19 @@ public class PicassoLoader implements Callback {
         this.transformation = transformation;
     }
 
-    public void loadNoCache() {
+    private void registerUriLoadListener() {
+        if (placeholderUri != null && !placeholderLoaded) {
+            PicassoFactory.getInstance().registerListener(getContext(), Uri.parse(placeholderUri), this);
+        } else if (uriToLoad != null) {
+            PicassoFactory.getInstance().registerListener(getContext(), Uri.parse(uriToLoad), this);
+        }
+    }
 
-        load(true);
+    public interface PictureItemImageLoaderListener<T extends ImageView> {
+        void onBeforeImageLoad(PicassoLoader<T> loader);
+
+        void onImageLoaded(PicassoLoader<T> loader, boolean success);
+
+        void onImageUnavailable(PicassoLoader<T> loader, String lastLoadError);
     }
 }

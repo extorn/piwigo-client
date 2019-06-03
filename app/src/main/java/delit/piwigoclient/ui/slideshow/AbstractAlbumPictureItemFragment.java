@@ -42,12 +42,13 @@ import pl.droidsonroids.gif.GifImageView;
 
 import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_FLAG;
 
-public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<PictureResourceItem> {
+public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<PictureResourceItem> implements PicassoLoader.PictureItemImageLoaderListener<TouchImageView> {
 
     private static final String STATE_CURRENT_IMAGE_URL = "currentImageUrl";
     private String currentImageUrlDisplayed;
     private PicassoLoader loader;
     private ImageView imageView;
+    private ImageView imageLoadErrorView;
 
     public AbstractAlbumPictureItemFragment() {
     }
@@ -90,6 +91,8 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
         imageView = createImageViewer();
 
+        imageLoadErrorView = container.findViewById(R.id.image_load_error);
+
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +106,12 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     }
 
     protected ImageView createImageViewer() {
-        return createStaticImageViewer();
+        ImageView imageView = createStaticImageViewer();
+
+        loader = new PicassoLoader(imageView, this);
+        loader.setUsePlaceholderIfError(true);
+
+        return imageView;
     }
 
     protected ImageView createAnimatedGifViewer() {
@@ -125,32 +133,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             }
         });
 
-        loader = new PicassoLoader(imageView) {
-
-            @Override
-            public void load() {
-                showProgressIndicator();
-                imageView.setBackgroundColor(Color.TRANSPARENT);
-                super.load();
-            }
-
-            @Override
-            protected void onImageLoad(boolean success) {
-                if (success) {
-                    // do nothing
-                } else {
-                    imageView.setBackgroundColor(Color.DKGRAY);
-                }
-                EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
-                hideProgressIndicator();
-                getOverlaysVisibilityControl().runWithDelay(imageView);
-            }
-
-            @Override
-            protected void onImageUnavailable() {
-                getLoadInto().setImageResource(R.drawable.ic_file_gray_24dp);
-            }
-        };
         return imageView;
     }
 
@@ -185,33 +167,45 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
             }
         });
 
-        loader = new PicassoLoader(imageView) {
-
-            @Override
-            public void load() {
-                showProgressIndicator();
-                imageView.setBackgroundColor(Color.TRANSPARENT);
-                super.load();
-            }
-
-            @Override
-            protected void onImageLoad(boolean success) {
-                if (success) {
-                    imageView.resetZoom();
-                } else {
-                    imageView.setBackgroundColor(Color.DKGRAY);
-                }
-                EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
-                hideProgressIndicator();
-                getOverlaysVisibilityControl().runWithDelay(imageView);
-            }
-
-            @Override
-            protected void onImageUnavailable() {
-                getLoadInto().setImageResource(R.drawable.ic_file_gray_24dp);
-            }
-        };
         return imageView;
+    }
+
+    @Override
+    public void onBeforeImageLoad(PicassoLoader<TouchImageView> loader) {
+        showProgressIndicator();
+        imageView.setBackgroundColor(Color.TRANSPARENT);
+    }
+
+    @Override
+    public void onImageLoaded(PicassoLoader<TouchImageView> loader, boolean success) {
+        if (success) {
+            // hide the placeholder marker if appropriate.
+            imageView.setBackgroundColor(Color.TRANSPARENT);
+            if (loader.hasPlaceholder()) {
+                // placeholder loaded
+                if (loader.isImageLoaded()) {
+                    // hide the placeholder marker if appropriate.
+                    imageLoadErrorView.setVisibility(View.GONE);
+                }
+            }
+        }
+        EventBus.getDefault().post(new PiwigoSessionTokenUseNotificationEvent(PiwigoSessionDetails.getActiveSessionToken(ConnectionPreferences.getActiveProfile())));
+        hideProgressIndicator();
+        getOverlaysVisibilityControl().runWithDelay(imageView);
+    }
+
+    @Override
+    public void onImageUnavailable(PicassoLoader<TouchImageView> loader, String lastLoadError) {
+        if (!loader.hasPlaceholder()) {
+            imageView.setBackgroundColor(Color.DKGRAY);
+            imageView.setImageResource(R.drawable.ic_file_gray_24dp);
+        } else {
+            // show the placeholder marker
+            imageLoadErrorView.setVisibility(View.VISIBLE);
+        }
+        if (!PiwigoSessionDetails.isCached(ConnectionPreferences.getActiveProfile()) && lastLoadError != null) {
+            getUiHelper().showDetailedMsg(R.string.alert_error, lastLoadError);
+        }
     }
 
     @Override

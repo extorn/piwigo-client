@@ -16,6 +16,12 @@ public class ResizingPicassoLoader extends PicassoLoader {
         this.heightPx = heightPx;
     }
 
+    public ResizingPicassoLoader(ImageView loadInto, PicassoLoader.PictureItemImageLoaderListener listener, int widthPx, int heightPx) {
+        super(loadInto, listener);
+        this.widthPx = widthPx;
+        this.heightPx = heightPx;
+    }
+
     public void setCenterCrop(boolean centerCrop) {
         this.centerCrop = centerCrop;
     }

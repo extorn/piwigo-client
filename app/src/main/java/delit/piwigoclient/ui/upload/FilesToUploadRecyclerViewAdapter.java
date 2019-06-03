@@ -12,6 +12,10 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
@@ -19,10 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.recyclerview.widget.RecyclerView;
 import delit.piwigoclient.R;
+import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 
@@ -368,7 +370,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         void onRemove(FilesToUploadRecyclerViewAdapter adapter, File itemToRemove, boolean longClick);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements PicassoLoader.PictureItemImageLoaderListener {
         public final View mView;
         private final ProgressBar progressBar;
         private final TextView fileNameField;
@@ -392,7 +394,22 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             }
             fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
 
-            imageLoader = new ResizingPicassoLoader(fileForUploadImageView, 0, 0);
+            imageLoader = new ResizingPicassoLoader(fileForUploadImageView, this, 0, 0);
+        }
+
+        @Override
+        public void onBeforeImageLoad(PicassoLoader loader) {
+            fileForUploadImageView.setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        @Override
+        public void onImageLoaded(PicassoLoader loader, boolean success) {
+            fileForUploadImageView.setBackgroundColor(Color.TRANSPARENT);
+        }
+
+        @Override
+        public void onImageUnavailable(PicassoLoader loader, String lastLoadError) {
+            fileForUploadImageView.setBackgroundColor(Color.DKGRAY);
         }
 
         @Override
