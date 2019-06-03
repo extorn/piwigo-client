@@ -205,9 +205,12 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         SlideshowItemFragment selectedPage = (SlideshowItemFragment) getActiveFragment(position);
-        int pagerIndex = selectedPage.getPagerIndex();
-        if (pagerIndex < 0) {
-            throw new RuntimeException("Error pager index invalid!");
+        int pagerIndex = -1;
+        if (selectedPage != null) {
+            pagerIndex = selectedPage.getPagerIndex();
+            if (pagerIndex < 0) {
+                throw new RuntimeException("Error pager index invalid!");
+            }
         }
         if (selectedPage == null || pagerIndex == position) {
             // this if is needed because I am calling destroy item, but this is handled within the ViewPager too... I'm not sure why I am calling it any more, but
