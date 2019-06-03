@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -38,7 +37,6 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.DisplayUtils;
-import pl.droidsonroids.gif.GifImageView;
 
 import static delit.piwigoclient.business.CustomImageDownloader.EXIF_WANTED_URI_FLAG;
 
@@ -91,6 +89,9 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
         imageView = createImageViewer();
 
+        loader = new PicassoLoader(imageView, this);
+        loader.setUsePlaceholderIfError(true);
+
         imageLoadErrorView = container.findViewById(R.id.image_load_error);
 
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -107,32 +108,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
     protected ImageView createImageViewer() {
         ImageView imageView = createStaticImageViewer();
-
-        loader = new PicassoLoader(imageView, this);
-        loader.setUsePlaceholderIfError(true);
-
-        return imageView;
-    }
-
-    protected ImageView createAnimatedGifViewer() {
-        final GifImageView imageView = new GifImageView(getContext());
-
-        imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
-        imageView.setMinimumWidth(DisplayUtils.dpToPx(getContext(), 120));
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        imageView.setLayoutParams(layoutParams);
-        //TODO allow zooming in on the image.... or scrap all of this and load the gif into the ExoPlayer as a movie (probably better!)
-//        imageView.setScaleType(ImageView.ScaleType.MATRIX);
-        imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-
-        imageView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                getOverlaysVisibilityControl().runWithDelay(imageView);
-                return false;
-            }
-        });
-
         return imageView;
     }
 
@@ -259,8 +234,10 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
         // reset the screen state if we're entering for the first time
         if (currentImageUrlDisplayed == null) {
-            // currently only the loader needs resetting.
-            loader.resetAll();
+            if (loader != null) {
+                // currently only the loader needs resetting.
+                loader.resetAll();
+            }
         }
 
         // Load the content into the screen.

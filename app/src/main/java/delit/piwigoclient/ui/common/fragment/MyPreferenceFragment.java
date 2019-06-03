@@ -57,12 +57,6 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat impl
         this.pagerIndex = pagerIndex;
     }
 
-    @Override
-    public void onDetach() {
-        onPageDeselected();
-        super.onDetach();
-    }
-
     protected UIHelper getUiHelper() {
         return uiHelper;
     }
@@ -164,12 +158,6 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat impl
 
     protected String getPreferenceValueOrNull(@StringRes int preferenceKey) {
         return getPreferenceManager().getSharedPreferences().getString(getString(preferenceKey), null);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        onPageSelected();
     }
 
     protected int getPreferenceValueOrMinInt(@StringRes int preferenceKey) {

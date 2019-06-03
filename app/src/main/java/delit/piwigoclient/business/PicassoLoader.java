@@ -2,6 +2,7 @@ package delit.piwigoclient.business;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 import android.widget.ImageView;
@@ -23,6 +24,7 @@ import java.io.IOException;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.PicassoFactory;
+import delit.piwigoclient.util.DisplayUtils;
 import pl.droidsonroids.gif.GifDrawable;
 
 /**
@@ -201,25 +203,12 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
             } else {
                 PicassoFactory.getInstance().getPicassoSingleton(getContext()).cancelRequest(loadInto);
                 if(placeholderUri != null && placeholderLoaded && isLoadingGif()) {
-                    waitForErrorMessage = false;
-                    // load the gif straight into the image manually.
-                    CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader(loadInto.getContext());
-                    downloader.setListener(this);
-                    try {
-                        Downloader.Response rsp = downloader.load(Uri.parse(uriToLoad), -1);
-                        if(rsp != null) {
-                            //TODO create a custom video downloader that creates and uses a gif drawable as the basis for the stream decoder perhaps.
-                            GifDrawable drawable = new GifDrawable(rsp.getInputStream());
-                            loadInto.setImageDrawable(drawable);
-                            onSuccess();
-                        }
-                    } catch (IOException e) {
-                        Crashlytics.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
-                        Crashlytics.logException(e);
-                        loadInto.setImageResource(errorResourceId);
-                        onError();
+                    GifLoaderTask task = new GifLoaderTask();
+                    if (DisplayUtils.isRunningOnUIThread()) {
+                        task.execute(this);
+                    } else {
+                        task.doInBackground(this);
                     }
-
                 } else {
                     waitForErrorMessage = true;
                     RequestCreator loader = customiseLoader(buildLoader());
@@ -420,5 +409,36 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
         void onImageLoaded(PicassoLoader<T> loader, boolean success);
 
         void onImageUnavailable(PicassoLoader<T> loader, String lastLoadError);
+    }
+
+    private class GifLoaderTask extends AsyncTask<PicassoLoader, Void, Void> {
+
+        @Override
+        protected Void doInBackground(PicassoLoader... picassoLoaders) {
+            PicassoLoader loader = picassoLoaders[0];
+            waitForErrorMessage = false;
+            // load the gif straight into the image manually.
+            CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader(loadInto.getContext());
+            downloader.setListener(loader);
+            try {
+                Downloader.Response rsp = downloader.load(Uri.parse(uriToLoad), -1);
+                if (rsp != null) {
+                    //TODO create a custom video downloader that creates and uses a gif drawable as the basis for the stream decoder perhaps.
+                    GifDrawable drawable = new GifDrawable(rsp.getInputStream());
+                    loadInto.setImageDrawable(drawable);
+                    onSuccess();
+                } else {
+                    Crashlytics.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
+                    loadInto.setImageResource(errorResourceId);
+                    onError();
+                }
+            } catch (IOException e) {
+                Crashlytics.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
+                Crashlytics.logException(e);
+                loadInto.setImageResource(errorResourceId);
+                onError();
+            }
+            return null;
+        }
     }
 }

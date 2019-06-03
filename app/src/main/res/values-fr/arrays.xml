@@ -120,38 +120,11 @@
          - ? Veuillez m'envoyer un courriel (il y a un lien courriel dans la barre de navigation) pour demander ce dont vous avez besoin ou ce que vous voulez que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.4.0.6</item>
+        <item>1.4.0.7</item>
         <item>"Correction d'un bug :
-                 - Quelques changements mineurs
-                 - Les images s'affichent à nouveau correctement sur les anciens appareils
-                 - Corrections à l'affichage hors ligne - ce correctif n'est pas encore tout à fait complet
+                - Quelques changements mineurs
+                - Quelques accidents
                Changements :
-                 - Migration vers une nouvelle routine de compression vidéo - devrait maintenant compresser une vidéo dans n'importe quel format que l'application est capable de lire"</item>
-        <item>1.4.0.5</item>
-        <item>"Correction d'un bug :
-                - Correction vitale"</item>
-        <item>1.4.0.4</item>
-        <item>"Correction d'un bug :
-            - Crash lors du marquage d'une image en tant que favori
-            - Crash lors de l'utilisation de l'ordre de tri des dates avec un dossier contenant un nouveau dossier inutilisé"</item>
-        <item>1.4.0.3</item>
-        <item>"Changements :
-            - Meilleure gestion des données du modèle de vue"</item>
-        <item>1.4.0.2</item>
-        <item>"Changements :
-                - Prise en charge du tri des albums enfants par nom, date de la dernière mise à jour ou ordre par défaut du serveur"</item>
-        <item>1.4.0.1</item>
-        <item>"Changements :
-                - L'ordre du diaporama reflète maintenant l'ordre de tri de l'album lorsqu'il est inversé
-                - réduction de la taille du cache des éléments du diaporama pour réduire les changements de plantage sur l'application"</item>
-        <item>1.4.0.0</item>
-        <item>"Changements :
-                - Ajout de la compression vidéo optionnelle de toutes les vidéos mp4 (format 16:9 seulement) en pré-téléchargement (non configurable actuellement)
-                - Filtrage des types de fichiers activé dans la fenêtre de sélection de fichiers
-                - Vous pouvez maintenant cliquer sur l'icône de l'application dans la barre de navigation pour rafraîchir la connexion de l'utilisateur
-                - Ajout d'une préférence pour permettre d'inverser l'ordre de tri des photos de l'album
-                - Permet de masquer et d'afficher les sous-albums à l'intérieur d'un album (cliquez sur l'en-tête des albums)
-               Correction d'un bug :
-                - Problèmes multiples dans le processus de téléchargement"</item>
+                - L'accès hors ligne aux données récupérées et mises en cache fonctionne maintenant (nouvel élément de navigation)"</item>
     </string-array>
 </resources>

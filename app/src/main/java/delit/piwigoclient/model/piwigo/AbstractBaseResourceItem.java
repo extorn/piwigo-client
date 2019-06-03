@@ -261,6 +261,22 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
         addResourceFile(img);
     }
 
+    public String getFirstSuitableUrl() {
+        String uri = getThumbnailUrl();
+        if (uri == null) {
+            for (AbstractBaseResourceItem.ResourceFile f : getAvailableFiles()) {
+                if (f != getFullSizeFile()) {
+                    uri = getFileUrl(f.getName());
+                    break;
+                }
+            }
+        }
+        if (uri == null) {
+            uri = getFileUrl(getFullSizeFile().getName());
+        }
+        return uri;
+    }
+
     public static class ResourceFile implements Comparable<ResourceFile>, Parcelable, Serializable {
 
         private static final long serialVersionUID = 2807336261739692481L;

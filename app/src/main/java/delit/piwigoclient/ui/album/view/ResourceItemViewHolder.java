@@ -66,10 +66,7 @@ public class ResourceItemViewHolder<S extends Identifiable&Parcelable> extends A
         if (rf != null) {
             imageLoader.setUriToLoad(rf);
         } else {
-            if (newItem.getThumbnailUrl() != null) {
-                // this is really bizarre - but show something for now.
-                imageLoader.setUriToLoad(newItem.getThumbnailUrl());
-            }
+            imageLoader.setUriToLoad(resItem.getFirstSuitableUrl());
         }
         imageLoader.setCenterCrop(true);
     }
