@@ -118,8 +118,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
         throw new IllegalArgumentException("Unsupported slideshow item type at position " + position);
     }
 
-    @Override
-    public Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
+    protected <T extends Fragment & PagerItemFragment> T createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
 
         GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
         SlideshowItemFragment fragment = null;
@@ -138,7 +137,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
             fragment.setArguments(args);
         }
         if (fragment != null) {
-            return fragment;
+            return (T) fragment;
         }
         //TODO handle this better.
         throw new RuntimeException("unsupported gallery item.");
@@ -206,7 +205,11 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         SlideshowItemFragment selectedPage = (SlideshowItemFragment) getActiveFragment(position);
-        if(selectedPage == null || selectedPage.getPagerIndex() == position) {
+        int pagerIndex = selectedPage.getPagerIndex();
+        if (pagerIndex < 0) {
+            throw new RuntimeException("Error pager index invalid!");
+        }
+        if (selectedPage == null || pagerIndex == position) {
             // this if is needed because I am calling destroy item, but this is handled within the ViewPager too... I'm not sure why I am calling it any more, but
             // things don't work if I don't.
             super.destroyItem(container, position, object);

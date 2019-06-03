@@ -10,27 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.Preference;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 
 public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
 
-    private View view;
+    public AutoUploadJobsPreferenceFragment(int pagerIndex) {
+        super(pagerIndex);
+    }
 
-    public AutoUploadJobsPreferenceFragment(){}
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.pref_auto_upload_jobs, rootKey);
-    }
-
-    public static AutoUploadJobsPreferenceFragment newInstance() {
-        AutoUploadJobsPreferenceFragment fragment = new AutoUploadJobsPreferenceFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     private SharedPreferences.OnSharedPreferenceChangeListener prefChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {

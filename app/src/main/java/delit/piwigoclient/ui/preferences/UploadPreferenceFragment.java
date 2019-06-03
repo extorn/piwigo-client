@@ -25,6 +25,10 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Upload Settings";
 
+    public UploadPreferenceFragment(int pagerIndex) {
+        super(pagerIndex);
+    }
+
     // Not needed from API v23 and above
     public Context getContext() {
         return getActivity().getApplicationContext();

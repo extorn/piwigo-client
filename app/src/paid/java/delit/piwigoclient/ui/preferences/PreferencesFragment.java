@@ -29,10 +29,10 @@ public class PreferencesFragment extends CommonPreferencesFragment {
         }
 
         @Override
-        protected Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
+        protected <T extends Fragment & PagerItemFragment> T createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
             switch (position) {
                 case 4:
-                    return AutoUploadJobsPreferenceFragment.newInstance();
+                    return (T) new AutoUploadJobsPreferenceFragment(position);
                 default:
                     return super.createNewItem(fragmentTypeNeeded, position);
             }

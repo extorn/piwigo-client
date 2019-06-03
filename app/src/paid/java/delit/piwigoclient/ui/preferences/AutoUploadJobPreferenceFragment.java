@@ -8,17 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceManager;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.preference.CheckBoxPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -37,8 +38,6 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
     private PreferenceChangeListener prefChangeListener;
     private int actionId = -1;
     private int jobId = -1;
-
-    public AutoUploadJobPreferenceFragment(){}
 
     public static AutoUploadJobPreferenceFragment newInstance(int actionId, int jobId) {
         AutoUploadJobPreferenceFragment fragment = new AutoUploadJobPreferenceFragment();

@@ -7,6 +7,11 @@ import delit.piwigoclient.R;
  */
 
 public class ConnectionPreferenceFragment extends BaseConnectionPreferenceFragment {
+
+    public ConnectionPreferenceFragment(int pagerIndex) {
+        super(pagerIndex);
+    }
+
     @Override
     protected void buildPreferencesViewAndInitialise(String rootKey) {
         super.buildPreferencesViewAndInitialise(rootKey);

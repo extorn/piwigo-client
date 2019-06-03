@@ -166,40 +166,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             }
         });
 
-        final ViewTreeObserver.OnPreDrawListener predrawListener = new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                try {
-                    if (!viewHolder.imageLoader.isImageLoaded() && !viewHolder.imageLoader.isImageLoading()) {
-                        int imgSize = scalingQuality;
-                        if (imgSize == Integer.MAX_VALUE) {
-                            imgSize = viewHolder.fileForUploadImageView.getMeasuredWidth();
-                        } else {
-                            // need that math.max to ensure that the image size remains positive
-                            //FIXME How can this ever be called before the ImageView object has a size?
-                            imgSize = Math.max(SCALING_QUALITY_VLOW, Math.min(scalingQuality, viewHolder.fileForUploadImageView.getMeasuredWidth()));
-                        }
-                        viewHolder.imageLoader.setResizeTo(imgSize, imgSize);
-                        viewHolder.imageLoader.load();
-                    }
-                } catch (IllegalStateException e) {
-                    Crashlytics.logException(e);
-                    // image loader not configured yet...
-                }
-                return true;
-            }
-        };
-        viewHolder.fileForUploadImageView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View v) {
-                viewHolder.fileForUploadImageView.getViewTreeObserver().addOnPreDrawListener(predrawListener);
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View v) {
-                viewHolder.fileForUploadImageView.getViewTreeObserver().removeOnPreDrawListener(predrawListener);
-            }
-        });
+        final ViewTreeObserver.OnPreDrawListener predrawListener = new UploadItemPreDrawListener(viewHolder, scalingQuality);
+        viewHolder.fileForUploadImageView.addOnAttachStateChangeListener(new ImageViewAttachListener(viewHolder.fileForUploadImageView, predrawListener));
 
         return viewHolder;
     }
@@ -415,6 +383,59 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         @Override
         public String toString() {
             return super.toString() + " '" + mItem.getName() + "'";
+        }
+    }
+
+    private static class UploadItemPreDrawListener implements ViewTreeObserver.OnPreDrawListener {
+
+        private final ViewHolder viewHolder;
+        private final int scalingQuality;
+
+        public UploadItemPreDrawListener(ViewHolder viewHolder, int scalingQuality) {
+            this.viewHolder = viewHolder;
+            this.scalingQuality = scalingQuality;
+        }
+
+        @Override
+        public boolean onPreDraw() {
+            try {
+                if (!viewHolder.imageLoader.isImageLoaded() && !viewHolder.imageLoader.isImageLoading()) {
+                    int imgSize = scalingQuality;
+                    if (imgSize == Integer.MAX_VALUE) {
+                        imgSize = viewHolder.fileForUploadImageView.getMeasuredWidth();
+                    } else {
+                        // need that math.max to ensure that the image size remains positive
+                        //FIXME How can this ever be called before the ImageView object has a size?
+                        imgSize = Math.max(SCALING_QUALITY_VLOW, Math.min(scalingQuality, viewHolder.fileForUploadImageView.getMeasuredWidth()));
+                    }
+                    viewHolder.imageLoader.setResizeTo(imgSize, imgSize);
+                    viewHolder.imageLoader.load();
+                }
+            } catch (IllegalStateException e) {
+                Crashlytics.logException(e);
+                // image loader not configured yet...
+            }
+            return true;
+        }
+    }
+
+    private static class ImageViewAttachListener implements View.OnAttachStateChangeListener {
+        private final ViewTreeObserver.OnPreDrawListener predrawListener;
+        private final AppCompatImageView imageView;
+
+        public ImageViewAttachListener(AppCompatImageView imageView, ViewTreeObserver.OnPreDrawListener predrawListener) {
+            this.imageView = imageView;
+            this.predrawListener = predrawListener;
+        }
+
+        @Override
+        public void onViewAttachedToWindow(View v) {
+            imageView.getViewTreeObserver().addOnPreDrawListener(predrawListener);
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(View v) {
+            imageView.getViewTreeObserver().removeOnPreDrawListener(predrawListener);
         }
     }
 }

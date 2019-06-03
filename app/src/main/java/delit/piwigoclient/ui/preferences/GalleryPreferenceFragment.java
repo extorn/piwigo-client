@@ -5,10 +5,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.preference.SwitchPreference;
-import androidx.preference.Preference;
 import android.view.MenuItem;
 import android.view.View;
+
+import androidx.preference.Preference;
+import androidx.preference.SwitchPreference;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -75,6 +76,10 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         }
     };
     private View view;
+
+    public GalleryPreferenceFragment(int pagerIndex) {
+        super(pagerIndex);
+    }
 
     // Not needed from API v23 and above
     public Context getContext() {

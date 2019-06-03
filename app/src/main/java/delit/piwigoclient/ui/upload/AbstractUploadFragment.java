@@ -882,8 +882,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (Boolean.TRUE == positiveAnswer) {
                 AbstractUploadFragment fragment = getUiHelper().getParent();
                 UploadJob activeJob = fragment.getActiveJob(getContext());
-                activeJob.cancelFileUpload(itemToRemove);
-                fragment.getFilesForUploadViewAdapter().remove(itemToRemove);
+                if (activeJob != null) {
+                    activeJob.cancelFileUpload(itemToRemove);
+                    fragment.getFilesForUploadViewAdapter().remove(itemToRemove);
+                }
             }
         }
     }

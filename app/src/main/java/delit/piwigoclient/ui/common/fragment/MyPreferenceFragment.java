@@ -20,6 +20,7 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
+import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.common.preference.ClientCertificatePreference;
 import delit.piwigoclient.ui.common.preference.CustomEditTextPreference;
 import delit.piwigoclient.ui.common.preference.CustomEditTextPreferenceDialogFragmentCompat;
@@ -41,18 +42,25 @@ import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
+public abstract class MyPreferenceFragment extends PreferenceFragmentCompat implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
+    private static final String STATE_PAGER_INDEX_POS = "pager_index_pos";
     private UIHelper uiHelper;
     private Context c;
+    private int pagerIndex = -1;
     protected static final String DIALOG_FRAGMENT_TAG =
             "androidx.preference.PreferenceFragment.DIALOG";
 
-    public static final class DummyPreferencesFragment extends MyPreferenceFragment {
+    public MyPreferenceFragment() {
+    }
 
-        @Override
-        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+    public MyPreferenceFragment(int pagerIndex) {
+        this.pagerIndex = pagerIndex;
+    }
 
-        }
+    @Override
+    public void onDetach() {
+        onPageDeselected();
+        super.onDetach();
     }
 
     protected UIHelper getUiHelper() {
@@ -89,19 +97,7 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onDetach() {
-        onFragmentHidden();
-        super.onDetach();
-    }
-
-    public void onFragmentHidden() {
-        if (uiHelper != null) {
-            uiHelper.deregisterFromActiveServiceCalls();
-            uiHelper.closeAllDialogs();
-        }
-    }
-
-    public void onFragmentShown() {
+    public void onPageSelected() {
         //TODO try force always hiding the keyboard
         if (uiHelper != null) {
             uiHelper.registerToActiveServiceCalls();
@@ -111,9 +107,28 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
     }
 
     @Override
+    public void onPageDeselected() {
+        if (uiHelper != null) {
+            uiHelper.deregisterFromActiveServiceCalls();
+            uiHelper.closeAllDialogs();
+        }
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         uiHelper.onSaveInstanceState(outState);
+        outState.putInt(STATE_PAGER_INDEX_POS, pagerIndex);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (savedInstanceState != null) {
+            uiHelper.onRestoreSavedInstanceState(savedInstanceState);
+            pagerIndex = savedInstanceState.getInt(STATE_PAGER_INDEX_POS);
+        }
+        uiHelper.registerToActiveServiceCalls();
     }
 
     // Not needed from API v23 and above
@@ -123,12 +138,8 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (savedInstanceState != null) {
-            uiHelper.onRestoreSavedInstanceState(savedInstanceState);
-        }
-        uiHelper.registerToActiveServiceCalls();
+    public int getPagerIndex() {
+        return pagerIndex;
     }
 
     protected Preference findPreference(int preferenceId) {
@@ -155,6 +166,12 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
         return getPreferenceManager().getSharedPreferences().getString(getString(preferenceKey), null);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        onPageSelected();
+    }
+
     protected int getPreferenceValueOrMinInt(@StringRes int preferenceKey) {
 
         try {
@@ -176,11 +193,15 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat {
         return Integer.MIN_VALUE;
     }
 
+    public static final class DummyPreferencesFragment extends MyPreferenceFragment {
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        onFragmentShown();
+        public DummyPreferencesFragment(int pagerIndex) {
+            super(pagerIndex);
+        }
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        }
     }
 
     protected DialogFragment onDisplayCustomPreferenceDialog(Preference preference) {

@@ -1185,6 +1185,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(AlbumSelectionCompleteEvent event) {
         if (getUiHelper().isTrackingRequest(event.getActionId())) {
+            if (event.getCurrentSelection().size() != event.getSelectedItems().size()) {
+                // action was cancelled due to inability to load the albums
+                return;
+            }
             updatedLinkedAlbumSet = event.getSelectedItems();
             setLinkedAlbumFieldText(linkedAlbumsField, updatedLinkedAlbumSet);
 

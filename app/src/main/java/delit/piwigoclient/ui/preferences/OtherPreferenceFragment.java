@@ -15,6 +15,10 @@ import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 
 public class OtherPreferenceFragment extends MyPreferenceFragment {
 
+    public OtherPreferenceFragment(int pagerIndex) {
+        super(pagerIndex);
+    }
+
     // Not needed from API v23 and above
     public Context getContext() {
         return getActivity().getApplicationContext();

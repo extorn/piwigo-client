@@ -235,6 +235,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     public static void deleteStateFromDisk(Context c, UploadJob thisUploadJob) {
+        if (thisUploadJob == null) {
+            return; // out of sync! Job no longer exists presumably.
+        }
         File stateFile = thisUploadJob.getLoadedFromFile();
         if (stateFile == null) {
             stateFile = getJobStateFile(c, thisUploadJob.isRunInBackground(), thisUploadJob.getJobId());

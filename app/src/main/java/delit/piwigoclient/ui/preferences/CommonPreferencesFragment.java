@@ -26,7 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.preference.PreferenceFragmentCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.gms.ads.AdView;
@@ -154,8 +153,6 @@ public class CommonPreferencesFragment extends MyFragment {
      */
     protected class CommonPreferencesPagerAdapter extends MyFragmentRecyclerPagerAdapter {
 
-        private int lastPosition;
-
         public CommonPreferencesPagerAdapter(FragmentManager fm) {
             super(fm);
         }
@@ -179,14 +176,7 @@ public class CommonPreferencesFragment extends MyFragment {
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            PreferenceFragmentCompat fragment = (PreferenceFragmentCompat) super.instantiateItem(container, position);
-            if (position == ((ViewPager) container).getCurrentItem()) {
-                if (lastPosition >= 0 && lastPosition != position) {
-                    onPageDeselected(lastPosition);
-                }
-                lastPosition = position;
-            }
-            return fragment;
+            return super.instantiateItem(container, position);
         }
 
         @Override
@@ -197,32 +187,29 @@ public class CommonPreferencesFragment extends MyFragment {
                 activeFragment = (MyPreferenceFragment) instantiateItem(container, position);
 //            activeFragment.onPageSelected();
             }
-            activeFragment.onFragmentShown();
-        }
-
-        public void onPageDeselected(int position) {
-            Fragment managedFragment = getActiveFragment(position);
-            if (managedFragment != null) {
-                // if this slideshow item still exists (not been deleted by user)
-                MyPreferenceFragment selectedPage = (MyPreferenceFragment) managedFragment;
-                selectedPage.onFragmentHidden();
-            }
+            activeFragment.onPageSelected();
         }
 
         @Override
-        protected Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
+        protected <T extends Fragment & PagerItemFragment> T createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
+            Fragment fragment;
             switch (position) {
                 case 0:
-                    return new ConnectionPreferenceFragment();
+                    fragment = new ConnectionPreferenceFragment(position);
+                    break;
                 case 1:
-                    return new GalleryPreferenceFragment();
+                    fragment = new GalleryPreferenceFragment(position);
+                    break;
                 case 2:
-                    return new UploadPreferenceFragment();
+                    fragment = new UploadPreferenceFragment(position);
+                    break;
                 case 3:
-                    return new OtherPreferenceFragment();
+                    fragment = new OtherPreferenceFragment(position);
+                    break;
                 default:
                     throw new RuntimeException("PagerAdapter count doesn't match positions available");
             }
+            return (T) fragment;
         }
 
         @Override

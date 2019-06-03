@@ -57,6 +57,10 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     private String preferencesKey;
     private ResponseCacheButtonTextRetriever responseCacheButtonTextRetriever;
 
+    public BaseConnectionPreferenceFragment(int pagerIndex) {
+        super(pagerIndex);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {

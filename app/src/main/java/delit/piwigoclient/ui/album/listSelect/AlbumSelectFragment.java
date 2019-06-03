@@ -9,13 +9,14 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
@@ -139,8 +140,10 @@ public class AlbumSelectFragment extends ListViewLongSetSelectFragment<Available
             // need to synchronise as the list adapter may be being rebuilt.
             HashSet<CategoryItemStub> selectedAlbums = new HashSet<>(selectedIdsSet.size());
             AvailableAlbumsListAdapter listAdapter = getListAdapter();
-            for (Long selectedId : selectedIdsSet) {
-                selectedAlbums.add(listAdapter.getItemById(selectedId));
+            if (listAdapter != null) {
+                for (Long selectedId : selectedIdsSet) {
+                    selectedAlbums.add(listAdapter.getItemById(selectedId));
+                }
             }
             EventBus.getDefault().post(new AlbumSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedAlbums));
             // now pop this screen off the stack.

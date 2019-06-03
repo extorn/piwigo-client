@@ -1123,10 +1123,10 @@ public abstract class UIHelper<T> {
         public QueuedDialogMessage(Parcel in) {
             id = in.readInt();
             titleId = in.readInt();
-            message = ParcelUtils.readString(in);
+            message = in.readString();
             positiveButtonTextId = in.readInt();
             cancellable = ParcelUtils.readBool(in);
-            detail = ParcelUtils.readString(in);
+            detail = in.readString();
             listener = ParcelUtils.readValue(in, QuestionResultListener.class.getClassLoader(), QuestionResultListener.class);
             hasListener = ParcelUtils.readBool(in);
         }
@@ -1135,10 +1135,10 @@ public abstract class UIHelper<T> {
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeInt(id);
             dest.writeInt(titleId);
-            dest.writeValue(message);
+            dest.writeString(message);
             dest.writeInt(positiveButtonTextId);
             ParcelUtils.writeBool(dest, cancellable);
-            dest.writeValue(detail);
+            dest.writeString(detail);
             try {
                 dest.writeSerializable(listener);
             } catch(RuntimeException e) {

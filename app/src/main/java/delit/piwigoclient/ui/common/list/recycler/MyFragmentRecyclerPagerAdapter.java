@@ -107,7 +107,14 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
             List<Fragment> fragments = mFragmentManager.getFragments();
             // if fragments is not empty then the page was very probably rotated
             for (Fragment f : fragments) {
-                activeFragments.put(((PagerItemFragment) f).getPagerIndex(), f);
+                int pagerIndex = ((PagerItemFragment) f).getPagerIndex();
+                if (pagerIndex < 0) {
+                    throw new RuntimeException("Error pager index invalid!");
+                }
+                Fragment removed = activeFragments.put(pagerIndex, f);
+                if (removed != null) {
+                    throw new RuntimeException("Two fragments share the same pager index: " + pagerIndex);
+                }
             }
         }
 
@@ -118,6 +125,9 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         }
 
         f = createNewItem(fragmentTypeNeeded, position);
+        if (!(f instanceof PagerItemFragment)) {
+            Log.e(TAG, "Fragment must implement PagerItemFragment");
+        }
 
         addFragmentToTransaction(container, f, position);
 
@@ -144,7 +154,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         mCurTransaction.add(container.getId(), f);
     }
 
-    protected abstract Fragment createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position);
+    protected abstract <T extends Fragment & PagerItemFragment> T createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position);
 
     public void onDeleteItem(ViewGroup container, int position) {
 
