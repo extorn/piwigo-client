@@ -5,6 +5,6 @@ import android.widget.ImageView;
 public class AlbumGifPictureItemFragment extends AlbumPictureItemFragment {
     @Override
     protected ImageView createImageViewer() {
-        return super.createAnimatedGifViewer();
+        return createAnimatedGifViewer();
     }
 }
