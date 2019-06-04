@@ -120,6 +120,9 @@
          - ? Veuillez m'envoyer un courriel (il y a un lien courriel dans la barre de navigation) pour demander ce dont vous avez besoin ou ce que vous voulez que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.8</item>
+        <item>"Correction d'un bug :
+            - Correction d'un crash Android 4"</item>
         <item>1.4.0.7</item>
         <item>"Correction d'un bug :
                 - Quelques changements mineurs
