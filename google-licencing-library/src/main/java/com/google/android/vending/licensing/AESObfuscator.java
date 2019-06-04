@@ -25,7 +25,6 @@ import com.google.android.vending.licensing.util.Base64DecoderException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -104,7 +103,7 @@ Crashlytics.logException(e);
         try {
             // Header is appended as an integrity check
             Cipher cipher = buildEncrypter();
-            byte[] data = cipher.doFinal((header + key + original).getBytes(StandardCharsets.UTF_8));
+            byte[] data = cipher.doFinal((header + key + original).getBytes(UTF8));
             ByteArrayOutputStream baos = new ByteArrayOutputStream(data.length + 16);
             byte[] iv = cipher.getIV();
             if(iv == null || iv.length != 16) {
@@ -134,7 +133,7 @@ Crashlytics.logException(e);
             byte[] ivBytes = Arrays.copyOf(bytes, 16);
             byte[] dataBytes = Arrays.copyOfRange(bytes, 16, bytes.length);
             Cipher cipher = buildDecrypter(ivBytes);
-            String result = new String(cipher.doFinal(dataBytes), StandardCharsets.UTF_8);
+            String result = new String(cipher.doFinal(dataBytes), UTF8);
             // Check for presence of header. This serves as a final integrity check, for cases
             // where the block size is correct during decryption.
             int headerIndex = result.indexOf(header+key);
@@ -187,6 +186,11 @@ Crashlytics.logException(e);
             }
             throw new RuntimeException("Invalid environment", e);
         } catch (InvalidAlgorithmParameterException e) {
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
+            throw new RuntimeException("Invalid environment", e);
+        } catch (UnsupportedEncodingException e) {
             if (recordErrors) {
                 Crashlytics.logException(e);
             }
