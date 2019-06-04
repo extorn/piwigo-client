@@ -50,8 +50,8 @@
     <string name="admin_email" translatable="false"><a href="mailto:gd_apps-piwigoclient@yahoo.co.uk">gd_apps-piwigoclient@yahoo.co.uk</a></string>
     <string name="alert_title_login">登录</string>
     <string name="alert_title_connectionTest">连接测试</string>
-    <string name="alert_message_success_connectionTest">成功\ n用户类型：％1$s。</string>
-    <string name="alert_message_no_available_image_sizes">警告\ n服务器未报告可用的图像大小。</string>
+    <string name="alert_message_success_connectionTest">成功\n用户类型：％1$s。</string>
+    <string name="alert_message_no_available_image_sizes">警告\n服务器未报告可用的图像大小。</string>
     <string name="alert_success">成功！</string>
     <string name="alert_partial_success">INCOMPLETE</string>
     <string name="alert_error">错误</string>
@@ -683,8 +683,8 @@ SOFTWARE.
     <string name="alert_title_error_connecting_to_server">连接到服务器时出错</string>
     <string name="alert_warning_message_self_signed_certificates">自签名SSL证书不应在面向公众的服务器上使用（在互联网上） - 请访问https://letsencrypt.org或类似方法进行调查。这仅用于测试目的。</string>
     <string name="alert_error_adding_certificate_to_truststore">将证书添加到信任库时出错</string>
-    <string name="alert_add_cert_to_truststore_pattern">将证书链添加到可信CA列表中？\ n \ n</string>
-    <string name="certificate_summary_pattern">主题：％1$s \ n有效期：％2$s  - ％3$s \ nSerial：％4$s</string>
+    <string name="alert_add_cert_to_truststore_pattern">将证书链添加到可信CA列表中？\n \n</string>
+    <string name="certificate_summary_pattern">主题：％1$s \n有效期：％2$s  - ％3$s \nSerial：％4$s</string>
     <string name="alert_http_engine_shutdown">HTTP引擎关闭。将根据需要自动重启。</string>
     <string name="alert_clearing_certificate_use_history">重置选择为受信任的证书列表</string>
     <string name="alert_delete_all_files_selected_for_upload">删除所有选择上传的文件？</string>
@@ -799,7 +799,7 @@ SOFTWARE.
     <string name="alert_msg_piwigo_method_not_available_pattern">该服务器上不再提供Piwigo WS方法％1$s。禁用应用中受影响的功能。您刚刚停用或删除了服务器插件吗？</string>
     <string name="removing_favorite">删除收藏夹</string>
     <string name="adding_favorite">添加收藏夹</string>
-    <string name="alert_error_unsupported_features_pattern">此应用程序支持的某些功能在您的服务器上不可用。要启用：\ n1。安装PiwigoClientWsExts插件。\ n2。注销并重新登录此应用程序。\ n \ n您将在一周内提醒您。</string>
+    <string name="alert_error_unsupported_features_pattern">此应用程序支持的某些功能在您的服务器上不可用。要启用：\n1。安装PiwigoClientWsExts插件。\n2。注销并重新登录此应用程序。\n \n您将在一周内提醒您。</string>
     <string name="tag_will_be_created_when_resource_is_saved">使用用户标签插件添加新标签。只有在保存资源后才会创建标记。</string>
     <string name="resource_details_updated_message">资源详情已更新</string>
     <string name="alert_server_call_in_progress_please_wait">服务器调用正在进行中请等待此操作再次尝试之前完成。</string>
@@ -831,11 +831,11 @@ SOFTWARE.
     <string name="certificate_chain_not_verifiable_error">无法使用此设备上的证书验证证书链。</string>
     <string name="certificate_chain_not_verifiable_error_detail">无法使用此设备上的证书验证证书链。要解决此问题，请允许此应用维护受信任证书列表（在此应用连接设置中）。</string>
     <string name="undefined_error_msg">未定义的错误</string>
-    <string name="resource_unavailable_error_msg_pattern">无法访问请求的资源。\ n \ nHTHTTP状态代码（％1$d）</string>
-    <string name="server_error_msg_pattern">服务器或服务器与设备之间出现问题。\ n \ nHTHTTP状态代码（％1$d）</string>
-    <string name="redirect_error_msg_pattern">请求重定向错误：\ nHTTP状态代码（％1$d）</string>
+    <string name="resource_unavailable_error_msg_pattern">无法访问请求的资源。\n \nHTHTTP状态代码（％1$d）</string>
+    <string name="server_error_msg_pattern">服务器或服务器与设备之间出现问题。\n \nHTHTTP状态代码（％1$d）</string>
+    <string name="redirect_error_msg_pattern">请求重定向错误：\nHTTP状态代码（％1$d）</string>
     <string name="http_error_msg_pattern">HTTP错误消息（％1$s）</string>
-    <string name="unexpected_response_error_msg_pattern">意外响应：\ nHTTP状态代码（％1$d）</string>
+    <string name="unexpected_response_error_msg_pattern">意外响应：\nHTTP状态代码（％1$d）</string>
     <string name="connection_error_msg_pattern">无法连接到服务器</string>
     <string name="preference_corrupt_please_re_type_pattern">“偏好％1$s无法恢复，默认为％2$s。请在应用设置中重置此值”</string>
     <string name="switch_to_cached_mode">服务器目前不可用。使用缓存数据？</string>
