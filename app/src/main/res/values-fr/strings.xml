@@ -465,7 +465,6 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_add_cert_to_truststore_pattern">Ajouter la chaîne de certificats à la liste des AC de confiance ?</string>
     <string name="certificate_summary_pattern">Sujet : %1$s\nValide : %2$s - %3$s\nSérie : %4$s</string>
     <string name="alert_http_engine_shutdown">Arrêt du moteur HTTP. Redémarrage automatique selon les besoins.</string>
-    <string name="certificate_chain_seperator">\n----n----&gt;\n\n\n</string>
     <string name="alert_clearing_certificate_use_history">Réinitialisation de la liste des certificats choisis pour la confiance</string>
     <string name="alert_delete_all_files_selected_for_upload">Supprimer tous les fichiers sélectionnés pour le téléchargement ?</string>
     <string name="alert_partial_upload_deleted">Annuler le téléchargement d\'un fichier après qu\'il ait été partiellement transféré sur le serveur aura pour conséquence que le téléchargement partiel restera sur le serveur. Nettoyez manuellement le dossier de téléchargement sur le serveur (par exemple /var/www/piwigo/upload/buffer) pour gagner de la place.</string>

@@ -819,7 +819,7 @@ SOFTWARE.
     <string name="alert_add_cert_to_truststore_pattern">Add Certificate chain to list of trusted CAs?\n\n</string>
     <string name="certificate_summary_pattern">Subject: %1$s\nValid: %2$s - %3$s\nSerial: %4$s</string>
     <string name="alert_http_engine_shutdown">HTTP Engine shutdown. Will be restarted automatically as needed.</string>
-    <string name="certificate_chain_seperator"><![CDATA[\n\n---->\n\n]]></string>
+    <string name="certificate_chain_seperator" translatable="false"><![CDATA[\n\n---->\n\n]]></string>
     <string name="alert_clearing_certificate_use_history">Resetting the list of certificates chosen to be trusted</string>
     <string name="alert_delete_all_files_selected_for_upload">Delete all files selected for upload?</string>
     <string name="alert_partial_upload_deleted">Cancelling a file upload after it has been partially transferred to the server will result in the partial upload remaining on the server. Manually clean the upload folder on the server (e.g. /var/www/piwigo/upload/buffer) to save space.</string>

@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+    <string name="notification_title_background_upload_service">背景Piwigo上传服务</string>
+    <string name="notification_text_background_upload_running">运行上传作业</string>
+    <string name="notification_text_background_upload_sleeping">睡眠。接下来在％1$tR运行</string>
+    <string name="notification_text_background_upload_polling">轮询要上载的文件。</string>
+
+    <string name="alert_auto_upload_service_stopped">后台上传服务已停止</string>
+    <string name="alert_auto_upload_service_started">后台上传服务已启动</string>
+    <string name="alert_auto_upload_service_job_restarted">开始使用％2$d文件将以前未完成的作业上传到服务器％1 $ s</string>
+    <string name="alert_auto_upload_service_job_started">开始使用％2$d文件将作业上载到服务器％1$s</string>
+    <string name="alert_auto_upload_service_job_finished_success">已完成运行后台上传作业到服务器％1$s。</string>
+    <string name="alert_auto_upload_service_job_finished_partial_success">已完成运行后台上传作业到服务器％1 $ s。某些文件无法上传，稍后将重试。</string>
+    <string name="alert_auto_upload_service_job_finished_failure">已完成运行后台上传作业到服务器％1$s。没有文件可以上传。工作将在稍后重试。</string>
+    <string name="alert_auto_upload_service_checking_for_tasks">后台上传服务检查任务</string>
+    <string name="progress_creating_tag">创建标签</string>
+    <string name="error_updating_favorites_pattern">从收藏夹中删除资源（％1$s）时出错：％2$s</string>
+    <string name="favorites_content_load_failed_text">无法加载标记为收藏的资源</string>
+    <string name="alert_confirm_delete_items_from_server_or_just_remove_from_favorites_list_pattern">您已请求删除％1$d资源。您是否希望永久删除所有相册（和服务器）中的这些内容，或者只是将其与此收藏夹取消链接？</string>
+    <string name="progress_remove_favorite_resources">从收藏夹列表中删除资源</string>
+    <string name="favorites_empty_text">你目前没有收藏夹</string>
+    <string name="favorites_heading">你的收藏</string>
+    <string name="button_unfavorite">不喜欢</string>
+</resources>
