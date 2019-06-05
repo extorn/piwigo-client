@@ -76,7 +76,8 @@
                 android:inputType="text|textNoSuggestions"
                 android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                android:focusable="true" />
+                android:focusable="true"
+                android:importantForAutofill="no" />
 
             <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
                 android:id="@+id/group_is_default"

@@ -20,12 +20,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.os.Build;
-import androidx.annotation.IdRes;
-import androidx.annotation.IntRange;
-import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
-import androidx.viewpager.widget.PagerAdapter;
-import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -34,6 +28,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.TextView;
+
+import androidx.annotation.IdRes;
+import androidx.annotation.IntRange;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import delit.piwigoclient.R;
 
@@ -66,7 +67,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     private ViewPager mViewPager;
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
-    @IdRes private int viewPagerId;
+    @IdRes
+    private int viewPagerId = View.NO_ID;
     @IntRange(from = 0)
     private int initialTabIdx;
 
@@ -94,7 +96,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         final TypedArray a = context.obtainStyledAttributes(
                 attrs, R.styleable.SlidingTabLayout, defStyleAttr, defStyleRes);
 
-        viewPagerId = a.getResourceId(R.styleable.SlidingTabLayout_viewPager, -1);
+        viewPagerId = a.getResourceId(R.styleable.SlidingTabLayout_viewPager, View.NO_ID);
 
         initialTabIdx = a.getInt(R.styleable.SlidingTabLayout_initialTabIdx, 0);
 
@@ -251,7 +253,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     @Override
     protected void onAttachedToWindow() {
 
-        if(viewPagerId > 0 && mViewPager == null) {
+        if (viewPagerId != View.NO_ID && mViewPager == null) {
             setViewPager((ViewPager)((ViewGroup)getParent()).findViewById(viewPagerId));
         }
 

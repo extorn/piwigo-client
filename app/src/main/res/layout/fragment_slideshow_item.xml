@@ -220,7 +220,8 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="2dp"
-                        android:layout_marginBottom="3dp"/>
+                        android:layout_marginBottom="3dp"
+                        android:importantForAutofill="no" />
 
                     <TextView
                         android:id="@+id/slideshow_image_details_name_label"
@@ -239,7 +240,8 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="2dp"
-                        android:layout_marginBottom="3dp"/>
+                        android:layout_marginBottom="3dp"
+                        android:importantForAutofill="no" />
 
                     <TextView
                         android:id="@+id/slideshow_image_details_linked_albums_label"
