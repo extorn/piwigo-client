@@ -821,7 +821,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files);
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent.setFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        }
         startActivity(intent);
     }
 
@@ -848,7 +850,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 notificationIntent.setDataAndType(apkURI, mimeType);
                 notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 notificationIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                notificationIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    notificationIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                }
 
 //        } else {
                 // N.B.this only works with a very select few android apps - folder browsing seeminly isn't a standard thing in android.

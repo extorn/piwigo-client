@@ -154,11 +154,11 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:16.1.0'
     implementation 'com.google.android.gms:play-services-oss-licenses:16.0.2'
     // firebase-perf must be lower version than firebase-core and play-services*
-    implementation 'com.google.firebase:firebase-perf:17.0.0'
+    implementation 'com.google.firebase:firebase-perf:17.0.2'
     implementation 'androidx.multidex:multidex:2.0.1'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-    androidTestImplementation 'androidx.test:rules:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
     // android mp4 video compression library
     //implementation 'net.ypresto.androidtranscoder:android-transcoder:0.3.0'
     // android mp4 streaming header generator library

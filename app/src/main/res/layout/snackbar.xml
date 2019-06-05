@@ -22,7 +22,6 @@
     android:id="@+id/custom_toast_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/toast_background">
@@ -70,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/snackbar_text"
-        android:layout_marginStart="@dimen/design_snackbar_extra_spacing_horizontal"
+        android:layout_marginStart="@dimen/my_design_snackbar_extra_spacing_horizontal"
         android:layout_centerHorizontal="true"
         android:minWidth="48dp"
         android:textColor="?attr/colorAccent"

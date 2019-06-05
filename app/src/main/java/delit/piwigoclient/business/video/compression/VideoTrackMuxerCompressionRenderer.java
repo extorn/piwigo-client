@@ -42,7 +42,7 @@ import java.util.Queue;
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer implements MediaClock {
 
-    private static final String MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_AVC;    // H.264 Advanced Video Coding
+    private static final String MIME_TYPE = "video/avc"; //API19+ MediaFormat.MIMETYPE_VIDEO_AVC;    // H.264 Advanced Video Coding
     //    private static final String MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_MPEG4; // MPEG4 format
     private final static boolean VERBOSE = false;
     private static final String KEY_CROP_LEFT = "crop-left";
@@ -584,11 +584,13 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         } else {
             outputFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, wantedKeyFrameInterval); // interval in seconds between key frames
         }
-        if (inputMediaFormat.containsKey(MediaFormat.KEY_ROTATION)) {
-            // it gets rotated by exoplayer so this isn't needed now.
-            outputFormat.setInteger(MediaFormat.KEY_ROTATION, inputMediaFormat.getInteger(MediaFormat.KEY_ROTATION));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (inputMediaFormat.containsKey(MediaFormat.KEY_ROTATION)) {
+                // it gets rotated by exoplayer so this isn't needed now.
+                outputFormat.setInteger(MediaFormat.KEY_ROTATION, inputMediaFormat.getInteger(MediaFormat.KEY_ROTATION));
+            }
         }
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (inputMediaFormat.containsKey(MediaFormat.KEY_BITRATE_MODE)) {
                 // it gets rotated by exoplayer so this isn't needed now.
                 outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, inputMediaFormat.getInteger(MediaFormat.KEY_BITRATE_MODE));

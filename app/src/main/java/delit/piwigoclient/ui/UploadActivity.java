@@ -227,7 +227,7 @@ public class UploadActivity extends MyActivity {
             getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
             LoginResponseHandler handler = new LoginResponseHandler();
-            getUiHelper().addActiveServiceCall(getString(R.string.logging_in_to_piwigo_patterna, serverUri), handler.invokeAsync(getApplicationContext(), connectionPrefs), handler.getTag());
+            getUiHelper().addActiveServiceCall(getString(R.string.logging_in_to_piwigo_pattern, serverUri), handler.invokeAsync(getApplicationContext(), connectionPrefs), handler.getTag());
         }
     }
 
@@ -308,7 +308,10 @@ public class UploadActivity extends MyActivity {
         } else {
             // process the extra stream data
             ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-            String[] mimeTypes = intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
+            String[] mimeTypes = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                intent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES);
+            }
             if (imageUris != null) {
                 filesToUpload = new ArrayList<>(imageUris.size());
                 int i = 0;
