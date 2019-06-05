@@ -618,4 +618,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="connection_error_msg_pattern">Impossible de se connecter au serveur</string>
     <string name="preference_corrupt_please_re_type_pattern">"La préférence %1$s est irrécupérable et a été fixée par défaut à %2$s. Veuillez réinitialiser cette valeur dans les paramètres de l'application"</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données en cache?</string>
+    <string name="server_connection_id_pattern">%1$s@%2$s</string>
 </resources>

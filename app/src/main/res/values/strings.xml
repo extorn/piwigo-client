@@ -973,4 +973,5 @@ SOFTWARE.
     <string name="connection_error_msg_pattern">Unable to connect to server</string>
     <string name="preference_corrupt_please_re_type_pattern">"Preference %1$s is irretrievable and has been defaulted to %2$s. Please reset this value in the app settings"</string>
     <string name="switch_to_cached_mode">The server is presently not available. Use cached data?</string>
+    <string name="server_connection_id_pattern">%1$s@%2$s</string>
 </resources>

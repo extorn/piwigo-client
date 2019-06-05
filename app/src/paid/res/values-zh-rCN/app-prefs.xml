@@ -36,7 +36,7 @@
 
 
     <string name="preference_data_upload_automatic_job_server_album_title">上传到相册</string>
-    <string name="preference_data_upload_automatic_job_server_album_summary">%1%s</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1$s</string>
 
 
     <string name="preference_data_upload_automatic_job_local_folder_title">从文件夹上传</string>
@@ -61,7 +61,7 @@
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">使用ext %1$s 上传文件</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">隐私级别</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">上传的文件对%1 $ s可见</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">上传的文件对%1$s 可见</string>
 
 
 </resources>

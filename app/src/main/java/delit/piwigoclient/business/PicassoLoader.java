@@ -411,19 +411,28 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
         void onImageUnavailable(PicassoLoader<T> loader, String lastLoadError);
     }
 
-    private class GifLoaderTask extends AsyncTask<PicassoLoader, Void, GifDrawable> {
+    private void setWaitForErrorMessage(boolean waitForErrorMessage) {
+        this.waitForErrorMessage = waitForErrorMessage;
+    }
+
+    private int getErrorResourceId() {
+        return errorResourceId;
+    }
+
+    private static class GifLoaderTask extends AsyncTask<PicassoLoader, Void, GifDrawable> {
 
         private IOException error;
+        private PicassoLoader loader;
 
         @Override
         protected GifDrawable doInBackground(PicassoLoader... picassoLoaders) {
-            PicassoLoader loader = picassoLoaders[0];
-            waitForErrorMessage = false;
+            loader = picassoLoaders[0];
+            loader.setWaitForErrorMessage(false);
             // load the gif straight into the image manually.
-            CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader(loadInto.getContext());
+            CustomImageDownloader downloader = PicassoFactory.getInstance().getDownloader(loader.getLoadInto().getContext());
             downloader.setListener(loader);
             try {
-                Downloader.Response rsp = downloader.load(Uri.parse(uriToLoad), -1);
+                Downloader.Response rsp = downloader.load(Uri.parse(loader.getUriToLoad()), -1);
                 if (rsp != null) {
                     //TODO create a custom video downloader that creates and uses a gif drawable as the basis for the stream decoder perhaps.
                     return new GifDrawable(rsp.getInputStream());
@@ -436,18 +445,28 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
 
         @Override
         protected void onPostExecute(GifDrawable drawable) {
-            if (drawable != null) {
-                loadInto.setImageDrawable(drawable);
-                onSuccess();
-            } else {
-                Crashlytics.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
-                loadInto.setImageResource(errorResourceId);
-                onError();
-                if (error != null) {
-                    Crashlytics.logException(error);
+            try {
+                if (drawable != null) {
+                    loader.getLoadInto().setImageDrawable(drawable);
+                    loader.onSuccess();
+                } else {
+                    Crashlytics.log(Log.ERROR, "PicassoLoader", "error downloading gif file");
+                    loader.getLoadInto().setImageResource(loader.getErrorResourceId());
+                    loader.onError();
+                    if (error != null) {
+                        Crashlytics.logException(error);
+                    }
                 }
+            } finally {
+                loader = null;
             }
+        }
 
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            loader = null;
+            error = null;
         }
     }
 }

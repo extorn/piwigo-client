@@ -212,7 +212,7 @@ public class ServerConnectionsListPreferenceDialogFragmentCompat extends Prefere
             TextView detailView = itemView.findViewById(R.id.details);
 
             nameView.setText(item.getProfileName());
-            detailView.setText(item.getUsername() + '@' + item.getServerName());
+            detailView.setText(getString(R.string.server_connection_id_pattern, item.getUsername(), item.getServerName()));
         }
 
         @Override

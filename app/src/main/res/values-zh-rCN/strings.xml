@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
-    <string name="ad_app_id" translatable="false">ca-app-pub-1408465472557768~4878187139</string>
     <string name="checking_license">检查许可......</string>
     <string name="button_quit">出口</string>
     <string name="button_buy">买App</string>
@@ -8,26 +7,7 @@
     <string name="unlicensed_dialog_body">无法验证许可证。检查网络连接是否可用。</string>
     <string name="unlicensed_dialog_title">申请未获许可</string>
     <string name="application_error">申请错误：%1$d</string>
-    <!--<string name="appbar_scrolling_view_behavior" translatable="false">delit.piwigoclient.ui.CustomScrollingViewBehavior</string>-->
 
-    <string name="ad_id_album_banner" translatable="false">ca-app-pub-1408465472557768/1316125026</string>
-    <string name="ad_id_album_create_banner" translatable="false">ca-app-pub-1408465472557768/9877975475</string>
-    <string name="ad_id_slideshow_banner" translatable="false">ca-app-pub-1408465472557768/6117859712</string>
-    <string name="ad_id_album_interstitial" translatable="false">ca-app-pub-1408465472557768/4632241138</string>
-    <string name="ad_id_uploads_interstitial" translatable="false">ca-app-pub-1408465472557768/7831653530</string>
-    <string name="ad_id_selectlist_banner" translatable="false">ca-app-pub-1408465472557768/6141555221</string>
-    <string name="ad_id_user_edit_banner" translatable="false">ca-app-pub-1408465472557768/5646731207</string>
-    <string name="ad_id_group_edit_banner" translatable="false">ca-app-pub-1408465472557768/2002875958</string>
-    <string name="ad_id_uploads_banner" translatable="false">ca-app-pub-1408465472557768/6053925314</string>
-    <string name="ad_id_app_preferences_banner" translatable="false">ca-app-pub-1408465472557768/7547325605</string>
-    <string name="ad_id_app_about_banner" translatable="false">ca-app-pub-1408465472557768/2374534759</string>
-    <string name="ad_id_app_top_tips_banner" translatable="false">ca-app-pub-1408465472557768/3659572555</string>
-    <string name="ad_id_app_licences_banner" translatable="false">ca-app-pub-1408465472557768/5519449132</string>
-    <string name="ad_id_app_eula_banner" translatable="false">ca-app-pub-1408465472557768/4753162372</string>
-
-    <string name="app_name" translatable="false">PiwigoClient</string>
-    <string name="app_name_and_version_pattern" translatable="false">PiwigoClient v%1$s</string>
-    <string name="app_paid_name_and_version_pattern" translatable="false">PiwigoClient v%1$s (paid)</string>
 
     <string name="alert_title_permissions_needed">需要额外的权限</string>
     <string name="alert_write_permission_needed_for_download">写入文件系统以下载文件需要权限</string>
@@ -35,11 +15,11 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="preference_test_server_connection_key" translatable="false">preference_test_server_connection</string>
+
     <string name="preference_test_server_connection_title">测试连接</string>
     <string name="preference_test_server_connection_summary">测试与服务器的连接</string>
 
-    <string name="preference_data_upload_clear_failed_uploads_from_server_key" translatable="false">preference_data_upload_clear_failed_uploads_from_server</string>
+
     <string name="preference_data_upload_clear_failed_uploads_from_server_title">清洁服务器</string>
     <string name="preference_data_upload_clear_failed_uploads_from_server_summary">清除服务器上的PiwigoClient上传失败</string>
     <string name="progress_clearing_failed_uploads_from_server">清除服务器上的任何失败上传</string>
@@ -47,7 +27,7 @@
 
     <string name="gallery_photos_summary_text_pattern">%1$d张照片</string>
     <string name="gallery_subcategory_summary_text_pattern">%1$d子专辑和%2$d张照片</string>
-    <string name="admin_email" translatable="false"><a href="mailto:gd_apps-piwigoclient@yahoo.co.uk">gd_apps-piwigoclient@yahoo.co.uk</a></string>
+
     <string name="alert_title_login">登录</string>
     <string name="alert_title_connectionTest">连接测试</string>
     <string name="alert_message_success_connectionTest">成功\n用户类型：%1$s。</string>
@@ -173,359 +153,7 @@
     <string name="eula" formatted="false">“EndUser许可协议（\”协议“） 最后更新时间：2018年8月7日  在点击“我同意”之前，请仔细阅读此终端用户许可协议（\“协议\”） 按钮，下载或使用Piwigo客户端（\“Application \”）。  通过单击“我同意”按钮，下载或使用应用程序，即表示您同意受到约束 根据本协议的条款和条件。 如果您不同意本协议的条款，请不要单击“我同意”按钮而不是 下载或使用该应用程序。  如果您正在考虑使用此应用程序访问和/或修改用于商业目的的服务器，则必须阅读并理解责任限制。 您必须在非生产服务器上对此进行测试，然后才能根据您的决定自行承担任何风险和责任。此应用程序主要是设计的 用于非商业目的。  定义  被许可方：被许可方是指打算使用许可软件或已经合法或非法使用许可软件的个人或公司。 “被许可人”一词并不意味着该软件在默认情况下是合法许可的。   执照  Gareth Deli授予您可撤销，非独占，不可转让的有限许可 仅为个人或商业目的下载，安装和使用本应用程序 严格按照本协议的条款。  本软件“按原样”提供，不提供任何明示或暗示的保证，包括但不限于适销性，特定用途的适用性和不侵权的保证。在任何情况下，作者或版权所有者均不对任何索赔，损害或其他责任承担任何责任，无论是在合同，侵权行为还是其他方面的行为，由本软件引起或与之相关，或与本软件的使用或其他交易有关。软件   限制  您同意不会，并且您不会允许其他人： a）许可，出售，出租，租赁，转让，分发，传输，托管，外包，披露或以其他方式 商业利用应用程序或将应用程序提供给任何第三方。 b）手动或使用工具反编译或以其他方式查看应用程序的源代码或字节代码 c）运行或尝试在除手机或平板电脑类型的物理设备之外的任何设备上运行此应用程序，并使用Android操作系统作为其主要操作系统。 d）运行或尝试在模拟器或其他沙箱环境中运行此应用程序，以检查其行为。 e）基于此应用程序创建衍生作品。  用户数据收集  Firebase集成已添加到此应用程序中，以便于跟踪应用程序的使用，主要目的是更有效地解决错误并确定应用程序的使用方式。将收集实现此目的所需的最低数据。   有限保修和免责声明  该软件按“原样”提供，被许可人自行承担风险。 Gareth Deli对其使用，性能或适用于特定用途不做任何保证。软件总是可能包含错误（错误）而无法工作。因此，Gareth Deli不保证软件完全没有错误，或者它可以在不中断所有计算机和配置的情况下运行。  被许可方有责任检查软件是否符合其特定用途或满足其功能和性能要求。被许可人还有义务测试软件在其设备及其配置上的工作方式;在生产环境中使用软件之前，测试所有用例并检查数据是否在没有错误的情况下进行处理。如果将该软件用于商业目的，这一点至关重要。   责任限制  被许可人应对软件使用的后果负责，从而在法律允许的范围内对由此造成的直接和间接损害负责。在法律允许的范围内，责任仅限于购买价格;否则它仅限于法定可能的最低限度。   维护和支持  Gareth Deli仅通过电子邮件为当前版本的软件提供一般支持。旧版本不受支持。   对应用程序的修改  Gareth Deli保留暂时或暂时修改，暂停或终止的权利 永久，应用程序或其连接的任何服务，无论是否通知和不通知 对你负责。   期限和终止  本协议在您或Gareth Deli终止之前一直有效。  Gareth Deli可以自行决定随时以任何理由， 在事先通知或不事先通知的情况下暂停或终止本协议。 本协议将立即终止，恕不另行通知Gareth Deli 如果您未能遵守本协议的任何条款。您也可以终止此操作 同意删除您的移动设备或您的移动设备及其所有副本 桌面。 本协议终止后，您应停止使用本应用程序并删除所有副本 您的移动设备或桌面上的应用程序。 分割 如果本协议的任何条款被认定为无法执行或无效，则此类条款将是 改变和解释，以最大限度地实现这种规定的目标 根据适用法律可行，其余条款将继续完全有效。   本协议的修订  Gareth Deli保留自行决定修改或更换此权利的权利 随时达成协议。如果修订是重要的，我们将提供至少0天的通知 在任何新条款生效之前。什么构成重大变化将由我们决定 自行决定。   联系信息  如果您对本协议有任何疑问，请与我们联系。“ </string>
     <string name="about_content">“这个应用程序的编写是为了让我在移动时更容易访问我的照片库。  它会定期更新以添加更多功能，其中一些是我想到的，另一些是用户要求的。  2018年8月，一位用户David Klement带着屏幕模型回到我身边，寻求更专业的设计。从1.3.95版开始，我一直在从专辑视图屏幕开始整合这些想法。 这些完整的建议屏幕设计列表可在应用程序网站上查看（https://api-8938561204297001672-604498.firebaseapp.com/design-proposals/index.html）。  注意：语言翻译使用www.Deepl.com或谷歌翻译网站进行。如果您发现任何明显的错误，请告诉我，以便我可以纠正它们。  有两个版本，免费版（带广告）和付费版（免费广告）。您可以自由选择自己喜欢的内容。您目前无法“升级”免费版本，安装付费版本并删除免费版本。 注意：版本会随着时间的推移而出现分歧。大多数更改都将针对免费和付费版本。  目前，付费版本增加了对标签的支持： &amp;#160;&amp;#160;&amp;#160;&amp;#160;&amp;#160;&amp;#160;&amp;#160;&amp;#160;Piwigo支持开箱即用的标签，但User Tags插件增加了更多功能（执行基本测试）。   目前，它提供了基本级别的功能，允许在现有图库中导航，上传新照片和视频，以及在图库中创建新类别。有些字段可以在创建后修改，但许多仍然只读....现在！  我可以问一下，如果您卸载该应用程序，您可以使用应用程序菜单上的链接向我发送电子邮件，告诉我为什么该应用程序无法满足您的需求，因此我可以解决此问题。  我测试的PIWIGO服务器版本目前为2.9.4。  我的测试库仅包含.jpg和.mp4文件。如果您的其他人包含其他内容，您可能会遇到问题 - 如果是，请告诉我，我会优先处理这些文件类型。  警告：Piwigo版本低于1.9.2  - 上传视频我认为取决于修复</string>
     <string name="licences_heading">此应用程序中使用的资源许可证</string>
-    <string name="licences_content" formatted="false" translatable="false">"*** Touch Image View - com.ortiz.touch.
-MIT License - Copyright © 2012 Michael Ortiz
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
-
-
-
-
-
-
-
-*** android-gif-drawable - pl.droidsonroids.gif:android-gif-drawable
-
-MIT License
-Copyright (c) 2016 Karol Wrótniak, Droids on Roids
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-SKIA:
-// Copyright (c) 2011 Google Inc. All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-//
-//    * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-//    * Redistributions in binary form must reproduce the above
-// copyright notice, this list of conditions and the following disclaimer
-// in the documentation and/or other materials provided with the
-// distribution.
-//    * Neither the name of Google Inc. nor the names of its
-// contributors may be used to endorse or promote products derived from
-// this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-GIFLIB:
-The GIFLIB distribution is Copyright (c) 1997  Eric S. Raymond
-
-ReLinker:
-Copyright 2015 KeepSafe Software, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-memset.arm.S:
-Copyright (C) 2010 The Android Open Source Project
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-memset32_neon.S:
-Copyright (c) 2009,2010, Code Aurora Forum. All rights reserved.
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file (SKIA section).
-
-
-
-
-
-
-*** qtfaststart - https://github.com/ypresto/qtfaststart-java
-
-The MIT License (MIT)
-
-Copyright (c) 2014 Yuya Tanaka
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-*** Android-Rate - com.github.hotchemi:android-rate
-
-The MIT License (MIT)
-
-Copyright (c) 2014 Paul Asiimwe
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the \"Software\"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-
-
-*** Google Firebase - com.google.firebase
-*** Crashlytics - com.crashlytics
-*** play-services-oss-licenses
-*** com.android.support
-
-*** GSON - https://github.com/google/gson - Apache License 2.0
-*** Picasso - http://square.github.io/picasso/ - Copyright 2013 Square, Inc. - Apache License 2.0
-*** Material Icons - https://material.io/icons - Apache License 2.0
-*** EXO Player - Apache License 2.0
-*** EventBus - http://greenrobot.org - Apache License 2.0
-*** android-async-http - http://loopj.com/android-async-http/ - Apache License 2.0
-*** android-sliding-layer-lib - https://github.com/wunderlist/android-sliding-layer-lib - Apache License 2.0
-*** Metadata Extractor - https://drewnoakes.com/code/exif/ - Apache License 2.0
-
- Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/
-
-   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
-
-   1. Definitions.
-
-      \"License\" shall mean the terms and conditions for use, reproduction,
-      and distribution as defined by Sections 1 through 9 of this document.
-
-      \"Licensor\" shall mean the copyright owner or entity authorized by
-      the copyright owner that is granting the License.
-
-      \"Legal Entity\" shall mean the union of the acting entity and all
-      other entities that control, are controlled by, or are under common
-      control with that entity. For the purposes of this definition,
-      \"control\" means (i) the power, direct or indirect, to cause the
-      direction or management of such entity, whether by contract or
-      otherwise, or (ii) ownership of fifty percent (50%) or more of the
-      outstanding shares, or (iii) beneficial ownership of such entity.
-
-      \"You\" (or \"Your\") shall mean an individual or Legal Entity
-      exercising permissions granted by this License.
-
-      \"Source\" form shall mean the preferred form for making modifications,
-      including but not limited to software source code, documentation
-      source, and configuration files.
-
-      \"Object\" form shall mean any form resulting from mechanical
-      transformation or translation of a Source form, including but
-      not limited to compiled object code, generated documentation,
-      and conversions to other media types.
-
-      \"Work\" shall mean the work of authorship, whether in Source or
-      Object form, made available under the License, as indicated by a
-      copyright notice that is included in or attached to the work
-      (an example is provided in the Appendix below).
-
-      \"Derivative Works\" shall mean any work, whether in Source or Object
-      form, that is based on (or derived from) the Work and for which the
-      editorial revisions, annotations, elaborations, or other modifications
-      represent, as a whole, an original work of authorship. For the purposes
-      of this License, Derivative Works shall not include works that remain
-      separable from, or merely link (or bind by name) to the interfaces of,
-      the Work and Derivative Works thereof.
-
-      \"Contribution\" shall mean any work of authorship, including
-      the original version of the Work and any modifications or additions
-      to that Work or Derivative Works thereof, that is intentionally
-      submitted to Licensor for inclusion in the Work by the copyright owner
-      or by an individual or Legal Entity authorized to submit on behalf of
-      the copyright owner. For the purposes of this definition, \"submitted\"
-      means any form of electronic, verbal, or written communication sent
-      to the Licensor or its representatives, including but not limited to
-      communication on electronic mailing lists, source code control systems,
-      and issue tracking systems that are managed by, or on behalf of, the
-      Licensor for the purpose of discussing and improving the Work, but
-      excluding communication that is conspicuously marked or otherwise
-      designated in writing by the copyright owner as \"Not a Contribution.\"
-
-      \"Contributor\" shall mean Licensor and any individual or Legal Entity
-      on behalf of whom a Contribution has been received by Licensor and
-      subsequently incorporated within the Work.
-
-   2. Grant of Copyright License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      copyright license to reproduce, prepare Derivative Works of,
-      publicly display, publicly perform, sublicense, and distribute the
-      Work and such Derivative Works in Source or Object form.
-
-   3. Grant of Patent License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      (except as stated in this section) patent license to make, have made,
-      use, offer to sell, sell, import, and otherwise transfer the Work,
-      where such license applies only to those patent claims licensable
-      by such Contributor that are necessarily infringed by their
-      Contribution(s) alone or by combination of their Contribution(s)
-      with the Work to which such Contribution(s) was submitted. If You
-      institute patent litigation against any entity (including a
-      cross-claim or counterclaim in a lawsuit) alleging that the Work
-      or a Contribution incorporated within the Work constitutes direct
-      or contributory patent infringement, then any patent licenses
-      granted to You under this License for that Work shall terminate
-      as of the date such litigation is filed.
-
-   4. Redistribution. You may reproduce and distribute copies of the
-      Work or Derivative Works thereof in any medium, with or without
-      modifications, and in Source or Object form, provided that You
-      meet the following conditions:
-
-      (a) You must give any other recipients of the Work or
-          Derivative Works a copy of this License; and
-
-      (b) You must cause any modified files to carry prominent notices
-          stating that You changed the files; and
-
-      (c) You must retain, in the Source form of any Derivative Works
-          that You distribute, all copyright, patent, trademark, and
-          attribution notices from the Source form of the Work,
-          excluding those notices that do not pertain to any part of
-          the Derivative Works; and
-
-      (d) If the Work includes a \"NOTICE\" text file as part of its
-          distribution, then any Derivative Works that You distribute must
-          include a readable copy of the attribution notices contained
-          within such NOTICE file, excluding those notices that do not
-          pertain to any part of the Derivative Works, in at least one
-          of the following places: within a NOTICE text file distributed
-          as part of the Derivative Works; within the Source form or
-          documentation, if provided along with the Derivative Works; or,
-          within a display generated by the Derivative Works, if and
-          wherever such third-party notices normally appear. The contents
-          of the NOTICE file are for informational purposes only and
-          do not modify the License. You may add Your own attribution
-          notices within Derivative Works that You distribute, alongside
-          or as an addendum to the NOTICE text from the Work, provided
-          that such additional attribution notices cannot be construed
-          as modifying the License.
-
-      You may add Your own copyright statement to Your modifications and
-      may provide additional or different license terms and conditions
-      for use, reproduction, or distribution of Your modifications, or
-      for any such Derivative Works as a whole, provided Your use,
-      reproduction, and distribution of the Work otherwise complies with
-      the conditions stated in this License.
-
-   5. Submission of Contributions. Unless You explicitly state otherwise,
-      any Contribution intentionally submitted for inclusion in the Work
-      by You to the Licensor shall be under the terms and conditions of
-      this License, without any additional terms or conditions.
-      Notwithstanding the above, nothing herein shall supersede or modify
-      the terms of any separate license agreement you may have executed
-      with Licensor regarding such Contributions.
-
-   6. Trademarks. This License does not grant permission to use the trade
-      names, trademarks, service marks, or product names of the Licensor,
-      except as required for reasonable and customary use in describing the
-      origin of the Work and reproducing the content of the NOTICE file.
-
-   7. Disclaimer of Warranty. Unless required by applicable law or
-      agreed to in writing, Licensor provides the Work (and each
-      Contributor provides its Contributions) on an \"AS IS\" BASIS,
-      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-      implied, including, without limitation, any warranties or conditions
-      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
-      PARTICULAR PURPOSE. You are solely responsible for determining the
-      appropriateness of using or redistributing the Work and assume any
-      risks associated with Your exercise of permissions under this License.
-
-   8. Limitation of Liability. In no event and under no legal theory,
-      whether in tort (including negligence), contract, or otherwise,
-      unless required by applicable law (such as deliberate and grossly
-      negligent acts) or agreed to in writing, shall any Contributor be
-      liable to You for damages, including any direct, indirect, special,
-      incidental, or consequential damages of any character arising as a
-      result of this License or out of the use or inability to use the
-      Work (including but not limited to damages for loss of goodwill,
-      work stoppage, computer failure or malfunction, or any and all
-      other commercial damages or losses), even if such Contributor
-      has been advised of the possibility of such damages.
-
-   9. Accepting Warranty or Additional Liability. While redistributing
-      the Work or Derivative Works thereof, You may choose to offer,
-      and charge a fee for, acceptance of support, warranty, indemnity,
-      or other liability obligations and/or rights consistent with this
-      License. However, in accepting such obligations, You may act only
-      on Your own behalf and on Your sole responsibility, not on behalf
-      of any other Contributor, and only if You agree to indemnify,
-      defend, and hold each Contributor harmless for any liability
-      incurred by, or claims asserted against, such Contributor by reason
-      incurred by, or claims asserted against, such Contributor by reason
-      of your accepting any such warranty or additional liability.
-
-   END OF TERMS AND CONDITIONS
-"
-    </string>
     <string name="slideshow_image_details_name_title">资源名称</string>
     <string name="slideshow_image_details_description_title">资源描述</string>
     <string name="unlock_menu_title">开锁</string>
@@ -839,4 +467,5 @@ SOFTWARE.
     <string name="connection_error_msg_pattern">无法连接到服务器</string>
     <string name="preference_corrupt_please_re_type_pattern">“偏好%1$s无法恢复，默认为%2$s。请在应用设置中重置此值”</string>
     <string name="switch_to_cached_mode">服务器目前不可用。使用缓存数据？</string>
+    <string name="server_connection_id_pattern">%1$s@%2$s</string>
 </resources>

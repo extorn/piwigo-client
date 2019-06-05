@@ -194,7 +194,7 @@
     <string name="preference_gallery_clearVideoCache_title">清除视频缓存</string>
 
     <string name="preference_gallery_clearVideoCache_summary">删除缓存到磁盘的所有视频</string>
-    <string name="preference_gallery_clearVideoCache_summary_pattern">删除缓存到磁盘的所有%1 $ .2fMB视频</string>
+    <string name="preference_gallery_clearVideoCache_summary_pattern">删除缓存到磁盘的所有%1$.2fMB视频</string>
 
 
     <string name="preference_gallery_recentlyAlteredAgeMillis_title">最大年龄最近项目（天）</string>

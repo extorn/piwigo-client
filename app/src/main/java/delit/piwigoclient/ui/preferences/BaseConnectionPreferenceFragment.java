@@ -182,15 +182,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         findPreference(R.string.preference_caching_max_cache_entry_size_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
         Preference responseCacheFlushButton = findPreference(R.string.preference_caching_clearResponseCache_key);
-        responseCacheFlushButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheClearingStarted_message));
-                new ClearCacheInBackgroundTask().execute(preference.getContext());
-                return true;
-
-            }
-        });
+        responseCacheFlushButton.setOnPreferenceClickListener(new ResponseCacheFlushButtonListener(this));
         setResponseCacheButtonText();
 
         findPreference(R.string.preference_server_connection_timeout_secs_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
@@ -251,28 +243,38 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
     private static class ResponseCacheButtonTextRetriever extends AsyncTask<BaseConnectionPreferenceFragment, Void, Double> {
 
         private Preference responseCacheFlushButton;
-        private Context context;
         private BaseConnectionPreferenceFragment fragment;
 
         @Override
         protected Double doInBackground(BaseConnectionPreferenceFragment[] params) {
             this.fragment = params[0];
             this.responseCacheFlushButton = fragment.findPreference(R.string.preference_caching_clearResponseCache_key);
-            context = responseCacheFlushButton.getContext();
-            final double cacheBytes = CacheUtils.getResponseCacheSize(context);
+            final double cacheBytes = CacheUtils.getResponseCacheSize(responseCacheFlushButton.getContext());
             return cacheBytes;
         }
 
         @Override
         protected void onPostExecute(Double cacheBytes) {
-            if (!isCancelled() && fragment.isVisible()) {
-                String spaceSuffix = "(" + IOUtils.toNormalizedText(cacheBytes) + ")";
+            try {
+                if (!isCancelled() && fragment.isVisible()) {
+                    String spaceSuffix = "(" + IOUtils.toNormalizedText(cacheBytes) + ")";
 //                String cacheLevel = ConnectionPreferences.getCacheLevel(fragment.getPrefs(), context);
 //                if("memory".equals(cacheLevel)) {
 //                    spaceSuffix += String.format(" + %1$d", CacheUtils.getItemsInResponseCache(context));
 //                }
-                responseCacheFlushButton.setTitle(context.getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
+                    responseCacheFlushButton.setTitle(fragment.getString(R.string.preference_caching_clearResponseCache_title) + spaceSuffix);
+                }
+            } finally {
+                responseCacheFlushButton = null;
+                fragment = null; // allow reference to be cleared
             }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            responseCacheFlushButton = null;
+            fragment = null; // allow reference to be cleared
         }
     }
 
@@ -583,13 +585,16 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         }
     }
 
-    private class ClearCacheInBackgroundTask extends AsyncTask<Context, Void, Boolean> {
+    private static class ClearCacheInBackgroundTask extends AsyncTask<BaseConnectionPreferenceFragment, Void, Boolean> {
+
+        private BaseConnectionPreferenceFragment fragment;
 
         @Override
-        protected Boolean doInBackground(Context... contexts) {
+        protected Boolean doInBackground(BaseConnectionPreferenceFragment... fragments) {
+            fragment = fragments[0];
             try {
-                CacheUtils.clearResponseCache(contexts[0]);
-                forceHttpConnectionCleanupAndRebuild();
+                CacheUtils.clearResponseCache(fragment.getContext());
+                fragment.forceHttpConnectionCleanupAndRebuild();
                 return Boolean.TRUE;
             } catch (SecurityException e) {
                 Crashlytics.logException(e);
@@ -599,13 +604,39 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
-            super.onPostExecute(aBoolean);
-            if (Boolean.TRUE.equals(aBoolean)) {
-                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
-            } else {
-                getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheClearFailed_message));
+            try {
+                super.onPostExecute(aBoolean);
+                if (Boolean.TRUE.equals(aBoolean)) {
+                    fragment.getUiHelper().showDetailedMsg(R.string.cacheCleared_title, fragment.getString(R.string.cacheCleared_message));
+                } else {
+                    fragment.getUiHelper().showDetailedMsg(R.string.cacheCleared_title, fragment.getString(R.string.cacheClearFailed_message));
+                }
+                fragment.setResponseCacheButtonText();
+            } finally {
+                fragment = null;
             }
-            setResponseCacheButtonText();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            fragment = null;
+        }
+    }
+
+    private static class ResponseCacheFlushButtonListener implements Preference.OnPreferenceClickListener {
+        private final BaseConnectionPreferenceFragment fragment;
+
+        public ResponseCacheFlushButtonListener(BaseConnectionPreferenceFragment fragment) {
+            this.fragment = fragment;
+        }
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+            fragment.getUiHelper().showDetailedMsg(R.string.cacheCleared_title, fragment.getString(R.string.cacheClearingStarted_message));
+            new ClearCacheInBackgroundTask().execute(fragment);
+            return true;
+
         }
     }
 }
