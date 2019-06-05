@@ -18,7 +18,7 @@
 
 
     <string name="preference_data_upload_automatic_upload_jobs_title">自动上传作业</string>
-    <string name="preference_data_upload_automatic_upload_jobs_summary">％1$d工作</string>
+    <string name="preference_data_upload_automatic_upload_jobs_summary">%1$d工作</string>
 
     <!-- boolean flag set that if false will stop the job running -->
 
@@ -32,16 +32,16 @@
 
     <string name="preference_data_upload_automatic_job_server_title">上传到服务器</string>
 
-    <string name="preference_data_upload_automatic_job_server_summary">个人资料：％1$s</string>
+    <string name="preference_data_upload_automatic_job_server_summary">个人资料：%1$s</string>
 
 
     <string name="preference_data_upload_automatic_job_server_album_title">上传到相册</string>
-    <string name="preference_data_upload_automatic_job_server_album_summary">％1%s</string>
+    <string name="preference_data_upload_automatic_job_server_album_summary">%1%s</string>
 
 
     <string name="preference_data_upload_automatic_job_local_folder_title">从文件夹上传</string>
 
-    <string name="preference_data_upload_automatic_job_local_folder_summary">％1$s</string>
+    <string name="preference_data_upload_automatic_job_local_folder_summary">%1$s</string>
 
 
     <string name="preference_data_upload_automatic_job_delete_uploaded_summary">删除成功上传的文件</string>
@@ -53,15 +53,15 @@
 
 
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize已上传</string>
-    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">％1$d MB</string>
+    <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
 
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">JPG，PNG，生</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">文件扩展名</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">使用ext ％1$s 上传文件</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">使用ext %1$s 上传文件</string>
 
     <string name="preference_data_upload_automatic_job_privacy_level_title">隐私级别</string>
-    <string name="preference_data_upload_automatic_job_privacy_level_summary">上传的文件对％1 $ s可见</string>
+    <string name="preference_data_upload_automatic_job_privacy_level_summary">上传的文件对%1 $ s可见</string>
 
 
 </resources>

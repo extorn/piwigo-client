@@ -685,7 +685,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             resourceDescriptionView.setText(model.getDescription());
         }
 
-        resourceRatingScoreField.setText(String.format(getString(R.string.rating_score_pattern), model.getScore(), model.getRatingsGiven()));
+        resourceRatingScoreField.setText(getString(R.string.rating_score_pattern, model.getScore(), model.getRatingsGiven()));
 
         populateResourceExtraFields();
 
@@ -1031,7 +1031,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             averageRatingsBar.setRating(resource.getAverageRating());
             averageRatingsBar.setVisibility(VISIBLE);
         }
-        resourceRatingScoreField.setText(String.format(getString(R.string.rating_score_pattern), model.getScore(), model.getRatingsGiven()));
+        resourceRatingScoreField.setText(getString(R.string.rating_score_pattern, model.getScore(), model.getRatingsGiven()));
     }
 
     protected void onImageDeleted(HashSet<Long> deletedItemIds) {

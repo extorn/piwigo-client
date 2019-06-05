@@ -13,6 +13,13 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -27,12 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -226,7 +227,7 @@ public class UploadActivity extends MyActivity {
             getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_warning_no_server_url_specified));
         } else {
             LoginResponseHandler handler = new LoginResponseHandler();
-            getUiHelper().addActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), handler.invokeAsync(getApplicationContext(), connectionPrefs), handler.getTag());
+            getUiHelper().addActiveServiceCall(getString(R.string.logging_in_to_piwigo_patterna, serverUri), handler.invokeAsync(getApplicationContext(), connectionPrefs), handler.getTag());
         }
     }
 

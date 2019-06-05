@@ -328,7 +328,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                         getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_image_download_complete_message));
                     } catch (IOException e) {
                         Crashlytics.logException(e);
-                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern), e.getMessage()));
+                        getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_copy_file_from_cache_pattern, e.getMessage()));
                     }
                 } else {
                     getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_download_cancelled_insufficient_permissions));

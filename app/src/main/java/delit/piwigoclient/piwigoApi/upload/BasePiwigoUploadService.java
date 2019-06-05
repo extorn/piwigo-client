@@ -1070,7 +1070,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             Boolean verifiedUploadedFile = verifyFileNotCorrupted(thisUploadJob, thisUploadJob.getUploadedFileResource(fileForUpload));
             if (verifiedUploadedFile == null) {
                 // notify the listener of the final error we received from the server
-                String errorMsg = String.format(getString(R.string.error_upload_file_verification_failed), fileForUpload.getName());
+                String errorMsg = getString(R.string.error_upload_file_verification_failed, fileForUpload.getName());
                 notifyListenersOfCustomErrorUploadingFile(thisUploadJob, fileForUpload, errorMsg);
             } else if (verifiedUploadedFile) {
                 thisUploadJob.markFileAsVerified(fileForUpload);
@@ -1102,7 +1102,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 if (ext == null) {
                     thisUploadJob.cancelFileUpload(uploadJobKey);
                     // notify the listener of the final error we received from the server
-                    String errorMsg = String.format(getString(R.string.error_upload_file_ext_missing_pattern), fileForUpload.getName());
+                    String errorMsg = getString(R.string.error_upload_file_ext_missing_pattern, fileForUpload.getName());
                     notifyListenersOfCustomErrorUploadingFile(thisUploadJob, uploadJobKey, errorMsg);
                 }
 

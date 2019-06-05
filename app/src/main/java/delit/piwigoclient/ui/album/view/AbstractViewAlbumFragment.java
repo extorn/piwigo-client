@@ -230,7 +230,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void fillGroupsField(TextView allowedGroupsField, Collection<Group> selectedGroups) {
         if(selectedGroups.size() == 0) {
-            allowedGroupsField.setText(String.format(getString(R.string.click_to_view_pattern), 0));
+            allowedGroupsField.setText(getString(R.string.click_to_view_pattern, 0));
         } else {
             StringBuilder sb = new StringBuilder();
             Iterator<Group> groupIter = selectedGroups.iterator();
@@ -258,7 +258,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     private void fillUsernamesField(TextView allowedUsernamesField, Collection<Username> selectedUsernames) {
         if(selectedUsernames.size() == 0) {
-            allowedUsernamesField.setText(String.format(getString(R.string.click_to_view_pattern), 0));
+            allowedUsernamesField.setText(getString(R.string.click_to_view_pattern, 0));
         } else {
             StringBuilder sb = new StringBuilder();
             Iterator<Username> usernameIter = selectedUsernames.iterator();
@@ -642,7 +642,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                     } else if (basket.getAction() == Basket.ACTION_CUT) {
                         msgPatternId = R.string.alert_confirm_move_items_here_pattern;
                     }
-                    String message = String.format(getString(msgPatternId), basket.getItemCount(), galleryModel.getContainerDetails().getName());
+                    String message = getString(msgPatternId, basket.getItemCount(), galleryModel.getContainerDetails().getName());
                     getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new BasketAction(getUiHelper()));
                 }
                 return true; // consume the event
@@ -840,7 +840,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     }
 
     private void onAlbumDeleteRequest(final CategoryItem album) {
-        String msg = String.format(getString(R.string.alert_confirm_really_delete_album_from_server_pattern), album.getName());
+        String msg = getString(R.string.alert_confirm_really_delete_album_from_server_pattern, album.getName());
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new DeleteAlbumAction(getUiHelper(), album));
     }
 
@@ -1271,7 +1271,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
                 currentUsers[currentUsers.length - 1] = currentLoggedInUserId;
                 wantedAlbumUsers.add(currentLoggedInUserId);
                 // update the ui.
-                allowedUsersField.setText(String.format(getString(R.string.click_to_view_pattern), currentUsers.length));
+                allowedUsersField.setText(getString(R.string.click_to_view_pattern, currentUsers.length));
                 int msgId = R.string.alert_information_own_user_readded_to_permissions_list;
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_information, getString(msgId), R.string.button_ok, false, new AddingAlbumPermissionsAction(getUiHelper()));
                 return true;
@@ -1284,11 +1284,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
                     if (newlyAddedUsers.contains(currentLoggedInUserId)) {
                         //we're having to force add this user explicitly therefore for safety we need to apply the change recursively
-                        String msg = String.format(getString(R.string.alert_information_add_album_permissions_recursively_pattern), galleryModel.getContainerDetails().getSubCategories());
+                        String msg = getString(R.string.alert_information_add_album_permissions_recursively_pattern, galleryModel.getContainerDetails().getSubCategories());
                         getUiHelper().showOrQueueDialogMessage(R.string.alert_information, msg, R.string.button_ok, false, new AddingChildPermissionsAction(getUiHelper(), newlyAddedGroups, newlyAddedUsers));
                     } else {
 
-                        String msg = String.format(getString(R.string.alert_confirm_add_album_permissions_recursively_pattern), newlyAddedGroups.size(), newlyAddedUsers.size(), galleryModel.getContainerDetails().getSubCategories());
+                        String msg = getString(R.string.alert_confirm_add_album_permissions_recursively_pattern, newlyAddedGroups.size(), newlyAddedUsers.size(), galleryModel.getContainerDetails().getSubCategories());
                         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_no, R.string.button_yes, new AddAccessToAlbumAction(getUiHelper(), newlyAddedGroups, newlyAddedUsers));
                     }
                 } else {
@@ -1315,7 +1315,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         if (newlyRemovedGroups.size() > 0 || newlyRemovedUsers.size() > 0) {
 
             if (galleryModel.getContainerDetails().getSubCategories() > 0) {
-                String message = String.format(getString(R.string.alert_confirm_really_remove_album_permissions_pattern), newlyRemovedGroups.size(), newlyRemovedUsers.size());
+                String message = getString(R.string.alert_confirm_really_remove_album_permissions_pattern, newlyRemovedGroups.size(), newlyRemovedUsers.size());
                 getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_no, R.string.button_yes, new RemoveAccessToAlbumAction(getUiHelper(), newlyRemovedGroups, newlyRemovedUsers));
             } else {
                 addActiveServiceCall(R.string.gallery_details_updating_progress_title, new AlbumRemovePermissionsResponseHandler(galleryModel.getContainerDetails(), newlyRemovedGroups, newlyRemovedUsers));
@@ -1342,10 +1342,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         allowedUsersField.setText(R.string.click_to_view);
         galleryPrivacyStatusField.setChecked(galleryModel.getContainerDetails().isPrivate());
         if (currentUsers != null) {
-            allowedUsersField.setText(String.format(getString(R.string.click_to_view_pattern), currentUsers.length));
+            allowedUsersField.setText(getString(R.string.click_to_view_pattern, currentUsers.length));
         }
         if (currentGroups != null) {
-            allowedGroupsField.setText(String.format(getString(R.string.click_to_view_pattern), currentGroups.length));
+            allowedGroupsField.setText(getString(R.string.click_to_view_pattern, currentGroups.length));
         }
         displayControlsBasedOnSessionState();
         setEditItemDetailsControlsStatus();
@@ -1928,8 +1928,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         galleryModel.setContainerDetails(response.getAlbum());
         currentUsers = this.galleryModel.getContainerDetails().getUsers();
         currentGroups = this.galleryModel.getContainerDetails().getGroups();
-        allowedUsersField.setText(String.format(getString(R.string.click_to_view_pattern), currentUsers.length));
-        allowedGroupsField.setText(String.format(getString(R.string.click_to_view_pattern), currentGroups.length));
+        allowedUsersField.setText(getString(R.string.click_to_view_pattern, currentUsers.length));
+        allowedGroupsField.setText(getString(R.string.click_to_view_pattern, currentGroups.length));
     }
 
     private void onAlbumDeleted(AlbumDeleteResponseHandler.PiwigoAlbumDeletedResponse response) {

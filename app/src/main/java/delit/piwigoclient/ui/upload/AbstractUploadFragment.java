@@ -224,7 +224,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (PiwigoSessionDetails.getInstance(activeProfile) == null) {
             fileSelectButton.setEnabled(false);
             String serverUri = activeProfile.getPiwigoServerAddress(getPrefs(), getContext());
-            getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_in_to_piwigo_pattern, serverUri), new LoginResponseHandler(), new OnLoginAction());
         } else {
             String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
             uploadableFilesView.setText(fileTypesStr);
@@ -402,7 +402,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
         if (sessionDetails == null || !sessionDetails.isFullyLoggedIn()) {
             String serverUri = ConnectionPreferences.getActiveProfile().getTrimmedNonNullPiwigoServerAddress(prefs, getContext());
-            getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler());
+            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_in_to_piwigo_pattern, serverUri), new LoginResponseHandler());
         } else {
             if (sessionDetails.getAllowedFileTypes() == null) {
                 fileSelectButton.setEnabled(false);

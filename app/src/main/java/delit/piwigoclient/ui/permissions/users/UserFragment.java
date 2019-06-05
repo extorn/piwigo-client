@@ -524,7 +524,7 @@ public class UserFragment extends MyFragment {
     private void deleteUser(final User user) {
         String currentUser = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getUsername();
         if (currentUser.equals(user.getUsername())) {
-            getUiHelper().showDetailedMsg(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_delete_yourself_pattern), currentUser));
+            getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_delete_yourself_pattern, currentUser));
         } else {
 
             String message = getString(R.string.alert_confirm_really_delete_user);

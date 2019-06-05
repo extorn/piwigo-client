@@ -534,7 +534,11 @@ public abstract class UIHelper<T> {
         if (savedInstanceState != null) {
             Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
             if (thisBundle != null) {
-                activeServiceCalls = Collections.synchronizedMap(BundleUtils.<Long, String>readMap(thisBundle, ACTIVE_SERVICE_CALLS, getClass().getClassLoader()));
+                HashMap<Long, String> activeCalls = BundleUtils.readMap(thisBundle, ACTIVE_SERVICE_CALLS, null);
+                if (activeCalls == null) {
+                    activeCalls = new HashMap<>();
+                }
+                activeServiceCalls = Collections.synchronizedMap(activeCalls);
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
                 runWithPermissions = BundleUtils.getSerializable(thisBundle, STATE_RUN_WITH_PERMS_LIST, HashMap.class);
                 try {

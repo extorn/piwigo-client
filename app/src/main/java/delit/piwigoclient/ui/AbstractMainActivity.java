@@ -749,7 +749,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         if (!VersionCompatability.INSTANCE.isSupportedVersion()) {
             String serverVersion = VersionCompatability.INSTANCE.getServerVersionString();
             String minimumVersion = VersionCompatability.INSTANCE.getMinimumTestedVersionString();
-            getUiHelper().showDetailedMsg(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_piwigo_version_pattern), serverVersion, minimumVersion));
+            getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_error_unsupported_piwigo_version_pattern, serverVersion, minimumVersion));
         }
 
         if(sessionDetails.isPiwigoClientPluginInstalled() && !VersionUtils.versionExceeds(VersionUtils.parseVersionString(BuildConfig.PIWIGO_CLIENT_WS_VERSION), VersionUtils.parseVersionString(sessionDetails.getPiwigoClientPluginVersion()))) {
@@ -758,7 +758,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
         }
 
         if(showUserWarning && !VersionCompatability.INSTANCE.isFavoritesEnabled()) {
-            getUiHelper().showDetailedMsg(R.string.alert_warning, String.format(getString(R.string.alert_error_unsupported_features_pattern)));
+            getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_error_unsupported_features_pattern));
         }
     }
 

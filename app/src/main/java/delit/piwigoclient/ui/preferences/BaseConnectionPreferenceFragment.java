@@ -323,7 +323,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
-            getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction(loginAsProfileAfterLogout));
+            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_out_of_piwigo_pattern, sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction(loginAsProfileAfterLogout));
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();
             getUiHelper().addActionOnResponse(msgId, new OnHttpClientShutdownAction(loginAsProfileAfterLogout));
@@ -346,7 +346,7 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
         if (sessionDetails != null && sessionDetails.isLoggedIn()) {
-            getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_out_of_piwigo_pattern), sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction(false));
+            getUiHelper().invokeActiveServiceCall(getString(R.string.logging_out_of_piwigo_pattern, sessionDetails.getServerUrl()), new LogoutResponseHandler(), new OnLogoutAction(false));
             return true;
         } else if (HttpClientFactory.getInstance(getContext()).isInitialised(connectionPrefs)) {
             long msgId = new HttpConnectionCleanup(connectionPrefs, getContext()).start();

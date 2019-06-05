@@ -249,7 +249,7 @@ public class UsersListFragment extends MyFragment {
     private void onDeleteUser(final User thisItem) {
         String currentUser = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile()).getUsername();
         if (currentUser.equals(thisItem.getUsername())) {
-            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, String.format(getString(R.string.alert_error_unable_to_delete_yourself_pattern), currentUser));
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_unable_to_delete_yourself_pattern, currentUser));
         } else {
 
             String message = getString(R.string.alert_confirm_really_delete_user);
@@ -299,7 +299,7 @@ public class UsersListFragment extends MyFragment {
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(UserDeletedEvent event) {
         viewAdapter.remove(event.getUser());
-        getUiHelper().showDetailedMsg(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), event.getUser().getUsername()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_user_delete_success_pattern, event.getUser().getUsername()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -310,12 +310,12 @@ public class UsersListFragment extends MyFragment {
     private void onUserDeleted(final UserDeleteResponseHandler.PiwigoDeleteUserResponse response) {
         User user = deleteActionsPending.remove(response.getMessageId());
         viewAdapter.remove(user);
-        getUiHelper().showDetailedMsg(R.string.alert_information, String.format(getString(R.string.alert_user_delete_success_pattern), user.getUsername()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_user_delete_success_pattern, user.getUsername()));
     }
 
     private void onUserDeleteFailed(final long messageId) {
         User user = deleteActionsPending.remove(messageId);
-        getUiHelper().showDetailedMsg(R.string.alert_information, String.format(getString(R.string.alert_user_delete_failed_pattern), user.getUsername()));
+        getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_user_delete_failed_pattern, user.getUsername()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

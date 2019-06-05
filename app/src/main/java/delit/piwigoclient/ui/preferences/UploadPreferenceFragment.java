@@ -55,7 +55,7 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
                 PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
                 String serverUri = connectionPrefs.getPiwigoServerAddress(getPrefs(), getContext());
                 if (sessionDetails == null || !sessionDetails.isLoggedIn()) {
-                    getUiHelper().invokeActiveServiceCall(String.format(getString(R.string.logging_in_to_piwigo_pattern), serverUri), new LoginResponseHandler(), new OnLoginAction());
+                    getUiHelper().invokeActiveServiceCall(getString(R.string.logging_in_to_piwigo_pattern, serverUri), new LoginResponseHandler(), new OnLoginAction());
                 } else if(sessionDetails.isPiwigoClientCleanUploadsAvailable()){
                     getUiHelper().invokeActiveServiceCall(R.string.progress_clearing_failed_uploads_from_server, new PiwigoClientFailedUploadsCleanResponseHandler(), new FailedUploadCleanAction());
                 } else {

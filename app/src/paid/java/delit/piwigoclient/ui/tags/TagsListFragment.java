@@ -422,7 +422,7 @@ public class TagsListFragment extends MyFragment {
 //    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
 //    public void onEvent(TagDeletedEvent event) {
 //        viewAdapter.remove(event.getTag());
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, String.format(getString(R.string.alert_tag_delete_success_pattern), event.getTag().getName()));
+//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, event.getTag().getName()));
 //    }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -441,12 +441,12 @@ public class TagsListFragment extends MyFragment {
 //    public void onTagDeleted(final PiwigoResponseBufferingHandler.PiwigoDeleteTagResponse response) {
 //        Tag tag = deleteActionsPending.remove(response.getMessageId());
 //        viewAdapter.remove(tag);
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, String.format(getString(R.string.alert_tag_delete_success_pattern), tag.getName()));
+//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_tag_delete_success_pattern, tag.getName()));
 //    }
 
 //    public void onTagDeleteFailed(final long messageId) {
 //        Tag tag = deleteActionsPending.remove(messageId);
-//        getUiHelper().showOrQueueMessage(R.string.alert_information, String.format(getString(R.string.alert_tag_delete_failed_pattern), tag.getName()));
+//        getUiHelper().showOrQueueMessage(R.string.alert_information, getString(R.string.alert_tag_delete_failed_pattern, tag.getName()));
 //    }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
