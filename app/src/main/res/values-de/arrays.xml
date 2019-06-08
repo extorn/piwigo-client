@@ -109,6 +109,9 @@
          - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.11</item>
+        <item>"Änderungen:
+                - Hochladen - Stoppte die automatische harte Drehung von Videos in den Hochformat-Modus und entfernte die Rotations-Metadaten, da das Video nicht universell abgespielt wird."</item>
         <item>1.4.0.10</item>
         <item>"Fehlerbehebung:
                 - Ein paar unregelmäßige Probleme"</item>

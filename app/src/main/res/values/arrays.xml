@@ -198,6 +198,17 @@
             - Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <!--
+        <item>Upcoming</item>
+        <item>"Changes:
+                - TODO Added support for setting the desired bitrate of the video stream
+                - TODO Added support for selecting videos for compression on an invididual basis before clicking upload
+                - TODO Added support for MP3 encoding of the audio stream
+                - TODO Added support for setting the desired bitrate of the audio stream"</item>
+                -->
+        <item>1.4.0.11</item>
+        <item>"Changes:
+                - Upload - Stopped automatic hard rotation of videos into portrait mode, removing the rotation metadata as the video is not universally played"</item>
         <item>1.4.0.10</item>
         <item>"Bugfix:
                 - A few intermittent issues"</item>

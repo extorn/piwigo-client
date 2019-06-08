@@ -495,10 +495,12 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
             // Hence currentUnappliedRotation should always be 0. For 90 and 270 degree rotations, we need
             // to flip the width, height and pixel aspect ratio to reflect the rotation that was applied.
             if (pendingRotationDegrees == 90 || pendingRotationDegrees == 270) {
-                int rotatedHeight = currentWidth;
-                currentWidth = currentHeight;
-                currentHeight = rotatedHeight;
-                currentPixelWidthHeightRatio = 1 / currentPixelWidthHeightRatio;
+                if (compressionSettings.isHardRotateVideo()) {
+                    int rotatedHeight = currentWidth;
+                    currentWidth = currentHeight;
+                    currentHeight = rotatedHeight;
+                    currentPixelWidthHeightRatio = 1f / currentPixelWidthHeightRatio;
+                }
             }
         } else {
             // On API level 20 and below the decoder does not apply the rotation.

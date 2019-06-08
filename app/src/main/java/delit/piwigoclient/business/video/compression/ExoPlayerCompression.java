@@ -191,7 +191,7 @@ public class ExoPlayerCompression {
         private int wantedBitRate = -1;
         private int wantedBitRateModeV21 = -1;
         private boolean isAllowSkippingFrames;
-        private boolean needMediaClock;
+        private boolean isHardRotateVideo;
 
         public VideoCompressionParameters(final long maxInterleavingIntervalMs) {
             this.maxInterleavingIntervalUs = maxInterleavingIntervalMs;
@@ -229,6 +229,10 @@ public class ExoPlayerCompression {
             this.wantedKeyFrameRate = wantedKeyFrameRate;
         }
 
+        public boolean isHardRotateVideo() {
+            return isHardRotateVideo;
+        }
+
         /**
          * 3 in seconds where 0 is every frame and -1 is only a single key frame
          *
@@ -264,6 +268,19 @@ public class ExoPlayerCompression {
 
         public void setAllowSkippingFrames(boolean allowSkippingFrames) {
             isAllowSkippingFrames = allowSkippingFrames;
+        }
+
+        /**
+         * If true, the video may literally be saved in portrait format with no rotate tag.
+         * <br>
+         * WARNING - This means it cannot be played by all media players, as some presume video
+         * is in landscape mode with a rotate flag if needed!
+         * </b>
+         *
+         * @param hardRotateVideo
+         */
+        public void setHardRotateVideo(boolean hardRotateVideo) {
+            isHardRotateVideo = hardRotateVideo;
         }
     }
 
