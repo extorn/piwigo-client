@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.preference.Preference;
 import androidx.preference.SwitchPreference;
@@ -75,7 +74,9 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
             return true;
         }
     };
-    private View view;
+
+    public GalleryPreferenceFragment() {
+    }
 
     public GalleryPreferenceFragment(int pagerIndex) {
         super(pagerIndex);

@@ -358,7 +358,7 @@ public class ViewTagFragment extends MyFragment {
     }
 
     private void reloadTagModel(Tag tag) {
-        tagModel = ViewModelProviders.of(getActivity()).get("" + tag.getId(), PiwigoTagModel.class).getPiwigoTag(tag).getValue();
+        tagModel = ViewModelProviders.of(getActivity()).get("" + tag.getId(), PiwigoTagModel.class).updatePiwigoTag(tag).getValue();
     }
 
     private PiwigoTag getTagModel() {

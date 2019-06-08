@@ -8,6 +8,9 @@ import delit.piwigoclient.R;
 
 public class ConnectionPreferenceFragment extends BaseConnectionPreferenceFragment {
 
+    public ConnectionPreferenceFragment() {
+    }
+
     public ConnectionPreferenceFragment(int pagerIndex) {
         super(pagerIndex);
     }

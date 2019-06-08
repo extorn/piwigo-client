@@ -77,6 +77,7 @@ import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.CustomSnackbar;
+import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ObjectUtils;
 import delit.piwigoclient.util.TransientMsgUtils;
 import delit.piwigoclient.util.X509Utils;
@@ -704,16 +705,37 @@ public abstract class UIHelper<T> {
     }
 
     public void showProgressIndicator() {
-        if(progressIndicator == null) {
+
+        if (progressIndicator == null) {
             Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
         } else {
-            progressIndicator.setVisibility(View.VISIBLE);
+            if (DisplayUtils.isRunningOnUIThread()) {
+                progressIndicator.setVisibility(View.VISIBLE);
+            } else {
+                // publish on the main thread
+                progressIndicator.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressIndicator.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
         }
     }
 
     public void hideProgressIndicator() {
         if(progressIndicator != null) {
-            progressIndicator.setVisibility(View.GONE);
+            if (DisplayUtils.isRunningOnUIThread()) {
+                progressIndicator.setVisibility(View.GONE);
+            } else {
+                // publish on the main thread
+                progressIndicator.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressIndicator.setVisibility(View.GONE);
+                    }
+                });
+            }
         }
     }
 

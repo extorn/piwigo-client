@@ -17,6 +17,9 @@ import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 
 public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
 
+    public AutoUploadJobsPreferenceFragment() {
+    }
+
     public AutoUploadJobsPreferenceFragment(int pagerIndex) {
         super(pagerIndex);
     }

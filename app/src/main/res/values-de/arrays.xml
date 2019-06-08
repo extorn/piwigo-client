@@ -109,11 +109,14 @@
          - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.10</item>
+        <item>"Fehlerbehebung:
+                - Ein paar unregelmäßige Probleme"</item>
         <item>1.4.0.9</item>
-        <item>"Bugfix:
-                - Chinese language fixes
-                - Animated Gif support fixed
-                - Removed a potential memory leak"</item>
+        <item>"Fehlerbehebung:
+                - Korrekturen bei der chinesischen Sprache
+                - Animierte Gif-Unterstützung korrigiert
+                - Ein mögliches Speicherleck wurde entfernt"</item>
         <item>1.4.0.8</item>
         <item>"Fehlerbehebung:
             - Android 4 Absturz behoben"</item>

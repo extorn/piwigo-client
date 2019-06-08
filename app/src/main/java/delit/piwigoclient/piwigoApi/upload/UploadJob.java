@@ -378,7 +378,7 @@ public class UploadJob implements Serializable {
         while(filesToUploadIter.hasNext()) {
             File f = filesToUploadIter.next();
             if(f.isDirectory()) {
-                filesToUpload.remove(f);
+                filesToUploadIter.remove();
             }
         }
         return filesToUpload;

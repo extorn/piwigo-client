@@ -44,13 +44,15 @@ import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
 
 public abstract class MyPreferenceFragment extends PreferenceFragmentCompat implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
     private static final String STATE_PAGER_INDEX_POS = "pager_index_pos";
+    protected static final int NO_PAGER_INDEX = -1;
     private UIHelper uiHelper;
     private Context c;
-    private int pagerIndex = -1;
+    private int pagerIndex;
     protected static final String DIALOG_FRAGMENT_TAG =
             "androidx.preference.PreferenceFragment.DIALOG";
 
     public MyPreferenceFragment() {
+        this(NO_PAGER_INDEX);
     }
 
     public MyPreferenceFragment(int pagerIndex) {
@@ -182,6 +184,9 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat impl
     }
 
     public static final class DummyPreferencesFragment extends MyPreferenceFragment {
+
+        public DummyPreferencesFragment() {
+        }
 
         public DummyPreferencesFragment(int pagerIndex) {
             super(pagerIndex);

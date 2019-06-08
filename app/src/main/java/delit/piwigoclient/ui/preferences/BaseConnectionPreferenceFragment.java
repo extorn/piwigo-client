@@ -61,6 +61,9 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         super(pagerIndex);
     }
 
+    public BaseConnectionPreferenceFragment() {
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {

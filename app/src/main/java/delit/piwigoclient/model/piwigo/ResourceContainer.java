@@ -2,6 +2,9 @@ package delit.piwigoclient.model.piwigo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 /**
  * Created by gareth on 06/04/18.
@@ -9,6 +12,7 @@ import android.os.Parcelable;
 
 public abstract class ResourceContainer<S extends Identifiable&Parcelable, T extends Identifiable&Parcelable> extends IdentifiablePagedList<T> implements Identifiable, Parcelable {
 
+    private static final String TAG = "ResourceContainer";
     private S containerDetails;
 
     public ResourceContainer(S containerDetails, String itemType) {
@@ -23,12 +27,18 @@ public abstract class ResourceContainer<S extends Identifiable&Parcelable, T ext
     public ResourceContainer(Parcel in) {
         super(in);
         containerDetails = in.readParcelable(getClass().getClassLoader());
+        if (containerDetails == null) {
+            Crashlytics.log(Log.WARN, TAG, "Resource container details was loaded as null for item of type " + getItemType());
+        }
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
         dest.writeParcelable(containerDetails, flags);
+        if (containerDetails == null) {
+            Crashlytics.log(Log.WARN, TAG, "Resource container details was saved as null for item of type " + getItemType());
+        }
     }
 
     public ResourceItem getResourceItemById(long itemId) {

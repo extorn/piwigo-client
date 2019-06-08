@@ -89,7 +89,8 @@ public class ExoPlayerCompression {
         listenerWrapper.onCompressionStarted();
         Uri videoUri = Uri.fromFile(inputFile);
         ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
-        player.prepare(videoSource);
+        Crashlytics.log(Log.DEBUG, TAG, "ExoPlayerCompression using looper " + player.getPlaybackLooper() + ". Is main looper : " + (Looper.getMainLooper() == player.getPlaybackLooper()));
+        player.prepare(videoSource); // has crashed here intermittently - apparently due to a looper issue - could one specifically need adding to this thread?
         PlaybackParameters playbackParams = new PlaybackParameters(1.0f);
         player.setPlaybackParameters(playbackParams);
         player.setPlayWhenReady(true);

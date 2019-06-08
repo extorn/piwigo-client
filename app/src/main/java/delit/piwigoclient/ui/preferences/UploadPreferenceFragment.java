@@ -25,6 +25,9 @@ public class UploadPreferenceFragment extends MyPreferenceFragment {
 
     private static final String TAG = "Upload Settings";
 
+    public UploadPreferenceFragment() {
+    }
+
     public UploadPreferenceFragment(int pagerIndex) {
         super(pagerIndex);
     }
