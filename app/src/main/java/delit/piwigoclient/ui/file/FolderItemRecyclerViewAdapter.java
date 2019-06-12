@@ -3,6 +3,8 @@ package delit.piwigoclient.ui.file;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
@@ -31,6 +34,8 @@ import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
+import delit.piwigoclient.ui.common.util.MediaScanner;
+import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.IOUtils;
 import delit.piwigoclient.util.ObjectUtils;
 
@@ -39,15 +44,18 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
     public final static int VIEW_TYPE_FILE_IMAGE = 2;
+    private final MediaScanner mediaScanner;
     private transient List<File> currentDisplayContent;
     private File activeFolder;
     private Comparator<? super File> fileComparator;
     private NavigationListener navigationListener;
     private TreeSet<String> currentVisibleFileExts;
+    private HashMap<File, Uri> currentDisplayContentUris = new HashMap<>();
 
-    public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MultiSelectStatusListener multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
+    public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MediaScanner mediaScanner, MultiSelectStatusListener multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
         super(multiSelectStatusListener, folderViewPrefs);
         this.navigationListener = navigationListener;
+        this.mediaScanner = mediaScanner;
         changeFolderViewed(folderViewPrefs.getInitialFolderAsFile());
     }
 
@@ -97,11 +105,64 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         currentDisplayContent = folderContent != null ? ArrayUtils.toArrayList(folderContent) : new ArrayList(0);
         currentVisibleFileExts = getUniqueFileExtsInFolder(currentDisplayContent);
         Collections.sort(currentDisplayContent, getFileComparator());
-        notifyDataSetChanged();
+        currentDisplayContentUris.clear();
+
+        if (!mediaScanner.isReadyToScan()) {
+            new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    while (!mediaScanner.isReadyToScan()) {
+                        synchronized (mediaScanner) {
+                            try {
+                                mediaScanner.wait(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    scanForFiles();
+                    return null;
+                }
+            }.execute();
+        } else {
+            scanForFiles();
+        }
 
         if (!refreshingExistingFolder) {
             navigationListener.onPostFolderOpened(oldFolder, newContent);
         }
+    }
+
+    private void scanForFiles() {
+        for (File f : currentDisplayContent) {
+            if (!f.isDirectory()) {
+                mediaScanner.scan(f);
+            }
+        }
+
+        while (mediaScanner.getScansRunning() > 0) {
+            synchronized (mediaScanner) {
+                try {
+                    mediaScanner.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        for (File f : currentDisplayContent) {
+            if (!f.isDirectory()) {
+                currentDisplayContentUris.put(f, mediaScanner.getScanResults(f));
+            }
+        }
+
+        DisplayUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     private TreeSet<String> getUniqueFileExtsInFolder(List<File> currentDisplayContent) {
@@ -354,7 +415,12 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             getCheckBox().setVisibility(getAdapterPrefs().isAllowFileSelection() ? View.VISIBLE : View.GONE);
             getCheckBox().setChecked(getSelectedItems().contains(newItem));
             getCheckBox().setEnabled(isEnabled());
-            getIconViewLoader().setFileToLoad(getItem());
+            Uri itemUri = currentDisplayContentUris.get(newItem);
+            if (itemUri != null) {
+                getIconViewLoader().setUriToLoad(itemUri.toString());
+            } else if (currentDisplayContentUris.size() > 0) {
+                getIconViewLoader().setFileToLoad(newItem);
+            }
         }
 
         @Override

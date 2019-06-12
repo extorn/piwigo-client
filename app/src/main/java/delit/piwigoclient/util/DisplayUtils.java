@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Point;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -204,5 +205,14 @@ public class DisplayUtils {
         }
         int columnsToShow = (int) Math.max(1, Math.round(screenWidth) / minWidthInches); // never allow less than one column by default.
         return columnsToShow;
+    }
+
+    public static void runOnUiThread(Runnable runnable) {
+        if (isRunningOnUIThread()) {
+            runnable.run();
+        } else {
+            Handler h = new Handler(Looper.getMainLooper());
+            h.post(runnable);
+        }
     }
 }

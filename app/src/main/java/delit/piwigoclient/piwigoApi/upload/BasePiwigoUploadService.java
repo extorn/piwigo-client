@@ -787,21 +787,11 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private File compressVideo(UploadJob uploadJob, File rawVideo) {
         File outputVideo = uploadJob.getCompressedFile(getApplicationContext(), rawVideo);
-        CompressionListener listener = new CompressionListener(this, uploadJob.getJobId(), rawVideo, outputVideo);
+        UploadFileCompressionListener listener = new UploadFileCompressionListener(this, uploadJob.getJobId(), rawVideo, outputVideo);
 
-        try {
-//            YPrestoCompressor compressor = new YPrestoCompressor();
-            ExoPlayerCompression compressor = new ExoPlayerCompression();
-            compressor.compressFile(getApplicationContext(), rawVideo, outputVideo, listener);
-        } catch (FileNotFoundException e) {
-            Crashlytics.logException(e);
-            postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, e));
-            uploadJob.cancelFileUpload(rawVideo);
-        } catch (IOException e) {
-            Crashlytics.logException(e);
-            postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawVideo, e));
-            uploadJob.cancelFileUpload(rawVideo);
-        }
+//        YPrestoCompressor compressor = new YPrestoCompressor();
+        ExoPlayerCompression compressor = new ExoPlayerCompression();
+        compressor.invokeFileCompression(getApplicationContext(), rawVideo, outputVideo, listener);
 
         while (!uploadJob.isCancelUploadAsap() && (!listener.isCompressionComplete() && null == listener.getCompressionError())) {
             try {
@@ -809,6 +799,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     listener.wait();
                 }
             } catch (InterruptedException e) {
+                Log.e(TAG, "Listener awoken!");
                 // either spurious wakeup or the upload job wished to be cancelled.
             }
         }
@@ -1268,7 +1259,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return new Pair<>(imageChunkUploadHandler.isSuccess(), uploadedResource);
     }
 
-    private static class CompressionListener implements ExoPlayerCompression.CompressionListener {
+    private static class UploadFileCompressionListener implements ExoPlayerCompression.CompressionListener {
 
         private final File rawVideo;
         private final File compressedVideo;
@@ -1277,7 +1268,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         private long jobId;
         private Exception compressionError;
 
-        public CompressionListener(BasePiwigoUploadService uploadService, long jobId, File rawVideo, File compressedVideo) {
+        public UploadFileCompressionListener(BasePiwigoUploadService uploadService, long jobId, File rawVideo, File compressedVideo) {
             this.uploadService = uploadService;
             this.jobId = jobId;
             this.rawVideo = rawVideo;

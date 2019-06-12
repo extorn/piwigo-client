@@ -14,7 +14,7 @@ import java.util.Date;
 public class VideoResourceItem extends ResourceItem {
 
     private static final String TAG = "VidResItem";
-    private static final long serialVersionUID = 1917026684526700745L;
+    private static final long serialVersionUID = -2479502149387115863L;
 
     public VideoResourceItem(long id, String name, String description, Date dateCreated, Date lastAltered, String baseResourceUrl) {
         super(id, name, description, dateCreated, lastAltered, baseResourceUrl);

@@ -33,7 +33,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,6 +67,7 @@ import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.BiArrayAdapter;
 import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.common.util.MediaScanner;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
@@ -115,6 +115,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private Button uploadJobStatusButton;
     private TextView uploadableFilesView;
     private boolean compressVideosBeforeUpload;
+    private MediaScanner mediaScanner;
 
 
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
@@ -186,6 +187,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                              Bundle savedInstanceState) {
 
         super.onCreateView(inflater, container, savedInstanceState);
+
+        mediaScanner = new MediaScanner(container.getContext());
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
@@ -325,7 +328,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         filesForUploadView.setLayoutManager(gridLayoutMan);
 
         if (filesToUploadAdapter == null) {
-            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(filesForUpload, getContext(), this);
+            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(filesForUpload, mediaScanner, getContext(), this);
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
         }
         filesForUploadView.setAdapter(filesToUploadAdapter);
@@ -339,6 +342,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return fileSelectButton;
     }
 
+    @Override
+    public void onDestroyView() {
+        mediaScanner.close();
+        super.onDestroyView();
+    }
 
     private TextView getUploadableFilesView() {
         return uploadableFilesView;
@@ -353,13 +361,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             File inputVideo = filesForUpload.get(0);
             File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
             File outputVideo = new File(moviesFolder, "compressed_" + inputVideo.getName());
-            try {
+            /*try*/
+            {
                 //TODO this compressor is very basic - need to use my own.
-//                new YPrestoCompressor().compressFile(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
-                new ExoPlayerCompression().compressFile(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
-            } catch (IOException e) {
+//                new YPrestoCompressor().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
+                new ExoPlayerCompression().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
+            } /*catch (IOException e) {
                 getUiHelper().showDetailedMsg(R.string.alert_error, "Error compressing video " + e.getMessage());
-            }
+            }*/
         }
     }
 

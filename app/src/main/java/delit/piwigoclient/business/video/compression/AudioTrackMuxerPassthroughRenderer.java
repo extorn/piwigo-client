@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
+import delit.piwigoclient.util.IOUtils;
+
 /**
  * This doesn't seem to work (with the video compression, but does alone) - issue with the link to exoplayer I think... It's kind of there, but not completely. Very weird error.
  */
@@ -42,7 +44,11 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
     private final ExoPlayerCompression.AudioCompressionParameters compressionSettings;
     private MediaFormat currentMediaFormat;
     Map<Long, Integer> sampleTimeSizeMap = new HashMap<>(100);
+    private static final int PREFERRED_MAX_CACHE_SIZE = 3;
     private Queue<AudioBufferQueueItem> cachedAudioBufferQueue = new ArrayDeque<>();
+    private long renderPositionUs;
+    private MediaCodec.BufferInfo audioBufferInfo = new MediaCodec.BufferInfo(); // shared copy for efficiency.
+    private boolean lastRendererLoadedSourceData;
 
     public AudioTrackMuxerPassthroughRenderer(Context context, MediaCodecSelector mediaCodecSelector, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable AudioRendererEventListener eventListener, MediaMuxerControl mediaMuxerControl, AudioSink audioSink, ExoPlayerCompression.AudioCompressionParameters compressionSettings) {
         super(context, mediaCodecSelector, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, audioSink);
@@ -58,6 +64,7 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
     @Override
     protected void onQueueInputBuffer(DecoderInputBuffer buffer) {
         sampleTimeSizeMap.put(buffer.timeUs, buffer.data.remaining());
+        mediaMuxerControl.markDataRead();
         super.onQueueInputBuffer(buffer);
     }
 
@@ -94,6 +101,7 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
 
     @Override
     public void render(long positionUs, long elapsedRealtimeUs) throws ExoPlaybackException {
+        lastRendererLoadedSourceData = mediaMuxerControl.isSourceDataRead();
         if (mediaMuxerControl.isAudioConfigured() && !mediaMuxerControl.isMediaMuxerStarted()) {
             // still trying to configure other tracks so lets not fill the buffers!
             return;
@@ -101,6 +109,7 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
         if (VERBOSE) {
             Log.d(TAG, String.format("Checking audio buffer at positionUs %1$d", positionUs));
         }
+        this.renderPositionUs = positionUs;
         super.render(positionUs, elapsedRealtimeUs);
     }
 
@@ -130,31 +139,37 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
 
         long maxRenderItemUs = positionUs + compressionSettings.getMaxInterleavingIntervalUs();
 
-        if (!mediaMuxerControl.isConfigured()) {
-            if (bufferPresentationTimeUs > maxRenderItemUs) {
-                writeTranscodedAudioToCache(codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs);
-                return true;
-            }
-            return false;
-        }
+//        if (!mediaMuxerControl.isConfigured()) {
+//            if ((cachedAudioBufferQueue.size() < PREFERRED_MAX_CACHE_SIZE || !lastRendererLoadedSourceData) && bufferPresentationTimeUs > maxRenderItemUs) { // if the last renderer didn't read anything, maybe the source data buffers are full - drain a bit.
+//                writeTranscodedAudioToCache(codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs);
+//                return true;
+//            }
+//            return false;
+//        }
 
         mediaMuxerControl.startMediaMuxer();
 
-        processAnyOlderCachedData(maxRenderItemUs, elapsedRealtimeUs, codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs);
+        processAnyOlderCachedData(maxRenderItemUs);
 
-        if (bufferPresentationTimeUs > maxRenderItemUs) {
-            writeTranscodedAudioToCache(codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs);
-            if (VERBOSE) {
-                Log.e(TAG, "Audio Processor - Giving up render to video at position " + positionUs);
+        if (mediaMuxerControl.isHasVideo() && mediaMuxerControl.hasAudioDataQueued()) {
+            if (bufferPresentationTimeUs > maxRenderItemUs) {
+                if (cachedAudioBufferQueue.size() < PREFERRED_MAX_CACHE_SIZE || !lastRendererLoadedSourceData) { // if the last renderer didn't read anything, maybe the source data buffers are full - drain a bit.
+                    writeTranscodedAudioToCache(codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs);
+                    if (VERBOSE) {
+                        Log.e(TAG, "Audio Processor - Giving up render to video at position " + positionUs);
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
             }
-            return true;
         }
 
-        return writeTranscodedAudioToMuxer(codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs, true);
+        return writeTranscodedAudioToMuxer(codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs);
 
     }
 
-    private void processAnyOlderCachedData(long maxRenderItemUs, long elapsedRealtimeUs, MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs) {
+    private void processAnyOlderCachedData(long maxRenderItemUs) {
 
         while (!cachedAudioBufferQueue.isEmpty()) {
             AudioBufferQueueItem cachedItem = cachedAudioBufferQueue.peek();
@@ -165,21 +180,23 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
             if (VERBOSE) {
                 Log.d(TAG, String.format("Audio Renderer: Processing deferred sample audio data for track %1$d from buffer %2$d at [%3$d]", mediaMuxerControl.getAudioTrackId(), cachedItem.bufferIndex, cachedItem.bufferPresentationTimeUs));
             }
-            writeTranscodedAudioToMuxer(cachedItem.codec, cachedItem.buffer, cachedItem.bufferIndex, cachedItem.bufferFlags, cachedItem.bufferPresentationTimeUs, false);
+            writeTranscodedAudioToMuxer(null, cachedItem.buffer, cachedItem.bufferIndex, cachedItem.bufferFlags, cachedItem.bufferPresentationTimeUs);
         }
     }
 
     private void writeTranscodedAudioToCache(MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs) {
-        ByteBuffer bufferClone = ByteBuffer.allocate(buffer.remaining());
-        byte[] dst = new byte[buffer.remaining()];
-        buffer.get(dst);
-        bufferClone.put(dst);
-        bufferClone.flip();
-
-        cachedAudioBufferQueue.add(new AudioBufferQueueItem(codec, bufferClone, bufferIndex, bufferFlags, bufferPresentationTimeUs));
+        ByteBuffer bufferClone = IOUtils.deepCopyVisible(buffer);
+        cachedAudioBufferQueue.add(new AudioBufferQueueItem(bufferClone, bufferIndex, bufferFlags, bufferPresentationTimeUs));
         codec.releaseOutputBuffer(bufferIndex, false);
         if (VERBOSE) {
             Log.d(TAG, String.format("Pausing Audio Renderer: Deferring writing of sample audio data for track %1$d from buffer %2$d at [%3$d]", mediaMuxerControl.getAudioTrackId(), bufferIndex, bufferPresentationTimeUs));
+        }
+        if (!cachedAudioBufferQueue.isEmpty()) {
+            long cacheSize = 0;
+            for (AudioBufferQueueItem item : cachedAudioBufferQueue) {
+                cacheSize += item.buffer.remaining();
+            }
+            Log.e(TAG, "AudioQueueSize : " + cachedAudioBufferQueue.size() + IOUtils.toNormalizedText(cacheSize));
         }
     }
 
@@ -195,14 +212,17 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
 
     @Override
     protected void renderToEndOfStream() {
-        if (mediaMuxerControl.isHasAudio()) {
-            mediaMuxerControl.audioRendererStopped();
+        if (cachedAudioBufferQueue.isEmpty()) {
+            if (mediaMuxerControl.isHasAudio()) {
+                mediaMuxerControl.audioRendererStopped();
+            }
+        } else {
+            long maxRenderItemUs = renderPositionUs + compressionSettings.getMaxInterleavingIntervalUs();
+            processAnyOlderCachedData(maxRenderItemUs);
         }
     }
 
-    private boolean writeTranscodedAudioToMuxer(MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean checkCache) {
-
-        MediaCodec.BufferInfo audioBufferInfo = new MediaCodec.BufferInfo();
+    private boolean writeTranscodedAudioToMuxer(MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs) {
         audioBufferInfo.flags = bufferFlags;
         audioBufferInfo.offset = 0;
         audioBufferInfo.size = buffer.remaining();
@@ -212,9 +232,11 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
         }
 
         long originalBytes = sampleTimeSizeMap.get(bufferPresentationTimeUs);
+
         mediaMuxerControl.writeSampleData(mediaMuxerControl.getAudioTrackId(), buffer, audioBufferInfo, originalBytes);
 
-        if (checkCache) {
+        if (codec != null) {
+            // this is a live buffer attached not cached
             codec.releaseOutputBuffer(bufferIndex, false);
         }
 
@@ -246,14 +268,12 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
     }
 
     private static class AudioBufferQueueItem {
-        MediaCodec codec;
         ByteBuffer buffer;
         int bufferIndex;
         int bufferFlags;
         long bufferPresentationTimeUs;
 
-        public AudioBufferQueueItem(MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs) {
-            this.codec = codec;
+        public AudioBufferQueueItem(ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs) {
             this.buffer = buffer;
             this.bufferIndex = bufferIndex;
             this.bufferFlags = bufferFlags;

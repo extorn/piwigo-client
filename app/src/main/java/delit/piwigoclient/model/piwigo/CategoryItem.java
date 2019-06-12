@@ -30,6 +30,7 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
             return GalleryItem.ALBUM_HEADING_TYPE;
         }
     };
+    private static final long serialVersionUID = 6967613449661498517L;
     private List<CategoryItem> childAlbums;
     private int photoCount;
     private long totalPhotoCount;
@@ -97,11 +98,11 @@ public class CategoryItem extends GalleryItem implements Cloneable, PhotoContain
 
     @Override
     public String getThumbnailUrl() {
-        return thumbnailUrl;
+        return getFullPath(thumbnailUrl);
     }
 
     public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl == null ? null : thumbnailUrl.substring(getBaseResourceUrl().length());
+        this.thumbnailUrl = getRelativePath(thumbnailUrl);
     }
 
     public void setChildAlbums(ArrayList<CategoryItem> childAlbums) {

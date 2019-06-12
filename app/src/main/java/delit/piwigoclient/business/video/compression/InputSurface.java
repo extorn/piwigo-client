@@ -12,11 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * https://android.googlesource.com/platform/cts/+/jb-mr2-release/tests/tests/media/src/android/media/cts/
  */
+// from: https://android.googlesource.com/platform/cts/+/lollipop-release/tests/tests/media/src/android/media/cts/InputSurface.java
+// blob: 157ed88d143229e4edb6889daf18fb73aa2fc5a5
 package delit.piwigoclient.business.video.compression;
-
 import android.opengl.EGL14;
 import android.opengl.EGLConfig;
 import android.opengl.EGLContext;
@@ -27,8 +26,6 @@ import android.os.Build;
 import android.util.Log;
 import android.view.Surface;
 
-import androidx.annotation.RequiresApi;
-
 import com.crashlytics.android.Crashlytics;
 
 /**
@@ -38,17 +35,13 @@ import com.crashlytics.android.Crashlytics;
  * to create an EGL window surface.  Calls to eglSwapBuffers() cause a frame of data to be sent
  * to the video encoder.
  */
-@RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 class InputSurface {
     private static final String TAG = "InputSurface";
-    private static final boolean VERBOSE = false;
     private static final int EGL_RECORDABLE_ANDROID = 0x3142;
-    private static final int EGL_OPENGL_ES2_BIT = 4;
-    private EGLDisplay mEGLDisplay;
-    private EGLContext mEGLContext;
-    private EGLSurface mEGLSurface;
+    private EGLDisplay mEGLDisplay = EGL14.EGL_NO_DISPLAY;
+    private EGLContext mEGLContext = EGL14.EGL_NO_CONTEXT;
+    private EGLSurface mEGLSurface = EGL14.EGL_NO_SURFACE;
     private Surface mSurface;
-
     /**
      * Creates an InputSurface from a Surface.
      */
@@ -59,7 +52,6 @@ class InputSurface {
         mSurface = surface;
         eglSetup();
     }
-
     /**
      * Prepares EGL.  We want a GLES 2.0 context and a surface that supports recording.
      */
@@ -73,13 +65,13 @@ class InputSurface {
             mEGLDisplay = null;
             throw new RuntimeException("unable to initialize EGL14");
         }
-        // Configure EGL for pbuffer and OpenGL ES 2.0.  We want enough RGB bits
-        // to be able to tell if the frame is reasonable.
+        // Configure EGL for recordable and OpenGL ES 2.0.  We want enough RGB bits
+        // to minimize artifacts from possible YUV conversion.
         int[] attribList = {
                 EGL14.EGL_RED_SIZE, 8,
                 EGL14.EGL_GREEN_SIZE, 8,
                 EGL14.EGL_BLUE_SIZE, 8,
-                EGL14.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+                EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT,
                 EGL_RECORDABLE_ANDROID, 1,
                 EGL14.EGL_NONE
         };
@@ -111,28 +103,23 @@ class InputSurface {
             throw new RuntimeException("surface was null");
         }
     }
-
     /**
      * Discard all resources held by this class, notably the EGL context.  Also releases the
      * Surface that was passed to our constructor.
      */
     public void release() {
-        if (EGL14.eglGetCurrentContext().equals(mEGLContext)) {
-            // Clear the current context and surface to ensure they are discarded immediately.
-            EGL14.eglMakeCurrent(mEGLDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE,
-                    EGL14.EGL_NO_CONTEXT);
+        if (mEGLDisplay != EGL14.EGL_NO_DISPLAY) {
+            EGL14.eglDestroySurface(mEGLDisplay, mEGLSurface);
+            EGL14.eglDestroyContext(mEGLDisplay, mEGLContext);
+            EGL14.eglReleaseThread();
+            EGL14.eglTerminate(mEGLDisplay);
         }
-        EGL14.eglDestroySurface(mEGLDisplay, mEGLSurface);
-        EGL14.eglDestroyContext(mEGLDisplay, mEGLContext);
-        //EGL14.eglTerminate(mEGLDisplay);
         mSurface.release();
-        // null everything out so future attempts to use this object will cause an NPE
-        mEGLDisplay = null;
-        mEGLContext = null;
-        mEGLSurface = null;
+        mEGLDisplay = EGL14.EGL_NO_DISPLAY;
+        mEGLContext = EGL14.EGL_NO_CONTEXT;
+        mEGLSurface = EGL14.EGL_NO_SURFACE;
         mSurface = null;
     }
-
     /**
      * Makes our EGL context and surface current.
      */
@@ -142,13 +129,18 @@ class InputSurface {
         }
     }
 
+    public void makeUnCurrent() {
+        if (!EGL14.eglMakeCurrent(mEGLDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE,
+                EGL14.EGL_NO_CONTEXT)) {
+            throw new RuntimeException("eglMakeCurrent failed");
+        }
+    }
     /**
      * Calls eglSwapBuffers.  Use this to "publish" the current frame.
      */
     public boolean swapBuffers() {
         return EGL14.eglSwapBuffers(mEGLDisplay, mEGLSurface);
     }
-
     /**
      * Returns the Surface that the MediaCodec receives buffers from.
      */
@@ -157,16 +149,38 @@ class InputSurface {
     }
 
     /**
+     * Queries the surface's width.
+     */
+    public int getWidth() {
+        int[] value = new int[1];
+        EGL14.eglQuerySurface(mEGLDisplay, mEGLSurface, EGL14.EGL_WIDTH, value, 0);
+        return value[0];
+    }
+
+    /**
+     * Queries the surface's height.
+     */
+    public int getHeight() {
+        int[] value = new int[1];
+        EGL14.eglQuerySurface(mEGLDisplay, mEGLSurface, EGL14.EGL_HEIGHT, value, 0);
+        return value[0];
+    }
+    /**
      * Sends the presentation time stamp to EGL.  Time is expressed in nanoseconds.
      */
     public void setPresentationTime(long nsecs) {
-        EGLExt.eglPresentationTimeANDROID(mEGLDisplay, mEGLSurface, nsecs);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            EGLExt.eglPresentationTimeANDROID(mEGLDisplay, mEGLSurface, nsecs);
+        }
     }
-
     /**
      * Checks for EGL errors.
      */
     private void checkEglError(String msg) {
+        /*int error;
+        if ((error = EGL14.eglGetError()) != EGL14.EGL_SUCCESS) {
+            throw new RuntimeException(msg + ": EGL error: 0x" + Integer.toHexString(error));
+        }*/
         boolean failed = false;
         int error;
         while ((error = EGL14.eglGetError()) != EGL14.EGL_SUCCESS) {

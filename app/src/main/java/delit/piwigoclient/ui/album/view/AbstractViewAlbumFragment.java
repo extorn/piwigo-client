@@ -956,7 +956,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
     @Override
     protected String buildPageHeading() {
         CategoryItem catItem = galleryModel.getContainerDetails();
-        if(CategoryItem.ROOT_ALBUM.equals(catItem)) {
+        if (catItem.isRoot()) {
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
             if(sessionDetails != null) {
                 ServerConfig serverConfig = sessionDetails.getServerConfig();
@@ -966,7 +966,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
             return getString(R.string.album_title_home);
         } else {
-            String currentAlbumName = "... / " + galleryModel.getContainerDetails().getName();
+            String currentAlbumName = "... / " + catItem.getName();
             return currentAlbumName;
         }
     }

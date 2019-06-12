@@ -43,7 +43,8 @@
         android:id="@+id/folder_path"
         android:layout_below="@id/folder_root_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp" />
 
     <delit.piwigoclient.ui.common.FlowLayout
         android:id="@+id/file_ext_filters"

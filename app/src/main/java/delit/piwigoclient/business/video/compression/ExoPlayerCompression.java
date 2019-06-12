@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 
@@ -11,9 +12,11 @@ import androidx.annotation.RequiresApi;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -32,9 +35,7 @@ import java.io.IOException;
 
 import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR;
 
-/**
- * This doesn't seem to work - issue with the link between the renderers and the exoplayer I think... It's kind of there, but not completely. Very weird error.
- */
+
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class ExoPlayerCompression {
 
@@ -44,57 +45,72 @@ public class ExoPlayerCompression {
     public ExoPlayerCompression() {
     }
 
-    public void compressFile(Context context, File inputFile, final File outputFile, CompressionListener listener) throws IOException {
+    public void invokeFileCompression(final Context context, final File inputFile, final File outputFile, final CompressionListener listener) {
+        new HandlerThread("mainFileCompressorThread") {
+            @Override
+            protected void onLooperPrepared() {
+                try {
+                    invokeCompressor();
+                } catch (RuntimeException e) {
+                    listener.onCompressionError(e);
+                } catch (IOException e) {
+                    listener.onCompressionError(e);
+                }
+            }
 
-        if (outputFile.exists()) {
-            outputFile.delete();
+            private void invokeCompressor() throws IOException {
+                TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
+                LoadControl loadControl = new DefaultLoadControl();
+                TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+
+                CompressionListener listenerWrapper = new InternalCompressionListener(listener, outputFile);
+
+                MediaMuxerControl mediaMuxerControl;
+                mediaMuxerControl = new MediaMuxerControl(inputFile, outputFile, listenerWrapper);
+
+                CompressionParameters compressionSettings = new CompressionParameters();
+                compressionSettings.getVideoCompressionParameters().setWantedBitRate(8000 * 250);
+
+                CompressionRenderersFactory renderersFactory = new CompressionRenderersFactory(context, mediaMuxerControl, compressionSettings);
+                SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
+                player.addListener(new PlayerMonitor(listenerWrapper)); // watch for errors and report them
+                ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new FileDataSourceFactory());
+                ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+                factory.setExtractorsFactory(extractorsFactory);
+                listenerWrapper.onCompressionStarted();
+                Uri videoUri = Uri.fromFile(inputFile);
+                ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
+                player.prepare(videoSource);
+                PlaybackParameters playbackParams = new PlaybackParameters(1.0f);
+                player.setPlaybackParameters(playbackParams);
+                player.setPlayWhenReady(true);
+
+                Handler progressHandler = new Handler(getLooper());
+                progressHandler.postDelayed(new CompressionProgressListener(progressHandler, player, mediaMuxerControl, listenerWrapper), 1000);
+            }
+        }.start();
+
+    }
+
+    private static class PlayerMonitor extends Player.DefaultEventListener {
+        private final CompressionListener listenerWrapper;
+
+        public PlayerMonitor(CompressionListener listenerWrapper) {
+            this.listenerWrapper = listenerWrapper;
         }
 
-        Looper eventLooper = Looper.myLooper() != null ? Looper.myLooper() : Looper.getMainLooper();
-        Handler eventHandler = new Handler(eventLooper);
+        @Override
+        public void onPlayerError(ExoPlaybackException error) {
+            listenerWrapper.onCompressionError(error);
+        }
 
-        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(new DefaultBandwidthMeter());
-        LoadControl loadControl = new DefaultLoadControl();
-        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
-
-        CompressionListener listenerWrapper = new CompressionListenerWrapper(listener) {
-
-            private long mediaDurationMs;
-
-            @Override
-            public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
-                super.onCompressionProgress(compressionProgress, mediaDurationMs);
-                this.mediaDurationMs = mediaDurationMs;
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            if (playbackState == Player.STATE_ENDED) {
+                Looper.myLooper().quitSafely();
             }
-
-            @Override
-            public void onCompressionComplete() {
-                makeTranscodedFileStreamable(outputFile);
-                super.onCompressionProgress(100d, mediaDurationMs);
-                super.onCompressionComplete();
-            }
-        };
-
-        MediaMuxerControl mediaMuxerControl = new MediaMuxerControl(inputFile, outputFile, eventHandler, listenerWrapper);
-
-        CompressionParameters compressionSettings = new CompressionParameters();
-
-        CompressionRenderersFactory renderersFactory = new CompressionRenderersFactory(context, mediaMuxerControl, compressionSettings);
-        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
-        ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new FileDataSourceFactory());
-        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
-        factory.setExtractorsFactory(extractorsFactory);
-
-
-        listenerWrapper.onCompressionStarted();
-        Uri videoUri = Uri.fromFile(inputFile);
-        ExtractorMediaSource videoSource = factory.createMediaSource(videoUri);
-        Crashlytics.log(Log.DEBUG, TAG, "ExoPlayerCompression using looper " + player.getPlaybackLooper() + ". Is main looper : " + (Looper.getMainLooper() == player.getPlaybackLooper()));
-        player.prepare(videoSource); // has crashed here intermittently - apparently due to a looper issue - could one specifically need adding to this thread?
-        PlaybackParameters playbackParams = new PlaybackParameters(1.0f);
-        player.setPlaybackParameters(playbackParams);
-        player.setPlayWhenReady(true);
-        eventHandler.postDelayed(new CompressionProgressListener(eventHandler, player, mediaMuxerControl, listenerWrapper), 1000);
+            super.onPlayerStateChanged(playWhenReady, playbackState);
+        }
     }
 
     private void makeTranscodedFileStreamable(File input) {
@@ -324,4 +340,33 @@ public class ExoPlayerCompression {
     }
 
 
+    private class InternalCompressionListener extends CompressionListenerWrapper {
+
+        private final File outputFile;
+        private long mediaDurationMs;
+
+        public InternalCompressionListener(CompressionListener wrapped, File outputFile) {
+            super(wrapped);
+            this.outputFile = outputFile;
+        }
+
+        @Override
+        public void onCompressionProgress(double compressionProgress, long mediaDurationMs) {
+            super.onCompressionProgress(compressionProgress, mediaDurationMs);
+            this.mediaDurationMs = mediaDurationMs;
+        }
+
+        @Override
+        public void onCompressionComplete() {
+            makeTranscodedFileStreamable(outputFile);
+            super.onCompressionProgress(100d, mediaDurationMs);
+            super.onCompressionComplete();
+        }
+
+        @Override
+        public void onCompressionError(Exception e) {
+            super.onCompressionError(e);
+            Looper.myLooper().quitSafely();
+        }
+    }
 }

@@ -2,6 +2,9 @@ package delit.piwigoclient.util;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
@@ -24,12 +27,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import delit.piwigoclient.BuildConfig;
 
@@ -193,21 +200,7 @@ public class IOUtils {
         return false;
     }
 
-    public static String toNormalizedText(double cacheBytes) {
-        long KB = 1024;
-        long MB = KB * 1024;
-        String text = " ";
-        if (cacheBytes < KB) {
-            text += String.format(Locale.getDefault(), "%1$.0f Bytes", cacheBytes);
-        } else if (cacheBytes < MB) {
-            double kb = (cacheBytes / KB);
-            text += String.format(Locale.getDefault(), "%1$.1f KB", kb);
-        } else {
-            double mb = (cacheBytes / MB);
-            text += String.format(Locale.getDefault(), "%1$.1f MB", mb);
-        }
-        return text;
-    }
+    private static Executor FILESEEKEREXECUTOR = Executors.newFixedThreadPool(5);
 
     /**
      * returns a list of all available sd cards paths, or null if not found.
@@ -271,5 +264,150 @@ public class IOUtils {
     public static String getFileExt(String filename) {
         int extStartAtIdx = filename.lastIndexOf('.');
         return filename.substring(extStartAtIdx + 1);
+    }
+
+    public static String toNormalizedText(long cacheBytes) {
+        long KB = 1024;
+        long MB = KB * 1024;
+        String text = " ";
+        if (cacheBytes < KB) {
+            text += String.format(Locale.getDefault(), "%1$d Bytes", cacheBytes);
+        } else if (cacheBytes < MB) {
+            double kb = ((double) cacheBytes) / KB;
+            text += String.format(Locale.getDefault(), "%1$.1f KB", kb);
+        } else {
+            double mb = ((double) cacheBytes) / MB;
+            text += String.format(Locale.getDefault(), "%1$.1f MB", mb);
+        }
+        return text;
+    }
+
+    public static Uri getMediaStoreUri(final Context c, final File file) {
+        AsyncTask<Void, Void, Uri> task = new AsyncTask<Void, Void, Uri>() {
+
+            @Override
+            protected Uri doInBackground(Void... nothing) {
+                FileSeekerToo seeker = new FileSeekerToo(c);
+                seeker.scanForFile(file);
+                while (!seeker.hasResult()) {
+                    synchronized (seeker) {
+                        try {
+                            seeker.wait(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                return seeker.getResult();
+            }
+        }.executeOnExecutor(FILESEEKEREXECUTOR);
+
+        try {
+            return task.get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+//        MediaScannerConnection.MediaScannerConnectionClient mediaScannerConnectionClient =
+//                ;
+//        new MediaScannerConnection(context, mediaScannerConnectionClient).connect();
+//
+//        FileSeeker listener = new FileSeeker();
+//        String path = fileToLoad.getAbsolutePath();
+//        MediaScannerConnection.scanFile(c, new String[]{path}, null /*mimeTypes*/, listener);
+//        return listener.getUriFound();
+    }
+
+    public static ByteBuffer deepCopy(ByteBuffer orig) {
+        int pos = orig.position(), lim = orig.limit();
+        try {
+            orig.position(0).limit(orig.capacity()); // set range to entire buffer
+            ByteBuffer toReturn = deepCopyVisible(orig); // deep copy range
+            toReturn.position(pos).limit(lim); // set range to original
+            return toReturn;
+        } finally // do in finally in case something goes wrong we don't bork the orig
+        {
+            orig.position(pos).limit(lim); // restore original
+        }
+    }
+
+    public static ByteBuffer deepCopyVisible(ByteBuffer orig) {
+        int pos = orig.position();
+        try {
+            ByteBuffer toReturn;
+            // try to maintain implementation to keep performance
+            if (orig.isDirect())
+                toReturn = ByteBuffer.allocateDirect(orig.remaining());
+            else
+                toReturn = ByteBuffer.allocate(orig.remaining());
+
+            toReturn.put(orig);
+            toReturn.order(orig.order());
+
+            return (ByteBuffer) toReturn.position(0);
+        } finally {
+            orig.position(pos);
+        }
+    }
+
+    private static class FileSeekerToo implements MediaScannerConnection.MediaScannerConnectionClient {
+
+        private final MediaScannerConnection connection;
+        private File seekFile;
+        private boolean hasResult;
+        private Uri result;
+
+        public FileSeekerToo(Context c) {
+            connection = new MediaScannerConnection(c, this);
+        }
+
+        public void scanForFile(File f) {
+            this.seekFile = f;
+            if (connection.isConnected()) {
+                connection.disconnect();
+            }
+            connection.connect();
+        }
+
+        @Override
+        public void onMediaScannerConnected() {
+            connection.scanFile(seekFile.toString(), null);
+        }
+
+        @Override
+        public void onScanCompleted(String path, Uri uri) {
+            if (path.equals(seekFile.toString())) {
+                connection.disconnect();
+                hasResult = true;
+                result = uri;
+                synchronized (this) {
+                    notifyAll();
+                }
+            }
+        }
+
+        public boolean hasResult() {
+            return hasResult;
+        }
+
+        public Uri getResult() {
+            return result;
+        }
+    }
+
+    private static class FileSeeker implements MediaScannerConnection.OnScanCompletedListener {
+        private Uri uriFound;
+
+        @Override
+        public void onScanCompleted(String s, Uri uri) {
+            // uri is in format content://...
+            uriFound = uri;
+        }
+
+        public Uri getUriFound() {
+            return uriFound;
+        }
     }
 }

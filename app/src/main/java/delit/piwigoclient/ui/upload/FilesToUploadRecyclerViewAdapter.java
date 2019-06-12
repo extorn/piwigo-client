@@ -2,6 +2,8 @@ package delit.piwigoclient.ui.upload;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,8 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
+import delit.piwigoclient.ui.common.util.MediaScanner;
+import delit.piwigoclient.util.DisplayUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
@@ -45,13 +49,76 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     private final UploadProgressModel uploadProgressModel;
     private final RemoveListener listener;
     private final int scalingQuality = SCALING_QUALITY_MEDIUM;
+    private final MediaScanner mediaScanner;
     private boolean useDarkMode;
+    private HashMap<File, Uri> currentDisplayContentUris = new HashMap<>();
     private int viewType = VIEW_TYPE_LIST;
 
-    public FilesToUploadRecyclerViewAdapter(ArrayList<File> filesToUpload, @NonNull Context context, RemoveListener listener) {
+    public FilesToUploadRecyclerViewAdapter(ArrayList<File> filesToUpload, MediaScanner mediaScanner, @NonNull Context context, RemoveListener listener) {
         this.listener = listener;
         this.uploadProgressModel = new UploadProgressModel(filesToUpload);
+        this.mediaScanner = mediaScanner;
         this.setHasStableIds(true);
+        updateUris();
+    }
+
+    private void updateUris() {
+        if (uploadProgressModel.filesToUpload.isEmpty()) {
+            currentDisplayContentUris.clear();
+            return;
+        }
+        if (!mediaScanner.isReadyToScan()) {
+            new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    while (!mediaScanner.isReadyToScan()) {
+                        synchronized (mediaScanner) {
+                            try {
+                                mediaScanner.wait(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    scanForFiles();
+                    return null;
+                }
+            }.execute();
+        } else {
+            scanForFiles();
+        }
+    }
+
+    private void scanForFiles() {
+        for (File f : uploadProgressModel.filesToUpload) {
+            if (!f.isDirectory()) {
+                mediaScanner.scan(f);
+            }
+        }
+
+        while (mediaScanner.getScansRunning() > 0) {
+            synchronized (mediaScanner) {
+                try {
+                    mediaScanner.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        for (File f : uploadProgressModel.filesToUpload) {
+            if (!f.isDirectory()) {
+                currentDisplayContentUris.put(f, mediaScanner.getScanResults(f));
+            }
+        }
+
+        DisplayUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyItemRangeChanged(0, uploadProgressModel.filesToUpload.size());
+            }
+        });
     }
 
     @Override
@@ -114,8 +181,12 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         // configure the filename field
         holder.fileNameField.setText(holder.mItem.getName());
 
-        // configure the image loader
-        holder.imageLoader.setFileToLoad(holder.mItem);
+        Uri itemUri = currentDisplayContentUris.get(holder.mItem);
+        if (itemUri != null) {
+            holder.imageLoader.setUriToLoad(itemUri.toString());
+        } else if (currentDisplayContentUris.size() > 0) {
+            holder.imageLoader.setFileToLoad(holder.mItem);
+        }
 
         holder.itemHeading.setVisibility(View.VISIBLE);
         holder.itemHeading.setText(getFileSizeStr(holder.mItem));
@@ -218,6 +289,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
      */
     public ArrayList addAll(List<File> filesForUpload) {
         ArrayList<File> newFiles = uploadProgressModel.addAll(filesForUpload);
+        updateUris();
         notifyDataSetChanged();
         return newFiles;
     }

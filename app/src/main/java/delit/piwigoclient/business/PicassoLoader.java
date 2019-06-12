@@ -210,22 +210,26 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
                         task.doInBackground(this);
                     }
                 } else {
-                    waitForErrorMessage = true;
-                    RequestCreator loader = customiseLoader(buildLoader());
-                    if (forceServerRequest) {
-                        loader.memoryPolicy(MemoryPolicy.NO_CACHE);
-                        loader.networkPolicy(NetworkPolicy.NO_CACHE);
-                    }
-                    //                if(placeholderUri != null) {
-                    //                    Log.d("PicassoLoader", "Loading: " + placeholderUri, new Exception().fillInStackTrace());
-                    //                } else {
-                    //                    Log.d("PicassoLoader", "Loading: " + uriToLoad, new Exception().fillInStackTrace());
-                    //                }
-                    registerUriLoadListener();
-                    loader.into(loadInto, this);
+                    runLoad(forceServerRequest);
                 }
             }
         }
+    }
+
+    private void runLoad(boolean forceServerRequest) {
+        waitForErrorMessage = true;
+        RequestCreator loader = customiseLoader(buildLoader());
+        if (forceServerRequest) {
+            loader.memoryPolicy(MemoryPolicy.NO_CACHE);
+            loader.networkPolicy(NetworkPolicy.NO_CACHE);
+        }
+        //                if(placeholderUri != null) {
+        //                    Log.d("PicassoLoader", "Loading: " + placeholderUri, new Exception().fillInStackTrace());
+        //                } else {
+        //                    Log.d("PicassoLoader", "Loading: " + uriToLoad, new Exception().fillInStackTrace());
+        //                }
+        registerUriLoadListener();
+        loader.into(loadInto, this);
     }
 
     public void cancelImageLoadIfRunning() {
@@ -297,10 +301,12 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
         if (!placeholderLoaded && placeholderUri != null) {
             return picassoSingleton.load(placeholderUri);
         }
+
+
         if (uriToLoad != null) {
             return picassoSingleton.load(uriToLoad);
         } else if (fileToLoad != null) {
-            return picassoSingleton.load(fileToLoad);
+            return picassoSingleton.load(fileToLoad); // convert to uri to allow using MediaStore data (useful for video thumbnails)
         } else if (resourceToLoad != Integer.MIN_VALUE) {
             return picassoSingleton.load(resourceToLoad);
         }

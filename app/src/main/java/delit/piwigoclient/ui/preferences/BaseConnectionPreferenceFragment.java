@@ -243,21 +243,21 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         initialising = false;
     }
 
-    private static class ResponseCacheButtonTextRetriever extends AsyncTask<BaseConnectionPreferenceFragment, Void, Double> {
+    private static class ResponseCacheButtonTextRetriever extends AsyncTask<BaseConnectionPreferenceFragment, Void, Long> {
 
         private Preference responseCacheFlushButton;
         private BaseConnectionPreferenceFragment fragment;
 
         @Override
-        protected Double doInBackground(BaseConnectionPreferenceFragment[] params) {
+        protected Long doInBackground(BaseConnectionPreferenceFragment[] params) {
             this.fragment = params[0];
             this.responseCacheFlushButton = fragment.findPreference(R.string.preference_caching_clearResponseCache_key);
-            final double cacheBytes = CacheUtils.getResponseCacheSize(responseCacheFlushButton.getContext());
+            final long cacheBytes = CacheUtils.getResponseCacheSize(responseCacheFlushButton.getContext());
             return cacheBytes;
         }
 
         @Override
-        protected void onPostExecute(Double cacheBytes) {
+        protected void onPostExecute(Long cacheBytes) {
             try {
                 if (!isCancelled() && fragment.isVisible()) {
                     String spaceSuffix = "(" + IOUtils.toNormalizedText(cacheBytes) + ")";

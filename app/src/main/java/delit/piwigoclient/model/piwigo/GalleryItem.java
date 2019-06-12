@@ -45,7 +45,7 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
             return "PicturesHeading";
         }
     };
-    private static final long serialVersionUID = 7684159305897923971L;
+    private static final long serialVersionUID = -8486162043348525674L;
     private long id; // this is final... except blank category items need to alter it
     private String name;
     private String description;
@@ -76,16 +76,16 @@ public class GalleryItem implements Comparable<GalleryItem>, Identifiable, Parce
     }
 
     protected final String getFullPath(String urlPath) {
-        if (urlPath != null && baseResourceUrl != null) {
-            return baseResourceUrl + urlPath;
-        }
+//        if (urlPath != null && baseResourceUrl != null) {
+//            return baseResourceUrl + urlPath;
+//        }
         return urlPath;
     }
 
     protected final String getRelativePath(String urlPath) {
-        if (urlPath != null && baseResourceUrl != null) {
-            return urlPath.substring(baseResourceUrl.length());
-        }
+//        if (urlPath != null && baseResourceUrl != null) {
+//            return urlPath.substring(baseResourceUrl.length());
+//        }
         return urlPath;
     }
 

@@ -160,7 +160,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     // android mp4 video compression library
-    //implementation 'net.ypresto.androidtranscoder:android-transcoder:0.3.0'
+    implementation 'net.ypresto.androidtranscoder:android-transcoder:0.3.0'
     // android mp4 streaming header generator library
     implementation 'net.ypresto.qtfaststartjava:qtfaststart:0.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'

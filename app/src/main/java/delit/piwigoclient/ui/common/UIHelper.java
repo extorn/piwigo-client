@@ -381,11 +381,7 @@ public abstract class UIHelper<T> {
             activeServiceCalls.put(messageId, handler.getTag());
         }
         if (!isProgressIndicatorVisible()) {
-            if (progressIndicator == null) {
-                Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
-            } else {
-                progressIndicator.showProgressIndicator(titleString, -1);
-            }
+            showProgressIndicator(titleString, -1);
         }
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
         return messageId;
@@ -704,6 +700,24 @@ public abstract class UIHelper<T> {
         return true;
     }
 
+    public void showProgressIndicator(final String titleString, final int progress) {
+        if (progressIndicator == null) {
+            Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
+        } else {
+            if (DisplayUtils.isRunningOnUIThread()) {
+                progressIndicator.showProgressIndicator(titleString, progress);
+            } else {
+                // publish on the main thread
+                progressIndicator.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressIndicator.showProgressIndicator(titleString, progress);
+                    }
+                });
+            }
+        }
+    }
+
     public void showProgressIndicator() {
 
         if (progressIndicator == null) {
@@ -811,11 +825,7 @@ public abstract class UIHelper<T> {
             activeServiceCalls.put(messageId, serviceDesc);
         }
         if (!isProgressIndicatorVisible()) {
-            if (progressIndicator == null) {
-                Crashlytics.log(Log.ERROR, TAG, "The current activity does not have a progress indicator.");
-            } else {
-                progressIndicator.showProgressIndicator(titleString, -1);
-            }
+            showProgressIndicator(titleString, -1);
         }
         PiwigoResponseBufferingHandler.getDefault().registerResponseHandler(messageId, piwigoResponseListener);
         return messageId;

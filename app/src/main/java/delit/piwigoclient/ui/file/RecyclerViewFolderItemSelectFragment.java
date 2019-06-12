@@ -40,6 +40,7 @@ import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
 import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.common.util.MediaScanner;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.IOUtils;
@@ -61,6 +62,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     private ArrayList<String> allPossiblyVisibleFileExts;
     private ArrayList<String> selectedVisibleFileExts;
     private FlowLayout fileExtFilters;
+    private MediaScanner mediaScanner;
 
     public static RecyclerViewFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
         RecyclerViewFolderItemSelectFragment fragment = new RecyclerViewFolderItemSelectFragment();
@@ -104,6 +106,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
+
+        mediaScanner = new MediaScanner(getContext());
 
         if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
@@ -171,6 +175,12 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
 
         return v;
+    }
+
+    @Override
+    public void onDestroyView() {
+        mediaScanner.close();
+        super.onDestroyView();
     }
 
     private void buildFileExtFilterControls() {
@@ -242,6 +252,9 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         }
         TextView pathItem = null;
         int idx = 0;
+
+        int paddingPx = DisplayUtils.dpToPx(getContext(), 3);
+
         for(final File pathItemFile : pathItems) {
             idx++;
             int lastId = NO_ID;
@@ -251,6 +264,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             pathItem = new TextView(getContext());
             pathItem.setId(View.generateViewId());
             TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_AppCompat_Body2_Clickable);
+            pathItem.setPaddingRelative(0, 0, 0, 0);
             pathItem.setText(pathItemFile.getName());
             folderPathView.addView(pathItem);
 
@@ -281,6 +295,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                 TextView pathItemSeperator = new TextView(getContext());
                 TextViewCompat.setTextAppearance(pathItemSeperator, R.style.TextAppearance_AppCompat_Body2);
                 pathItemSeperator.setText("/");
+                pathItemSeperator.setPaddingRelative(paddingPx, 0, paddingPx, 0);
                 pathItemSeperator.setId(View.generateViewId());
                 folderPathView.addView(pathItemSeperator);
                 pathItem = pathItemSeperator;
@@ -308,7 +323,9 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         if(getListAdapter() == null) {
 
-            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>(), getViewPrefs());
+
+            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, mediaScanner, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>(), getViewPrefs());
+
             if (activeFolder != null) {
                 viewAdapter.setActiveFolder(activeFolder);
             } else {

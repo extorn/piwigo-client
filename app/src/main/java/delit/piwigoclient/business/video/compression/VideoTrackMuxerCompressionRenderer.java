@@ -4,15 +4,15 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.media.MediaCodec;
 import android.media.MediaCodecList;
-import android.media.MediaCrypto;
 import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Looper;
+import android.os.HandlerThread;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.collection.LongSparseArray;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -31,10 +31,10 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
+
+//import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 
 /**
  * This doesn't seem to work - issue with the link to exoplayer I think... It's kind of there, but not completely. Very weird error.
@@ -45,35 +45,30 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     private static final String MIME_TYPE = "video/avc"; //API19+ MediaFormat.MIMETYPE_VIDEO_AVC;    // H.264 Advanced Video Coding
     //    private static final String MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_MPEG4; // MPEG4 format
     private final static boolean VERBOSE = false;
-    private static final String KEY_CROP_LEFT = "crop-left";
-    private static final String KEY_CROP_RIGHT = "crop-right";
-    private static final String KEY_CROP_BOTTOM = "crop-bottom";
-    private static final String KEY_CROP_TOP = "crop-top";
     private final MediaMuxerControl mediaMuxerControl;
     private final String TAG = "CompressionVidRenderer";
     private final ExoPlayerCompression.VideoCompressionParameters compressionSettings;
-    private CodecMaxValues currentCodecMaxValues;
-    private int currentUnappliedRotationDegrees;
-    private float currentPixelWidthHeightRatio;
-    private int currentHeight;
-    private int currentWidth;
     private int pendingRotationDegrees;
-    private float pendingPixelWidthHeightRatio;
-    private Integer scalingMode;
-    Map<Long, Integer> sampleTimeSizeMap = new HashMap<>(100);
+    private LongSparseArray<Integer> sampleTimeSizeMap = new LongSparseArray<>(100);
     private OutputSurface decoderOutputSurface;
-    private boolean mediaMuxerStarted;
     private MediaCodec encoder;
-    private MediaFormat inputMediaFormat;
     private boolean encoderInputEndedSignalled;
     private PlaybackParameters playbackParameters;
     private InputSurface encoderInputSurface;
     private Queue<Long> framesQueuedInEncoder = new LinkedList<>();
+    private boolean codecNeedsInit = true;
+    private HandlerThread ht = new HandlerThread("surface callbacks handler");
 
     public VideoTrackMuxerCompressionRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify, MediaMuxerControl mediaMuxerControl, ExoPlayerCompression.VideoCompressionParameters compressionSettings) {
         super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
         this.mediaMuxerControl = mediaMuxerControl;
         this.compressionSettings = compressionSettings;
+    }
+
+    @Override
+    protected void onDisabled() {
+        ht.quitSafely();
+        super.onDisabled();
     }
 
     @Override
@@ -126,36 +121,35 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         if (VERBOSE) {
             Log.d(TAG, "releasing decoding codec");
         }
+        codecNeedsInit = true;
         super.releaseCodec();
     }
 
     @Override
     protected void onQueueInputBuffer(DecoderInputBuffer buffer) {
         sampleTimeSizeMap.put(buffer.timeUs, buffer.data.remaining());
+        mediaMuxerControl.markDataRead();
         super.onQueueInputBuffer(buffer);
     }
 
-    /**
-     * cloned from MediaCodecVideoRenderer
-     *
-     * @param newFormat
-     * @throws ExoPlaybackException
-     */
-    @Override
-    protected void onInputFormatChanged(Format newFormat) throws ExoPlaybackException {
-        // now do the normal call
-        super.onInputFormatChanged(newFormat);
-        pendingPixelWidthHeightRatio = newFormat.pixelWidthHeightRatio;
-        pendingRotationDegrees = newFormat.rotationDegrees;
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private android.media.MediaCodecInfo selectEncoderCodecV21(String mimeType) {
+        MediaCodecList codecList = new MediaCodecList(MediaCodecList.ALL_CODECS);
+        for (android.media.MediaCodecInfo codecInfo : codecList.getCodecInfos()) {
+            if (!codecInfo.isEncoder()) {
+                continue;
+            }
+            String[] types = codecInfo.getSupportedTypes();
+            for (int j = 0; j < types.length; j++) {
+                if (types[j].equalsIgnoreCase(mimeType)) {
+                    return codecInfo;
+                }
+            }
+        }
+        return null;
     }
 
-    /**
-     * Method cloned verbartim from the Parent class
-     * <p>
-     * Returns the first codec capable of encoding the specified MIME type, or null if no
-     * match was found.
-     */
-    private android.media.MediaCodecInfo selectCodec(String mimeType) {
+    private android.media.MediaCodecInfo selectEncoderCodecV20(String mimeType) {
         int numCodecs = MediaCodecList.getCodecCount();
         for (int i = 0; i < numCodecs; i++) {
             android.media.MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
@@ -172,13 +166,19 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         return null;
     }
 
-    @Override
-    public void handleMessage(int messageType, Object message) throws ExoPlaybackException {
-        if (messageType == C.MSG_SET_SCALING_MODE) {
-            scalingMode = (Integer) message;
+    /**
+     * Method cloned verbartim from the Parent class
+     * <p>
+     * Returns the first codec capable of encoding the specified MIME type, or null if no
+     * match was found.
+     */
+    private android.media.MediaCodecInfo selectEncoderCodec(String mimeType) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return selectEncoderCodecV21(mimeType);
+        } else {
+            return selectEncoderCodecV20(mimeType);
         }
-        // now do the normal call
-        super.handleMessage(messageType, message);
+
     }
 
     /**
@@ -221,9 +221,11 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         if (mediaMuxerControl.isVideoConfigured() && !mediaMuxerControl.isConfigured()) {
             return false;
         }
-        if (bufferPresentationTimeUs > positionUs + compressionSettings.getMaxInterleavingIntervalUs()) {
-            Log.e(TAG, "Video Processor - Giving up render to audio at position " + positionUs);
-            return false;
+        if (mediaMuxerControl.isHasAudio() && mediaMuxerControl.hasVideoDataQueued()) {
+            if (bufferPresentationTimeUs > positionUs + compressionSettings.getMaxInterleavingIntervalUs()) {
+                Log.e(TAG, "Video Processor - Giving up render to audio at position " + positionUs);
+                return false;
+            }
         }
         return super.processOutputBuffer(positionUs, elapsedRealtimeUs, codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs, shouldSkip && compressionSettings.isAllowSkippingFrames());
     }
@@ -288,7 +290,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
 
         try {
             // await for new data from the decoder
-            decoderOutputSurface.awaitNewImage(10000);
+            decoderOutputSurface.awaitNewImage();
         } catch (RuntimeException e) {
             //TODO this will occur if the thread is killed off - need to deal with this cleaning the mess left on file system!
             Log.w(TAG, "Timeout waiting for image to become available was interrupted");
@@ -354,13 +356,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
             // do this before we try to stuff any more data in.
             int encoderOutputBufferId = encoder.dequeueOutputBuffer(info, 10 * framesQueuedInEncoder.size()); // vary the timeout to stop the decoder rushing ahead
 
-
-            //MediaFormat bufferFormat = encoder.getOutputFormat(outputBufferId);
             if (encoderOutputBufferId == MediaCodec.INFO_TRY_AGAIN_LATER) {
-                // no output available yet
-//                if (VERBOSE) {
-//                    Log.d(TAG, "no output from encoder available");
-//                }
                 encoderOutputAvailable = false;
             } else if (encoderOutputBufferId == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                 MediaFormat newFormat = encoder.getOutputFormat();
@@ -372,8 +368,8 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
                         Log.e(TAG, "Skipping encoder output format swap to : " + newFormat);
                     }
                 } else {
+                    mediaMuxerControl.setOrientationHint(pendingRotationDegrees);
                     mediaMuxerControl.addVideoTrack(newFormat);
-                    mediaMuxerControl.setOrientationHint(currentUnappliedRotationDegrees);
                     mediaMuxerControl.markVideoConfigured();
                 }
             } else if (encoderOutputBufferId < 0 && encoderOutputBufferId != MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
@@ -383,15 +379,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
             if (encoderOutputBufferId > 0) {
                 // have data to process.
 
-                if (!mediaMuxerStarted) {
-                    try {
-                        mediaMuxerStarted = true;
-                        // the media muxer is ready to start accepting data now from the encoder
-                        mediaMuxerControl.startMediaMuxer();
-                    } catch (IllegalStateException e) {
-                        Log.d(TAG, "video: error starting media muxer", e);
-                    }
-                }
+                mediaMuxerControl.startMediaMuxer();
 
                 // get the data buffer
                 encodedDataBuffer = getEncoderOutputBuffer(encoder, encoderOutputBufferId);
@@ -442,7 +430,6 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
 
         if (isEnded()) {
             releaseTranscoder();
-            inputMediaFormat = null;
         }
         return wroteData;
     }
@@ -465,6 +452,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     @Override
     protected void onEnabled(boolean joining) throws ExoPlaybackException {
         super.onEnabled(joining);
+        ht.start();
         mediaMuxerControl.setHasVideo();
     }
 
@@ -473,88 +461,101 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         return super.isEnded() && !mediaMuxerControl.isVideoConfigured();
     }
 
-
-
-    @Override
-    protected void onOutputFormatChanged(MediaCodec codec, MediaFormat outputFormat) {
-
-        // called when the decoder is configured!
-
-        boolean hasCrop = outputFormat.containsKey(KEY_CROP_RIGHT)
-                && outputFormat.containsKey(KEY_CROP_LEFT) && outputFormat.containsKey(KEY_CROP_BOTTOM)
-                && outputFormat.containsKey(KEY_CROP_TOP);
-        currentWidth = hasCrop
-                ? outputFormat.getInteger(KEY_CROP_RIGHT) - outputFormat.getInteger(KEY_CROP_LEFT) + 1
-                : outputFormat.getInteger(MediaFormat.KEY_WIDTH);
-        currentHeight = hasCrop
-                ? outputFormat.getInteger(KEY_CROP_BOTTOM) - outputFormat.getInteger(KEY_CROP_TOP) + 1
-                : outputFormat.getInteger(MediaFormat.KEY_HEIGHT);
-        currentPixelWidthHeightRatio = pendingPixelWidthHeightRatio;
-        if (Util.SDK_INT >= 21) {
-            // On API level 21 and above the decoder applies the rotation when rendering to the surface.
-            // Hence currentUnappliedRotation should always be 0. For 90 and 270 degree rotations, we need
-            // to flip the width, height and pixel aspect ratio to reflect the rotation that was applied.
-            if (pendingRotationDegrees == 90 || pendingRotationDegrees == 270) {
-                if (compressionSettings.isHardRotateVideo()) {
-                    int rotatedHeight = currentWidth;
-                    currentWidth = currentHeight;
-                    currentHeight = rotatedHeight;
-                    currentPixelWidthHeightRatio = 1f / currentPixelWidthHeightRatio;
-                }
-            }
-        } else {
-            // On API level 20 and below the decoder does not apply the rotation.
-            currentUnappliedRotationDegrees = pendingRotationDegrees;
-        }
-        if (VERBOSE) {
-            Log.d(TAG, "decoder output media format changing to : " + outputFormat);
-        }
-
-        try {
-            configureCompressor(new CodecMaxValues(currentWidth, currentHeight, currentCodecMaxValues.inputSize));
-        } catch (IOException e) {
-            throw new RuntimeException("Error reconfiguring compressor", e);
-        } catch (ExoPlaybackException e) {
-            throw new RuntimeException("Error reconfiguring compressor", e);
-        }
-        // now do the normal call
-        super.onOutputFormatChanged(codec, outputFormat);
-    }
-
     @Override
     protected MediaFormat getMediaFormat(Format format, CodecMaxValues codecMaxValues, boolean deviceNeedsAutoFrcWorkaround, int tunnelingAudioSessionId) {
-        inputMediaFormat = super.getMediaFormat(format, codecMaxValues, deviceNeedsAutoFrcWorkaround, tunnelingAudioSessionId);
+        MediaFormat trueFormat = mediaMuxerControl.getTrueVideoInputFormat();
+
+        MediaFormat inputMediaFormat = super.getMediaFormat(format, codecMaxValues, deviceNeedsAutoFrcWorkaround, tunnelingAudioSessionId);
+
+        setIntegerMediaFormatKey(inputMediaFormat, trueFormat, MediaFormat.KEY_LEVEL, -1);
+        setIntegerMediaFormatKey(inputMediaFormat, trueFormat, MediaFormat.KEY_PROFILE, -1);
+
+        if (format.colorInfo == null) {
+            setIntegerMediaFormatKey(inputMediaFormat, trueFormat, MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_LIMITED);
+            setIntegerMediaFormatKey(inputMediaFormat, trueFormat, MediaFormat.KEY_COLOR_TRANSFER, MediaFormat.COLOR_TRANSFER_SDR_VIDEO);
+            setIntegerMediaFormatKey(inputMediaFormat, trueFormat, MediaFormat.KEY_COLOR_STANDARD, MediaFormat.COLOR_STANDARD_BT709);
+            setIntegerMediaFormatKey(inputMediaFormat, trueFormat, MediaFormat.KEY_COLOR_FORMAT, android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        }
+
+        if (Util.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // On API level 21 and above the decoder applies the rotation when rendering to the surface - prevent this auto-rotation.
+            if (inputMediaFormat.containsKey(MediaFormat.KEY_ROTATION)) {
+                pendingRotationDegrees = inputMediaFormat.getInteger(MediaFormat.KEY_ROTATION);
+                inputMediaFormat.setInteger(MediaFormat.KEY_ROTATION, 0);
+            }
+        }
+
         return inputMediaFormat;
     }
 
-    @Override
-    protected void configureCodec(MediaCodecInfo codecInfo, MediaCodec codec, Format format, MediaCrypto crypto) throws MediaCodecUtil.DecoderQueryException {
-        super.configureCodec(codecInfo, codec, format, crypto);
-        currentCodecMaxValues = getCodecMaxValues(codecInfo, format, getStreamFormats());
+    private void setIntegerMediaFormatKey(MediaFormat output, MediaFormat input, String key, int defaultValue) {
+        if (input != null && input.containsKey(key)) {
+            output.setInteger(key, input.getInteger(key));
+        } else {
+            output.setInteger(key, defaultValue);
+        }
     }
 
-    private boolean configureCompressor(CodecMaxValues codecMaxValues) throws IOException, ExoPlaybackException {
+
+    /**
+     * Called directly prior to decoder codec init!
+     *
+     * @param mediaCodecSelector
+     * @param format
+     * @param requiresSecureDecoder
+     * @return
+     * @throws MediaCodecUtil.DecoderQueryException
+     */
+    @Override
+    protected MediaCodecInfo getDecoderInfo(MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder) throws MediaCodecUtil.DecoderQueryException {
+        MediaCodecInfo decoderInfo = super.getDecoderInfo(mediaCodecSelector, format, requiresSecureDecoder);
+        if (decoderOutputSurface == null) {
+            try {
+                CodecMaxValues codecMaxValues = getCodecMaxValues(decoderInfo, format, getStreamFormats());
+                MediaFormat inputMediaFormat = getMediaFormat(format, codecMaxValues, false, getConfiguration().tunnelingAudioSessionId);
+                configureCompressor(format.width, format.height, inputMediaFormat);
+            } catch (IOException e) {
+                throw new RuntimeException("Error reconfiguring compressor", e);
+            } catch (ExoPlaybackException e) {
+                throw new RuntimeException("Error reconfiguring compressor", e);
+            }
+        }
+        return decoderInfo;
+    }
+
+    @Override
+    protected boolean shouldInitCodec(MediaCodecInfo codecInfo) {
+        return codecNeedsInit && super.shouldInitCodec(codecInfo);
+    }
+
+    @Override
+    protected void onCodecInitialized(String name, long initializedTimestampMs, long initializationDurationMs) {
+        codecNeedsInit = false;
+        super.onCodecInitialized(name, initializedTimestampMs, initializationDurationMs);
+    }
+
+    private boolean configureCompressor(int inputVideoWidth, int inputVideoHeight, MediaFormat inputMediaFormat) throws IOException, ExoPlaybackException {
         if (VERBOSE) {
             Log.d(TAG, "configuring compressor using thread : " + Thread.currentThread().getName());
         }
         int wantedWidthPx = compressionSettings.getWantedWidthPx();
         if (wantedWidthPx < 0) {
-            wantedWidthPx = codecMaxValues.width;
+            wantedWidthPx = inputVideoWidth;
         }
         int wantedHeightPx = compressionSettings.getWantedHeightPx();
         if (wantedHeightPx < 0) {
-            wantedHeightPx = codecMaxValues.height;
+            wantedHeightPx = inputVideoHeight;
         }
         int wantedFrameRate = compressionSettings.getWantedFrameRate();
         int wantedKeyFrameInterval = compressionSettings.getWantedKeyFrameInterval();
         int wantedBitRate = compressionSettings.getWantedBitRate();
         if (wantedBitRate < 0) {
-            wantedBitRate = codecMaxValues.inputSize * 8; // * (8 / 2);
+            wantedBitRate = wantedWidthPx * wantedHeightPx; // 1/8 of a full frame allowed per second
         }
         int wantedBitRateModeV21 = compressionSettings.getWantedBitRateModeV21();
 
-        android.media.MediaCodecInfo codecInfo = selectCodec(MIME_TYPE);
-        if (codecInfo == null) {
+        android.media.MediaCodecInfo encoderCodecInfo = selectEncoderCodec(MIME_TYPE);
+        if (encoderCodecInfo == null) {
             if (VERBOSE) {
                 // Don't fail CTS if they don't have an AVC codec (not here, anyway).
                 Log.e(TAG, "Unable to find an appropriate codec for " + MIME_TYPE);
@@ -562,46 +563,41 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
             return false;
         }
         if (VERBOSE) {
-            Log.d(TAG, "found codec: " + codecInfo.getName());
+            Log.d(TAG, "found codec: " + encoderCodecInfo.getName());
         }
 
         // Create an encoder format that matches the input format.  (Might be able to just
         // re-use the format used to generate the video, since we want it to be the same.)
         MediaFormat outputFormat = MediaFormat.createVideoFormat(MIME_TYPE, wantedWidthPx, wantedHeightPx);
-        outputFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        setIntegerMediaFormatKey(outputFormat, inputMediaFormat, MediaFormat.KEY_BIT_RATE, wantedBitRate); // average bitrate in bits per second
+        setIntegerMediaFormatKey(outputFormat, inputMediaFormat, MediaFormat.KEY_FRAME_RATE, wantedFrameRate); // Frames per second
+        setIntegerMediaFormatKey(outputFormat, inputMediaFormat, MediaFormat.KEY_I_FRAME_INTERVAL, wantedKeyFrameInterval); // interval in seconds between key frames
+        setIntegerMediaFormatKey(outputFormat, inputMediaFormat, MediaFormat.KEY_COLOR_FORMAT, android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+        // level and profile might be set automatically?!
+//        setIntegerMediaFormatKey(outputFormat, inputMediaFormat, MediaFormat.KEY_LEVEL, -1);
+//        setIntegerMediaFormatKey(outputFormat, inputMediaFormat, MediaFormat.KEY_PROFILE, -1);
 
-        if (inputMediaFormat.containsKey(MediaFormat.KEY_BIT_RATE)) {
-            outputFormat.setInteger(MediaFormat.KEY_BIT_RATE, inputMediaFormat.getInteger(MediaFormat.KEY_BIT_RATE));
-        } else {
-            outputFormat.setInteger(MediaFormat.KEY_BIT_RATE, wantedBitRate); // average bitrate in bits per second
-        }
-        if (inputMediaFormat.containsKey(MediaFormat.KEY_FRAME_RATE)) {
-            outputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, inputMediaFormat.getInteger(MediaFormat.KEY_FRAME_RATE));
-        } else {
-            outputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, wantedFrameRate); // Frames per second
-        }
-        if (inputMediaFormat.containsKey(MediaFormat.KEY_I_FRAME_INTERVAL)) {
-            outputFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, inputMediaFormat.getInteger(MediaFormat.KEY_I_FRAME_INTERVAL));
-        } else {
-            outputFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, wantedKeyFrameInterval); // interval in seconds between key frames
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (inputMediaFormat.containsKey(MediaFormat.KEY_ROTATION)) {
-                // it gets rotated by exoplayer so this isn't needed now.
-                outputFormat.setInteger(MediaFormat.KEY_ROTATION, inputMediaFormat.getInteger(MediaFormat.KEY_ROTATION));
-            }
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (inputMediaFormat.containsKey(MediaFormat.KEY_BITRATE_MODE)) {
-                // it gets rotated by exoplayer so this isn't needed now.
-                outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, inputMediaFormat.getInteger(MediaFormat.KEY_BITRATE_MODE));
-            } else {
-                outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, wantedBitRateModeV21);
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            if (inputMediaFormat.containsKey(MediaFormat.KEY_BITRATE_MODE)) {
+//                // it gets rotated by exoplayer so this isn't needed now.
+//                outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, inputMediaFormat.getInteger(MediaFormat.KEY_BITRATE_MODE));
+//            } else {
+//                outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, wantedBitRateModeV21);
+//            }
+//        }
 
-        encoder = MediaCodec.createEncoderByType(MIME_TYPE);
+//        android.media.MediaCodecInfo.CodecCapabilities capabilities = encoderCodecInfo.getCapabilitiesForType(MIME_TYPE);
+//        for(int supportedFormat : capabilities.colorFormats) {
+//            if(supportedFormat == android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible) {
+//                outputFormat.setInteger( MediaFormat.KEY_COLOR_FORMAT, android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible);
+//                break;
+//            }
+////        }
+//        if(!outputFormat.containsKey(MediaFormat.KEY_COLOR_FORMAT)) {
+//            setIntegerMediaFormatKey(outputFormat, inputMediaFormat, MediaFormat.KEY_COLOR_FORMAT, android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+//        }
+
+        encoder = MediaCodec.createByCodecName(encoderCodecInfo.getName());
         encoder.configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
 
         if (encoderInputSurface != null) {
@@ -615,7 +611,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         // the encoder is now ready to start accepting data from the input surface as it arrives (one frame at a time)
         encoder.start();
 
-        decoderOutputSurface = new OutputSurface(new Handler(Looper.getMainLooper()));//new OutputSurfaceBuilder().getOutputSurface(context);
+        decoderOutputSurface = new OutputSurface(new Handler(ht.getLooper()));//new OutputSurfaceBuilder().getOutputSurface(context);
         // ensure the decoded data gets written to this surface
         handleMessage(C.MSG_SET_SURFACE, decoderOutputSurface.getSurface());
         return true;
@@ -641,61 +637,4 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     public PlaybackParameters getPlaybackParameters() {
         return playbackParameters;
     }
-/*
-    private static class InputSurfaceBuilder implements Runnable {
-
-        private InputSurface inputSurface;
-        private Surface encoderInputSurface;
-
-        public InputSurface getInputSurface(Context context, Surface encoderInputSurface) {
-            this.encoderInputSurface = encoderInputSurface;
-            Handler mainHandler = new Handler(context.getMainLooper());
-            mainHandler.post(this);
-            synchronized (this) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("Thread was interrupted - probably wants to die");
-                }
-            }
-
-            return this.inputSurface;
-        }
-
-        @Override
-        public void run() {
-            inputSurface = new InputSurface(encoderInputSurface);
-            inputSurface.makeCurrent();
-            synchronized (this) {
-                notifyAll();
-            }
-        }
-    }
-
-    private static class OutputSurfaceBuilder implements Runnable {
-
-        private OutputSurface outputSurface;
-
-        public OutputSurface getOutputSurface(Context context) {
-            Handler mainHandler = new Handler(context.getMainLooper());
-            mainHandler.post(this);
-            synchronized (this) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("Thread was interrupted - probably wants to die");
-                }
-            }
-
-            return outputSurface;
-        }
-
-        @Override
-        public void run() {
-            outputSurface = new OutputSurface(new Handler(Looper.getMainLooper()));
-            synchronized (this) {
-                notifyAll();
-            }
-        }
-    }*/
 }
