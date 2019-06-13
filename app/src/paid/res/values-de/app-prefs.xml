@@ -45,13 +45,12 @@
     <string name="preference_data_upload_automatic_job_delete_uploaded_title">Automatisches Löschen</string>
 
     <string name="preference_data_upload_automatic_job_compress_videos_summary">Videos vor dem Hochladen komprimieren</string>
-    <string name="preference_data_upload_automatic_job_compress_videos_title">Videos komprimieren (720p)</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_title">Videos komprimieren</string>
 
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Dateigröße hochgeladen</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
 
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">jpg,png,roh</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">Dateierweiterungen</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Dateien mit ext %1$s hochladen</string>
 

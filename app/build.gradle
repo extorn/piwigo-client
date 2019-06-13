@@ -28,8 +28,8 @@ android {
         applicationId "delit.piwigoclient"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 215
-        versionName "1.4.0.11"
+        versionCode 216
+        versionName "1.4.0.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
@@ -120,7 +120,7 @@ dependencies {
     // vector graphics support
     implementation 'androidx.vectordrawable:vectordrawable:1.0.1'
     // annotations support
-    implementation 'androidx.annotation:annotation:1.0.2'
+    implementation 'androidx.annotation:annotation:1.1.0'
     // drawers, snackbars etc
     implementation 'com.google.android.material:material:1.0.0' //1.1.0-alpha01
     // parse exif information
@@ -160,7 +160,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
     // android mp4 video compression library
-    implementation 'net.ypresto.androidtranscoder:android-transcoder:0.3.0'
+    //implementation 'net.ypresto.androidtranscoder:android-transcoder:0.3.0'
     // android mp4 streaming header generator library
     implementation 'net.ypresto.qtfaststartjava:qtfaststart:0.1.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'

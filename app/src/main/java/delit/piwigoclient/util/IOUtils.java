@@ -2,9 +2,6 @@ package delit.piwigoclient.util;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
@@ -32,9 +29,11 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -282,44 +281,6 @@ public class IOUtils {
         return text;
     }
 
-    public static Uri getMediaStoreUri(final Context c, final File file) {
-        AsyncTask<Void, Void, Uri> task = new AsyncTask<Void, Void, Uri>() {
-
-            @Override
-            protected Uri doInBackground(Void... nothing) {
-                FileSeekerToo seeker = new FileSeekerToo(c);
-                seeker.scanForFile(file);
-                while (!seeker.hasResult()) {
-                    synchronized (seeker) {
-                        try {
-                            seeker.wait(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                return seeker.getResult();
-            }
-        }.executeOnExecutor(FILESEEKEREXECUTOR);
-
-        try {
-            return task.get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
-//        MediaScannerConnection.MediaScannerConnectionClient mediaScannerConnectionClient =
-//                ;
-//        new MediaScannerConnection(context, mediaScannerConnectionClient).connect();
-//
-//        FileSeeker listener = new FileSeeker();
-//        String path = fileToLoad.getAbsolutePath();
-//        MediaScannerConnection.scanFile(c, new String[]{path}, null /*mimeTypes*/, listener);
-//        return listener.getUriFound();
-    }
-
     public static ByteBuffer deepCopy(ByteBuffer orig) {
         int pos = orig.position(), lim = orig.limit();
         try {
@@ -352,62 +313,30 @@ public class IOUtils {
         }
     }
 
-    private static class FileSeekerToo implements MediaScannerConnection.MediaScannerConnectionClient {
-
-        private final MediaScannerConnection connection;
-        private File seekFile;
-        private boolean hasResult;
-        private Uri result;
-
-        public FileSeekerToo(Context c) {
-            connection = new MediaScannerConnection(c, this);
-        }
-
-        public void scanForFile(File f) {
-            this.seekFile = f;
-            if (connection.isConnected()) {
-                connection.disconnect();
+    public static File[] getFilesNotBeingWritten(File[] matchingFiles, long timePeriodMillis) {
+        ArrayList<File> filesToUpload = new ArrayList(Arrays.asList(matchingFiles));
+        Map<File, Long> fileSizes = new HashMap<>(filesToUpload.size());
+        for (File file : filesToUpload) {
+            if (file.length() > 0) {
+                fileSizes.put(file, file.length());
             }
-            connection.connect();
         }
-
-        @Override
-        public void onMediaScannerConnected() {
-            connection.scanFile(seekFile.toString(), null);
+        try {
+            Thread.sleep(timePeriodMillis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        public void onScanCompleted(String path, Uri uri) {
-            if (path.equals(seekFile.toString())) {
-                connection.disconnect();
-                hasResult = true;
-                result = uri;
-                synchronized (this) {
-                    notifyAll();
+        for (File file : filesToUpload) {
+            if (file.length() > 0) {
+                Long oldLen = fileSizes.get(file);
+                if (oldLen == null) {
+                    fileSizes.put(file, file.length());
+                } else if (oldLen != file.length()) {
+                    fileSizes.remove(file);
                 }
+
             }
         }
-
-        public boolean hasResult() {
-            return hasResult;
-        }
-
-        public Uri getResult() {
-            return result;
-        }
-    }
-
-    private static class FileSeeker implements MediaScannerConnection.OnScanCompletedListener {
-        private Uri uriFound;
-
-        @Override
-        public void onScanCompleted(String s, Uri uri) {
-            // uri is in format content://...
-            uriFound = uri;
-        }
-
-        public Uri getUriFound() {
-            return uriFound;
-        }
+        return fileSizes.keySet().toArray(new File[fileSizes.size()]);
     }
 }

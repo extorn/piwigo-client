@@ -263,6 +263,9 @@
     <string name="preference_data_upload_max_filesize_mb_title">Max Filesize à télécharger sans avertissement (en MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
 
+    <string name="preference_data_upload_compress_videos_quality_title">Qualité vidéo</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Qualité de compression vidéo %1$s</string>
+
     <!-- other page -->
 
     <string name="preference_page_other">Autres</string>

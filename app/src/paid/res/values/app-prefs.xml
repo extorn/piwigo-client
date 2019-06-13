@@ -52,7 +52,7 @@
 
     <string name="preference_data_upload_automatic_job_compress_videos_key" translatable="false">preference_data_upload_automatic_job_compress_videos</string>
     <string name="preference_data_upload_automatic_job_compress_videos_summary">Compress videos before upload</string>
-    <string name="preference_data_upload_automatic_job_compress_videos_title">Compress videos (720p)</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_title">Compress videos</string>
     <bool name="preference_data_upload_automatic_job_compress_videos_default">false</bool>
 
     <integer name="preference_data_upload_automatic_job_max_upload_size_mb_default">20</integer>
@@ -61,7 +61,7 @@
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_key" translatable="false">preference_data_upload_automatic_server_file_exts_uploaded</string>
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">jpg,png,raw</string>
+    <string name="preference_data_upload_automatic_job_file_exts_uploaded_default" translatable="false">jpg,jpeg,png,mp4</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">File extensions</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">Upload files with ext %1$s</string>
 
@@ -69,6 +69,13 @@
     <string name="preference_data_upload_automatic_job_privacy_level_summary">Uploaded files visible to %1$s</string>
     <string name="preference_data_upload_automatic_job_privacy_level_key" translatable="false">preference_data_upload_automatic_job_privacy_level</string>
     <integer name="preference_data_upload_automatic_job_privacy_level_default">0</integer>
+
+    <string name="preference_data_upload_automatic_job_compress_videos_quality_title" translatable="false">@string/preference_data_upload_compress_videos_quality_title</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_quality_summary" translatable="false">@string/preference_data_upload_compress_videos_quality_summary</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_quality_key" translatable="false">preference_data_upload_automatic_job_compress_videos_quality</string>
+    <integer name="preference_data_upload_automatic_job_compress_videos_quality_default">
+        @integer/preference_data_upload_compress_videos_quality_default
+    </integer>
 
     <string name="preference_data_upload_automatic_job_files_uploaded_already_key" translatable="false">preference_data_upload_automatic_job_files_uploaded_already</string>
 

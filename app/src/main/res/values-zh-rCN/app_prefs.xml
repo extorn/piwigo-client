@@ -261,6 +261,8 @@
     <string name="preference_data_upload_max_filesize_mb_title">Max Filesize上传时不会发出警告（以MB为单位）</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
 
+    <string name="preference_data_upload_compress_videos_quality_title">视频质量</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">视频压缩质量 %1$s</string>
 
     <!-- other page -->
 

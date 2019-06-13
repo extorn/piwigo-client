@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +15,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.util.ArrayUtils;
 
 import java.io.File;
@@ -25,8 +24,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
@@ -35,7 +36,6 @@ import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 import delit.piwigoclient.ui.common.util.MediaScanner;
-import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.IOUtils;
 import delit.piwigoclient.util.ObjectUtils;
 
@@ -107,62 +107,22 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         Collections.sort(currentDisplayContent, getFileComparator());
         currentDisplayContentUris.clear();
 
-        if (!mediaScanner.isReadyToScan()) {
-            new AsyncTask<Void, Void, Void>() {
+        notifyDataSetChanged();
+        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(currentDisplayContent, 15) {
 
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    while (!mediaScanner.isReadyToScan()) {
-                        synchronized (mediaScanner) {
-                            try {
-                                mediaScanner.wait(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    scanForFiles();
-                    return null;
+            @Override
+            public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, "processing icons from  " + firstResultIdx + " to " + lastResultIdx + "   " + System.currentTimeMillis());
                 }
-            }.execute();
-        } else {
-            scanForFiles();
-        }
+                currentDisplayContentUris.putAll(batchResults);
+                notifyItemRangeChanged(firstResultIdx, batchResults.size());
+            }
+        });
 
         if (!refreshingExistingFolder) {
             navigationListener.onPostFolderOpened(oldFolder, newContent);
         }
-    }
-
-    private void scanForFiles() {
-        for (File f : currentDisplayContent) {
-            if (!f.isDirectory()) {
-                mediaScanner.scan(f);
-            }
-        }
-
-        while (mediaScanner.getScansRunning() > 0) {
-            synchronized (mediaScanner) {
-                try {
-                    mediaScanner.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        for (File f : currentDisplayContent) {
-            if (!f.isDirectory()) {
-                currentDisplayContentUris.put(f, mediaScanner.getScanResults(f));
-            }
-        }
-
-        DisplayUtils.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        });
     }
 
     private TreeSet<String> getUniqueFileExtsInFolder(List<File> currentDisplayContent) {
@@ -420,6 +380,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
                 getIconViewLoader().setUriToLoad(itemUri.toString());
             } else if (currentDisplayContentUris.size() > 0) {
                 getIconViewLoader().setFileToLoad(newItem);
+            } else {
+                getIconViewLoader().setResourceToLoad(R.drawable.ic_file_gray_24dp);
             }
         }
 
@@ -431,16 +393,11 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
             final ViewTreeObserver.OnPreDrawListener predrawListener = new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
-                    try {
-                        if (!getIconViewLoader().isImageLoaded() && !getIconViewLoader().isImageLoading() && !getIconViewLoader().isImageUnavailable()) {
+                    if (!getIconViewLoader().isImageLoaded() && !getIconViewLoader().isImageLoading() && !getIconViewLoader().isImageUnavailable()) {
 
-                            int imgSize = getIconView().getMeasuredWidth();
-                            getIconViewLoader().setResizeTo(imgSize, imgSize);
-                            getIconViewLoader().load();
-                        }
-                    } catch (IllegalStateException e) {
-                        Crashlytics.logException(e);
-                        // image loader not configured yet...
+                        int imgSize = getIconView().getMeasuredWidth();
+                        getIconViewLoader().setResizeTo(imgSize, imgSize);
+                        getIconViewLoader().load();
                     }
                     return true;
                 }

@@ -36,6 +36,7 @@ import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
 import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
 import delit.piwigoclient.util.CustomFileFilter;
+import delit.piwigoclient.util.IOUtils;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -419,17 +420,23 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
             postNewResponse(jobConfig.getJobId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(jobConfig.getJobId(),"Local folder no longer exists. Ignoring job"));
             return null;
         }
-        File[] matchingFiles = f.listFiles(fileFilter.withFileExtIn(jobConfig.getFileExtsToUpload(context)).withMaxSizeMb(jobConfig.getMaxUploadSize(context)));
+        boolean compressVideos = jobConfig.isCompressVideosBeforeUpload(context);
+        File[] matchingFiles = f.listFiles(fileFilter.withFileExtIn(jobConfig.getFileExtsToUpload(context)).withMaxSizeMb(jobConfig.getMaxUploadSize(context), compressVideos));
+        if (matchingFiles.length == 0) {
+            return null;
+        }
+        matchingFiles = IOUtils.getFilesNotBeingWritten(matchingFiles, 1000);
         if(matchingFiles.length == 0) {
             return null;
         }
         ArrayList<File> filesToUpload = new ArrayList(Arrays.asList(matchingFiles));
-        //public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, int uploadedFilePrivacyLevel, boolean useTempFolder) {
+
         CategoryItemStub category = jobConfig.getUploadToAlbum(context);
         UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(context, getPrefs()), filesToUpload, category,
-                jobConfig.isCompressVideosBeforeUpload(context), jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId());
+                compressVideos, jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId());
         uploadJob.setToRunInBackground();
         uploadJob.setJobConfigId(jobConfig.getJobId());
+        uploadJob.setVideoCompressionQuality(jobConfig.getVideoCompressionQuality(context));
         return uploadJob;
     }
 

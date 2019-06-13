@@ -56,6 +56,8 @@ public class UploadJob implements Serializable {
     private volatile transient boolean cancelUploadAsap;
     private transient File loadedFromFile;
     private LinkedHashMap<Date, String> errors = new LinkedHashMap<>();
+    private double videoCompressionQuality = -1;
+    private transient boolean wasLastRunCancelled;
 
     public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, boolean compressVideosBeforeUpload, byte uploadedFilePrivacyLevel) {
         this.jobId = jobId;
@@ -468,7 +470,7 @@ public class UploadJob implements Serializable {
     }
 
     public boolean hasBeenRunBefore() {
-        return loadedFromFile != null || filePartialUploadProgress.size() > 0;
+        return loadedFromFile != null || filePartialUploadProgress.size() > 0 || fileUploadStatus.size() > 0;
     }
 
     public File getLoadedFromFile() {
@@ -534,6 +536,25 @@ public class UploadJob implements Serializable {
         }
         fileExt = fileExt.toLowerCase();
         return fileExt.equals("mp4");
+    }
+
+    public double getVideoCompressionQuality() {
+        return videoCompressionQuality;
+    }
+
+    public void setVideoCompressionQuality(double videoCompressionQuality) {
+        this.videoCompressionQuality = videoCompressionQuality;
+    }
+
+    public void clearCancelUploadAsapFlag() {
+        wasLastRunCancelled = true;
+        cancelUploadAsap = false;
+    }
+
+    public boolean getAndClearWasLastRunCancelled() {
+        boolean ret = wasLastRunCancelled;
+        wasLastRunCancelled = false;
+        return ret;
     }
 
 

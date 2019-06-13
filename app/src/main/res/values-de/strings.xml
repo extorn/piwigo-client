@@ -421,6 +421,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="error_upload_file_verification_failed">Verifizierung der Datei auf dem Server fehlgeschlagen für den Upload von %1$s</string>
     <string name="alert_message_remove_file_server_state_incorrect">Diese Datei wurde teilweise hochgeladen und Sie müssen daran denken, danach auf die Schaltfläche Hochladen zu klicken, um die beschädigte Datei vom Server zu entfernen. Weitermachen?</string>
     <string name="alert_message_file_upload_cancelled_pattern">Upload der Datei (%1$s) abgebrochen.</string>
+    <string name="alert_message_upload_cancelled">Der Upload wurde abgebrochen</string>
+    <string name="alert_message_upload_cancelled_message">Wenn du den Upload nicht später neu starten möchtest. Sie sollten die Dateien aus dem Upload-Job entfernen und dann auf Hochladen klicken. Dadurch wird der abgebrochene Upload-Status vom Server gelöscht.</string>
     <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">Die von Ihnen gewählte Bildgröße wird von dem Server, mit dem Sie verbunden sind, nicht nativ unterstützt. Der Server gibt das Bild in der Größe der nächsten Übereinstimmung zurück.</string>
     <string name="logging_out_of_piwigo_pattern">Abmelden von %1$s</string>
     <string name="preference_connections_category_connections_caching">Web-Antwort-Caching</string>
@@ -473,8 +475,8 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="heading_keystore_filename">Schlüsselspeicher</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Fehler beim Upload</string>
-    <string name="alert_message_error_uploading_end">Nach erfolgreichem Hochladen aller Dateien ist ein Fehler aufgetreten. Sie können den Job später erneut versuchen, und er kann durchaus erfolgreich sein, oder Sie können diesen Job vom Gerät löschen und dann alle unvollständigen Änderungen am Server manuell bereinigen. Auftrag löschen?</string>
-    <string name="alert_message_error_uploading_start">Vor dem Hochladen aller Dateien ist ein Fehler aufgetreten. Sie können den Job später noch einmal versuchen, aber Sie können diesen Job vom Gerät löschen, aber alle unvollständigen Änderungen am Server manuell bereinigen. Auftrag löschen?</string>
+    <string name="alert_message_error_uploading_end">Nach erfolgreichem Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie den Upload neu, um von dort fortzufahren, wo er hingegangen ist, und löschen Sie alle verbleibenden temporären Daten vom Server.</string>
+    <string name="alert_message_error_uploading_start">Vor dem erfolgreichen Hochladen aller Dateien ist ein Fehler aufgetreten. Starten Sie entweder den Upload neu, um dort fortzufahren, wo er hingekommen ist, oder löschen Sie alle verbleibenden Dateien aus dem Auftrag und klicken Sie dann auf die Schaltfläche Fertigstellen, um alle verbleibenden temporären Daten vom Server zu löschen.</string>
     <string name="release_history">Freigabehistorie</string>
     <string name="planned_releases">Geplante Veröffentlichungen</string>
     <string name="tags_heading">Schilder</string>
@@ -591,5 +593,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="preference_corrupt_please_re_type_pattern">"Die Präferenz %1$s ist unwiederbringlich und wurde auf %2$s voreingestellt. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück."</string>
     <string name="switch_to_cached_mode">Der Server ist derzeit nicht verfügbar. Cache-Daten verwenden?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
+    <string name="compress_videos">Videos kompressieren</string>
 </resources>
 

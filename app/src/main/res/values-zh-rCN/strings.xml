@@ -298,6 +298,8 @@
     <string name="error_upload_file_verification_failed">服务器上的文件验证无法上传%1$s</string>
     <string name="alert_message_remove_file_server_state_incorrect">此文件已部分上传，您必须记住在此之后单击上载按钮以从服务器中删除损坏的文件。继续？</string>
     <string name="alert_message_file_upload_cancelled_pattern">上传文件（%1$s）已取消。</string>
+    <string name="alert_message_upload_cancelled">上传已取消</string>
+    <string name="alert_message_upload_cancelled_message">如果您不希望稍后重新启动上传。 您应该从上传作业中删除文件，然后单击上载。 这将清除服务器上取消的上载状态。</string>
     <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">您连接的服务器本身不支持您选择的图像大小。服务器将返回“最接近的匹配”大小的图像。</string>
     <string name="logging_out_of_piwigo_pattern">退出%1$s</string>
     <string name="loading_new_server_configuration">加载新的服务器连接配置</string>
@@ -349,8 +351,8 @@
     <string name="heading_keystore_filename">密钥库</string>
     <string name="heading_keystore_alias">别号</string>
     <string name="alert_title_error_upload">上传错误</string>
-    <string name="alert_message_error_uploading_end">成功上载所有文件后发生错误。您可以稍后重试该作业，它可能会成功，或者您可以从设备中删除此作业，然后手动清除对服务器所做的任何未完成的更改。删除工作？</string>
-    <string name="alert_message_error_uploading_start">上传所有文件之前发生错误。您可以稍后重试该作业，但它可能会成功，但您可以从设备中删除此作业，但可以手动清除对服务器所做的任何未完成的更改。删除工作？</string>
+    <string name="alert_message_error_uploading_end">成功上载所有文件后发生错误。 重新启动上载以从其到达的位置继续并清除服务器中的任何剩余临时数据。</string>
+    <string name="alert_message_error_uploading_start">成功上载所有文件之前发生错误。 重新启动上载以从其到达的位置继续，或者从作业中删除任何剩余文件，然后单击“完成”按钮以清除服务器中的任何剩余临时数据。</string>
     <string name="release_history">发布历史</string>
     <string name="planned_releases">计划发布</string>
     <string name="tags_heading">标签</string>
@@ -468,4 +470,5 @@
     <string name="preference_corrupt_please_re_type_pattern">“偏好%1$s无法恢复，默认为%2$s。请在应用设置中重置此值”</string>
     <string name="switch_to_cached_mode">服务器目前不可用。使用缓存数据？</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
+    <string name="compress_videos">压缩视频</string>
 </resources>

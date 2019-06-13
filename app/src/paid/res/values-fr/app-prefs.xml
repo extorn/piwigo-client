@@ -50,7 +50,7 @@
     <string name="preference_data_upload_automatic_job_delete_uploaded_title">Effacement automatique</string>
 
     <string name="preference_data_upload_automatic_job_compress_videos_summary">Compresser les vidéos avant de les télécharger</string>
-    <string name="preference_data_upload_automatic_job_compress_videos_title">Compresser les vidéos (720p)</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_title">Compresser les vidéos</string>
 
 
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize téléchargé</string>

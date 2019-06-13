@@ -107,13 +107,15 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
             List<Fragment> fragments = mFragmentManager.getFragments();
             // if fragments is not empty then the page was very probably rotated
             for (Fragment f : fragments) {
-                int pagerIndex = ((PagerItemFragment) f).getPagerIndex();
-                if (pagerIndex < 0) {
-                    throw new RuntimeException("Error pager index invalid!");
-                }
-                Fragment removed = activeFragments.put(pagerIndex, f);
-                if (removed != null) {
-                    throw new RuntimeException("Two fragments share the same pager index: " + pagerIndex);
+                if (f instanceof PagerItemFragment) {
+                    int pagerIndex = ((PagerItemFragment) f).getPagerIndex();
+                    if (pagerIndex < 0) {
+                        throw new RuntimeException("Error pager index invalid!");
+                    }
+                    Fragment removed = activeFragments.put(pagerIndex, f);
+                    if (removed != null) {
+                        throw new RuntimeException("Two fragments share the same pager index: " + pagerIndex);
+                    }
                 }
             }
         }

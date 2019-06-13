@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.util.IOUtils;
 
 /**
@@ -196,7 +197,9 @@ public class AudioTrackMuxerPassthroughRenderer extends MediaCodecAudioRenderer 
             for (AudioBufferQueueItem item : cachedAudioBufferQueue) {
                 cacheSize += item.buffer.remaining();
             }
-            Log.e(TAG, "AudioQueueSize : " + cachedAudioBufferQueue.size() + IOUtils.toNormalizedText(cacheSize));
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "AudioQueueSize : " + cachedAudioBufferQueue.size() + IOUtils.toNormalizedText(cacheSize));
+            }
         }
     }
 

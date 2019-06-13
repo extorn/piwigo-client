@@ -11,11 +11,17 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.ui.common.util.MediaScanner;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
+import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
+import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
+import delit.piwigoclient.util.CollectionUtils;
 import delit.piwigoclient.util.ProjectUtils;
 
 /**
@@ -42,7 +48,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         if (prefsVersion == -1) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
-            editor.commit();
+            editor.apply();
         } else if (prefsVersion <= 43) {
             SharedPreferences.Editor editor = prefs.edit();
             encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_username_key, null);
@@ -50,7 +56,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_username_key, null);
             encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_password_key, null);
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
-            editor.commit();
+            editor.apply();
         } else if(prefsVersion <= 144) {
             // Fix any addresses with a space character.
             SharedPreferences.Editor editor = prefs.edit();
@@ -62,7 +68,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                     editor.putString(getString(R.string.preference_piwigo_server_address_key), serverName.replaceAll(" ", ""));
                 }
             }
-            editor.commit();
+            editor.apply();
         } else if(prefsVersion < 147) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.remove(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key));
@@ -83,13 +89,23 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                     editor.putInt(connPrefs.getKey(getApplicationContext(), R.string.preference_server_connection_timeout_secs_key), currentTimeout);
                 }
             }
-            editor.commit();
+            editor.apply();
+        } else if (prefsVersion < 216) {
+            for (AutoUploadJobConfig config : new AutoUploadJobsConfig(prefs).getAutoUploadJobs(getApplicationContext())) {
+                SharedPreferences jobPrefs = config.getJobPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = jobPrefs.edit();
+                String oldVal = jobPrefs.getString(getString(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key), getString(R.string.preference_data_upload_automatic_job_file_exts_uploaded_default));
+                ArrayList<String> fileExts = CollectionUtils.stringsFromCsvList(oldVal);
+                editor.putStringSet(getString(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key), new HashSet<>(fileExts));
+                editor.apply();
+            }
         }
+
 
         if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -115,7 +131,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         super.onCreate();
 
         //Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build());
-
+        MediaScanner.instance(getApplicationContext());
         PicassoFactory.initialise();
         upgradeAnyPreferencesIfRequired();
         AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
@@ -123,6 +139,13 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         resources = getResources();
         onAppCreate();
 //        TooLargeTool.startLogging(this);
+    }
+
+
+    @Override
+    public void onTerminate() {
+        MediaScanner.instance(getApplicationContext()).close();
+        super.onTerminate();
     }
 
     protected abstract void onAppCreate();

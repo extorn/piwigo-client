@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.file;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
@@ -54,7 +55,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     private static final String STATE_ALL_POSS_VIS_FILE_EXTS = "RecyclerViewFolderItemSelectFragment.allPossVisFileExts";
     private static final String STATE_SELECTED_VIS_FILE_EXTS = "RecyclerViewFolderItemSelectFragment.selectedVisFileExts";
     private FlowLayout folderPathView;
-    private Spinner spinner;
+    private Spinner folderRootFolderSpinner;
     private MappedArrayAdapter<String, File> folderRootsAdapter;
     private long startedActionAtTime;
     private FolderItemRecyclerViewAdapter.NavigationListener navListener;
@@ -62,7 +63,6 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     private ArrayList<String> allPossiblyVisibleFileExts;
     private ArrayList<String> selectedVisibleFileExts;
     private FlowLayout fileExtFilters;
-    private MediaScanner mediaScanner;
 
     public static RecyclerViewFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
         RecyclerViewFolderItemSelectFragment fragment = new RecyclerViewFolderItemSelectFragment();
@@ -107,8 +107,6 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         View v = super.onCreateView(inflater, container, savedInstanceState);
 
-        mediaScanner = new MediaScanner(getContext());
-
         if (isNotAuthorisedToAlterState()) {
             getViewPrefs().readonly();
         }
@@ -122,11 +120,9 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         startedActionAtTime = System.currentTimeMillis();
 
-        folderRootsAdapter = buildFolderRootsAdapter();
 
-        spinner = v.findViewById(R.id.folder_root_spinner);
-        spinner.setAdapter(folderRootsAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        folderRootFolderSpinner = v.findViewById(R.id.folder_root_spinner);
+        folderRootFolderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (id > 0) {
@@ -170,16 +166,19 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             }
         };
 
-        bindDataToView(savedInstanceState);
-        buildFileExtFilterControls();
-
-
         return v;
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        bindDataToView(savedInstanceState);
+        buildFileExtFilterControls();
+    }
+
+    @Override
     public void onDestroyView() {
-        mediaScanner.close();
         super.onDestroyView();
     }
 
@@ -231,14 +230,18 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     }
 
     private void buildBreadcrumbs(File newFolder) {
+        if (folderRootsAdapter == null) {
+            return;
+            // still building the ui
+        }
         String item = folderRootsAdapter.getItemByValue(newFolder);
         if (item == null) {
             // reset the selection
-            if (spinner.getSelectedItemId() >= 0) {
-                spinner.setAdapter(folderRootsAdapter);
+            if (folderRootFolderSpinner.getSelectedItemId() >= 0) {
+                folderRootFolderSpinner.setAdapter(folderRootsAdapter);
             }
         } else {
-            spinner.setSelection(folderRootsAdapter.getPosition(item), false);
+            folderRootFolderSpinner.setSelection(folderRootsAdapter.getPosition(item), false);
         }
 
         File f = newFolder;
@@ -316,6 +319,23 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
     private void bindDataToView(Bundle savedInstanceState) {
 
+        new AsyncTask<Void, Void, MappedArrayAdapter<String, File>>() {
+
+            @Override
+            protected MappedArrayAdapter<String, File> doInBackground(Void... voids) {
+                return buildFolderRootsAdapter();
+            }
+
+            @Override
+            protected void onPostExecute(MappedArrayAdapter<String, File> mappedArrayAdapter) {
+                // building this stuff is slow - lets do it async!
+                folderRootsAdapter = mappedArrayAdapter;
+                folderRootFolderSpinner.setAdapter(folderRootsAdapter);
+                buildBreadcrumbs(getListAdapter().getActiveFolder());
+            }
+        }.execute();
+
+
         File activeFolder = null;
         if (savedInstanceState != null) {
             activeFolder = BundleUtils.getFile(savedInstanceState, ACTIVE_FOLDER);
@@ -324,7 +344,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         if(getListAdapter() == null) {
 
 
-            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, mediaScanner, new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>(), getViewPrefs());
+            final FolderItemRecyclerViewAdapter viewAdapter = new FolderItemRecyclerViewAdapter(navListener, MediaScanner.instance(getContext()), new FolderItemRecyclerViewAdapter.MultiSelectStatusAdapter<File>(), getViewPrefs());
 
             if (activeFolder != null) {
                 viewAdapter.setActiveFolder(activeFolder);

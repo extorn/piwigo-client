@@ -3,7 +3,6 @@ package delit.piwigoclient.ui.upload;
 import android.content.Context;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +23,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.ui.common.util.MediaScanner;
-import delit.piwigoclient.util.DisplayUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}
@@ -67,56 +66,12 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             currentDisplayContentUris.clear();
             return;
         }
-        if (!mediaScanner.isReadyToScan()) {
-            new AsyncTask<Void, Void, Void>() {
-
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    while (!mediaScanner.isReadyToScan()) {
-                        synchronized (mediaScanner) {
-                            try {
-                                mediaScanner.wait(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    scanForFiles();
-                    return null;
-                }
-            }.execute();
-        } else {
-            scanForFiles();
-        }
-    }
-
-    private void scanForFiles() {
-        for (File f : uploadProgressModel.filesToUpload) {
-            if (!f.isDirectory()) {
-                mediaScanner.scan(f);
-            }
-        }
-
-        while (mediaScanner.getScansRunning() > 0) {
-            synchronized (mediaScanner) {
-                try {
-                    mediaScanner.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        for (File f : uploadProgressModel.filesToUpload) {
-            if (!f.isDirectory()) {
-                currentDisplayContentUris.put(f, mediaScanner.getScanResults(f));
-            }
-        }
-
-        DisplayUtils.runOnUiThread(new Runnable() {
+        notifyDataSetChanged();
+        mediaScanner.invokeScan(new MediaScanner.MediaScannerScanTask(uploadProgressModel.filesToUpload, 15) {
             @Override
-            public void run() {
-                notifyItemRangeChanged(0, uploadProgressModel.filesToUpload.size());
+            public void onScanComplete(Map<File, Uri> batchResults, int firstResultIdx, int lastResultIdx, boolean jobFinished) {
+                currentDisplayContentUris.putAll(batchResults);
+                notifyItemRangeChanged(firstResultIdx, batchResults.size());
             }
         });
     }
@@ -184,7 +139,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         Uri itemUri = currentDisplayContentUris.get(holder.mItem);
         if (itemUri != null) {
             holder.imageLoader.setUriToLoad(itemUri.toString());
-        } else if (currentDisplayContentUris.size() > 0) {
+        } else {
             holder.imageLoader.setFileToLoad(holder.mItem);
         }
 
@@ -435,6 +390,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
 
             imageLoader = new ResizingPicassoLoader(fileForUploadImageView, this, 0, 0);
+
         }
 
         @Override

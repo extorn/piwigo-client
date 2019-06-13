@@ -88,6 +88,10 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat impl
         return new BasicPiwigoResponseListener();
     }
 
+    protected void callServer(String callDescription, AbstractPiwigoDirectResponseHandler handler) {
+        uiHelper.addActiveServiceCall(callDescription, handler);
+    }
+
     protected void callServer(@StringRes int callDescriptionResId, AbstractPiwigoDirectResponseHandler handler) {
         uiHelper.addActiveServiceCall(callDescriptionResId, handler);
     }

@@ -12,13 +12,12 @@ import androidx.annotation.StringRes;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -55,8 +54,8 @@ public class AutoUploadJobConfig implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(jobId);
     }
-    
-    private SharedPreferences getJobPreferences(Context c) {
+
+    public SharedPreferences getJobPreferences(Context c) {
         if(jobPreferences == null) {
             jobPreferences = c.getSharedPreferences(getSharedPreferencesName(jobId), Context.MODE_PRIVATE);
         }
@@ -130,16 +129,10 @@ public class AutoUploadJobConfig implements Parcelable {
         return value;
     }
 
-    private @NonNull List getCsvListValue(Context c, @StringRes int prefKeyId) {
-        String value = getStringValue(c, prefKeyId);
-        String[] values = value.split(",");
-        return Arrays.asList(values);
-    }
-
-    private @NonNull List getCsvListValue(Context c, @StringRes int prefKeyId, @StringRes int prefDefaultId) {
-        String value = getStringValue(c, prefKeyId, c.getString(prefDefaultId));
-        String[] values = value.split(",");
-        return Arrays.asList(values);
+    public @NonNull
+    Set<String> getStringSetValue(Context c, @StringRes int prefKeyId, @StringRes int prefDefaultId) {
+        TreeSet<String> defaultVal = new TreeSet<>(CollectionUtils.stringsFromCsvList(c.getString(prefDefaultId)));
+        return getJobPreferences(c).getStringSet(c.getString(prefKeyId), defaultVal);
     }
 
     public ConnectionPreferences.ProfilePreferences getConnectionPrefs(Context c, SharedPreferences overallAppPrefs) {
@@ -198,6 +191,10 @@ public class AutoUploadJobConfig implements Parcelable {
 
     public boolean isCompressVideosBeforeUpload(Context c) {
         return getBooleanValue(c, R.string.preference_data_upload_automatic_job_compress_videos_key, R.bool.preference_data_upload_automatic_job_compress_videos_default);
+    }
+
+    public double getVideoCompressionQuality(Context c) {
+        return ((double) getIntValue(c, R.string.preference_data_upload_automatic_job_compress_videos_quality_key, R.integer.preference_data_upload_automatic_job_compress_videos_quality_default)) / 1000;
     }
 
     public static class PriorUploads implements Serializable {
@@ -284,8 +281,8 @@ public class AutoUploadJobConfig implements Parcelable {
         priorUploads.saveToFile(c);
     }
 
-    public List<String> getFileExtsToUpload(Context c) {
-        return getCsvListValue(c, R.string.preference_data_upload_automatic_job_file_exts_uploaded_key, R.string.preference_data_upload_automatic_job_file_exts_uploaded_default);
+    public Set<String> getFileExtsToUpload(Context c) {
+        return getStringSetValue(c, R.string.preference_data_upload_automatic_job_file_exts_uploaded_key, R.string.preference_data_upload_automatic_job_file_exts_uploaded_default);
     }
 
     public ServerAlbumSelectPreference.ServerAlbumDetails getUploadToAlbumDetails(Context context) {

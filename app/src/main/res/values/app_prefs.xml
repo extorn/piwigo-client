@@ -303,6 +303,11 @@
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
 
+    <string name="preference_data_upload_compress_videos_quality_title">Video Quality</string>
+    <string name="preference_data_upload_compress_videos_quality_summary">Video compression quality %1$s</string>
+    <string name="preference_data_upload_compress_videos_quality_key" translatable="false">preference_data_upload_compress_videos_quality</string>
+    <integer name="preference_data_upload_compress_videos_quality_default">650</integer>
+
     <!-- other page -->
 
     <string name="preference_page_other">Other</string>

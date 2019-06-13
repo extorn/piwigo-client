@@ -80,6 +80,7 @@ import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.piwigoclient.ui.common.util.MediaScanner;
 import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.dialogs.SelectAlbumDialog;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
@@ -995,8 +996,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     public void onGetResource(final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
+        // add the file details to the media store :-)
+        MediaScanner.instance(getContext()).invokeScan(new MediaScanner.MediaScannerImportTask(response.getFile()));
         if(activeDownloadAction.isShareDownloadedResource()) {
-            //TODO put in content provider
             shareFileDownloaded(response.getFile());
         } else {
             notifyUserFileDownloadComplete(response.getFile());

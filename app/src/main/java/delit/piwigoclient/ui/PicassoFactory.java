@@ -90,9 +90,9 @@ public class PicassoFactory {
         if (old != null) {
             Crashlytics.log(Log.ERROR, TAG, String.format("There was already a Uri Load Listener registered for Uri %1$s", uri));
         }
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, String.format("There are %1$d Uri Load Listeners registered", errorHandler.listeners.size()));
-        }
+//        if (BuildConfig.DEBUG) {
+//            Log.d(TAG, String.format("There are %1$d Uri Load Listeners registered", errorHandler.listeners.size()));
+//        }
     }
 
     public synchronized void deregisterListener(Context context, Uri uri) {
@@ -100,9 +100,9 @@ public class PicassoFactory {
             getPicassoSingleton(context);
         }
         if (errorHandler.removeListener(uri)) {
-            if (BuildConfig.DEBUG) {
-                Log.d(TAG, String.format("There are %1$d Uri Load Listeners registered", errorHandler.listeners.size()));
-            }
+//            if (BuildConfig.DEBUG) {
+//                Log.d(TAG, String.format("There are %1$d Uri Load Listeners registered", errorHandler.listeners.size()));
+//            }
         }
     }
 

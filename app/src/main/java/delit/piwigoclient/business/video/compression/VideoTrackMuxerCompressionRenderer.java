@@ -67,8 +67,9 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
 
     @Override
     protected void onDisabled() {
-        ht.quitSafely();
         super.onDisabled();
+        releaseTranscoder(); // can't do when we release the codec as that is called when we set surface (in configureTranscoder)
+        ht.quitSafely();
     }
 
     @Override
@@ -368,7 +369,9 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
                         Log.e(TAG, "Skipping encoder output format swap to : " + newFormat);
                     }
                 } else {
-                    mediaMuxerControl.setOrientationHint(pendingRotationDegrees);
+                    if (!compressionSettings.isHardRotateVideo()) {
+                        mediaMuxerControl.setOrientationHint(pendingRotationDegrees);
+                    }
                     mediaMuxerControl.addVideoTrack(newFormat);
                     mediaMuxerControl.markVideoConfigured();
                 }
@@ -477,11 +480,16 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
             setIntegerMediaFormatKey(inputMediaFormat, trueFormat, MediaFormat.KEY_COLOR_FORMAT, android.media.MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         }
 
-        if (Util.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // On API level 21 and above the decoder applies the rotation when rendering to the surface - prevent this auto-rotation.
-            if (inputMediaFormat.containsKey(MediaFormat.KEY_ROTATION)) {
-                pendingRotationDegrees = inputMediaFormat.getInteger(MediaFormat.KEY_ROTATION);
-                inputMediaFormat.setInteger(MediaFormat.KEY_ROTATION, 0);
+        if (inputMediaFormat.containsKey(MediaFormat.KEY_ROTATION)) {
+            pendingRotationDegrees = inputMediaFormat.getInteger(MediaFormat.KEY_ROTATION);
+
+            if (Util.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                // On API level 21 and above the decoder applies the rotation when rendering to the surface - prevent this auto-rotation.
+                if (inputMediaFormat.containsKey(MediaFormat.KEY_ROTATION)) {
+                    if (!compressionSettings.isHardRotateVideo()) {
+                        inputMediaFormat.setInteger(MediaFormat.KEY_ROTATION, 0);
+                    }
+                }
             }
         }
 
@@ -548,10 +556,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         }
         int wantedFrameRate = compressionSettings.getWantedFrameRate();
         int wantedKeyFrameInterval = compressionSettings.getWantedKeyFrameInterval();
-        int wantedBitRate = compressionSettings.getWantedBitRate();
-        if (wantedBitRate < 0) {
-            wantedBitRate = wantedWidthPx * wantedHeightPx; // 1/8 of a full frame allowed per second
-        }
+        int wantedBitRate = compressionSettings.getWantedBitRate(wantedWidthPx, inputVideoHeight);
         int wantedBitRateModeV21 = compressionSettings.getWantedBitRateModeV21();
 
         android.media.MediaCodecInfo encoderCodecInfo = selectEncoderCodec(MIME_TYPE);
@@ -566,6 +571,12 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
             Log.d(TAG, "found codec: " + encoderCodecInfo.getName());
         }
 
+        if (compressionSettings.isHardRotateVideo() && pendingRotationDegrees != 0 && pendingRotationDegrees != 180) {
+            int tmp = wantedWidthPx;
+            wantedWidthPx = wantedHeightPx;
+            wantedHeightPx = tmp;
+        }
+
         // Create an encoder format that matches the input format.  (Might be able to just
         // re-use the format used to generate the video, since we want it to be the same.)
         MediaFormat outputFormat = MediaFormat.createVideoFormat(MIME_TYPE, wantedWidthPx, wantedHeightPx);
@@ -577,14 +588,19 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
 //        setIntegerMediaFormatKey(outputFormat, inputMediaFormat, MediaFormat.KEY_LEVEL, -1);
 //        setIntegerMediaFormatKey(outputFormat, inputMediaFormat, MediaFormat.KEY_PROFILE, -1);
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            if (inputMediaFormat.containsKey(MediaFormat.KEY_BITRATE_MODE)) {
-//                // it gets rotated by exoplayer so this isn't needed now.
-//                outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, inputMediaFormat.getInteger(MediaFormat.KEY_BITRATE_MODE));
-//            } else {
-//                outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, wantedBitRateModeV21);
-//            }
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            android.media.MediaCodecInfo.CodecCapabilities capabilities = encoderCodecInfo.getCapabilitiesForType(MIME_TYPE);
+            if (capabilities.getEncoderCapabilities().isBitrateModeSupported(wantedBitRateModeV21)) {
+                outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, wantedBitRateModeV21);
+            }
+            if (capabilities.getEncoderCapabilities().isBitrateModeSupported(android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR)) {
+                outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR);
+            } else if (capabilities.getEncoderCapabilities().isBitrateModeSupported(android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CQ)) {
+                outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CQ);
+            } else if (capabilities.getEncoderCapabilities().isBitrateModeSupported(android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR)) {
+                outputFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR);
+            }
+        }
 
 //        android.media.MediaCodecInfo.CodecCapabilities capabilities = encoderCodecInfo.getCapabilitiesForType(MIME_TYPE);
 //        for(int supportedFormat : capabilities.colorFormats) {

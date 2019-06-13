@@ -45,6 +45,8 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
     private float rotation = 0;
     private int resourceToLoad = Integer.MIN_VALUE;
     private boolean imageUnavailable;
+    private @DrawableRes
+    int placeholderPlaceholderId = R.drawable.ic_file_gray_24dp;
     private String placeholderUri;
     private boolean placeholderLoaded;
     private @DrawableRes
@@ -217,19 +219,25 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
     }
 
     private void runLoad(boolean forceServerRequest) {
-        waitForErrorMessage = true;
-        RequestCreator loader = customiseLoader(buildLoader());
-        if (forceServerRequest) {
-            loader.memoryPolicy(MemoryPolicy.NO_CACHE);
-            loader.networkPolicy(NetworkPolicy.NO_CACHE);
+        try {
+            waitForErrorMessage = true;
+            RequestCreator loader = customiseLoader(buildLoader());
+            if (forceServerRequest) {
+                loader.memoryPolicy(MemoryPolicy.NO_CACHE);
+                loader.networkPolicy(NetworkPolicy.NO_CACHE);
+            }
+            //                if(placeholderUri != null) {
+            //                    Log.d("PicassoLoader", "Loading: " + placeholderUri, new Exception().fillInStackTrace());
+            //                } else {
+            //                    Log.d("PicassoLoader", "Loading: " + uriToLoad, new Exception().fillInStackTrace());
+            //                }
+            registerUriLoadListener();
+            loader.into(loadInto, this);
+        } catch (IllegalStateException e) {
+            if (!placeholderLoaded) {
+                throw e;
+            }
         }
-        //                if(placeholderUri != null) {
-        //                    Log.d("PicassoLoader", "Loading: " + placeholderUri, new Exception().fillInStackTrace());
-        //                } else {
-        //                    Log.d("PicassoLoader", "Loading: " + uriToLoad, new Exception().fillInStackTrace());
-        //                }
-        registerUriLoadListener();
-        loader.into(loadInto, this);
     }
 
     public void cancelImageLoadIfRunning() {
@@ -270,9 +278,9 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
             rc.noPlaceholder();
         } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                rc.placeholder(R.drawable.ic_file_gray_24dp);
+                rc.placeholder(placeholderPlaceholderId);
             } else {
-                rc.placeholder(ContextCompat.getDrawable(loadInto.getContext(), R.drawable.ic_file_gray_24dp));
+                rc.placeholder(ContextCompat.getDrawable(loadInto.getContext(), placeholderPlaceholderId));
             }
         }
 
@@ -310,6 +318,8 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
         } else if (resourceToLoad != Integer.MIN_VALUE) {
             return picassoSingleton.load(resourceToLoad);
         }
+
+        Crashlytics.log(Log.ERROR, "PicassoLoader", "No valid source specified from which to load image");
         throw new IllegalStateException("No valid source specified from which to load image");
     }
 

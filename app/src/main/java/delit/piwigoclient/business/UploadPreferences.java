@@ -40,4 +40,8 @@ public class UploadPreferences {
     public static int getUploadChunkMaxRetries(Context context, SharedPreferences prefs) {
         return prefs.getInt(context.getString(R.string.preference_data_upload_chunk_auto_retries_key), context.getResources().getInteger(R.integer.preference_data_upload_chunk_auto_retries_default));
     }
+
+    public static double getVideoCompressionQuality(Context context, SharedPreferences prefs) {
+        return ((double) prefs.getInt(context.getString(R.string.preference_data_upload_compress_videos_quality_key), context.getResources().getInteger(R.integer.preference_data_upload_compress_videos_quality_default))) / 1000;
+    }
 }

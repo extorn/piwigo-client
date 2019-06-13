@@ -49,14 +49,13 @@
 
 
     <string name="preference_data_upload_automatic_job_compress_videos_summary">在上传之前压缩视频</string>
-    <string name="preference_data_upload_automatic_job_compress_videos_title">压缩视频（720p）</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_title">压缩视频</string>
 
 
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_title">Max Filesize已上传</string>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_summary">%1$d MB</string>
 
 
-    <string name="preference_data_upload_automatic_job_file_exts_uploaded_default">JPG，PNG，生</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_title">文件扩展名</string>
     <string name="preference_data_upload_automatic_job_file_exts_uploaded_summary">使用ext %1$s 上传文件</string>
 

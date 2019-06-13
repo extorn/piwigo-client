@@ -90,7 +90,6 @@
             - Automatische Bildrotation basierend auf Geräteausrichtung, Geräteausrichtung, Geräteausrichtung, Geräteausrichtung ignoriert Bildschirmrotationssperre
             - Überprüfen Sie den aktuellen Anmeldestatus, um sicherzustellen, dass die Alben- und Bildlisten immer korrekt sind
             - Überprüfen Sie die Unterstützung für den Upload auf ältere Server (z.B. piwigo.com - Version 2.8a)
-            - Erlaubt die Verknüpfung des Hochladevorgangs mit einer Komprimierungsroutine für Videos
             - Die Möglichkeit, ein Album zu löschen, aber nicht seinen Inhalt (Waisenkinder erstellen)
             - Verwaltung von verwaisten Dateien
             - Erlaubt es dem Benutzer, in der Diashow herauszuzoomen (Ansicht kleiner als Vollbild)
@@ -109,25 +108,16 @@
          - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <item>1.4.0.11</item>
-        <item>"Änderungen:
-                - Hochladen - Stoppte die automatische harte Drehung von Videos in den Hochformat-Modus und entfernte die Rotations-Metadaten, da das Video nicht universell abgespielt wird."</item>
-        <item>1.4.0.10</item>
+        <item>1.4.0.12</item>
         <item>"Fehlerbehebung:
-                - Ein paar unregelmäßige Probleme"</item>
-        <item>1.4.0.9</item>
-        <item>"Fehlerbehebung:
-                - Korrekturen bei der chinesischen Sprache
-                - Animierte Gif-Unterstützung korrigiert
-                - Ein mögliches Speicherleck wurde entfernt"</item>
-        <item>1.4.0.8</item>
-        <item>"Fehlerbehebung:
-            - Android 4 Absturz behoben"</item>
-        <item>1.4.0.7</item>
-        <item>"Fehlerbehebung:
-                - Ein paar kleine Änderungen
-                - Ein paar Abstürze
-               Änderungen:
-                - Der Offline-Zugriff auf retrived und zwischengespeicherte Daten funktioniert jetzt (neuer Navigationspunkt)"</item>
+                - Fehlerbehandlung beim Hochladen hinzugefügt
+                - Code entfernt, der das Anzeigen von Bildern für einige Server- und App-Konfigurationen verhindert.
+              Änderungen:
+                - Hochladen - Entfernter Dialog zur Frage der Videokompression - ersetzt durch ein Kontrollkästchen
+                - Verwenden Sie den Android Media Store, um Miniaturansichten für Videos auf dem Gerät abzurufen.
+                - Hinzufügen von Dateien, die auf Ihr Gerät heruntergeladen wurden, zum Android Media Store
+                - Präferenz zur Auswahl der Kompressionsqualität (hoch, mittel, niedrig, hoch)
+                - BEZAHLT: Automatischer Upload-Job - Individuelle Einstellung der Kompressionsqualität (hoch, mittel, niedrig)
+                - BEZAHLT: Automatischer Upload-Job - Dateien für die Upload-Liste sind nun auf das beschränkt, was Ihr Server erlaubt"</item>
     </string-array>
 </resources>

@@ -1,20 +1,24 @@
 package delit.piwigoclient.util;
 
+import android.webkit.MimeTypeMap;
+
 import java.io.File;
 import java.io.FileFilter;
-import java.util.List;
+import java.util.Collection;
 
 public class CustomFileFilter implements FileFilter {
 
     private int maxSizeMb;
-    private List<String> acceptableFileExtList;
+    private Collection<String> acceptableFileExtList;
+    private boolean allowVideosToExceedLimit;
 
-    public CustomFileFilter withMaxSizeMb(int maxSizeMb) {
+    public CustomFileFilter withMaxSizeMb(int maxSizeMb, boolean allowVideosToExceedLimit) {
         this.maxSizeMb = maxSizeMb;
+        this.allowVideosToExceedLimit = allowVideosToExceedLimit;
         return this;
     }
 
-    public CustomFileFilter withFileExtIn(List<String> acceptableFileExtList) {
+    public CustomFileFilter withFileExtIn(Collection<String> acceptableFileExtList) {
         this.acceptableFileExtList = acceptableFileExtList;
         return this;
     }
@@ -27,7 +31,12 @@ public class CustomFileFilter implements FileFilter {
         if (!isFilenameMatch(pathname.getName())) {
             return false;
         }
-        return isFilesizeMatch(pathname);
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(pathname.getName()));
+        if (mimeType == null || !mimeType.startsWith("video/") || !allowVideosToExceedLimit) {
+            return isFilesizeMatch(pathname);
+        }
+        return true;
     }
 
     private boolean isFilesizeMatch(File pathname) {

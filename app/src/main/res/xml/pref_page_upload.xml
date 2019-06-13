@@ -58,6 +58,15 @@
             android:summary="@string/preference_data_upload_max_filesize_mb_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+        <delit.piwigoclient.ui.common.preference.IntListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@integer/preference_data_upload_compress_videos_quality_default"
+            android:key="@string/preference_data_upload_compress_videos_quality_key"
+            android:summary="@string/preference_data_upload_compress_videos_quality_summary"
+            android:title="@string/preference_data_upload_compress_videos_quality_title"
+            app:entries="@array/preference_data_upload_compress_videos_quality_items"
+            app:entryValues="@array/preference_data_upload_compress_videos_quality_values" />
         <Preference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

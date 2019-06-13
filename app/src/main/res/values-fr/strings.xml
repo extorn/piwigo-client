@@ -449,6 +449,8 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="error_upload_file_verification_failed">La vérification du fichier sur le serveur a échoué pour le téléchargement de %1$s</string>
     <string name="alert_message_remove_file_server_state_incorrect">Ce fichier a été partiellement téléchargé et vous devez vous rappeler de cliquer sur le bouton de téléchargement après cela pour supprimer le fichier corrompu du serveur. Continuer ?</string>
     <string name="alert_message_file_upload_cancelled_pattern">Chargement du fichier (%1$s) annulé.</string>
+    <string name="alert_message_upload_cancelled">Le téléchargement a été annulé</string>
+    <string name="alert_message_upload_cancelled_message">Si vous ne souhaitez pas redémarrer le téléchargement plus tard. Vous devez supprimer les fichiers de la tâche de téléchargement, puis cliquer sur Télécharger. Ceci nettoiera l\'état de téléchargement annulé du serveur.</string>
     <string name="alert_warning_slideshow_image_size_not_natively_supported_by_server">La taille d\'image que vous avez sélectionnée n\'est pas prise en charge nativement par le serveur auquel vous êtes connecté. Le serveur renverra l\'image de la taille \"correspondance la plus proche".</string>
     <string name="logging_out_of_piwigo_pattern">Déconnexion de %1$s</string>
     <string name="loading_new_server_configuration">Chargement d\'une nouvelle configuration de connexion au serveur</string>
@@ -500,8 +502,8 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="heading_keystore_filename">Keystore</string>
     <string name="heading_keystore_alias">Alias</string>
     <string name="alert_title_error_upload">Téléchargement d\'erreur</string>
-    <string name="alert_message_error_uploading_end">Une erreur s\'est produite après le téléchargement réussi de tous les fichiers. Vous pouvez réessayer le travail plus tard et il peut très bien réussir, ou vous pouvez supprimer ce travail de l\'appareil et ensuite nettoyer manuellement toutes les modifications incomplètes apportées au serveur. Supprimer un travail ?</string>
-    <string name="alert_message_error_uploading_start">Une erreur s\'est produite avant le téléchargement de tous les fichiers. Vous pouvez réessayer le travail plus tard et il peut très bien réussir, mais vous pouvez supprimer ce travail de l\'appareil, mais nettoyer manuellement toutes les modifications incomplètes apportées au serveur. Supprimer un travail ?</string>
+    <string name="alert_message_error_uploading_end">"Une erreur s'est produite après le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer à partir de l'endroit où il s'est rendu et effacez toutes les données temporaires résiduelles du serveur."</string>
+    <string name="alert_message_error_uploading_start">"Une erreur s'est produite avant le téléchargement réussi de tous les fichiers. Redémarrez le téléchargement pour continuer à partir d'où il est arrivé, ou supprimez tous les fichiers restants du travail, puis cliquez sur le bouton Terminer pour effacer toutes les données temporaires résiduelles du serveur."</string>
     <string name="release_history">Historique des versions</string>
     <string name="planned_releases">Rejets prévus</string>
     <string name="tags_heading">Tags</string>
@@ -619,4 +621,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="preference_corrupt_please_re_type_pattern">"La préférence %1$s est irrécupérable et a été fixée par défaut à %2$s. Veuillez réinitialiser cette valeur dans les paramètres de l'application"</string>
     <string name="switch_to_cached_mode">Le serveur n\'est actuellement pas disponible. Utiliser des données en cache?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
+    <string name="compress_videos">Compresser les vidéos</string>
 </resources>

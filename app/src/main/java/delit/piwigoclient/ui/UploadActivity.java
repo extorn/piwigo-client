@@ -42,6 +42,8 @@ import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
+import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
+import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.album.create.CreateAlbumFragment;
 import delit.piwigoclient.ui.album.drillDownSelect.CategoryItemViewAdapterPreferences;
 import delit.piwigoclient.ui.album.drillDownSelect.RecyclerViewCategoryItemSelectFragment;
@@ -107,6 +109,13 @@ public class UploadActivity extends MyActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        if (intent.getBooleanExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB, false)) {
+            UploadJob job = ForegroundPiwigoUploadService.getFirstActiveForegroundJob(getApplicationContext());
+            if (job.isRunningNow()) {
+                job.cancelUploadAsap();
+            }
+            intent.removeExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB);
+        }
         super.onNewIntent(intent);
         this.setIntent(intent);
     }

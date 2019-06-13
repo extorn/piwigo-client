@@ -238,6 +238,15 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if (thisUploadJob == null) {
             return; // out of sync! Job no longer exists presumably.
         }
+        for (File file : thisUploadJob.getFilesWithStatus(UploadJob.COMPRESSED)) {
+            File compressedVersion = thisUploadJob.getCompressedFile(c, file);
+            if (compressedVersion.exists()) {
+                if (!compressedVersion.delete()) {
+                    Crashlytics.log(Log.ERROR, TAG, "Unable to delete compressed file when attempting to delete job state from disk.");
+                }
+            }
+        }
+
         File stateFile = thisUploadJob.getLoadedFromFile();
         if (stateFile == null) {
             stateFile = getJobStateFile(c, thisUploadJob.isRunInBackground(), thisUploadJob.getJobId());
@@ -494,14 +503,19 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             saveStateToDisk(thisUploadJob);
 
-            if (!thisUploadJob.getFilesForUpload().isEmpty()) {
-                uploadFilesInJob(maxChunkUploadAutoRetries, thisUploadJob, availableAlbumsOnServer);
+            if (!thisUploadJob.isCancelUploadAsap()) {
+                if (!thisUploadJob.getFilesForUpload().isEmpty()) {
+                    uploadFilesInJob(maxChunkUploadAutoRetries, thisUploadJob, availableAlbumsOnServer);
+                }
             }
 
-            if (thisUploadJob.getFilesNotYetUploaded().size() == 0 && thisUploadJob.getTemporaryUploadAlbum() > 0) {
-                boolean success = deleteTemporaryUploadAlbum(thisUploadJob);
-                if (!success) {
-                    return;
+            if (!thisUploadJob.isCancelUploadAsap()) {
+
+                if (thisUploadJob.getFilesNotYetUploaded().size() == 0 && thisUploadJob.getTemporaryUploadAlbum() > 0) {
+                    boolean success = deleteTemporaryUploadAlbum(thisUploadJob);
+                    if (!success) {
+                        return;
+                    }
                 }
             }
 
@@ -513,6 +527,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         } finally {
             thisUploadJob.setRunning(false);
+            thisUploadJob.clearCancelUploadAsapFlag();
             if (!thisUploadJob.hasJobCompletedAllActionsSuccessfully()) {
                 saveStateToDisk(thisUploadJob);
             } else {
@@ -791,12 +806,18 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
 //        YPrestoCompressor compressor = new YPrestoCompressor();
         ExoPlayerCompression compressor = new ExoPlayerCompression();
-        compressor.invokeFileCompression(getApplicationContext(), rawVideo, outputVideo, listener);
+        ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
+        compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(uploadJob.getVideoCompressionQuality());
+        compressor.invokeFileCompression(getApplicationContext(), rawVideo, outputVideo, listener, compressionSettings);
 
-        while (!uploadJob.isCancelUploadAsap() && (!listener.isCompressionComplete() && null == listener.getCompressionError())) {
+        while (!listener.isCompressionComplete() && null == listener.getCompressionError()) {
             try {
                 synchronized (listener) {
-                    listener.wait();
+                    listener.wait(1000);
+                    if (uploadJob.isCancelUploadAsap()) {
+                        compressor.cancel();
+                        return null;
+                    }
                 }
             } catch (InterruptedException e) {
                 Log.e(TAG, "Listener awoken!");
@@ -852,14 +873,20 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         if (compressedVideoFile == null || !compressedVideoFile.exists()) {
                             // need to compress this file
                             compressedVideoFile = compressVideo(thisUploadJob, fileForUpload);
-                            thisUploadJob.addFileChecksum(fileForUpload, compressedVideoFile);
-                            thisUploadJob.markFileAsCompressed(fileForUpload);
-                            saveStateToDisk(thisUploadJob);
+                            if (compressedVideoFile != null) {
+                                thisUploadJob.addFileChecksum(fileForUpload, compressedVideoFile);
+                                thisUploadJob.markFileAsCompressed(fileForUpload);
+                                saveStateToDisk(thisUploadJob);
+                            }
                         }
 
                         //NOTE: at this point, if error during compression, file will be removed from list to upload.
                     }
                 }
+            }
+
+            if (thisUploadJob.isCancelUploadAsap()) {
+                return;
             }
 
             if (thisUploadJob.needsUpload(fileForUpload)) {
@@ -873,12 +900,19 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             }
 
+            if (thisUploadJob.isCancelUploadAsap()) {
+                return;
+            }
 
             saveStateToDisk(thisUploadJob);
 
             if (thisUploadJob.needsVerification(fileForUpload)) {
                 verifyUploadedFileData(thisUploadJob, fileForUpload);
                 uploadedCompressedVideo &= thisUploadJob.isUploadedFileVerified(fileForUpload);
+            }
+
+            if (thisUploadJob.isCancelUploadAsap()) {
+                return;
             }
 
             saveStateToDisk(thisUploadJob);
@@ -896,6 +930,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
 
             saveStateToDisk(thisUploadJob);
+
+            if (thisUploadJob.isCancelUploadAsap()) {
+                return;
+            }
 
             // Once added to album its too late the cancel the upload.
 //            if (!thisUploadJob.isFileUploadStillWanted(fileForUpload)) {

@@ -1,11 +1,16 @@
 package delit.piwigoclient.piwigoApi.upload;
 
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+
+import androidx.core.app.NotificationCompat;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
+import delit.piwigoclient.ui.UploadActivity;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -19,6 +24,7 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
     private static final String ACTION_UPLOAD_FILES = "delit.piwigoclient.action.ACTION_UPLOAD_FILES";
     private static final int FOREGROUND_UPLOAD_NOTIFICATION_ID = 3;
     private static final int JOB_ID = 20;
+    public static final String ACTION_CANCEL_JOB = "cancelForegroundJob";
 
     public ForegroundPiwigoUploadService() {
         super(TAG);
@@ -43,6 +49,20 @@ public class ForegroundPiwigoUploadService extends BasePiwigoUploadService {
         } finally {
             stopForeground(true);
         }
+    }
+
+    @Override
+    protected NotificationCompat.Builder buildNotification(String text) {
+        NotificationCompat.Builder builder = super.buildNotification(text);
+        Intent contentIntent = new Intent(this, UploadActivity.class);
+        contentIntent.putExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB, true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel_black, getString(R.string.button_cancel), pendingIntent));
+        } else {
+            builder.addAction(new NotificationCompat.Action(R.drawable.ic_cancel_black, getString(R.string.button_cancel), pendingIntent));
+        }
+        return builder;
     }
 
     @Override

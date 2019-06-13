@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <integer-array name="preference_data_upload_compress_videos_quality_values">
+        <item>400</item>
+        <item>650</item>
+        <item>1000</item>
+    </integer-array>
+
+    <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>low</item>
+        <item>medium</item>
+        <item>high</item>
+    </string-array>
+
     <integer-array name="preference_album_subalbum_sort_order_values">
         <item>0</item>
         <item>1</item>
@@ -178,7 +190,6 @@
             - Auto image rotation based on device orientation, device orientation, device orientation ignoring screen rotation lock
             - Verify the current login status to ensure album and image lists are always correct
             - Verify support for upload to older servers (e.g. piwigo.com - version 2.8a)
-            - Allow linking the upload process to a compression routine for videos
             - The ability to delete an album, but not its contents (creating orphans)
             - Orphan file management
             - Allow user to zoom out in slideshow (view smaller than fullscreen)
@@ -198,33 +209,20 @@
             - Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <!--
-        <item>Upcoming</item>
-        <item>"Changes:
-                - TODO Added support for setting the desired bitrate of the video stream
-                - TODO Added support for selecting videos for compression on an invididual basis before clicking upload
+        <!--"Changes:
                 - TODO Added support for MP3 encoding of the audio stream
                 - TODO Added support for setting the desired bitrate of the audio stream"</item>
                 -->
-        <item>1.4.0.11</item>
-        <item>"Changes:
-                - Upload - Stopped automatic hard rotation of videos into portrait mode, removing the rotation metadata as the video is not universally played"</item>
-        <item>1.4.0.10</item>
+        <item>1.4.0.12</item>
         <item>"Bugfix:
-                - A few intermittent issues"</item>
-        <item>1.4.0.9</item>
-        <item>"Bugfix:
-                - Chinese language fixes
-                - Animated Gif support fixed
-                - Removed a potential memory leak"</item>
-        <item>1.4.0.8</item>
-        <item>"Bugfix:
-            - Android 4 crash fixed"</item>
-        <item>1.4.0.7</item>
-        <item>"Bugfix:
-                - A few minor changes
-                - A few crashes
-               Changes:
-                - Offline access to retrived and cached data is now working (new navigation item)"</item>
+                - Added error handling to upload
+                - Removed code causing preventing viewing of images for some server and app configurations
+              Changes:
+                - Upload - Removed dialog asking about video compression - replaced with checkbox
+                - Use android media store to retrieve thumbnails for videos on device
+                - Add files downloaded to your device to the android media store
+                - Preference to select compression quality (high, medium, low)
+                - PAID: Automatic upload job - Individual preference to select compression quality (high, medium, low)
+                - PAID: Automatic upload job - files to upload list is now limited to what your server allows"</item>
     </string-array>
 </resources>
