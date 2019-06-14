@@ -59,14 +59,30 @@
         android:enabled="false"
         android:text="@string/compress_videos" />
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_above="@+id/selected_files_for_upload"
+    <TextView
+        android:id="@+id/privacy_level_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/select_files_for_upload_button"
-        android:layout_alignTop="@+id/select_files_for_upload_button">
+        android:layout_below="@id/compress_videos_button"
+        android:layout_margin="5dp"
+        android:labelFor="@id/privacy_level"
+        android:text="@string/upload_file_privacy_level_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+    <Spinner
+        android:id="@+id/privacy_level"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/privacy_level_label"
+        android:layout_margin="5dp" />
+
+    <LinearLayout
+        android:id="@+id/files_for_upload_labels_layout"
+        android:orientation="vertical"
+        android:layout_below="@+id/privacy_level"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true">
 
         <TextView
             android:id="@+id/files_for_upload_label"
@@ -90,7 +106,7 @@
 
     <delit.piwigoclient.ui.common.button.CustomImageButton
         android:id="@+id/select_files_for_upload_button"
-        android:layout_below="@id/compress_videos_button"
+        android:layout_below="@id/privacy_level"
         android:layout_alignParentEnd="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -102,23 +118,8 @@
         android:layout_below="@+id/select_files_for_upload_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/privacy_level_label"
-        tools:context=".ui.upload.UploadFragment"/>
-    <TextView
-        android:id="@+id/privacy_level_label"
-        android:labelFor="@id/privacy_level"
-        android:layout_above="@id/privacy_level"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:layout_margin="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/upload_file_privacy_level_title"/>
-    <Spinner
-        android:id="@+id/privacy_level"
         android:layout_above="@+id/upload_files_controls"
-        android:layout_margin="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        tools:context=".ui.upload.UploadFragment"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upload_files_controls"
