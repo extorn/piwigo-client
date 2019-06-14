@@ -11,17 +11,12 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.common.util.MediaScanner;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
-import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
-import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
-import delit.piwigoclient.util.CollectionUtils;
 import delit.piwigoclient.util.ProjectUtils;
 
 /**
@@ -45,6 +40,18 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     private void upgradeAnyPreferencesIfRequired() {
         SharedPreferences prefs = getPrefs();
         int prefsVersion = prefs.getInt(getString(R.string.preference_app_prefs_version_key), -1);
+
+        upgradeAnyPreferencesIfRequired(prefs, prefsVersion);
+
+        if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
+            editor.apply();
+        }
+    }
+
+    protected void upgradeAnyPreferencesIfRequired(SharedPreferences prefs, int prefsVersion) {
+
         if (prefsVersion == -1) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
@@ -90,26 +97,10 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                 }
             }
             editor.apply();
-        } else if (prefsVersion < 216) {
-            for (AutoUploadJobConfig config : new AutoUploadJobsConfig(prefs).getAutoUploadJobs(getApplicationContext())) {
-                SharedPreferences jobPrefs = config.getJobPreferences(getApplicationContext());
-                SharedPreferences.Editor editor = jobPrefs.edit();
-                String oldVal = jobPrefs.getString(getString(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key), getString(R.string.preference_data_upload_automatic_job_file_exts_uploaded_default));
-                ArrayList<String> fileExts = CollectionUtils.stringsFromCsvList(oldVal);
-                editor.putStringSet(getString(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key), new HashSet<>(fileExts));
-                editor.apply();
-            }
-        }
-
-
-        if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
-            editor.apply();
         }
     }
 
-    private void encryptAndSaveValue(SharedPreferences prefs, SharedPreferences.Editor editor, int keyId, String defaultVal) {
+    protected void encryptAndSaveValue(SharedPreferences prefs, SharedPreferences.Editor editor, int keyId, String defaultVal) {
         String key = getString(keyId);
         String currentVal = prefs.getString(key, defaultVal);
         if (currentVal != null && !currentVal.equals(defaultVal)) {
