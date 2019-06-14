@@ -1,12 +1,52 @@
 
 <en-GB>
+Bugfix:
+ - Added error handling to upload
+ - Removed code causing preventing viewing of images for some server and app configurations
+ Changes:
+ - Upload - Removed dialog asking about video compression - replaced with checkbox
+ - Use android media store to retrieve thumbnails for videos on device
+ - Add files downloaded to your device to the android media store
+ - Preference to select compression quality (high, medium, low)
+ - PAID: Automatic upload job - Individual preference to select compression quality (high, medium, low)
+ - PAID: Automatic upload job - files to upload list is now limited to what your server allows"
 </en-GB>
 
 <de-DE>
+Fehlerbehebung:
+ - Fehlerbehandlung beim Hochladen hinzugefügt
+ - Code entfernt, der das Anzeigen von Bildern für einige Server- und App-Konfigurationen verhindert.
+ Änderungen:
+ - Hochladen - Entfernter Dialog zur Frage der Videokompression - ersetzt durch ein Kontrollkästchen
+ - Verwenden Sie den Android Media Store, um Miniaturansichten für Videos auf dem Gerät abzurufen.
+ - Hinzufügen von Dateien, die auf Ihr Gerät heruntergeladen wurden, zum Android Media Store
+ - Präferenz zur Auswahl der Kompressionsqualität (hoch, mittel, niedrig, hoch)
+ - BEZAHLT: Automatischer Upload-Job - Individuelle Einstellung der Kompressionsqualität (hoch, mittel, niedrig)
+ - BEZAHLT: Automatischer Upload-Job - Dateien für die Upload-Liste sind nun auf das beschränkt, was Ihr Server erlaubt
 </de-DE>
 
 <fr-FR>
+Correction d'un bug :
+ - Ajout de la gestion des erreurs lors du téléchargement
+ - Suppression du code empêchant l'affichage des images pour certaines configurations de serveur et d'application
+ Changements :
+ - Upload - Suppression de la boîte de dialogue demandant des informations sur la compression vidéo - remplacée par une case à cocher
+ - Utilisez android media store pour récupérer les vignettes des vidéos sur l'appareil
+ - Ajouter les fichiers téléchargés sur votre appareil à la boutique android media store
+ - Préférence pour le choix de la qualité de compression (haute, moyenne, basse)
+ - PAYÉ : Tâche de téléchargement automatique - Préférence individuelle pour sélectionner la qualité de compression (haute, moyenne, basse)
+ - PAYÉ : Tâche de téléchargement automatique - les fichiers à télécharger dans la liste sont maintenant limités à ce que votre serveur permet
 </fr-FR>
 
 <zh-CN>
+修正：
+ - 添加了上传错误处理
+ - 删除了导致阻止查看某些服务器和应用配置的图像的代码
+ 变化：
+ - 上传 - 删除了关于视频压缩的对话框 - 替换为复选框
+ - 使用Android媒体商店检索设备上视频的缩略图
+ - 将下载到您设备的文件添加到Android媒体商店
+ - 选择压缩质量（高，中，低）的首选
+ - 付费：自动上传作业 - 个人喜欢选择压缩质量（高，中，低）
+ - 付费：自动上传作业 - 上传文件列表现在仅限于您的服务器允许的内容
 </zh-CN>
