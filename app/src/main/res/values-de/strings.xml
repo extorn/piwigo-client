@@ -593,6 +593,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="preference_corrupt_please_re_type_pattern">"Die Präferenz %1$s ist unwiederbringlich und wurde auf %2$s voreingestellt. Bitte setzen Sie diesen Wert in den App-Einstellungen zurück."</string>
     <string name="switch_to_cached_mode">Der Server ist derzeit nicht verfügbar. Cache-Daten verwenden?</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
-    <string name="compress_videos">Videos kompressieren</string>
+    <string name="compress_videos">Videos komprimieren</string>
+    <string name="compress_images">Bilder komprimieren</string>
 </resources>
 

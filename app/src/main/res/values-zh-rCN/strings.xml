@@ -471,4 +471,5 @@
     <string name="switch_to_cached_mode">服务器目前不可用。使用缓存数据？</string>
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">压缩视频</string>
+    <string name="compress_images">压缩图像</string>
 </resources>
