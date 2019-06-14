@@ -263,8 +263,20 @@
     <string name="preference_data_upload_max_filesize_mb_title">Max Filesize à télécharger sans avertissement (en MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
 
+    <string name="preference_data_upload_compress_videos_summary">Compress videos before upload</string>
+    <string name="preference_data_upload_compress_videos_title">Compress videos</string>
+
     <string name="preference_data_upload_compress_videos_quality_title">Qualité vidéo</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Qualité de compression vidéo %1$s</string>
+
+    <string name="preference_data_upload_compress_images_summary">Compresser les images avant le téléchargement</string>
+    <string name="preference_data_upload_compress_images_title">Compresser les images</string>
+
+    <string name="preference_data_upload_compress_images_quality_title">Qualité de l\'image</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Qualité de compression d\'image %1$s</string>
+
+    <string name="preference_data_upload_compress_images_output_format_title">Format de sortie de l\'image</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Format de sortie de compression d\'image %1$s</string>
 
     <!-- other page -->
 

@@ -303,10 +303,30 @@
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
     <integer name="preference_data_upload_max_filesize_mb_default">20</integer>
 
+    <string name="preference_data_upload_compress_videos_key" translatable="false">preference_data_upload_compress_videos</string>
+    <string name="preference_data_upload_compress_videos_summary">Compress videos before upload</string>
+    <string name="preference_data_upload_compress_videos_title">Compress videos</string>
+    <bool name="preference_data_upload_compress_videos_default">true</bool>
+
     <string name="preference_data_upload_compress_videos_quality_title">Video Quality</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Video compression quality %1$s</string>
     <string name="preference_data_upload_compress_videos_quality_key" translatable="false">preference_data_upload_compress_videos_quality</string>
     <integer name="preference_data_upload_compress_videos_quality_default">650</integer>
+
+    <string name="preference_data_upload_compress_images_key" translatable="false">preference_data_upload_compress_images</string>
+    <string name="preference_data_upload_compress_images_summary">Compress images before upload</string>
+    <string name="preference_data_upload_compress_images_title">Compress images</string>
+    <bool name="preference_data_upload_compress_images_default">false</bool>
+
+    <string name="preference_data_upload_compress_images_quality_title">Image Quality</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Image compression quality %1$s</string>
+    <string name="preference_data_upload_compress_images_quality_key" translatable="false">preference_data_upload_compress_images_quality</string>
+    <integer name="preference_data_upload_compress_images_quality_default">70</integer>
+
+    <string name="preference_data_upload_compress_images_output_format_title">Image Output Format</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Image compression output format %1$s</string>
+    <string name="preference_data_upload_compress_images_output_format_key" translatable="false">preference_data_upload_compress_images_output_format</string>
+    <string name="preference_data_upload_compress_images_output_format_default" translatable="false">jpeg</string>
 
     <!-- other page -->
 

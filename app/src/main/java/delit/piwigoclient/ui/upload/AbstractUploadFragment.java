@@ -356,15 +356,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (filesToUploadAdapter == null) {
             filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(filesForUpload, mediaScanner, getContext(), this);
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
-            if (compressVideosCheckbox.getVisibility() == VISIBLE) {
-                filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                    @Override
-                    public void onChanged() {
-                        compressVideosCheckbox.setEnabled(isVideoFilesWaitingForUpload());
 
-                    }
-                });
-            }
+            filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onChanged() {
+                    compressVideosCheckbox.setEnabled(isVideoFilesWaitingForUpload());
+                    compressImagesCheckbox.setEnabled(isImageFilesWaitingForUpload());
+                }
+            });
         }
         filesForUploadView.setAdapter(filesToUploadAdapter);
 
@@ -373,13 +372,21 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         return view;
     }
 
+    protected boolean isImageFilesWaitingForUpload() {
+        return hasFileMatchingMime("image/");
+    }
+
     protected boolean isVideoFilesWaitingForUpload() {
+        return hasFileMatchingMime("video/");
+    }
+
+    protected boolean hasFileMatchingMime(String mimePrefix) {
         ArrayList<File> files = filesToUploadAdapter.getFiles();
         MimeTypeMap mimeTypesMap = MimeTypeMap.getSingleton();
         for (File f : files) {
             String fileExt = IOUtils.getFileExt(f.getName());
             String mimeType = mimeTypesMap.getMimeTypeFromExtension(fileExt);
-            if (mimeType != null && mimeType.startsWith("video/")) {
+            if (mimeType != null && mimeType.startsWith(mimePrefix)) {
                 return true;
             }
         }

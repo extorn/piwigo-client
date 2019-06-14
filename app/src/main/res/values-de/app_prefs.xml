@@ -262,8 +262,20 @@
     <string name="preference_data_upload_max_filesize_mb_title">Max Dateigröße zum Hochladen ohne Warnung (in MB)</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
 
+    <string name="preference_data_upload_compress_videos_summary">Compress videos before upload</string>
+    <string name="preference_data_upload_compress_videos_title">Compress videos</string>
+
     <string name="preference_data_upload_compress_videos_quality_title">Videoqualität</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Videokompressionsqualität %1$s</string>
+
+    <string name="preference_data_upload_compress_images_summary">Bilder vor dem Hochladen komprimieren</string>
+    <string name="preference_data_upload_compress_images_title">Bilder komprimieren</string>
+
+    <string name="preference_data_upload_compress_images_quality_title">Bildqualität</string>
+    <string name="preference_data_upload_compress_images_quality_summary">Qualität der Bildkompression %1$s</string>
+
+    <string name="preference_data_upload_compress_images_output_format_title">Bildausgabeformat</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">Ausgabeformat für die Bildkompression %1$s</string>
 
     <!-- other page -->
 

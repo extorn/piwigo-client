@@ -261,8 +261,20 @@
     <string name="preference_data_upload_max_filesize_mb_title">Max Filesize上传时不会发出警告（以MB为单位）</string>
     <string name="preference_data_upload_max_filesize_mb_summary">%1$d MB</string>
 
+    <string name="preference_data_upload_compress_videos_summary">Compress videos before upload</string>
+    <string name="preference_data_upload_compress_videos_title">Compress videos</string>
+
     <string name="preference_data_upload_compress_videos_quality_title">视频质量</string>
     <string name="preference_data_upload_compress_videos_quality_summary">视频压缩质量 %1$s</string>
+
+    <string name="preference_data_upload_compress_images_summary">上传前压缩图像</string>
+    <string name="preference_data_upload_compress_images_title">压缩图像</string>
+
+    <string name="preference_data_upload_compress_images_quality_title">画面质量</string>
+    <string name="preference_data_upload_compress_images_quality_summary">图像压缩质量 %1$s</string>
+
+    <string name="preference_data_upload_compress_images_output_format_title">图像输出格式</string>
+    <string name="preference_data_upload_compress_images_output_format_summary">图像压缩输出格式 %1$s</string>
 
     <!-- other page -->
 
