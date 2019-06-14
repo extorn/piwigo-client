@@ -204,7 +204,7 @@
             - Remember the previously opened photo or album when the user opens the app.
             - Support stretching or cropping images to fill device screen
             - Add some sort of help to assist user in knowing the features
-            - Improved Animated gif support
+            - Improved Animated gif support (large file streaming)
          - Possibly (Paid App only):
             - The random photos idea implemented on the piwigo web UI
             - Support for user comments
@@ -220,6 +220,10 @@
                 - TODO Added support for MP3 encoding of the audio stream
                 - TODO Added support for setting the desired bitrate of the audio stream"</item>
                 -->
+        <item>1.4.0.13</item>
+        <item>"Changes:
+                - New - image compression as an upload option
+                - New - PAID: Automatic upload job image compression as an upload option"</item>
         <item>1.4.0.12</item>
         <item>"Bugfix:
                 - Added error handling to upload
