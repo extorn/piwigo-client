@@ -623,4 +623,6 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Compresser les vidéos</string>
     <string name="compress_images">Compression d\'images</string>
+    <string name="upload_tab_title_settings">Réglages</string>
+    <string name="upload_tab_title_files">Fichiers</string>
 </resources>

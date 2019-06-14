@@ -595,5 +595,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Videos komprimieren</string>
     <string name="compress_images">Bilder komprimieren</string>
+    <string name="upload_tab_title_settings">Einstellungen</string>
+    <string name="upload_tab_title_files">Dateien</string>
 </resources>
 

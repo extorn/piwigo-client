@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="preference_data_compress_images_output_format_items" translatable="false">
+    <string-array name="preference_data_upload_compress_images_output_format_items" translatable="false">
         <item>jpeg</item>
         <item>webp</item>
         <item>png</item>

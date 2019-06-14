@@ -472,4 +472,6 @@
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">压缩视频</string>
     <string name="compress_images">压缩图像</string>
+    <string name="upload_tab_title_settings">设置</string>
+    <string name="upload_tab_title_files">档</string>
 </resources>

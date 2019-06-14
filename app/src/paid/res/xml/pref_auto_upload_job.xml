@@ -51,8 +51,8 @@
             android:key="@string/preference_data_upload_automatic_job_compress_images_output_format_key"
             android:summary="@string/preference_data_upload_automatic_job_compress_images_output_format_summary"
             android:title="@string/preference_data_upload_automatic_job_compress_images_output_format_title"
-            app:entries="@array/preference_data_compress_images_output_format_items"
-            app:entryValues="@array/preference_data_compress_images_output_format_items" />
+            app:entries="@array/preference_data_upload_compress_images_output_format_items"
+            app:entryValues="@array/preference_data_upload_compress_images_output_format_items" />
 
         <androidx.preference.SwitchPreference
             android:layout_width="match_parent"

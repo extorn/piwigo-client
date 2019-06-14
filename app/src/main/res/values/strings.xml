@@ -979,4 +979,6 @@ SOFTWARE.
     <string name="server_connection_id_pattern">%1$s@%2$s</string>
     <string name="compress_videos">Compress Videos</string>
     <string name="compress_images">Compress Images</string>
+    <string name="upload_tab_title_settings">Settings</string>
+    <string name="upload_tab_title_files">Files</string>
 </resources>
