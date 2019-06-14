@@ -12,10 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +28,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdView;
@@ -121,6 +125,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private MediaScanner mediaScanner;
     private CheckBox compressVideosCheckbox;
     private CheckBox compressImagesCheckbox;
+    private static final int TAB_IDX_SETTINGS = 1;
+    private static final int TAB_IDX_FILES = 0;
+    private ViewPager mViewPager;
+    private LinearLayout compressImagesSettings;
+    private LinearLayout compressVideosSettings;
+    private Spinner compressVideosQualitySpinner;
+    private Spinner compressImagesQualitySpinner;
+    private Spinner compressImagesOutputFormatSpinner;
 
 
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
@@ -159,6 +171,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     public void onEvent(FileSelectionCompleteEvent stickyEvent) {
         if (externallyTriggeredSelectFilesActionId == stickyEvent.getActionId() || getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
             EventBus.getDefault().removeStickyEvent(stickyEvent);
+            mViewPager.setCurrentItem(TAB_IDX_FILES);
             updateFilesForUploadList(stickyEvent.getSelectedFiles());
             AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
         }
@@ -204,6 +217,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         } else {
             adView.setVisibility(GONE);
         }
+
+        mViewPager = view.findViewById(R.id.sliding_views_tab_content);
+//        mViewPager.setCurrentItem(TAB_IDX_FILES);
 
         AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences viewPrefs = new AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences();
         viewPrefs.selectable(false, false);
@@ -287,27 +303,48 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         updateActiveJobActionButtonsStatus();
 
+        compressVideosSettings = view.findViewById(R.id.video_compression_options);
+        compressVideosQualitySpinner = compressVideosSettings.findViewById(R.id.compress_videos_quality);
+        setSpinnerSelectedItem(compressVideosQualitySpinner, UploadPreferences.getVideoCompressionQuality(getContext(), getPrefs()));
+
+
         compressVideosCheckbox = view.findViewById(R.id.compress_videos_button);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             compressVideosCheckbox.setVisibility(GONE);
+            compressVideosSettings.setVisibility(GONE);
         } else {
+            boolean compressVids = UploadPreferences.isCompressVideosByDefault(getContext(), getPrefs());
+            compressVideosCheckbox.setChecked(!compressVids);// ensure the checked change listener is called!
             compressVideosCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     setCompressVideosBeforeUpload(isChecked);
+                    compressVideosSettings.setVisibility(isChecked ? VISIBLE : GONE);
+                    compressVideosSettings.setEnabled(buttonView.isEnabled());
                 }
             });
-            compressVideosCheckbox.setChecked(UploadPreferences.isCompressVideosByDefault(getContext(), getPrefs()));
+            compressVideosCheckbox.setChecked(compressVids);
         }
 
+        compressImagesSettings = view.findViewById(R.id.image_compression_options);
+        compressImagesOutputFormatSpinner = compressImagesSettings.findViewById(R.id.compress_images_output_format);
+        setSpinnerSelectedItem(compressImagesOutputFormatSpinner, UploadPreferences.getImageCompressionOutputFormat(getContext(), getPrefs()));
+
+//        compressImagesQualitySpinner = compressImagesSettings.findViewById(R.id.compress_images_quality);
+//        setSpinnerSelectedItem(compressImagesQualitySpinner, UploadPreferences.getImageCompressionQuality(getContext(), getPrefs()));
+
         compressImagesCheckbox = view.findViewById(R.id.compress_images_button);
+        boolean compressPics = UploadPreferences.isCompressImagesByDefault(getContext(), getPrefs());
+        compressImagesCheckbox.setChecked(!compressPics);// ensure the checked change listener is called!
         compressImagesCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setCompressVideosBeforeUpload(isChecked);
+                setCompressImagesBeforeUpload(isChecked);
+                compressImagesSettings.setVisibility(isChecked ? VISIBLE : GONE);
+                compressImagesSettings.setEnabled(buttonView.isEnabled());
             }
         });
-        compressImagesCheckbox.setChecked(UploadPreferences.isCompressImagesByDefault(getContext(), getPrefs()));
+        compressImagesCheckbox.setChecked(compressPics);
 
         uploadFilesNowButton = view.findViewById(R.id.upload_files_button);
         uploadFilesNowButton.setOnClickListener(new View.OnClickListener() {
@@ -370,6 +407,16 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         updateUiUploadStatusFromJobIfRun(container.getContext(), filesToUploadAdapter);
 
         return view;
+    }
+
+    private void setSpinnerSelectedItem(Spinner spinner, Object item) {
+        SpinnerAdapter adapter = spinner.getAdapter();
+        if (adapter instanceof ArrayAdapter) {
+            int itemPosition = ((ArrayAdapter) spinner.getAdapter()).getPosition(item);
+            spinner.setSelection(itemPosition);
+        } else {
+            Crashlytics.log(Log.ERROR, TAG, "Cannot set selected spinner item - adapter is not instance of ArrayAdapter");
+        }
     }
 
     protected boolean isImageFilesWaitingForUpload() {
@@ -629,6 +676,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
 
             if (fileListAdapter == null || uploadToAlbum == null || CategoryItemStub.ROOT_GALLERY.equals(uploadToAlbum)) {
+                mViewPager.setCurrentItem(TAB_IDX_SETTINGS);
                 getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_error_please_select_upload_album));
                 deleteUploadJobButton.setVisibility(VISIBLE);
                 return;
