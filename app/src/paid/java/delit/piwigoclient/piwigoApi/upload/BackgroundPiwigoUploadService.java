@@ -433,10 +433,12 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
 
         CategoryItemStub category = jobConfig.getUploadToAlbum(context);
         UploadJob uploadJob = createUploadJob(jobConfig.getConnectionPrefs(context, getPrefs()), filesToUpload, category,
-                compressVideos, jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId());
+                jobConfig.getUploadedFilePrivacyLevel(context), jobListener.getHandlerId());
         uploadJob.setToRunInBackground();
         uploadJob.setJobConfigId(jobConfig.getJobId());
-        uploadJob.setVideoCompressionQuality(jobConfig.getVideoCompressionQuality(context));
+
+        uploadJob.setVideoCompressionParams(jobConfig.getVideoCompressionParams(context));
+        uploadJob.setImageCompressionParams(jobConfig.getImageCompressionParams(context));
         return uploadJob;
     }
 

@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -78,6 +79,7 @@ import delit.piwigoclient.piwigoApi.upload.handlers.ImageCheckFilesResponseHandl
 import delit.piwigoclient.piwigoApi.upload.handlers.NewImageUploadFileChunkResponseHandler;
 import delit.piwigoclient.piwigoApi.upload.handlers.UploadAlbumCreateResponseHandler;
 import delit.piwigoclient.util.IOUtils;
+import id.zelory.compressor.Compressor;
 
 import static delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler.getNextMessageId;
 
@@ -99,9 +101,9 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     public static @NotNull
-    UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, ArrayList<File> filesForUpload, CategoryItemStub category, boolean compressVideosBeforeUpload, byte uploadedFilePrivacyLevel, long responseHandlerId) {
+    UploadJob createUploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, ArrayList<File> filesForUpload, CategoryItemStub category, byte uploadedFilePrivacyLevel, long responseHandlerId) {
         long jobId = getNextMessageId();
-        UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, filesForUpload, category, compressVideosBeforeUpload, uploadedFilePrivacyLevel);
+        UploadJob uploadJob = new UploadJob(connectionPrefs, jobId, responseHandlerId, filesForUpload, category, uploadedFilePrivacyLevel);
         synchronized (activeUploadJobs) {
             activeUploadJobs.add(uploadJob);
         }
@@ -453,20 +455,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             Collection<String> uniqueIdsList;
             if (nameUnique) {
                 uniqueIdsList = thisUploadJob.getFileToFilenamesMap().values();
-
             } else {
-                Map<File, String> uniqueIdsMap = thisUploadJob.getFileChecksums();
-                // remove any videos that are going to be compressed - we can't use checksum to check these because the file will change.
-                if (thisUploadJob.isCompressVideosBeforeUpload()) {
-                    for (File video : thisUploadJob.getVideosForUpload()) {
-                        if (thisUploadJob.canCompressVideoFile(video) && thisUploadJob.needsUpload(video)) {
-                            // don't remove the checksum if the file has been uploaded since that is the checksum for the uploaded file.
-                            uniqueIdsMap.remove(video);
-                        }
-                    }
-                }
-                // get the list of all those we can check
-                uniqueIdsList = uniqueIdsMap.values();
+                uniqueIdsList = thisUploadJob.getFileChecksums().values();
             }
 
 
@@ -807,7 +797,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 //        YPrestoCompressor compressor = new YPrestoCompressor();
         ExoPlayerCompression compressor = new ExoPlayerCompression();
         ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
-        compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(uploadJob.getVideoCompressionQuality());
+        compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(uploadJob.getVideoCompressionParams().getQuality());
         compressor.invokeFileCompression(getApplicationContext(), rawVideo, outputVideo, listener, compressionSettings);
 
         while (!listener.isCompressionComplete() && null == listener.getCompressionError()) {
@@ -833,6 +823,36 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return outputVideo;
     }
 
+    private File compressImage(UploadJob uploadJob, File rawImage, File outputPhoto) {
+        try {
+            String format = uploadJob.getImageCompressionParams().getOutputFormat();
+            Bitmap.CompressFormat outputFormat = null;
+            if ("jpeg".equals(format)) {
+                outputFormat = Bitmap.CompressFormat.JPEG;
+            } else if ("webp".equals(format)) {
+                outputFormat = Bitmap.CompressFormat.WEBP;
+            } else if ("png".equals(format)) {
+                outputFormat = Bitmap.CompressFormat.PNG;
+            }
+
+            outputPhoto = new Compressor(this)
+//                    .setMaxWidth(640)
+//                    .setMaxHeight(480)
+                    .setQuality(uploadJob.getImageCompressionParams().getQuality())
+                    .setCompressFormat(outputFormat)
+                    .setDestinationDirectoryPath(outputPhoto.getParent())
+                    .compressToFile(rawImage, outputPhoto.getName());
+        } catch (IOException e) {
+            if (outputPhoto.exists()) {
+                outputPhoto.delete();
+            }
+            Crashlytics.logException(e);
+            postNewResponse(uploadJob.getJobId(), new PiwigoUploadFileLocalErrorResponse(getNextMessageId(), rawImage, e));
+            return null;
+        }
+        return outputPhoto;
+    }
+
     private void uploadFilesInJob(int maxChunkUploadAutoRetries, UploadJob thisUploadJob, ArrayList<CategoryItemStub> availableAlbumsOnServer) {
 
         long jobId = thisUploadJob.getJobId();
@@ -846,8 +866,6 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
         }
 
-        ArrayList<File> videosForUpload = thisUploadJob.getVideosForUpload();
-
         for (File fileForUpload : thisUploadJob.getFilesForUpload()) {
 
             boolean uploadedCompressedVideo = false;
@@ -856,32 +874,35 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 thisUploadJob.cancelFileUpload(fileForUpload);
             }
 
-            if (thisUploadJob.isCompressVideosBeforeUpload() && thisUploadJob.needsUpload(fileForUpload)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    // compression only possible for Android API 18 and up.
-
-                    if (videosForUpload.contains(fileForUpload) && thisUploadJob.canCompressVideoFile(fileForUpload)) {
-                        // it is a video and it is compressible.
+            if (thisUploadJob.needsUpload(fileForUpload)) {
+                File compressedFile = null;
+                if (thisUploadJob.isVideo(fileForUpload)) {
+                    // it is compression wanted, and it this particular video compressible.
+                    if (thisUploadJob.isCompressVideosBeforeUpload() && thisUploadJob.canCompressVideoFile(fileForUpload)) {
                         //Check if we've already compressed it
-                        File compressedVideoFile = thisUploadJob.getCompressedFile(getApplicationContext(), fileForUpload);
-                        if (compressedVideoFile.exists() && !thisUploadJob.isFileCompressed(fileForUpload)) {
-                            if (!compressedVideoFile.delete()) { // the compression failed - delete file and allow restart
-                                onFileDeleteFailed(tag, compressedVideoFile, "compressed video - pre upload");
-                            }
-                            compressedVideoFile = null; // clear reference to trigger re-compression
-                        }
-                        if (compressedVideoFile == null || !compressedVideoFile.exists()) {
+                        compressedFile = getCompressedVersionOfFileToUpload(thisUploadJob, fileForUpload);
+                        if (compressedFile == null || !compressedFile.exists()) {
                             // need to compress this file
-                            compressedVideoFile = compressVideo(thisUploadJob, fileForUpload);
-                            if (compressedVideoFile != null) {
-                                thisUploadJob.addFileChecksum(fileForUpload, compressedVideoFile);
-                                thisUploadJob.markFileAsCompressed(fileForUpload);
-                                saveStateToDisk(thisUploadJob);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                                // compression only possible for Android API 18 and up.
+                                compressedFile = compressVideo(thisUploadJob, fileForUpload);
                             }
                         }
-
-                        //NOTE: at this point, if error during compression, file will be removed from list to upload.
                     }
+                } else if (thisUploadJob.isPhoto(fileForUpload)) {
+                    if (thisUploadJob.isCompressPhotosBeforeUpload()) {
+                        compressedFile = getCompressedVersionOfFileToUpload(thisUploadJob, fileForUpload);
+                        if (compressedFile == null || !compressedFile.exists()) {
+                            // need to compress this file
+                            compressedFile = compressImage(thisUploadJob, fileForUpload, compressedFile);
+                        }
+                    }
+                }
+                if (compressedFile != null) {
+                    // we use this checksum to check the file was uploaded successfully
+                    thisUploadJob.addFileChecksum(fileForUpload, compressedFile);
+                    thisUploadJob.markFileAsCompressed(fileForUpload);
+                    saveStateToDisk(thisUploadJob);
                 }
             }
 
@@ -962,6 +983,17 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             saveStateToDisk(thisUploadJob);
 
         }
+    }
+
+    protected File getCompressedVersionOfFileToUpload(UploadJob uploadJob, File fileForUpload) {
+        File compressedFile = uploadJob.getCompressedFile(getApplicationContext(), fileForUpload);
+        if (compressedFile.exists() && !uploadJob.isFileCompressed(fileForUpload)) {
+            if (!compressedFile.delete()) { // the compression failed - delete file and allow restart
+                onFileDeleteFailed(tag, compressedFile, "compressed file - pre upload");
+            }
+            compressedFile = null; // clear reference to trigger re-compression
+        }
+        return compressedFile;
     }
 
     private ResourceItem uploadFileInChunks(UploadJob thisUploadJob, byte[] streamBuffer, File uploadJobKey, File fileForUpload, String uploadName, int maxChunkUploadAutoRetries) throws IOException {

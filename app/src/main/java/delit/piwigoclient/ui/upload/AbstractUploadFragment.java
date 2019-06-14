@@ -117,8 +117,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private Button uploadJobStatusButton;
     private TextView uploadableFilesView;
     private boolean compressVideosBeforeUpload;
+    private boolean compressImagesBeforeUpload;
     private MediaScanner mediaScanner;
     private CheckBox compressVideosCheckbox;
+    private CheckBox compressImagesCheckbox;
 
 
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
@@ -295,8 +297,17 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     setCompressVideosBeforeUpload(isChecked);
                 }
             });
-            compressVideosCheckbox.setChecked(true);
+            compressVideosCheckbox.setChecked(UploadPreferences.isCompressVideosByDefault(getContext(), getPrefs()));
         }
+
+        compressImagesCheckbox = view.findViewById(R.id.compress_images_button);
+        compressImagesCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                setCompressVideosBeforeUpload(isChecked);
+            }
+        });
+        compressImagesCheckbox.setChecked(UploadPreferences.isCompressImagesByDefault(getContext(), getPrefs()));
 
         uploadFilesNowButton = view.findViewById(R.id.upload_files_button);
         uploadFilesNowButton.setOnClickListener(new View.OnClickListener() {
@@ -387,28 +398,28 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private TextView getUploadableFilesView() {
         return uploadableFilesView;
     }
-
-    private void compressVideos() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            getUiHelper().showDetailedMsg(R.string.alert_error, "Video Compression not supported on this version of android");
-        } else {
-            FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
-            ArrayList<File> filesForUpload = fileListAdapter.getFiles();
-            File inputVideo = filesForUpload.get(0);
-            File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-            File outputVideo = new File(moviesFolder, "compressed_" + inputVideo.getName());
-            /*try*/
-            {
-                //TODO this compressor is very basic - need to use my own.
-//                new YPrestoCompressor().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
-                ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
-                compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(UploadPreferences.getVideoCompressionQuality(getContext(), prefs));
-                new ExoPlayerCompression().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()), compressionSettings);
-            } /*catch (IOException e) {
-                getUiHelper().showDetailedMsg(R.string.alert_error, "Error compressing video " + e.getMessage());
-            }*/
-        }
-    }
+//
+//    private void compressVideos() {
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+//            getUiHelper().showDetailedMsg(R.string.alert_error, "Video Compression not supported on this version of android");
+//        } else {
+//            FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
+//            ArrayList<File> filesForUpload = fileListAdapter.getFiles();
+//            File inputVideo = filesForUpload.get(0);
+//            File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+//            File outputVideo = new File(moviesFolder, "compressed_" + inputVideo.getName());
+//            /*try*/
+//            {
+//                //TODO this compressor is very basic - need to use my own.
+////                new YPrestoCompressor().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
+//                ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
+//                compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(UploadPreferences.getVideoCompressionParams(getContext(), prefs).getQuality());
+//                new ExoPlayerCompression().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()), compressionSettings);
+//            } /*catch (IOException e) {
+//                getUiHelper().showDetailedMsg(R.string.alert_error, "Error compressing video " + e.getMessage());
+//            }*/
+//        }
+//    }
 
     private void requestFileSelection(ArrayList<String> allowedFileTypes) {
         FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
@@ -639,8 +650,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         if (!userInputRequested) {
             if (activeJob == null) {
                 long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
-                activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, compressVideosBeforeUpload, privacyLevelWanted, handlerId);
-                activeJob.setVideoCompressionQuality(UploadPreferences.getVideoCompressionQuality(getContext(), getPrefs()));
+                activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, privacyLevelWanted, handlerId);
+                if (compressVideosBeforeUpload) {
+                    activeJob.setVideoCompressionParams(UploadPreferences.getVideoCompressionParams(getContext(), getPrefs()));
+                }
+                if (compressImagesBeforeUpload) {
+                    activeJob.setImageCompressionParams(UploadPreferences.getImageCompressionParams(getContext(), getPrefs()));
+                }
             }
             submitUploadJob(activeJob);
         }
@@ -794,6 +810,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     protected void setCompressVideosBeforeUpload(boolean compress) {
         compressVideosBeforeUpload = compress;
+    }
+
+    protected void setCompressImagesBeforeUpload(boolean compress) {
+        compressImagesBeforeUpload = compress;
     }
 
     @Override

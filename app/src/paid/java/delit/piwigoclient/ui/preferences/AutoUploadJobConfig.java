@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
+import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 import delit.piwigoclient.util.CollectionUtils;
 import delit.piwigoclient.util.IOUtils;
@@ -124,6 +125,11 @@ public class AutoUploadJobConfig implements Parcelable {
         return value;
     }
 
+    private String getStringValue(Context c, @StringRes int prefKeyId, @StringRes int prefDefaultKeyId) {
+        String value = getJobPreferences(c).getString(c.getString(prefKeyId), c.getString(prefDefaultKeyId));
+        return value;
+    }
+
     private String getStringValue(Context c, @StringRes int prefKeyId, String defaultVal) {
         String value = getJobPreferences(c).getString(c.getString(prefKeyId), defaultVal);
         return value;
@@ -193,8 +199,39 @@ public class AutoUploadJobConfig implements Parcelable {
         return getBooleanValue(c, R.string.preference_data_upload_automatic_job_compress_videos_key, R.bool.preference_data_upload_automatic_job_compress_videos_default);
     }
 
-    public double getVideoCompressionQuality(Context c) {
+    public boolean isCompressImagesBeforeUpload(Context c) {
+        return getBooleanValue(c, R.string.preference_data_upload_automatic_job_compress_images_key, R.bool.preference_data_upload_automatic_job_compress_images_default);
+    }
+
+    private double getVideoCompressionQuality(Context c) {
         return ((double) getIntValue(c, R.string.preference_data_upload_automatic_job_compress_videos_quality_key, R.integer.preference_data_upload_automatic_job_compress_videos_quality_default)) / 1000;
+    }
+
+    private int getImageCompressionQuality(Context c) {
+        return getIntValue(c, R.string.preference_data_upload_automatic_job_compress_images_quality_key, R.integer.preference_data_upload_automatic_job_compress_images_quality_default);
+    }
+
+    private String getImageCompressionOutputFormat(Context c) {
+        return getStringValue(c, R.string.preference_data_upload_automatic_job_compress_images_quality_key, R.string.preference_data_upload_automatic_job_compress_images_output_format_default);
+    }
+
+    public UploadJob.VideoCompressionParams getVideoCompressionParams(Context c) {
+        if (isCompressVideosBeforeUpload(c)) {
+            UploadJob.VideoCompressionParams params = new UploadJob.VideoCompressionParams();
+            params.setQuality(getVideoCompressionQuality(c));
+            return params;
+        }
+        return null;
+    }
+
+    public UploadJob.ImageCompressionParams getImageCompressionParams(Context c) {
+        if (isCompressImagesBeforeUpload(c)) {
+            UploadJob.ImageCompressionParams params = new UploadJob.ImageCompressionParams();
+            params.setOutputFormat(getImageCompressionOutputFormat(c));
+            params.setQuality(getImageCompressionQuality(c));
+            return params;
+        }
+        return null;
     }
 
     public static class PriorUploads implements Serializable {

@@ -3,6 +3,8 @@ package delit.piwigoclient.piwigoApi.upload;
 import android.content.Context;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.IntRange;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,7 +29,6 @@ public class UploadJob implements Serializable {
     public static final Integer COMPRESSED = 8; // file has been compressed successfully.
 
     public static final Integer CANCELLED = -1; // file has been removed from the upload job
-    private static final long serialVersionUID = 3L;
     public static final Integer UPLOADING = 0; // file bytes transfer in process
     public static final Integer UPLOADED = 1; // all file bytes uploaded but not checksum verified
     public static final Integer VERIFIED = 2; // file bytes match those on the client device
@@ -36,6 +37,7 @@ public class UploadJob implements Serializable {
     public static final Integer REQUIRES_DELETE = 5; // user cancels upload after file partially uploaded
     public static final Integer DELETED = 6; // file has been deleted from the server
     public static final Integer CORRUPT = 7; // (moves to this state if verification fails)
+    private static final long serialVersionUID = -9200565400491814263L;
     private final long jobId;
     private final long responseHandlerId;
     private final ArrayList<File> filesForUpload;
@@ -44,7 +46,6 @@ public class UploadJob implements Serializable {
     private final ArrayList<Long> uploadToCategoryParentage;
     private final long uploadToCategory;
     private final byte privacyLevelWanted;
-    private final boolean compressVideosBeforeUpload;
     private int jobConfigId = -1;
     private boolean runInBackground;
     private ConnectionPreferences.ProfilePreferences connectionPrefs;
@@ -56,10 +57,11 @@ public class UploadJob implements Serializable {
     private volatile transient boolean cancelUploadAsap;
     private transient File loadedFromFile;
     private LinkedHashMap<Date, String> errors = new LinkedHashMap<>();
-    private double videoCompressionQuality = -1;
     private transient boolean wasLastRunCancelled;
+    private VideoCompressionParams videoCompressionParams;
+    private ImageCompressionParams imageCompressionParams;
 
-    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, boolean compressVideosBeforeUpload, byte uploadedFilePrivacyLevel) {
+    public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel) {
         this.jobId = jobId;
         this.connectionPrefs = connectionPrefs;
         this.responseHandlerId = responseHandlerId;
@@ -69,7 +71,6 @@ public class UploadJob implements Serializable {
         this.filesForUpload = new ArrayList<>(filesForUpload);
         this.fileUploadStatus = new HashMap<>(filesForUpload.size());
         this.filePartialUploadProgress = new HashMap<>(filesForUpload.size());
-        this.compressVideosBeforeUpload = compressVideosBeforeUpload;
     }
 
     public void setToRunInBackground() {
@@ -259,7 +260,7 @@ public class UploadJob implements Serializable {
         if (COMPRESSED.equals(status)) {
             return 100;
         }
-        if (compressVideosBeforeUpload && canCompressVideoFile(uploadJobKey)) {
+        if (isCompressVideosBeforeUpload() && canCompressVideoFile(uploadJobKey)) {
             // if we've started uploading this file it must have been compressed first!
             return getUploadProgress(uploadJobKey) > 0 ? 100 : 0;
         }
@@ -313,13 +314,18 @@ public class UploadJob implements Serializable {
             if(!f.exists()) {
                 // Remove file from upload list
                 cancelFileUpload(f);
-            } else {
-                // recalculate checksums for all files not yet uploaded
-                final String checksum = Md5SumUtils.calculateMD5(f);
-                if (!newJob) {
-                    fileChecksums.remove(f);
+            } else if (needsUpload(f)) {
+                if (!((isPhoto(f) && isCompressPhotosBeforeUpload())
+                        || canCompressVideoFile(f) && isCompressVideosBeforeUpload())) {
+                    // if its not a file we're going to compress
+
+                    // recalculate checksums for all files not yet uploaded
+                    final String checksum = Md5SumUtils.calculateMD5(f);
+                    if (!newJob) {
+                        fileChecksums.remove(f);
+                    }
+                    fileChecksums.put(f, checksum);
                 }
-                fileChecksums.put(f, checksum);
             }
         }
     }
@@ -493,8 +499,16 @@ public class UploadJob implements Serializable {
         return errors;
     }
 
-    public boolean isCompressVideosBeforeUpload() {
-        return compressVideosBeforeUpload;
+    public boolean isVideo(File file) {
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(file.getName()));
+        return mimeType != null && mimeType.startsWith("video/");
+    }
+
+    public boolean isPhoto(File file) {
+        MimeTypeMap map = MimeTypeMap.getSingleton();
+        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(file.getName()));
+        return mimeType != null && mimeType.startsWith("image/");
     }
 
     public ArrayList<File> getVideosForUpload() {
@@ -508,9 +522,7 @@ public class UploadJob implements Serializable {
 
         ArrayList<File> videoFilesToCompress = new ArrayList<>(allFiles.size());
         for (File f : allFiles) {
-            String fileExt = IOUtils.getFileExt(f.getName());
-            String mimeType = map.getMimeTypeFromExtension(fileExt);
-            if (mimeType != null && mimeType.startsWith("video/")) {
+            if (isVideo(f)) {
                 videoFilesToCompress.add(f);
             }
         }
@@ -538,14 +550,6 @@ public class UploadJob implements Serializable {
         return fileExt.equals("mp4");
     }
 
-    public double getVideoCompressionQuality() {
-        return videoCompressionQuality;
-    }
-
-    public void setVideoCompressionQuality(double videoCompressionQuality) {
-        this.videoCompressionQuality = videoCompressionQuality;
-    }
-
     public void clearCancelUploadAsapFlag() {
         wasLastRunCancelled = true;
         cancelUploadAsap = false;
@@ -557,6 +561,29 @@ public class UploadJob implements Serializable {
         return ret;
     }
 
+    public ImageCompressionParams getImageCompressionParams() {
+        return imageCompressionParams;
+    }
+
+    public void setImageCompressionParams(ImageCompressionParams imageCompressionParams) {
+        this.imageCompressionParams = imageCompressionParams;
+    }
+
+    public boolean isCompressVideosBeforeUpload() {
+        return videoCompressionParams != null;
+    }
+
+    public boolean isCompressPhotosBeforeUpload() {
+        return imageCompressionParams != null;
+    }
+
+    public VideoCompressionParams getVideoCompressionParams() {
+        return videoCompressionParams;
+    }
+
+    public void setVideoCompressionParams(VideoCompressionParams videoCompressionParams) {
+        this.videoCompressionParams = videoCompressionParams;
+    }
 
     protected static class PartialUploadData implements Serializable {
         private static final long serialVersionUID = 3574283238335920169L;
@@ -612,6 +639,50 @@ public class UploadJob implements Serializable {
             this.fileChecksum = fileChecksum;
             this.bytesUploaded = bytesUploaded;
             this.countChunksUploaded = countChunksUploaded;
+        }
+    }
+
+    public static class ImageCompressionParams implements Serializable {
+        private static final long serialVersionUID = 5917397481875872085L;
+        private String outputFormat;
+        private @IntRange(from = 0, to = 100)
+        int quality;
+
+        public ImageCompressionParams() {
+        }
+
+        public int getQuality() {
+            return quality;
+        }
+
+        public void setQuality(int quality) {
+            this.quality = quality;
+        }
+
+        public String getOutputFormat() {
+            return outputFormat;
+        }
+
+        public void setOutputFormat(String outputFormat) {
+            this.outputFormat = outputFormat;
+        }
+    }
+
+    public static class VideoCompressionParams implements Serializable {
+        private static final long serialVersionUID = -4413899202447516873L;
+        private double quality = -1;
+
+        public VideoCompressionParams() {
+
+        }
+
+        public double getQuality() {
+            return quality;
+        }
+
+
+        public void setQuality(double quality) {
+            this.quality = quality;
         }
     }
 }
