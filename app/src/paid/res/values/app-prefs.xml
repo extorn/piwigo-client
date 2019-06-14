@@ -51,9 +51,18 @@
     <bool name="preference_data_upload_automatic_job_delete_uploaded_default">true</bool>
 
     <string name="preference_data_upload_automatic_job_compress_videos_key" translatable="false">preference_data_upload_automatic_job_compress_videos</string>
-    <string name="preference_data_upload_automatic_job_compress_videos_summary">Compress videos before upload</string>
-    <string name="preference_data_upload_automatic_job_compress_videos_title">Compress videos</string>
-    <bool name="preference_data_upload_automatic_job_compress_videos_default">false</bool>
+    <string name="preference_data_upload_automatic_job_compress_videos_summary" translatable="false">@string/preference_data_upload_compress_videos_summary</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_title" translatable="false">@string/preference_data_upload_compress_videos_title</string>
+    <bool name="preference_data_upload_automatic_job_compress_videos_default">
+        @bool/preference_data_upload_compress_videos_default
+    </bool>
+
+    <string name="preference_data_upload_automatic_job_compress_images_key" translatable="false">preference_data_upload_automatic_job_compress_images</string>
+    <string name="preference_data_upload_automatic_job_compress_images_summary" translatable="false">@string/preference_data_upload_compress_images_summary</string>
+    <string name="preference_data_upload_automatic_job_compress_images_title" translatable="false">@string/preference_data_upload_compress_images_title</string>
+    <bool name="preference_data_upload_automatic_job_compress_images_default">
+        @bool/preference_data_upload_compress_images_default
+    </bool>
 
     <integer name="preference_data_upload_automatic_job_max_upload_size_mb_default">20</integer>
     <string name="preference_data_upload_automatic_job_max_upload_size_mb_key" translatable="false">preference_data_upload_automatic_max_upload_size</string>
@@ -77,6 +86,19 @@
         @integer/preference_data_upload_compress_videos_quality_default
     </integer>
 
+    <string name="preference_data_upload_automatic_job_compress_images_quality_title" translatable="false">@string/preference_data_upload_compress_images_quality_title</string>
+    <string name="preference_data_upload_automatic_job_compress_images_quality_summary" translatable="false">@string/preference_data_upload_compress_images_quality_summary</string>
+    <string name="preference_data_upload_automatic_job_compress_images_quality_key" translatable="false">preference_data_upload_automatic_job_compress_images_quality</string>
+    <integer name="preference_data_upload_automatic_job_compress_images_quality_default">
+        @integer/preference_data_upload_compress_images_quality_default
+    </integer>
+
+    <string name="preference_data_upload_automatic_job_compress_images_output_format_title" translatable="false">@string/preference_data_upload_compress_images_output_format_title</string>
+    <string name="preference_data_upload_automatic_job_compress_images_output_format_summary" translatable="false">@string/preference_data_upload_compress_images_output_format_summary</string>
+    <string name="preference_data_upload_automatic_job_compress_images_output_format_key" translatable="false">preference_data_upload_automatic_job_compress_images_output_format</string>
+    <string name="preference_data_upload_automatic_job_compress_images_output_format_default" translatable="false">@string/preference_data_upload_compress_images_output_format_default</string>
+
     <string name="preference_data_upload_automatic_job_files_uploaded_already_key" translatable="false">preference_data_upload_automatic_job_files_uploaded_already</string>
+
 
 </resources>
