@@ -59,7 +59,7 @@ public class UploadPreferences {
         return params;
     }
 
-    private static double getVideoCompressionQuality(Context context, SharedPreferences prefs) {
+    public static double getVideoCompressionQuality(Context context, SharedPreferences prefs) {
         return ((double) getInt(context, prefs, R.string.preference_data_upload_compress_videos_quality_key, R.integer.preference_data_upload_compress_videos_quality_default)) / 1000;
     }
 
@@ -71,11 +71,11 @@ public class UploadPreferences {
         return getBoolean(context, prefs, R.string.preference_data_upload_compress_images_key, R.bool.preference_data_upload_compress_images_default);
     }
 
-    private static int getImageCompressionQuality(Context context, SharedPreferences prefs) {
+    public static int getImageCompressionQuality(Context context, SharedPreferences prefs) {
         return getInt(context, prefs, R.string.preference_data_upload_compress_images_quality_key, R.integer.preference_data_upload_compress_images_quality_default);
     }
 
-    private static String getImageCompressionOutputFormat(Context context, SharedPreferences prefs) {
+    public static String getImageCompressionOutputFormat(Context context, SharedPreferences prefs) {
         return getString(context, prefs, R.string.preference_data_upload_compress_images_output_format_key, R.string.preference_data_upload_compress_images_output_format_default);
     }
 
