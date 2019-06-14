@@ -42,10 +42,19 @@
         tools:text="some album" />
 
     <CheckBox
-        android:id="@+id/compress_videos_button"
+        android:id="@+id/compress_images_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/selected_gallery"
+        android:layout_margin="5dp"
+        android:enabled="false"
+        android:text="@string/compress_images" />
+
+    <CheckBox
+        android:id="@+id/compress_videos_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/compress_images_button"
         android:layout_margin="5dp"
         android:enabled="false"
         android:text="@string/compress_videos" />
