@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.util.SparseIntArray;
 
 import androidx.annotation.DrawableRes;
@@ -73,6 +74,7 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             handler.runCall();
         } else {
             // invoke a separate thread if this was called on the main thread (this won't occur when called within Picasso)
+            Crashlytics.log(Log.ERROR, TAG, "Image downloader has been called on and blocked the main thread!");
             handler.invokeAndWait(context, connectionPrefs);
         }
 

@@ -458,6 +458,7 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
         boolean exit = false;
         LoginResponseHandler handler = new LoginResponseHandler();
         boolean failureReported = false;
+        int loopcount = 0;
         do {
             handler.invokeAndWait(context, getConnectionPrefs());
             PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
@@ -496,7 +497,11 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
                 onGetNewSessionAndOrUserDetailsFailed();
             }
             loginStatus = newLoginStatus;
-        } while (!exit);
+            loopcount++;
+        } while (!exit && loopcount < 15); // loop count should never be hit but is a sanity check to stop hanging
+        if (loopcount == 15) {
+            Crashlytics.log(Log.ERROR, "Handler", "Insane looping while trying to get new login!");
+        }
 
         return handler.isSuccess();
     }

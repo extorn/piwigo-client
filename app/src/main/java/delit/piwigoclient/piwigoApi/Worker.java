@@ -71,7 +71,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             return new Thread(r, "AsyncLoginTask #" + mCount.getAndIncrement());
         }
     };
-    private static final long MAX_TIMEOUT_MILLIS = 1000 * 60 * 3; // 3 minutes!
+    private static final long MAX_TIMEOUT_MILLIS = 1000 * 60; // 1 minute - I can't think of a reason for a single call to exceed this time.
 
     static {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
