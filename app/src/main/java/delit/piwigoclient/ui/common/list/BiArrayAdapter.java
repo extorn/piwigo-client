@@ -1,9 +1,10 @@
 package delit.piwigoclient.ui.common.list;
 
 import android.content.Context;
+import android.widget.ArrayAdapter;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,10 @@ import delit.piwigoclient.util.ArrayUtils;
 
 public class BiArrayAdapter<T> extends ArrayAdapter<T> {
     private final List<Long> objectIds;
+
+    public BiArrayAdapter(@NonNull Context context, @NonNull T[] objects, @NonNull long[] objectIds) {
+        this(context, android.R.layout.simple_spinner_item, 0, objects, objectIds);
+    }
 
     public BiArrayAdapter(@NonNull Context context, int resource, @NonNull T[] objects, @NonNull long[] objectIds) {
         this(context, resource, 0, objects, objectIds);

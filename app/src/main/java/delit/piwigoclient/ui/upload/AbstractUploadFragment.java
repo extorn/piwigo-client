@@ -260,7 +260,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         CharSequence[] privacyLevelsText = getResources().getTextArray(R.array.privacy_levels_groups_array);
         long[] privacyLevelsValues = ArrayUtils.getLongArray(getResources().getIntArray(R.array.privacy_levels_values_array));
-        BiArrayAdapter<CharSequence> privacyLevelOptionsAdapter = new BiArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, 0, privacyLevelsText, privacyLevelsValues);
+        BiArrayAdapter<CharSequence> privacyLevelOptionsAdapter = new BiArrayAdapter<>(getContext(), privacyLevelsText, privacyLevelsValues);
 //        if(!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
 //            // remove the "admin only" privacy option.
 //            privacyLevelOptionsAdapter.remove(privacyLevelOptionsAdapter.getItemById(8)); // Admin ID
@@ -305,6 +305,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         compressVideosSettings = view.findViewById(R.id.video_compression_options);
         compressVideosQualitySpinner = compressVideosSettings.findViewById(R.id.compress_videos_quality);
+        compressVideosQualitySpinner.setAdapter(new BiArrayAdapter<>(getContext(), getResources().getStringArray(R.array.preference_data_upload_compress_videos_quality_items),
+                ArrayUtils.getLongArray(getResources().getIntArray(R.array.preference_data_upload_compress_videos_quality_values))));
         setSpinnerSelectedItem(compressVideosQualitySpinner, UploadPreferences.getVideoCompressionQuality(getContext(), getPrefs()));
 
 
@@ -330,8 +332,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         compressImagesOutputFormatSpinner = compressImagesSettings.findViewById(R.id.compress_images_output_format);
         setSpinnerSelectedItem(compressImagesOutputFormatSpinner, UploadPreferences.getImageCompressionOutputFormat(getContext(), getPrefs()));
 
-//        compressImagesQualitySpinner = compressImagesSettings.findViewById(R.id.compress_images_quality);
-//        setSpinnerSelectedItem(compressImagesQualitySpinner, UploadPreferences.getImageCompressionQuality(getContext(), getPrefs()));
+        compressImagesQualitySpinner = compressImagesSettings.findViewById(R.id.compress_images_quality);
+        setSpinnerSelectedItem(compressImagesQualitySpinner, UploadPreferences.getImageCompressionQuality(getContext(), getPrefs()));
 
         compressImagesCheckbox = view.findViewById(R.id.compress_images_button);
         boolean compressPics = UploadPreferences.isCompressImagesByDefault(getContext(), getPrefs());
@@ -707,9 +709,15 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
                 activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, privacyLevelWanted, handlerId);
                 if (compressVideosBeforeUpload) {
+                    UploadJob.VideoCompressionParams vidCompParams = new UploadJob.VideoCompressionParams();
+                    vidCompParams.setQuality(compressVideosQualitySpinner.getSelectedItemId());
                     activeJob.setVideoCompressionParams(UploadPreferences.getVideoCompressionParams(getContext(), getPrefs()));
                 }
                 if (compressImagesBeforeUpload) {
+                    UploadJob.ImageCompressionParams imageCompParams = new UploadJob.ImageCompressionParams();
+                    imageCompParams.setOutputFormat(compressImagesOutputFormatSpinner.getSelectedItem().toString());
+                    imageCompParams.setQuality(UploadPreferences.getImageCompressionQuality(getContext(), getPrefs())); //TODO use the user value instead!!!!
+                    //imageCompParams.setQuality((int) compressImagesQualitySpinner.getSelectedItemId());
                     activeJob.setImageCompressionParams(UploadPreferences.getImageCompressionParams(getContext(), getPrefs()));
                 }
             }

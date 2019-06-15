@@ -203,6 +203,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="9dp"
+                        android:duplicateParentState="true"
                         android:entries="@array/preference_data_upload_compress_images_output_format_items" />
 
                     <TextView
@@ -221,7 +222,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
-                        android:layout_marginBottom="9dp" />
+                        android:layout_marginBottom="9dp"
+                        android:duplicateParentState="true" />
 
                 </LinearLayout>
 
@@ -260,7 +262,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="9dp"
-                        android:entries="@array/preference_data_upload_compress_videos_quality_items" />
+                        android:duplicateParentState="true" />
 
                 </LinearLayout>
 
