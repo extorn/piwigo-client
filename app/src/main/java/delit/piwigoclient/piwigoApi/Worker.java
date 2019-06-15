@@ -4,8 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -70,6 +71,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             return new Thread(r, "AsyncLoginTask #" + mCount.getAndIncrement());
         }
     };
+    private static final long MAX_TIMEOUT_MILLIS = 1000 * 60 * 3; // 3 minutes!
 
     static {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
@@ -256,7 +258,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
         //TODO collect a list of tasks and kill them all if the app exits.
         Boolean retVal = null;
         boolean timedOut = false;
-        long timeoutAt = Long.MAX_VALUE;
+        long timeoutAt = System.currentTimeMillis() + MAX_TIMEOUT_MILLIS;
         while (!task.isCancelled() && !task.getStatus().equals(FINISHED) && !timedOut) {
 
             if(retVal != null) {
