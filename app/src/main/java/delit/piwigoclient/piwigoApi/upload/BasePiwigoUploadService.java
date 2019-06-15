@@ -536,7 +536,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     private void invokeWithRetries(UploadJob thisUploadJob, AbstractPiwigoWsResponseHandler handler, int maxRetries) {
         int allowedAttempts = maxRetries;
-        while (!handler.isSuccess() && allowedAttempts > 0) {
+        while (!handler.isSuccess() && allowedAttempts > 0 && !thisUploadJob.isCancelUploadAsap()) {
             allowedAttempts--;
             // this is blocking
             handler.invokeAndWait(getApplicationContext(), thisUploadJob.getConnectionPrefs());
