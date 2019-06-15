@@ -240,6 +240,7 @@
     <string name="preference_page_upload">Télécharger</string>
     <string name="preference_connections_category_data_upload_display">Réglages visuels</string>
     <string name="preference_connections_category_data_upload">Transfert de données</string>
+    <string name="preference_connections_category_pre_data_upload_compression">Compression de pré-téléchargement</string>
 
     <!-- prefs -->
 

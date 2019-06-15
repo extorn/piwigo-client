@@ -238,6 +238,7 @@
     <string name="preference_page_upload">上传</string>
     <string name="preference_connections_category_data_upload_display">视觉设置</string>
     <string name="preference_connections_category_data_upload">数据上传</string>
+    <string name="preference_connections_category_pre_data_upload_compression">预上载压缩</string>
 
     <!-- prefs -->
 

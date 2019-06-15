@@ -236,6 +236,7 @@
     <string name="preference_page_upload">Hochladen</string>
     <string name="preference_connections_category_data_upload_display">Visuelle Einstellungen</string>
     <string name="preference_connections_category_data_upload">Daten-Upload</string>
+    <string name="preference_connections_category_pre_data_upload_compression">Komprimierung vor dem Hochladen</string>
 
     <!-- prefs -->
 

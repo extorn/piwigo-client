@@ -275,6 +275,7 @@
     <string name="preference_page_upload">Upload</string>
     <string name="preference_connections_category_data_upload_display">Visual settings</string>
     <string name="preference_connections_category_data_upload">Data Upload</string>
+    <string name="preference_connections_category_pre_data_upload_compression">Pre-Upload Compression</string>
 
     <!-- prefs -->
 
