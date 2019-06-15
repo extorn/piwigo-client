@@ -779,8 +779,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         });
     }
 
-    private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter<AbstractSlideshowItemFragment> {
-        public UseAsAlbumThumbnailForParentAction(UIHelper uiHelper) {
+    private static class UseAsAlbumThumbnailForParentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>> {
+        public UseAsAlbumThumbnailForParentAction(FragmentUIHelper<AbstractSlideshowItemFragment> uiHelper) {
             super(uiHelper);
         }
 
@@ -977,8 +977,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         EventBus.getDefault().post(new AlbumAlteredEvent(response.getAlbumParentIdAltered(), response.getAlbumIdAltered()));
     }
 
-    private static class OnDeleteItemAction extends UIHelper.QuestionResultAdapter<AbstractSlideshowItemFragment> {
-        public OnDeleteItemAction(UIHelper uiHelper) {
+    private static class OnDeleteItemAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>> {
+        public OnDeleteItemAction(FragmentUIHelper<AbstractSlideshowItemFragment> uiHelper) {
             super(uiHelper);
         }
 
@@ -1254,7 +1254,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 onResourceInfoRetrieved((BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) response);
             } else if (response instanceof BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse) {
                 BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<T> r = ((BaseImageUpdateInfoResponseHandler.PiwigoUpdateResourceInfoResponse<T>) response);
-                onResourceInfoAltered((T) r.getPiwigoResource());
+                onResourceInfoAltered(r.getPiwigoResource());
             } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
                 onGetSubAlbumNames((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response);
             } else if (response instanceof AlbumThumbnailUpdatedResponseHandler.PiwigoAlbumThumbnailUpdatedResponse) {

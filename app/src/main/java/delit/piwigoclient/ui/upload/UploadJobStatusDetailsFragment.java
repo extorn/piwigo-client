@@ -1,14 +1,15 @@
 package delit.piwigoclient.ui.upload;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -25,7 +26,7 @@ import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
-public class UploadJobStatusDetailsFragment extends MyFragment {
+public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDetailsFragment> {
     private static final String STATE_UPLOAD_JOB_ID = "uploadJobId";
     private UploadJob uploadJob;
 

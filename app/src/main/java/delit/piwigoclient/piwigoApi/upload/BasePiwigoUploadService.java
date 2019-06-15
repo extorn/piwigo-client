@@ -730,7 +730,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                 item.setLinkedAlbums(new HashSet<Long>(1));
                 thisUploadJob.addFileUploaded(entry.getKey(), item);
             } else {
-                ImageGetInfoResponseHandler getImageInfoHandler = new ImageGetInfoResponseHandler(new ResourceItem(imageId, null, null, null, null, null), multimediaExtensionList);
+                ImageGetInfoResponseHandler<ResourceItem> getImageInfoHandler = new ImageGetInfoResponseHandler<>(new ResourceItem(imageId, null, null, null, null, null), multimediaExtensionList);
                 int allowedAttempts = 2;
                 boolean success = false;
                 while (!success && allowedAttempts > 0) {
@@ -1260,14 +1260,14 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             Log.w(TAG, "cannot delete uploaded resource from server, as we are missing a reference to it (presumably upload has not been started)!");
             return true;
         }
-        ImageDeleteResponseHandler imageDeleteHandler = new ImageDeleteResponseHandler(uploadedResource);
+        ImageDeleteResponseHandler<ResourceItem> imageDeleteHandler = new ImageDeleteResponseHandler<>(uploadedResource);
         invokeWithRetries(uploadJob, imageDeleteHandler, 2);
         return imageDeleteHandler.isSuccess();
     }
 
     private Boolean verifyFileNotCorrupted(UploadJob uploadJob, ResourceItem uploadedResource) {
 
-        ImageCheckFilesResponseHandler imageFileCheckHandler = new ImageCheckFilesResponseHandler(uploadedResource);
+        ImageCheckFilesResponseHandler<ResourceItem> imageFileCheckHandler = new ImageCheckFilesResponseHandler<>(uploadedResource);
         invokeWithRetries(uploadJob, imageFileCheckHandler, 2);
         return imageFileCheckHandler.isSuccess() ? imageFileCheckHandler.isFileMatch() : null;
     }
@@ -1278,7 +1278,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             uploadedResource.getLinkedAlbums().remove(thisUploadJob.getTemporaryUploadAlbum());
         }
         // Don't update the tags because we aren't altering this aspect of the the image during upload and it (could) cause problems
-        ImageUpdateInfoResponseHandler imageInfoUpdateHandler = new ImageUpdateInfoResponseHandler(uploadedResource, false);
+        ImageUpdateInfoResponseHandler<ResourceItem> imageInfoUpdateHandler = new ImageUpdateInfoResponseHandler<>(uploadedResource, false);
         imageInfoUpdateHandler.setFilename(fileForUpload.getName());
         invokeWithRetries(thisUploadJob, imageInfoUpdateHandler, 2);
         if (!imageInfoUpdateHandler.isSuccess()) {

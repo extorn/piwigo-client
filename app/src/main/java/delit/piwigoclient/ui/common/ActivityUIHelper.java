@@ -58,10 +58,10 @@ public class ActivityUIHelper extends UIHelper<MyActivity> {
         showMessageImmediatelyIfPossible(message);
     }
 
-    private static class BlockingUserInteractionQuestionResultAdapter extends QuestionResultAdapter {
+    private static class BlockingUserInteractionQuestionResultAdapter extends QuestionResultAdapter<ActivityUIHelper> {
         private final BlockingUserInteractionQuestion event;
 
-        public BlockingUserInteractionQuestionResultAdapter(UIHelper uiHelper, BlockingUserInteractionQuestion event) {
+        public BlockingUserInteractionQuestionResultAdapter(ActivityUIHelper uiHelper, BlockingUserInteractionQuestion event) {
             super(uiHelper);
             this.event = event;
         }

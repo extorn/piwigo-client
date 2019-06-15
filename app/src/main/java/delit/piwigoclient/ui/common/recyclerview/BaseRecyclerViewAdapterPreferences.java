@@ -2,7 +2,7 @@ package delit.piwigoclient.ui.common.recyclerview;
 
 import android.os.Bundle;
 
-public class BaseRecyclerViewAdapterPreferences {
+public class BaseRecyclerViewAdapterPreferences<Q extends BaseRecyclerViewAdapterPreferences> {
     private boolean allowItemSelection;
     private boolean initialSelectionLocked;
     private boolean multiSelectionEnabled;
@@ -19,24 +19,24 @@ public class BaseRecyclerViewAdapterPreferences {
         return this;
     }
 
-    public <Q extends BaseRecyclerViewAdapterPreferences> Q notSelectable() {
+    public BaseRecyclerViewAdapterPreferences<Q> notSelectable() {
         allowItemSelection = false;
-        return (Q) this;
+        return this;
     }
 
-    public <Q extends BaseRecyclerViewAdapterPreferences> Q selectable(boolean multiSelectionAllowed, boolean initialSelectionLocked) {
+    public BaseRecyclerViewAdapterPreferences<Q> selectable(boolean multiSelectionAllowed, boolean initialSelectionLocked) {
         allowItemSelection = true;
         this.initialSelectionLocked = initialSelectionLocked;
         this.multiSelectionEnabled = multiSelectionAllowed;
         allowItemDeletion = false;
         allowItemAddition = false;
         enabled = true;
-        return (Q) this;
+        return this;
     }
 
-    public <Q extends BaseRecyclerViewAdapterPreferences> Q deletable() {
+    public BaseRecyclerViewAdapterPreferences<Q> deletable() {
         allowItemDeletion = true;
-        return (Q) this;
+        return this;
     }
 
     public Bundle storeToBundle(Bundle parent) {

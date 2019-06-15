@@ -1,11 +1,13 @@
 package delit.piwigoclient.ui.common.fragment;
 
-import androidx.annotation.LayoutRes;
 import android.widget.ListView;
+
+import androidx.annotation.LayoutRes;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.Enableable;
 import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
@@ -42,7 +44,10 @@ public abstract class ListViewLongSetSelectFragment<X extends Enableable, Z exte
     protected void selectOnlyListItems(Set<Long> selectionIds) {
         X listAdapter = getListAdapter();
         if (listAdapter instanceof SelectableItemsAdapter) {
-            ((SelectableItemsAdapter) listAdapter).setSelectedItems(new HashSet(selectionIds));
+            if (BuildConfig.DEBUG) {
+                throw new RuntimeException("Incorrectly using ListViewLongSetSelectFragment when should be using ListViewLongSelectableSetSelectFragment");
+            }
+            ((SelectableItemsAdapter) listAdapter).setSelectedItems(new HashSet<>(selectionIds));
         } else {
             ListView list = getList();
             for (int i = 0; i < list.getCount(); i++) {

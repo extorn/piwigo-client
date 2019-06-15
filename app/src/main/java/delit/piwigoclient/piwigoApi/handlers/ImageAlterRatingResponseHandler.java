@@ -44,7 +44,7 @@ public class ImageAlterRatingResponseHandler extends AbstractPiwigoWsResponseHan
         storeResponse(r);
     }
 
-    public static class PiwigoRatingAlteredResponse extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
+    public static class PiwigoRatingAlteredResponse extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse<ResourceItem> {
         public PiwigoRatingAlteredResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource, boolean isCached) {
             super(messageId, piwigoMethod, piwigoResource, isCached);
         }

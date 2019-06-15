@@ -37,7 +37,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
 import delit.piwigoclient.ui.common.FlowLayout;
-import delit.piwigoclient.ui.common.fragment.LongSetSelectFragment;
+import delit.piwigoclient.ui.common.fragment.LongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
 import delit.piwigoclient.ui.common.util.BundleUtils;
@@ -71,7 +71,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     }
 
     public static Bundle buildArgsBundle(FolderItemViewAdapterPreferences prefs, int actionId) {
-        Bundle args = LongSetSelectFragment.buildArgsBundle(prefs, actionId, null);
+        Bundle args = LongSelectableSetSelectFragment.buildArgsBundle(prefs, actionId, null);
         return args;
     }
 

@@ -39,7 +39,8 @@ import delit.piwigoclient.ui.common.util.MediaScanner;
 import delit.piwigoclient.util.IOUtils;
 import delit.piwigoclient.util.ObjectUtils;
 
-public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemRecyclerViewAdapter.FolderItemViewHolder> {
+
+public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemRecyclerViewAdapter.FolderItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<File>> {
 
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
@@ -295,8 +296,9 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         void onPostFolderOpened(File oldFolder, File newFolder);
     }
 
+
     class FolderItemCustomClickListener extends CustomClickListener<FolderItemViewAdapterPreferences, File, FolderItemViewHolder> {
-        public <Q extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemViewHolder>> FolderItemCustomClickListener(FolderItemViewHolder viewHolder, Q parentAdapter) {
+        public FolderItemCustomClickListener(FolderItemViewHolder viewHolder, FolderItemRecyclerViewAdapter parentAdapter) {
             super(viewHolder, parentAdapter);
         }
 

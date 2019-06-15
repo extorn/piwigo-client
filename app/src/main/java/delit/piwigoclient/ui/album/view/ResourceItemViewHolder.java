@@ -1,7 +1,6 @@
 package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
-import android.os.Parcelable;
 import android.view.View;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -10,17 +9,17 @@ import androidx.appcompat.widget.AppCompatImageView;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.model.piwigo.Identifiable;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.ui.common.UIHelper;
 
 import static android.view.View.GONE;
 
-public class ResourceItemViewHolder<S extends Identifiable&Parcelable> extends AlbumItemViewHolder<S> {
+public class ResourceItemViewHolder<Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, M extends ResourceContainer<? extends ResourceItem, GalleryItem>> extends AlbumItemViewHolder<ResourceItem, Q, ResourceItemViewHolder<Q, M>, M> {
     public AppCompatImageView mTypeIndicatorImg;
     public AppCompatCheckBox checkBox;
 
-    public ResourceItemViewHolder(View view, AlbumItemRecyclerViewAdapter<S> parentAdapter, int viewType) {
+    public ResourceItemViewHolder(View view, AlbumItemRecyclerViewAdapter<ResourceItem, Q, ResourceItemViewHolder<Q, M>, M> parentAdapter, int viewType) {
         super(view, parentAdapter, viewType);
     }
 

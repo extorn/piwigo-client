@@ -14,6 +14,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoUsernames;
 import delit.piwigoclient.model.piwigo.Username;
 import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
@@ -21,14 +22,14 @@ import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 /**
  * {@link androidx.recyclerview.widget.RecyclerView.Adapter} that can display a {@link Username}
  */
-public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Username, PiwigoUsernames, UsernameRecyclerViewAdapter.UsernameViewHolder> {
+public class UsernameRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, Username, PiwigoUsernames, UsernameRecyclerViewAdapter.UsernameViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<Username>> {
 
     private final List<String> userTypes;
     private final List<String> userTypeValues;
     private final HashSet<Long> indirectlySelectedItems;
 
 
-    public UsernameRecyclerViewAdapter(final Context context, final PiwigoUsernames usernames, HashSet<Long> indirectlySelectedItems, MultiSelectStatusListener multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
+    public UsernameRecyclerViewAdapter(final Context context, final PiwigoUsernames usernames, HashSet<Long> indirectlySelectedItems, MultiSelectStatusListener<Username> multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
         super(null, usernames, multiSelectStatusListener, prefs);
         setContext(context);
         this.indirectlySelectedItems = indirectlySelectedItems;

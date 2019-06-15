@@ -53,10 +53,10 @@ import delit.piwigoclient.util.CollectionUtils;
  * Note that state for all fragments is kept while the page is still visible, it is only when it is not that the
  * state is trimmed.
  */
-public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
+public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFragmentRecyclerPagerAdapter.PagerItemFragment> extends PagerAdapter {
     private static final String TAG = "FrgmntStatePagerAdapter";
     private static final boolean DEBUG = false;
-    private final Map<Integer, Fragment> activeFragments = new HashMap<>(3);
+    private final Map<Integer, T> activeFragments = new HashMap<>(3);
     private FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction = null;
     private Map<Integer, Fragment.SavedState> pageState;
@@ -85,15 +85,15 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         }
     }
 
-    public Class<? extends Fragment> getFragmentType(int position) {
+    public Class<T> getFragmentType(int position) {
         return null;
     }
 
-    public Collection<Fragment> getActiveFragments() {
+    public Collection<T> getActiveFragments() {
         return activeFragments.values();
     }
 
-    public Fragment getActiveFragment(int position) {
+    public T getActiveFragment(int position) {
         return activeFragments.get(position);
     }
 
@@ -101,18 +101,19 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
-        Class<? extends Fragment> fragmentTypeNeeded = getFragmentType(position);
+        Class<T> fragmentTypeNeeded = getFragmentType(position);
 
         if (activeFragments.size() == 0) {
             List<Fragment> fragments = mFragmentManager.getFragments();
             // if fragments is not empty then the page was very probably rotated
             for (Fragment f : fragments) {
                 if (f instanceof PagerItemFragment) {
-                    int pagerIndex = ((PagerItemFragment) f).getPagerIndex();
+                    T pif = (T) f; // safe since f is already a fragment.
+                    int pagerIndex = pif.getPagerIndex();
                     if (pagerIndex < 0) {
                         throw new RuntimeException("Error pager index invalid!");
                     }
-                    Fragment removed = activeFragments.put(pagerIndex, f);
+                    Fragment removed = activeFragments.put(pagerIndex, pif);
                     if (removed != null) {
                         throw new RuntimeException("Two fragments share the same pager index: " + pagerIndex);
                     }
@@ -121,13 +122,13 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         }
 
         // check if fragment is already active. If so, do nothing
-        Fragment f = activeFragments.get(position);
+        T f = activeFragments.get(position);
         if (f != null) {
             return f;
         }
 
         f = createNewItem(fragmentTypeNeeded, position);
-        if (!(f instanceof PagerItemFragment)) {
+        if (f == null) {
             Log.e(TAG, "Fragment must implement PagerItemFragment");
         }
 
@@ -136,7 +137,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         return f;
     }
 
-    protected void addFragmentToTransaction(ViewGroup container, Fragment f, int position) {
+    protected void addFragmentToTransaction(ViewGroup container, T f, int position) {
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
@@ -156,7 +157,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
         mCurTransaction.add(container.getId(), f);
     }
 
-    protected abstract <T extends Fragment & PagerItemFragment> T createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position);
+    protected abstract T createNewItem(Class<T> fragmentTypeNeeded, int position);
 
     public void onDeleteItem(ViewGroup container, int position) {
 
@@ -166,7 +167,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
         // now shift the remaining active fragments by one position.
         int activeAdapterPosition = position;
-        Fragment f;
+        T f;
         do {
             f = activeFragments.remove(activeAdapterPosition + 1);
             if(f != null) {
@@ -192,7 +193,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
 
-        Fragment fragment = getActiveFragment(position);
+        T fragment = getActiveFragment(position);
         if (fragment == null) {
             //nothing to do here, fragment no longer managed.
             return;
@@ -322,7 +323,7 @@ public abstract class MyFragmentRecyclerPagerAdapter extends PagerAdapter {
 
         Bundle state = new Bundle();
 
-        for (Map.Entry<Integer, Fragment> activeFragmentEntry : activeFragments.entrySet()) {
+        for (Map.Entry<Integer, T> activeFragmentEntry : activeFragments.entrySet()) {
             int key = activeFragmentEntry.getKey();
             if(pageState.size() < maxFragmentsToSaveInState || (key > minIdxToKeep && key < maxIdxToKeep)) {
                 //TODO these fragments are active so this is probably doubling up state already stored.

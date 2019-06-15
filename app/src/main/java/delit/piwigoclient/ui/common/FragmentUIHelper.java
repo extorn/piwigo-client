@@ -10,12 +10,12 @@ import androidx.fragment.app.Fragment;
  * Created by gareth on 17/10/17.
  */
 
-public class FragmentUIHelper extends UIHelper<Fragment> {
+public class FragmentUIHelper<T extends Fragment> extends UIHelper<T> {
 
     private boolean blockDialogsFromShowing = false;
 
 
-    public FragmentUIHelper(Fragment parent, SharedPreferences prefs, Context context) {
+    public FragmentUIHelper(T parent, SharedPreferences prefs, Context context) {
         super(parent, prefs, context);
     }
 

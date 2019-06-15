@@ -52,6 +52,7 @@ import delit.piwigoclient.piwigoApi.handlers.GroupsGetListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -71,7 +72,7 @@ import delit.piwigoclient.util.SetUtils;
  * Created by gareth on 21/06/17.
  */
 
-public class GroupFragment extends MyFragment {
+public class GroupFragment extends MyFragment<GroupFragment> {
 
     private static final String CURRENT_GROUP_MEMBERS = "currentGroupMembers";
     private static final String CURRENT_GROUP = "currentGroup";
@@ -400,10 +401,10 @@ public class GroupFragment extends MyFragment {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, message, R.string.button_cancel, R.string.button_ok, new OnDeleteGroupAction(getUiHelper(), group));
     }
 
-    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<GroupFragment> {
+    private static class OnDeleteGroupAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<GroupFragment>> {
         private final Group group;
 
-        public OnDeleteGroupAction(UIHelper uiHelper, Group group) {
+        public OnDeleteGroupAction(FragmentUIHelper<GroupFragment> uiHelper, Group group) {
             super(uiHelper);
             this.group = group;
         }

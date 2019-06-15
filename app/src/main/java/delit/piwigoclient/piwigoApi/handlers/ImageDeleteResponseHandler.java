@@ -11,23 +11,23 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
 
-public class ImageDeleteResponseHandler extends AbstractPiwigoWsResponseHandler {
+public class ImageDeleteResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "DeleteImageRspHdlr";
-    private final HashSet<? extends ResourceItem> items;
+    private final HashSet<T> items;
     private final HashSet<Long> itemIds;
 
-    public ImageDeleteResponseHandler(HashSet<Long> itemIds, HashSet<? extends ResourceItem> selectedItems) {
+    public ImageDeleteResponseHandler(HashSet<Long> itemIds, HashSet<T> selectedItems) {
         super("pwg.images.delete", TAG);
         this.itemIds = itemIds;
         this.items = selectedItems;
     }
 
-    public <T extends ResourceItem> ImageDeleteResponseHandler(T item) {
+    public ImageDeleteResponseHandler(T item) {
         super("pwg.images.delete", TAG);
-        this.itemIds = new HashSet<Long>();
-        this.items = new HashSet<T>();
-        ((HashSet<T>)items).add(item);
+        this.itemIds = new HashSet<>();
+        this.items = new HashSet<>();
+        items.add(item);
         itemIds.add(item.getId());
     }
 

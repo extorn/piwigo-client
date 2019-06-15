@@ -2,10 +2,6 @@ package delit.piwigoclient.ui.common.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,7 +9,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.ads.AdView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -23,6 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -303,6 +305,9 @@ public abstract class LongSetSelectFragment<Y extends View, X extends Enableable
 
     public HashSet<Long> getCurrentSelection() {
         if (listAdapter instanceof SelectableItemsAdapter) {
+            if (BuildConfig.DEBUG) {
+                throw new RuntimeException("Incorrectly using LongSetSelectFragment when should be using LongSelectableSetSelectFragment");
+            }
             currentSelection = ((SelectableItemsAdapter) listAdapter).getSelectedItemIds();
         }
         return currentSelection;

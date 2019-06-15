@@ -49,7 +49,7 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
  * to display a custom {@link ViewPager} title strip which gives continuous feedback to the user
  * when scrolling.
  */
-public class CommonPreferencesFragment extends MyFragment {
+public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragment> {
 
     static final String LOG_TAG = "PreferencesFragment";
 
@@ -151,7 +151,7 @@ public class CommonPreferencesFragment extends MyFragment {
      * this class is the {@link #getPageTitle(int)} method which controls what is displayed in the
      * {@link SlidingTabLayout}.
      */
-    protected class CommonPreferencesPagerAdapter extends MyFragmentRecyclerPagerAdapter {
+    protected class CommonPreferencesPagerAdapter extends MyFragmentRecyclerPagerAdapter<MyPreferenceFragment> {
 
         public CommonPreferencesPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -191,7 +191,7 @@ public class CommonPreferencesFragment extends MyFragment {
         }
 
         @Override
-        protected <T extends Fragment & PagerItemFragment> T createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
+        protected MyPreferenceFragment createNewItem(Class<MyPreferenceFragment> fragmentTypeNeeded, int position) {
             Fragment fragment;
             switch (position) {
                 case 0:
@@ -209,7 +209,7 @@ public class CommonPreferencesFragment extends MyFragment {
                 default:
                     throw new RuntimeException("PagerAdapter count doesn't match positions available");
             }
-            return (T) fragment;
+            return (MyPreferenceFragment) fragment;
         }
 
         @Override

@@ -4,19 +4,19 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.RequestCreator;
 
-public class ResizingPicassoLoader extends PicassoLoader {
+public class ResizingPicassoLoader<T extends ImageView> extends PicassoLoader<T> {
 
     private boolean centerCrop = true;
     private int widthPx;
     private int heightPx;
 
-    public ResizingPicassoLoader(ImageView loadInto, int widthPx, int heightPx) {
+    public ResizingPicassoLoader(T loadInto, int widthPx, int heightPx) {
         super(loadInto);
         this.widthPx = widthPx;
         this.heightPx = heightPx;
     }
 
-    public ResizingPicassoLoader(ImageView loadInto, PicassoLoader.PictureItemImageLoaderListener listener, int widthPx, int heightPx) {
+    public ResizingPicassoLoader(T loadInto, PicassoLoader.PictureItemImageLoaderListener listener, int widthPx, int heightPx) {
         super(loadInto, listener);
         this.widthPx = widthPx;
         this.heightPx = heightPx;

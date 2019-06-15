@@ -30,7 +30,7 @@ public class GroupsGetListResponseHandler extends AbstractPiwigoWsResponseHandle
 
     public GroupsGetListResponseHandler(Collection<Long> groupIds) {
         super("pwg.groups.getList", TAG);
-        this.groupIds = new HashSet();
+        this.groupIds = new HashSet<>();
         this.groupIds.addAll(groupIds);
         page = PagedList.MISSING_ITEMS_PAGE;
         pageSize = this.groupIds.size();

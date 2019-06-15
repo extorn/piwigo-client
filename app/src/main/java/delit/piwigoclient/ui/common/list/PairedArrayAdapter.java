@@ -1,23 +1,19 @@
 package delit.piwigoclient.ui.common.list;
 
 import android.content.Context;
-import androidx.annotation.ArrayRes;
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 
 public abstract class PairedArrayAdapter<T> extends BaseAdapter {
 
     private final Context context;
     private final T[] data;
     private final int itemLayout;
-
-    public PairedArrayAdapter(@NonNull Context context, @LayoutRes int itemLayout, @ArrayRes int dataResource) {
-        this(context, itemLayout, (T[])context.getResources().getStringArray(dataResource));
-    }
 
     public PairedArrayAdapter(@NonNull Context context, @LayoutRes int itemLayout, @NonNull T[] data) {
         this.context = context;

@@ -367,7 +367,7 @@ public abstract class UIHelper<T> {
         return addActiveServiceCall(titleString, messageId, serviceDesc);
     }
 
-    public static <T extends AsyncTask, S extends Object> T submitAsyncTask(T task, S... params) {
+    public static <T extends AsyncTask<S, ?, ?>, S> T submitAsyncTask(T task, S... params) {
         if (executors == null) {
             executors = Executors.newCachedThreadPool();
         }
@@ -966,7 +966,7 @@ public abstract class UIHelper<T> {
         return progressIndicator;
     }
 
-    public interface QuestionResultListener<T> extends Serializable {
+    public interface QuestionResultListener<S extends UIHelper> extends Serializable {
         void onDismiss(AlertDialog dialog);
 
         void onResultInternal(AlertDialog dialog, Boolean positiveAnswer);
@@ -975,7 +975,7 @@ public abstract class UIHelper<T> {
 
         void onShow(AlertDialog alertDialog);
 
-        void setUiHelper(UIHelper<T> uiHelper);
+        void setUiHelper(S uiHelper);
 
         void chainResult(QuestionResultListener listener);
     }
@@ -988,10 +988,10 @@ public abstract class UIHelper<T> {
         actionOnServerCallComplete.put(msgId, loginAction);
     }
 
-    private static class NewUnTrustedCaCertificateReceivedAction extends UIHelper.QuestionResultAdapter {
+    private static class NewUnTrustedCaCertificateReceivedAction extends UIHelper.QuestionResultAdapter<UIHelper<?>> {
         private final HashMap<String, X509Certificate> untrustedCerts;
 
-        public NewUnTrustedCaCertificateReceivedAction(UIHelper uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
+        public NewUnTrustedCaCertificateReceivedAction(UIHelper<?> uiHelper, HashMap<String, X509Certificate> untrustedCerts) {
             super(uiHelper);
             this.untrustedCerts = untrustedCerts;
         }
@@ -1034,22 +1034,22 @@ public abstract class UIHelper<T> {
         }
     }
 
-    public static abstract class QuestionResultAdapter<T> implements QuestionResultListener<T> {
+    public static abstract class QuestionResultAdapter<Q extends UIHelper<?>> implements QuestionResultListener<Q> {
 
         private QuestionResultListener chainedListener;
 
-        private UIHelper<T> uiHelper;
+        private Q uiHelper;
 
-        public QuestionResultAdapter(UIHelper<T> uiHelper) {
+        public QuestionResultAdapter(Q uiHelper) {
             this.uiHelper = uiHelper;
         }
 
-        public UIHelper<T> getUiHelper() {
+        public Q getUiHelper() {
             return uiHelper;
         }
 
         @Override
-        public void setUiHelper(UIHelper<T> uiHelper) {
+        public void setUiHelper(Q uiHelper) {
             this.uiHelper = uiHelper;
         }
 

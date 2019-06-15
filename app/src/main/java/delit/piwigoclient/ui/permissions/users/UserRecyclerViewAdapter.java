@@ -12,6 +12,7 @@ import java.util.List;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PiwigoUsers;
 import delit.piwigoclient.model.piwigo.User;
+import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.recyclerview.BaseViewHolder;
 import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
@@ -19,12 +20,12 @@ import delit.piwigoclient.ui.common.recyclerview.IdentifiableListViewAdapter;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link User}
  */
-public class UserRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, User, PiwigoUsers, UserRecyclerViewAdapter.UserViewHolder> {
+public class UserRecyclerViewAdapter extends IdentifiableListViewAdapter<BaseRecyclerViewAdapterPreferences, User, PiwigoUsers, UserRecyclerViewAdapter.UserViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<User>> {
 
     private final List<String> userTypes;
     private final List<String> userTypeValues;
 
-    public UserRecyclerViewAdapter(final Context context, final PiwigoUsers users, MultiSelectStatusListener multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
+    public UserRecyclerViewAdapter(final Context context, final PiwigoUsers users, MultiSelectStatusListener<User> multiSelectStatusListener, BaseRecyclerViewAdapterPreferences prefs) {
         super(null, users, multiSelectStatusListener, prefs);
         userTypes = Arrays.asList(context.getResources().getStringArray(R.array.user_types_array));
         userTypeValues = Arrays.asList(context.getResources().getStringArray(R.array.user_types_values_array));

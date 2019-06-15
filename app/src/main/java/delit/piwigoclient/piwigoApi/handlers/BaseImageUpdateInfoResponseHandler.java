@@ -91,8 +91,8 @@ public abstract class BaseImageUpdateInfoResponseHandler<T extends ResourceItem>
         this.filename = filename;
     }
 
-    public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse {
-        public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, ResourceItem piwigoResource, boolean isCached) {
+    public static class PiwigoUpdateResourceInfoResponse<T extends ResourceItem> extends PiwigoResponseBufferingHandler.PiwigoResourceItemResponse<T> {
+        public PiwigoUpdateResourceInfoResponse(long messageId, String piwigoMethod, T piwigoResource, boolean isCached) {
             super(messageId, piwigoMethod, piwigoResource, isCached);
         }
     }

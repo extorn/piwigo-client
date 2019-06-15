@@ -4,12 +4,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.appcompat.app.AppCompatActivity;
-import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -40,7 +41,7 @@ public abstract class MyActivity extends AppCompatActivity {
     protected SharedPreferences prefs;
 
     private HashMap<Long, Integer> trackedActionIntentsMap = new HashMap<>(3);
-    private UIHelper uiHelper;
+    private ActivityUIHelper uiHelper;
     private LicenceCheckingHelper licencingHelper;
 //    private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -190,7 +191,7 @@ public abstract class MyActivity extends AppCompatActivity {
         }
     }
 
-    public UIHelper getUiHelper() {
+    public ActivityUIHelper getUiHelper() {
         return uiHelper;
     }
 

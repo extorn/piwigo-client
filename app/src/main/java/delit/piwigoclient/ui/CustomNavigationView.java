@@ -55,7 +55,7 @@ import delit.piwigoclient.util.ProjectUtils;
 public class CustomNavigationView extends NavigationView implements NavigationView.OnNavigationItemSelectedListener {
 
     private SharedPreferences prefs;
-    private UIHelper uiHelper;
+    private ViewGroupUIHelper<CustomNavigationView> uiHelper;
     private ViewGroup headerView;
     private boolean refreshSessionInProgress;
 
@@ -408,11 +408,11 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         setMenuVisibilityToMatchSessionState(lockApp);
     }
 
-    private static class ConfigureNetworkAccessQuestionResult extends UIHelper.QuestionResultAdapter<CustomNavigationView> {
+    private static class ConfigureNetworkAccessQuestionResult extends UIHelper.QuestionResultAdapter<ViewGroupUIHelper<CustomNavigationView>> {
 
         private final boolean networkAccessDesired;
 
-        public ConfigureNetworkAccessQuestionResult(UIHelper uiHelper, boolean networkAccessDesired) {
+        public ConfigureNetworkAccessQuestionResult(ViewGroupUIHelper<CustomNavigationView> uiHelper, boolean networkAccessDesired) {
             super(uiHelper);
             this.networkAccessDesired = networkAccessDesired;
         }

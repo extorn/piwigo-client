@@ -2,7 +2,6 @@ package delit.piwigoclient.ui.album.view;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Parcelable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -17,7 +16,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.model.piwigo.Identifiable;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.ui.common.SquareLinearLayout;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
@@ -25,7 +24,7 @@ import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 import static android.view.View.GONE;
 import static delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences.SCALING_QUALITY_VLOW;
 
-public abstract class AlbumItemViewHolder<S extends Identifiable & Parcelable> extends CustomViewHolder<AlbumItemRecyclerViewAdapterPreferences, GalleryItem> implements PicassoLoader.PictureItemImageLoaderListener {
+public abstract class AlbumItemViewHolder<S extends GalleryItem, Q extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter, P extends AlbumItemViewHolder<S, Q, P, M>, M extends ResourceContainer<? extends S, GalleryItem>> extends CustomViewHolder<AlbumItemRecyclerViewAdapterPreferences, GalleryItem> implements PicassoLoader.PictureItemImageLoaderListener {
     protected final int viewType;
     public AppCompatImageView mImageView;
     public TextView mNameView;
@@ -33,17 +32,17 @@ public abstract class AlbumItemViewHolder<S extends Identifiable & Parcelable> e
     public ImageView mRecentlyAlteredMarkerView;
     protected SquareLinearLayout mImageContainer;
     protected ResizingPicassoLoader imageLoader;
-    protected AlbumItemRecyclerViewAdapter<S> parentAdapter;
+    protected AlbumItemRecyclerViewAdapter<S, Q, P, M> parentAdapter;
     protected View mItemContainer;
 
-    public AlbumItemViewHolder(View view, AlbumItemRecyclerViewAdapter<S> parentAdapter, int viewType) {
+    public AlbumItemViewHolder(View view, AlbumItemRecyclerViewAdapter<S, Q, P, M> parentAdapter, int viewType) {
         super(view);
         this.parentAdapter = parentAdapter;
         this.viewType = viewType;
 
     }
 
-    public AlbumItemRecyclerViewAdapter<S> getParentAdapter() {
+    public AlbumItemRecyclerViewAdapter<S, Q, P, M> getParentAdapter() {
         return parentAdapter;
     }
 

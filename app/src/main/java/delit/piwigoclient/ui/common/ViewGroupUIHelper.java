@@ -9,8 +9,8 @@ import android.view.ViewGroup;
  * Created by gareth on 17/10/17.
  */
 
-public class ViewGroupUIHelper extends UIHelper<ViewGroup> {
-    public ViewGroupUIHelper(ViewGroup parent, SharedPreferences prefs, Context context) {
+public class ViewGroupUIHelper<T extends ViewGroup> extends UIHelper<T> {
+    public ViewGroupUIHelper(T parent, SharedPreferences prefs, Context context) {
         super(parent, prefs, context);
     }
 

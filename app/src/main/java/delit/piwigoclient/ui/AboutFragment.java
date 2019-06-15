@@ -2,13 +2,14 @@ package delit.piwigoclient.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
 
@@ -20,7 +21,7 @@ import delit.piwigoclient.ui.common.list.PairedArrayAdapter;
  * Created by gareth on 07/06/17.
  */
 
-public class AboutFragment extends MyFragment {
+public class AboutFragment extends MyFragment<AboutFragment> {
     public static AboutFragment newInstance() {
         return new AboutFragment();
     }
@@ -61,7 +62,7 @@ public class AboutFragment extends MyFragment {
         }
 
         public ReleaseListAdapter(@NonNull Context context, int itemLayout, int dataResource) {
-            super(context, itemLayout, dataResource);
+            super(context, itemLayout, context.getResources().getStringArray(dataResource));
         }
 
         @Override

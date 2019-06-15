@@ -58,6 +58,7 @@ import delit.piwigoclient.piwigoApi.handlers.UserPermissionsRemovedResponseHandl
 import delit.piwigoclient.piwigoApi.handlers.UserUpdateInfoResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -80,7 +81,7 @@ import static android.view.View.VISIBLE;
  * Created by gareth on 21/06/17.
  */
 
-public class UserFragment extends MyFragment {
+public class UserFragment extends MyFragment<UserFragment> {
 
     private static final String CURRENT_GROUP_MEMBERSHIPS = "groupMemberships";
     private static final String CURRENT_DIRECT_ALBUM_PERMISSIONS = "currentDirectAlbumPermissions";
@@ -532,11 +533,11 @@ public class UserFragment extends MyFragment {
         }
     }
 
-    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<UserFragment> {
+    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UserFragment>> {
 
         private final User user;
 
-        public OnDeleteUserAction(UIHelper uiHelper, User user) {
+        public OnDeleteUserAction(FragmentUIHelper<UserFragment> uiHelper, User user) {
             super(uiHelper);
             this.user = user;
         }

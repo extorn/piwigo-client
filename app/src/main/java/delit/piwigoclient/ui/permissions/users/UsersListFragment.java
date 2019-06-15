@@ -35,6 +35,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.UserDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.UsersGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -52,7 +53,7 @@ import delit.piwigoclient.ui.model.PiwigoUsersModel;
  * Created by gareth on 26/05/17.
  */
 
-public class UsersListFragment extends MyFragment {
+public class UsersListFragment extends MyFragment<UsersListFragment> {
 
     private final ConcurrentHashMap<Long, User> deleteActionsPending = new ConcurrentHashMap<>();
     private FloatingActionButton retryActionButton;
@@ -257,11 +258,11 @@ public class UsersListFragment extends MyFragment {
         }
     }
 
-    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<UsersListFragment> {
+    private static class OnDeleteUserAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<UsersListFragment>> {
 
         private final User user;
 
-        public OnDeleteUserAction(UIHelper uiHelper, User user) {
+        public OnDeleteUserAction(FragmentUIHelper<UsersListFragment> uiHelper, User user) {
             super(uiHelper);
             this.user = user;
         }

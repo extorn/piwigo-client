@@ -1,9 +1,9 @@
 package delit.piwigoclient.ui.preferences;
 
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import delit.piwigoclient.R;
+import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 
 public class PreferencesFragment extends CommonPreferencesFragment {
@@ -29,10 +29,10 @@ public class PreferencesFragment extends CommonPreferencesFragment {
         }
 
         @Override
-        protected <T extends Fragment & PagerItemFragment> T createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
+        protected MyPreferenceFragment createNewItem(Class<MyPreferenceFragment> fragmentTypeNeeded, int position) {
             switch (position) {
                 case 4:
-                    return (T) new AutoUploadJobsPreferenceFragment(position);
+                    return new AutoUploadJobsPreferenceFragment(position);
                 default:
                     return super.createNewItem(fragmentTypeNeeded, position);
             }

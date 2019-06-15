@@ -57,6 +57,7 @@ import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
@@ -76,7 +77,7 @@ import static android.view.View.VISIBLE;
 /**
  * A fragment representing a list of Items.
  */
-public class ViewFavoritesFragment extends MyFragment {
+public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
 
     private static final String STATE_FAVORITES_ACTIVE_LOAD_THREADS = "activeLoadingThreads";
     private static final String STATE_FAVORITES_LOADS_TO_RETRY = "retryLoadList";
@@ -557,11 +558,11 @@ public class ViewFavoritesFragment extends MyFragment {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteFavoritesForeverAction(getUiHelper(), selectedItemIds, selectedItems));
     }
 
-    private static class OnDeleteFavoritesAction extends UIHelper.QuestionResultAdapter<ViewFavoritesFragment> {
+    private static class OnDeleteFavoritesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewFavoritesFragment>> {
         private HashSet<Long> selectedItemIds;
         private HashSet<ResourceItem> selectedItems;
 
-        public OnDeleteFavoritesAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
+        public OnDeleteFavoritesAction(FragmentUIHelper<ViewFavoritesFragment> uiHelper, HashSet<Long> selectedItemIds, HashSet<ResourceItem> selectedItems) {
             super(uiHelper);
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
@@ -849,7 +850,7 @@ public class ViewFavoritesFragment extends MyFragment {
         }
     }
 
-    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter {
+    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter {
 
         @Override
         public void onMultiSelectStatusChanged(BaseRecyclerViewAdapter adapter, boolean multiSelectEnabled) {

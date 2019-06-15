@@ -90,6 +90,7 @@ import delit.piwigoclient.piwigoApi.handlers.UsernamesGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.PicassoFactory;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -123,7 +124,7 @@ import static android.view.View.VISIBLE;
 /**
  * A fragment representing a list of Items.
  */
-public abstract class AbstractViewAlbumFragment extends MyFragment {
+public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewAlbumFragment> {
 
     private static final String ARG_ALBUM = "album";
     private static final String STATE_EDITING_ITEM_DETAILS = "editingItemDetails";
@@ -939,9 +940,9 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         galleryPrivacyStatusField.setOnCheckedChangeListener(privacyStatusFieldListener);
     }
 
-    private static void deleteResourcesFromServerForever(UIHelper uiHelper, final HashSet<Long> selectedItemIds, final HashSet<? extends ResourceItem> selectedItems) {
+    private static void deleteResourcesFromServerForever(UIHelper uiHelper, final HashSet<Long> selectedItemIds, final HashSet<ResourceItem> selectedItems) {
         String msg = uiHelper.getContext().getString(R.string.alert_confirm_really_delete_items_from_server);
-        uiHelper.showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new DeleteResourceForeverAction(uiHelper, selectedItemIds, selectedItems));
+        uiHelper.showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new DeleteResourceForeverAction<ResourceItem>(uiHelper, selectedItemIds, selectedItems));
     }
 
     private void loadAlbumPermissionsIfNeeded() {
@@ -1473,17 +1474,16 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class AlbumNoLongerExistsAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
-        public AlbumNoLongerExistsAction(UIHelper uiHelper) {
+    private static class AlbumNoLongerExistsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        public AlbumNoLongerExistsAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
             super(uiHelper);
         }
 
         @Override
         public void onDismiss(AlertDialog dialog) {
             super.onDismiss(dialog);
-            AbstractViewAlbumFragment fragment = getUiHelper().getParent();
             //TODO getFragmentManager means this fragment needs to be serialised!
-            fragment.getFragmentManager().popBackStack();
+            getUiHelper().getParent().getFragmentManager().popBackStack();
         }
     }
     private void onAdminListOfAlbumsLoaded(AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse response) {
@@ -1610,8 +1610,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
 
     }
 
-    private static class BasketAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
-        public BasketAction(UIHelper uiHelper) {
+    private static class BasketAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        public BasketAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
             super(uiHelper);
         }
 
@@ -1814,11 +1814,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class DeleteSharedResourcesAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
+    private static class DeleteSharedResourcesAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
 
         private HashSet<ResourceItem> sharedResources;
 
-        public DeleteSharedResourcesAction(UIHelper uiHelper, HashSet<ResourceItem> sharedResources) {
+        public DeleteSharedResourcesAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, HashSet<ResourceItem> sharedResources) {
             super(uiHelper);
             this.sharedResources = sharedResources;
         }
@@ -1846,12 +1846,12 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class DeleteResourceForeverAction extends UIHelper.QuestionResultAdapter {
+    private static class DeleteResourceForeverAction<T extends ResourceItem> extends UIHelper.QuestionResultAdapter {
 
         private HashSet<Long> selectedItemIds;
-        private HashSet<? extends ResourceItem> selectedItems;
+        private HashSet<T> selectedItems;
 
-        public DeleteResourceForeverAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
+        public DeleteResourceForeverAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<T> selectedItems) {
             super(uiHelper);
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
@@ -1860,16 +1860,16 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         @Override
         public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
             if (Boolean.TRUE == positiveAnswer) {
-                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler(selectedItemIds, selectedItems));
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resources, new ImageDeleteResponseHandler<T>(selectedItemIds, selectedItems));
             }
         }
     }
 
-    private static class AddAccessToAlbumAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
+    private static class AddAccessToAlbumAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
         private HashSet<Long> newlyAddedGroups;
         private HashSet<Long> newlyAddedUsers;
 
-        public AddAccessToAlbumAction(UIHelper uiHelper, HashSet<Long> newlyAddedGroups, HashSet<Long> newlyAddedUsers) {
+        public AddAccessToAlbumAction(FragmentUIHelper uiHelper, HashSet<Long> newlyAddedGroups, HashSet<Long> newlyAddedUsers) {
             super(uiHelper);
             this.newlyAddedGroups = newlyAddedGroups;
             this.newlyAddedUsers = newlyAddedUsers;
@@ -1887,11 +1887,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class AddingChildPermissionsAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
+    private static class AddingChildPermissionsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
         private HashSet<Long> newlyAddedGroups;
         private HashSet<Long> newlyAddedUsers;
 
-        public AddingChildPermissionsAction(UIHelper uiHelper, HashSet<Long> newlyAddedGroups, HashSet<Long> newlyAddedUsers) {
+        public AddingChildPermissionsAction(FragmentUIHelper uiHelper, HashSet<Long> newlyAddedGroups, HashSet<Long> newlyAddedUsers) {
             super(uiHelper);
             this.newlyAddedGroups = newlyAddedGroups;
             this.newlyAddedUsers = newlyAddedUsers;
@@ -2003,11 +2003,11 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class RemoveAccessToAlbumAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
+    private static class RemoveAccessToAlbumAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
         private HashSet<Long> newlyRemovedGroups;
         private HashSet<Long> newlyRemovedUsers;
 
-        public RemoveAccessToAlbumAction(UIHelper uiHelper, HashSet<Long> newlyRemovedGroups, HashSet<Long> newlyRemovedUsers) {
+        public RemoveAccessToAlbumAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, HashSet<Long> newlyRemovedGroups, HashSet<Long> newlyRemovedUsers) {
             super(uiHelper);
             this.newlyRemovedGroups = newlyRemovedGroups;
             this.newlyRemovedUsers = newlyRemovedUsers;
@@ -2082,10 +2082,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), R.string.button_no, R.string.button_yes, new BadHttpProtocolAction(getUiHelper(), connectionPreferences));
     }
 
-    private static class BadHttpProtocolAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
+    private static class BadHttpProtocolAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
         private final ConnectionPreferences.ProfilePreferences connectionPreferences;
 
-        public BadHttpProtocolAction(UIHelper uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
+        public BadHttpProtocolAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
             super(uiHelper);
             this.connectionPreferences = connectionPreferences;
         }
@@ -2100,10 +2100,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private static class BadRequestRedirectionAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
+    private static class BadRequestRedirectionAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
         private final ConnectionPreferences.ProfilePreferences connectionPreferences;
 
-        public BadRequestRedirectionAction(UIHelper uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
+        public BadRequestRedirectionAction(FragmentUIHelper uiHelper, ConnectionPreferences.ProfilePreferences connectionPreferences) {
             super(uiHelper);
             this.connectionPreferences = connectionPreferences;
         }
@@ -2390,7 +2390,25 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
         }
     }
 
-    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter {
+    private static class AddingAlbumPermissionsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
+        public AddingAlbumPermissionsAction(FragmentUIHelper<AbstractViewAlbumFragment> uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
+                fragment.addingAlbumPermissions();
+            }
+        }
+    }
+
+    protected PiwigoAlbum getGalleryModel() {
+        return galleryModel;
+    }
+
+    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter {
 
         private Map<Long, CategoryItem> albumThumbnailLoadActions = new HashMap<>();
 
@@ -2443,24 +2461,6 @@ public abstract class AbstractViewAlbumFragment extends MyFragment {
             }
 
             return true;
-        }
-    }
-
-    protected PiwigoAlbum getGalleryModel() {
-        return galleryModel;
-    }
-
-    private static class AddingAlbumPermissionsAction extends UIHelper.QuestionResultAdapter<AbstractViewAlbumFragment> {
-        public AddingAlbumPermissionsAction(UIHelper uiHelper) {
-            super(uiHelper);
-        }
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-                AbstractViewAlbumFragment fragment = getUiHelper().getParent();
-                fragment.addingAlbumPermissions();
-            }
         }
     }
 }

@@ -4,13 +4,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
 
@@ -28,7 +29,7 @@ import delit.piwigoclient.util.ProjectUtils;
  * Created by gareth on 07/06/17.
  */
 
-public class EulaFragment extends MyFragment {
+public class EulaFragment extends MyFragment<EulaFragment> {
     public static EulaFragment newInstance() {
         return new EulaFragment();
     }

@@ -30,7 +30,7 @@ import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
 import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
 import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 
-public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemRecyclerViewAdapter.CategoryItemViewHolder> {
+public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemRecyclerViewAdapter.CategoryItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<CategoryItem>> {
 
     public final static int VIEW_TYPE_FOLDER = 0;
     public final static int VIEW_TYPE_FILE = 1;
@@ -39,7 +39,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
     private CategoryItem activeItem;
     private NavigationListener navigationListener;
 
-    public CategoryItemRecyclerViewAdapter(CategoryItem root, NavigationListener navigationListener, MultiSelectStatusListener multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
+    public CategoryItemRecyclerViewAdapter(CategoryItem root, NavigationListener navigationListener, MultiSelectStatusListener<CategoryItem> multiSelectStatusListener, CategoryItemViewAdapterPreferences viewPrefs) {
         super(multiSelectStatusListener, viewPrefs);
         this.navigationListener = navigationListener;
         overallRoot = root;
@@ -80,7 +80,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
         activeItem = newDisplayRoot;
 //        getSelectedItemIds().clear();
         List<CategoryItem> folderContent = activeItem.getChildAlbums();
-        currentDisplayContent = folderContent != null ? new ArrayList<>(folderContent) : new ArrayList(0);
+        currentDisplayContent = folderContent != null ? new ArrayList<>(folderContent) : new ArrayList<CategoryItem>(0);
         notifyDataSetChanged();
     }
 
@@ -203,7 +203,7 @@ public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Cat
     }
 
     class CategoryItemCustomClickListener extends CustomClickListener<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder> {
-        public <Q extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder>> CategoryItemCustomClickListener(CategoryItemViewHolder viewHolder, Q parentAdapter) {
+        public <Q extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemViewHolder, MultiSelectStatusListener<CategoryItem>>> CategoryItemCustomClickListener(CategoryItemViewHolder viewHolder, Q parentAdapter) {
             super(viewHolder, parentAdapter);
         }
 

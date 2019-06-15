@@ -71,7 +71,7 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat impl
     public void onCreate(Bundle paramBundle) {
         super.onCreate(paramBundle);
         if (uiHelper == null) {
-            uiHelper = new FragmentUIHelper(this, getPrefs(), c);
+            uiHelper = new FragmentUIHelper<>(this, getPrefs(), c);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener(c);
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);

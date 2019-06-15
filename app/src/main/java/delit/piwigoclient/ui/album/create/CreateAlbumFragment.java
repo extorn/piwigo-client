@@ -9,6 +9,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SwitchCompat;
+
 import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -22,9 +26,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -54,7 +55,7 @@ import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 /**
  * Created by gareth on 23/05/17.
  */
-public class CreateAlbumFragment extends MyFragment {
+public class CreateAlbumFragment extends MyFragment<CreateAlbumFragment> {
 
     private static final String STATE_UPLOAD_TO_GALLERY = "uploadToGallery";
     private static final String STATE_NEW_GALLERY = "newAlbum";

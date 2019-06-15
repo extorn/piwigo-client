@@ -8,20 +8,21 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
-import delit.piwigoclient.ui.common.fragment.ListViewLongSetSelectFragment;
+import delit.piwigoclient.ui.common.fragment.ListViewLongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteEvent;
@@ -30,7 +31,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionCompleteE
  * Created by gareth on 26/05/17.
  */
 
-public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AlbumSelectionListAdapter, BaseRecyclerViewAdapterPreferences> {
+public class AlbumSelectFragment extends ListViewLongSelectableSetSelectFragment<AlbumSelectionListAdapter, BaseRecyclerViewAdapterPreferences> {
 
     private static final String STATE_INDIRECT_SELECTION = "indirectSelection";
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";

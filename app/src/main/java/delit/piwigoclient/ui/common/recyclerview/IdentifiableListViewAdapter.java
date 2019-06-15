@@ -14,13 +14,13 @@ import delit.piwigoclient.ui.model.ViewModelContainer;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link T}
  */
-public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdapterPreferences, T extends Identifiable, V extends IdentifiableItemStore<T>, S extends CustomViewHolder<P, T>> extends BaseRecyclerViewAdapter<P, T, S> {
+public abstract class IdentifiableListViewAdapter<P extends BaseRecyclerViewAdapterPreferences, T extends Identifiable, V extends IdentifiableItemStore<T>, S extends CustomViewHolder<P, T>, R extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends BaseRecyclerViewAdapter<P, T, S, R> {
 
     private final V itemStore;
     private final Class<? extends ViewModelContainer> modelType;
 
 
-    public IdentifiableListViewAdapter(final Class<? extends ViewModelContainer> modelType, final V itemStore, MultiSelectStatusListener multiSelectStatusListener, P prefs) {
+    public IdentifiableListViewAdapter(final Class<? extends ViewModelContainer> modelType, final V itemStore, R multiSelectStatusListener, P prefs) {
         super(multiSelectStatusListener, prefs);
         this.itemStore = itemStore;
         this.modelType = modelType;

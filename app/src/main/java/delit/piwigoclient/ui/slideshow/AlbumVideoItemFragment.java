@@ -53,6 +53,7 @@ import delit.piwigoclient.business.video.RemoteFileCachingDataSourceFactory;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.ui.common.CustomClickTouchListener;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
@@ -564,9 +565,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         }
     }
 
-    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter<AlbumVideoItemFragment> {
+    private static class ClearCachedContentAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AlbumVideoItemFragment>> {
 
-        public ClearCachedContentAction(UIHelper uiHelper) {
+        public ClearCachedContentAction(FragmentUIHelper<AlbumVideoItemFragment> uiHelper) {
             super(uiHelper);
         }
 

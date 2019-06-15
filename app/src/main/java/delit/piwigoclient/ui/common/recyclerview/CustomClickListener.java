@@ -8,9 +8,9 @@ import com.crashlytics.android.Crashlytics;
 public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T, S extends CustomViewHolder<V, T>> implements View.OnClickListener, View.OnLongClickListener {
 
     private final S viewHolder;
-    private final BaseRecyclerViewAdapter<V, T, S> parentAdapter;
+    private final BaseRecyclerViewAdapter<V, T, S, ?> parentAdapter;
 
-    public <Q extends BaseRecyclerViewAdapter<V, T, S>> CustomClickListener(S viewHolder, Q parentAdapter) {
+    public <Q extends BaseRecyclerViewAdapter<V, T, S, ?>> CustomClickListener(S viewHolder, Q parentAdapter) {
         this.viewHolder = viewHolder;
         this.parentAdapter = parentAdapter;
     }
@@ -54,7 +54,7 @@ public class CustomClickListener<V extends BaseRecyclerViewAdapterPreferences, T
         return true;
     }
 
-    public <Q extends BaseRecyclerViewAdapter<V, T, S>> Q getParentAdapter() {
+    public <Q extends BaseRecyclerViewAdapter<V, T, S, ?>> Q getParentAdapter() {
         return (Q) parentAdapter;
     }
 

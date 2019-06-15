@@ -71,10 +71,10 @@ public class LicenceCheckingHelper {
         });
     }
 
-    private static class LicenceCheckAction extends UIHelper.QuestionResultAdapter<MyActivity> {
+    private static class LicenceCheckAction extends UIHelper.QuestionResultAdapter<ActivityUIHelper> {
         private final boolean allowRetry;
 
-        public LicenceCheckAction(UIHelper<MyActivity> uiHelper, boolean allowRetry) {
+        public LicenceCheckAction(ActivityUIHelper uiHelper, boolean allowRetry) {
             super(uiHelper);
             this.allowRetry = allowRetry;
         }

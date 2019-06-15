@@ -1,13 +1,14 @@
 package delit.piwigoclient.ui.common.recyclerview;
 
 import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -26,16 +27,16 @@ import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
  * @param <T> Item
  * @param <S> ViewHolder for each Item
  */
-public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterPreferences, T, S extends CustomViewHolder<V, T>> extends RecyclerView.Adapter<S> implements Enableable, SelectableItemsAdapter<T> {
+public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterPreferences, T, S extends CustomViewHolder<V, T>, P extends BaseRecyclerViewAdapter.MultiSelectStatusListener<T>> extends RecyclerView.Adapter<S> implements Enableable, SelectableItemsAdapter<T> {
 
     private static final String TAG = "BaseRecyclerViewAdapter";
-    private final MultiSelectStatusListener<T> multiSelectStatusListener;
+    private final P multiSelectStatusListener;
     private Context context;
     private V prefs;
     private HashSet<Long> selectedResourceIds = new HashSet<>(0);
     private HashSet<Long> initialSelectedResourceIds = new HashSet<>(0);
 
-    public <P extends MultiSelectStatusListener<T>> BaseRecyclerViewAdapter(P multiSelectStatusListener, V prefs) {
+    public BaseRecyclerViewAdapter(P multiSelectStatusListener, V prefs) {
         this.setHasStableIds(true);
         this.multiSelectStatusListener = multiSelectStatusListener;
         this.prefs = prefs;
@@ -260,7 +261,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
-    public ItemSelectionListener<? extends BaseRecyclerViewAdapter<V, T, S>> buildItemSelectionListener(S viewHolder) {
+    public ItemSelectionListener<? extends BaseRecyclerViewAdapter<V, T, S, P>> buildItemSelectionListener(S viewHolder) {
         return new ItemSelectionListener<>(this, viewHolder);
     }
 
@@ -277,8 +278,8 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         multiSelectStatusListener.onItemDeleteRequested(this, viewHolder.getItem());
     }
 
-    public <P extends MultiSelectStatusListener<T>> P getMultiSelectStatusListener() {
-        return (P) multiSelectStatusListener;
+    public P getMultiSelectStatusListener() {
+        return multiSelectStatusListener;
     }
 
     public interface MultiSelectStatusListener<T> {
@@ -328,7 +329,7 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         }
     }
 
-    protected class ItemSelectionListener<X extends BaseRecyclerViewAdapter<V, T, S>> implements CompoundButton.OnCheckedChangeListener {
+    protected class ItemSelectionListener<X extends BaseRecyclerViewAdapter<V, T, S, P>> implements CompoundButton.OnCheckedChangeListener {
 
         private final S holder;
         private X adapter;

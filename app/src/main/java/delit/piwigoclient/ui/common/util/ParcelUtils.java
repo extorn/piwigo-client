@@ -31,7 +31,7 @@ public class ParcelUtils {
     public static <T extends Parcelable> HashSet<T> readHashSet(@NonNull Parcel in, ClassLoader loader) {
         ArrayList<T> store = readValue(in, loader, ArrayList.class);
         if(store != null) {
-            HashSet retVal = new HashSet<T>(store);
+            HashSet<T> retVal = new HashSet<>(store);
             retVal.addAll(store);
             return retVal;
         }

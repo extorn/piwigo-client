@@ -12,6 +12,10 @@ import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -23,9 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -45,7 +46,7 @@ import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEve
  * UNUSED - Use this once it works!
  * Created by gareth on 26/05/17.
  */
-public class AlbumSelectExpandableFragment extends MyFragment {
+public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpandableFragment> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";
     private static final String STATE_ACTION_ID = "actionId";

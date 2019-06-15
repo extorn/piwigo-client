@@ -61,6 +61,7 @@ import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.MainActivity;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapter;
 import delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.recycler.EndlessRecyclerViewScrollListener;
@@ -81,7 +82,7 @@ import static android.view.View.VISIBLE;
 /**
  * A fragment representing a list of Items.
  */
-public class ViewTagFragment extends MyFragment {
+public class ViewTagFragment extends MyFragment<ViewTagFragment> {
 
     private static final String ARG_TAG = "tag";
     private static final String STATE_TAG_DIRTY = "isTagDirty";
@@ -596,8 +597,8 @@ public class ViewTagFragment extends MyFragment {
         getUiHelper().showOrQueueDialogQuestion(R.string.alert_confirm_title, msg, R.string.button_cancel, R.string.button_ok, new OnDeleteTagsForeverAction(getUiHelper(), selectedItemIds, selectedItems));
     }
 
-    private static class OnDeleteTagsAction extends UIHelper.QuestionResultAdapter<ViewTagFragment> {
-        public OnDeleteTagsAction(UIHelper uiHelper) {
+    private static class OnDeleteTagsAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewTagFragment>> {
+        public OnDeleteTagsAction(FragmentUIHelper<ViewTagFragment> uiHelper) {
             super(uiHelper);
         }
 
@@ -657,12 +658,12 @@ public class ViewTagFragment extends MyFragment {
         }
     }
 
-    private static class OnDeleteTagsForeverAction extends UIHelper.QuestionResultAdapter {
+    private static class OnDeleteTagsForeverAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<ViewTagFragment>> {
 
         private HashSet<Long> selectedItemIds;
         private HashSet<? extends ResourceItem> selectedItems;
 
-        public OnDeleteTagsForeverAction(UIHelper uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
+        public OnDeleteTagsForeverAction(FragmentUIHelper<ViewTagFragment> uiHelper, HashSet<Long> selectedItemIds, HashSet<? extends ResourceItem> selectedItems) {
             super(uiHelper);
             this.selectedItemIds = selectedItemIds;
             this.selectedItems = selectedItems;
@@ -917,7 +918,7 @@ public class ViewTagFragment extends MyFragment {
         }
     }
 
-    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.MultiSelectStatusAdapter {
+    private class AlbumViewAdapterListener extends AlbumItemRecyclerViewAdapter.AlbumItemMultiSelectStatusAdapter {
 
         @Override
         public void onMultiSelectStatusChanged(BaseRecyclerViewAdapter adapter, boolean multiSelectEnabled) {

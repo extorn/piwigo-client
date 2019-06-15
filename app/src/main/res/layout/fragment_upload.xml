@@ -11,14 +11,14 @@
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
         app:viewPager="@+id/sliding_views_tab_content"
-        tools:initialTabIdx="0" />
+        tools:initialTabIdx="1" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/sliding_views_tab_content"
         android:layout_height="match_parent"
+        android:layout_width="match_parent"
         android:layout_alignWithParentIfMissing="true"
         android:layout_above="@+id/upload_files_controls"
-        android:layout_width="match_parent"
         android:layout_below="@id/sliding_views_tab_headings"
         android:paddingStart="5dp"
         android:paddingEnd="5dp"
@@ -216,7 +216,7 @@
                         android:text="@string/preference_data_upload_compress_images_quality_title"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                    <Spinner
+                    <NumberPicker
                         android:id="@+id/compress_images_quality"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -287,6 +287,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/delete_upload_job_button"
             android:text="@string/upload_job_status_button"/>

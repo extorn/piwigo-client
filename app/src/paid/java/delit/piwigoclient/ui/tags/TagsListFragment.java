@@ -40,6 +40,7 @@ import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -57,7 +58,7 @@ import delit.piwigoclient.ui.model.PiwigoTagModel;
 /**
  * Created by gareth on 26/05/17.
  */
-public class TagsListFragment extends MyFragment {
+public class TagsListFragment extends MyFragment<TagsListFragment> {
 
     private static final String TAGS_MODEL = "tagsModel";
     private ConcurrentHashMap<Long, Tag> deleteActionsPending = new ConcurrentHashMap<>();
@@ -307,10 +308,10 @@ public class TagsListFragment extends MyFragment {
         });
     }
 
-    private static class OnDeleteTagAction extends UIHelper.QuestionResultAdapter<TagsListFragment> {
+    private static class OnDeleteTagAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<TagsListFragment>> {
         private final Tag tag;
 
-        public OnDeleteTagAction(UIHelper uiHelper, Tag tag) {
+        public OnDeleteTagAction(FragmentUIHelper<TagsListFragment> uiHelper, Tag tag) {
             super(uiHelper);
             this.tag = tag;
         }

@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
@@ -67,6 +68,7 @@ import delit.piwigoclient.piwigoApi.upload.ForegroundPiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
+import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
@@ -131,7 +133,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private LinearLayout compressImagesSettings;
     private LinearLayout compressVideosSettings;
     private Spinner compressVideosQualitySpinner;
-    private Spinner compressImagesQualitySpinner;
+    private NumberPicker compressImagesNumberPicker;
     private Spinner compressImagesOutputFormatSpinner;
 
 
@@ -305,8 +307,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         compressVideosSettings = view.findViewById(R.id.video_compression_options);
         compressVideosQualitySpinner = compressVideosSettings.findViewById(R.id.compress_videos_quality);
-        compressVideosQualitySpinner.setAdapter(new BiArrayAdapter<>(getContext(), getResources().getStringArray(R.array.preference_data_upload_compress_videos_quality_items),
-                ArrayUtils.getLongArray(getResources().getIntArray(R.array.preference_data_upload_compress_videos_quality_values))));
+        BiArrayAdapter<String> videoQualityAdapter = new BiArrayAdapter<>(getContext(), getResources().getStringArray(R.array.preference_data_upload_compress_videos_quality_items),
+                ArrayUtils.getLongArray(getResources().getIntArray(R.array.preference_data_upload_compress_videos_quality_values)));
+        videoQualityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        compressVideosQualitySpinner.setAdapter(videoQualityAdapter);
         setSpinnerSelectedItem(compressVideosQualitySpinner, UploadPreferences.getVideoCompressionQuality(getContext(), getPrefs()));
 
 
@@ -332,8 +336,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         compressImagesOutputFormatSpinner = compressImagesSettings.findViewById(R.id.compress_images_output_format);
         setSpinnerSelectedItem(compressImagesOutputFormatSpinner, UploadPreferences.getImageCompressionOutputFormat(getContext(), getPrefs()));
 
-        compressImagesQualitySpinner = compressImagesSettings.findViewById(R.id.compress_images_quality);
-        setSpinnerSelectedItem(compressImagesQualitySpinner, UploadPreferences.getImageCompressionQuality(getContext(), getPrefs()));
+        compressImagesNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_quality);
+        compressImagesNumberPicker.setMinValue(10);
+        compressImagesNumberPicker.setMaxValue(100);
+        compressImagesNumberPicker.setValue(UploadPreferences.getImageCompressionQuality(getContext(), getPrefs()));
 
         compressImagesCheckbox = view.findViewById(R.id.compress_images_button);
         boolean compressPics = UploadPreferences.isCompressImagesByDefault(getContext(), getPrefs());
@@ -717,7 +723,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     UploadJob.ImageCompressionParams imageCompParams = new UploadJob.ImageCompressionParams();
                     imageCompParams.setOutputFormat(compressImagesOutputFormatSpinner.getSelectedItem().toString());
                     imageCompParams.setQuality(UploadPreferences.getImageCompressionQuality(getContext(), getPrefs())); //TODO use the user value instead!!!!
-                    //imageCompParams.setQuality((int) compressImagesQualitySpinner.getSelectedItemId());
+                    imageCompParams.setQuality(compressImagesNumberPicker.getValue());
                     activeJob.setImageCompressionParams(UploadPreferences.getImageCompressionParams(getContext(), getPrefs()));
                 }
             }
@@ -961,8 +967,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class DeleteAllFilesSelectedAction extends UIHelper.QuestionResultAdapter<AbstractUploadFragment> {
-        public DeleteAllFilesSelectedAction(UIHelper uiHelper) {
+    private static class DeleteAllFilesSelectedAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
+        public DeleteAllFilesSelectedAction(FragmentUIHelper<AbstractUploadFragment> uiHelper) {
             super(uiHelper);
         }
 
@@ -977,11 +983,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter<AbstractUploadFragment> {
+    private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
 
         private final File itemToRemove;
 
-        public PartialUploadFileAction(UIHelper uiHelper, File itemToRemove) {
+        public PartialUploadFileAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, File itemToRemove) {
             super(uiHelper);
             this.itemToRemove = itemToRemove;
         }
@@ -1052,10 +1058,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class FileSizeExceededAction extends UIHelper.QuestionResultAdapter<AbstractUploadFragment> {
+    private static class FileSizeExceededAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
         private Set<File> filesToDelete;
 
-        public FileSizeExceededAction(UIHelper uiHelper, Set<File> filesForReview) {
+        public FileSizeExceededAction(FragmentUIHelper<AbstractUploadFragment> uiHelper, Set<File> filesForReview) {
             super(uiHelper);
             this.filesToDelete = filesForReview;
         }
@@ -1075,8 +1081,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private static class OnDeleteJobQuestionAction extends UIHelper.QuestionResultAdapter<AbstractUploadFragment> {
-        public OnDeleteJobQuestionAction(UIHelper uiHelper) {
+    private static class OnDeleteJobQuestionAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
+        public OnDeleteJobQuestionAction(FragmentUIHelper<AbstractUploadFragment> uiHelper) {
             super(uiHelper);
         }
 

@@ -118,7 +118,8 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
         throw new IllegalArgumentException("Unsupported slideshow item type at position " + position);
     }
 
-    protected <T extends Fragment & PagerItemFragment> T createNewItem(Class<? extends Fragment> fragmentTypeNeeded, int position) {
+    @Override
+    protected Fragment createNewItem(Class fragmentTypeNeeded, int position) {
 
         GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
         SlideshowItemFragment fragment = null;
@@ -137,7 +138,7 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
             fragment.setArguments(args);
         }
         if (fragment != null) {
-            return (T) fragment;
+            return fragment;
         }
         //TODO handle this better.
         throw new RuntimeException("unsupported gallery item.");
