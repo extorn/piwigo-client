@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.JobIntentService;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.crashlytics.android.Crashlytics;
 import com.drew.imaging.ImageMetadataReader;
@@ -35,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -823,7 +825,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return outputVideo;
     }
 
-    private File compressImage(UploadJob uploadJob, File rawImage, File outputPhoto) {
+    private File compressImage(UploadJob uploadJob, File rawImage) {
+        File outputPhoto = uploadJob.getCompressedFile(getApplicationContext(), rawImage);
         try {
             String format = uploadJob.getImageCompressionParams().getOutputFormat();
             Bitmap.CompressFormat outputFormat = null;
@@ -836,12 +839,30 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
 
             outputPhoto = new Compressor(this)
-//                    .setMaxWidth(640)
-//                    .setMaxHeight(480)
                     .setQuality(uploadJob.getImageCompressionParams().getQuality())
                     .setCompressFormat(outputFormat)
                     .setDestinationDirectoryPath(outputPhoto.getParent())
                     .compressToFile(rawImage, outputPhoto.getName());
+            if (outputFormat == Bitmap.CompressFormat.JPEG) {
+                ExifInterface originalExifData = new ExifInterface(rawImage.getAbsolutePath());
+                ExifInterface newExifData = new ExifInterface(outputPhoto.getAbsolutePath());
+                Field[] fields = ExifInterface.class.getFields();
+                try {
+                    for (Field f : fields) {
+                        if (f.getName().startsWith("TAG_")) {
+                            String tagName = f.get(originalExifData).toString();
+                            String tagValue = originalExifData.getAttribute(tagName);
+                            if (tagValue != null) {
+                                newExifData.setAttribute(tagName, tagValue);
+                            }
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new IOException("Unable to migrate EXIF information");
+                }
+                newExifData.saveAttributes();
+            }
+
         } catch (IOException e) {
             if (outputPhoto.exists()) {
                 outputPhoto.delete();
@@ -894,7 +915,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                         compressedFile = getCompressedVersionOfFileToUpload(thisUploadJob, fileForUpload);
                         if (compressedFile == null || !compressedFile.exists()) {
                             // need to compress this file
-                            compressedFile = compressImage(thisUploadJob, fileForUpload, compressedFile);
+                            compressedFile = compressImage(thisUploadJob, fileForUpload);
                         }
                     }
                 }

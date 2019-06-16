@@ -123,14 +123,12 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
     // drawers, snackbars etc
     implementation 'com.google.android.material:material:1.0.0' //1.1.0-alpha01
-    // parse exif information
-    //implementation 'com.android.support:exifinterface:27.1.1'
     // parse and edit exif and IPTC etc information
     implementation 'com.drewnoakes:metadata-extractor:2.11.0'
     // custom tab support
     implementation 'androidx.browser:browser:1.0.0'
     //EXIF Support
-    //implementation "com.android.support:exifinterface:27.1.1"
+    implementation 'androidx.exifinterface:exifinterface:1.0.0'
     // Core libraries (v4)
     //implementation 'androidx.legacy:legacy-support-v4:1.0.0' // needed for v7 libs since 27.1.1
     //implementation 'com.android.support:support-core-ui:27.1.1'
