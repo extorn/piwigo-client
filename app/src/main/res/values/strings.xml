@@ -981,4 +981,5 @@ SOFTWARE.
     <string name="compress_images">Compress Images</string>
     <string name="upload_tab_title_settings">Settings</string>
     <string name="upload_tab_title_files">Files</string>
+    <string name="unable_to_handle_shared_uri_missing_content_description_information">Unable to handle shared File. Missing detailed information such as filename and exact file type. Please download the file to your device first.</string>
 </resources>

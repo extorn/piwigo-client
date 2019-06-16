@@ -597,5 +597,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="compress_images">Bilder komprimieren</string>
     <string name="upload_tab_title_settings">Einstellungen</string>
     <string name="upload_tab_title_files">Dateien</string>
+    <string name="unable_to_handle_shared_uri_missing_content_description_information">Die gemeinsame Datei kann nicht verarbeitet werden. Fehlende Detailinformationen wie Dateiname und genauer Dateityp. Bitte laden Sie die Datei zuerst auf Ihr Gerät herunter.</string>
 </resources>
 

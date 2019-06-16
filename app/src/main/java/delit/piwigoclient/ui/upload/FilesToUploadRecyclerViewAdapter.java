@@ -427,7 +427,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         @Override
         public boolean onPreDraw() {
             try {
-                if (!viewHolder.imageLoader.isImageLoaded() && !viewHolder.imageLoader.isImageLoading()) {
+                if (!viewHolder.imageLoader.isImageLoaded() && !viewHolder.imageLoader.isImageLoading() && !viewHolder.imageLoader.isImageUnavailable()) {
                     int imgSize = scalingQuality;
                     if (imgSize == Integer.MAX_VALUE) {
                         imgSize = viewHolder.fileForUploadImageView.getMeasuredWidth();

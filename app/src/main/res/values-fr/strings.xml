@@ -625,4 +625,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="compress_images">Compression d\'images</string>
     <string name="upload_tab_title_settings">Réglages</string>
     <string name="upload_tab_title_files">Fichiers</string>
+    <string name="unable_to_handle_shared_uri_missing_content_description_information">"Impossible de gérer les fichiers partagés. Informations détaillées manquantes telles que le nom du fichier et le type de fichier exact. Veuillez d'abord télécharger le fichier sur votre appareil."</string>
 </resources>

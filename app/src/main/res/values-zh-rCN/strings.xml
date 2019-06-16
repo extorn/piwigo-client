@@ -474,4 +474,5 @@
     <string name="compress_images">压缩图像</string>
     <string name="upload_tab_title_settings">设置</string>
     <string name="upload_tab_title_files">档</string>
+    <string name="unable_to_handle_shared_uri_missing_content_description_information">无法处理共享文件。 缺少文件名和确切文件类型等详细信息。 请先将文件下载到您的设备。</string>
 </resources>
