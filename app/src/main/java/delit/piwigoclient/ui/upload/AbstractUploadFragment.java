@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -73,7 +72,6 @@ import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.list.BiArrayAdapter;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.common.util.MediaScanner;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
@@ -99,32 +97,25 @@ import static android.view.View.VISIBLE;
  * create an instance of this fragment.
  */
 public abstract class AbstractUploadFragment extends MyFragment implements FilesToUploadRecyclerViewAdapter.RemoveListener {
-
     // the fragment initialization parameters
     private static final String TAG = "UploadFragment";
-    private static final String SAVED_STATE_CURRENT_GALLERY = "currentGallery";
-    private static final String SAVED_STATE_PRIVACY_LEVEL_WANTED = "privacyLevelWanted";
-    private static final String SAVED_STATE_FILES_BEING_UPLOADED = "filesBeingUploaded";
+    private static final String SAVED_STATE_UPLOAD_TO_ALBUM = "uploadToAlbum";
     private static final String SAVED_STATE_UPLOAD_JOB_ID = "uploadJobId";
     private static final String ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID = "externallyTriggeredSelectFilesActionId";
+
+    private Long uploadJobId;
+    private long externallyTriggeredSelectFilesActionId;
+    private CategoryItemStub uploadToAlbum;
 
     private RecyclerView filesForUploadView;
     private Button uploadFilesNowButton;
     private Button deleteUploadJobButton;
-    private TextView selectedGallerySpinner;
+    private TextView selectedGalleryTextView;
     private Spinner privacyLevelSpinner;
     private CustomImageButton fileSelectButton;
-    private byte privacyLevelWanted;
-    private CategoryItemStub uploadToAlbum;
-    private Long uploadJobId;
-    private long externallyTriggeredSelectFilesActionId;
-    private ArrayList<File> filesForUpload = new ArrayList<>();
     private FilesToUploadRecyclerViewAdapter filesToUploadAdapter;
     private Button uploadJobStatusButton;
     private TextView uploadableFilesView;
-    private boolean compressVideosBeforeUpload;
-    private boolean compressImagesBeforeUpload;
-    private MediaScanner mediaScanner;
     private CheckBox compressVideosCheckbox;
     private CheckBox compressImagesCheckbox;
     private static final int TAB_IDX_SETTINGS = 1;
@@ -139,7 +130,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
         Bundle args = new Bundle();
-        args.putParcelable(SAVED_STATE_CURRENT_GALLERY, uploadToAlbum);
+        args.putParcelable(SAVED_STATE_UPLOAD_TO_ALBUM, uploadToAlbum);
         args.putInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID, actionId);
         return args;
     }
@@ -147,9 +138,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(SAVED_STATE_CURRENT_GALLERY, uploadToAlbum);
-        outState.putByte(SAVED_STATE_PRIVACY_LEVEL_WANTED, privacyLevelWanted);
-        BundleUtils.putFileArrayList(outState, SAVED_STATE_FILES_BEING_UPLOADED, filesForUpload);
         if (uploadJobId != null) {
             outState.putLong(SAVED_STATE_UPLOAD_JOB_ID, uploadJobId);
         }
@@ -157,15 +145,22 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            uploadToAlbum = getArguments().getParcelable(SAVED_STATE_CURRENT_GALLERY);
+            uploadToAlbum = getArguments().getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
             if (uploadToAlbum == null) {
                 uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
             }
             externallyTriggeredSelectFilesActionId = getArguments().getInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID);
-            setArguments(null); // use the saved state from here.
+        }
+        if (savedInstanceState != null) { // override the upload to album value (used to set clickable text field)
+            uploadToAlbum = getArguments().getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
         }
     }
 
@@ -208,7 +203,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         super.onCreateView(inflater, container, savedInstanceState);
 
-        mediaScanner = MediaScanner.instance(container.getContext());
+        MediaScanner mediaScanner = MediaScanner.instance(container.getContext());
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
@@ -227,11 +222,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         viewPrefs.selectable(false, false);
         viewPrefs.withShowHierachy();
 
-        selectedGallerySpinner = view.findViewById(R.id.selected_gallery);
-        selectedGallerySpinner.setOnClickListener(new View.OnClickListener() {
+        selectedGalleryTextView = view.findViewById(R.id.selected_gallery);
+        selectedGalleryTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onSelectedGallerySpinnerClick();
+                onSelectedGalleryTextViewClick();
             }
         });
 
@@ -272,17 +267,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
 // Apply the filesToUploadAdapter to the spinner
         privacyLevelSpinner.setAdapter(privacyLevelOptionsAdapter);
-        privacyLevelSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                privacyLevelWanted = (byte) id;
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
         privacyLevelSpinner.setSelection(0);
 
         deleteUploadJobButton = view.findViewById(R.id.delete_upload_job_button);
@@ -324,7 +308,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             compressVideosCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    setCompressVideosBeforeUpload(isChecked);
                     compressVideosSettings.setVisibility(isChecked ? VISIBLE : GONE);
                     compressVideosSettings.setEnabled(buttonView.isEnabled());
                 }
@@ -347,7 +330,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         compressImagesCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setCompressImagesBeforeUpload(isChecked);
                 compressImagesSettings.setVisibility(isChecked ? VISIBLE : GONE);
                 compressImagesSettings.setEnabled(buttonView.isEnabled());
             }
@@ -363,35 +345,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         });
 
-//        if (BuildConfig.DEBUG) {
-//            Button compressVideosButton = new Button(getContext());
-//            compressVideosButton.setText("Compress");
-//            compressVideosButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    compressVideos();
-//                }
-//            });
-//            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-//            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
-//            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-//            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
-//        }
-
         if (savedInstanceState != null) {
             // update view with saved data
-            uploadToAlbum = savedInstanceState.getParcelable(SAVED_STATE_CURRENT_GALLERY);
-            privacyLevelWanted = savedInstanceState.getByte(SAVED_STATE_PRIVACY_LEVEL_WANTED);
             if (savedInstanceState.containsKey(SAVED_STATE_UPLOAD_JOB_ID)) {
                 uploadJobId = savedInstanceState.getLong(SAVED_STATE_UPLOAD_JOB_ID);
             }
-            filesForUpload = BundleUtils.getFileArrayList(savedInstanceState, SAVED_STATE_FILES_BEING_UPLOADED);
         }
 
-        selectedGallerySpinner.setText(uploadToAlbum.getName());
-        if (privacyLevelWanted >= 0) {
-            privacyLevelSpinner.setSelection(privacyLevelOptionsAdapter.getPosition(privacyLevelWanted));
-        }
+        selectedGalleryTextView.setText(uploadToAlbum.getName());
 
         int columnsToShow = UploadPreferences.getColumnsOfFilesListedForUpload(prefs, getActivity());
 
@@ -399,7 +360,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         filesForUploadView.setLayoutManager(gridLayoutMan);
 
         if (filesToUploadAdapter == null) {
-            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(filesForUpload, mediaScanner, getContext(), this);
+            filesToUploadAdapter = new FilesToUploadRecyclerViewAdapter(new ArrayList<File>(), mediaScanner, getContext(), this);
             filesToUploadAdapter.setViewType(FilesToUploadRecyclerViewAdapter.VIEW_TYPE_GRID);
 
             filesToUploadAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -460,28 +421,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private TextView getUploadableFilesView() {
         return uploadableFilesView;
     }
-//
-//    private void compressVideos() {
-//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
-//            getUiHelper().showDetailedMsg(R.string.alert_error, "Video Compression not supported on this version of android");
-//        } else {
-//            FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
-//            ArrayList<File> filesForUpload = fileListAdapter.getFiles();
-//            File inputVideo = filesForUpload.get(0);
-//            File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-//            File outputVideo = new File(moviesFolder, "compressed_" + inputVideo.getName());
-//            /*try*/
-//            {
-//                //TODO this compressor is very basic - need to use my own.
-////                new YPrestoCompressor().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
-//                ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
-//                compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(UploadPreferences.getVideoCompressionParams(getContext(), prefs).getQuality());
-//                new ExoPlayerCompression().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()), compressionSettings);
-//            } /*catch (IOException e) {
-//                getUiHelper().showDetailedMsg(R.string.alert_error, "Error compressing video " + e.getMessage());
-//            }*/
-//        }
-//    }
 
     private void requestFileSelection(ArrayList<String> allowedFileTypes) {
         FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
@@ -510,7 +449,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
-    private void onSelectedGallerySpinnerClick() {
+    private void onSelectedGalleryTextViewClick() {
         HashSet<Long> selection = new HashSet<>();
         selection.add(uploadToAlbum.getId());
         ExpandingAlbumSelectionNeededEvent evt = new ExpandingAlbumSelectionNeededEvent(false, true, selection, uploadToAlbum.getParentId());
@@ -561,9 +500,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             uploadToAlbum = new CategoryItemStub("???", uploadJob.getUploadToCategory());
             AlbumGetSubAlbumNamesResponseHandler hndler = new AlbumGetSubAlbumNamesResponseHandler(uploadJob.getUploadToCategory(), false);
             getUiHelper().addActionOnResponse(getUiHelper().addActiveServiceCall(hndler), new OnGetSubAlbumNamesAction());
-            selectedGallerySpinner.setText(uploadToAlbum.getName());
+            selectedGalleryTextView.setText(uploadToAlbum.getName());
 
-            privacyLevelWanted = uploadJob.getPrivacyLevelWanted();
+            byte privacyLevelWanted = uploadJob.getPrivacyLevelWanted();
             if (privacyLevelWanted >= 0) {
                 privacyLevelSpinner.setSelection(((BiArrayAdapter) privacyLevelSpinner.getAdapter()).getPosition(privacyLevelWanted));
             }
@@ -651,7 +590,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         updateActiveJobActionButtonsStatus();
     }
 
-    private Set<File> getFilesExceedingMaxDesiredUploadThreshold() {
+    private Set<File> getFilesExceedingMaxDesiredUploadThreshold(List<File> filesForUpload) {
         int maxUploadSizeWantedThresholdMB = UploadPreferences.getMaxUploadFilesizeMb(getContext(), prefs);
         HashSet<File> retVal = new HashSet<>();
         for (File f : filesForUpload) {
@@ -680,8 +619,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         boolean userInputRequested = false;
 
+        FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
+        ArrayList<File> filesForUpload = fileListAdapter.getFiles();
         if (activeJob == null) {
-            FilesToUploadRecyclerViewAdapter fileListAdapter = getFilesForUploadViewAdapter();
 
             if (fileListAdapter == null || uploadToAlbum == null || CategoryItemStub.ROOT_GALLERY.equals(uploadToAlbum)) {
                 mViewPager.setCurrentItem(TAB_IDX_SETTINGS);
@@ -690,10 +630,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 return;
             }
 
-            filesForUpload = fileListAdapter.getFiles();
-
             if (!filesizesChecked) {
-                final Set<File> filesForReview = getFilesExceedingMaxDesiredUploadThreshold();
+                final Set<File> filesForReview = getFilesExceedingMaxDesiredUploadThreshold(filesForUpload);
                 StringBuilder filenameListStrB = new StringBuilder();
                 for (File f : filesForReview) {
                     double fileLengthMB = ((double) f.length()) / 1024 / 1024;
@@ -712,14 +650,15 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         if (!userInputRequested) {
             if (activeJob == null) {
+                byte privacyLevelWanted = (byte) privacyLevelSpinner.getSelectedItemId(); // save as just bytes!
                 long handlerId = getUiHelper().getPiwigoResponseListener().getHandlerId();
                 activeJob = ForegroundPiwigoUploadService.createUploadJob(ConnectionPreferences.getActiveProfile(), filesForUpload, uploadToAlbum, privacyLevelWanted, handlerId);
-                if (compressVideosBeforeUpload) {
+                if (compressVideosCheckbox.isChecked()) {
                     UploadJob.VideoCompressionParams vidCompParams = new UploadJob.VideoCompressionParams();
                     vidCompParams.setQuality(compressVideosQualitySpinner.getSelectedItemId());
                     activeJob.setVideoCompressionParams(UploadPreferences.getVideoCompressionParams(getContext(), getPrefs()));
                 }
-                if (compressImagesBeforeUpload) {
+                if (compressImagesCheckbox.isChecked()) {
                     UploadJob.ImageCompressionParams imageCompParams = new UploadJob.ImageCompressionParams();
                     imageCompParams.setOutputFormat(compressImagesOutputFormatSpinner.getSelectedItem().toString());
                     imageCompParams.setQuality(UploadPreferences.getImageCompressionQuality(getContext(), getPrefs())); //TODO use the user value instead!!!!
@@ -792,7 +731,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         compressVideosCheckbox.setEnabled((noJobIsYetConfigured || jobIsFinished) && isVideoFilesWaitingForUpload());
         updateActiveJobActionButtonsStatus();
         fileSelectButton.setEnabled(noJobIsYetConfigured || jobIsFinished);
-        selectedGallerySpinner.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
+        selectedGalleryTextView.setEnabled(noJobIsYetConfigured || (jobIsFinished && !filesStillToBeUploaded));
         privacyLevelSpinner.setEnabled(noJobIsYetConfigured || jobIsFinished);
     }
 
@@ -877,14 +816,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         getUiHelper().showNotification(TAG, 1, mBuilder.build());
     }
 
-    protected void setCompressVideosBeforeUpload(boolean compress) {
-        compressVideosBeforeUpload = compress;
-    }
-
-    protected void setCompressImagesBeforeUpload(boolean compress) {
-        compressImagesBeforeUpload = compress;
-    }
-
     @Override
     protected BasicPiwigoResponseListener buildPiwigoResponseListener(Context context) {
         return new ForegroundPiwigoFileUploadResponseListener(context);
@@ -935,7 +866,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (event.getSelectedItems() != null && event.getSelectedItems().size() > 0) {
                 CategoryItem selectedAlbum = event.getSelectedItems().iterator().next();
                 uploadToAlbum = selectedAlbum.toStub();
-                selectedGallerySpinner.setText(uploadToAlbum.getName());
+                selectedGalleryTextView.setText(uploadToAlbum.getName());
             }
         }
     }
@@ -951,8 +882,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         getUiHelper().showDetailedShortMsg(R.string.alert_information, getString(R.string.alert_temporary_upload_album_deleted));
     }
 
-    private TextView getSelectedGallerySpinner() {
-        return selectedGallerySpinner;
+    private TextView getSelectedGalleryTextView() {
+        return selectedGalleryTextView;
     }
 
     private static class OnLoginAction extends UIHelper.Action<AbstractUploadFragment, LoginResponseHandler.PiwigoOnLoginResponse> {
@@ -1115,10 +1046,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 CategoryItemStub uploadToAlbum = fragment.getUploadToAlbum();
                 if (uploadToAlbum.getId() == response.getAlbumNames().get(0).getId()) {
                     uploadToAlbum = response.getAlbumNames().get(0);
-                    fragment.getSelectedGallerySpinner().setText(uploadToAlbum.getName());
+                    fragment.getSelectedGalleryTextView().setText(uploadToAlbum.getName());
                 } else if (uploadToAlbum.getId() == CategoryItemStub.ROOT_GALLERY.getId()) {
                     uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
-                    fragment.getSelectedGallerySpinner().setText(uploadToAlbum.getName());
+                    fragment.getSelectedGalleryTextView().setText(uploadToAlbum.getName());
                 }
             }
             return super.onSuccess(uiHelper, response);

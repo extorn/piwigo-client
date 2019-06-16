@@ -163,7 +163,9 @@ public class UploadActivity extends MyActivity {
                 toolbar.setTitle(R.string.upload_page_title);
             }
             setSupportActionBar(toolbar);
-            showUploadFragment(true, connectionPrefs);
+            if (savedInstanceState == null) { // the fragment will be created automatically from the fragment manager state if there is state :-)
+                showUploadFragment(true, connectionPrefs);
+            }
         }
     }
 
