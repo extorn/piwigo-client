@@ -207,7 +207,10 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
     private void parseContentLengthDetails(HttpResponse httpResponse) {
         long contentLength = -1;
         Header header = httpResponse.getFirstHeader("Content-Length");
-        String contentLengthHeader = header.getValue();
+        String contentLengthHeader = null;
+        if (header != null) {
+            contentLengthHeader = header.getValue();
+        }
         if (!TextUtils.isEmpty(contentLengthHeader)) {
             try {
                 contentLength = Long.parseLong(contentLengthHeader);
