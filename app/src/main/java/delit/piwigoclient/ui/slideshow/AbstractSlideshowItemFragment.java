@@ -105,17 +105,17 @@ import static android.view.View.VISIBLE;
 
 public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> extends MyFragment implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
 
-    private static final String ARG_GALLERY_ITEM = "galleryItem";
-    private static final String ARG_ALBUM_ITEM_IDX = "albumItemIndex";
-    private static final String ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT = "albumLoadedResourceItemCount";
-    private static final String ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT = "albumTotalResourceItemCount";
     private static final String TAG = "SlideshowItemFragment";
+    private static final String ARG_GALLERY_ITEM = "galleryItem";
+    private static final String ARG_AND_STATE_ALBUM_ITEM_IDX = "albumItemIndex";
+    private static final String ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT = "albumLoadedResourceItemCount";
+    private static final String ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT = "albumTotalResourceItemCount";
     private static final String STATE_UPDATED_LINKED_ALBUM_SET = "updatedLinkedAlbumSet";
     private static final String STATE_ALBUMS_REQUIRING_UPDATE = "albumsRequiringUpdate";
     private static final String STATE_EDITING_ITEM_DETAILS = "editingItemDetails";
     private static final String STATE_INFORMATION_SHOWING = "informationShowing";
     private static final String STATE_IS_PRIMARY_SLIDESHOW_ITEM = "isPrimarySlideshowItem";
-    private static final String ALLOW_DOWNLOAD = "allowDownload";
+    private static final String STATE_IS_ALLOW_DOWNLOAD = "allowDownload";
     protected ImageButton editButton;
     protected TextView tagsField;
     private T model;
@@ -152,31 +152,30 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private ViewVisibleControl overlaysVisibilityControl;
     private TextView resourceTitleView;
 
+    public static <S extends ResourceItem> Bundle buildArgs(S model, int albumItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
+        Bundle b = new Bundle();
+        b.putParcelable(ARG_GALLERY_ITEM, model);
+        b.putInt(ARG_AND_STATE_ALBUM_ITEM_IDX, albumItemIdx);
+        b.putInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumResourceItemCount);
+        b.putLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, totalResourceItemCount);
+        return b;
+    }
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(STATE_EDITING_ITEM_DETAILS, editingItemDetails);
         outState.putBoolean(STATE_INFORMATION_SHOWING, informationShowing);
-        outState.putParcelable(ARG_GALLERY_ITEM, model);
-        outState.putBoolean(ALLOW_DOWNLOAD, isAllowDownload());
+        outState.putBoolean(STATE_IS_ALLOW_DOWNLOAD, isAllowDownload());
         BundleUtils.putHashSet(outState, STATE_UPDATED_LINKED_ALBUM_SET, updatedLinkedAlbumSet);
         BundleUtils.putLongHashSet(outState, STATE_ALBUMS_REQUIRING_UPDATE, albumsRequiringReload);
-        outState.putInt(ARG_ALBUM_ITEM_IDX, albumItemIdx);
-        outState.putInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
-        outState.putLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, albumTotalItemCount);
+        outState.putInt(ARG_AND_STATE_ALBUM_ITEM_IDX, albumItemIdx);
+        outState.putInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumLoadedItemCount);
+        outState.putLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, albumTotalItemCount);
         outState.putBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM, isPrimarySlideshowItem);
         if (BuildConfig.DEBUG) {
             BundleUtils.logSize("AbstractSlideshowItemFragment", outState);
         }
-    }
-
-    public static <S extends ResourceItem> Bundle buildArgs(S model, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
-        Bundle b = new Bundle();
-        b.putParcelable(ARG_GALLERY_ITEM, model);
-        b.putInt(ARG_ALBUM_ITEM_IDX, albumResourceItemIdx);
-        b.putInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumResourceItemCount);
-        b.putLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, totalResourceItemCount);
-        return b;
     }
 
     public boolean isAllowDownload() {
@@ -208,10 +207,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if (args != null) {
             intialiseFields(); // if we are opening this page for the first time with new data, wipe any old values.
             loadArgsFromBundle(args);
-            setArguments(null); // use the saved state from here.
         }
         // override page default values with any saved state
-        loadArgsFromBundle(savedInstanceState);
         restoreSavedInstanceState(savedInstanceState);
 
         setAsAlbumThumbnail.setOnClickListener(new View.OnClickListener() {
@@ -263,9 +260,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             return;
         }
         model = b.getParcelable(ARG_GALLERY_ITEM);
-        albumItemIdx = b.getInt(ARG_ALBUM_ITEM_IDX);
-        albumLoadedItemCount = b.getInt(ARG_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
-        albumTotalItemCount = b.getLong(ARG_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
+        albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
+        albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
+        albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
     }
 
     private void restoreSavedInstanceState(Bundle b) {
@@ -274,10 +271,14 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
         editingItemDetails = b.getBoolean(STATE_EDITING_ITEM_DETAILS);
         informationShowing = b.getBoolean(STATE_INFORMATION_SHOWING);
-        allowDownload = b.getBoolean(ALLOW_DOWNLOAD);
+        allowDownload = b.getBoolean(STATE_IS_ALLOW_DOWNLOAD);
         updatedLinkedAlbumSet = BundleUtils.getHashSet(b, STATE_UPDATED_LINKED_ALBUM_SET);
         albumsRequiringReload = BundleUtils.getLongHashSet(b, STATE_ALBUMS_REQUIRING_UPDATE);
         isPrimarySlideshowItem = b.getBoolean(STATE_IS_PRIMARY_SLIDESHOW_ITEM);
+
+        albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
+        albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
+        albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
     }
 
     private static class DownloadAction implements Parcelable {
