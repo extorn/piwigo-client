@@ -516,8 +516,8 @@ public abstract class UIHelper<T> {
         Bundle thisBundle = new Bundle();
         BundleUtils.writeMap(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls);
         thisBundle.putInt(STATE_TRACKED_REQUESTS, trackedRequest);
-        thisBundle.putSerializable(STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
-        thisBundle.putSerializable(STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
+        BundleUtils.writeMap(thisBundle, STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
+        BundleUtils.writeMap(thisBundle, STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
         thisBundle.putInt(STATE_PERMS_FOR_REASON, permissionsNeededReason);
         BundleUtils.writeQueue(thisBundle, STATE_SIMPLE_MESSAGE_QUEUE, simpleMessageQueue);
         BundleUtils.writeQueue(thisBundle, STATE_DIALOG_MESSAGE_QUEUE, dialogMessageQueue);
@@ -531,24 +531,19 @@ public abstract class UIHelper<T> {
         if (savedInstanceState != null) {
             Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
             if (thisBundle != null) {
-                HashMap<Long, String> activeCalls = BundleUtils.readMap(thisBundle, ACTIVE_SERVICE_CALLS, null);
-                if (activeCalls == null) {
-                    activeCalls = new HashMap<>();
-                }
+                HashMap<Long, String> activeCalls = BundleUtils.readMap(thisBundle, ACTIVE_SERVICE_CALLS, new HashMap<Long, String>(), null);
                 activeServiceCalls = Collections.synchronizedMap(activeCalls);
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
-                runWithPermissions = BundleUtils.getSerializable(thisBundle, STATE_RUN_WITH_PERMS_LIST, HashMap.class);
-                try {
-                    actionOnServerCallComplete = BundleUtils.getSerializable(thisBundle, STATE_ACTIONS_ON_RESPONSES, ConcurrentHashMap.class);
-                } catch(IllegalStateException e) {
-                    Map<Long, Action> map = BundleUtils.getSerializable(thisBundle, STATE_ACTIONS_ON_RESPONSES, HashMap.class);
-                    actionOnServerCallComplete = new ConcurrentHashMap<>(map);
-                }
+                runWithPermissions = BundleUtils.readMap(thisBundle, STATE_RUN_WITH_PERMS_LIST, PermissionsWantedRequestEvent.class.getClassLoader());
+                actionOnServerCallComplete = BundleUtils.readMap(thisBundle, STATE_ACTIONS_ON_RESPONSES, new ConcurrentHashMap<Long, Action>(), Action.class.getClassLoader());
                 permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
-                piwigoResponseListener.onRestoreInstanceState(thisBundle);
 
                 BundleUtils.readQueue(savedInstanceState, STATE_SIMPLE_MESSAGE_QUEUE, simpleMessageQueue);
                 BundleUtils.readQueue(savedInstanceState, STATE_DIALOG_MESSAGE_QUEUE, dialogMessageQueue);
+
+
+                piwigoResponseListener.onRestoreInstanceState(thisBundle);
+
                 for(QueuedDialogMessage message : dialogMessageQueue) {
                     if(message.getListener() != null) {
                         message.getListener().setUiHelper(this);
