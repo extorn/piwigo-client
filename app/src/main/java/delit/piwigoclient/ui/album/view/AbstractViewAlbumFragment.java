@@ -1030,12 +1030,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                             adminCopyOfAlbum = albumAdminList.getAlbum(galleryModel.getContainerDetails());
                         } catch (IllegalStateException e) {
                             Crashlytics.logException(e);
-                            if (BuildConfig.DEBUG) {
-                                Log.d(getTag(), String.format("current container details (%1$s) not in admin list", galleryModel.getContainerDetails()));
-                            } else {
-                                Crashlytics.log(Log.ERROR, getTag(), String.format("current container details (%1$s) not in admin list", galleryModel.getContainerDetails()));
-
-                            }
+                            Crashlytics.log(Log.ERROR, getTag(), String.format("current container details (%1$s) not in admin list", galleryModel.getContainerDetails()));
                         }
                         if (adminCopyOfAlbum != null) {
                             adminCategories = adminCopyOfAlbum.getChildAlbums();
