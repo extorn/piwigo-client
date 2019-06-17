@@ -8,6 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.widget.TextViewCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -20,11 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.widget.TextViewCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -58,7 +59,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
     private FlowLayout categoryPathView;
     private long startedActionAtTime;
     private CategoryItemRecyclerViewAdapter.NavigationListener navListener;
-    private LinkedHashMap<Long, Parcelable> listViewStates; // one state for each level within the list (created and deleted on demand)
+    private LinkedHashMap<Long, Parcelable> listViewStates = new LinkedHashMap<>(5); // one state for each level within the list (created and deleted on demand)
 
 
     public static RecyclerViewCategoryItemSelectFragment newInstance(CategoryItemViewAdapterPreferences prefs, int actionId) {
@@ -95,7 +96,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             outState.putParcelable(ACTIVE_ITEM, getListAdapter().getActiveItem());
         }
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
-        outState.putSerializable(STATE_LIST_VIEW_STATE, listViewStates);
+        BundleUtils.writeMap(outState, STATE_LIST_VIEW_STATE, listViewStates);
     }
 
     @Nullable
@@ -110,7 +111,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
 
         if (savedInstanceState != null) {
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
-            listViewStates = BundleUtils.getSerializable(savedInstanceState, STATE_LIST_VIEW_STATE, LinkedHashMap.class);
+            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap<Long, Parcelable>(), getClass().getClassLoader());
         }
 
         startedActionAtTime = System.currentTimeMillis();
@@ -123,9 +124,6 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             public void onCategoryOpened(CategoryItem oldCategory, CategoryItem newCategory) {
 
                 if(oldCategory != null) {
-                    if (listViewStates == null) {
-                        listViewStates = new LinkedHashMap<>(5);
-                    }
                     listViewStates.put(oldCategory.getId(), getList().getLayoutManager() == null ? null : getList().getLayoutManager().onSaveInstanceState());
                 }
                 getList().scrollToPosition(0);
@@ -177,7 +175,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
                 public void onClick(View v) {
                     TextView tv = (TextView) v;
                     getListAdapter().setActiveItem(pathItemCategory);
-                    if(listViewStates != null) {
+                    if (!listViewStates.isEmpty()) {
                         Iterator<Map.Entry<Long, Parcelable>> iter = listViewStates.entrySet().iterator();
                         Map.Entry<Long, Parcelable> item;
                         while (iter.hasNext()) {
