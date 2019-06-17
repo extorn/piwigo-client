@@ -180,7 +180,8 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         newSessionKeyHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         newSessionKeyHandler.invokeAndWait(getContext(), getConnectionPrefs());
         if (!newSessionKeyHandler.isSuccess()) {
-            if (newSessionKeyHandler.getError().getCause() instanceof UnknownHostException) {
+            Throwable error = newSessionKeyHandler.getError();
+            if (error != null && error.getCause() instanceof UnknownHostException) {
                 if (acceptCachedResponse) {
                     return true;
                 }
