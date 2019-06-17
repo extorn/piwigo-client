@@ -178,11 +178,11 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         return v;
     }
 
-    private void onFavoriteUpdateFailed() {
+    private void onFavoriteUpdateFailed(boolean oldValue) {
         if (getModel().isFavorite() != favoriteButton.isChecked()) {
             // change the button to match the model.
             favoriteButton.setTag("noListener");
-            favoriteButton.setChecked(!getModel().isFavorite());
+            favoriteButton.setChecked(oldValue);
         }
         favoriteButton.setEnabled(true);
     }
@@ -295,21 +295,33 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
         }
     }
 
-    private static class FavoriteAction<T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<SlideshowItemFragment<T>, S> {
+    private void onFavoriteUpdateSucceeded(boolean newValue) {
+        favoriteButton.setEnabled(true);
+    }
+
+    private abstract static class FavoriteAction<T extends ResourceItem, S extends PiwigoResponseBufferingHandler.Response> extends UIHelper.Action<SlideshowItemFragment<T>, S> {
+
+        protected abstract boolean getValueOnSucess();
+
         @Override
         public boolean onFailure(UIHelper<SlideshowItemFragment<T>> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
-            getActionParent(uiHelper).onFavoriteUpdateFailed();
+            getActionParent(uiHelper).onFavoriteUpdateFailed(!getValueOnSucess());
             return super.onFailure(uiHelper, response);
         }
 
         @Override
         public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, S response) {
-            getActionParent(uiHelper).onFavoriteUpdateSucceeded();
+            getActionParent(uiHelper).onFavoriteUpdateSucceeded(getValueOnSucess());
             return super.onSuccess(uiHelper, response);
         }
     }
 
     private static class FavoriteRemoveAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse> {
+        @Override
+        protected boolean getValueOnSucess() {
+            return false;
+        }
+
         @Override
         public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesRemoveImageResponseHandler.PiwigoRemoveFavoriteResponse response) {
             if(EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class) == null) {
@@ -321,16 +333,17 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
 
     private static class FavoriteAddAction<T extends ResourceItem> extends FavoriteAction<T, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse> {
         @Override
+        protected boolean getValueOnSucess() {
+            return true;
+        }
+
+        @Override
         public boolean onSuccess(UIHelper<SlideshowItemFragment<T>> uiHelper, FavoritesAddImageResponseHandler.PiwigoAddFavoriteResponse response) {
             if(EventBus.getDefault().getStickyEvent(FavoritesUpdatedEvent.class) == null) {
                 EventBus.getDefault().postSticky(new FavoritesUpdatedEvent());
             }
             return super.onSuccess(uiHelper, response);
         }
-    }
-
-    private void onFavoriteUpdateSucceeded() {
-        favoriteButton.setEnabled(true);
     }
 
     private static class FavoriteCheckedListener implements CompoundButton.OnCheckedChangeListener {
@@ -354,6 +367,10 @@ public abstract class SlideshowItemFragment<T extends ResourceItem> extends Abst
             if ("noListener".equals(buttonView.getTag())) {
                 buttonView.setTag(null);
                 return;
+            }
+            if (!buttonView.isEnabled()) {
+                Crashlytics.log(Log.ERROR, TAG, "tag/untag favorite image called but ignored as in progress");
+                return; // should never occur
             }
             buttonView.setEnabled(false);
             if (item.hasFavoriteInfo()) {
