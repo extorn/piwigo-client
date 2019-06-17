@@ -149,10 +149,10 @@ public class BundleUtils {
         return new Date(timeMillis);
     }
 
-    public static <S,T> HashMap<S, T> readMap(Bundle bundle, String key, ClassLoader loader) {
+    public static <S, T, P extends Map<S, T>> P readMap(Bundle bundle, String key, P mapToFill, ClassLoader loader) {
         Bundle b = bundle.getBundle(key);
         if(b == null) {
-            return null;
+            return mapToFill;
         }
         int len = b.getInt("bytes");
         byte[] dataBytes = b.getByteArray("data");
@@ -160,10 +160,14 @@ public class BundleUtils {
         try {
             p.unmarshall(dataBytes, 0, len);
             p.setDataPosition(0);
-            return ParcelUtils.readMap(p, loader);
+            return ParcelUtils.readMap(p, mapToFill, loader);
         } finally {
             p.recycle();
         }
+    }
+
+    public static <S, T> HashMap<S, T> readMap(Bundle bundle, String key, ClassLoader loader) {
+        return readMap(bundle, key, new HashMap<S, T>(), loader);
     }
 
     /**

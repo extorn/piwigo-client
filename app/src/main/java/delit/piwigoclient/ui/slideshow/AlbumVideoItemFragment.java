@@ -64,12 +64,12 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     private static final String TAG = "VideoItemFragment";
 
     private static final String STATE_CACHED_VIDEO_FILENAME = "cachedVideoFileName";
-    private static final String STATE_VIDEO_PLAY_AUTOMATICALLY = "videoPlayAutomatically";
+    private static final String ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY = "videoPlayAutomatically";
     private static final String STATE_VIDEO_IS_PLAYING = "videoIsPlayingWhenVisible";
     private static final String STATE_VIDEO_PLAYBACK_POSITION = "currentVideoPlaybackPosition";
     private static final String STATE_PERMISSION_TO_CACHE_GRANTED = "permissionToCacheToDisk";
     private static final String STATE_CACHED_VIDEO_ORIGINAL_FILENAME = "originalVideoFilename";
-    private static final String STATE_SHOWING_STANDALONE = "showingOutsideSlideshow";
+    private static final String ARG_AND_STATE_SHOWING_STANDALONE = "showingOutsideSlideshow";
 
     private static final int PERMISSIONS_FOR_DOWNLOAD = 1;
     private static final int PERMISSIONS_FOR_CACHE = 2;
@@ -98,13 +98,13 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     public static Bundle buildStandaloneArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
         Bundle b = buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay);
-        b.putBoolean(STATE_SHOWING_STANDALONE, true);
+        b.putBoolean(ARG_AND_STATE_SHOWING_STANDALONE, true);
         return b;
     }
 
     public static Bundle buildArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
         Bundle args = SlideshowItemFragment.buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
-        args.putBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY, startPlaybackOnFragmentDisplay);
+        args.putBoolean(ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY, startPlaybackOnFragmentDisplay);
         return args;
     }
 
@@ -152,13 +152,13 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     public void onSaveInstanceState(@NonNull Bundle outState) {
         logStatus("saving state");
         super.onSaveInstanceState(outState);
-        outState.putBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY, playVideoAutomatically);
+        outState.putBoolean(ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY, playVideoAutomatically);
         outState.putBoolean(STATE_VIDEO_IS_PLAYING, videoIsPlayingWhenVisible);
         outState.putBoolean(STATE_PERMISSION_TO_CACHE_GRANTED, permissionToCache);
         outState.putString(STATE_CACHED_VIDEO_FILENAME, cachedVideoFile != null ? cachedVideoFile.getAbsolutePath() : null);
         outState.putString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME, originalVideoFilename);
         outState.putLong(STATE_VIDEO_PLAYBACK_POSITION, videoPlaybackPosition);
-        outState.putBoolean(STATE_SHOWING_STANDALONE, showingOutsideSlideshow);
+        outState.putBoolean(ARG_AND_STATE_SHOWING_STANDALONE, showingOutsideSlideshow);
     }
 
     @Override
@@ -187,21 +187,19 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
-        super.onViewCreated(view, savedInstanceState);
-        setAllowDownload(false);
-
         if (getArguments() != null) {
             logStatus("loading arguments");
-            playVideoAutomatically = getArguments().getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
+            playVideoAutomatically = getArguments().getBoolean(ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY);
+            showingOutsideSlideshow = getArguments().getBoolean(ARG_AND_STATE_SHOWING_STANDALONE);
+            // now initialise whether to play the video or not.
             videoIsPlayingWhenVisible = playVideoAutomatically;
-            showingOutsideSlideshow = getArguments().getBoolean(STATE_SHOWING_STANDALONE);
-            setArguments(null);
         }
         if (savedInstanceState != null) {
             logStatus("loading saved state");
-            showingOutsideSlideshow = savedInstanceState.getBoolean(STATE_SHOWING_STANDALONE);
-            playVideoAutomatically = savedInstanceState.getBoolean(STATE_VIDEO_PLAY_AUTOMATICALLY);
+            // these two are only ever loaded from the args... then state. (args are deleted though atm in super.super class!)
+            playVideoAutomatically = savedInstanceState.getBoolean(ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY);
+            showingOutsideSlideshow = savedInstanceState.getBoolean(ARG_AND_STATE_SHOWING_STANDALONE);
+
             videoIsPlayingWhenVisible = savedInstanceState.getBoolean(STATE_VIDEO_IS_PLAYING);
             permissionToCache = savedInstanceState.getBoolean(STATE_PERMISSION_TO_CACHE_GRANTED);
             videoPlaybackPosition = savedInstanceState.getLong(STATE_VIDEO_PLAYBACK_POSITION);
@@ -213,6 +211,9 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
             }
             originalVideoFilename = savedInstanceState.getString(STATE_CACHED_VIDEO_ORIGINAL_FILENAME);
         }
+        super.onViewCreated(view, savedInstanceState);
+        setAllowDownload(false);
+
         logStatus("view state restored");
         displayItemDetailsControlsBasedOnSessionState();
     }

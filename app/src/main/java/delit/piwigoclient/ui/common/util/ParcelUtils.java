@@ -56,8 +56,9 @@ public class ParcelUtils {
 
     public static <T> T readValue(@NonNull Parcel in, ClassLoader loader, Class<T> expectedType) {
         Class<T> valueType = expectedType;
-        Object o = in.readValue(loader);
+        Object o = null;
         try {
+            o = in.readValue(loader);
             if(valueType.isPrimitive()) {
                 valueType = ClassUtils.wrap(valueType);
             }
@@ -68,6 +69,10 @@ public class ParcelUtils {
             return val;
         } catch(ClassCastException e) {
             Crashlytics.log(Log.ERROR, TAG, "returning null as value of unexpected type : " + o);
+            Crashlytics.logException(e);
+            return null;
+        } catch (NullPointerException e) {
+            Crashlytics.log(Log.ERROR, TAG, "returning null as unable to retrieve stored value of type : " + expectedType.getName());
             Crashlytics.logException(e);
             return null;
         }
