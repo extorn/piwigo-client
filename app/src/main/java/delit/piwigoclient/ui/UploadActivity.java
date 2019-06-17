@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -319,6 +318,7 @@ public class UploadActivity extends MyActivity {
                     Crashlytics.log("Unable to process received data with mime type : " + mimeType);
                 }
             }
+            intent.setClipData(null);
         } else {
             // process the extra stream data
             ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
@@ -351,7 +351,7 @@ public class UploadActivity extends MyActivity {
                     filesToUpload = new ArrayList<>(0);
                 }
             }
-            intent.putExtra(Intent.EXTRA_STREAM, (Parcelable[]) null);
+            intent.removeExtra(Intent.EXTRA_STREAM);
         }
         return filesToUpload;
     }
@@ -361,10 +361,8 @@ public class UploadActivity extends MyActivity {
 
         File sharedFile = getLocallySharedFile(imageUri, fileExt);
         if (sharedFile == null) {
-            getUiHelper().showShortMsg(R.string.unable_to_handle_shared_uri_missing_content_description_information);
-            //TODO handle shared Uris.
-//            sharedFile = getDownloadedFileFromSharedUri(imageUri, fileExt);
-//            if(mimeType.startsWith("video/")) {
+            if (mimeType.startsWith("video/")) {
+                getUiHelper().showDetailedMsg(R.string.alert_error, R.string.unable_to_handle_shared_uri_missing_content_description_information);
 //                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 //                    try {
 //                        MediaExtractor mExtractor = new MediaExtractor();
@@ -387,7 +385,9 @@ public class UploadActivity extends MyActivity {
 //                        sharedFile = renamedTo;
 //                    }
 //                }
-//            }
+            } else {
+                sharedFile = getDownloadedFileFromSharedUri(imageUri, fileExt);
+            }
         }
         filesToUpload.add(sharedFile);
     }
