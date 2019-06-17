@@ -352,10 +352,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
             Bundle bundle = (Bundle) state;
             bundle.setClassLoader(loader);
 
-            pageState = BundleUtils.readMap(bundle, "pagesState", getClass().getClassLoader());
-            if (pageState == null) {
-                pageState = new HashMap<>();
-            }
+            pageState = BundleUtils.readMap(bundle, "pagesState", new HashMap<Integer, Fragment.SavedState>(), getClass().getClassLoader());
 
             visibleItemIdx = bundle.getInt("visibleItemIndex");
         }
