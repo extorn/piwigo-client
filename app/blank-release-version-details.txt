@@ -1,24 +1,28 @@
 
 <en-GB>
 Changes:
-- New - image compression as an upload option
-- New - PAID: Automatic upload job image compression as an upload option
+- More error reporting to help diagnose issues
+Bugfix:
+- Corrected several important issues including video playback for non privacy plugin users
 </en-GB>
 
 <de-DE>
 Änderungen:
-- Neu - Bildkompression als Upload-Option
-- Neu - Bezahlt: Automatische Upload-Job-Bildkompression als Upload-Option
+- Mehr Fehlerberichte zur Unterstützung der Fehlerdiagnose
+Fehlerbehebung:
+- Es wurden mehrere wichtige Probleme behoben, einschließlich der Videowiedergabe für Benutzer, die keine Plugins für den Datenschutz verwenden.
 </de-DE>
 
 <fr-FR>
 Changements :
-- Nouveau - compression d'image comme option de téléchargement
-- Nouveau - PAYÉ : Compression automatique de l'image d'un travail de téléchargement en tant qu'option de téléchargement
+- Plus de rapports d'erreurs pour aider à diagnostiquer les problèmes
+Correction d'un bug :
+- Correction de plusieurs problèmes importants, y compris la lecture vidéo pour les utilisateurs de plugins qui n'utilisent pas la protection de la vie privée.
 </fr-FR>
 
 <zh-CN>
 变化：
-- 新增 - 图像压缩作为上传选项
-- 新增 -PAID：自动上传作业图像压缩作为上传选项
+- 更多错误报告，以帮助诊断问题
+修正：
+- 纠正了几个重要问题，包括非隐私插件用户的视频播放
 </zh-CN>

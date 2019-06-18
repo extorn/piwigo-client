@@ -220,6 +220,11 @@
                 - TODO Added support for MP3 encoding of the audio stream
                 - TODO Added support for setting the desired bitrate of the audio stream"</item>
                 -->
+        <item>1.4.0.14</item>
+        <item>"Changes:
+            - More error reporting to help diagnose issues
+            Bugfix:
+            - Corrected several important issues including video playback for non privacy plugin users"</item>
         <item>1.4.0.13</item>
         <item>"Changes:
                 - New - image compression as an upload option
