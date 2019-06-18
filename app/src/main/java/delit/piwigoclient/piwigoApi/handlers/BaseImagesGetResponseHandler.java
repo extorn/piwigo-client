@@ -111,7 +111,13 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         }
 
         if (resourceParser.isFixedImageUrisForPrivacyPluginUser()) {
-            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX", null);
+            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX_2", null);
+        }
+        if (resourceParser.isFixedImageUrisWithAmpEscaping()) {
+            FirebaseAnalytics.getInstance(getContext()).logEvent("AMPERSAND_URI_FIX", null);
+        }
+        if (resourceParser.isFixedPrivacyPluginImageUrisForPrivacyPluginUser()) {
+            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX_1", null);
         }
 
         PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalResourceCount, resources, isCached);
@@ -129,9 +135,19 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         private Matcher multimediaPatternMatcher;
         private String basePiwigoUrl;
         private boolean fixedImageUrisForPrivacyPluginUser;
+        private boolean fixedImageUrisWithAmpEscaping;
+        private boolean fixedPrivacyPluginImageUrisForPrivacyPluginUser;
 
         public boolean isFixedImageUrisForPrivacyPluginUser() {
             return fixedImageUrisForPrivacyPluginUser;
+        }
+
+        public boolean isFixedImageUrisWithAmpEscaping() {
+            return fixedImageUrisWithAmpEscaping;
+        }
+
+        public boolean isFixedPrivacyPluginImageUrisForPrivacyPluginUser() {
+            return fixedPrivacyPluginImageUrisForPrivacyPluginUser;
         }
 
         public BasicCategoryImageResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
@@ -243,6 +259,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 thumbnail = derivatives.get("thumb").getAsJsonObject().get("url").getAsString();
                 if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
+                    fixedPrivacyPluginImageUrisForPrivacyPluginUser = true;
                 } else {
 
                     String thumbRelUri = thumbnail.substring(basePiwigoUrl.length());
@@ -307,7 +324,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             if(idx > 0 && idx == url.indexOf("&amp;")) {
                 //strip the unwanted extra html escaping
                 fixedUrl = url.replaceAll("&amp;", "&");
-                Crashlytics.log(Log.DEBUG, TAG, String.format("URL Fixed (%1$s) as: %2$s", url, fixedUrl));
+                fixedImageUrisWithAmpEscaping = true;
             }
             return fixedUrl;
         }
