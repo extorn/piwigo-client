@@ -121,7 +121,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
 
         private final Pattern p;
         private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
-        private Matcher m;
+        private Matcher multimediaPatternMatcher;
         private String basePiwigoUrl;
 
         public BasicCategoryImageResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
@@ -141,7 +141,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             }
             multimediaRegexpBuilder.append(")$");
             p = Pattern.compile(multimediaRegexpBuilder.toString());
-            m = null;
+            multimediaPatternMatcher = null;
         }
 
         public ResourceItem parseAndProcessResourceData(JsonObject image) throws JSONException {
@@ -172,10 +172,10 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             ResourceItem item;
 
             if(originalResourceUrl != null) {
-                if (m == null) {
-                    m = p.matcher(originalResourceUrl);
+                if (multimediaPatternMatcher == null) {
+                    multimediaPatternMatcher = p.matcher(originalResourceUrl);
                 } else {
-                    m.reset(originalResourceUrl);
+                    multimediaPatternMatcher.reset(originalResourceUrl);
                 }
             }
 
@@ -225,7 +225,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 originalResourceUrlHeight = image.get("height").getAsInt();
             }
 
-            if (originalResourceUrl != null && m.matches()) {
+            if (originalResourceUrl != null && multimediaPatternMatcher.matches()) {
                 //TODO why must we do something special for the privacy plugin?
                 // is a video - need to ensure the file is accessed via piwigo privacy plugin if installed (direct access blocked).
                 String mediaFile = originalResourceUrl.replaceFirst("^.*(/upload/.*)", "$1");
@@ -234,10 +234,11 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
                 } else {
-                    boolean missingImageId = mediaFile.startsWith("/upload");
-                    if(missingImageId) {
-                        originalResourceUrl = originalResourceUrl.replaceFirst("/upload", "/"+id+"/upload");
-                    }
+                    // This workaround breaks things for non piwigo privcy users.
+//                    boolean missingImageId = mediaFile.startsWith("/upload");
+//                    if(missingImageId) {
+//                        originalResourceUrl = originalResourceUrl.replaceFirst("/upload", "/"+id+"/upload");
+//                    }
                 }
                 item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
                 item.setThumbnailUrl(thumbnail);

@@ -626,4 +626,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="upload_tab_title_settings">Réglages</string>
     <string name="upload_tab_title_files">Fichiers</string>
     <string name="unable_to_handle_shared_uri_missing_content_description_information">"Impossible de gérer les fichiers partagés. Informations détaillées manquantes telles que le nom du fichier et le type de fichier exact. Veuillez d'abord télécharger le fichier sur votre appareil."</string>
+    <string name="alert_internal_server_exposed_pattern">Autorité inattendue %1$s trouvée dans l\'url et remplacée par %2$s. Votre serveur peut être mal configuré.</string>
 </resources>

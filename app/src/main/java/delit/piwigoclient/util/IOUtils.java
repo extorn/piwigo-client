@@ -23,6 +23,7 @@ import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -44,6 +45,20 @@ import delit.piwigoclient.BuildConfig;
  */
 
 public class IOUtils {
+
+    public static void write(InputStream src, OutputStream dst) throws IOException {
+        BufferedInputStream inStream = new BufferedInputStream(src);
+        byte[] buf = new byte[10240];
+        int read = -1;
+        do {
+            read = inStream.read(buf, 0, buf.length);
+            if (read > 0) {
+                dst.write(buf, 0, read);
+            }
+        } while (read >= 0);
+        inStream.close();
+        dst.close();
+    }
 
     public static void write(InputStream src, File dst) throws IOException {
         BufferedInputStream inStream = new BufferedInputStream(src);

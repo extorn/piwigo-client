@@ -73,6 +73,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.piwigoclient.ui.events.BadRequestExposesInternalServerEvent;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
@@ -448,6 +449,14 @@ public abstract class UIHelper<T> {
         alertDialog.setCancelable(nextMessage.isCancellable());
         alertDialog.setTitle(nextMessage.getTitleId());
         alertDialog.setMessage(nextMessage.getMessage());
+
+        if (nextMessage.getLayoutId() != Integer.MIN_VALUE) {
+            LayoutInflater inflater = LayoutInflater.from(alertDialog.getContext());
+            final LinearLayout dialogView = (LinearLayout) inflater.inflate(nextMessage.getLayoutId(), null, false);
+            alertDialog.setView(dialogView);
+            nextMessage.populateCustomView(dialogView);
+        }
+
         Button b = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         if (b != null) {
             b.setVisibility(View.GONE);
@@ -477,7 +486,6 @@ public abstract class UIHelper<T> {
     public void invokeActiveServiceCall(String progressMsg, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
         addActionOnResponse(worker.getMessageId(), actionOnResponse);
         addActiveServiceCall(progressMsg, worker);
-        worker.invokeAsync(context);
     }
 
     public void invokeActiveServiceCall(int progressMsgId, AbstractPiwigoDirectResponseHandler worker, Action actionOnResponse) {
@@ -767,6 +775,14 @@ public abstract class UIHelper<T> {
                 return true;
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(final BadRequestExposesInternalServerEvent event) {
+        if (event.isHandled()) {
+            return;
+        }
+        showOrQueueDialogMessage(R.string.alert_warning, getContext().getString(R.string.alert_internal_server_exposed_pattern, event.getOldAuthority(), event.getNewAuthority()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -1140,7 +1156,7 @@ public abstract class UIHelper<T> {
         }
     }
 
-    private static class QueuedDialogMessage implements Parcelable {
+    public static class QueuedDialogMessage implements Parcelable {
         private static final AtomicInteger idGen = new AtomicInteger();
         private final int id;
         private final int titleId;
@@ -1250,6 +1266,23 @@ public abstract class UIHelper<T> {
         }
 
         public void populateCustomView(LinearLayout dialogView) {
+            int layoutId = getLayoutId();
+
+            if (layoutId == R.layout.layout_dialog_detailed) {
+                final TextView detailView = dialogView.findViewById(R.id.details);
+                detailView.setText(getDetail());
+
+                ToggleButton detailsVisibleButton = dialogView.findViewById(R.id.details_toggle);
+                detailsVisibleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        detailView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+                    }
+                });
+                detailsVisibleButton.toggle();
+            } else {
+                throw new RuntimeException("Unsupported layout for dialog message : " + layoutId);
+            }
         }
 
         @Override
@@ -1259,6 +1292,14 @@ public abstract class UIHelper<T> {
 
         public boolean isHasListener() {
             return hasListener;
+        }
+
+        protected int getLayoutId() {
+            if (detail != null && !detail.trim().isEmpty()) {
+                return R.layout.layout_dialog_detailed;
+            } else {
+                return Integer.MIN_VALUE;
+            }
         }
     }
 
@@ -1339,23 +1380,6 @@ public abstract class UIHelper<T> {
             return layoutId;
         }
 
-        @Override
-        public void populateCustomView(LinearLayout dialogView) {
-            if(layoutId == R.layout.layout_dialog_detailed) {
-                final TextView detailView = dialogView.findViewById(R.id.details);
-                detailView.setText(getDetail());
-
-                ToggleButton detailsVisibleButton = dialogView.findViewById(R.id.details_toggle);
-                detailsVisibleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        detailView.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-                    }
-                });
-                detailsVisibleButton.toggle();
-            }
-            super.populateCustomView(dialogView);
-        }
     }
 
     private static class ActivityPermissionRequester implements PermissionRequester {

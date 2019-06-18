@@ -43,6 +43,7 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
+import delit.piwigoclient.util.UriUtils;
 
 /**
  * An {@link HttpDataSource} that uses Android's {@link HttpURLConnection}.
@@ -433,7 +434,10 @@ public class RemoteDirectHttpClientBasedHttpDataSource implements HttpDataSource
         client.setEnableRedirects(enableRedirects, maxRedirects);
         CustomResponseHandler responseHandler = new CustomResponseHandler();
 
-        client.get(context, dataSpec.uri.toString(), headers.toArray(new Header[0]), null, responseHandler);
+        boolean forceHttps = activeConnectionPreferences.isForceHttps(sharedPrefs, context);
+        String uri = UriUtils.sanityCheckFixAndReportUri(dataSpec.uri.toString(), sessionDetails.getServerUrl(), forceHttps, activeConnectionPreferences);
+
+        client.get(context, uri, headers.toArray(new Header[0]), null, responseHandler);
     }
 
     /**

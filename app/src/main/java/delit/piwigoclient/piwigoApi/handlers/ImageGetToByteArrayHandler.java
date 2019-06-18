@@ -12,6 +12,7 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
+import delit.piwigoclient.util.UriUtils;
 
 /**
  * Created by gareth on 25/06/17.
@@ -62,12 +63,13 @@ public class ImageGetToByteArrayHandler extends AbstractPiwigoDirectResponseHand
 
     @Override
     public RequestHandle runCall(CachingAsyncHttpClient client, AsyncHttpResponseHandler handler) {
-        if (getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext()) && resourceUrl.toLowerCase().startsWith("http://")) {
-            resourceUrl = resourceUrl.replaceFirst("://", "s://");
-        }
+
+        boolean forceHttps = getConnectionPrefs().isForceHttps(getSharedPrefs(), getContext());
+        String uri = UriUtils.sanityCheckFixAndReportUri(resourceUrl, getPiwigoServerUrl(), forceHttps, getConnectionPrefs());
+
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
         boolean onlyUseCache = sessionDetails != null && sessionDetails.isCached();
-        return client.get(getContext(), resourceUrl, buildOfflineAccessHeaders(onlyUseCache), null, handler);
+        return client.get(getContext(), uri, buildOfflineAccessHeaders(onlyUseCache), null, handler);
     }
 
     @Subscribe

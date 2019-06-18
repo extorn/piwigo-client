@@ -34,6 +34,7 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
     /**
      * An {@link Executor} that can be used to execute tasks in parallel.
      */
+    private static final long MAX_TIMEOUT_MILLIS = 1000 * 60; // 1 minute - I can't think of a reason for a single call to exceed this time. Unless debugging!
     private static final ThreadPoolExecutor HTTP_THREAD_POOL_EXECUTOR;
     private static final ThreadPoolExecutor HTTP_LOGIN_THREAD_POOL_EXECUTOR;
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
@@ -71,7 +72,6 @@ public class Worker extends AsyncTask<Long, Integer, Boolean> {
             return new Thread(r, "AsyncLoginTask #" + mCount.getAndIncrement());
         }
     };
-    private static final long MAX_TIMEOUT_MILLIS = 1000 * 60; // 1 minute - I can't think of a reason for a single call to exceed this time.
 
     static {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(

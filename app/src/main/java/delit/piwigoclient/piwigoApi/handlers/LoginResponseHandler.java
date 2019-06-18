@@ -77,7 +77,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
 
         if (canContinue && isSessionDetailsOutOfDate(PiwigoSessionDetails.getInstance(connectionPrefs))) {
-            canContinue = getNewSessionDetails(loginResponse);
+            canContinue = getNewSessionDetails();
         }
 
         loginResponse.setNewSessionDetails(PiwigoSessionDetails.getInstance(connectionPrefs));
@@ -221,7 +221,7 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         }
     }
 
-    private boolean getNewSessionDetails(PiwigoOnLoginResponse loginResponse) {
+    private boolean getNewSessionDetails() {
         GetSessionStatusResponseHandler sessionLoadHandler = new GetSessionStatusResponseHandler();
         sessionLoadHandler.setPerformingLogin(); // need this otherwise it will go recursive getting another login session
         sessionLoadHandler.invokeAndWait(getContext(), getConnectionPrefs());

@@ -326,6 +326,14 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            loadArgsFromBundle(getArguments());
+        }
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         // need to do this here because text fields don't update correctly when set in onCreateView / onViewCreated

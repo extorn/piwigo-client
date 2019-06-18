@@ -26,6 +26,7 @@ import com.google.android.exoplayer2.C;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,6 +43,7 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
 import delit.piwigoclient.BuildConfig;
+import delit.piwigoclient.util.IOUtils;
 
 
 public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpResponseHandler {
@@ -59,6 +61,10 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
     private boolean loadSucceeded;
     private boolean canParseResponseData;
     private boolean isIdle;
+    private boolean failed;
+    private Throwable error;
+    private int statusCode;
+    private byte[] responseData;
 
     public RandomAccessFileAsyncHttpResponseHandler(CachedContent cacheMetaData, RemoteAsyncFileCachingDataSource.CacheListener cacheListener, boolean usePoolThread) {
         super(cacheMetaData.getCachedDataFile(), false, false, usePoolThread);
@@ -68,7 +74,25 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
 
     @Override
     public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
+        failed = true;
+        error = throwable;
+        this.statusCode = statusCode;
+    }
 
+    public byte[] getResponseData() {
+        return responseData;
+    }
+
+    public boolean isFailed() {
+        return failed;
+    }
+
+    public Throwable getError() {
+        return error;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
     }
 
     @Override
@@ -99,6 +123,10 @@ public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpRespo
                 try {
                     if (canParseResponseData) {
                         storeResponseDataToRandomAccessFile(contentLength, instream);
+                    } else {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        IOUtils.write(instream, baos);
+                        responseData = baos.toByteArray();
                     }
                 } finally {
                     synchronized (cacheMetaData) {

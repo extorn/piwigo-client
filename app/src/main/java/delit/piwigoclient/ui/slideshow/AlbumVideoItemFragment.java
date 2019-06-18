@@ -18,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -30,6 +31,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import org.greenrobot.eventbus.EventBus;
@@ -238,6 +240,33 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         cacheListener.setTimebar(timebar);
 
         player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext()), trackSelector, loadControl);
+        player.addListener(new Player.DefaultEventListener() {
+            @Override
+            public void onPlayerError(ExoPlaybackException error) {
+                Throwable e = error;
+                while (e != null) {
+                    if (e instanceof RemoteAsyncFileCachingDataSource.HttpIOException || e instanceof HttpDataSource.InvalidResponseCodeException) {
+                        break;
+                    }
+                    e = e.getCause();
+                }
+                if (e instanceof RemoteAsyncFileCachingDataSource.HttpIOException) {
+                    RemoteAsyncFileCachingDataSource.HttpIOException err = (RemoteAsyncFileCachingDataSource.HttpIOException) e;
+                    String response = null;
+                    try {
+                        response = new String(err.getResponseData());
+                    } catch (RuntimeException e1) {
+                        // do nothing.
+                    }
+                    getUiHelper().showOrQueueDialogMessage(new UIHelper.QueuedDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.getStatusCode(), err.getUri()), response, R.string.button_ok));
+                } else if (e instanceof HttpDataSource.InvalidResponseCodeException) {
+                    HttpDataSource.InvalidResponseCodeException err = (HttpDataSource.InvalidResponseCodeException) e;
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.alert_server_error_pattern, err.responseCode, getModel().getDownloadFileName(getModel().getFullSizeFile())));
+                } else {
+                    getUiHelper().showOrQueueDialogMessage(R.string.alert_error, getString(R.string.error_unexpected_error_calling_server));
+                }
+            }
+        });
         simpleExoPlayerView.setPlayer(player);
 
         simpleExoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {

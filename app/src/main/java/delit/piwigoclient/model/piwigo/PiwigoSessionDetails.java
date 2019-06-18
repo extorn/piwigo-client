@@ -339,4 +339,5 @@ public class PiwigoSessionDetails {
     public ServerConfig getServerConfig() {
         return serverConfig;
     }
+
 }
