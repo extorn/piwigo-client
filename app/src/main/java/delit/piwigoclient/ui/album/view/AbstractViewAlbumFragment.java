@@ -2074,7 +2074,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final BadRequestUsingHttpToHttpsServerEvent event) {
         final ConnectionPreferences.ProfilePreferences connectionPreferences = event.getConnectionPreferences();
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), R.string.button_no, R.string.button_yes, new BadHttpProtocolAction(getUiHelper(), connectionPreferences));
+        String failedUriPath = event.getFailedUri().toString();
+        getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_http_to_https), failedUriPath, R.string.button_no, R.string.button_yes, new BadHttpProtocolAction(getUiHelper(), connectionPreferences));
     }
 
     private static class BadHttpProtocolAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractViewAlbumFragment>> {
@@ -2118,7 +2119,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final BadRequestUsesRedirectionServerEvent event) {
         final ConnectionPreferences.ProfilePreferences connectionPreferences = event.getConnectionPreferences();
-        getUiHelper().showOrQueueDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_follow_redirects), R.string.button_no, R.string.button_yes, new BadRequestRedirectionAction(getUiHelper(), connectionPreferences));
+        String failedUriPath = event.getFailedUri().toString();
+        getUiHelper().showOrQueueEnhancedDialogQuestion(R.string.alert_question_title, getString(R.string.alert_bad_request_follow_redirects), failedUriPath, R.string.button_no, R.string.button_yes, new BadRequestRedirectionAction(getUiHelper(), connectionPreferences));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)

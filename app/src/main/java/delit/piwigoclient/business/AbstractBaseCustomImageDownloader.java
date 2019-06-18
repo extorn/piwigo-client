@@ -81,7 +81,23 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
         if (!handler.isSuccess()) {
             PiwigoResponseBufferingHandler.UrlErrorResponse errorResponse = (PiwigoResponseBufferingHandler.UrlErrorResponse) handler.getResponse();
 
-            StringBuilder msgBuilder= new StringBuilder();
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+            if ("http".equalsIgnoreCase(uri.getScheme()) && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
+                EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs, uri));
+            }
+            if (errorResponse.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
+                EventBus.getDefault().post(new BadRequestUsesRedirectionServerEvent(connectionPrefs, uri));
+            }
+
+            int drawableId = errorDrawables.get(errorResponse.getStatusCode());
+            if (drawableId > 0) {
+                //return locked padlock image.
+                Bitmap icon = PicassoFactory.getInstance().getPicassoSingleton(context).load(drawableId).get();
+                return new Downloader.Response(icon, true);
+            }
+
+
+            StringBuilder msgBuilder = new StringBuilder();
             msgBuilder.append(errorResponse.getUrl());
             msgBuilder.append('\n');
             msgBuilder.append(errorResponse.getErrorMessage());
@@ -91,23 +107,10 @@ public abstract class AbstractBaseCustomImageDownloader implements Downloader {
             msgBuilder.append(errorResponse.getResponseBody());
 
             final String toastMessage = msgBuilder.toString();
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
-            if ("http".equalsIgnoreCase(uri.getScheme()) && connectionPrefs.getPiwigoServerAddress(sharedPrefs, context).toLowerCase().startsWith("https://")) {
-                EventBus.getDefault().post(new BadRequestUsingHttpToHttpsServerEvent(connectionPrefs));
-            }
-            if (errorResponse.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
-                EventBus.getDefault().post(new BadRequestUsesRedirectionServerEvent(connectionPrefs));
-            }
+
             if (listener != null) {
                 listener.onImageDownloadError(toastMessage);
-            }
-            int drawableId = errorDrawables.get(errorResponse.getStatusCode());
-            if (drawableId > 0) {
-                //return locked padlock image.
-                Bitmap icon = PicassoFactory.getInstance().getPicassoSingleton(context).load(drawableId).get();
-                return new Downloader.Response(icon, true);
-            }
-            if (listener == null) { // these are going to be caught by listeners registered on a uri basis with the PicassoFactory.
+            } else { // these are going to be caught by listeners registered on a uri basis with the PicassoFactory.
                 throw new ResponseException(toastMessage, networkPolicy, errorResponse.getStatusCode());
             }
             return null;
