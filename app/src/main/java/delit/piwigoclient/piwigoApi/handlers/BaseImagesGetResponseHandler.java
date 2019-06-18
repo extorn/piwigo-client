@@ -3,6 +3,7 @@ package delit.piwigoclient.piwigoApi.handlers;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -109,6 +110,10 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             }
         }
 
+        if (resourceParser.isFixedImageUrisForPrivacyPluginUser()) {
+            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX", null);
+        }
+
         PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalResourceCount, resources, isCached);
         storeResponse(r);
     }
@@ -123,6 +128,11 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         private Matcher multimediaPatternMatcher;
         private String basePiwigoUrl;
+        private boolean fixedImageUrisForPrivacyPluginUser;
+
+        public boolean isFixedImageUrisForPrivacyPluginUser() {
+            return fixedImageUrisForPrivacyPluginUser;
+        }
 
         public BasicCategoryImageResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
             this.basePiwigoUrl = basePiwigoUrl;
@@ -234,11 +244,15 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
                 if (thumbnail.matches(".*piwigo_privacy/get\\.php\\?.*")) {
                     originalResourceUrl = thumbnail.replaceFirst("(^.*file=)([^&]*)(.*)", "$1." + mediaFile + "$3");
                 } else {
-                    // This workaround breaks things for non piwigo privcy users.
-//                    boolean missingImageId = mediaFile.startsWith("/upload");
-//                    if(missingImageId) {
-//                        originalResourceUrl = originalResourceUrl.replaceFirst("/upload", "/"+id+"/upload");
-//                    }
+
+                    String thumbRelUri = thumbnail.substring(basePiwigoUrl.length());
+                    if (thumbRelUri.startsWith("/" + id + "/_data")) {
+                        boolean missingImageId = mediaFile.startsWith("/upload");
+                        if (missingImageId) {
+                            originalResourceUrl = originalResourceUrl.replaceFirst("/upload", "/" + id + "/upload");
+                            fixedImageUrisForPrivacyPluginUser = true;
+                        }
+                    }
                 }
                 item = new VideoResourceItem(id, name, description, dateCreated, dateLastAltered, basePiwigoUrl);
                 item.setThumbnailUrl(thumbnail);
