@@ -1,28 +1,28 @@
 
 <en-GB>
 Changes:
-- More error reporting to help diagnose issues
-Bugfix:
-- Corrected several important issues including video playback for non privacy plugin users
+- You can hide adverts for a short period by watching a reward video
+ Bugfix:
+- Login status wasn't correct after clearing all cached data
 </en-GB>
 
 <de-DE>
 Änderungen:
-- Mehr Fehlerberichte zur Unterstützung der Fehlerdiagnose
-Fehlerbehebung:
-- Es wurden mehrere wichtige Probleme behoben, einschließlich der Videowiedergabe für Benutzer, die keine Plugins für den Datenschutz verwenden.
+- Sie können Anzeigen für einen kurzen Zeitraum ausblenden, indem Sie sich ein Prämienvideo ansehen.
+ Fehlerbehebung:
+- Der Anmeldestatus war nicht korrekt, nachdem alle zwischengespeicherten Daten gelöscht wurden.
 </de-DE>
 
 <fr-FR>
 Changements :
-- Plus de rapports d'erreurs pour aider à diagnostiquer les problèmes
-Correction d'un bug :
-- Correction de plusieurs problèmes importants, y compris la lecture vidéo pour les utilisateurs de plugins qui n'utilisent pas la protection de la vie privée.
+- Vous pouvez cacher les publicités pendant une courte période en regardant une vidéo de récompense.
+ Correction d'un bug :
+- L'état de connexion n'était pas correct après avoir effacé toutes les données mises en cache.
 </fr-FR>
 
 <zh-CN>
 变化：
-- 更多错误报告，以帮助诊断问题
-修正：
-- 纠正了几个重要问题，包括非隐私插件用户的视频播放
+- 您可以通过观看奖励视频来隐藏短期广告
+ 修正：
+- 清除所有缓存数据后，登录状态不正确
 </zh-CN>

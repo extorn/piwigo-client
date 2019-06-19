@@ -118,6 +118,11 @@
              - 请给我发电子邮件（导航栏中有一个电子邮件链接）来请求您需要或想要此应用尚未执行的操作"</item>
     </string-array>
     <string-array name="release_history">
+        <item>1.4.0.15</item>
+        <item>"变化：
+                  - 您可以通过观看奖励视频来隐藏短期广告
+               修正：
+                  - 清除所有缓存数据后，登录状态不正确"</item>
         <item>1.4.0.14</item>
         <item>"Changes:
             - More error reporting to help diagnose issues

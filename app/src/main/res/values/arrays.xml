@@ -220,6 +220,11 @@
                 - TODO Added support for MP3 encoding of the audio stream
                 - TODO Added support for setting the desired bitrate of the audio stream"</item>
                 -->
+        <item>1.4.0.15</item>
+        <item>"Changes:
+                - You can hide adverts for a short period by watching a reward video
+               Bugfix:
+                - Login status wasn't correct after clearing all cached data"</item>
         <item>1.4.0.14</item>
         <item>"Changes:
             - More error reporting to help diagnose issues
