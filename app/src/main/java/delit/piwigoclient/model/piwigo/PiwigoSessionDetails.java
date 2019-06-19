@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -100,6 +102,17 @@ public class PiwigoSessionDetails {
     public static boolean isCached(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         PiwigoSessionDetails instance = getInstance(connectionPrefs);
         return instance != null && instance.isCached();
+    }
+
+    public static void logoutAll(Context context) {
+        Iterator<Map.Entry<ConnectionPreferences.ProfilePreferences, PiwigoSessionDetails>> iter = sessionDetailsMap.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<ConnectionPreferences.ProfilePreferences, PiwigoSessionDetails> entry = iter.next();
+            if (entry.getValue() != null) {
+                HttpClientFactory.getInstance(context).flushCookies(entry.getValue().connectionPrefs);
+            }
+            iter.remove();
+        }
     }
 
     public synchronized static PiwigoSessionDetails getInstance(ConnectionPreferences.ProfilePreferences activeProfile) {

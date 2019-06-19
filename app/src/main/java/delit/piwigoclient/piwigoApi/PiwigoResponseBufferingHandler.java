@@ -198,9 +198,9 @@ public class PiwigoResponseBufferingHandler {
         final Long handlerId;
         if (response.isEndResponse()) {
             handlerId = handlerResponseMap.remove(response.getMessageId());
-            if (BuildConfig.DEBUG) {
-                Log.e(TAG, String.format("Removed handler registered for message with id %2$d after receiving message of type %1$s ", response.getClass().getName(), response.getMessageId()));
-            }
+//            if (BuildConfig.DEBUG) {
+//                Log.d(TAG, String.format("Removed handler registered for message with id %2$d after receiving message of type %1$s ", response.getClass().getName(), response.getMessageId()));
+//            }
         } else {
             handlerId = handlerResponseMap.get(response.getMessageId());
         }
