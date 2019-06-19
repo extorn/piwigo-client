@@ -19,14 +19,10 @@ import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 
 public class MainActivity extends AbstractMainActivity<MainActivity> {
 
-    private static final long REWARD_COUNT_UPDATE_FREQUENCY = 1000;
     private RewardedVideoAd rewardedVideoAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        AdsManager.RewardCountDownAction action = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
-        action.start();
-
         rewardedVideoAd = AdsManager.getInstance().getRewardedVideoAd(this, new AdsManager.OnRewardEarnedListener(this, REWARD_COUNT_UPDATE_FREQUENCY));
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);

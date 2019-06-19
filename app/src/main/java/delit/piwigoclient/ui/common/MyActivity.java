@@ -24,12 +24,14 @@ import java.util.HashMap;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
+import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 import delit.piwigoclient.ui.events.ShowMessageEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
+import delit.piwigoclient.util.DisplayUtils;
 
 /**
  * Created by gareth on 26/05/17.
@@ -37,23 +39,40 @@ import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
 
 public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActivity {
 
+    protected static final long REWARD_COUNT_UPDATE_FREQUENCY = 1000;
     private static final String STATE_TRACKED_ACTION_TO_INTENTS_MAP = "trackedActionIntentsMap";
     protected SharedPreferences prefs;
+    private static int activitiesResumed = 0;
+    private static boolean activitySwap;
 
     private HashMap<Long, Integer> trackedActionIntentsMap = new HashMap<>(3);
     private ActivityUIHelper<T> uiHelper;
     private LicenceCheckingHelper licencingHelper;
+    private AdsManager.RewardCountDownAction rewardsCountdownAction;
+
 //    private FirebaseAnalytics mFirebaseAnalytics;
 
     public SharedPreferences getSharedPrefs() {
         return prefs;
     }
 
+    public static int getActivitiesResumedCount() {
+        return activitiesResumed;
+    }
+
+    public LicenceCheckingHelper getLicencingHelper() {
+        return licencingHelper;
+    }
+
+    protected BasicPiwigoResponseListener buildPiwigoResponseListener() {
+        return new BasicPiwigoResponseListener();
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         // Obtain the FirebaseAnalytics instance.
 //        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
+        rewardsCountdownAction = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (uiHelper == null) {
             uiHelper = new ActivityUIHelper<T>((T) this, prefs);
@@ -76,22 +95,39 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         uiHelper.registerToActiveServiceCalls();
     }
 
-    public LicenceCheckingHelper getLicencingHelper() {
-        return licencingHelper;
+    protected void onAppPaused() {
+        if (rewardsCountdownAction != null) {
+            rewardsCountdownAction.stop();
+        }
     }
 
-    protected BasicPiwigoResponseListener buildPiwigoResponseListener() {
-        return new BasicPiwigoResponseListener();
+    protected void onAppResumed() {
+        rewardsCountdownAction.start();
     }
 
     @Override
     protected void onPause() {
+        activitiesResumed--;
+        activitySwap = true;
+        DisplayUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activitySwap = false;
+                if (getActivitiesResumedCount() == 0) {
+                    onAppPaused();
+                }
+            }
+        }, 1000);
         uiHelper.deregisterFromActiveServiceCalls();
         super.onPause();
     }
 
     @Override
     public void onResume() {
+        activitiesResumed++;
+        if (!activitySwap) {
+            onAppResumed();
+        }
         super.onResume();
         uiHelper.registerToActiveServiceCalls();
         if (!EventBus.getDefault().isRegistered(this)) {
@@ -100,6 +136,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         uiHelper.handleAnyQueuedPiwigoMessages();
         uiHelper.showNextQueuedMessage();
     }
+
 
     protected boolean hasAgreedToEula() {
         int agreedEulaVersion = prefs.getInt(getString(R.string.preference_agreed_eula_version_key), -1);

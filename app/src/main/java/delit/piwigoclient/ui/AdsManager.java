@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -19,6 +20,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -262,6 +264,12 @@ public class AdsManager {
             long rewardTime = Math.min(rewardItem.getAmount() * 1000, adDisplayTime * 2); // 30 sec vs time ad watched for
             rewardTime = Math.min(rewardTime, 300000); // 5 minutes absolute maximum!
             endsAt = endsAt.add(BigInteger.valueOf(rewardTime));
+
+            long totalRewardTime = endsAt.longValue() - System.currentTimeMillis();
+            Bundle bundle = new Bundle();
+            bundle.putLong("Reward_Time_Added", (rewardTime / 1000));
+            bundle.putLong("User_Reward_Time_Remaining", (totalRewardTime / 1000));
+            FirebaseAnalytics.getInstance(context).logEvent("User_Rewarded", bundle);
             prefUtil.writeSecurePreference(sharedPreferences, context.getString(R.string.preference_advert_free_time_key), endsAt.toByteArray());
             AdsManager.RewardCountDownAction action = AdsManager.RewardCountDownAction.getInstance(context, rewardCountUpdateFrequency);
             action.start();
@@ -378,6 +386,10 @@ public class AdsManager {
             prefKey = c.getString(R.string.preference_advert_free_time_key);
             this.callFrequency = callFrequency;
             h = new Handler(Looper.getMainLooper());
+        }
+
+        public static RewardCountDownAction getActiveInstance(Context c) {
+            return instance;
         }
 
         public static RewardCountDownAction getInstance(Context c, long callFrequency) {
