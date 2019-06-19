@@ -1,28 +1,20 @@
 
 <en-GB>
-Changes:
-- You can hide adverts for a short period by watching a reward video
- Bugfix:
-- Login status wasn't correct after clearing all cached data
+Bugfix:
+- Video not able to start playing after navigation to new view and then returning with back button
 </en-GB>
 
 <de-DE>
-Änderungen:
-- Sie können Anzeigen für einen kurzen Zeitraum ausblenden, indem Sie sich ein Prämienvideo ansehen.
- Fehlerbehebung:
-- Der Anmeldestatus war nicht korrekt, nachdem alle zwischengespeicherten Daten gelöscht wurden.
+Fehlerbehebung:
+- Das Video kann nach der Navigation zu einer neuen Ansicht nicht gestartet werden und kehrt dann mit der Zurück-Taste zurück.
 </de-DE>
 
 <fr-FR>
-Changements :
-- Vous pouvez cacher les publicités pendant une courte période en regardant une vidéo de récompense.
- Correction d'un bug :
-- L'état de connexion n'était pas correct après avoir effacé toutes les données mises en cache.
+Correction d'un bug :
+- La vidéo ne peut pas commencer à jouer après la navigation vers une nouvelle vue, puis revenir en arrière avec le bouton Précédent.
 </fr-FR>
 
 <zh-CN>
-变化：
-- 您可以通过观看奖励视频来隐藏短期广告
- 修正：
-- 清除所有缓存数据后，登录状态不正确
+修正：
+- 视频无法在导航到新视图后开始播放，然后使用后退按钮返回
 </zh-CN>
