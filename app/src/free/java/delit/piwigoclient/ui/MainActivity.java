@@ -4,8 +4,6 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.google.android.gms.ads.reward.RewardedVideoAd;
-
 import org.greenrobot.eventbus.EventBus;
 
 import delit.piwigoclient.R;
@@ -19,7 +17,7 @@ import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 
 public class MainActivity extends AbstractMainActivity<MainActivity> {
 
-    private RewardedVideoAd rewardedVideoAd;
+    private AdsManager.MyRewardedAdControl rewardedVideoAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +70,7 @@ public class MainActivity extends AbstractMainActivity<MainActivity> {
     }
 
     private void showRewardVideo() {
-        if (rewardedVideoAd.isLoaded()) {
-            rewardedVideoAd.show();
-        } else {
-            rewardedVideoAd.getRewardedVideoAdListener().onRewardedVideoAdClosed(); // trigger a reload
+        if (!rewardedVideoAd.show()) {
             getUiHelper().showShortMsg(R.string.reward_video_not_yet_loaded);
         }
     }

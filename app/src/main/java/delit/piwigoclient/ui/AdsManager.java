@@ -17,6 +17,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.AdMetadataListener;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
@@ -79,13 +80,13 @@ public class AdsManager {
         this.advertsDisabled = advertsDisabled;
     }
 
-    public RewardedVideoAd getRewardedVideoAd(Activity activity, OnRewardEarnedListener onRewardListener) {
+    public MyRewardedAdControl getRewardedVideoAd(Activity activity, OnRewardEarnedListener onRewardListener) {
         // Use an activity context to get the rewarded video instance.
         RewardedVideoAd rewardedVideoAd = MobileAds.getRewardedVideoAdInstance(activity);
-        MyRewardedAdListener listener = new MyRewardedAdListener(activity.getString(R.string.ad_id_reward_ad), rewardedVideoAd, onRewardListener);
+        MyRewardedAdControl listener = new MyRewardedAdControl(activity.getString(R.string.ad_id_reward_ad), rewardedVideoAd, onRewardListener);
         rewardedVideoAd.setRewardedVideoAdListener(listener);
         listener.loadAdvert();
-        return rewardedVideoAd;
+        return listener;
     }
 
     public synchronized void updateShowAdvertsSetting(Context context) {
@@ -254,14 +255,14 @@ public class AdsManager {
             this.rewardCountUpdateFrequency = rewardCountUpdateFrequency;
         }
 
-        public void onRewardEarned(RewardItem rewardItem, long adDisplayTime) {
+        public void onRewardEarned(RewardItem rewardItem, long adDisplayTimeMaximum) {
 
             byte[] oldVal = prefUtil.readSecurePreferenceRawBytes(sharedPreferences, context.getString(R.string.preference_advert_free_time_key), null);
             BigInteger endsAt = BigInteger.valueOf(System.currentTimeMillis());
             if (oldVal != null) {
                 endsAt = endsAt.max(new BigInteger(oldVal));
             }
-            long rewardTime = Math.min(rewardItem.getAmount() * 1000, adDisplayTime * 2); // 30 sec vs time ad watched for
+            long rewardTime = Math.min(rewardItem.getAmount() * 1000, adDisplayTimeMaximum * 2); // 30 sec vs time ad watched for
             rewardTime = Math.min(rewardTime, 300000); // 5 minutes absolute maximum!
             endsAt = endsAt.add(BigInteger.valueOf(rewardTime));
 
@@ -276,7 +277,7 @@ public class AdsManager {
         }
     }
 
-    private static class MyRewardedAdListener implements RewardedVideoAdListener {
+    public static final class MyRewardedAdControl extends AdMetadataListener implements RewardedVideoAdListener {
 
         private final String advertId;
         private final RewardedVideoAd rewardedVideoAd;
@@ -285,9 +286,11 @@ public class AdsManager {
         private boolean isLoading;
         private long adDisplayAt;
         private Handler h;
+        private long adDisplayedFor;
 
-        public MyRewardedAdListener(String advertId, RewardedVideoAd rewardedVideoAd, OnRewardEarnedListener listener) {
+        public MyRewardedAdControl(String advertId, RewardedVideoAd rewardedVideoAd, OnRewardEarnedListener listener) {
             this.rewardedVideoAd = rewardedVideoAd;
+            rewardedVideoAd.setAdMetadataListener(this);
             if (BuildConfig.DEBUG) {
                 this.advertId = "ca-app-pub-3940256099942544/5224354917"; // test ID
             } else {
@@ -295,6 +298,10 @@ public class AdsManager {
             }
             this.listener = listener;
             h = new Handler(Looper.getMainLooper());
+        }
+
+        @Override
+        public void onAdMetadataChanged() {
         }
 
         @Override
@@ -308,6 +315,7 @@ public class AdsManager {
 
         @Override
         public void onRewardedVideoStarted() {
+            adDisplayedFor = 0;
             adDisplayAt = System.currentTimeMillis();
         }
 
@@ -316,10 +324,33 @@ public class AdsManager {
             loadAdvert();
         }
 
+        public void pause(Context context) {
+            rewardedVideoAd.pause(context);
+        }
+
+        public boolean show() {
+            if (rewardedVideoAd.isLoaded()) {
+                rewardedVideoAd.show();
+                return true;
+            }
+            loadAdvert();
+            return false;
+        }
+
+        public void resume(Context context) {
+            rewardedVideoAd.resume(context);
+        }
+
+        public void destroy(Context context) {
+            rewardedVideoAd.destroy(context);
+        }
+
         @Override
         public void onRewarded(RewardItem rewardItem) {
-            long adDisplayTime = System.currentTimeMillis() - adDisplayAt;
-            listener.onRewardEarned(rewardItem, adDisplayTime);
+            adDisplayedFor += System.currentTimeMillis() - adDisplayAt;
+            listener.onRewardEarned(rewardItem, adDisplayedFor);
+
+
         }
 
         @Override
