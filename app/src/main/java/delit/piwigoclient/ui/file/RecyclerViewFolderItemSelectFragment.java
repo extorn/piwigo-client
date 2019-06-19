@@ -96,7 +96,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         super.onSaveInstanceState(outState);
         BundleUtils.putFile(outState, ACTIVE_FOLDER, getListAdapter().getActiveFolder());
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
-        outState.putSerializable(STATE_LIST_VIEW_STATE, listViewStates);
+        BundleUtils.writeMap(outState, STATE_LIST_VIEW_STATE, listViewStates);
         outState.putStringArrayList(STATE_ALL_POSS_VIS_FILE_EXTS, allPossiblyVisibleFileExts);
         outState.putStringArrayList(STATE_SELECTED_VIS_FILE_EXTS, selectedVisibleFileExts);
     }
@@ -113,7 +113,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
         if (savedInstanceState != null) {
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
-            listViewStates = BundleUtils.getSerializable(savedInstanceState, STATE_LIST_VIEW_STATE, LinkedHashMap.class);
+            listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap(), Parcelable.class.getClassLoader());
             allPossiblyVisibleFileExts = savedInstanceState.getStringArrayList(STATE_ALL_POSS_VIS_FILE_EXTS);
             selectedVisibleFileExts = savedInstanceState.getStringArrayList(STATE_SELECTED_VIS_FILE_EXTS);
         }

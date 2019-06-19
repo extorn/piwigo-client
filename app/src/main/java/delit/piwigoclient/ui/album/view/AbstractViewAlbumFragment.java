@@ -284,7 +284,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
         outState.putLongArray(STATE_CURRENT_GROUPS, currentGroups);
         outState.putLongArray(STATE_CURRENT_USERS, currentUsers);
         outState.putBoolean(STATE_GALLERY_DIRTY, galleryIsDirty);
-        outState.putSerializable(STATE_GALLERY_ACTIVE_LOAD_THREADS, loadingMessageIds);
+        BundleUtils.writeMap(outState, STATE_GALLERY_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putStringArrayList(STATE_GALLERY_LOADS_TO_RETRY, itemsToLoad);
         outState.putBoolean(STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED, movedResourceParentUpdateRequired);
         outState.putInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS, updateAlbumDetailsProgress);
@@ -370,7 +370,8 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             galleryIsDirty = galleryIsDirty || PiwigoSessionDetails.getUserGuid(ConnectionPreferences.getActiveProfile()) != userGuid;
             galleryIsDirty = galleryIsDirty || savedInstanceState.getBoolean(STATE_GALLERY_DIRTY);
-            SetUtils.setNotNull(loadingMessageIds, BundleUtils.getSerializable(savedInstanceState, STATE_GALLERY_ACTIVE_LOAD_THREADS, HashMap.class));
+            loadingMessageIds.clear();
+            BundleUtils.readMap(savedInstanceState, STATE_GALLERY_ACTIVE_LOAD_THREADS, loadingMessageIds, null);
             Set<Long> messageIdsExpired = PiwigoResponseBufferingHandler.getDefault().getUnknownMessageIds(loadingMessageIds.keySet());
             if (messageIdsExpired.size() > 0) {
                 for (Long messageId : messageIdsExpired) {

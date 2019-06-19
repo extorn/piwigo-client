@@ -152,7 +152,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
-        outState.putSerializable(STATE_FAVORITES_ACTIVE_LOAD_THREADS, loadingMessageIds);
+        BundleUtils.writeMap(outState, STATE_FAVORITES_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putStringArrayList(STATE_FAVORITES_LOADS_TO_RETRY, itemsToLoad);
         outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
     }
@@ -217,7 +217,8 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             favoritesIsDirty = favoritesIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
             favoritesIsDirty = favoritesIsDirty || savedInstanceState.getBoolean(STATE_FAVORITES_DIRTY);
-            SetUtils.setNotNull(loadingMessageIds,BundleUtils.getSerializable(savedInstanceState, STATE_FAVORITES_ACTIVE_LOAD_THREADS, HashMap.class));
+            loadingMessageIds.clear();
+            BundleUtils.readMap(savedInstanceState, STATE_FAVORITES_ACTIVE_LOAD_THREADS, loadingMessageIds, null);
             SetUtils.setNotNull(itemsToLoad,savedInstanceState.getStringArrayList(STATE_FAVORITES_LOADS_TO_RETRY));
             if(deleteActionData != null && deleteActionData.isEmpty()) {
                 deleteActionData = null;

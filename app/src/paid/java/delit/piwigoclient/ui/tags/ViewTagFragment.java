@@ -164,7 +164,7 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
         super.onSaveInstanceState(outState);
         viewPrefs.storeToBundle(outState);
         outState.putParcelable(ARG_TAG, tag);
-        outState.putSerializable(STATE_TAG_ACTIVE_LOAD_THREADS, loadingMessageIds);
+        BundleUtils.writeMap(outState, STATE_TAG_ACTIVE_LOAD_THREADS, loadingMessageIds);
         outState.putStringArrayList(STATE_TAG_LOADS_TO_RETRY, itemsToLoad);
         outState.putParcelable(STATE_DELETE_ACTION_DATA, deleteActionData);
     }
@@ -235,7 +235,8 @@ public class ViewTagFragment extends MyFragment<ViewTagFragment> {
             userGuid = savedInstanceState.getLong(STATE_USER_GUID);
             tagIsDirty = tagIsDirty || PiwigoSessionDetails.getUserGuid(connectionPrefs) != userGuid;
             tagIsDirty = tagIsDirty || savedInstanceState.getBoolean(STATE_TAG_DIRTY);
-            SetUtils.setNotNull(loadingMessageIds,BundleUtils.getSerializable(savedInstanceState, STATE_TAG_ACTIVE_LOAD_THREADS, HashMap.class));
+            loadingMessageIds.clear();
+            BundleUtils.readMap(savedInstanceState, STATE_TAG_ACTIVE_LOAD_THREADS, loadingMessageIds, null);
             SetUtils.setNotNull(itemsToLoad,savedInstanceState.getStringArrayList(STATE_TAG_LOADS_TO_RETRY));
             if(deleteActionData != null && deleteActionData.isEmpty()) {
                 deleteActionData = null;

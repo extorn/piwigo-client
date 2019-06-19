@@ -75,7 +75,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         rewardsCountdownAction = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (uiHelper == null) {
-            uiHelper = new ActivityUIHelper<T>((T) this, prefs);
+            uiHelper = new ActivityUIHelper<>((T) this, prefs);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
@@ -83,7 +83,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
 
         if (savedInstanceState != null) {
             uiHelper.onRestoreSavedInstanceState(savedInstanceState);
-            trackedActionIntentsMap = BundleUtils.getSerializable(savedInstanceState, STATE_TRACKED_ACTION_TO_INTENTS_MAP, HashMap.class);
+            trackedActionIntentsMap = BundleUtils.readMap(savedInstanceState, STATE_TRACKED_ACTION_TO_INTENTS_MAP, null);
         }
 
         if (BuildConfig.PAID_VERSION && !BuildConfig.DEBUG) {
@@ -147,7 +147,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         uiHelper.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_TRACKED_ACTION_TO_INTENTS_MAP, trackedActionIntentsMap);
+        BundleUtils.writeMap(outState, STATE_TRACKED_ACTION_TO_INTENTS_MAP, trackedActionIntentsMap);
         super.onSaveInstanceState(outState);
     }
 
