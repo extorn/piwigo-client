@@ -13,6 +13,7 @@ Connexion à des serveurs fonctionnant sur des ports http ou https non standard
 Accepter les certificats de serveur non valides (mauvais nom d'hôte) ou auto-signés si nécessaire.
 Le brochage des certificats du serveur est pris en charge (vérifiez les certificats par rapport à une copie locale).
 Visualisez les images à une résolution optimisée pour votre écran (ou sélectionnez celle que vous voulez).
+Affichage hors ligne en lecture seule de votre serveur
 Afficher et autoriser le zoom sur les images de n'importe quelle taille disponible sur le serveur
 Voir les vidéos MP4 (d'autres devraient fonctionner aussi, mais je n'ai pas testé d'autres formats)
 Télécharger des images.
@@ -20,6 +21,7 @@ Enregistrer les vidéos entièrement téléchargées
 Possibilité d'exclure les vidéos des diaporamas
 Évaluez les images et visualisez les cotes d'écoute moyennes
 Télécharger de nouvelles images ou vidéos (peut être compressé en option)
+Surveillance automatique des dossiers de l'appareil et téléchargement de fichiers dans un job d'arrière-plan
 Afficher, ajouter, modifier, supprimer des balises et des images balisées
 Définir et modifier les permissions, la description et autres détails des albums et fichiers
 Ajouter ou modifier des albums, leurs permissions, leur description, etc.

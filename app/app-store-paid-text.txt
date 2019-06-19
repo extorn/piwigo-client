@@ -13,6 +13,7 @@ Connect to servers running on non-standard http or https ports
 Accept invalid (wrong host name) or self signed server certificates if required
 server Certificate pinning is supported (verify certs against a local copy)
 View images at a resolution optimised for your screen (or select the one you want).
+Offline read only view of your server
 Show and allow zoom into images of any size available on the server
 View MP4 videos (others should work too, but I've not tested other formats)
 Download images.
@@ -20,6 +21,7 @@ Save fully downloaded videos
 Optionally exclude videos from slide-shows
 Rate images and view average ratings
 Upload new images or videos  (can be optionally compressed)
+Automatic device folder monitoring and upload of files in a background job
 View, add, amend, delete Tags and Tagged images
 Setting and amend permissions, description, and other details of albums and files
 Add or alter albums, their permissions, description, etc

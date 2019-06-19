@@ -13,6 +13,7 @@ Verbindung zu Servern, die auf nicht standardmäßigen http- oder https-Ports la
 Akzeptieren Sie bei Bedarf ungültige (falscher Hostname) oder selbstsignierte Serverzertifikate.
 Server Certificate Pinning wird unterstützt (Zertifikate gegen eine lokale Kopie verifizieren).
 Betrachten Sie Bilder in einer für Ihren Bildschirm optimierten Auflösung (oder wählen Sie die gewünschte Auflösung).
+Offline-Lesezugriff auf Ihren Server
 Anzeigen und Zulassen des Zooms in Bilder jeder Größe, die auf dem Server verfügbar sind.
 MP4-Videos anzeigen (andere sollten auch funktionieren, aber ich habe andere Formate nicht getestet)
 Bilder herunterladen.
@@ -20,6 +21,7 @@ Speichern Sie vollständig heruntergeladene Videos
 Videos können optional von Diashows ausgeschlossen werden.
 Bilder bewerten und durchschnittliche Bewertungen anzeigen
 Neue Bilder oder Videos hochladen (kann optional komprimiert werden)
+Automatische Geräteordnerüberwachung und Upload von Dateien in einem Hintergrundauftrag
 Anzeigen, Hinzufügen, Ändern, Löschen von Tags und markierten Bildern
 Festlegen und Ändern von Berechtigungen, Beschreibungen und anderen Details von Alben und Dateien
 Hinzufügen oder Ändern von Alben, deren Berechtigungen, Beschreibung usw.
