@@ -69,7 +69,7 @@ import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.FavoritesUpdatedEvent;
 import delit.piwigoclient.ui.model.PiwigoFavoritesModel;
-import delit.piwigoclient.util.SetUtils;
+import delit.piwigoclient.util.CollectionUtils;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -219,7 +219,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
             favoritesIsDirty = favoritesIsDirty || savedInstanceState.getBoolean(STATE_FAVORITES_DIRTY);
             loadingMessageIds.clear();
             BundleUtils.readMap(savedInstanceState, STATE_FAVORITES_ACTIVE_LOAD_THREADS, loadingMessageIds, null);
-            SetUtils.setNotNull(itemsToLoad,savedInstanceState.getStringArrayList(STATE_FAVORITES_LOADS_TO_RETRY));
+            CollectionUtils.addToCollectionNullSafe(itemsToLoad, savedInstanceState.getStringArrayList(STATE_FAVORITES_LOADS_TO_RETRY));
             if(deleteActionData != null && deleteActionData.isEmpty()) {
                 deleteActionData = null;
             } else {

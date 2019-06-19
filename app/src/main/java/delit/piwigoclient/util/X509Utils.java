@@ -645,7 +645,7 @@ public class X509Utils {
     public static boolean areEqual(KeyStore first, KeyStore second) {
         Set<String> firstAliases = listAliasesInStore(first);
         Set<String> secondAliases = listAliasesInStore(second);
-        if (!SetUtils.equals(firstAliases, secondAliases)) {
+        if (!CollectionUtils.equals(firstAliases, secondAliases)) {
             return false;
         }
         char[] storePass = new char[0];

@@ -72,6 +72,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumPermissionsSelectionNeededEve
 import delit.piwigoclient.ui.events.trackable.GroupSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.permissions.AlbumSelectionListAdapter;
+import delit.piwigoclient.util.CollectionUtils;
 import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
@@ -279,7 +280,7 @@ public class UserFragment extends MyFragment<UserFragment> {
             newUser = savedInstanceState.getParcelable(NEW_USER);
             fieldsEditable = savedInstanceState.getBoolean(STATE_FIELDS_EDITABLE);
             newGroupMembership = BundleUtils.getHashSet(savedInstanceState, STATE_NEW_GROUP_MEMBERSHIP);
-            SetUtils.setNotNull(saveActionIds, BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_SAVE_ACTION_IDS));
+            CollectionUtils.addToCollectionNullSafe(saveActionIds, BundleUtils.getLongHashSet(savedInstanceState, IN_FLIGHT_SAVE_ACTION_IDS));
             selectGroupsActionId = savedInstanceState.getInt(STATE_SELECT_GROUPS_ACTION_ID);
         }
 
@@ -766,7 +767,7 @@ public class UserFragment extends MyFragment<UserFragment> {
             adapterPreferences.readonly();
             AlbumSelectionListAdapter availableItemsAdapter = new AlbumSelectionListAdapter(getContext(), availableGalleries, indirectAlbumPermissions, adapterPreferences);
             availableItemsAdapter.linkToListView(albumPermissionsField, initialSelection, initialSelection);
-        } else if (!SetUtils.equals(adapter.getSelectedItems(), initialSelection)) {
+        } else if (!CollectionUtils.equals(adapter.getSelectedItems(), initialSelection)) {
             adapter.setSelectedItems(initialSelection);
             adapter.setIndirectlySelectedItems(indirectAlbumPermissions);
         }

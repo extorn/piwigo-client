@@ -1,8 +1,6 @@
 package delit.piwigoclient.util;
 
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -63,50 +61,4 @@ public class SetUtils {
         return diffs;
     }
 
-    public static String[] asStringArray(Collection<String> items) {
-        String[] arr = new String[items.size()];
-        int i = 0;
-        for (String id : items) {
-            arr[i++] = id;
-        }
-        return arr;
-    }
-
-    public static long[] asLongArray(Collection<Long> items) {
-        long[] arr = new long[items.size()];
-        int i = 0;
-        for (Long id : items) {
-            arr[i++] = id;
-        }
-        return arr;
-    }
-
-    public static int[] asIntArray(Collection<Integer> items) {
-        int[] arr = new int[items.size()];
-        int i = 0;
-        for (Integer id : items) {
-            arr[i++] = id;
-        }
-        return arr;
-    }
-
-    public static <T extends Collection<?>, S extends Collection<?>> boolean equals(T collectionA, S collectionB) {
-        return collectionA.size() == collectionB.size()
-                && collectionA.containsAll(collectionB)
-                && collectionB.containsAll(collectionA);
-    }
-
-    public static <X extends Map<K, V>, K, V> void setNotNull(X memberSaveActionIds, Map<K, V> newValues) {
-        memberSaveActionIds.clear();
-        if (newValues != null) {
-            memberSaveActionIds.putAll(newValues);
-        }
-    }
-
-    public static <X extends Collection<T>, T> void setNotNull(X memberSaveActionIds, Collection<T> newValues) {
-        memberSaveActionIds.clear();
-        if (newValues != null) {
-            memberSaveActionIds.addAll(newValues);
-        }
-    }
 }

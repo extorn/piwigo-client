@@ -115,6 +115,7 @@ import delit.piwigoclient.ui.events.trackable.GroupSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.UsernameSelectionNeededEvent;
 import delit.piwigoclient.ui.model.PiwigoAlbumModel;
+import delit.piwigoclient.util.CollectionUtils;
 import delit.piwigoclient.util.SetUtils;
 
 import static android.view.View.GONE;
@@ -378,7 +379,7 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
                     loadingMessageIds.remove(messageId);
                 }
             }
-            SetUtils.setNotNull(itemsToLoad, savedInstanceState.getStringArrayList(STATE_GALLERY_LOADS_TO_RETRY));
+            CollectionUtils.addToCollectionNullSafe(itemsToLoad, savedInstanceState.getStringArrayList(STATE_GALLERY_LOADS_TO_RETRY));
             movedResourceParentUpdateRequired = savedInstanceState.getBoolean(STATE_MOVED_RESOURCE_PARENT_UPDATE_NEEDED);
             updateAlbumDetailsProgress = savedInstanceState.getInt(STATE_UPDATE_ALBUM_DETAILS_PROGRESS);
             usernameSelectionWantedNext = savedInstanceState.getBoolean(STATE_USERNAME_SELECTION_WANTED_NEXT);
@@ -1742,10 +1743,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private void onAlbumPermissionsAdded(AlbumAddPermissionsResponseHandler.PiwigoAddAlbumPermissionsResponse response) {
         HashSet<Long> newGroupsSet = SetUtils.asSet(galleryModel.getContainerDetails().getGroups());
         newGroupsSet.addAll(response.getGroupIdsAffected());
-        galleryModel.getContainerDetails().setGroups(SetUtils.asLongArray(newGroupsSet));
+        galleryModel.getContainerDetails().setGroups(CollectionUtils.asLongArray(newGroupsSet));
         HashSet<Long> newUsersSet = SetUtils.asSet(galleryModel.getContainerDetails().getUsers());
         newUsersSet.addAll(response.getUserIdsAffected());
-        galleryModel.getContainerDetails().setUsers(SetUtils.asLongArray(newUsersSet));
+        galleryModel.getContainerDetails().setUsers(CollectionUtils.asLongArray(newUsersSet));
 
         if (!removeAlbumPermissions()) {
             onAlbumUpdateFinished();
@@ -1755,10 +1756,10 @@ public abstract class AbstractViewAlbumFragment extends MyFragment<AbstractViewA
     private void onAlbumPermissionsRemoved(AlbumRemovePermissionsResponseHandler.PiwigoRemoveAlbumPermissionsResponse response) {
         HashSet<Long> newGroupsSet = SetUtils.asSet(galleryModel.getContainerDetails().getGroups());
         newGroupsSet.removeAll(response.getGroupIdsAffected());
-        galleryModel.getContainerDetails().setGroups(SetUtils.asLongArray(newGroupsSet));
+        galleryModel.getContainerDetails().setGroups(CollectionUtils.asLongArray(newGroupsSet));
         HashSet<Long> newUsersSet = SetUtils.asSet(galleryModel.getContainerDetails().getUsers());
         newUsersSet.removeAll(response.getUserIdsAffected());
-        galleryModel.getContainerDetails().setUsers(SetUtils.asLongArray(newUsersSet));
+        galleryModel.getContainerDetails().setUsers(CollectionUtils.asLongArray(newUsersSet));
 
         onAlbumUpdateFinished();
     }
