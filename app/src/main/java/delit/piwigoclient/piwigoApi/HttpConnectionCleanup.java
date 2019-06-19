@@ -3,6 +3,7 @@ package delit.piwigoclient.piwigoApi;
 import android.content.Context;
 
 import delit.piwigoclient.business.ConnectionPreferences;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 
 /**
@@ -34,6 +35,7 @@ public class HttpConnectionCleanup extends Worker {
         } else {
             HttpClientFactory.getInstance(getContext()).cancelAllRunningHttpRequests(connectionPrefs);
         }
+        PiwigoSessionDetails.logout(connectionPrefs, getContext());
         PiwigoResponseBufferingHandler.getDefault().processResponse(new HttpClientsShutdownResponse(messageId));
         return true;
     }
