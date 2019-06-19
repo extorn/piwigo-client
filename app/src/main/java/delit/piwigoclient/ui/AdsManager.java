@@ -311,12 +311,12 @@ public class AdsManager {
 
         @Override
         public void onRewardedVideoAdOpened() {
+            adDisplayedFor = 0;
+            adDisplayAt = System.currentTimeMillis();
         }
 
         @Override
         public void onRewardedVideoStarted() {
-            adDisplayedFor = 0;
-            adDisplayAt = System.currentTimeMillis();
         }
 
         @Override
@@ -347,7 +347,7 @@ public class AdsManager {
 
         @Override
         public void onRewarded(RewardItem rewardItem) {
-            adDisplayedFor += System.currentTimeMillis() - adDisplayAt;
+            adDisplayedFor = System.currentTimeMillis() - adDisplayAt;
             listener.onRewardEarned(rewardItem, adDisplayedFor);
 
 
