@@ -106,6 +106,7 @@ import static android.view.View.VISIBLE;
 public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> extends MyFragment implements MyFragmentRecyclerPagerAdapter.PagerItemFragment {
 
     private static final String TAG = "SlideshowItemFragment";
+
     private static final String ARG_GALLERY_ITEM = "galleryItem";
     private static final String ARG_AND_STATE_ALBUM_ITEM_IDX = "albumItemIndex";
     private static final String ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT = "albumLoadedResourceItemCount";
@@ -116,9 +117,22 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private static final String STATE_INFORMATION_SHOWING = "informationShowing";
     private static final String STATE_IS_PRIMARY_SLIDESHOW_ITEM = "isPrimarySlideshowItem";
     private static final String STATE_IS_ALLOW_DOWNLOAD = "allowDownload";
+
+    private T model;
+    private int albumItemIdx;
+    private int albumLoadedItemCount;
+    private long albumTotalItemCount;
+    private HashSet<CategoryItemStub> updatedLinkedAlbumSet;
+    private HashSet<Long> albumsRequiringReload;
+    private boolean editingItemDetails;
+    private boolean informationShowing;
+    private transient boolean isPrimarySlideshowItem;
+    private boolean allowDownload = true;
+
+    private transient boolean doOnPageSelectedAndAddedRun; // reset to false with every object re-use and never tracked.
+
     protected ImageButton editButton;
     protected TextView tagsField;
-    private T model;
     private RatingBar averageRatingsBar;
     private ProgressBar progressIndicator;
     private RatingBar ratingsBar;
@@ -130,25 +144,15 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private ImageButton deleteButton;
     private ImageButton copyButton;
     private ImageButton moveButton;
-    private boolean editingItemDetails;
-    private boolean informationShowing;
     private RatingBar ratingBar;
     private ImageButton downloadButton;
-    private boolean allowDownload = true;
     private DownloadAction activeDownloadAction;
     private CustomImageButton setAsAlbumThumbnail;
     private TextView linkedAlbumsField;
-    private HashSet<CategoryItemStub> updatedLinkedAlbumSet;
-    private HashSet<Long> albumsRequiringReload;
-    private int albumItemIdx;
-    private int albumLoadedItemCount;
     private TextView itemPositionTextView;
-    private long albumTotalItemCount;
     private CustomSlidingLayer bottomSheet;
     private View itemContent;
     private TextView resourceRatingScoreField;
-    private transient boolean isPrimarySlideshowItem;
-    private transient boolean doOnPageSelectedAndAddedRun;
     private ViewVisibleControl overlaysVisibilityControl;
     private TextView resourceTitleView;
 
@@ -194,6 +198,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         albumItemIdx = -1;
         albumLoadedItemCount = -1;
         albumTotalItemCount = -1;
+        isPrimarySlideshowItem = false;
+        doOnPageSelectedAndAddedRun = false;
     }
 
     @Override
