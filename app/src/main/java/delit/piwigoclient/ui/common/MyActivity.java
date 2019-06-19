@@ -35,13 +35,13 @@ import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
  * Created by gareth on 26/05/17.
  */
 
-public abstract class MyActivity extends AppCompatActivity {
+public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActivity {
 
     private static final String STATE_TRACKED_ACTION_TO_INTENTS_MAP = "trackedActionIntentsMap";
     protected SharedPreferences prefs;
 
     private HashMap<Long, Integer> trackedActionIntentsMap = new HashMap<>(3);
-    private ActivityUIHelper uiHelper;
+    private ActivityUIHelper<T> uiHelper;
     private LicenceCheckingHelper licencingHelper;
 //    private FirebaseAnalytics mFirebaseAnalytics;
 
@@ -56,7 +56,7 @@ public abstract class MyActivity extends AppCompatActivity {
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (uiHelper == null) {
-            uiHelper = new ActivityUIHelper(this, prefs);
+            uiHelper = new ActivityUIHelper<T>((T) this, prefs);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
             listener.withUiHelper(this, uiHelper);
             uiHelper.setPiwigoResponseListener(listener);
@@ -191,7 +191,7 @@ public abstract class MyActivity extends AppCompatActivity {
         }
     }
 
-    public ActivityUIHelper getUiHelper() {
+    public ActivityUIHelper<T> getUiHelper() {
         return uiHelper;
     }
 

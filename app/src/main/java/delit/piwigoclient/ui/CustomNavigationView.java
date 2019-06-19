@@ -44,6 +44,7 @@ import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.LockAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
+import delit.piwigoclient.ui.events.RewardUpdateEvent;
 import delit.piwigoclient.ui.events.UnlockAppEvent;
 import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.ProjectUtils;
@@ -134,6 +135,23 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         uiHelper.addActionOnResponse(msgId, new OnHttpConnectionsCleanedAction());
         uiHelper.addActiveServiceCall(getContext().getString(R.string.loading_new_server_configuration), msgId, "httpCleanup");
         cleanup.start();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    public void onEvent(RewardUpdateEvent event) {
+        MenuItem item = getMenu().findItem(R.id.nav_buy_time);
+        long millis = event.getRewardTimeRemaining();
+        if (millis > 0) {
+            long mins = millis / (60000);
+            long secs = (millis - (mins * 60000)) / 1000;
+            item.setTitle(getContext().getString(R.string.bought_time_menu_title_pattern, mins, secs));
+            if (mins > 30) {
+                item.setEnabled(false);
+            }
+        } else {
+            item.setEnabled(true);
+            item.setTitle(getContext().getString(R.string.buy_time_menu_title));
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
@@ -395,6 +413,8 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
             // only allow locking of the app if we've got an active login to PIWIGO.
             m.findItem(R.id.nav_lock).setVisible(!isReadOnly && sessionDetails != null && sessionDetails.isFullyLoggedIn() && !sessionDetails.isGuest());
             m.findItem(R.id.nav_unlock).setVisible(isReadOnly);
+
+            m.findItem(R.id.nav_buy_time).setVisible(!BuildConfig.PAID_VERSION);
 
             m.findItem(R.id.nav_offline_mode).setVisible(sessionDetails == null || !sessionDetails.isCached());
             m.findItem(R.id.nav_online_mode).setVisible(sessionDetails != null && sessionDetails.isCached());

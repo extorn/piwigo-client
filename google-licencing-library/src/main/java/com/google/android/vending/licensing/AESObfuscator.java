@@ -22,8 +22,6 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.vending.licensing.util.Base64;
 import com.google.android.vending.licensing.util.Base64DecoderException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidAlgorithmParameterException;
@@ -96,35 +94,78 @@ Crashlytics.logException(e);
         return iv;
     }
 
-    public String obfuscate(String original, String key) {
-        if (original == null) {
+    private byte[] mergeArrays(byte[]... arrays) {
+        int totLen = 0;
+        for (byte[] arr : arrays) {
+            totLen += arr.length;
+        }
+        byte[] output = new byte[totLen];
+        totLen = 0;
+        for (byte[] arr : arrays) {
+            for (int i = 0; i < arr.length; i++) {
+                output[totLen++] = arr[i];
+            }
+        }
+        return output;
+    }
+
+    @Override
+    public String obfuscateBytes(byte[] originalData, String key) {
+        if (originalData == null) {
             return null;
         }
         try {
             // Header is appended as an integrity check
             Cipher cipher = buildEncrypter();
-            byte[] data = cipher.doFinal((header + key + original).getBytes(UTF8));
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(data.length + 16);
+            byte[] inputData = mergeArrays(header.getBytes(UTF8), key.getBytes(UTF8), originalData);
+            byte[] encrypted = cipher.doFinal(inputData);
             byte[] iv = cipher.getIV();
             if(iv == null || iv.length != 16) {
                 throw new IllegalStateException("IV has not been initialised");
             }
-            baos.write(iv);
-            baos.write(data);
-            return Base64.encode(baos.toByteArray());
-        } catch (UnsupportedEncodingException e) {
-            Crashlytics.logException(e);
-            throw new RuntimeException("Invalid environment", e);
+            byte[] finalOutput = mergeArrays(iv, encrypted);
+            return Base64.encode(finalOutput);
         } catch (GeneralSecurityException e) {
             Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
-        } catch (IOException e) {
+        } catch (UnsupportedEncodingException e) {
             Crashlytics.logException(e);
             throw new RuntimeException("Invalid environment", e);
         }
     }
 
-    public String unobfuscate(String obfuscated, String key) throws ValidationException {
+
+    @Override
+    public String obfuscateString(String original, String key) {
+        if (original == null) {
+            return null;
+        }
+        try {
+            return obfuscateBytes(original.getBytes(UTF8), key);
+        } catch (UnsupportedEncodingException e) {
+            Crashlytics.logException(e);
+            throw new RuntimeException("Invalid environment", e);
+        }
+    }
+
+    @Override
+    public String unobfuscateString(String obfuscated, String key) throws ValidationException {
+        if (obfuscated == null) {
+            return null;
+        }
+        byte[] bytes = unobfuscateBytes(obfuscated, key);
+        try {
+            return new String(bytes, UTF8);
+        } catch (UnsupportedEncodingException e) {
+            if (recordErrors) {
+                Crashlytics.logException(e);
+            }
+            throw new RuntimeException("Invalid environment", e);
+        }
+    }
+
+    @Override
+    public byte[] unobfuscateBytes(String obfuscated, String key) throws ValidationException {
         if (obfuscated == null) {
             return null;
         }
@@ -133,18 +174,32 @@ Crashlytics.logException(e);
             byte[] ivBytes = Arrays.copyOf(bytes, 16);
             byte[] dataBytes = Arrays.copyOfRange(bytes, 16, bytes.length);
             Cipher cipher = buildDecrypter(ivBytes);
-            String result = new String(cipher.doFinal(dataBytes), UTF8);
+
+            byte[] headerBytes = header.getBytes(UTF8);
+            byte[] keyBytes = key.getBytes(UTF8);
+
+            byte[] decrypted = cipher.doFinal(dataBytes);
+            boolean sane = true;
+            int totalHeaderLen = headerBytes.length;
+            for (int i = 0; i < totalHeaderLen; i++) {
+                sane &= decrypted[i] == headerBytes[i];
+            }
+            for (int i = 0; i < keyBytes.length; i++) {
+                sane &= decrypted[totalHeaderLen + i] == keyBytes[i];
+            }
+            totalHeaderLen += keyBytes.length;
+
             // Check for presence of header. This serves as a final integrity check, for cases
             // where the block size is correct during decryption.
-            int headerIndex = result.indexOf(header+key);
-            if (headerIndex != 0) {
+            if (!sane) {
                 if(BuildConfig.DEBUG) {
                     Log.w(TAG, "Unable to decrypt - Header not found (invalid data or key)" + ":" +
-                            obfuscated + "\n" + header + key + " not found in " + result);
+                            obfuscated + "\n" + header + key + " not found in " + new String(decrypted, UTF8));
                 }
                 throw new ValidationException("Unable to decrypt - header not found (invalid data or key)" + ":" + obfuscated);
             }
-            return result.substring(header.length() + key.length());
+
+            return Arrays.copyOfRange(decrypted, totalHeaderLen, decrypted.length);
         } catch (Base64DecoderException e) {
             if (recordErrors) {
                 Crashlytics.logException(e);

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import androidx.annotation.IdRes;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -92,7 +93,7 @@ import delit.piwigoclient.util.DisplayUtils;
 import delit.piwigoclient.util.VersionUtils;
 import hotchemi.android.rate.MyAppRate;
 
-public abstract class AbstractMainActivity extends MyActivity implements ComponentCallbacks2 {
+public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> extends MyActivity<T> implements ComponentCallbacks2 {
 
     private static final String STATE_CURRENT_ALBUM = "currentAlbum";
     private static final String STATE_BASKET = "basket";
@@ -320,7 +321,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onNavigationItemSelected(NavigationItemSelectEvent event) {
+    public final void onNavigationItemSelected(NavigationItemSelectEvent event) {
         // Handle navigation view item clicks here.
         int id = event.navigationitemSelected;
 
@@ -359,10 +360,14 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
                 showEula();
                 break;
             default:
+                onNavigationItemSelected(event, id);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+    }
+
+    protected void onNavigationItemSelected(NavigationItemSelectEvent event, @IdRes int itemId) {
     }
 
     private void showTopTips() {
@@ -382,7 +387,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     private void showUpload() {
         try {
-            startActivity(UploadActivity.buildIntent(getBaseContext(), currentAlbum.toStub()));
+            startActivity(UploadActivity.buildIntent(this, currentAlbum.toStub()));
         } catch(ActivityNotFoundException e) {
             Crashlytics.logException(e);
         }
@@ -460,7 +465,7 @@ public abstract class AbstractMainActivity extends MyActivity implements Compone
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(FileSelectionNeededEvent event) {
-        Intent intent = new Intent(getBaseContext(), FileSelectActivity.class);
+        Intent intent = new Intent(this, FileSelectActivity.class);
         intent.putExtra(FileSelectActivity.INTENT_DATA, event);
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());

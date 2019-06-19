@@ -599,5 +599,9 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="upload_tab_title_files">Dateien</string>
     <string name="unable_to_handle_shared_uri_missing_content_description_information">Die gemeinsame Datei kann nicht verarbeitet werden. Fehlende Detailinformationen wie Dateiname und genauer Dateityp. Bitte laden Sie die Datei zuerst auf Ihr Gerät herunter.</string>
     <string name="alert_internal_server_exposed_pattern">Unerwartete Autorität %1$s in der URL gefunden und durch %2$s ersetzt. Ihr Server könnte falsch konfiguriert sein.</string>
+    <string name="buy_time_menu_title">Anzeigen ausblenden</string>
+    <string name="watch_advert_to_buy_advert_free_time">Möchten Sie eine Anzeige sehen, um einen kurzen Zeitraum ohne Werbung zu kaufen? Sie können dies mehrmals tun, um die Zeitspanne bei Bedarf zu verlängern.</string>
+    <string name="reward_video_not_yet_loaded">Sorry, aber das Belohnungsvideo wurde noch nicht geladen. Bitte versuchen Sie es später noch einmal.</string>
+    <string name="bought_time_menu_title_pattern">Anzeigen in %02d:%02d</string>
 </resources>
 

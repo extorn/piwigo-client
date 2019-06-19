@@ -136,7 +136,7 @@ public class X509Utils {
 
     public static void saveKeystore(Context context, KeyStore keystore, char[] keystorePassword, String keystoreFilename) {
 
-        File appDataDir = context.getApplicationContext().getFilesDir();
+        File appDataDir = context.getFilesDir();
         if (!appDataDir.exists()) {
             appDataDir.mkdir();
         }
@@ -285,7 +285,7 @@ public class X509Utils {
     }
 
     public static KeyStore loadKeystore(Context context, String keystoreFilename, char[] keystorePassword) {
-        File appDataDir = context.getApplicationContext().getFilesDir();
+        File appDataDir = context.getFilesDir();
         if (!appDataDir.exists()) {
             appDataDir.mkdir();
         }

@@ -24,6 +24,7 @@
     <string name="ad_id_app_top_tips_banner" translatable="false">ca-app-pub-1408465472557768/3659572555</string>
     <string name="ad_id_app_licences_banner" translatable="false">ca-app-pub-1408465472557768/5519449132</string>
     <string name="ad_id_app_eula_banner" translatable="false">ca-app-pub-1408465472557768/4753162372</string>
+    <string name="ad_id_reward_ad" translatable="false">ca-app-pub-1408465472557768/9874441359</string>
 
     <string name="app_name" translatable="false">PiwigoClient</string>
     <string name="app_name_and_version_pattern" translatable="false">PiwigoClient v%1$s</string>
@@ -983,4 +984,8 @@ SOFTWARE.
     <string name="upload_tab_title_files">Files</string>
     <string name="unable_to_handle_shared_uri_missing_content_description_information">Unable to handle shared File. Missing detailed information such as filename and exact file type. Please download the file to your device first.</string>
     <string name="alert_internal_server_exposed_pattern">Unexpected authority %1$s found in url and replaced with %2$s. Your server could be misconfigured.</string>
+    <string name="buy_time_menu_title">Hide Adverts</string>
+    <string name="watch_advert_to_buy_advert_free_time">Would you like to watch an advertisement to buy a short period without any adverts? You can do this multiple times to increase the length of time if wanted.</string>
+    <string name="reward_video_not_yet_loaded">Sorry, but the reward video has not yet loaded. Please try again later.</string>
+    <string name="bought_time_menu_title_pattern">Adverts in %02d:%02d</string>
 </resources>

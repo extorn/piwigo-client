@@ -78,5 +78,10 @@
             android:id="@+id/nav_unlock"
             android:icon="@drawable/ic_lock_open_black_24dp"
             android:title="@string/unlock_menu_title" />
+
+        <item
+            android:id="@+id/nav_buy_time"
+            android:icon="@drawable/ic_access_time_black_24dp"
+            android:title="@string/buy_time_menu_title" />
     </group>
 </menu>

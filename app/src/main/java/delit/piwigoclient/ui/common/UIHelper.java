@@ -274,7 +274,7 @@ public abstract class UIHelper<T> {
                     //TODO check why... this can occur if the app is minimised at this point?
                     return false;
                 }
-                ClipboardManager clipboardService = (ClipboardManager) v.getContext().getApplicationContext().getSystemService(CLIPBOARD_SERVICE);
+                ClipboardManager clipboardService = (ClipboardManager) v.getContext().getSystemService(CLIPBOARD_SERVICE);
                 clipboardService.setPrimaryClip(ClipData.newPlainText("Piwigo Client", message));
                 dismissHandled = true;
                 snackbar.dismiss();

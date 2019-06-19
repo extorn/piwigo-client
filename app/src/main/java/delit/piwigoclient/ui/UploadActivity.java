@@ -417,7 +417,7 @@ public class UploadActivity extends MyActivity {
     }
 
     private File getTmpUploadFolder() {
-        File tmp_upload_folder = new File(getApplicationContext().getExternalCacheDir(), "piwigo-upload");
+        File tmp_upload_folder = new File(getExternalCacheDir(), "piwigo-upload");
         tmp_upload_folder.mkdir();
         return tmp_upload_folder;
     }
@@ -451,7 +451,7 @@ public class UploadActivity extends MyActivity {
                         sharedFile = new File(tmp_upload_folder, filename + '_' + i + ext);
                     }
                     sharedFile.deleteOnExit();
-                    IOUtils.write(getApplicationContext().getContentResolver().openInputStream(imageUri), sharedFile);
+                    IOUtils.write(getContentResolver().openInputStream(imageUri), sharedFile);
                 } catch(FileNotFoundException e1) {
                     throw new RuntimeException("Unable to write shared data to a temporary file");
                 } catch(IOException e1) {
@@ -471,7 +471,7 @@ public class UploadActivity extends MyActivity {
 
     public String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getApplicationContext().getContentResolver().query(contentUri, proj,
+        Cursor cursor = getContentResolver().query(contentUri, proj,
                 null, null, null);
 
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
@@ -502,7 +502,7 @@ public class UploadActivity extends MyActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(FileSelectionNeededEvent event) {
-        Intent intent = new Intent(getBaseContext(), FileSelectActivity.class);
+        Intent intent = new Intent(this, FileSelectActivity.class);
         intent.putExtra(FileSelectActivity.INTENT_DATA, event);
         setTrackedIntent(event.getActionId(), FILE_SELECTION_INTENT_REQUEST);
         startActivityForResult(intent, event.getActionId());
@@ -512,10 +512,11 @@ public class UploadActivity extends MyActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
-            if (resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            if (resultCode == RESULT_OK && extras != null) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
-                long actionTimeMillis = data.getExtras().getLong(FileSelectActivity.ACTION_TIME_MILLIS);
-                ArrayList<File> filesForUpload = BundleUtils.getFileArrayList(data.getExtras(), FileSelectActivity.INTENT_SELECTED_FILES);
+                long actionTimeMillis = extras.getLong(FileSelectActivity.ACTION_TIME_MILLIS);
+                ArrayList<File> filesForUpload = BundleUtils.getFileArrayList(extras, FileSelectActivity.INTENT_SELECTED_FILES);
 
                 int eventId = requestCode;
                 FileSelectionCompleteEvent event = new FileSelectionCompleteEvent(eventId, filesForUpload, actionTimeMillis);

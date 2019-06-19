@@ -83,7 +83,7 @@ public class ExifDataListAdapter extends SimpleExpandableListAdapter {
                 flatList.add(value);
             }
         }
-        return flatList.toArray(new String[flatList.size()]);
+        return flatList.toArray(new String[0]);
     }
 
     public static ExifDataListAdapter newAdapter(Context c, Metadata metadata) {

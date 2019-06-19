@@ -255,7 +255,7 @@ public class AutoUploadJobConfig implements Parcelable {
         }
 
         public static File getFolder(Context c) {
-            File jobsFolder = new File(c.getApplicationContext().getExternalCacheDir(), "uploadJobData");
+            File jobsFolder = new File(c.getExternalCacheDir(), "uploadJobData");
             if(!jobsFolder.exists()) {
                 if(!jobsFolder.mkdir()) {
                     throw new RuntimeException("Unable to create required app data folder");

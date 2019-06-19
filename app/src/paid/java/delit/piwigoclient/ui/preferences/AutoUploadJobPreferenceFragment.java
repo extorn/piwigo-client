@@ -166,7 +166,7 @@ public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 
     private void updateAvailableFileTypes(Set<String> allowedFileTypes) {
         MultiSelectListPreference p = (MultiSelectListPreference) findPreference(R.string.preference_data_upload_automatic_job_file_exts_uploaded_key);
-        String[] availableOptions = allowedFileTypes.toArray(new String[allowedFileTypes.size()]);
+        String[] availableOptions = allowedFileTypes.toArray(new String[0]);
 
         AutoUploadJobConfig jobConfig = new AutoUploadJobConfig(jobId);
         Set<String> newValues = jobConfig.getFileExtsToUpload(getContext());

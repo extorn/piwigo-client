@@ -17,8 +17,8 @@ import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
  * Created by gareth on 17/10/17.
  */
 
-public class ActivityUIHelper extends UIHelper<MyActivity> {
-    public ActivityUIHelper(MyActivity parent, SharedPreferences prefs) {
+public class ActivityUIHelper<T extends MyActivity> extends UIHelper<T> {
+    public ActivityUIHelper(T parent, SharedPreferences prefs) {
         super(parent, prefs, parent);
     }
 
@@ -58,10 +58,10 @@ public class ActivityUIHelper extends UIHelper<MyActivity> {
         showMessageImmediatelyIfPossible(message);
     }
 
-    private static class BlockingUserInteractionQuestionResultAdapter extends QuestionResultAdapter<ActivityUIHelper> {
+    private static class BlockingUserInteractionQuestionResultAdapter<T extends ActivityUIHelper<?>> extends QuestionResultAdapter<T> {
         private final BlockingUserInteractionQuestion event;
 
-        public BlockingUserInteractionQuestionResultAdapter(ActivityUIHelper uiHelper, BlockingUserInteractionQuestion event) {
+        public BlockingUserInteractionQuestionResultAdapter(T uiHelper, BlockingUserInteractionQuestion event) {
             super(uiHelper);
             this.event = event;
         }

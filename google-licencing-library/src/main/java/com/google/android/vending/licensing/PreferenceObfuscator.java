@@ -48,7 +48,7 @@ public class PreferenceObfuscator {
         if (mEditor == null) {
             mEditor = mPreferences.edit();
         }
-        String obfuscatedValue = mObfuscator.obfuscate(value, key);
+        String obfuscatedValue = mObfuscator.obfuscateString(value, key);
         mEditor.putString(key, obfuscatedValue);
     }
 
@@ -57,10 +57,10 @@ public class PreferenceObfuscator {
         String value = mPreferences.getString(key, null);
         if (value != null) {
             try {
-                result = mObfuscator.unobfuscate(value, key);
+                result = mObfuscator.unobfuscateString(value, key);
             } catch (ValidationException e) {
                 Crashlytics.logException(e);
-                // Unable to unobfuscate, data corrupt or tampered
+                // Unable to unobfuscateString, data corrupt or tampered
                 if(BuildConfig.DEBUG) {
                     Log.w(TAG, "Validation error while reading preference: " + key);
                 }

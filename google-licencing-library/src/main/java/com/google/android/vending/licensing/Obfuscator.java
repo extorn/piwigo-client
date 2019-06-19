@@ -17,7 +17,7 @@
 package com.google.android.vending.licensing;
 
 /**
- * Interface used as part of a {@link Policy} to allow application authors to obfuscate
+ * Interface used as part of a {@link Policy} to allow application authors to obfuscateString
  * licensing data that will be stored into a SharedPreferences file.
  * <p>
  * Any transformation scheme must be reversable. Implementing classes may optionally implement an
@@ -34,16 +34,35 @@ public interface Obfuscator {
      * @param key The key for the data that is to be obfuscated.
      * @return A transformed version of the original data.
      */
-    String obfuscate(String original, String key);
+    String obfuscateString(String original, String key);
 
     /**
-     * Undo the transformation applied to data by the obfuscate() method.
+     * Obfuscate data that is being stored into shared preferences.
+     *
+     * @param original The data that is to be obfuscated.
+     * @param key      The key for the data that is to be obfuscated.
+     * @return A transformed version of the original data.
+     */
+    String obfuscateBytes(byte[] original, String key);
+
+    /**
+     * Undo the transformation applied to data by the obfuscateString() method.
      *
      * @param obfuscated The data that has been obfuscated.
      * @param key The key for the data that is obfuscated.
      * @return A transformed version of the original data.
      * @throws ValidationException Optionally thrown if a data integrity check fails.
      */
-    String unobfuscate(String obfuscated, String key) throws ValidationException;
+    String unobfuscateString(String obfuscated, String key) throws ValidationException;
+
+    /**
+     * Undo the transformation applied to data by the obfuscateString() method.
+     *
+     * @param obfuscated The data that has been obfuscated.
+     * @param key        The key for the data that is obfuscated.
+     * @return A transformed version of the original data.
+     * @throws ValidationException Optionally thrown if a data integrity check fails.
+     */
+    byte[] unobfuscateBytes(String obfuscated, String key) throws ValidationException;
 
 }

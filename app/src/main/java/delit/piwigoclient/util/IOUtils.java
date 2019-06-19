@@ -225,13 +225,13 @@ public class IOUtils {
     public static List<String> getSdCardPaths(final Context context, final boolean includePrimaryExternalStorage)
     {
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            StorageManager sm = (StorageManager) context.getApplicationContext().getSystemService(Context.STORAGE_SERVICE);
+//            StorageManager sm = (StorageManager) context.getSystemService(Context.STORAGE_SERVICE);
 //            StorageVolume volume = sm.getPrimaryStorageVolume();
 //        }
 
 
         final File[] externalCacheDirs= ContextCompat.getExternalCacheDirs(context);
-        if(externalCacheDirs==null||externalCacheDirs.length==0)
+        if (externalCacheDirs.length == 0)
             return null;
         if(externalCacheDirs.length==1)
         {
@@ -329,7 +329,7 @@ public class IOUtils {
     }
 
     public static File[] getFilesNotBeingWritten(File[] matchingFiles, long timePeriodMillis) {
-        ArrayList<File> filesToUpload = new ArrayList(Arrays.asList(matchingFiles));
+        ArrayList<File> filesToUpload = new ArrayList<>(Arrays.asList(matchingFiles));
         Map<File, Long> fileSizes = new HashMap<>(filesToUpload.size());
         for (File file : filesToUpload) {
             if (file.length() > 0) {
@@ -352,6 +352,6 @@ public class IOUtils {
 
             }
         }
-        return fileSizes.keySet().toArray(new File[fileSizes.size()]);
+        return fileSizes.keySet().toArray(new File[0]);
     }
 }

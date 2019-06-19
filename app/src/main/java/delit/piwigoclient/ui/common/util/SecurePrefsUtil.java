@@ -52,10 +52,24 @@ public class SecurePrefsUtil {
         return instance;
     }
 
+    public void writeSecurePreference(SharedPreferences prefs, String preferenceKey, byte[] preferenceValue) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(preferenceKey, encryptValue(preferenceKey, preferenceValue));
+        editor.commit();
+    }
+
     public void writeSecurePreference(SharedPreferences prefs, String preferenceKey, String preferenceValue) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(preferenceKey, encryptValue(preferenceKey, preferenceValue));
         editor.commit();
+    }
+
+    public byte[] readSecurePreferenceRawBytes(SharedPreferences prefs, String preferenceKey, byte[] defaultValue) {
+        String prefValue = prefs.getString(preferenceKey, null);
+        if (prefValue == null || prefValue.length() == 0) {
+            return defaultValue;
+        }
+        return decryptRawValue(prefs, preferenceKey, prefValue, defaultValue);
     }
 
     public String readSecureStringPreference(SharedPreferences prefs, String preferenceKey, String defaultValue) {
@@ -68,10 +82,10 @@ public class SecurePrefsUtil {
 
     public String decryptValue(PreferenceDataStore prefStore, String preferenceKey, String encryptedVal, String defaultValue) {
         try {
-            return newObfuscator.unobfuscate(encryptedVal, preferenceKey);
+            return newObfuscator.unobfuscateString(encryptedVal, preferenceKey);
         } catch (ValidationException e) {
             try {
-                String decrypted = oldObfuscator.unobfuscate(encryptedVal, preferenceKey);
+                String decrypted = oldObfuscator.unobfuscateString(encryptedVal, preferenceKey);
                 Crashlytics.logException(new MigratingEncryptedPreferenceException());
                 try {
                     prefStore.putString(preferenceKey, encryptValue(preferenceKey, decrypted));
@@ -89,12 +103,12 @@ public class SecurePrefsUtil {
         }
     }
 
-    public String decryptValue(SharedPreferences prefs, String key, String encryptedVal, String defaultValue) {
+    public byte[] decryptRawValue(SharedPreferences prefs, String key, String encryptedVal, byte[] defaultValue) {
         try {
-            return newObfuscator.unobfuscate(encryptedVal, key);
+            return newObfuscator.unobfuscateBytes(encryptedVal, key);
         } catch (ValidationException e) {
             try {
-                String decrypted = oldObfuscator.unobfuscate(encryptedVal, key);
+                byte[] decrypted = oldObfuscator.unobfuscateBytes(encryptedVal, key);
                 Crashlytics.logException(new MigratingEncryptedPreferenceException());
                 writeSecurePreference(prefs, key, decrypted);
                 return decrypted;
@@ -108,8 +122,31 @@ public class SecurePrefsUtil {
         }
     }
 
+    public String decryptValue(SharedPreferences prefs, String key, String encryptedVal, String defaultValue) {
+        try {
+            return newObfuscator.unobfuscateString(encryptedVal, key);
+        } catch (ValidationException e) {
+            try {
+                String decrypted = oldObfuscator.unobfuscateString(encryptedVal, key);
+                Crashlytics.logException(new MigratingEncryptedPreferenceException());
+                writeSecurePreference(prefs, key, decrypted);
+                return decrypted;
+            } catch (ValidationException e1) {
+                // do nothing
+            }
+            String message = MyApplication.getAppResources().getString(R.string.preference_corrupt_please_re_type_pattern, key, defaultValue);
+            Crashlytics.log(Log.DEBUG, TAG, message + " encypted value : BEGIN_" + encryptedVal + "_END");
+            EventBus.getDefault().post(new ShowMessageEvent(ShowMessageEvent.TYPE_WARN, R.string.alert_warning, message));
+            return defaultValue;
+        }
+    }
+
+    public String encryptValue(String key, byte[] value) {
+        return newObfuscator.obfuscateBytes(value, key);
+    }
+
     public String encryptValue(String key, String value) {
-        return newObfuscator.obfuscate(value, key);
+        return newObfuscator.obfuscateString(value, key);
     }
 
     private static final class MigratingEncryptedPreferenceException extends RuntimeException {

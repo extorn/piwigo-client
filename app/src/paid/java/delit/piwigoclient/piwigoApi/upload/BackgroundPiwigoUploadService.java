@@ -70,7 +70,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
         }
         terminateUploadServiceThreadAsap = false;
         starting = true;
-        Intent intent = new Intent(context.getApplicationContext(), BackgroundPiwigoUploadService.class);
+        Intent intent = new Intent(context, BackgroundPiwigoUploadService.class);
         intent.setAction(ACTION_BACKGROUND_UPLOAD_FILES);
         enqueueWork(context, BackgroundPiwigoUploadService.class, JOB_ID, intent);
     }
@@ -162,7 +162,7 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                             ConnectionPreferences.ProfilePreferences jobConnProfilePrefs = unfinishedJob.getConnectionPrefs();
                             boolean jobIsValid = jobConnProfilePrefs != null && jobConnProfilePrefs.isValid(getPrefs(), getApplicationContext());
                             if(!jobIsValid) {
-                                new AutoUploadJobConfig(unfinishedJob.getJobConfigId()).setJobValid(getBaseContext(), false);
+                                new AutoUploadJobConfig(unfinishedJob.getJobConfigId()).setJobValid(this, false);
                             }
                             if (!unfinishedJob.isFinished() && jobIsValid) {
                                 AutoUploadJobConfig jobConfig = jobs.getAutoUploadJobConfig(unfinishedJob.getJobConfigId(), context);
@@ -266,13 +266,13 @@ public class BackgroundPiwigoUploadService extends BasePiwigoUploadService imple
                 runningUploadJob = thisUploadJob;
             }
             updateNotificationText(getString(R.string.notification_text_background_upload_running), true);
-            boolean connectionDetailsValid = thisUploadJob.getConnectionPrefs().isValid(getBaseContext());
+            boolean connectionDetailsValid = thisUploadJob.getConnectionPrefs().isValid(this);
             if(connectionDetailsValid) {
                 super.runJob(thisUploadJob, listener);
             } else {
                 // update the job validity status
                 AutoUploadJobConfig config = new AutoUploadJobConfig(thisUploadJob.getJobConfigId());
-                config.setJobValid(getBaseContext(), false);
+                config.setJobValid(this, false);
             }
         } finally {
             synchronized (BackgroundPiwigoUploadService.class) {

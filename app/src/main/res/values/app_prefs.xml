@@ -5,6 +5,8 @@
 
     <!-- Non editable preferences -->
 
+    <string name="preference_advert_free_time_key" translatable="false">preference_advert_free_time</string>
+
     <string name="preference_agreed_eula_version_key" translatable="false">preference_agreed_eula_version</string>
     <string name="preference_app_prefs_version_key" translatable="false">preference_app_prefs_version</string>
 

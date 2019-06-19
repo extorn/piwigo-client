@@ -190,7 +190,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     private static List<UploadJob> loadBackgroundJobsStateFromDisk(Context c) {
-        File jobsFolder = new File(c.getApplicationContext().getExternalCacheDir(), "uploadJobs");
+        File jobsFolder = new File(c.getExternalCacheDir(), "uploadJobs");
         if (!jobsFolder.exists()) {
             jobsFolder.mkdir();
             return new ArrayList<>();
@@ -294,7 +294,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     protected void runPostJobCleanup(UploadJob uploadJob, boolean deleteUploadedFiles) {
-        File tmp_upload_folder = new File(getApplicationContext().getExternalCacheDir(), "piwigo-upload");
+        File tmp_upload_folder = new File(getExternalCacheDir(), "piwigo-upload");
 
         for (File f : uploadJob.getFilesSuccessfullyUploaded()) {
             if (f.exists()) {
@@ -311,7 +311,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannelIfNeeded();
         }
-        return new NotificationCompat.Builder(getBaseContext(), getDefaultNotificationChannelId());
+        return new NotificationCompat.Builder(this, getDefaultNotificationChannelId());
     }
 
     abstract protected int getNotificationId();
@@ -320,20 +320,20 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     //TODO add determinate progress...
     protected void updateNotificationText(String text, int progress) {
-//        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationBuilder = buildNotification(text);
         notificationBuilder.setProgress(100, progress, false);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getBaseContext());
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(getNotificationId(), notificationBuilder.build());
     }
 
     protected void updateNotificationText(String text, boolean showIndeterminateProgress) {
-//        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationBuilder = buildNotification(text);
         if (showIndeterminateProgress) {
             notificationBuilder.setProgress(0, 0, true);
         }
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getBaseContext());
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(getNotificationId(), notificationBuilder.build());
     }
 
@@ -357,18 +357,18 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void createNotificationChannelIfNeeded() {
-        NotificationManager notificationManager = (NotificationManager) getBaseContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = notificationManager.getNotificationChannel(getDefaultNotificationChannelId());
         if (channel == null) {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            String name = getBaseContext().getString(R.string.app_name);
+            String name = getString(R.string.app_name);
             channel = new NotificationChannel(getDefaultNotificationChannelId(), name, importance);
             notificationManager.createNotificationChannel(channel);
         }
     }
 
     private String getDefaultNotificationChannelId() {
-        return getBaseContext().getString(R.string.app_name) + "_UploadService";
+        return getString(R.string.app_name) + "_UploadService";
     }
 
     protected void doBeforeWork(Intent intent) {
@@ -769,13 +769,13 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if (orphanListHandler.isSuccess()) {
                 ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse resp = (ImagesListOrphansResponseHandler.PiwigoGetOrphansResponse) orphanListHandler.getResponse();
                 if (resp.getTotalCount() > resp.getResources().size()) {
-                    postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getApplicationContext().getString(R.string.upload_error_too_many_orphaned_files_exist_on_server))));
+                    postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getString(R.string.upload_error_too_many_orphaned_files_exist_on_server))));
                     return null;
                 } else {
                     orphans = resp.getResources();
                 }
             }
-            postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getApplicationContext().getString(R.string.upload_error_orphaned_file_retrieval_failed))));
+            postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), new PiwigoResponseBufferingHandler.CustomErrorResponse(thisUploadJob.getJobId(), getString(R.string.upload_error_orphaned_file_retrieval_failed))));
         } else {
             orphans = new ArrayList<>(0);
             thisUploadJob.recordError(new Date(), getString(R.string.upload_error_orphaned_file_retrieval_unavailable));

@@ -172,7 +172,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         trackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
 
-        String userAgent = Util.getUserAgent(getContext(), getActivity().getApplicationContext().getPackageName());
+        String userAgent = Util.getUserAgent(getContext(), getContext().getPackageName());
         cacheListener = new CustomCacheListener();
         dataSourceFactory = new RemoteFileCachingDataSourceFactory(getContext(), bandwidthMeter, cacheListener, cacheListener, userAgent);
         PausableLoadControl.Listener loadControlPauseListener = dataSourceFactory.getLoadControlPauseListener();

@@ -52,7 +52,7 @@ public class CacheUtils {
     };
 
     private static File getVideoCacheFolder(Context c) throws IOException {
-        File f = new File(c.getApplicationContext().getExternalCacheDir(), "videos");
+        File f = new File(c.getExternalCacheDir(), "videos");
         if (!f.exists() || !f.isDirectory()) {
             boolean created = f.mkdir();
             if (!created) {
@@ -265,11 +265,12 @@ public class CacheUtils {
     public static File getBasicCacheFolder(Context context) {
         File cacheFolder;
         try {
-            cacheFolder = new File(context.getApplicationContext().getExternalCacheDir(), "basic-cache");
-            if (!cacheFolder.exists()) {
-                cacheFolder.mkdir();
+            cacheFolder = new File(context.getExternalCacheDir(), "basic-cache");
+            boolean created = cacheFolder.exists();
+            if (!created) {
+                created = cacheFolder.mkdir();
             }
-            if (!(cacheFolder.canRead() && cacheFolder.canWrite())) {
+            if (!(created && cacheFolder.canRead() && cacheFolder.canWrite())) {
                 //Permission has been revoked!
                 throw new SecurityException(context.getString(R.string.error_insufficient_permissions_for_cache_folder));
             }
