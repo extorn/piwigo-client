@@ -512,7 +512,7 @@ public class UploadActivity extends MyActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (getTrackedIntentType(requestCode) == FILE_SELECTION_INTENT_REQUEST) {
-            Bundle extras = data.getExtras();
+            Bundle extras = data != null ? data.getExtras() : null;
             if (resultCode == RESULT_OK && extras != null) {
 //                int sourceEventId = data.getExtras().getInt(FileSelectActivity.INTENT_SOURCE_EVENT_ID);
                 long actionTimeMillis = extras.getLong(FileSelectActivity.ACTION_TIME_MILLIS);
