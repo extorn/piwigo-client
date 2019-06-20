@@ -82,9 +82,11 @@ public class ExoPlayerCompression {
     private static class PlayerMonitor extends Player.DefaultEventListener {
         private final CompressionListener listenerWrapper;
         private final Looper looper;
+        private final MediaMuxerControl mediaMuxerControl;
         private SimpleExoPlayer player;
 
-        public PlayerMonitor(SimpleExoPlayer player, CompressionListener listenerWrapper, Looper looper) {
+        public PlayerMonitor(SimpleExoPlayer player, MediaMuxerControl mediaMuxerControl, CompressionListener listenerWrapper, Looper looper) {
+            this.mediaMuxerControl = mediaMuxerControl;
             this.listenerWrapper = listenerWrapper;
             this.player = player;
             this.looper = looper;
@@ -100,6 +102,9 @@ public class ExoPlayerCompression {
             if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
                 player.release();
                 player = null;
+                if (mediaMuxerControl.isHasAudio() || mediaMuxerControl.isHasVideo()) {
+                    mediaMuxerControl.safeShutdown();
+                }
                 looper.quitSafely();
             }
             super.onPlayerStateChanged(playWhenReady, playbackState);
@@ -392,8 +397,10 @@ public class ExoPlayerCompression {
             try {
                 invokeCompressor(compressionSettings);
             } catch (RuntimeException e) {
+                Crashlytics.logException(e);
                 listener.onCompressionError(e);
             } catch (IOException e) {
+                Crashlytics.logException(e);
                 listener.onCompressionError(e);
             }
         }
@@ -419,7 +426,7 @@ public class ExoPlayerCompression {
 
             CompressionRenderersFactory renderersFactory = new CompressionRenderersFactory(contextRef.get(), mediaMuxerControl, compressionSettings);
             player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl);
-            PlayerMonitor playerMonitor = new PlayerMonitor(player, listenerWrapper, Looper.myLooper());
+            PlayerMonitor playerMonitor = new PlayerMonitor(player, mediaMuxerControl, listenerWrapper, Looper.myLooper());
             player.addListener(playerMonitor); // watch for errors and report them
             ExtractorMediaSource.Factory factory = new ExtractorMediaSource.Factory(new FileDataSourceFactory());
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
@@ -443,7 +450,7 @@ public class ExoPlayerCompression {
 
         public void cancel() {
             cancelled = true;
-            player.stop();
+            player.stop(); // will cause the thread to shutdown safely once all messages have been processed.
         }
     }
 }

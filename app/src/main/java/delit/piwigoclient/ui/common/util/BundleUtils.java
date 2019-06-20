@@ -20,28 +20,39 @@ import java.util.Queue;
 import java.util.Set;
 
 import delit.piwigoclient.util.ArrayUtils;
+import delit.piwigoclient.util.IOUtils;
 
 public class BundleUtils {
 
     public static <T extends Serializable> T getSerializable(Bundle bundle, String key, Class<T> clazz) {
-        Serializable val = bundle.getSerializable(key);
-        if(val == null) {
+        try {
+            Serializable val = bundle.getSerializable(key);
+            if (val == null) {
+                return null;
+            }
+            if (clazz.isInstance(val)) {
+                return clazz.cast(val);
+            }
+            throw new IllegalStateException("Looking for object of type " + clazz.getName() + " but was " + val.getClass().getName());
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
             return null;
         }
-        if(clazz.isInstance(val)) {
-            return clazz.cast(val);
-        }
-        throw new IllegalStateException("Looking for object of type " + clazz.getName() + " but was " + val.getClass().getName());
     }
 
     public static <T extends Parcelable> HashSet<T> getHashSet(Bundle bundle, String key) {
-        ArrayList<T> data = bundle.getParcelableArrayList(key);
-        HashSet<T> retVal = null;
-        if(data != null) {
-            retVal = new HashSet<T>(data.size());
-            retVal.addAll(data);
+        try {
+            ArrayList<T> data = bundle.getParcelableArrayList(key);
+            HashSet<T> retVal = null;
+            if (data != null) {
+                retVal = new HashSet<T>(data.size());
+                retVal.addAll(data);
+            }
+            return retVal;
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
+            return null;
         }
-        return retVal;
     }
 
     public static <T extends Parcelable> void putHashSet(Bundle bundle, String key, HashSet<T> data) {
@@ -52,13 +63,18 @@ public class BundleUtils {
 
 
     public static HashSet<Long> getLongHashSet(Bundle bundle, String key) {
-        Long[] data = ArrayUtils.wrap(bundle.getLongArray(key));
-        HashSet<Long> retVal = null;
-        if(data != null) {
-            retVal = new HashSet<>(data.length);
-            Collections.addAll(retVal, data);
+        try {
+            Long[] data = ArrayUtils.wrap(bundle.getLongArray(key));
+            HashSet<Long> retVal = null;
+            if (data != null) {
+                retVal = new HashSet<>(data.length);
+                Collections.addAll(retVal, data);
+            }
+            return retVal;
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
+            return null;
         }
-        return retVal;
     }
 
     public static void putLongHashSet(Bundle bundle, String key, Set<Long> data) {
@@ -75,21 +91,31 @@ public class BundleUtils {
     }
 
     public static File getFile(Bundle bundle, String key) {
-        String filePath = bundle.getString(key);
-        if(filePath != null) {
-            return new File(filePath);
+        try {
+            String filePath = bundle.getString(key);
+            if (filePath != null) {
+                return new File(filePath);
+            }
+            return null;
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
+            return null;
         }
-        return null;
     }
 
     public static HashSet<Integer> getIntHashSet(Bundle bundle, String key) {
-        Integer[] data = ArrayUtils.wrap(bundle.getIntArray(key));
-        HashSet<Integer> retVal = null;
-        if(data != null) {
-            retVal = new HashSet<>(data.length);
-            Collections.addAll(retVal, data);
+        try {
+            Integer[] data = ArrayUtils.wrap(bundle.getIntArray(key));
+            HashSet<Integer> retVal = null;
+            if (data != null) {
+                retVal = new HashSet<>(data.length);
+                Collections.addAll(retVal, data);
+            }
+            return retVal;
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
+            return null;
         }
-        return retVal;
     }
 
     public static void putIntHashSet(Bundle bundle, String key, HashSet<Integer> data) {
@@ -100,37 +126,34 @@ public class BundleUtils {
     }
 
     public static ArrayList<File> getFileArrayList(Bundle bundle, String key) {
-        ArrayList<String> filenames = bundle.getStringArrayList(key);
-        if(filenames == null) {
+        try {
+            ArrayList<String> filenames = bundle.getStringArrayList(key);
+            if (filenames == null) {
+                return null;
+            }
+            ArrayList<File> files = new ArrayList<>(filenames.size());
+            for (String filename : filenames) {
+                files.add(new File(filename));
+            }
+            return files;
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
             return null;
         }
-        ArrayList<File> files = new ArrayList<>(filenames.size());
-        for(String filename : filenames) {
-            files.add(new File(filename));
-        }
-        return files;
     }
 
     public static void putFileArrayListExtra(Intent intent, String key, ArrayList<File> data) {
         if(data == null) {
             return;
         }
-        intent.putStringArrayListExtra(key, getFileNames(data));
+        intent.putStringArrayListExtra(key, IOUtils.getFileNames(data));
     }
 
     public static void putFileArrayList(Bundle bundle, String key, ArrayList<File> data) {
         if(data == null) {
             return;
         }
-        bundle.putStringArrayList(key, getFileNames(data));
-    }
-
-    private static ArrayList<String> getFileNames(ArrayList<File> data) {
-        ArrayList<String> filenames = new ArrayList<>(data.size());
-        for(File f : data) {
-            filenames.add(f.getAbsolutePath());
-        }
-        return filenames;
+        bundle.putStringArrayList(key, IOUtils.getFileNames(data));
     }
 
     public static void putDate(Bundle bundle, String key, Date value) {
@@ -142,27 +165,37 @@ public class BundleUtils {
     }
 
     public static Date getDate(Bundle bundle, String key) {
-        long timeMillis = bundle.getLong(key);
-        if(timeMillis == Long.MIN_VALUE) {
+        try {
+            long timeMillis = bundle.getLong(key);
+            if (timeMillis == Long.MIN_VALUE) {
+                return null;
+            }
+            return new Date(timeMillis);
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
             return null;
         }
-        return new Date(timeMillis);
     }
 
     public static <S, T, P extends Map<S, T>> P readMap(Bundle bundle, String key, P mapToFill, ClassLoader loader) {
-        Bundle b = bundle.getBundle(key);
-        if(b == null) {
-            return mapToFill;
-        }
-        int len = b.getInt("bytes");
-        byte[] dataBytes = b.getByteArray("data");
-        Parcel p = Parcel.obtain();
         try {
-            p.unmarshall(dataBytes, 0, len);
-            p.setDataPosition(0);
-            return ParcelUtils.readMap(p, mapToFill, loader);
-        } finally {
-            p.recycle();
+            Bundle b = bundle.getBundle(key);
+            if (b == null) {
+                return mapToFill;
+            }
+            int len = b.getInt("bytes");
+            byte[] dataBytes = b.getByteArray("data");
+            Parcel p = Parcel.obtain();
+            try {
+                p.unmarshall(dataBytes, 0, len);
+                p.setDataPosition(0);
+                return ParcelUtils.readMap(p, mapToFill, loader);
+            } finally {
+                p.recycle();
+            }
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
+            return mapToFill;
         }
     }
 
@@ -243,11 +276,15 @@ public class BundleUtils {
     }
 
     public static <T extends Parcelable> void readQueue(Bundle in, String key, Queue<T> queue) {
-        Parcelable[] queueData = in.getParcelableArray(key);
-        if(queueData != null) {
-            for(Parcelable p : queueData) {
-                queue.add((T)p);
+        try {
+            Parcelable[] queueData = in.getParcelableArray(key);
+            if (queueData != null) {
+                for (Parcelable p : queueData) {
+                    queue.add((T) p);
+                }
             }
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
         }
     }
 

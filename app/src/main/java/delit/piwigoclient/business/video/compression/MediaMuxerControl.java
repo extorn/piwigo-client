@@ -50,6 +50,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     private MediaFormat inputVideoFormat;
     private boolean sourceDataRead;
     private TreeSet<Sample> queuedData = new TreeSet<>();
+    private boolean safeShutdownInProgress;
 
     public MediaMuxerControl(File inputFile, File outputFile, ExoPlayerCompression.CompressionListener listener) throws IOException {
         this.inputFile = inputFile;
@@ -401,7 +402,11 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
             if (!hasAudio) {
                 release();
                 isFinished = true;
-                onCompressionComplete();
+                if (!safeShutdownInProgress) {
+                    onCompressionComplete();
+                } else {
+                    onCompressionError(new Exception("Compression terminated abnormally"));
+                }
             }
         }
     }
@@ -416,9 +421,22 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
             if (!hasVideo) {
                 release();
                 isFinished = true;
-                onCompressionComplete();
+                if (!safeShutdownInProgress) {
+                    onCompressionComplete();
+                } else {
+                    onCompressionError(new Exception("Compression terminated abnormally"));
+                }
             }
         }
+    }
+
+    private void onCompressionError(final Exception e) {
+        eventHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onCompressionError(e);
+            }
+        });
     }
 
     private void onCompressionComplete() {
@@ -440,6 +458,16 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     public MediaFormat getTrueVideoInputFormat() {
         return inputVideoFormat;
+    }
+
+    public void safeShutdown() {
+        synchronized (this) {
+            if (!safeShutdownInProgress) {
+                if (isHasAudio() || isHasVideo()) {
+                    eventHandler.postDelayed(new SafeShutdownAction(), 5000);
+                }
+            }
+        }
     }
 
     private static class Sample implements Comparable<Sample> {
@@ -500,6 +528,17 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
         public double getCompression() {
             return transcodedBytesWritten / originalBytesTranscoded;
+        }
+    }
+
+    private class SafeShutdownAction implements Runnable {
+        @Override
+        public void run() {
+            if (isHasAudio() || isHasVideo()) {
+                audioRendererStopped();
+                videoRendererStopped();
+            }
+            safeShutdownInProgress = false;
         }
     }
 }

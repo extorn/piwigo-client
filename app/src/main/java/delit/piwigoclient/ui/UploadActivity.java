@@ -609,7 +609,7 @@ public class UploadActivity extends MyActivity {
 
     private void showFragmentNow(Fragment f, boolean addDuplicatePreviousToBackstack) {
 
-        Crashlytics.log(Log.DEBUG, TAG, "showing fragment: " + f.getTag());
+        Crashlytics.log(Log.DEBUG, TAG, String.format("showing fragment: %1$s (%2$s)", f.getTag(), f.getClass().getName()));
         checkLicenceIfNeeded();
 
         DisplayUtils.hideKeyboardFrom(getApplicationContext(), getWindow());

@@ -127,7 +127,6 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private NumberPicker compressImagesNumberPicker;
     private Spinner compressImagesOutputFormatSpinner;
 
-
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
         Bundle args = new Bundle();
         args.putParcelable(SAVED_STATE_UPLOAD_TO_ALBUM, uploadToAlbum);
@@ -308,8 +307,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             compressVideosCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    compressVideosSettings.setVisibility(isChecked ? VISIBLE : GONE);
-                    compressVideosSettings.setEnabled(buttonView.isEnabled());
+                    compressVideosSettings.setVisibility(isChecked && buttonView.isEnabled() ? VISIBLE : GONE);
+//                    compressVideosSettings.setEnabled(buttonView.isEnabled());
                 }
             });
             compressVideosCheckbox.setChecked(compressVids);
@@ -330,8 +329,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         compressImagesCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                compressImagesSettings.setVisibility(isChecked ? VISIBLE : GONE);
-                compressImagesSettings.setEnabled(buttonView.isEnabled());
+                compressImagesSettings.setVisibility(isChecked && buttonView.isEnabled() ? VISIBLE : GONE);
+//                compressImagesSettings.setEnabled(buttonView.isEnabled());
             }
         });
         compressImagesCheckbox.setChecked(compressPics);
@@ -701,7 +700,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                     adapter.remove(itemToRemove);
                 }
             }
-            if (!activeJob.isRunningNow() && activeJob.getFilesNotYetUploaded().size() == 0) {
+            if (!activeJob.isRunningNow() && activeJob.getFilesAwaitingUpload().size() == 0) {
                 // no files left to upload. Lets switch the button from upload to finish
                 uploadFilesNowButton.setText(R.string.upload_files_finish_job_button_title);
             }
@@ -914,6 +913,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         }
     }
 
+    private Button getUploadFilesNowButton() {
+        return uploadFilesNowButton;
+    }
+
     private static class PartialUploadFileAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractUploadFragment>> {
 
         private final File itemToRemove;
@@ -931,6 +934,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 if (activeJob != null) {
                     activeJob.cancelFileUpload(itemToRemove);
                     fragment.getFilesForUploadViewAdapter().remove(itemToRemove);
+                }
+                int countFilesNeedingServerAction = activeJob.getFilesAwaitingUpload().size();
+                if (countFilesNeedingServerAction == 0) {
+                    // no files left to upload. Lets switch the button from upload to finish
+                    fragment.getUploadFilesNowButton().setText(R.string.upload_files_finish_job_button_title);
                 }
             }
         }

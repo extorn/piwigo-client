@@ -280,6 +280,14 @@ public class IOUtils {
         return filename.substring(extStartAtIdx + 1);
     }
 
+    public static ArrayList<String> getFileNames(ArrayList<File> data) {
+        ArrayList<String> filenames = new ArrayList<>(data.size());
+        for (File f : data) {
+            filenames.add(f.getAbsolutePath());
+        }
+        return filenames;
+    }
+
     public static String toNormalizedText(long cacheBytes) {
         long KB = 1024;
         long MB = KB * 1024;

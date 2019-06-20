@@ -522,7 +522,9 @@ public abstract class UIHelper<T> {
 
     public void onSaveInstanceState(Bundle outState) {
         Bundle thisBundle = new Bundle();
-        BundleUtils.writeMap(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls);
+        synchronized (activeServiceCalls) {
+            BundleUtils.writeMap(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls);
+        }
         thisBundle.putInt(STATE_TRACKED_REQUESTS, trackedRequest);
         BundleUtils.writeMap(thisBundle, STATE_RUN_WITH_PERMS_LIST, runWithPermissions);
         BundleUtils.writeMap(thisBundle, STATE_ACTIONS_ON_RESPONSES, actionOnServerCallComplete);
@@ -539,8 +541,9 @@ public abstract class UIHelper<T> {
         if (savedInstanceState != null) {
             Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
             if (thisBundle != null) {
-                HashMap<Long, String> activeCalls = BundleUtils.readMap(thisBundle, ACTIVE_SERVICE_CALLS, new HashMap<Long, String>(), null);
-                activeServiceCalls = Collections.synchronizedMap(activeCalls);
+                synchronized (activeServiceCalls) {
+                    BundleUtils.readMap(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls, null);
+                }
                 trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
                 runWithPermissions = BundleUtils.readMap(thisBundle, STATE_RUN_WITH_PERMS_LIST, PermissionsWantedRequestEvent.class.getClassLoader());
                 actionOnServerCallComplete = BundleUtils.readMap(thisBundle, STATE_ACTIONS_ON_RESPONSES, new ConcurrentHashMap<Long, Action>(), Action.class.getClassLoader());
