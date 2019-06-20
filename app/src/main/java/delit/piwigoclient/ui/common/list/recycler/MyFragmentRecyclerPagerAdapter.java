@@ -28,6 +28,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,7 +56,7 @@ import delit.piwigoclient.util.CollectionUtils;
  * Note that state for all fragments is kept while the page is still visible, it is only when it is not that the
  * state is trimmed.
  */
-public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFragmentRecyclerPagerAdapter.PagerItemFragment> extends PagerAdapter {
+public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFragmentRecyclerPagerAdapter.PagerItemFragment, S extends ViewPager> extends PagerAdapter {
     private static final String TAG = "FrgmntStatePagerAdapter";
     private static final boolean DEBUG = false;
     private final Map<Integer, T> activeFragments = new HashMap<>(3);
@@ -63,6 +66,9 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
     private int maxFragmentsToSaveInState = 3;
     private int visibleItemIdx = -1;
     private Fragment mCurrentPrimaryItem;
+    private int lastPosition;
+    private S container;
+    private ViewPager.OnPageChangeListener pageListener = new CustomPageChangeListener(this);
 
     public MyFragmentRecyclerPagerAdapter(FragmentManager fm) {
         mFragmentManager = fm;
@@ -85,7 +91,7 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         }
     }
 
-    public Class<T> getFragmentType(int position) {
+    public Class<? extends T> getFragmentType(int position) {
         return null;
     }
 
@@ -97,11 +103,27 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         return activeFragments.get(position);
     }
 
+    public void onPageSelected(int position) {
+        T managedFragment = getActiveFragment(position);
+        if (managedFragment != null) {
+            // if this item still exists (not been deleted by user)
+            managedFragment.onPageSelected();
+        }
+    }
+
+    public void onPageDeselected(int position) {
+        T managedFragment = getActiveFragment(position);
+        if (managedFragment != null) {
+            // if this slideshow item still exists (not been deleted by user)
+            managedFragment.onPageDeselected();
+        }
+    }
+
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
-        Class<T> fragmentTypeNeeded = getFragmentType(position);
+        Class<? extends T> fragmentTypeNeeded = getFragmentType(position);
 
         if (activeFragments.size() == 0) {
             List<Fragment> fragments = mFragmentManager.getFragments();
@@ -123,16 +145,22 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
 
         // check if fragment is already active. If so, do nothing
         T f = activeFragments.get(position);
-        if (f != null) {
-            return f;
-        }
 
-        f = createNewItem(fragmentTypeNeeded, position);
         if (f == null) {
-            Log.e(TAG, "Fragment must implement PagerItemFragment");
+            f = createNewItem(fragmentTypeNeeded, position);
+            if (f == null) {
+                Log.e(TAG, "Fragment must implement PagerItemFragment");
+            }
+
+            addFragmentToTransaction(container, f, position);
         }
 
-        addFragmentToTransaction(container, f, position);
+        if (position == ((ViewPager) container).getCurrentItem()) {
+            if (lastPosition >= 0 && lastPosition != position) {
+                onPageDeselected(lastPosition);
+            }
+            lastPosition = position;
+        }
 
         return f;
     }
@@ -157,11 +185,28 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
         mCurTransaction.add(container.getId(), f);
     }
 
-    protected abstract T createNewItem(Class<T> fragmentTypeNeeded, int position);
+    protected abstract T createNewItem(Class<? extends T> fragmentTypeNeeded, int position);
 
-    public void onDeleteItem(ViewGroup container, int position) {
 
-        destroyItem(container, position, getActiveFragment(position));
+    protected T instantiateItem(Class<? extends T> fragmentTypeNeeded) {
+        try {
+            return fragmentTypeNeeded.newInstance();
+        } catch (IllegalAccessException e) {
+            Crashlytics.logException(e);
+            throw new RuntimeException(e);
+        } catch (java.lang.InstantiationException e) {
+            Crashlytics.logException(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public final void onDeleteItem(ViewGroup container, int position) {
+
+        T fragment = getActiveFragment(position);
+        fragment.onPageDeselected();
+        onItemDeleted(fragment);
+
+        destroyItem(container, position, fragment);
         // remove this item
         pageState.remove(position);
 
@@ -188,6 +233,9 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
 
         clearPageState();
         notifyDataSetChanged();
+    }
+
+    protected void onItemDeleted(T fragment) {
     }
 
     @Override
@@ -278,7 +326,17 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
             fragment.setUserVisibleHint(true);
             mCurrentPrimaryItem = fragment;
             visibleItemIdx = position;
+            setPrimaryItemOnce(container, position, (T) fragment);
         }
+    }
+
+    public void setPrimaryItemOnce(@NonNull ViewGroup container, int position, @NonNull T primaryFragment) {
+
+        T activeFragment = primaryFragment;
+        if (activeFragment == null) {
+            activeFragment = (T) instantiateItem(container, position);
+        }
+        activeFragment.onPageSelected();
     }
 
     @Override
@@ -375,4 +433,61 @@ public abstract class MyFragmentRecyclerPagerAdapter<T extends Fragment & MyFrag
 
         int getPagerIndex();
     }
+
+    public S getContainer() {
+        return container;
+    }
+
+    public void setContainer(S container) {
+        this.container = container;
+        container.addOnPageChangeListener(pageListener);
+    }
+
+    private static class CustomPageChangeListener<T extends MyFragmentRecyclerPagerAdapter<?, ?>> implements ViewPager.OnPageChangeListener {
+
+        private T parentAdapter;
+        private ViewPager.OnPageChangeListener wrapped;
+        private int lastPage = -1;
+
+        public CustomPageChangeListener(T parentAdapter) {
+            this.parentAdapter = parentAdapter;
+        }
+
+        public void setWrapped(ViewPager.OnPageChangeListener wrapped) {
+            this.wrapped = wrapped;
+        }
+
+        @Override
+        public final void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            if (lastPage < 0) {
+                lastPage = position;
+            }
+
+            if (wrapped != null) {
+                wrapped.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            }
+        }
+
+        @Override
+        public final void onPageSelected(int position) {
+            if (lastPage >= 0) {
+                parentAdapter.onPageDeselected(lastPage);
+            }
+            parentAdapter.onPageSelected(position);
+            lastPage = position;
+
+            if (wrapped != null) {
+                wrapped.onPageSelected(position);
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+            if (wrapped != null) {
+                wrapped.onPageScrollStateChanged(state);
+            }
+        }
+    }
+
+
 }

@@ -90,7 +90,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     private TextView downloadedByteCountView;
     private TextView cachedByteCountView;
-    private PlayerView simpleExoPlayerView;
     private CustomCacheListener cacheListener;
     private DefaultTrackSelector trackSelector;
     private boolean showingOutsideSlideshow;
@@ -227,7 +226,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         logStatus("Creating item content");
 
         View itemContentView = inflater.inflate(R.layout.exo_player_viewer_custom, container, false);
-        simpleExoPlayerView = itemContentView.findViewById(R.id.slideshow_video_player);
+        PlayerView simpleExoPlayerView = itemContentView.findViewById(R.id.slideshow_video_player);
 
         downloadedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_downloaded);
         cachedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_cached_summary);

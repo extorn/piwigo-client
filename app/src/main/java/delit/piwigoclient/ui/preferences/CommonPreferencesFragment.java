@@ -34,6 +34,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -42,6 +45,7 @@ import delit.piwigoclient.ui.common.SlidingTabLayout;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
+import delit.piwigoclient.ui.common.list.recycler.SimpleFragmentPagerAdapter;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 
 /**
@@ -92,22 +96,6 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
      */
         ViewPager mViewPager = view.findViewById(R.id.viewpager);
         mViewPager.setAdapter(buildPagerAdapter(getChildFragmentManager()));
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
 
         // Give the SlidingTabLayout the ViewPager, this must be done AFTER the ViewPager has had
         // it's PagerAdapter set.
@@ -141,81 +129,25 @@ public class CommonPreferencesFragment extends MyFragment<CommonPreferencesFragm
         }
     }
 
-    protected MyFragmentRecyclerPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
-        return new CommonPreferencesPagerAdapter(childFragmentManager);
+    protected List<String> getTabTitles() {
+        ArrayList<String> tabTitles = new ArrayList<>();
+        tabTitles.add(getString(R.string.preference_page_connection));
+        tabTitles.add(getString(R.string.preference_page_gallery));
+        tabTitles.add(getString(R.string.preference_page_upload));
+        tabTitles.add(getString(R.string.preference_page_other));
+        return tabTitles;
     }
 
-    /**
-     * The {@link androidx.viewpager.widget.PagerAdapter} used to display pages in this sample.
-     * The individual pages are simple and just display two lines of value. The important section of
-     * this class is the {@link #getPageTitle(int)} method which controls what is displayed in the
-     * {@link SlidingTabLayout}.
-     */
-    protected class CommonPreferencesPagerAdapter extends MyFragmentRecyclerPagerAdapter<MyPreferenceFragment> {
+    protected List<Class<? extends MyPreferenceFragment>> getTabFragmentClasses() {
+        ArrayList<Class<? extends MyPreferenceFragment>> tabClasses = new ArrayList<>();
+        tabClasses.add(ConnectionPreferenceFragment.class);
+        tabClasses.add(GalleryPreferenceFragment.class);
+        tabClasses.add(UploadPreferenceFragment.class);
+        tabClasses.add(OtherPreferenceFragment.class);
+        return tabClasses;
+    }
 
-        public CommonPreferencesPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return getString(R.string.preference_page_connection);
-                case 1:
-                    return getString(R.string.preference_page_gallery);
-                case 2:
-                    return getString(R.string.preference_page_upload);
-                case 3:
-                    return getString(R.string.preference_page_other);
-                default:
-                    throw new RuntimeException("PagerAdapter count doesn't match positions available");
-            }
-        }
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            return super.instantiateItem(container, position);
-        }
-
-        @Override
-        public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            super.setPrimaryItem(container, position, object);
-            MyPreferenceFragment activeFragment = ((MyPreferenceFragment) getActiveFragment(position));
-            if (activeFragment == null) {
-                activeFragment = (MyPreferenceFragment) instantiateItem(container, position);
-//            activeFragment.onPageSelected();
-            }
-            activeFragment.onPageSelected();
-        }
-
-        @Override
-        protected MyPreferenceFragment createNewItem(Class<MyPreferenceFragment> fragmentTypeNeeded, int position) {
-            Fragment fragment;
-            switch (position) {
-                case 0:
-                    fragment = new ConnectionPreferenceFragment(position);
-                    break;
-                case 1:
-                    fragment = new GalleryPreferenceFragment(position);
-                    break;
-                case 2:
-                    fragment = new UploadPreferenceFragment(position);
-                    break;
-                case 3:
-                    fragment = new OtherPreferenceFragment(position);
-                    break;
-                default:
-                    throw new RuntimeException("PagerAdapter count doesn't match positions available");
-            }
-            return (MyPreferenceFragment) fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return 4;
-        }
-
+    protected MyFragmentRecyclerPagerAdapter buildPagerAdapter(FragmentManager childFragmentManager) {
+        return new SimpleFragmentPagerAdapter(childFragmentManager, getTabTitles(), getTabFragmentClasses());
     }
 }

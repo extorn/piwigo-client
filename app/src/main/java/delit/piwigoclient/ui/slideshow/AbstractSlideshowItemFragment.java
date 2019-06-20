@@ -198,7 +198,6 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         albumItemIdx = -1;
         albumLoadedItemCount = -1;
         albumTotalItemCount = -1;
-        isPrimarySlideshowItem = false;
         doOnPageSelectedAndAddedRun = false;
     }
 

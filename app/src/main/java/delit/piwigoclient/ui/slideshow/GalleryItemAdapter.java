@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
@@ -17,6 +16,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
@@ -27,15 +27,13 @@ import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
 
-public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends ViewPager> extends MyFragmentRecyclerPagerAdapter {
+public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends ViewPager, P extends SlideshowItemFragment<? extends ResourceItem>> extends MyFragmentRecyclerPagerAdapter<P, S> {
 
     private static final String TAG = "GalleryItemAdapter";
     private final List<Integer> galleryResourceItems;
     private boolean shouldShowVideos;
     private ResourceContainer<T, GalleryItem> gallery;
     private HashMap<Long, Integer> cachedItemPositions; // id of item, against Slideshow item's position in slideshow pager
-    private S container;
-    private int lastPosition = -1;
 
     public GalleryItemAdapter(ResourceContainer<T, GalleryItem> gallery, boolean shouldShowVideos, int selectedItem, FragmentManager fm) {
         super(fm);
@@ -103,93 +101,44 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     }
 
     @Override
-    public Class<? extends Fragment> getFragmentType(int position) {
+    public Class<? extends P> getFragmentType(int position) {
         int slideshowIdx = galleryResourceItems.get(position);
         GalleryItem galleryItem = gallery.getItemByIdx(slideshowIdx);
         if (galleryItem instanceof PictureResourceItem) {
             if("gif".equalsIgnoreCase(((PictureResourceItem) galleryItem).getFileExtension())) {
-                return AlbumGifPictureItemFragment.class;
+                return (Class<? extends P>) AlbumGifPictureItemFragment.class;
             } else {
-                return  AlbumPictureItemFragment.class;
+                return (Class<? extends P>) AlbumPictureItemFragment.class;
             }
         } else if (galleryItem instanceof VideoResourceItem) {
-            return AlbumVideoItemFragment.class;
+            return (Class<? extends P>) AlbumVideoItemFragment.class;
         }
         throw new IllegalArgumentException("Unsupported slideshow item type at position " + position);
     }
 
     @Override
-    protected Fragment createNewItem(Class fragmentTypeNeeded, int position) {
+    protected P createNewItem(Class<? extends P> fragmentTypeNeeded, int position) {
+        P item = instantiateItem(fragmentTypeNeeded);
+        if (item == null) {
+            throw new RuntimeException("unsupported gallery item.");
+        }
 
         GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
-        SlideshowItemFragment fragment = null;
         int totalSlideshowItems = getTotalSlideshowItems();
         if (galleryItem instanceof PictureResourceItem) {
-            if("gif".equalsIgnoreCase(((PictureResourceItem) galleryItem).getFileExtension())) {
-                fragment = new AlbumGifPictureItemFragment();
-            } else {
-                fragment = new AlbumPictureItemFragment();
-            }
             Bundle b = AlbumPictureItemFragment.buildArgs((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems);
-            fragment.setArguments(b);
+            item.setArguments(b);
         } else if (galleryItem instanceof VideoResourceItem) {
-            fragment = new AlbumVideoItemFragment();
             Bundle args = AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, false);
-            fragment.setArguments(args);
+            item.setArguments(args);
         }
-        if (fragment != null) {
-            return fragment;
-        }
-        //TODO handle this better.
-        throw new RuntimeException("unsupported gallery item.");
-    }
-
-    @NonNull
-    @Override
-    public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        SlideshowItemFragment fragment = (SlideshowItemFragment) super.instantiateItem(container, position);
-        if (position == ((ViewPager) container).getCurrentItem()) {
-            if (lastPosition >= 0 && lastPosition != position) {
-                onPageDeselected(lastPosition);
-            }
-            lastPosition = position;
-        }
-        return fragment;
-    }
-
-    @Override
-    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        super.setPrimaryItem(container, position, object);
-        SlideshowItemFragment activeFragment = ((SlideshowItemFragment)getActiveFragment(position));
-        if(activeFragment == null) {
-            activeFragment = (SlideshowItemFragment)instantiateItem(container, position);
-//            activeFragment.onPageSelected();
-        }
-        activeFragment.onPageSelected();
-    }
-
-    public void onPageSelected(int position) {
-        Fragment managedFragment = getActiveFragment(position);
-        if (managedFragment != null) {
-            // if this slideshow item still exists (not been deleted by user)
-            SlideshowItemFragment selectedPage = (SlideshowItemFragment) managedFragment;
-            selectedPage.onPageSelected();
-        }
-    }
-
-    public void onPageDeselected(int position) {
-        Fragment managedFragment = getActiveFragment(position);
-        if (managedFragment != null) {
-            // if this slideshow item still exists (not been deleted by user)
-            SlideshowItemFragment selectedPage = (SlideshowItemFragment) managedFragment;
-            selectedPage.onPageDeselected();
-        }
+        return item;
     }
 
     public int getSlideshowIndex(int rawCurrentGalleryItemPosition) {
         int idx = galleryResourceItems.indexOf(rawCurrentGalleryItemPosition);
         if (idx < 0) {
-            Crashlytics.log(Log.WARN, TAG, String.format("Slideshow does not contain album item with index position (%1$d) (only have %2$d items available) - probably deleted it - will show first available.", rawCurrentGalleryItemPosition, galleryResourceItems.size()));
+            Crashlytics.log(Log.WARN, TAG, String.format(Locale.getDefault(), "Slideshow does not contain album item with index position (%1$d) (only have %2$d items available) - probably deleted it - will show first available.", rawCurrentGalleryItemPosition, galleryResourceItems.size()));
             if(galleryResourceItems.size() > 0) {
                 return 0;
             }
@@ -236,37 +185,13 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     }
 
     @Override
-    public void onDeleteItem(ViewGroup container, int position) {
-        SlideshowItemFragment selectedPage = (SlideshowItemFragment) getActiveFragment(position);
-        selectedPage.onPageDeselected();
-        Integer cachedPosition = cachedItemPositions.remove(selectedPage.getModel().getId());
-
-        super.onDeleteItem(container, position);
-//        selectedPage = (SlideshowItemFragment) getActiveFragment(position);
-//        selectedPage.onPageSelected();
+    protected void onItemDeleted(P fragment) {
+        super.onItemDeleted(fragment);
+        Integer cachedPosition = cachedItemPositions.remove(fragment.getModel().getId());
     }
-
-    //
-//    public void onResume() {
-//        int pageToShow = Math.max(0, getContainer().getCurrentItem());
-//        if(pageToShow < galleryResourceItems.size()) {
-//            Fragment selectedPage = (Fragment)instantiateItem(getContainer(), pageToShow);
-//            if (selectedPage instanceof AlbumVideoItemFragment) {
-//                AlbumVideoItemFragment vidFrag = (AlbumVideoItemFragment)selectedPage;
-//                vidFrag.onPageSelected();
-//            }
-//        } else {
-//            // immediately leave this screen. For whatever reason, we can't show a valid item.
-//            getFragmentManager().popBackStack();
-//        }
-//    }
 
     @Override
     public void notifyDataSetChanged() {
-//        if (galleryResourceItems.size() > 0) {
-//            int lastLoadedIdx = galleryResourceItems.get(galleryResourceItems.size() - 1);
-//            addResourcesToIndex(1 + lastLoadedIdx, -1);
-//        }
         EventBus.getDefault().post(new SlideshowSizeUpdateEvent(galleryResourceItems.size(), getTotalSlideshowItems()));
         super.notifyDataSetChanged();
     }
@@ -279,13 +204,5 @@ public class GalleryItemAdapter<T extends Identifiable&Parcelable, S extends Vie
     public void onDataAppended(int firstPositionAddedAt, int itemsAddedCount) {
         addResourcesToIndex(firstPositionAddedAt, itemsAddedCount, -1);
         notifyDataSetChanged();
-    }
-
-    public S getContainer() {
-        return container;
-    }
-
-    public void setContainer(S container) {
-        this.container = container;
     }
 }

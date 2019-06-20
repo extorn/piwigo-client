@@ -33,6 +33,7 @@ import delit.piwigoclient.model.piwigo.PhotoContainer;
 import delit.piwigoclient.model.piwigo.PiwigoAlbum;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
+import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsResponseHandler;
@@ -66,7 +67,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     private CustomViewPager viewPager;
     private ResourceContainer<T, GalleryItem> resourceContainer;
     private View progressIndicator;
-    private GalleryItemAdapter<T, CustomViewPager> galleryItemAdapter;
+    private GalleryItemAdapter<T, CustomViewPager, ? extends SlideshowItemFragment<? extends ResourceItem>> galleryItemAdapter;
     private AdView adView;
 
     public static <T extends Identifiable & Parcelable> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, ResourceContainer<T, GalleryItem> resourceContainer, GalleryItem currentItem) {
@@ -162,13 +163,13 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
         }
 
+        viewPager.clearOnPageChangeListeners(); // do before setContainer because that adds a listener
         galleryItemAdapter.setContainer(viewPager);
         viewPager.setAdapter(galleryItemAdapter);
-
-
-        ViewPager.OnPageChangeListener slideshowPageChangeListener = new CustomPageChangeListener();
-        viewPager.clearOnPageChangeListeners();
+        ViewPager.OnPageChangeListener slideshowPageChangeListener = new MyPageChangeListener();
         viewPager.addOnPageChangeListener(slideshowPageChangeListener);
+
+
         int pagerItemsIdx = galleryItemAdapter.getSlideshowIndex(rawCurrentGalleryItemPosition);
         viewPager.setCurrentItem(pagerItemsIdx);
         return view;
@@ -397,9 +398,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
     }
 
-    private class CustomPageChangeListener implements ViewPager.OnPageChangeListener {
+    private class MyPageChangeListener implements ViewPager.OnPageChangeListener {
 
-        int lastPage = -1;
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -418,12 +418,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             if (adView != null && adView.getVisibility() == View.VISIBLE) {
                 ((AdsManager.MyBannerAdListener) adView.getAdListener()).replaceAd();
             }
-
-            if (lastPage >= 0) {
-                ((GalleryItemAdapter) viewPager.getAdapter()).onPageDeselected(lastPage);
-            }
-            ((GalleryItemAdapter) viewPager.getAdapter()).onPageSelected(position);
-            lastPage = position;
         }
 
         @Override
