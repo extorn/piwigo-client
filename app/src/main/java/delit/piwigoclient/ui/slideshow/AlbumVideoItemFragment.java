@@ -313,8 +313,10 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     @Override
     protected void doOnceOnPageSelectedAndAdded() {
         super.doOnceOnPageSelectedAndAdded();
-        getOverlaysVisibilityControl().runWithDelay(getView());
-        configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
+        if (getParentFragment() != null) {
+            getOverlaysVisibilityControl().runWithDelay(getParentFragment().getView());
+            configureDatasourceAndPlayerRequestingPermissions(playVideoAutomatically && videoIsPlayingWhenVisible);
+        }
     }
 
     private void clearCacheAndRestartVideo() {
