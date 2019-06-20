@@ -494,7 +494,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
     private void onDeleteResources(final DeleteActionData deleteActionData) {
 
         if (!deleteActionData.isResourceInfoAvailable()) {
-            String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
             for (ResourceItem item : deleteActionData.getItemsWithoutLinkedAlbumData()) {
                 deleteActionData.trackMessageId(addActiveServiceCall(R.string.progress_loading_resource_details, new ImageGetInfoResponseHandler(item, multimediaExtensionList)));
             }
@@ -528,7 +528,7 @@ public class ViewFavoritesFragment extends MyFragment<ViewFavoritesFragment> {
 
 
                 String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, getContext());
-                String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+                Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
 
                 long loadingMessageId = addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, new FavoritesGetImagesResponseHandler(sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList));
                 favoritesModel.recordPageBeingLoaded(loadingMessageId, pageToActuallyLoad);

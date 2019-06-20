@@ -179,7 +179,7 @@ public class ViewAlbumFragment extends AbstractViewAlbumFragment {
     }
 
     private void getResourceInfo(HashSet<ResourceItem> selectedResources) {
-        String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+        Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
         for(ResourceItem item : selectedResources) {
             addActiveServiceCall(R.string.progress_resource_details_updating, new ImageGetInfoResponseHandler(item, multimediaExtensionList));
         }

@@ -158,9 +158,8 @@
     <string name="preference_gallery_enable_video_playback_summary">如果您想按需下载和播放视频，请启用</string>
 
 
-    <string name="preference_piwigo_playable_media_extensions_title">支持的多媒体扩展（CSV列表）</string>
+    <string name="preference_piwigo_playable_media_extensions_title">支持的多媒体扩展</string>
     <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-    <string name="preference_piwigo_playable_media_extensions_default">MPG，AVI，MP3，OGG，MP4</string>
 
 
     <string name="preference_video_cache_enabled_title">缓存查看文件的视频</string>

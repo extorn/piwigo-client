@@ -630,5 +630,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="buy_time_menu_title">Masquer les annonces</string>
     <string name="watch_advert_to_buy_advert_free_time">Souhaitez-vous regarder une publicité pour acheter une courte période sans aucune publicité ? Vous pouvez le faire plusieurs fois pour augmenter la durée si vous le souhaitez.</string>
     <string name="reward_video_not_yet_loaded">Désolé, mais la vidéo de la récompense n\'a pas encore été chargée. Veuillez réessayer plus tard.</string>
-    <string name="bought_time_menu_title_pattern">Annonces en %02d:%02d</string>
+    <string name="bought_time_menu_title_pattern">Annonces en %1$02d:%2$02d</string>
 </resources>

@@ -6,6 +6,7 @@ import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 public class CollectionUtils {
@@ -132,6 +133,15 @@ public class CollectionUtils {
         memberSaveActionIds.clear();
         if (newValues != null) {
             memberSaveActionIds.addAll(newValues);
+        }
+    }
+
+    public static void removeItemsNotInRhsCollection(Collection<?> items, Collection<?> controlList) {
+        Iterator<?> iter = items.iterator();
+        while (iter.hasNext()) {
+            if (!controlList.contains(iter.next())) {
+                iter.remove();
+            }
         }
     }
 }

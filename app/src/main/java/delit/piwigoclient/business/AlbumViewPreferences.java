@@ -5,6 +5,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.util.DisplayUtils;
 
@@ -65,8 +69,14 @@ public class AlbumViewPreferences {
         return prefs.getString(context.getString(R.string.preference_gallery_album_thumbnail_size_key), context.getString(R.string.preference_gallery_album_thumbnail_size_default));
     }
 
-    public static String getKnownMultimediaExtensions(SharedPreferences prefs, Context context) {
-        return prefs.getString(context.getString(R.string.preference_piwigo_playable_media_extensions_key), context.getString(R.string.preference_piwigo_playable_media_extensions_default));
+    public static Set<String> getKnownMultimediaExtensions(SharedPreferences prefs, Context context) {
+
+        Set<String> value = prefs.getStringSet(context.getString(R.string.preference_piwigo_playable_media_extensions_key), null);
+        if (value == null) {
+            value = new HashSet<>();
+            Collections.addAll(value, context.getResources().getStringArray(R.array.preference_piwigo_playable_media_extensions_default));
+        }
+        return value;
     }
 
     public static String getResourceSortOrder(SharedPreferences prefs, Context context) {

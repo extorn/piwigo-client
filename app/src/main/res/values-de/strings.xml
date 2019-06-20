@@ -602,6 +602,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="buy_time_menu_title">Anzeigen ausblenden</string>
     <string name="watch_advert_to_buy_advert_free_time">Möchten Sie eine Anzeige sehen, um einen kurzen Zeitraum ohne Werbung zu kaufen? Sie können dies mehrmals tun, um die Zeitspanne bei Bedarf zu verlängern.</string>
     <string name="reward_video_not_yet_loaded">Sorry, aber das Belohnungsvideo wurde noch nicht geladen. Bitte versuchen Sie es später noch einmal.</string>
-    <string name="bought_time_menu_title_pattern">Anzeigen in %02d:%02d</string>
+    <string name="bought_time_menu_title_pattern">Anzeigen in %1$02d:%2$02d</string>
 </resources>
 

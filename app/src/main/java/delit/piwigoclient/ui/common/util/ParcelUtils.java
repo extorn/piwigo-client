@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
+import com.drew.lang.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -133,7 +134,7 @@ public class ParcelUtils {
         out.writeLong(data==null?Long.MIN_VALUE:data.getTime());
     }
 
-    public static void writeStringSet(Parcel dest, HashSet<String> entries) {
+    public static void writeStringSet(Parcel dest, Set<String> entries) {
         if(entries == null) {
             dest.writeList(null);
         } else {
@@ -141,8 +142,17 @@ public class ParcelUtils {
         }
     }
 
-    public static HashSet<String> readStringSet(Parcel in, ClassLoader loader) {
-        List<String> rawData = readValue(in, loader, ArrayList.class);
+    public static <T extends Set<String>> T readStringSet(Parcel in, @NonNull T dest) {
+        List<String> rawData = readValue(in, null, ArrayList.class);
+        if (rawData != null) {
+            dest.addAll(rawData);
+        }
+        return dest;
+    }
+
+    public static @Nullable
+    HashSet<String> readStringSet(Parcel in) {
+        List<String> rawData = readValue(in, null, ArrayList.class);
         HashSet<String> data = null;
         if(rawData != null) {
             data = new HashSet<>(rawData);

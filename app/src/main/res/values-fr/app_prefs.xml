@@ -164,9 +164,8 @@
     <string name="preference_gallery_enable_video_playback_summary">Activer si vous voulez télécharger et lire des vidéos à la demande</string>
 
 
-    <string name="preference_piwigo_playable_media_extensions_title">Extensions multimédia prises en charge (liste CSV)</string>
+    <string name="preference_piwigo_playable_media_extensions_title">Extensions multimédia prises en charge</string>
     <string name="preference_piwigo_playable_media_extensions_summary">%1$s</string>
-    <string name="preference_piwigo_playable_media_extensions_default">mpg,avi,mp3,ogg,mp4</string>
 
 
     <string name="preference_video_cache_enabled_title">Mise en cache des vidéos visionnées dans un fichier</string>

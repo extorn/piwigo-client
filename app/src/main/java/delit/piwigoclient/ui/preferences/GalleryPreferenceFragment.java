@@ -17,6 +17,8 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.TreeSet;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -25,6 +27,7 @@ import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.PicassoFactory;
 import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
+import delit.piwigoclient.ui.common.preference.EditableListPreference;
 import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
 import delit.piwigoclient.util.IOUtils;
@@ -158,6 +161,29 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
                 setVideoCacheButtonText(preference);
                 return true;
 
+            }
+        });
+
+        EditableListPreference playableMultimediaExts = (EditableListPreference) findPreference(R.string.preference_piwigo_playable_media_extensions_key);
+        playableMultimediaExts.setListener(new EditableListPreference.EditableListPreferenceChangeAdapter() {
+            @Override
+            public String filterUserInput(String value) {
+                String val = value.toLowerCase();
+                int dotIdx = val.indexOf('.');
+                if (dotIdx >= 0) {
+                    val = val.substring(dotIdx);
+                }
+                return val;
+            }
+
+            @Override
+            public void onItemSelectionChange(Set<String> oldSelection, Set<String> newSelection, boolean oldSelectionExists) {
+                super.onItemSelectionChange(oldSelection, newSelection, oldSelectionExists);
+            }
+
+            @Override
+            public Set<String> filterNewUserSelection(Set<String> userSelectedItems) {
+                return new TreeSet<>(userSelectedItems);
             }
         });
     }

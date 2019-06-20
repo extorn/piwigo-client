@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
@@ -16,17 +17,17 @@ import delit.piwigoclient.model.piwigo.Tag;
  */
 
 public class ImageGetInfoResponseHandler<T extends ResourceItem> extends BaseImageGetInfoResponseHandler<T> {
-    public ImageGetInfoResponseHandler(T piwigoResource, String multimediaExtensionList) {
+    public ImageGetInfoResponseHandler(T piwigoResource, Set<String> multimediaExtensionList) {
         super(piwigoResource, multimediaExtensionList);
     }
 
-    protected BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(String multimediaExtensionList, boolean usingPiwigoClientOveride) {
+    protected BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOveride) {
         return new ImageGetInfoResourceParser(multimediaExtensionList, getPiwigoServerUrl(), usingPiwigoClientOveride);
     }
 
     public static class ImageGetInfoResourceParser extends BaseImageGetInfoResourceParser {
 
-        public ImageGetInfoResourceParser(String multimediaExtensionList, String basePiwigoUrl, boolean usingPiwigoClientOveride) {
+        public ImageGetInfoResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl, boolean usingPiwigoClientOveride) {
             super(multimediaExtensionList, basePiwigoUrl, usingPiwigoClientOveride);
         }
 

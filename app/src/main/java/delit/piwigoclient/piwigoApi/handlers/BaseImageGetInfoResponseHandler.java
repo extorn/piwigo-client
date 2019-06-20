@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import java.util.Set;
+
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.RequestParams;
@@ -13,11 +15,11 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
 
     private static final String TAG = "GetResourceInfoRspHdlr";
     private final T resourceItem;
-    private final String multimediaExtensionList;
+    private final Set<String> multimediaExtensionList;
     private boolean usingPiwigoClientOveride;
     private String piwigoMethodToUse;
 
-    public BaseImageGetInfoResponseHandler(T piwigoResource, String multimediaExtensionList) {
+    public BaseImageGetInfoResponseHandler(T piwigoResource, Set<String> multimediaExtensionList) {
         super("pwg.images.getInfo", TAG);
         this.resourceItem = piwigoResource;
         this.multimediaExtensionList = multimediaExtensionList;
@@ -60,13 +62,13 @@ public abstract class BaseImageGetInfoResponseHandler<T extends ResourceItem> ex
         storeResponse(r);
     }
 
-    protected abstract BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(String multimediaExtensionList, boolean usingPiwigoClientOveride);
+    protected abstract BaseImagesGetResponseHandler.BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, boolean usingPiwigoClientOveride);
     
     public static abstract class BaseImageGetInfoResourceParser extends BaseImagesGetResponseHandler.BasicCategoryImageResourceParser {
 
         private final boolean usingPiwigoClientOveride;
 
-        public BaseImageGetInfoResourceParser(String multimediaExtensionList, String basePiwigoUrl, boolean usingPiwigoClientOveride) {
+        public BaseImageGetInfoResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl, boolean usingPiwigoClientOveride) {
             super(multimediaExtensionList, basePiwigoUrl);
             this.usingPiwigoClientOveride = usingPiwigoClientOveride;
         }

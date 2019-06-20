@@ -479,5 +479,5 @@
     <string name="buy_time_menu_title">隐藏广告</string>
     <string name="watch_advert_to_buy_advert_free_time">您是否希望观看广告，在没有任何广告的情况下购买短期广告？ 如果需要，您可以多次执行此操作以增加时间长度。</string>
     <string name="reward_video_not_yet_loaded">对不起，但奖励视频尚未加载。 请稍后再试。</string>
-    <string name="bought_time_menu_title_pattern">%02d:%02d 中的广告</string>
+    <string name="bought_time_menu_title_pattern">%1$02d:%2$02d 中的广告</string>
 </resources>

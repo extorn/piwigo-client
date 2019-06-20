@@ -108,20 +108,28 @@ public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragm
         findPreference(R.string.preference_server_basic_auth_username_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
         findPreference(R.string.preference_server_basic_auth_password_key).setOnPreferenceChangeListener(httpConnectionEngineInvalidListener);
 
-        EditableListPreference connectionProfilePref = (EditableListPreference) findPreference(R.string.preference_piwigo_connection_profile_key);
+        final EditableListPreference connectionProfilePref = (EditableListPreference) findPreference(R.string.preference_piwigo_connection_profile_key);
         String value = connectionProfilePref.getValue();
         connectionProfilePref.setListener(new EditableListPreference.EditableListPreferenceChangeAdapter() {
 
             @Override
-            public void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists) {
-                if (oldSelection != null) {
+            public void onItemSelectionChange(Set<String> oldSelection, Set<String> newSelection, boolean oldSelectionExists) {
+                if (!oldSelection.isEmpty()) {
                     // clone the current working copy of prefs to the previous active selection
                     if (oldSelectionExists) {
-                        ConnectionPreferences.clonePreferences(getPrefs(), getContext(), null, oldSelection);
+                        String oldValue = oldSelection.iterator().next();
+                        ConnectionPreferences.clonePreferences(getPrefs(), getContext(), null, oldValue);
+                    }
+                    String newValue = null;
+                    if (newSelection.size() > 0) {
+                        newValue = newSelection.iterator().next();
+                    } else {
+                        connectionProfilePref.addAndSelectItem("default");
+                        newValue = "default";
                     }
 
                     // Now refresh the logged in session
-                    refreshSession(newSelection);
+                    refreshSession(newValue);
                 }
 
             }

@@ -722,7 +722,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(thisUploadJob.getConnectionPrefs());
 
-        String multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getApplicationContext());
+        Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getApplicationContext());
         for (Map.Entry<File, Long> entry : resourcesToRetrieve.entrySet()) {
 
             long imageId = entry.getValue();

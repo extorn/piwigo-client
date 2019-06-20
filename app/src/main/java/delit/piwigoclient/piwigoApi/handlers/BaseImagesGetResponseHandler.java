@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.StringTokenizer;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,14 +32,13 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "GetResourcesRspHdlr";
-    private final String multimediaExtensionList;
+    private final Set<String> multimediaExtensionList;
     private final CategoryItem parentAlbum;
     private final String sortOrder;
     private final int pageSize;
     private final int page;
-    private String piwigoMethodToUse;
 
-    public BaseImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, String multimediaExtensionList) {
+    public BaseImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
         super("pwg.categories.getImages", TAG);
         this.parentAlbum = parentAlbum;
         this.sortOrder = sortOrder;
@@ -124,13 +123,13 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         storeResponse(r);
     }
 
-    protected BasicCategoryImageResourceParser buildResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
+    protected BasicCategoryImageResourceParser buildResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
         return new BasicCategoryImageResourceParser(multimediaExtensionList, basePiwigoUrl);
     }
 
     public static class BasicCategoryImageResourceParser {
 
-        private final Pattern p;
+        private final Pattern multimediaPattern;
         private final SimpleDateFormat piwigoDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.UK);
         private Matcher multimediaPatternMatcher;
         private String basePiwigoUrl;
@@ -150,23 +149,19 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
             return fixedPrivacyPluginImageUrisForPrivacyPluginUser;
         }
 
-        public BasicCategoryImageResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
+        public BasicCategoryImageResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
             this.basePiwigoUrl = basePiwigoUrl;
-            StringTokenizer st = new StringTokenizer(multimediaExtensionList, ",");
             StringBuilder multimediaRegexpBuilder = new StringBuilder(".*\\.(");
-            String token;
-            while (st.hasMoreTokens()) {
-                token = st.nextToken();
-                if (token.startsWith(".")) {
-                    token = token.substring(1);
-                }
-                multimediaRegexpBuilder.append(token);
-                if (st.hasMoreTokens()) {
+            Iterator<String> extIter = multimediaExtensionList.iterator();
+            while (extIter.hasNext()) {
+                String ext = extIter.next();
+                multimediaRegexpBuilder.append(ext);
+                if (extIter.hasNext()) {
                     multimediaRegexpBuilder.append('|');
                 }
             }
             multimediaRegexpBuilder.append(")$");
-            p = Pattern.compile(multimediaRegexpBuilder.toString());
+            multimediaPattern = Pattern.compile(multimediaRegexpBuilder.toString(), Pattern.CASE_INSENSITIVE);
             multimediaPatternMatcher = null;
         }
 
@@ -199,7 +194,7 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
 
             if(originalResourceUrl != null) {
                 if (multimediaPatternMatcher == null) {
-                    multimediaPatternMatcher = p.matcher(originalResourceUrl);
+                    multimediaPatternMatcher = multimediaPattern.matcher(originalResourceUrl);
                 } else {
                     multimediaPatternMatcher.reset(originalResourceUrl);
                 }

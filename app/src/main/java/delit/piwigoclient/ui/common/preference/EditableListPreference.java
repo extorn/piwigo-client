@@ -5,10 +5,10 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.AttributeSet;
+
 import androidx.preference.DialogPreference;
 import androidx.preference.PreferenceManager;
-import android.text.TextUtils;
-import android.util.AttributeSet;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -16,9 +16,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.piwigoclient.util.CollectionUtils;
+import delit.piwigoclient.util.SetUtils;
 
 /**
  * Created by gareth on 23/01/18.
@@ -27,13 +30,15 @@ import delit.piwigoclient.ui.common.util.ParcelUtils;
 public class EditableListPreference extends DialogPreference {
 
     // State persistent values
-    private String currentValue;
-    private HashSet<String> entries;
+    private TreeSet<String> currentValues = new TreeSet<>();
+    private TreeSet<String> entries;
     // Non state persistent values (because they are never altered)
     private int entriesPref;
     private String summary;
     private EditableListPreferenceChangeListener listener;
     private boolean allowItemEdit;
+    private boolean allowMultiSelect;
+    private boolean alwaysSelectAll;
 
     public EditableListPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
@@ -65,6 +70,8 @@ public class EditableListPreference extends DialogPreference {
 
         allowItemEdit = a.getBoolean(R.styleable.EditableListPreference_allowItemEdit, false);
 
+        allowMultiSelect = a.getBoolean(R.styleable.EditableListPreference_allowMultiSelect, false);
+
         a.recycle();
 
         summary = String.valueOf(super.getSummary());
@@ -83,7 +90,12 @@ public class EditableListPreference extends DialogPreference {
      *
      */
     public void loadEntries() {
-        entries = new HashSet<>(getPreferenceManager().getSharedPreferences().getStringSet(getContext().getString(entriesPref), new HashSet<String>(1)));
+        String entriesPrefKey = getContext().getString(entriesPref);
+        if (getKey().equals(entriesPrefKey)) {
+            alwaysSelectAll = true;
+        }
+        TreeSet<String> defVal = new TreeSet<>();
+        entries = new TreeSet<>(getSharedPreferences().getStringSet(entriesPrefKey, defVal));
     }
 
     /**
@@ -93,33 +105,83 @@ public class EditableListPreference extends DialogPreference {
      * @return The value of the key.
      */
     public String getValue() {
-        return currentValue;
+        if (!allowMultiSelect) {
+            return currentValues.size() > 0 ? currentValues.iterator().next() : null;
+        } else {
+            throw new IllegalStateException("only valid in single select mode");
+        }
     }
 
-    /**
-     * Sets the value of the key. This should be one of the entriesList in
-     * {@link #getEntryValues()}.
-     *
-     * @param value The value to set for the key.
-     */
     public void setValue(String value) {
-        // Always persist/notify the first time.
-        final boolean changed = !TextUtils.equals(currentValue, value);
-        if (changed) {
-            String oldValue = currentValue;
-            currentValue = value;
-            persistString(value);
+        if (!allowMultiSelect) {
+            HashSet<String> newVal = new HashSet<>();
+            if (value != null) {
+                newVal.add(value);
+            }
+            boolean changed = !CollectionUtils.equals(currentValues, newVal);
+            if (changed) {
+                TreeSet<String> oldValues = new TreeSet<>(currentValues);
+                currentValues.clear();
+                currentValues.addAll(newVal);
 
+                persistString(value);
+                notifyChanged();
+                if (listener != null) {
+                    boolean olsSelectionStillValid = SetUtils.difference(oldValues, currentValues).size() == 0;
+                    listener.onItemSelectionChange(oldValues, currentValues, olsSelectionStillValid);
+                }
+            }
+        } else {
+            throw new IllegalStateException("only valid in single select mode");
+        }
+    }
+
+    public Set<String> getValues() {
+        if (allowMultiSelect) {
+            return getValuesInternal();
+        } else {
+            throw new IllegalStateException("only valid in multi select mode");
+        }
+    }
+
+    public void setValues(Set<String> values) {
+        if (allowMultiSelect) {
+            setValuesInternal(values);
+        } else {
+            throw new IllegalStateException("only valid in multi select mode");
+        }
+    }
+
+    protected Set<String> getValuesInternal() {
+        return currentValues;
+    }
+
+    protected void setValuesInternal(Set<String> values) {
+
+        boolean changed = !CollectionUtils.equals(values, currentValues);
+        if (changed) {
+            HashSet<String> oldValues = new HashSet<>(currentValues);
+            currentValues.clear();
+            currentValues.addAll(values);
+
+            persistStringSet(currentValues);
             notifyChanged();
             if (listener != null) {
-                listener.onItemSelectionChange(oldValue, value, entries.contains(oldValue));
+                boolean olsSelectionStillValid = SetUtils.difference(oldValues, currentValues).size() == 0;
+                listener.onItemSelectionChange(oldValues, currentValues, olsSelectionStillValid);
             }
         }
     }
 
     @Override
-    protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        setValue(restoreValue ? getPersistedString(currentValue) : (String) defaultValue);
+    protected void onSetInitialValue(Object defaultValue) {
+        boolean canRestoreValue = shouldPersist() && getSharedPreferences().contains(getKey());
+        if (isMultiSelectMode()) {
+            setValues(canRestoreValue ? getPersistedStringSet(currentValues) : (Set<String>) defaultValue);
+        } else {
+            String currentValue = currentValues.size() > 0 ? currentValues.iterator().next() : null;
+            setValue(canRestoreValue ? getPersistedString(currentValue) : (String) defaultValue);
+        }
     }
 
     @Override
@@ -148,6 +210,10 @@ public class EditableListPreference extends DialogPreference {
         super.onRestoreInstanceState(myState.getSuperState());
         setValue(myState.value);
         entries = myState.entries;
+    }
+
+    protected boolean isMultiSelectMode() {
+        return allowMultiSelect;
     }
 
     /**
@@ -198,36 +264,59 @@ public class EditableListPreference extends DialogPreference {
      */
     @Override
     public CharSequence getSummary() {
-        final String entry = getValue();
+        final String strValue;
+        if (isMultiSelectMode()) {
+            strValue = CollectionUtils.toCsvList(getValuesInternal());
+        } else {
+            strValue = getValue();
+        }
         if (summary == null) {
             return super.getSummary();
         } else {
-            return String.format(summary, entry == null ? "" : entry);
+            return String.format(summary, strValue == null ? "" : strValue);
         }
     }
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getString(index);
+        if (isMultiSelectMode()) {
+            CharSequence[] val = a.getTextArray(index);
+            HashSet<String> defVal = new HashSet<>(val != null ? val.length : 0);
+            for (CharSequence v : val) {
+                defVal.add(v.toString());
+            }
+            return defVal;
+        } else {
+            return a.getString(index);
+        }
     }
 
     public boolean isAllowItemEdit() {
         return allowItemEdit;
     }
 
+    public boolean isAlwaysSelectAll() {
+        return alwaysSelectAll;
+    }
+
+    public String filterUserInput(String value) throws IllegalArgumentException {
+        return listener.filterUserInput(value);
+    }
+
     public void updateEntryValues(ArrayList<EditableListPreferenceDialogFragmentCompat.ListAction> actions) {
-        for(EditableListPreferenceDialogFragmentCompat.ListAction action : actions) {
-            if(action instanceof EditableListPreferenceDialogFragmentCompat.Removal) {
+
+        for (EditableListPreferenceDialogFragmentCompat.ListAction action : actions) {
+            if (action instanceof EditableListPreferenceDialogFragmentCompat.Removal) {
                 if (listener != null) {
                     listener.onItemRemoved(action.entryValue);
                 }
                 entries.remove(action.entryValue);
-            } else if(action instanceof EditableListPreferenceDialogFragmentCompat.Addition) {
+            } else if (action instanceof EditableListPreferenceDialogFragmentCompat.Addition) {
                 if (listener != null) {
                     listener.onItemAdded(action.entryValue);
                 }
                 entries.add(action.entryValue);
-            } else if(action instanceof EditableListPreferenceDialogFragmentCompat.Replacement) {
+            } else if (action instanceof EditableListPreferenceDialogFragmentCompat.Replacement) {
                 if (listener != null) {
                     listener.onItemAltered(this, action.entryValue, ((EditableListPreferenceDialogFragmentCompat.Replacement) action).newEntryValue);
                 }
@@ -236,6 +325,16 @@ public class EditableListPreference extends DialogPreference {
             }
         }
         persistEntries(entries);
+    }
+
+    public void addAndSelectItems(Set<String> items) {
+        loadEntries();
+        ArrayList<EditableListPreferenceDialogFragmentCompat.ListAction> actions = new ArrayList<>(items.size());
+        for (String item : items) {
+            actions.add(new EditableListPreferenceDialogFragmentCompat.Addition(item));
+        }
+        updateEntryValues(actions);
+        setValues(items); // use external version so it sanity checks the multi-select setting
     }
 
     public void addAndSelectItem(String item) {
@@ -247,14 +346,24 @@ public class EditableListPreference extends DialogPreference {
         setValue(item);
     }
 
+    public Set<String> filterNewUserSelection(Set<String> userSelectedItems) {
+        return listener.filterNewUserSelection(userSelectedItems);
+    }
+
     public interface EditableListPreferenceChangeListener extends Serializable {
         void onItemAdded(String newItem);
 
         void onItemRemoved(String newItem);
 
-        void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists);
+        void onItemSelectionChange(Set<String> oldSelection, Set<String> newSelection, boolean oldSelectionExists);
+
+//        void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists);
 
         void onItemAltered(EditableListPreference preference, String oldValue, String newValue);
+
+        String filterUserInput(String value) throws IllegalArgumentException;
+
+        Set<String> filterNewUserSelection(Set<String> userSelectedItems);
     }
 
     public static class SavedState extends BaseSavedState {
@@ -269,13 +378,13 @@ public class EditableListPreference extends DialogPreference {
                     }
                 };
         private String value;
-        private HashSet<String> entries;
+        private TreeSet<String> entries;
         private boolean entriesAltered;
 
         public SavedState(Parcel source) {
             super(source);
             value = source.readString();
-            entries = ParcelUtils.readStringSet(source, null);
+            entries = ParcelUtils.readStringSet(source, new TreeSet<String>());
             entriesAltered = ParcelUtils.readValue(source,null, boolean.class);
         }
 
@@ -303,11 +412,22 @@ public class EditableListPreference extends DialogPreference {
         }
 
         @Override
-        public void onItemSelectionChange(String oldSelection, String newSelection, boolean oldSelectionExists) {
+        public void onItemSelectionChange(Set<String> oldSelection, Set<String> newSelection, boolean oldSelectionExists) {
+
         }
 
         @Override
         public void onItemAltered(EditableListPreference preference, String oldValue, String newValue) {
+        }
+
+        @Override
+        public String filterUserInput(String value) throws IllegalArgumentException {
+            return value;
+        }
+
+        @Override
+        public Set<String> filterNewUserSelection(Set<String> userSelectedItems) {
+            return userSelectedItems;
         }
     }
 

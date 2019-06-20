@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.ResourceItem;
@@ -16,13 +17,13 @@ import delit.piwigoclient.piwigoApi.http.RequestParams;
 public class TagGetImagesResponseHandler extends AbstractPiwigoWsResponseHandler {
 
     private static final String TAG = "TagGetResRspHdlr";
-    private final String multimediaExtensionList;
+    private final Set<String> multimediaExtensionList;
     private final Tag tag;
     private final String sortOrder;
     private final int pageSize;
     private final int page;
 
-    public TagGetImagesResponseHandler(Tag tag, String sortOrder, int page, int pageSize, String multimediaExtensionList) {
+    public TagGetImagesResponseHandler(Tag tag, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
         super("pwg.tags.getImages", TAG);
         this.tag = tag;
         this.sortOrder = sortOrder;

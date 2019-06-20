@@ -11,12 +11,14 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Set;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.common.util.MediaScanner;
 import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
+import delit.piwigoclient.util.CollectionUtils;
 import delit.piwigoclient.util.ProjectUtils;
 
 /**
@@ -96,6 +98,23 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                     editor.putInt(connPrefs.getKey(getApplicationContext(), R.string.preference_server_connection_timeout_secs_key), currentTimeout);
                 }
             }
+            editor.apply();
+        } else if (prefsVersion < 222) {
+            String multimediaCsvList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), null);
+            HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
+            HashSet<String> cleanedValues = new HashSet<>(values.size());
+            for (String value : values) {
+                int dotIdx = value.indexOf('.');
+                if (dotIdx < 0) {
+                    cleanedValues.add(value.toLowerCase());
+                } else {
+                    cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+                }
+            }
+            SharedPreferences.Editor editor = prefs.edit();
+            String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
+            editor.remove(key);
+            editor.putStringSet(key, cleanedValues);
             editor.apply();
         }
     }

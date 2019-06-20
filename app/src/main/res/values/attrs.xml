@@ -55,6 +55,7 @@
     <declare-styleable name="EditableListPreference">
         <attr name="entriesPref" format="reference"/>
         <attr name="allowItemEdit" format="boolean"/>
+        <attr name="allowMultiSelect" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="MappedListPreference">

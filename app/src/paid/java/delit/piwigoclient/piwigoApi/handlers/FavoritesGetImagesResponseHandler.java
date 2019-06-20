@@ -1,8 +1,10 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import java.util.Set;
+
 public class FavoritesGetImagesResponseHandler extends ImagesGetResponseHandler {
 
-    public FavoritesGetImagesResponseHandler(String sortOrder, int page, int pageSize, String multimediaExtensionList) {
+    public FavoritesGetImagesResponseHandler(String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
         super(null, sortOrder, page, pageSize, multimediaExtensionList);
     }
 

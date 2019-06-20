@@ -40,12 +40,33 @@ public class BundleUtils {
         }
     }
 
+    public static HashSet<String> getStringHashSet(Bundle bundle, String key) {
+        try {
+            ArrayList<String> data = bundle.getStringArrayList(key);
+            HashSet<String> retVal = null;
+            if (data != null) {
+                retVal = new HashSet<>(data.size());
+                retVal.addAll(data);
+            }
+            return retVal;
+        } catch (RuntimeException e) {
+            Crashlytics.logException(e);
+            return null;
+        }
+    }
+
+    public static void putStringSet(Bundle bundle, String key, Set<String> data) {
+        if (data != null) {
+            bundle.putStringArrayList(key, new ArrayList<>(data));
+        }
+    }
+
     public static <T extends Parcelable> HashSet<T> getHashSet(Bundle bundle, String key) {
         try {
             ArrayList<T> data = bundle.getParcelableArrayList(key);
             HashSet<T> retVal = null;
             if (data != null) {
-                retVal = new HashSet<T>(data.size());
+                retVal = new HashSet<>(data.size());
                 retVal.addAll(data);
             }
             return retVal;
