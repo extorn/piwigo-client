@@ -83,6 +83,10 @@
 
 -keepclassmembers class com.google.android.gms.dynamite.DynamiteModule$DynamiteLoaderClassLoader { java.lang.ClassLoader sClassLoader; }
 
+-keepclassmembers class cz.msebera.android.httpclient.entity.HttpEntityWrapper {
+    protected HttpEntity wrappedEntity;
+}
+
 -keepclassmembers class ** {
     @org.greenrobot.eventbus.Subscribe <methods>;
 }
@@ -91,6 +95,15 @@
 # Only required if you use AsyncExecutor
 -keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
     <init>(java.lang.Throwable);
+}
+# Needed because Fragment constructors are very important - zero args for Bundle gen and int arg for my fragments as example!
+-keepclassmembers public class * extends androidx.fragment.app.Fragment {
+   public <init>(...);
+}
+
+# needed because I use them by name
+-keepclassmembernames class androidx.exifinterface.media.ExifInterface {
+    public static final <fields>;
 }
 
 # Allow customised serialization to work (all serializable classes must have serialVersionUID for this to be sufficient)
@@ -139,6 +152,7 @@
 -keep class com.adobe.xmp.** { public *; }
 -keep class **.R  { public *; }
 -keep class **.R$*  { public *; }
+
 #-keep public class * implements java.lang.annotation.Annotation { *; }
 ###-keep class delit.piwigoclient.**.*Activity { public *; }
 

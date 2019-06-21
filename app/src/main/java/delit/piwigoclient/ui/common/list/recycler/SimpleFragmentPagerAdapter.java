@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.common.list.recycler;
 
+import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import java.util.List;
 
 public class SimpleFragmentPagerAdapter<T extends Fragment & MyFragmentRecyclerPagerAdapter.PagerItemFragment> extends MyFragmentRecyclerPagerAdapter<T, ViewPager> {
 
+    private final static String TAG = "SimpleFragmentPagerAdapter";
     private final ArrayList<String> tabTitles;
     private final ArrayList<Class<? extends T>> tabClasses;
 
@@ -47,15 +49,19 @@ public class SimpleFragmentPagerAdapter<T extends Fragment & MyFragmentRecyclerP
             return constructor.newInstance(position);
 
         } catch (NoSuchMethodException e) {
+            Crashlytics.log(Log.ERROR, TAG, "Unable to find pager item constructor for fragment class : " + tabClass == null ? null : tabClass.getName());
             Crashlytics.logException(e);
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
+            Crashlytics.log(Log.ERROR, TAG, "Unable to find pager item constructor for fragment class : " + tabClass == null ? null : tabClass.getName());
             Crashlytics.logException(e);
             throw new RuntimeException(e);
         } catch (java.lang.InstantiationException e) {
+            Crashlytics.log(Log.ERROR, TAG, "Unable to find pager item constructor for fragment class : " + tabClass == null ? null : tabClass.getName());
             Crashlytics.logException(e);
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
+            Crashlytics.log(Log.ERROR, TAG, "Unable to find pager item constructor for fragment class : " + tabClass == null ? null : tabClass.getName());
             Crashlytics.logException(e);
             throw new RuntimeException(e);
         }

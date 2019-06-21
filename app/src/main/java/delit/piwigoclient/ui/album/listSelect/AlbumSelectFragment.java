@@ -29,6 +29,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
 /**
  * Created by gareth on 26/05/17.
  */
+//TODO - Migrate to using ASAP - ListViewLongSelectableSetSelectFragment
 public class AlbumSelectFragment extends ListViewLongSetSelectFragment<AvailableAlbumsListAdapter, AvailableAlbumsListAdapter.AvailableAlbumsListAdapterPreferences> {
 
     private static final String STATE_AVAILABLE_ITEMS = "availableItems";

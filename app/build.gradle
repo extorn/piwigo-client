@@ -47,8 +47,8 @@ android {
             // disable Crashlytics (couple this with uncommenting line in AbstractMyApplication onCreate method )
 //            ext.enableCrashlytics = false
             
-//            minifyEnabled true
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     lintOptions {
@@ -76,6 +76,7 @@ android {
             // this property is optional if you are using only one dimension.
             dimension "tier"
         }
+
         paidphone {
             applicationIdSuffix ".paid.phone"
             //.phone when debugging on phone so separate install.
