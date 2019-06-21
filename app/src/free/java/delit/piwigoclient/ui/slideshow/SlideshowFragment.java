@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Set;
+
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.Identifiable;
@@ -31,7 +33,7 @@ public class SlideshowFragment<T extends Identifiable & Parcelable & PhotoContai
     }
 
     @Override
-    protected long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> container, String sortOrder, int pageToLoad, int pageSize, String multimediaExtensionList) {
+    protected long invokeResourcePageLoader(ResourceContainer<T, GalleryItem> container, String sortOrder, int pageToLoad, int pageSize, Set<String> multimediaExtensionList) {
         T containerDetails = container.getContainerDetails();
         long loadingMessageId;
         if(containerDetails instanceof CategoryItem) {

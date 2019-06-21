@@ -10,10 +10,13 @@ import android.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.common.util.MediaScanner;
@@ -148,6 +151,8 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         registerActivityLifecycleCallbacks(this);
         resources = getResources();
         onAppCreate();
+        FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version", BuildConfig.VERSION_NAME);
+        FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version_code", "" + BuildConfig.VERSION_CODE);
 //        TooLargeTool.startLogging(this);
     }
 

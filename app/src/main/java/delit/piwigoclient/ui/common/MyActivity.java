@@ -249,19 +249,28 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(UserNotUniqueWarningEvent event) {
-        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("usernameNotUniqueOnPiwigoServer", null);
+        Bundle b = new Bundle();
+        b.putInt("app_version", BuildConfig.VERSION_CODE);
+        b.putString("app_version_name", BuildConfig.VERSION_NAME);
+        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("usernameNotUniqueOnPiwigoServer", b);
         getUiHelper().showDetailedMsg(R.string.alert_warning, getString(R.string.alert_warning_multiple_users_found_pattern, event.getOtherUsers().size(), event.getUserSelected().getUsername()));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ServerConnectionWarningEvent event) {
-        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("serverKilledConnectionLots", null);
+        Bundle b = new Bundle();
+        b.putInt("app_version", BuildConfig.VERSION_CODE);
+        b.putString("app_version_name", BuildConfig.VERSION_NAME);
+        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("serverKilledConnectionLots", b);
         getUiHelper().showDetailedMsg(R.string.alert_warning, event.getMessage());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(ServerConfigErrorEvent event) {
-        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("serverCfgErrAdminMissingPerm", null);
+        Bundle b = new Bundle();
+        b.putInt("app_version", BuildConfig.VERSION_CODE);
+        b.putString("app_version_name", BuildConfig.VERSION_NAME);
+        FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("serverCfgErrAdminMissingPerm", b);
         getUiHelper().showDetailedMsg(R.string.alert_warning, event.getMessage());
     }
 

@@ -1,5 +1,6 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import android.os.Bundle;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
+import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -110,13 +112,19 @@ public class BaseImagesGetResponseHandler extends AbstractPiwigoWsResponseHandle
         }
 
         if (resourceParser.isFixedImageUrisForPrivacyPluginUser()) {
-            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX_2", null);
+            Bundle b = new Bundle();
+            PiwigoSessionDetails.writeToBundle(b, getConnectionPrefs());
+            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX_2", b);
         }
         if (resourceParser.isFixedImageUrisWithAmpEscaping()) {
-            FirebaseAnalytics.getInstance(getContext()).logEvent("AMPERSAND_URI_FIX", null);
+            Bundle b = new Bundle();
+            PiwigoSessionDetails.writeToBundle(b, getConnectionPrefs());
+            FirebaseAnalytics.getInstance(getContext()).logEvent("AMPERSAND_URI_FIX", b);
         }
         if (resourceParser.isFixedPrivacyPluginImageUrisForPrivacyPluginUser()) {
-            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX_1", null);
+            Bundle b = new Bundle();
+            PiwigoSessionDetails.writeToBundle(b, getConnectionPrefs());
+            FirebaseAnalytics.getInstance(getContext()).logEvent("PRIVACY_PLUGIN_URI_FIX_1", b);
         }
 
         PiwigoGetResourcesResponse r = new PiwigoGetResourcesResponse(getMessageId(), getPiwigoMethod(), page, pageSize, totalResourceCount, resources, isCached);

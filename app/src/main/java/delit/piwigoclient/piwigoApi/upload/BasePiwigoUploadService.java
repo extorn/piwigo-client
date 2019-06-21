@@ -545,7 +545,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         }
         if(!handler.isSuccess()) {
             thisUploadJob.recordError(new Date(), buildErrorMessage(handler));
-            recordServerCallError(handler);
+            recordServerCallError(handler, thisUploadJob.getConnectionPrefs());
         }
     }
 
@@ -589,12 +589,13 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         return sb.toString();
     }
 
-    protected void recordServerCallError(AbstractPiwigoWsResponseHandler handler) {
+    protected void recordServerCallError(AbstractPiwigoWsResponseHandler handler, ConnectionPreferences.ProfilePreferences connectionPrefs) {
         Bundle b = new Bundle();
         b.putString("piwigoMethod", handler.getPiwigoMethod());
         b.putString("requestParams", handler.getRequestParameters()==null?"null":handler.getRequestParameters().toString());
         b.putString("responseType", handler.getResponse() == null ? null : handler.getResponse().getClass().getName());
         b.putSerializable("error", handler.getError());
+        PiwigoSessionDetails.writeToBundle(b, connectionPrefs);
         FirebaseAnalytics.getInstance(getApplicationContext()).logEvent("uploadError", b);
     }
 
@@ -750,7 +751,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                             thisUploadJob.addFileUploaded(entry.getKey(), null);
                             postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadProgressUpdateResponse(getNextMessageId(), entry.getKey(), thisUploadJob.getUploadProgress(entry.getKey())));
                         } else {
-                            recordServerCallError(getImageInfoHandler);
+                            recordServerCallError(getImageInfoHandler, thisUploadJob.getConnectionPrefs());
                         }
                     }
                 }

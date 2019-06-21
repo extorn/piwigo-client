@@ -1,21 +1,23 @@
 package delit.piwigoclient.piwigoApi.handlers;
 
+import java.util.Set;
+
 import delit.piwigoclient.model.piwigo.CategoryItem;
 
 public class ImagesGetResponseHandler extends BaseImagesGetResponseHandler {
 
-    public ImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, String multimediaExtensionList) {
+    public ImagesGetResponseHandler(CategoryItem parentAlbum, String sortOrder, int page, int pageSize, Set<String> multimediaExtensionList) {
         super(parentAlbum, sortOrder, page, pageSize, multimediaExtensionList);
     }
 
     @Override
-    protected ResourceParser buildResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
+    protected ResourceParser buildResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
         return new ResourceParser(multimediaExtensionList, basePiwigoUrl);
     }
 
     public static class ResourceParser extends BasicCategoryImageResourceParser {
 
-        public ResourceParser(String multimediaExtensionList, String basePiwigoUrl) {
+        public ResourceParser(Set<String> multimediaExtensionList, String basePiwigoUrl) {
             super(multimediaExtensionList, basePiwigoUrl);
         }
     }

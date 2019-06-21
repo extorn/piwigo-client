@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
 import delit.piwigoclient.piwigoApi.handlers.PiwigoClientFailedUploadsCleanResponseHandler;
@@ -74,6 +75,13 @@ public class PiwigoSessionDetails {
         // extra params
         this.allowedFileTypes = allowedFileTypes;
         this.webInterfaceUploadChunkSizeKB = webInterfaceUploadChunkSizeKB;
+    }
+
+    public static void writeToBundle(Bundle b, ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        PiwigoSessionDetails piwigoSessionDetails = getInstance(connectionPrefs);
+        if (piwigoSessionDetails != null) {
+            piwigoSessionDetails.writeToBundle(b);
+        }
     }
 
     public boolean isCached() {
@@ -342,6 +350,8 @@ public class PiwigoSessionDetails {
         out.putBoolean("community.plugin.in_use", isUseCommunityPlugin());
         out.putString("user.type", getUserType());
         out.putInt("login.status", loginStatus);
+        out.putInt("app_version", BuildConfig.VERSION_CODE);
+        out.putString("app_version_name", BuildConfig.VERSION_NAME);
         out.putString("piwigo.client.ws.ext.plugin.version", getPiwigoClientPluginVersion());
     }
 

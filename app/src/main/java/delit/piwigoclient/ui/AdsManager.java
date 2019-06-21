@@ -270,6 +270,8 @@ public class AdsManager {
             Bundle bundle = new Bundle();
             bundle.putLong("Reward_Time_Added", (rewardTime / 1000));
             bundle.putLong("User_Reward_Time_Remaining", (totalRewardTime / 1000));
+            bundle.putInt("app_version", BuildConfig.VERSION_CODE);
+            bundle.putString("app_version_name", BuildConfig.VERSION_NAME);
             FirebaseAnalytics.getInstance(context).logEvent("User_Rewarded", bundle);
             prefUtil.writeSecurePreference(sharedPreferences, context.getString(R.string.preference_advert_free_time_key), endsAt.toByteArray());
             AdsManager.RewardCountDownAction action = AdsManager.RewardCountDownAction.getInstance(context, rewardCountUpdateFrequency);
