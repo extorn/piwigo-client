@@ -399,7 +399,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
     private void configureDatasourceAndPlayerRequestingPermissions(final boolean startPlayback) {
 
-        logStatus("configuring datasource factory with current cache enabled etc setttings");
+        logStatus("configuring datasource factory with current cache enabled etc settings");
 
         boolean factorySettingsAltered = dataSourceFactory.setRedirectsAllowed(prefs.getBoolean(getString(R.string.preference_server_connection_allow_redirects_key), getResources().getBoolean(R.bool.preference_server_connection_allow_redirects_default)));
         factorySettingsAltered |= dataSourceFactory.setMaxRedirects(prefs.getInt(getString(R.string.preference_server_connection_max_redirects_key), getResources().getInteger(R.integer.preference_server_connection_max_redirects_default)));

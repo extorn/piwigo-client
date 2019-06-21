@@ -29,6 +29,7 @@ import delit.piwigoclient.util.IOUtils;
 
 public class CacheUtils {
 
+    private static final String TAG = "CacheUtils";
     private static final FilenameFilter metadataFileFilter = new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
@@ -75,7 +76,7 @@ public class CacheUtils {
         if (deleteQuietly(cacheDir)) {
             cacheDir.mkdir();
         } else {
-            Log.e("CacheUtils", "Error deleting video cache. Delete failed");
+            Log.e(TAG, "Error deleting video cache. Delete failed");
         }
 //        for(File f : cacheDir.listFiles()) {
 //            if(f.isDirectory()) {
@@ -90,6 +91,13 @@ public class CacheUtils {
         CachedContent cachedContent = IOUtils.readObjectFromFile(f);
         if (cachedContent != null) {
             cachedContent.setPersistTo(f);
+        } else {
+            if (f.exists()) {
+                if (!f.delete()) {
+                    Crashlytics.log(Log.ERROR, TAG, "Error deleting corrupt file : " + f.getAbsolutePath());
+                }
+            }
+            Log.e(TAG, "Unable to load cached content from file " + f);
         }
         return cachedContent;
     }

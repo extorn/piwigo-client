@@ -344,15 +344,15 @@ public class PiwigoSessionDetails {
     }
 
     public void writeToBundle(Bundle out) {
-        out.putStringArrayList("piwigo.methods", getMethodsAvailable());
-        out.putBoolean("is.admin.user", isAdminUser());
-        out.putBoolean("community.plugin.installed.", isCommunityPluginInstalled());
-        out.putBoolean("community.plugin.in_use", isUseCommunityPlugin());
-        out.putString("user.type", getUserType());
-        out.putInt("login.status", loginStatus);
+        out.putStringArrayList("piwigo_methods", getMethodsAvailable());
+        out.putBoolean("is_admin_user", isAdminUser());
+        out.putBoolean("community_plugin_installed", isCommunityPluginInstalled());
+        out.putBoolean("community_plugin_in_use", isUseCommunityPlugin());
+        out.putString("user_type", getUserType());
+        out.putInt("login_status", loginStatus);
         out.putInt("app_version", BuildConfig.VERSION_CODE);
         out.putString("app_version_name", BuildConfig.VERSION_NAME);
-        out.putString("piwigo.client.ws.ext.plugin.version", getPiwigoClientPluginVersion());
+        out.putString("piwigo_client_ws_ext_plugin_version", getPiwigoClientPluginVersion());
     }
 
     public void setServerConfig(ServerConfig serverConfig) {

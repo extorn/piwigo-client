@@ -1,11 +1,15 @@
 package delit.piwigoclient.piwigoApi.http.cache;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import cz.msebera.android.httpclient.client.cache.HttpCacheEntry;
 
-public final class CacheMap extends LinkedHashMap<String, HttpCacheEntry> {
+/**
+ * NOTE: need implements serializable else it isn't kept correctly with proguard rules!
+ */
+public final class CacheMap extends LinkedHashMap<String, HttpCacheEntry> implements Serializable {
 
     private static final long serialVersionUID = -7750025207539768511L;
 

@@ -57,6 +57,11 @@
 
 -keep class cz.msebera.android.httpclient.cookie.Cookie { *; }
 
+-keepclassmembers class delit.piwigoclient.business.video.RandomAccessFileAsyncHttpResponseHandler {
+    # Weird but this is needed else it gets stripped and the super implementation is presumably used!
+    protected byte[] getResponseData(cz.msebera.android.httpclient.HttpEntity);
+}
+
 -keep class com.google.gson.stream.** { *; }
 
 -keep class com.google.gson.Json* { *; }
@@ -111,6 +116,9 @@
      static final long serialVersionUID;
      private static final java.io.ObjectStreamField[] serialPersistentFields;
      !static !transient <fields>;
+     # <init>(...);
+     !private <fields>;
+     !private <methods>;
      private void writeObject(java.io.ObjectOutputStream);
      private void readObject(java.io.ObjectInputStream);
      java.lang.Object writeReplace();
