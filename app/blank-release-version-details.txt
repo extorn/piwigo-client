@@ -2,19 +2,23 @@
 <en-GB>
 Bugfix:
 - Video not able to start playing after navigation to new view and then returning with back button
+- Don't presume the user's current app version when upgrading preferences at app start
 </en-GB>
 
 <de-DE>
 Fehlerbehebung:
-- Das Video kann nach der Navigation zu einer neuen Ansicht nicht gestartet werden und kehrt dann mit der Zurück-Taste zurück.
+- Das Video kann nach der Navigation zu einer neuen Ansicht nicht gestartet werden und kehrt dann mit der Zurück-Taste zurück
+- Gehen Sie nicht von der aktuellen App-Version des Benutzers aus, wenn Sie die Einstellungen beim Start der App aktualisieren
 </de-DE>
 
 <fr-FR>
 Correction d'un bug :
-- La vidéo ne peut pas commencer à jouer après la navigation vers une nouvelle vue, puis revenir en arrière avec le bouton Précédent.
+- La vidéo ne peut pas commencer à jouer après la navigation vers une nouvelle vue, puis revenir en arrière avec le bouton Précédent
+- Ne présumez pas de la version actuelle de l'application de l'utilisateur lors de la mise à niveau des préférences au démarrage de l'application
 </fr-FR>
 
 <zh-CN>
 修正：
 - 视频无法在导航到新视图后开始播放，然后使用后退按钮返回
+- 在应用启动时升级首选项时，不要假定用户当前的应用版本
 </zh-CN>
