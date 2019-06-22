@@ -75,6 +75,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
         rewardsCountdownAction = AdsManager.RewardCountDownAction.getInstance(getBaseContext(), REWARD_COUNT_UPDATE_FREQUENCY);
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         if (uiHelper == null) {
+            //TODO move this to after the view is created so that the UI helper progress indicator can init if needed!
             uiHelper = new ActivityUIHelper<>((T) this, prefs);
             BasicPiwigoResponseListener listener = buildPiwigoResponseListener();
             listener.withUiHelper(this, uiHelper);

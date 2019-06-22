@@ -8,16 +8,18 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.multidex.MultiDexApplication;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -45,8 +47,8 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         return resources;
     }
 
-    protected SortedSet<PreferenceMigrator> getPreferenceMigrators() {
-        TreeSet<PreferenceMigrator> migrators = new TreeSet<>();
+    protected List<PreferenceMigrator> getPreferenceMigrators() {
+        List<PreferenceMigrator> migrators = new ArrayList<>();
 
         migrators.add(new PreferenceMigrator(44) {
             @Override
@@ -58,7 +60,7 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
                 editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             }
         });
-        migrators.add(new PreferenceMigrator(225) {
+        migrators.add(new PreferenceMigrator(226) {
 
             @Override
             protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
@@ -121,25 +123,34 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
 
     private void upgradeAnyPreferencesIfRequired() {
         SharedPreferences prefs = getPrefs();
-        SortedSet<PreferenceMigrator> migrators = getPreferenceMigrators();
+        List<PreferenceMigrator> migrators = getPreferenceMigrators();
+        Collections.sort(migrators); // into incrementing version number order
 
         int currentPrefsVersion = prefs.getInt(getString(R.string.preference_app_prefs_version_key), -1);
 
         for (PreferenceMigrator migrator : migrators) {
-            currentPrefsVersion = migrator.execute(this, prefs, currentPrefsVersion);
+            migrator.execute(this, prefs, currentPrefsVersion);
         }
         if (currentPrefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
+            int newVersion = ProjectUtils.getVersionCode(getApplicationContext());
+            editor.putInt(getString(R.string.preference_app_prefs_version_key), newVersion);
             editor.apply();
+            Bundle bundle = new Bundle();
+            bundle.putInt("from_version", currentPrefsVersion);
+            bundle.putInt("to_version", newVersion);
+            FirebaseAnalytics.getInstance(this).logEvent("app_upgraded", bundle);
         }
     }
 
     protected static abstract class PreferenceMigrator implements Comparable<PreferenceMigrator> {
 
+        private static int idGen = 0;
+        private final int id;
         private final int prefsVersion;
 
         public PreferenceMigrator(int prefsVersion) {
+            this.id = idGen++;
             this.prefsVersion = prefsVersion;
         }
 
@@ -148,14 +159,25 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
             return (prefsVersion < o.prefsVersion) ? -1 : ((prefsVersion == o.prefsVersion) ? 0 : 1);
         }
 
-        public final int execute(Context context, SharedPreferences prefs, int currentPrefsVersion) {
-            SharedPreferences.Editor editor = prefs.edit();
+        public final void execute(Context context, SharedPreferences prefs, int currentPrefsVersion) {
             if (currentPrefsVersion < prefsVersion) {
+                SharedPreferences.Editor editor = prefs.edit();
                 upgradePreferences(context, prefs, editor);
-                editor.putInt(context.getString(R.string.preference_app_prefs_version_key), prefsVersion);
+                editor.apply();
             }
-            editor.apply();
-            return Math.max(prefsVersion, currentPrefsVersion);
+        }
+
+        @Override
+        public boolean equals(@Nullable Object obj) {
+            if (!(obj instanceof PreferenceMigrator)) {
+                return false;
+            }
+            return id == ((PreferenceMigrator) obj).id;
+        }
+
+        @Override
+        public int hashCode() {
+            return id;
         }
 
         protected abstract void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor);

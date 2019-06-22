@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.SortedSet;
+import java.util.List;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
@@ -26,9 +26,9 @@ public class MyApplication extends AbstractMyApplication {
 
 
     @Override
-    protected SortedSet<AbstractMyApplication.PreferenceMigrator> getPreferenceMigrators() {
-        SortedSet<AbstractMyApplication.PreferenceMigrator> migrators = super.getPreferenceMigrators();
-        migrators.add(new PreferenceMigrator(225) {
+    protected List<PreferenceMigrator> getPreferenceMigrators() {
+        List<PreferenceMigrator> migrators = super.getPreferenceMigrators();
+        migrators.add(new PreferenceMigrator(226) {
             @Override
             protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
                 try {
