@@ -220,6 +220,10 @@
                 - TODO Added support for MP3 encoding of the audio stream
                 - TODO Added support for setting the desired bitrate of the audio stream"</item>
                 -->
+        <item>1.4.0.16.3</item>
+        <item>"Bugfix:
+                - Video not able to start playing after navigation to new view and then returning with back button
+                - Don't presume the user's current app version when upgrading preferences at app start"</item>
         <item>1.4.0.16</item>
         <item>"Bugfix:
                 - Video not able to start playing after navigation to new view and then returning with back button"</item>

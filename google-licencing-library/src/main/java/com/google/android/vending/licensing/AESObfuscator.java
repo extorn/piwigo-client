@@ -48,7 +48,7 @@ public class AESObfuscator implements Obfuscator {
     private static final String UTF8 = "UTF-8";
     private static final String KEYGEN_ALGORITHM = "PBEWITHSHAAND256BITAES-CBC-BC";
     private static final String CIPHER_ALGORITHM = "AES/CBC/PKCS5Padding";
-    private static final String header = "com.android.vending.licensing.AESObfuscator-1|";
+    private static final String HEADER = "com.android.vending.licensing.AESObfuscator-1|";
     private static final String TAG = "AESObfuscator";
 
     private static final SecureRandom random = new SecureRandom();
@@ -117,7 +117,7 @@ Crashlytics.logException(e);
         try {
             // Header is appended as an integrity check
             Cipher cipher = buildEncrypter();
-            byte[] inputData = mergeArrays(header.getBytes(UTF8), key.getBytes(UTF8), originalData);
+            byte[] inputData = mergeArrays(HEADER.getBytes(UTF8), key.getBytes(UTF8), originalData);
             byte[] encrypted = cipher.doFinal(inputData);
             byte[] iv = cipher.getIV();
             if(iv == null || iv.length != 16) {
@@ -175,7 +175,7 @@ Crashlytics.logException(e);
             byte[] dataBytes = Arrays.copyOfRange(bytes, 16, bytes.length);
             Cipher cipher = buildDecrypter(ivBytes);
 
-            byte[] headerBytes = header.getBytes(UTF8);
+            byte[] headerBytes = HEADER.getBytes(UTF8);
             byte[] keyBytes = key.getBytes(UTF8);
 
             byte[] decrypted = cipher.doFinal(dataBytes);
@@ -189,14 +189,14 @@ Crashlytics.logException(e);
             }
             totalHeaderLen += keyBytes.length;
 
-            // Check for presence of header. This serves as a final integrity check, for cases
+            // Check for presence of HEADER. This serves as a final integrity check, for cases
             // where the block size is correct during decryption.
             if (!sane) {
                 if(BuildConfig.DEBUG) {
                     Log.w(TAG, "Unable to decrypt - Header not found (invalid data or key)" + ":" +
-                            obfuscated + "\n" + header + key + " not found in " + new String(decrypted, UTF8));
+                            obfuscated + "\n" + HEADER + key + " not found in " + new String(decrypted, UTF8));
                 }
-                throw new ValidationException("Unable to decrypt - header not found (invalid data or key)" + ":" + obfuscated);
+                throw new ValidationException("Unable to decrypt - HEADER not found (invalid data or key)" + ":" + obfuscated);
             }
 
             return Arrays.copyOfRange(decrypted, totalHeaderLen, decrypted.length);

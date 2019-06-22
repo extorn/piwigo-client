@@ -2,6 +2,7 @@ package delit.piwigoclient.ui;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -42,84 +45,120 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
         return resources;
     }
 
+    protected SortedSet<PreferenceMigrator> getPreferenceMigrators() {
+        TreeSet<PreferenceMigrator> migrators = new TreeSet<>();
+
+        migrators.add(new PreferenceMigrator(44) {
+            @Override
+            protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
+                encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_username_key, null);
+                encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_password_key, null);
+                encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_username_key, null);
+                encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_password_key, null);
+                editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
+            }
+        });
+        migrators.add(new PreferenceMigrator(225) {
+
+            @Override
+            protected void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor) {
+                if (!prefs.contains(getString(R.string.preference_app_prefs_version_key))) {
+                    editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
+                }
+                if (prefs.contains(getString(R.string.preference_piwigo_server_address_key))) {
+                    String serverName = prefs.getString(getString(R.string.preference_piwigo_server_address_key), null);
+                    if (serverName != null) {
+                        try {
+                            URI.create(serverName);
+                        } catch (IllegalArgumentException e) {
+                            editor.putString(getString(R.string.preference_piwigo_server_address_key), serverName.replaceAll(" ", ""));
+                        }
+                    }
+                }
+                if (prefs.contains(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key))) {
+                    editor.remove(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key));
+                    editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key));
+                    editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsPortrait_key));
+                    editor.remove(getString(R.string.preference_gallery_images_preferredColumnsLandscape_key));
+                    editor.remove(getString(R.string.preference_gallery_images_preferredColumnsPortrait_key));
+                    editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsLandscape_key));
+                    editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsPortrait_key));
+                    editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsLandscape_key));
+                    editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsPortrait_key));
+                    Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
+                    for (String profile : connectionProfiles) {
+                        ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile, getPrefs(), context);
+                        int currentTimeout = connPrefs.getServerConnectTimeout(prefs, getApplicationContext());
+                        if (currentTimeout >= 1000) {
+                            currentTimeout = (int) Math.round(Math.ceil((double) currentTimeout / 1000));
+                            editor.putInt(connPrefs.getKey(getApplicationContext(), R.string.preference_server_connection_timeout_secs_key), currentTimeout);
+                        }
+                    }
+                }
+                try {
+                    String multimediaCsvList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), null);
+                    HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
+                    HashSet<String> cleanedValues = new HashSet<>(values.size());
+                    for (String value : values) {
+                        int dotIdx = value.indexOf('.');
+                        if (dotIdx < 0) {
+                            cleanedValues.add(value.toLowerCase());
+                        } else {
+                            cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
+                        }
+                    }
+                    String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
+                    editor.remove(key);
+                    editor.putStringSet(key, cleanedValues);
+                } catch (ClassCastException e) {
+                    // will occur if the user has previously migrated preferences at version 222!
+                }
+            }
+        });
+
+        return migrators;
+    }
+
     private void upgradeAnyPreferencesIfRequired() {
         SharedPreferences prefs = getPrefs();
-        int prefsVersion = prefs.getInt(getString(R.string.preference_app_prefs_version_key), -1);
+        SortedSet<PreferenceMigrator> migrators = getPreferenceMigrators();
 
-        upgradeAnyPreferencesIfRequired(prefs, prefsVersion);
+        int currentPrefsVersion = prefs.getInt(getString(R.string.preference_app_prefs_version_key), -1);
 
-        if (prefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
+        for (PreferenceMigrator migrator : migrators) {
+            currentPrefsVersion = migrator.execute(this, prefs, currentPrefsVersion);
+        }
+        if (currentPrefsVersion < ProjectUtils.getVersionCode(getApplicationContext())) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
             editor.apply();
         }
     }
 
-    protected void upgradeAnyPreferencesIfRequired(SharedPreferences prefs, int prefsVersion) {
+    protected static abstract class PreferenceMigrator implements Comparable<PreferenceMigrator> {
 
-        if (prefsVersion == -1) {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
-            editor.apply();
-        } else if (prefsVersion <= 43) {
-            SharedPreferences.Editor editor = prefs.edit();
-            encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_username_key, null);
-            encryptAndSaveValue(prefs, editor, R.string.preference_piwigo_server_password_key, null);
-            encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_username_key, null);
-            encryptAndSaveValue(prefs, editor, R.string.preference_server_basic_auth_password_key, null);
-            editor.putInt(getString(R.string.preference_app_prefs_version_key), ProjectUtils.getVersionCode(getApplicationContext()));
-            editor.apply();
-        } else if(prefsVersion <= 144) {
-            // Fix any addresses with a space character.
-            SharedPreferences.Editor editor = prefs.edit();
-            String serverName = prefs.getString(getString(R.string.preference_piwigo_server_address_key), null);
-            if(serverName != null) {
-                try {
-                    URI.create(serverName);
-                } catch (IllegalArgumentException e) {
-                    editor.putString(getString(R.string.preference_piwigo_server_address_key), serverName.replaceAll(" ", ""));
-                }
-            }
-            editor.apply();
-        } else if(prefsVersion < 147) {
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.remove(getString(R.string.preference_gallery_show_album_thumbnail_zoomed_key));
-            editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsLandscape_key));
-            editor.remove(getString(R.string.preference_gallery_albums_preferredColumnsPortrait_key));
-            editor.remove(getString(R.string.preference_gallery_images_preferredColumnsLandscape_key));
-            editor.remove(getString(R.string.preference_gallery_images_preferredColumnsPortrait_key));
-            editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsLandscape_key));
-            editor.remove(getString(R.string.preference_data_file_selector_preferredFolderColumnsPortrait_key));
-            editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsLandscape_key));
-            editor.remove(getString(R.string.preference_data_file_selector_preferredFileColumnsPortrait_key));
-            Set<String> connectionProfiles = ConnectionPreferences.getConnectionProfileList(prefs, getApplicationContext());
-            for(String profile : connectionProfiles) {
-                ConnectionPreferences.ProfilePreferences connPrefs = ConnectionPreferences.getPreferences(profile, getPrefs(), this);
-                int currentTimeout = connPrefs.getServerConnectTimeout(prefs, getApplicationContext());
-                if(currentTimeout >= 1000) {
-                    currentTimeout = (int) Math.round(Math.ceil((double)currentTimeout / 1000));
-                    editor.putInt(connPrefs.getKey(getApplicationContext(), R.string.preference_server_connection_timeout_secs_key), currentTimeout);
-                }
-            }
-            editor.apply();
-        } else if (prefsVersion < 222) {
-            String multimediaCsvList = prefs.getString(getString(R.string.preference_piwigo_playable_media_extensions_key), null);
-            HashSet<String> values = new HashSet<>(CollectionUtils.stringsFromCsvList(multimediaCsvList));
-            HashSet<String> cleanedValues = new HashSet<>(values.size());
-            for (String value : values) {
-                int dotIdx = value.indexOf('.');
-                if (dotIdx < 0) {
-                    cleanedValues.add(value.toLowerCase());
-                } else {
-                    cleanedValues.add(value.substring(dotIdx + 1).toLowerCase());
-                }
-            }
-            SharedPreferences.Editor editor = prefs.edit();
-            String key = getString(R.string.preference_piwigo_playable_media_extensions_key);
-            editor.remove(key);
-            editor.putStringSet(key, cleanedValues);
-            editor.apply();
+        private final int prefsVersion;
+
+        public PreferenceMigrator(int prefsVersion) {
+            this.prefsVersion = prefsVersion;
         }
+
+        @Override
+        public int compareTo(PreferenceMigrator o) {
+            return (prefsVersion < o.prefsVersion) ? -1 : ((prefsVersion == o.prefsVersion) ? 0 : 1);
+        }
+
+        public final int execute(Context context, SharedPreferences prefs, int currentPrefsVersion) {
+            SharedPreferences.Editor editor = prefs.edit();
+            if (currentPrefsVersion < prefsVersion) {
+                upgradePreferences(context, prefs, editor);
+                editor.putInt(context.getString(R.string.preference_app_prefs_version_key), prefsVersion);
+            }
+            editor.apply();
+            return Math.max(prefsVersion, currentPrefsVersion);
+        }
+
+        protected abstract void upgradePreferences(Context context, SharedPreferences prefs, SharedPreferences.Editor editor);
     }
 
     protected void encryptAndSaveValue(SharedPreferences prefs, SharedPreferences.Editor editor, int keyId, String defaultVal) {

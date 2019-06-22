@@ -108,6 +108,10 @@
          - ? Bitte mailen Sie mir (es gibt einen E-Mail-Link in der Navigationsleiste), um Dinge anzufordern, die Sie benötigen oder die diese App noch nicht kann"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.16.3</item>
+        <item>"Fehlerbehebung:
+                - Das Video kann nach der Navigation zu einer neuen Ansicht nicht gestartet werden und kehrt dann mit der Zurück-Taste zurück
+                - Gehen Sie nicht von der aktuellen App-Version des Benutzers aus, wenn Sie die Einstellungen beim Start der App aktualisieren"</item>
         <item>1.4.0.16</item>
         <item>"Fehlerbehebung:
                 - Das Video kann nach der Navigation zu einer neuen Ansicht nicht gestartet werden und kehrt dann mit der Zurück-Taste zurück"</item>

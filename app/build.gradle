@@ -28,8 +28,8 @@ android {
         applicationId "delit.piwigoclient"
         minSdkVersion 17
         targetSdkVersion 28
-        versionCode 224
-        versionName "1.4.0.16.2"
+        versionCode 225
+        versionName "1.4.0.16.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.config
@@ -53,7 +53,7 @@ android {
     }
     lintOptions {
         checkReleaseBuilds true
-        disable 'MissingTranslation'
+        // disable 'MissingTranslation'
         // Or, if you prefer, you can continue to check for errors in release builds,
         // but continue the build even when errors are found:
         abortOnError false
