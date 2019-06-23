@@ -203,14 +203,17 @@ public abstract class AbstractMyApplication extends MultiDexApplication implemen
     @Override
     public final void onCreate() {
         super.onCreate();
+        // ensure it's available for any users of it
+        resources = getResources();
 
         //Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()).build());
         MediaScanner.instance(getApplicationContext());
         PicassoFactory.initialise();
+
         upgradeAnyPreferencesIfRequired();
         AdsManager.getInstance().updateShowAdvertsSetting(getApplicationContext());
         registerActivityLifecycleCallbacks(this);
-        resources = getResources();
+
         onAppCreate();
         FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version", BuildConfig.VERSION_NAME);
         FirebaseAnalytics.getInstance(this).setUserProperty("global_app_version_code", "" + BuildConfig.VERSION_CODE);
