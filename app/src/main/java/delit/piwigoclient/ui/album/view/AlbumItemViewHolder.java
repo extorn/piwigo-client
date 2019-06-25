@@ -12,14 +12,14 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import com.crashlytics.android.Crashlytics;
 
+import delit.libs.ui.view.SquareLinearLayout;
+import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
 import delit.piwigoclient.model.piwigo.ResourceContainer;
-import delit.piwigoclient.ui.common.SquareLinearLayout;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 
 import static android.view.View.GONE;
 import static delit.piwigoclient.ui.album.view.AlbumItemRecyclerViewAdapterPreferences.SCALING_QUALITY_VLOW;

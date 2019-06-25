@@ -8,8 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
-import delit.piwigoclient.util.ObjectUtils;
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.ObjectUtils;
 
 /**
  * Helper class for providing sample content for user interfaces created by

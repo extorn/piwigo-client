@@ -29,10 +29,10 @@ import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.net.URI;
 
+import delit.libs.ui.util.SecurePrefsUtil;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.ui.events.RewardUpdateEvent;
 
 import static android.view.View.VISIBLE;

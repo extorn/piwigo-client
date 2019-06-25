@@ -12,6 +12,7 @@ import org.json.JSONException;
 
 import java.net.UnknownHostException;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -19,7 +20,6 @@ import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 import delit.piwigoclient.ui.events.BlockingUserInteractionQuestion;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;

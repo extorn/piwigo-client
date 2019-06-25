@@ -8,8 +8,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class ImageSetLinkedAlbumsResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 

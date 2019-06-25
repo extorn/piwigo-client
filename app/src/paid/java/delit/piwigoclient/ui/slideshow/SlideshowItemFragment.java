@@ -36,13 +36,13 @@ import delit.piwigoclient.piwigoApi.handlers.FavoritesRemoveImageResponseHandler
 import delit.piwigoclient.piwigoApi.handlers.ImageUpdateInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PluginUserTagsUpdateResourceTagsListResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.util.BundleUtils;
+import delit.libs.ui.util.BundleUtils;
 import delit.piwigoclient.ui.events.FavoritesUpdatedEvent;
 import delit.piwigoclient.ui.events.PiwigoSessionTokenUseNotificationEvent;
 import delit.piwigoclient.ui.events.TagContentAlteredEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.TagSelectionNeededEvent;
-import delit.piwigoclient.util.SetUtils;
+import delit.libs.util.SetUtils;
 
 
 public abstract class SlideshowItemFragment<T extends ResourceItem> extends AbstractSlideshowItemFragment<T> {

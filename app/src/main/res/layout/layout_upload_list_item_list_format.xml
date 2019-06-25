@@ -43,7 +43,7 @@
         tools:text="filename"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-    <delit.piwigoclient.ui.common.button.CustomImageButton
+    <delit.libs.ui.view.button.CustomImageButton
         android:id="@+id/file_for_upload_delete_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

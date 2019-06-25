@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <delit.piwigoclient.ui.common.SquareLinearLayout
+    <delit.libs.ui.view.SquareLinearLayout
         android:id="@+id/thumbnail_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:contentDescription="TODO" android:scaleType="fitCenter" />
 
-    </delit.piwigoclient.ui.common.SquareLinearLayout>
+    </delit.libs.ui.view.SquareLinearLayout>
 
     <TextView
         android:id="@+id/file_for_upload_heading_txt"
@@ -51,7 +51,7 @@
         tools:text="filename"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-    <delit.piwigoclient.ui.common.button.CustomImageButton
+    <delit.libs.ui.view.button.CustomImageButton
         android:id="@+id/file_for_upload_delete_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

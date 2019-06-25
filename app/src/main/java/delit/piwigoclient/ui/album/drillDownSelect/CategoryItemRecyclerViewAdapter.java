@@ -21,14 +21,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.CustomClickListener;
+import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.CategoryItem;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
-import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
 
 public class CategoryItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<CategoryItemViewAdapterPreferences, CategoryItem, CategoryItemRecyclerViewAdapter.CategoryItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<CategoryItem>> {
 

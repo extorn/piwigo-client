@@ -13,9 +13,9 @@ import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdView;
 
+import delit.libs.ui.view.list.PairedArrayAdapter;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.list.PairedArrayAdapter;
 
 /**
  * Created by gareth on 07/06/17.

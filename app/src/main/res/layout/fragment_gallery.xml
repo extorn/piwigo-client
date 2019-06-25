@@ -47,7 +47,7 @@
                 android:layout_margin="5dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
-            <delit.piwigoclient.ui.common.button.CustomImageButton
+            <delit.libs.ui.view.button.CustomImageButton
                 android:id="@+id/gallery_details_description_dropdown_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -179,28 +179,28 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="14dp">
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_details_edit_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_details_save_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/gallery_details_edit_button"
                     app:srcCompat="@drawable/ic_save_black_24dp" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_details_discard_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@+id/gallery_details_save_button"
                     app:srcCompat="@drawable/ic_undo_black_24dp" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/album_add_new_album_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -208,21 +208,21 @@
                     android:layout_toStartOf="@+id/gallery_action_delete"
                     app:srcCompat="@drawable/ic_create_new_folder_black_24dp" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_action_paste"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/album_add_new_album_button"
                     app:srcCompat="@drawable/ic_content_paste_black_24dp" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_action_cut"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toStartOf="@+id/gallery_action_paste"
                     app:srcCompat="@drawable/ic_content_cut_black_24px" />
 
-                <delit.piwigoclient.ui.common.button.CustomImageButton
+                <delit.libs.ui.view.button.CustomImageButton
                     android:id="@+id/gallery_action_delete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -290,7 +290,7 @@
                         android:text="@string/gallery_details_status_title"
                         android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                    <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+                    <delit.libs.ui.view.button.AppCompatCheckboxTriState
                         android:id="@+id/gallery_details_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

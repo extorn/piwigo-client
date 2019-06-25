@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
-        <delit.piwigoclient.ui.common.ProgressIndicator
+        <delit.libs.ui.view.ProgressIndicator
             android:background="@color/primary_dark"
             android:id="@+id/progressIndicator"
             android:layout_width="match_parent"

@@ -8,7 +8,7 @@ import org.json.JSONException;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.libs.http.RequestParams;
 
 public class TagAddResponseHandler extends AbstractPiwigoWsResponseHandler {
 

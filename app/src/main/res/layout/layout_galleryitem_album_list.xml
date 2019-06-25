@@ -10,7 +10,7 @@
     android:background="@color/colorAlbumItemBackground"
     tools:layout_height="120dp">
 
-    <delit.piwigoclient.ui.common.SquareLinearLayout
+    <delit.libs.ui.view.SquareLinearLayout
         android:id="@+id/image_container"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -27,7 +27,7 @@
             tools:layout_height="120dp"
             tools:layout_width="120dp"
             tools:src="@drawable/ic_broken_image_black_240dp" />
-    </delit.piwigoclient.ui.common.SquareLinearLayout>
+    </delit.libs.ui.view.SquareLinearLayout>
 
     <ImageView
         android:id="@+id/newly_altered_marker_image"

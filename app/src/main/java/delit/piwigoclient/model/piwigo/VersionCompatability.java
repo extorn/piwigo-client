@@ -2,8 +2,8 @@ package delit.piwigoclient.model.piwigo;
 
 import java.util.Arrays;
 
+import delit.libs.util.VersionUtils;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.util.VersionUtils;
 
 /**
  * Created by gareth on 15/06/17.

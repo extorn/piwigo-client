@@ -33,18 +33,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.view.FlowLayout;
+import delit.libs.ui.view.list.MappedArrayAdapter;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
 import delit.piwigoclient.ui.common.BackButtonHandler;
-import delit.piwigoclient.ui.common.FlowLayout;
 import delit.piwigoclient.ui.common.fragment.LongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
-import delit.piwigoclient.ui.common.list.MappedArrayAdapter;
-import delit.piwigoclient.ui.common.util.BundleUtils;
-import delit.piwigoclient.ui.common.util.MediaScanner;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
-import delit.piwigoclient.util.DisplayUtils;
-import delit.piwigoclient.util.IOUtils;
 
 import static android.view.View.NO_ID;
 

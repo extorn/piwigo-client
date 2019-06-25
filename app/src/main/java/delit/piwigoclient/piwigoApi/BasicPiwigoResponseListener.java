@@ -15,12 +15,12 @@ import androidx.fragment.app.Fragment;
 import com.crashlytics.android.Crashlytics;
 
 import cz.msebera.android.httpclient.HttpStatus;
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.util.DisplayUtils;
 
 /**
  * Created by gareth on 15/10/17.

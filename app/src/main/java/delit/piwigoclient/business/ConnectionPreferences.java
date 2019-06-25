@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
+import delit.libs.ui.util.SecurePrefsUtil;
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 
 /**
  * Created by gareth on 22/01/18.

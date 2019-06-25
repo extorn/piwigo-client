@@ -27,17 +27,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.CustomClickListener;
+import delit.libs.ui.view.recycler.CustomViewHolder;
+import delit.libs.util.IOUtils;
+import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapter;
-import delit.piwigoclient.ui.common.recyclerview.CustomClickListener;
-import delit.piwigoclient.ui.common.recyclerview.CustomViewHolder;
-import delit.piwigoclient.ui.common.util.MediaScanner;
-import delit.piwigoclient.util.IOUtils;
-import delit.piwigoclient.util.ObjectUtils;
 
 
 public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<FolderItemViewAdapterPreferences, File, FolderItemRecyclerViewAdapter.FolderItemViewHolder, BaseRecyclerViewAdapter.MultiSelectStatusListener<File>> {

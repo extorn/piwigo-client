@@ -17,12 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import delit.libs.util.IOUtils;
+import delit.libs.util.Md5SumUtils;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
-import delit.piwigoclient.util.IOUtils;
-import delit.piwigoclient.util.Md5SumUtils;
 
 public class UploadJob implements Serializable {
 

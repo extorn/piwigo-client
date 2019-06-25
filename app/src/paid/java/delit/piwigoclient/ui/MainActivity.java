@@ -12,7 +12,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.Tag;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.BackgroundUploadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadStoppedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadCheckingForTasksEvent;
@@ -26,7 +26,7 @@ import delit.piwigoclient.ui.preferences.AutoUploadJobPreferenceFragment;
 import delit.piwigoclient.ui.tags.TagSelectFragment;
 import delit.piwigoclient.ui.tags.TagsListFragment;
 import delit.piwigoclient.ui.tags.ViewTagFragment;
-import delit.piwigoclient.util.VersionUtils;
+import delit.libs.util.VersionUtils;
 
 /**
  * Created by gareth on 07/04/18.

@@ -4,9 +4,9 @@ import android.os.Bundle;
 
 import org.greenrobot.eventbus.EventBus;
 
+import delit.libs.ui.util.BundleUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.ui.common.MyActivity;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.preferences.PreferencesFragment;
 
 public class PreferencesActivity extends MyActivity {

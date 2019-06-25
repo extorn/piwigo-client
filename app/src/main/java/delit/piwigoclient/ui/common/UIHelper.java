@@ -64,6 +64,14 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.ui.util.TransientMsgUtils;
+import delit.libs.ui.view.ProgressIndicator;
+import delit.libs.util.CustomSnackbar;
+import delit.libs.util.ObjectUtils;
+import delit.libs.util.X509Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -71,17 +79,10 @@ import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.HttpConnectionCleanup;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoDirectResponseHandler;
-import delit.piwigoclient.ui.common.util.BundleUtils;
-import delit.piwigoclient.ui.common.util.ParcelUtils;
 import delit.piwigoclient.ui.events.BadRequestExposesInternalServerEvent;
 import delit.piwigoclient.ui.events.NewUnTrustedCaCertificateReceivedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedRequestEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.util.CustomSnackbar;
-import delit.piwigoclient.util.DisplayUtils;
-import delit.piwigoclient.util.ObjectUtils;
-import delit.piwigoclient.util.TransientMsgUtils;
-import delit.piwigoclient.util.X509Utils;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 

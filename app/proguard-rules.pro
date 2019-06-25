@@ -46,8 +46,8 @@
 -keep public class com.google.android.gms.** { public *; }
 -dontwarn com.google.android.gms.**
 
-#-keep class delit.piwigoclient.ui.common.SlidingTabLayout* { public *; }
--keep class delit.piwigoclient.ui.common.SlidingTabLayout$TabColorizer { public *; }
+#-keep class delit.libs.ui.view.SlidingTabLayout* { public *; }
+-keep class delit.libs.ui.view.SlidingTabLayout$TabColorizer { public *; }
 
 -keep class com.google.ads.** { public *; }
 

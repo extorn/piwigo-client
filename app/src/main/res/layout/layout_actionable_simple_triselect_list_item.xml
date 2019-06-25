@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<delit.piwigoclient.ui.common.list.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<delit.libs.ui.view.list.CheckableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:descendantFocusability="blocksDescendants">
 
-    <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+    <delit.libs.ui.view.button.AppCompatCheckboxTriState
         android:id="@+id/actionable_list_item_checked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
 
 
-    <delit.piwigoclient.ui.common.button.CustomImageButton
+    <delit.libs.ui.view.button.CustomImageButton
         android:id="@+id/actionable_list_item_delete_button"
         android:layout_alignParentEnd="true"
         android:layout_width="48dp"
@@ -40,4 +40,4 @@
         android:layout_centerVertical="true"
         android:focusable="false"
         app:srcCompat="@drawable/ic_delete_black_24px" />
-</delit.piwigoclient.ui.common.list.CheckableRelativeLayout>
+</delit.libs.ui.view.list.CheckableRelativeLayout>

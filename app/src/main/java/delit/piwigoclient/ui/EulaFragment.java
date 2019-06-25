@@ -17,13 +17,13 @@ import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
 
+import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 import delit.piwigoclient.ui.events.EulaAgreedEvent;
 import delit.piwigoclient.ui.events.EulaNotAgreedEvent;
-import delit.piwigoclient.util.ProjectUtils;
 
 /**
  * Created by gareth on 07/06/17.

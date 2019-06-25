@@ -6,10 +6,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.view.Enableable;
+import delit.libs.ui.view.list.SelectableItemsAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
-import delit.piwigoclient.ui.common.Enableable;
-import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
 
 /**
  * Created by gareth on 03/01/18.

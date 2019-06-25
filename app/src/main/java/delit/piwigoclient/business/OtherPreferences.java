@@ -8,9 +8,9 @@ import android.content.res.Configuration;
 import java.util.Calendar;
 import java.util.Date;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AbstractMainActivity;
-import delit.piwigoclient.util.DisplayUtils;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 

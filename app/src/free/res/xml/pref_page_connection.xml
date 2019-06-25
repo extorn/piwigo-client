@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- Look at this as a way of auto enable disable prefs - android:dependency="EnablePreferences" -->
-    <delit.piwigoclient.ui.common.preference.EditableListPreference
+    <delit.libs.ui.view.preference.EditableListPreference
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:key="@string/preference_piwigo_connection_profile_key"
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout="@android:layout/preference_category"
         android:title="@string/preference_connections_category_piwigo">
-        <delit.piwigoclient.ui.common.preference.CustomEditTextPreference
+        <delit.libs.ui.view.preference.CustomEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:capitalize="words"
@@ -28,7 +28,7 @@
             android:singleLine="true"
             android:summary="@string/preference_piwigo_server_address_summary"
             android:title="@string/preference_piwigo_server_address_title" />
-        <delit.piwigoclient.ui.common.preference.SecureEditTextPreference
+        <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:capitalize="none"
@@ -39,7 +39,7 @@
             android:singleLine="true"
             android:summary="@string/preference_piwigo_server_username_summary"
             android:title="@string/preference_piwigo_server_username_title" />
-        <delit.piwigoclient.ui.common.preference.SecureEditTextPreference
+        <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:capitalize="none"
@@ -74,7 +74,7 @@
             android:key="@string/preference_server_use_basic_auth_key"
             android:summary="@string/preference_server_use_basic_auth_summary"
             android:title="@string/preference_server_use_basic_auth_title" />
-        <delit.piwigoclient.ui.common.preference.SecureEditTextPreference
+        <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:capitalize="none"
@@ -85,7 +85,7 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/preference_server_basic_auth_username_title" />
-        <delit.piwigoclient.ui.common.preference.SecureEditTextPreference
+        <delit.libs.ui.view.preference.SecureEditTextPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:capitalize="none"
@@ -110,7 +110,7 @@
             android:key="@string/preference_server_use_custom_trusted_ca_certs_key"
             android:summary="@string/preference_server_use_custom_trusted_ca_certs_summary"
             android:title="@string/preference_server_use_custom_trusted_ca_certs_title" />
-        <delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference
+        <delit.libs.ui.view.preference.TrustedCaCertificatesPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/preference_select_trusted_certificate_key"
@@ -130,7 +130,7 @@
             android:key="@string/preference_server_use_client_certs_key"
             android:summary="@string/preference_server_use_client_certs_summary"
             android:title="@string/preference_server_use_client_certs_title" />
-        <delit.piwigoclient.ui.common.preference.ClientCertificatePreference
+        <delit.libs.ui.view.preference.ClientCertificatePreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:dependency="@string/preference_server_use_client_certs_key"
@@ -157,7 +157,7 @@
             android:key="@string/preference_server_connection_allow_redirects_key"
             android:summary="@string/preference_server_connection_allow_redirects_summary"
             android:title="@string/preference_server_connection_allow_redirects_title" />
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:dependency="@string/preference_server_connection_allow_redirects_key"
@@ -169,7 +169,7 @@
             app:minValue="0"
             app:wrapPickList="false" />
 
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/preference_server_connection_timeout_secs_key"
@@ -180,7 +180,7 @@
             app:minValue="1"
             app:wrapPickList="false" />
 
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/preference_server_response_timeout_secs_key"
@@ -192,7 +192,7 @@
             app:wrapPickList="false" />
 
 
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/preference_server_connection_retries_key"
@@ -223,7 +223,7 @@
             android:key="@string/preference_caching_clearResponseCache_key"
             android:summary="@string/preference_caching_clearResponseCache_summary"
             android:title="@string/preference_caching_clearResponseCache_title" />
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/preference_caching_max_cache_entries_key"
@@ -233,7 +233,7 @@
             app:maxValue="10000"
             app:minValue="0"
             app:wrapPickList="false"/>
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:key="@string/preference_caching_max_cache_entry_size_key"

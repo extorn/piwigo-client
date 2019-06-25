@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import delit.piwigoclient.util.CollectionUtils;
+import delit.libs.util.CollectionUtils;
 
 import static delit.piwigoclient.model.piwigo.CategoryItem.ROOT_ALBUM;
 

@@ -13,10 +13,10 @@ import com.drew.metadata.Metadata;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
-import delit.piwigoclient.ui.common.InlineViewPagerAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.InlineViewPagerAdapter;
 import delit.piwigoclient.ui.events.ExifDataRetrievedEvent;
 
 public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {

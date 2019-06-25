@@ -8,9 +8,9 @@ import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
 import androidx.annotation.StringRes;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
-import delit.piwigoclient.util.DisplayUtils;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 

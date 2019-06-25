@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.util.HashSet;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.libs.ui.util.ParcelUtils;
 
 /**
  * Created by gareth on 13/09/17.

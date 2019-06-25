@@ -40,7 +40,7 @@
 
     </LinearLayout>
 
-    <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+    <delit.libs.ui.view.button.AppCompatCheckboxTriState
         android:id="@+id/list_item_checked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
         android:clickable="false"
         android:focusable="false" />
 
-    <delit.piwigoclient.ui.common.button.CustomImageButton
+    <delit.libs.ui.view.button.CustomImageButton
         android:id="@+id/list_item_delete_button"
         android:layout_width="48dp"
         android:layout_height="48dp"

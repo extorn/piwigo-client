@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-import delit.piwigoclient.util.IOUtils;
+import delit.libs.util.IOUtils;
 
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MediaMuxerControl /*implements MetadataOutput*/ {

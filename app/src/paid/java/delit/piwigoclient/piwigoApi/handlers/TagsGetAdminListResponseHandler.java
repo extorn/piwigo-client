@@ -9,7 +9,7 @@ import org.json.JSONException;
 import java.util.HashSet;
 
 import delit.piwigoclient.model.piwigo.Tag;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.libs.http.RequestParams;
 
 public class TagsGetAdminListResponseHandler extends AbstractPiwigoWsResponseHandler {
 

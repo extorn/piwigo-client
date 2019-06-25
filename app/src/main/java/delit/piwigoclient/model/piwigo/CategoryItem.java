@@ -12,9 +12,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import delit.libs.ui.util.ParcelUtils;
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.BuildConfig;
-import delit.piwigoclient.ui.common.util.ParcelUtils;
-import delit.piwigoclient.util.CollectionUtils;
 
 /**
  * An item representing a piece of content.

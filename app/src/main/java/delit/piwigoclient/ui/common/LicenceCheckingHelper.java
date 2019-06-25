@@ -19,9 +19,9 @@ import com.google.android.vending.licensing.ServerManagedPolicy;
 import java.util.Date;
 import java.util.Random;
 
+import delit.libs.ui.util.PreferenceUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.util.PreferenceUtils;
 
 /**
  * Created by gareth on 28/10/17.

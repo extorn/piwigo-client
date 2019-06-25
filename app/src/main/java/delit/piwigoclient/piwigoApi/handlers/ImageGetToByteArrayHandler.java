@@ -6,13 +6,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import cz.msebera.android.httpclient.Header;
+import delit.libs.util.UriUtils;
+import delit.libs.util.http.HttpUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
 import delit.piwigoclient.ui.events.CancelDownloadEvent;
-import delit.piwigoclient.util.UriUtils;
 
 /**
  * Created by gareth on 25/06/17.

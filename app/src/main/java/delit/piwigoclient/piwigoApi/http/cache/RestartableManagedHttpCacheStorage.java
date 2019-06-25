@@ -47,8 +47,8 @@ import cz.msebera.android.httpclient.client.cache.Resource;
 import cz.msebera.android.httpclient.impl.client.cache.CacheConfig;
 import cz.msebera.android.httpclient.impl.client.cache.FileResource;
 import cz.msebera.android.httpclient.util.Args;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
-import delit.piwigoclient.util.IOUtils;
 
 /**
  * {@link HttpCacheStorage} implementation capable of deallocating resources associated with

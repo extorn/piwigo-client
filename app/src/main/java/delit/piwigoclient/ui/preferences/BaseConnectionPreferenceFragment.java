@@ -23,6 +23,15 @@ import java.security.KeyStore;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.ui.view.preference.ClientCertificatePreference;
+import delit.libs.ui.view.preference.EditableListPreference;
+import delit.libs.ui.view.preference.TrustedCaCertificatesPreference;
+import delit.libs.util.IOUtils;
+import delit.libs.util.ObjectUtils;
+import delit.libs.util.SetUtils;
+import delit.libs.util.SharedPreferencesPreferenceChangedListener;
+import delit.libs.util.X509Utils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
@@ -35,17 +44,8 @@ import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
 import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
-import delit.piwigoclient.ui.common.preference.ClientCertificatePreference;
-import delit.piwigoclient.ui.common.preference.EditableListPreference;
-import delit.piwigoclient.ui.common.preference.TrustedCaCertificatesPreference;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.util.IOUtils;
-import delit.piwigoclient.util.ObjectUtils;
-import delit.piwigoclient.util.SetUtils;
-import delit.piwigoclient.util.SharedPreferencesPreferenceChangedListener;
-import delit.piwigoclient.util.X509Utils;
 
 public abstract class BaseConnectionPreferenceFragment extends MyPreferenceFragment {
     private static final String TAG = "Connection Settings";

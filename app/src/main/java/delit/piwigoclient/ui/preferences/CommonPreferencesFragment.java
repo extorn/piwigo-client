@@ -37,15 +37,15 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import delit.libs.ui.view.SlidingTabLayout;
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.ui.view.recycler.MyFragmentRecyclerPagerAdapter;
+import delit.libs.ui.view.recycler.SimpleFragmentPagerAdapter;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.SlidingTabLayout;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
-import delit.piwigoclient.ui.common.list.recycler.MyFragmentRecyclerPagerAdapter;
-import delit.piwigoclient.ui.common.list.recycler.SimpleFragmentPagerAdapter;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 
 /**

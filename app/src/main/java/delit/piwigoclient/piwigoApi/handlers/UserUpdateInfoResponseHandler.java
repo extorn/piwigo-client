@@ -6,11 +6,11 @@ import org.json.JSONException;
 
 import java.util.HashSet;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class UserUpdateInfoResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 

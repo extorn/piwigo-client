@@ -26,15 +26,15 @@ import java.util.List;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
-import delit.piwigoclient.ui.common.list.MultiSourceListAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.button.AppCompatCheckboxTriState;
+import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.list.MultiSourceListAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewRequestedEvent;
 import delit.piwigoclient.ui.events.trackable.TrackableEventManager;
-import delit.piwigoclient.util.CollectionUtils;
-import delit.piwigoclient.util.ObjectUtils;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.ObjectUtils;
 
 public class AutoUploadJobsPreferenceDialogFragmentCompat extends PreferenceDialogFragmentCompat implements DialogPreference.TargetFragment {
     private final static String STATE_DELETED_JOBS = "AutoUploadJobsPreference.deletedJobs";

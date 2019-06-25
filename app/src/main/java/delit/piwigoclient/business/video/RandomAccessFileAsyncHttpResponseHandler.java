@@ -42,8 +42,8 @@ import cz.msebera.android.httpclient.ConnectionClosedException;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
-import delit.piwigoclient.util.IOUtils;
 
 
 public class RandomAccessFileAsyncHttpResponseHandler extends FileAsyncHttpResponseHandler {

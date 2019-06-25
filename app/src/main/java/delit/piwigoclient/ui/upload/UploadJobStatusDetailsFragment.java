@@ -20,10 +20,10 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import delit.libs.ui.view.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BasePiwigoUploadService;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
-import delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
 
 public class UploadJobStatusDetailsFragment extends MyFragment<UploadJobStatusDetailsFragment> {

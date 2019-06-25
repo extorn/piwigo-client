@@ -33,13 +33,13 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
 import delit.piwigoclient.ui.common.preference.ServerAlbumListPreference;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
 import delit.piwigoclient.ui.common.preference.ServerConnectionsListPreference;
 import delit.piwigoclient.ui.events.trackable.AutoUploadJobViewCompleteEvent;
-import delit.piwigoclient.util.CollectionUtils;
-import delit.piwigoclient.util.SetUtils;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.SetUtils;
 
 public class AutoUploadJobPreferenceFragment extends MyPreferenceFragment {
 

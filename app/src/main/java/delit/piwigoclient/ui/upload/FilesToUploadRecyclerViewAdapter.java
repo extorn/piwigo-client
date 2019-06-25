@@ -25,11 +25,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import delit.libs.ui.util.MediaScanner;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.PicassoLoader;
 import delit.piwigoclient.business.ResizingPicassoLoader;
 import delit.piwigoclient.model.piwigo.GalleryItem;
-import delit.piwigoclient.ui.common.util.MediaScanner;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link GalleryItem}

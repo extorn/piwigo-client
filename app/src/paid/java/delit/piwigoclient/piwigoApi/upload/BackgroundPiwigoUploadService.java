@@ -35,8 +35,8 @@ import delit.piwigoclient.ui.events.BackgroundUploadThreadStartedEvent;
 import delit.piwigoclient.ui.events.BackgroundUploadThreadTerminatedEvent;
 import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
-import delit.piwigoclient.util.CustomFileFilter;
-import delit.piwigoclient.util.IOUtils;
+import delit.libs.util.CustomFileFilter;
+import delit.libs.util.IOUtils;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in

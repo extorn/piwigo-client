@@ -13,7 +13,7 @@ import androidx.preference.Preference;
 
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
-import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
 
 public class AutoUploadJobsPreferenceFragment extends MyPreferenceFragment {
 

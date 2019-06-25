@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.HashSet;
 
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.CustomViewHolder;
 import delit.piwigoclient.model.piwigo.Identifiable;
 import delit.piwigoclient.model.piwigo.IdentifiableItemStore;
 import delit.piwigoclient.ui.model.ViewModelContainer;

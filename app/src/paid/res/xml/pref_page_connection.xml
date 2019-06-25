@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <!-- Look at this as a way of auto enable disable prefs - android:dependency="EnablePreferences" -->
-    <delit.piwigoclient.ui.common.preference.EditableListPreference
+    <delit.libs.ui.view.preference.EditableListPreference
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:key="@string/preference_piwigo_connection_profile_key"

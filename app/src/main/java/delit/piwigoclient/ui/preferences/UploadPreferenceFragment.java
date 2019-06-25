@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import androidx.preference.Preference;
 
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.UploadPreferences;
@@ -14,8 +16,6 @@ import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.PiwigoClientFailedUploadsCleanResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
-import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 
 /**
  * Created by gareth on 12/05/17.

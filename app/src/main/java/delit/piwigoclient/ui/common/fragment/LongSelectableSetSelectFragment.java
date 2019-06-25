@@ -5,9 +5,9 @@ import android.view.View;
 import java.util.HashSet;
 import java.util.Set;
 
-import delit.piwigoclient.ui.common.Enableable;
-import delit.piwigoclient.ui.common.list.SelectableItemsAdapter;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.Enableable;
+import delit.libs.ui.view.list.SelectableItemsAdapter;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 
 public abstract class LongSelectableSetSelectFragment<Y extends View, X extends Enableable & SelectableItemsAdapter, Z extends BaseRecyclerViewAdapterPreferences> extends LongSetSelectFragment<Y, X, Z> {
     @Override

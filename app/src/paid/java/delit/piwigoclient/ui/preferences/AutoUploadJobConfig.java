@@ -24,8 +24,8 @@ import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
-import delit.piwigoclient.util.CollectionUtils;
-import delit.piwigoclient.util.IOUtils;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.IOUtils;
 
 public class AutoUploadJobConfig implements Parcelable {
     private int jobId;

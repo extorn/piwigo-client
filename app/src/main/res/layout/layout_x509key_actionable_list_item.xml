@@ -81,7 +81,8 @@
         android:layout_alignWithParentIfMissing="true"
         tools:text="Valid To : 12/12/2012"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"/>
-    <delit.piwigoclient.ui.common.button.CustomImageButton
+
+    <delit.libs.ui.view.button.CustomImageButton
         android:id="@+id/list_item_delete_button"
         android:layout_alignParentEnd="true"
         android:layout_width="48dp"

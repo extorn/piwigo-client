@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
-import delit.piwigoclient.util.IOUtils;
 
 /**
  * This doesn't seem to work (with the video compression, but does alone) - issue with the link to exoplayer I think... It's kind of there, but not completely. Very weird error.

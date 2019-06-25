@@ -18,10 +18,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.HttpClientFactory;
-import delit.piwigoclient.util.IOUtils;
 
 /**
  * Created by gareth on 01/07/17.

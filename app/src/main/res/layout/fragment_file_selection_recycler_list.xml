@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <delit.piwigoclient.ui.common.button.CustomImageButton
+    <delit.libs.ui.view.button.CustomImageButton
         android:id="@+id/list_action_add_item_button"
         android:visibility="gone"
         tools:visibility="visible"
@@ -39,14 +39,14 @@
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"/>
 
-    <delit.piwigoclient.ui.common.FlowLayout
+    <delit.libs.ui.view.FlowLayout
         android:id="@+id/folder_path"
         android:layout_below="@id/folder_root_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp" />
 
-    <delit.piwigoclient.ui.common.FlowLayout
+    <delit.libs.ui.view.FlowLayout
         android:id="@+id/file_ext_filters"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

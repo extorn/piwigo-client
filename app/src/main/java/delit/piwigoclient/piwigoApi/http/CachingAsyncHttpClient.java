@@ -70,6 +70,10 @@ import cz.msebera.android.httpclient.impl.client.CloseableHttpClient;
 import cz.msebera.android.httpclient.impl.client.cache.CacheConfig;
 import cz.msebera.android.httpclient.impl.conn.PoolingHttpClientConnectionManager;
 import cz.msebera.android.httpclient.protocol.HttpContext;
+import delit.libs.http.AsyncHttpRequest;
+import delit.libs.http.RequestParams;
+import delit.libs.http.RetryHandler;
+import delit.libs.util.Utils;
 import delit.piwigoclient.piwigoApi.http.cache.RestartableManagedHttpCacheStorage;
 
 

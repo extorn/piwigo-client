@@ -21,13 +21,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.util.SecurePrefsUtil;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
-import delit.piwigoclient.ui.common.util.MediaScanner;
-import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
-import delit.piwigoclient.util.CollectionUtils;
-import delit.piwigoclient.util.ProjectUtils;
 
 /**
  * Created by gareth on 14/06/17.

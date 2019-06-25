@@ -16,7 +16,7 @@ import java.util.Locale;
 
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.libs.http.RequestParams;
 
 public class TagsGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 

@@ -26,6 +26,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.util.SecurePrefsUtil;
+import delit.libs.util.ProjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -38,7 +41,6 @@ import delit.piwigoclient.piwigoApi.handlers.LoginResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.LogoutResponseHandler;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.common.ViewGroupUIHelper;
-import delit.piwigoclient.ui.common.util.SecurePrefsUtil;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.AppUnlockedEvent;
 import delit.piwigoclient.ui.events.LockAppEvent;
@@ -46,8 +48,6 @@ import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.RewardUpdateEvent;
 import delit.piwigoclient.ui.events.UnlockAppEvent;
-import delit.piwigoclient.util.DisplayUtils;
-import delit.piwigoclient.util.ProjectUtils;
 
 /**
  * Created by gareth on 08/06/17.

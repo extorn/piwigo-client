@@ -21,15 +21,15 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
+import delit.libs.http.RequestParams;
+import delit.libs.util.http.HttpUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoJsonResponse;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
-import delit.piwigoclient.piwigoApi.HttpUtils;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.RequestHandle;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 
 /**

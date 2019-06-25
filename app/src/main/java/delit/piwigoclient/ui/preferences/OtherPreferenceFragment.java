@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.ui.view.preference.NumberPickerPreference;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.OtherPreferences;
-import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
-import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 
 /**
  * Created by gareth on 12/05/17.

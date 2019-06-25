@@ -9,8 +9,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.util.DisplayUtils;
 
 public class AlbumViewPreferences {
 

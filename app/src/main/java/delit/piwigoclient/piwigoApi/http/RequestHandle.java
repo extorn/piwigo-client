@@ -4,6 +4,8 @@ import android.os.Looper;
 
 import java.lang.ref.WeakReference;
 
+import delit.libs.http.AsyncHttpRequest;
+
 public class RequestHandle {
     private final WeakReference<AsyncHttpRequest> request;
 

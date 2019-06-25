@@ -49,6 +49,12 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TimeZone;
 
+import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.view.button.CustomImageButton;
+import delit.libs.ui.view.list.BiArrayAdapter;
+import delit.libs.util.ArrayUtils;
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
@@ -69,10 +75,7 @@ import delit.piwigoclient.ui.AdsManager;
 import delit.piwigoclient.ui.album.listSelect.AvailableAlbumsListAdapter;
 import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
-import delit.piwigoclient.ui.common.button.CustomImageButton;
 import delit.piwigoclient.ui.common.fragment.MyFragment;
-import delit.piwigoclient.ui.common.list.BiArrayAdapter;
-import delit.piwigoclient.ui.common.util.MediaScanner;
 import delit.piwigoclient.ui.events.AlbumAlteredEvent;
 import delit.piwigoclient.ui.events.AppLockedEvent;
 import delit.piwigoclient.ui.events.ViewJobStatusDetailsEvent;
@@ -82,9 +85,6 @@ import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.FileSelectionNeededEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.util.ArrayUtils;
-import delit.piwigoclient.util.CollectionUtils;
-import delit.piwigoclient.util.IOUtils;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;

@@ -11,11 +11,11 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.List;
 
+import delit.libs.http.RequestParams;
+import delit.libs.util.ArrayUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
-import delit.piwigoclient.util.ArrayUtils;
 
 public class CommunityGetSubAlbumNamesResponseHandler extends AbstractPiwigoWsResponseHandler {
 

@@ -22,9 +22,9 @@ import com.squareup.picasso.Transformation;
 import java.io.File;
 import java.io.IOException;
 
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.ui.PicassoFactory;
-import delit.piwigoclient.util.DisplayUtils;
 import pl.droidsonroids.gif.GifDrawable;
 
 /**

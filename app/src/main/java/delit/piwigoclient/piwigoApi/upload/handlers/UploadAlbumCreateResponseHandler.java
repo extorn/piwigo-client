@@ -7,9 +7,9 @@ import org.json.JSONException;
 
 import java.security.SecureRandom;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.AlbumCreateResponseHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class UploadAlbumCreateResponseHandler extends AbstractPiwigoWsResponseHandler {
 

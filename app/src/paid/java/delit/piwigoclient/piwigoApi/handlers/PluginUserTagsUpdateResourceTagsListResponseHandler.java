@@ -11,7 +11,7 @@ import java.util.Iterator;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.Tag;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.libs.http.RequestParams;
 
 public class PluginUserTagsUpdateResourceTagsListResponseHandler<T extends ResourceItem> extends AbstractPiwigoWsResponseHandler {
 

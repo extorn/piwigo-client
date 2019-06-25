@@ -11,7 +11,7 @@ import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.upload.BackgroundPiwigoUploadService;
 import delit.piwigoclient.ui.preferences.AutoUploadJobConfig;
 import delit.piwigoclient.ui.preferences.AutoUploadJobsConfig;
-import delit.piwigoclient.util.CollectionUtils;
+import delit.libs.util.CollectionUtils;
 
 public class MyApplication extends AbstractMyApplication {
 

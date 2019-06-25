@@ -6,7 +6,7 @@ import org.json.JSONException;
 
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.libs.http.RequestParams;
 
 public class FavoritesRemoveImageResponseHandler extends AbstractPiwigoWsResponseHandler {
 

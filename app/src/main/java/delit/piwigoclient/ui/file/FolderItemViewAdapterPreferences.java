@@ -2,13 +2,14 @@ package delit.piwigoclient.ui.file;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import delit.piwigoclient.ui.common.recyclerview.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 
 public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPreferences {
 

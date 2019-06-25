@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:descendantFocusability="blocksDescendants">
 
-    <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+    <delit.libs.ui.view.button.AppCompatCheckboxTriState
         android:id="@+id/checked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

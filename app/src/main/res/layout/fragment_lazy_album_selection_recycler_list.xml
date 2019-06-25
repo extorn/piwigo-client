@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <delit.piwigoclient.ui.common.button.CustomImageButton
+        <delit.libs.ui.view.button.CustomImageButton
             android:id="@+id/list_action_add_item_button"
             android:visibility="gone"
             tools:visibility="visible"
@@ -20,7 +20,7 @@
             android:layout_marginEnd="5dp"
             app:srcCompat="@drawable/ic_add_circle_black_24px" />
 
-        <delit.piwigoclient.ui.common.FlowLayout
+        <delit.libs.ui.view.FlowLayout
             android:id="@+id/category_path"
             app:horizontalSpacing="7dp"
             app:verticalSpacing="7dp"

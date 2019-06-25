@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.Date;
 import java.util.HashSet;
 
-import delit.piwigoclient.ui.common.util.ParcelUtils;
+import delit.libs.ui.util.ParcelUtils;
 
 public class User implements Identifiable, Parcelable {
     private long id = -1;

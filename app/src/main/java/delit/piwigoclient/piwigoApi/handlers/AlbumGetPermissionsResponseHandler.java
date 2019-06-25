@@ -6,9 +6,9 @@ import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 
+import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
 
 public class AlbumGetPermissionsResponseHandler extends AbstractPiwigoWsResponseHandler {
 

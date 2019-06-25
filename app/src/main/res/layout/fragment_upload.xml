@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <delit.piwigoclient.ui.common.SlidingTabLayout
+    <delit.libs.ui.view.SlidingTabLayout
         android:id="@+id/sliding_views_tab_headings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
                     tools:text="(jpg,mpg,avi)" />
             </LinearLayout>
 
-            <delit.piwigoclient.ui.common.button.CustomImageButton
+            <delit.libs.ui.view.button.CustomImageButton
                 android:id="@+id/select_files_for_upload_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

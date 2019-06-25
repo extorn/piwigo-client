@@ -20,17 +20,17 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import delit.libs.ui.view.fragment.MyPreferenceFragment;
+import delit.libs.ui.view.preference.EditableListPreference;
+import delit.libs.ui.view.preference.NumberPickerPreference;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.ui.PicassoFactory;
-import delit.piwigoclient.ui.common.fragment.MyPreferenceFragment;
-import delit.piwigoclient.ui.common.preference.EditableListPreference;
-import delit.piwigoclient.ui.common.preference.NumberPickerPreference;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
-import delit.piwigoclient.util.IOUtils;
 
 /**
  * Created by gareth on 12/05/17.

@@ -1,6 +1,6 @@
 package delit.piwigoclient.model.piwigo;
 
-import delit.piwigoclient.util.ObjectUtils;
+import delit.libs.util.ObjectUtils;
 
 public class ExifDataItem {
     private String title;

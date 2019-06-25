@@ -6,6 +6,8 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -14,14 +16,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
+import delit.libs.util.CollectionUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.ExpandingAlbumSelectionNeededEvent;
-import delit.piwigoclient.util.CollectionUtils;
 
 public class ServerAlbumSelectPreference extends EventDrivenPreference<ExpandingAlbumSelectionNeededEvent> {
 

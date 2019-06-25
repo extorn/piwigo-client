@@ -155,7 +155,7 @@
                 android:layout_marginBottom="7dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
-            <delit.piwigoclient.ui.common.button.AppCompatCheckboxTriState
+            <delit.libs.ui.view.button.AppCompatCheckboxTriState
                 android:id="@+id/temporary_album_needs_deleting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -174,7 +174,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"/>
 
 
-            <delit.piwigoclient.ui.common.list.ForcedMinimumHeightListView
+            <delit.libs.ui.view.list.ForcedMinimumHeightListView
                 android:id="@+id/errors_encountered_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

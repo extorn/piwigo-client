@@ -34,15 +34,15 @@ import cz.msebera.android.httpclient.conn.ssl.TrustStrategy;
 import cz.msebera.android.httpclient.conn.ssl.X509HostnameVerifier;
 import cz.msebera.android.httpclient.impl.client.cache.CacheConfig;
 import cz.msebera.android.httpclient.util.TextUtils;
+import delit.libs.http.UntrustedCaCertificateInterceptingTrustStrategy;
+import delit.libs.util.X509Utils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.business.video.CacheUtils;
 import delit.piwigoclient.piwigoApi.http.CachingAsyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.CachingSyncHttpClient;
 import delit.piwigoclient.piwigoApi.http.PersistentProfileCookieStore;
-import delit.piwigoclient.piwigoApi.http.UntrustedCaCertificateInterceptingTrustStrategy;
 import delit.piwigoclient.piwigoApi.http.cache.RestartableManagedHttpCacheStorage;
-import delit.piwigoclient.util.X509Utils;
 
 /**
  * Created by gareth on 07/07/17.

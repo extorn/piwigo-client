@@ -21,17 +21,17 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
 
+import delit.libs.ui.util.BundleUtils;
+import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.ui.AdsManager;
-import delit.piwigoclient.ui.common.util.BundleUtils;
 import delit.piwigoclient.ui.events.PiwigoMethodNowUnavailableUsingFallback;
 import delit.piwigoclient.ui.events.ServerConfigErrorEvent;
 import delit.piwigoclient.ui.events.ServerConnectionWarningEvent;
 import delit.piwigoclient.ui.events.ShowMessageEvent;
 import delit.piwigoclient.ui.events.UserNotUniqueWarningEvent;
-import delit.piwigoclient.util.DisplayUtils;
 
 /**
  * Created by gareth on 26/05/17.

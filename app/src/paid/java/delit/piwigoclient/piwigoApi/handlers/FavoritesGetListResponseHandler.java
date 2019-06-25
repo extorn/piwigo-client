@@ -9,7 +9,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
-import delit.piwigoclient.piwigoApi.http.RequestParams;
+import delit.libs.http.RequestParams;
 
 public class FavoritesGetListResponseHandler extends AbstractPiwigoWsResponseHandler {
 
