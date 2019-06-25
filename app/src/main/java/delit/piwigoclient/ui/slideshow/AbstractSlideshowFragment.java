@@ -126,6 +126,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
             Crashlytics.logException(new Exception("creating slideshow but resource container is null : type = " + galleryModelClass));
             // attempt to get back to a working fragment.
             getFragmentManager().popBackStack(); //TODO - work out why this is occurring!
+            return null;
         }
 
         super.onCreateView(inflater, container, savedInstanceState);
