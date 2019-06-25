@@ -232,6 +232,10 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
         return true;
     }
 
+    private boolean isOnPiwigoComSite() {
+        return getPiwigoServerUrl().matches("https://[^.]*\\.piwigo\\.com[/]?");
+    }
+
     private boolean loadUserDetails() {
         boolean canContinue;
         PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
@@ -247,15 +251,21 @@ public class LoginResponseHandler extends AbstractPiwigoWsResponseHandler {
             sessionDetails.setUserDetails(userDetails);
             canContinue = true;
         } else {
-            canContinue = false;
+            canContinue = isOnPiwigoComSite(); // this particular site hides the community plugin api calls.
             PiwigoResponseBufferingHandler.ErrorResponse response = (PiwigoResponseBufferingHandler.ErrorResponse) userInfoHandler.getResponse();
             if((response instanceof PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse && ((PiwigoResponseBufferingHandler.PiwigoHttpErrorResponse) response).getStatusCode() == 401)
              && sessionDetails.isAdminUser()) {
                 FirebaseAnalytics.getInstance(getContext()).logEvent("UserDowngrade_General", null);
                 sessionDetails.updateUserType("general");
-                EventBus.getDefault().post(new ServerConfigErrorEvent(getContext().getString(R.string.admin_user_missing_admin_permissions_after_login_warning_pattern, userInfoHandler.getPiwigoServerUrl())));
+                if (!canContinue) {
+                    EventBus.getDefault().post(new ServerConfigErrorEvent(getContext().getString(R.string.admin_user_missing_admin_permissions_after_login_warning_pattern, userInfoHandler.getPiwigoServerUrl())));
+                } else {
+                    sessionDetails.setUseCommunityPlugin(true);
+                }
             }
-            reportNestedFailure(userInfoHandler);
+            if (!canContinue) {
+                reportNestedFailure(userInfoHandler);
+            }
         }
         return canContinue;
     }

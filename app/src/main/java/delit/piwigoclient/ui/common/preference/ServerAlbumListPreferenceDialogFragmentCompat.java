@@ -12,16 +12,17 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdView;
-
-import java.util.ArrayList;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.preference.DialogPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceDialogFragmentCompat;
 import androidx.preference.PreferenceManager;
+
+import com.google.android.gms.ads.AdView;
+
+import java.util.ArrayList;
+
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItem;
@@ -143,28 +144,15 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         return fragment;
     }
 
-    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
-
-        @Override
-        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
-            ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionProfile();
-            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
-            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
-                retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
-            } else if (response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
-                addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
-            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
-                PiwigoSessionDetails.getInstance(connectionPrefs);
-                // need to try again as this call will have been pointless.
-                if (sessionDetails != null && (sessionDetails.isUseCommunityPlugin() || sessionDetails.isAdminUser())) {
-                    retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
-                } else {
-                    addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
-                }
-            } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
-                addAlbumsToUI(true, ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
-            }
-            super.onAfterHandlePiwigoResponse(response);
+    private long retrieveAppropriateAlbumList(ConnectionPreferences.ProfilePreferences connectionPrefs, PiwigoSessionDetails sessionDetails) {
+        if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
+            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler(), connectionPrefs);
+        } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
+            final boolean recursive = true;
+            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
+        } else {
+            final boolean recursive = true;
+            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
         }
     }
 
@@ -201,15 +189,28 @@ public class ServerAlbumListPreferenceDialogFragmentCompat extends PreferenceDia
         }
     }
 
-    private long retrieveAppropriateAlbumList(ConnectionPreferences.ProfilePreferences connectionPrefs, PiwigoSessionDetails sessionDetails) {
-        if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
-            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler(), connectionPrefs);
-        } else if (sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
-            final boolean recursive = true;
-            return addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
-        } else {
-            final boolean recursive = true;
-            return addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive), connectionPrefs);
+    private class CustomPiwigoResponseListener extends BasicPiwigoResponseListener {
+
+        @Override
+        public void onAfterHandlePiwigoResponse(PiwigoResponseBufferingHandler.Response response) {
+            ConnectionPreferences.ProfilePreferences connectionPrefs = getConnectionProfile();
+            PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(connectionPrefs);
+            if (response instanceof LoginResponseHandler.PiwigoOnLoginResponse) {
+                retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+            } else if (response instanceof CommunityGetSubAlbumNamesResponseHandler.PiwigoCommunityGetSubAlbumNamesResponse) {
+                addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+            } else if (response instanceof AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) {
+                PiwigoSessionDetails.getInstance(connectionPrefs);
+                // need to try again as this call will have been pointless.
+                if (sessionDetails != null && (sessionDetails.isCommunityApiAvailable() || sessionDetails.isAdminUser())) {
+                    retrieveAppropriateAlbumList(connectionPrefs, sessionDetails);
+                } else {
+                    addAlbumsToUI(false, ((AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) response).getAlbumNames());
+                }
+            } else if (response instanceof AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) {
+                addAlbumsToUI(true, ((AlbumGetSubAlbumsAdminResponseHandler.PiwigoGetSubAlbumsAdminResponse) response).getAdminList().flattenTree());
+            }
+            super.onAfterHandlePiwigoResponse(response);
         }
     }
 

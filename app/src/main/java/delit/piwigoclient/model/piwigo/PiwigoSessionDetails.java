@@ -153,6 +153,11 @@ public class PiwigoSessionDetails {
         return instance != null && instance.isAdminUser();
     }
 
+    public static boolean isCommunityApiAvailable(ConnectionPreferences.ProfilePreferences connectionPrefs) {
+        PiwigoSessionDetails instance = getInstance(connectionPrefs);
+        return instance != null && instance.isCommunityApiAvailable();
+    }
+
     public static boolean isUseCommunityPlugin(ConnectionPreferences.ProfilePreferences connectionPrefs) {
         PiwigoSessionDetails instance = getInstance(connectionPrefs);
         return instance != null && instance.isUseCommunityPlugin();
@@ -363,4 +368,7 @@ public class PiwigoSessionDetails {
         return serverConfig;
     }
 
+    public boolean isCommunityApiAvailable() {
+        return isMethodAvailable("community.categories.getList");
+    }
 }

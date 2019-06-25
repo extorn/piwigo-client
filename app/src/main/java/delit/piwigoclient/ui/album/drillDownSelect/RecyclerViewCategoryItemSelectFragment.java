@@ -252,7 +252,7 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
             handler = new AlbumGetSubAlbumsResponseHandler(CategoryItem.ROOT_ALBUM, preferredAlbumThumbnailSize, true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);
-        } else if (sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
+        } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
             CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId(), true);
             handler.withConnectionPreferences(connectionPrefs);
             addActiveServiceCall(R.string.progress_loading_albums, handler);

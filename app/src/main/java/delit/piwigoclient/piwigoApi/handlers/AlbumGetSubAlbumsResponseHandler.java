@@ -58,30 +58,35 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
 
     @Override
     protected void onPiwigoSuccess(JsonElement rsp, boolean isCached) throws JSONException {
-        JsonObject result = rsp.getAsJsonObject();
 
-        ArrayList<CategoryItem> availableGalleries = null;
-        if(result.has("categories")) {
-            JsonElement elem = result.get("categories");
-            if(elem != null && !elem.isJsonNull()) {
-                JsonArray categories = elem.getAsJsonArray();
-                availableGalleries = new ArrayList<>(categories.size());
-                parseCategories(categories, availableGalleries);
-            }
+
+        ArrayList<CategoryItem> availableGalleries;
+        if (rsp.isJsonArray()) {
+            availableGalleries = parseCategoriesArray(rsp);
         } else {
-            JsonElement elem = result.get("item");
-            if(elem != null && !elem.isJsonNull()) {
-                JsonArray categories = elem.getAsJsonArray();
-                availableGalleries = new ArrayList<>(categories.size());
-                parseCategories(categories, availableGalleries);
+            JsonObject result = rsp.getAsJsonObject();
+            if (result.has("categories")) {
+                JsonElement elem = result.get("categories");
+                availableGalleries = parseCategoriesArray(elem);
+            } else {
+                JsonElement elem = result.get("item");
+                availableGalleries = parseCategoriesArray(elem);
             }
-        }
-        if(availableGalleries == null) {
-            availableGalleries = new ArrayList<>(0);
         }
 
         PiwigoGetSubAlbumsResponse r = new PiwigoGetSubAlbumsResponse(getMessageId(), getPiwigoMethod(), availableGalleries, isCached);
         storeResponse(r);
+    }
+
+    private ArrayList<CategoryItem> parseCategoriesArray(JsonElement elem) throws JSONException {
+        if (elem != null && !elem.isJsonNull()) {
+            JsonArray categories = elem.getAsJsonArray();
+            ArrayList<CategoryItem> availableGalleries = new ArrayList<>(categories.size());
+            parseCategories(categories, availableGalleries);
+            return availableGalleries;
+        } else {
+            return new ArrayList<>(0);
+        }
     }
 
     private void parseCategories(JsonArray categories, ArrayList<CategoryItem> availableGalleries) throws JSONException {
@@ -132,6 +137,13 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         if (category.has("id_uppercat")
                 && !category.get("id_uppercat").isJsonNull()) {
             parentId = category.get("id_uppercat").getAsLong();
+        } else if (category.has("uppercats")) {
+            String[] parentage = category.get("uppercats").getAsString().split(",");
+            if (parentage.length > 1) {
+                parentId = Long.valueOf(parentage[parentage.length - 2]);
+            } else {
+                parentId = 0L;
+            }
         }
 
         int photos = category.get("nb_images").getAsInt();
@@ -183,7 +195,7 @@ public class AlbumGetSubAlbumsResponseHandler extends AbstractPiwigoWsResponseHa
         CategoryItem item = new CategoryItem(id, name, description, !isPublic, dateLastAltered, photos, totalPhotos, subCategories, thumbnail);
         item.setRepresentativePictureId(representativePictureId);
 
-        if(parentId != null) {
+        if (parentId != null && parentId != 0) {
             CategoryItem directParentAlbum = availableAlbumsMap.get(parentId);
             item.setParentageChain(directParentAlbum.getParentageChain(), directParentAlbum.getId());
             directParentAlbum.addChildAlbum(item);

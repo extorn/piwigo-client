@@ -609,7 +609,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             } else {
                 postNewResponse(thisUploadJob.getJobId(), new PiwigoPrepareUploadFailedResponse(getNextMessageId(), handler.getResponse()));
             }
-        } else if (sessionDetails.isUseCommunityPlugin()) {
+        } else if (sessionDetails.isUseCommunityPlugin() && sessionDetails.isCommunityApiAvailable()) {
             final boolean recursive = true;
             CommunityGetSubAlbumNamesResponseHandler handler = new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive);
             invokeWithRetries(thisUploadJob, handler, 2);
@@ -621,8 +621,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             }
         } else {
             AlbumGetSubAlbumNamesResponseHandler handler = new AlbumGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, true);
+            invokeWithRetries(thisUploadJob, handler, 2);
             if (handler.isSuccess()) {
-                invokeWithRetries(thisUploadJob, handler, 2);
                 AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse rsp = (AlbumGetSubAlbumNamesResponseHandler.PiwigoGetSubAlbumNamesResponse) handler.getResponse();
                 return rsp.getAlbumNames();
             } else {

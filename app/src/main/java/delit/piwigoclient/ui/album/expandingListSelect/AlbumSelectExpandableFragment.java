@@ -333,7 +333,7 @@ public class AlbumSelectExpandableFragment extends MyFragment<AlbumSelectExpanda
 
             if (PiwigoSessionDetails.isAdminUser(connectionPrefs)) {
                 addActiveServiceCall(R.string.progress_loading_albums, new AlbumGetSubAlbumsAdminResponseHandler());
-            } else if (sessionDetails != null && sessionDetails.isUseCommunityPlugin()) {
+            } else if (sessionDetails != null && sessionDetails.isCommunityApiAvailable()) {
                 final boolean recursive = true;
                 addActiveServiceCall(R.string.progress_loading_albums, new CommunityGetSubAlbumNamesResponseHandler(CategoryItem.ROOT_ALBUM.getId()/*currentGallery.id*/, recursive));
             } else {
