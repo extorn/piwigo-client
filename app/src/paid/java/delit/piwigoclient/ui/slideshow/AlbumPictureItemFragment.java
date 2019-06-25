@@ -1,11 +1,12 @@
 package delit.piwigoclient.ui.slideshow;
 
 import android.os.Bundle;
-import androidx.annotation.LayoutRes;
-import androidx.viewpager.widget.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
+
+import androidx.annotation.LayoutRes;
+import androidx.viewpager.widget.ViewPager;
 
 import com.crashlytics.android.Crashlytics;
 import com.drew.metadata.Metadata;
@@ -13,10 +14,10 @@ import com.drew.metadata.Metadata;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import delit.libs.ui.view.InlineViewPagerAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
 import delit.piwigoclient.model.piwigo.PictureResourceItem;
-import delit.libs.ui.InlineViewPagerAdapter;
 import delit.piwigoclient.ui.events.ExifDataRetrievedEvent;
 
 public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {

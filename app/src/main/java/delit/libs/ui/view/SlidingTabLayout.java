@@ -36,7 +36,6 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import delit.libs.ui.InlineViewPagerAdapter;
 import delit.piwigoclient.R;
 
 /**

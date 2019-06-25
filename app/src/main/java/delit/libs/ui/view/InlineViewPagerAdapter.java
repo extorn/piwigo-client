@@ -1,4 +1,4 @@
-package delit.libs.ui;
+package delit.libs.ui.view;
 
 import android.view.View;
 import android.view.ViewGroup;
