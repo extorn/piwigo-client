@@ -118,6 +118,9 @@
              - 请给我发电子邮件（导航栏中有一个电子邮件链接）来请求您需要或想要此应用尚未执行的操作"</item>
     </string-array>
     <string-array name="release_history">
+        <item>1.4.0.17</item>
+        <item>"变化：
+                  - 增加了对社区插件的piwigo.com配置的支持 - 现在可以上传"</item>
         <item>1.4.0.16.3</item>
         <item>"修正：
                 - 视频无法在导航到新视图后开始播放，然后使用后退按钮返回
