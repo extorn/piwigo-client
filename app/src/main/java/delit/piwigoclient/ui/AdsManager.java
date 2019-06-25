@@ -102,8 +102,6 @@ public class AdsManager {
                     Crashlytics.log(Log.DEBUG, TAG, "Error parsing URI - adverts enabled");
                     showAds = true;
                 }
-            } else {
-                showAds = true;
             }
         }
 
@@ -476,6 +474,10 @@ public class AdsManager {
         private boolean updatePreference(boolean stoppedEarly, long elapsedTime) {
             long now = System.currentTimeMillis();
             Context c = contextWeakReference.get();
+            if (c == null) {
+                // somehow, this context has died without killing this background thread. Kill the thread too.
+                return false;
+            }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
             SecurePrefsUtil prefUtil = SecurePrefsUtil.getInstance(c);
             byte[] oldVal = prefUtil.readSecurePreferenceRawBytes(prefs, prefKey, null);
