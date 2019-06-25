@@ -159,7 +159,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             externallyTriggeredSelectFilesActionId = getArguments().getInt(ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID);
         }
         if (savedInstanceState != null) { // override the upload to album value (used to set clickable text field)
-            uploadToAlbum = getArguments().getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
+            uploadToAlbum = savedInstanceState.getParcelable(SAVED_STATE_UPLOAD_TO_ALBUM);
         }
     }
 
