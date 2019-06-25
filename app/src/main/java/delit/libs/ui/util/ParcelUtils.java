@@ -5,9 +5,9 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
-import com.drew.lang.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Date;
