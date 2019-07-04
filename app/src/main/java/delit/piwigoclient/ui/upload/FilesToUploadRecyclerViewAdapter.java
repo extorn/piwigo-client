@@ -390,7 +390,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             }
             fileForUploadImageView = itemView.findViewById(R.id.file_for_upload_img);
 
-            imageLoader = new ResizingPicassoLoader(fileForUploadImageView, this, 0, 0);
+            imageLoader = new ResizingPicassoLoader<>(fileForUploadImageView, this, 0, 0);
 
         }
 
