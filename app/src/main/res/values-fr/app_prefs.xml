@@ -237,9 +237,10 @@
     <!-- Data Upload page -->
 
     <string name="preference_page_upload">Télécharger</string>
-    <string name="preference_connections_category_data_upload_display">Réglages visuels</string>
-    <string name="preference_connections_category_data_upload">Transfert de données</string>
-    <string name="preference_connections_category_pre_data_upload_compression">Compression de pré-téléchargement</string>
+    <string name="preference_upload_category_data_upload_display">Réglages visuels</string>
+    <string name="preference_upload_category_data_upload">Transfert de données</string>
+    <string name="preference_upload_category_pre_data_upload_compression">Compression de pré-téléchargement</string>
+    <string name="preference_upload_category_advanced">Advanced</string>
 
     <!-- prefs -->
 
@@ -285,23 +286,23 @@
 
     <!-- prefs -->
 
-    <string name="preference_data_file_selector_showFilenames_key">preference_data_file_selector_show_show_Filenames</string>
+
     <string name="preference_data_file_selector_showFilenames_title">Afficher les noms de fichiers</string>
     <string name="preference_data_file_selector_showFilenames_summary">Noms de fichiers affichés pour chaque fichier</string>
 
-    <string name="preference_data_file_selector_preferredFileColumnsLandscape_key">preference_data_file_selector_preferredFileColumnsLandscape</string>
+
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Paysage : Colonnes des fichiers à afficher</string>
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFileColumnsPortrait_key">preference_data_file_selector_preferredFileColumnsPortrait</string>
+
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portrait : Colonnes des fichiers à afficher</string>
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_key">preference_data_file_selector_preferredFolderColumnsLandscape</string>
+
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Paysage : Colonnes de dossiers à afficher</string>
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_key">preference_data_file_selector_preferredFolderColumnsPortrait</string>
+
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Portrait : Colonnes de dossiers à afficher</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 

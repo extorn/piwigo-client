@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import delit.libs.ui.util.MediaScanner;
@@ -50,30 +51,30 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     private File activeFolder;
     private Comparator<? super File> fileComparator;
     private NavigationListener navigationListener;
-    private TreeSet<String> currentVisibleFileExts;
+    private SortedSet<String> currentVisibleFileExts;
     private HashMap<File, Uri> currentDisplayContentUris = new HashMap<>();
 
-    public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MediaScanner mediaScanner, MultiSelectStatusListener multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
+    public FolderItemRecyclerViewAdapter(NavigationListener navigationListener, MediaScanner mediaScanner, MultiSelectStatusListener<File> multiSelectStatusListener, FolderItemViewAdapterPreferences folderViewPrefs) {
         super(multiSelectStatusListener, folderViewPrefs);
         this.navigationListener = navigationListener;
         this.mediaScanner = mediaScanner;
-        changeFolderViewed(folderViewPrefs.getInitialFolderAsFile());
     }
 
     public void setInitiallySelectedItems() {
-        List<String> initialSelectionItems = getAdapterPrefs().getInitialSelection();
+        SortedSet<String> initialSelectionItems = getAdapterPrefs().getInitialSelection();
+        HashSet<Long> initialSelectionIds = null;
         if (initialSelectionItems != null) {
-            HashSet<Long> initialSelectionIds = new HashSet<>(initialSelectionItems.size());
+            initialSelectionIds = new HashSet<>(initialSelectionItems.size());
             for (String selectedItem : initialSelectionItems) {
                 int pos = getItemPosition(new File(selectedItem));
                 if (pos >= 0) {
                     initialSelectionIds.add(getItemId(pos));
                 }
             }
-            // update the visible selection.
-            setInitiallySelectedItems(initialSelectionIds);
-            setSelectedItems(initialSelectionIds);
         }
+        // update the visible selection.
+        setInitiallySelectedItems(initialSelectionIds);
+        setSelectedItems(initialSelectionIds);
     }
 
     public void rebuildContentView() {
@@ -81,6 +82,8 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     public void changeFolderViewed(File newContent) {
+        SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getAdapterPrefs().getVisibleFileTypesForMimes(newContent);
+        getAdapterPrefs().getVisibleFileTypes().addAll(fileExtsInFolderMatchingMimeTypesWanted);
         updateContent(newContent, false);
     }
 
@@ -103,7 +106,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         activeFolder = newContent;
         getSelectedItemIds().clear();
         File[] folderContent = activeFolder.listFiles(getAdapterPrefs().getFileFilter());
-        currentDisplayContent = folderContent != null ? ArrayUtils.toArrayList(folderContent) : new ArrayList(0);
+        currentDisplayContent = folderContent != null ? ArrayUtils.toArrayList(folderContent) : new ArrayList<File>(0);
         currentVisibleFileExts = getUniqueFileExtsInFolder(currentDisplayContent);
         Collections.sort(currentDisplayContent, getFileComparator());
         currentDisplayContentUris.clear();
@@ -126,13 +129,13 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
     }
 
-    private TreeSet<String> getUniqueFileExtsInFolder(List<File> currentDisplayContent) {
-        TreeSet<String> currentVisibleFileExts = new TreeSet<>();
+    private SortedSet<String> getUniqueFileExtsInFolder(List<File> currentDisplayContent) {
+        SortedSet<String> currentVisibleFileExts = new TreeSet<>();
         for (File f : currentDisplayContent) {
             if (f.isDirectory()) {
                 continue;
             }
-            currentVisibleFileExts.add(IOUtils.getFileExt(f.getName()));
+            currentVisibleFileExts.add(IOUtils.getFileExt(f.getName()).toLowerCase());
         }
         return currentVisibleFileExts;
     }
@@ -286,7 +289,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         return currentDisplayContent == null ? 0 : currentDisplayContent.size();
     }
 
-    public TreeSet<String> getFileExtsInCurrentFolder() {
+    public SortedSet<String> getFileExtsInCurrentFolder() {
         return currentVisibleFileExts;
     }
 
@@ -425,7 +428,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         private View deleteButton;
         private AppCompatCheckboxTriState checkBox;
         private ImageView iconView;
-        private ResizingPicassoLoader iconViewLoader;
+        private ResizingPicassoLoader<ImageView> iconViewLoader;
 
         public FolderItemViewHolder(View view) {
             super(view);
@@ -479,7 +482,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
 
             iconView = itemView.findViewById(R.id.list_item_icon_thumbnail);
             iconView.setContentDescription("folder item thumb");
-            iconViewLoader = new ResizingPicassoLoader(getIconView(), this, 0, 0);
+            iconViewLoader = new ResizingPicassoLoader<>(getIconView(), this, 0, 0);
 
             deleteButton = itemView.findViewById(R.id.list_item_delete_button);
             deleteButton.setOnClickListener(new View.OnClickListener() {

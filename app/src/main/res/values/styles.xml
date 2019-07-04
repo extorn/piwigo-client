@@ -72,13 +72,15 @@
 
     <style name="Custom.Widget.AppCompat.Spinner.Underlined" parent="Widget.AppCompat.Spinner.Underlined">
         <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
+        <item name="android:paddingBottom">9dp</item>
+        <item name="android:paddingTop">0dp</item>
     </style>
 
     <!-- spinner / drop down lists - what is displayed when not expanded -->
     <style name="Custom.Widget.AppCompat.TextView.SpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body1</item>
         <item name="android:textColor">@color/edit_text_color_selector</item>
-        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingBottom">7dp</item>
     </style>
     <!-- items in the dropdown 'popup' when a spinner is clicked on -->
     <style name="Custom.Widget.AppCompat.DropDownItem.Spinner" parent="Widget.AppCompat.DropDownItem.Spinner">

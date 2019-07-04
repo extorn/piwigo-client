@@ -11,7 +11,14 @@
         <item>Cache en mémoire</item>
         <item>Cache sur disque</item>
     </string-array>
-
+    <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>très faible (0,05 b/pixels*frame)</item>
+        <item>inférieur (0,1 b/pixels*cadre)</item>
+        <item>faible (0,4 b/pixels*frame)</item>
+        <item>moyen (0,65 b/pixels*cadre)</item>
+        <item>élevée (1 b/pixels*frame)</item>
+        <item>très élevé (1,3 b/pixels*frame)</item>
+    </string-array>
     <string-array name="preference_gallery_item_slideshow_image_size_array">
         <item>meilleur ajustement</item>
         <item>carré</item>

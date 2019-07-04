@@ -29,7 +29,7 @@ import delit.libs.util.IOUtils;
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class MediaMuxerControl /*implements MetadataOutput*/ {
     private static final String TAG = "MediaMuxerControl";
-    private static final boolean VERBOSE = true;
+    private static final boolean VERBOSE = false;
     private final File inputFile;
     private final ExoPlayerCompression.CompressionListener listener;
     private final Handler eventHandler;
@@ -198,12 +198,14 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
         return false;
     }
 
-    public void markDataRead() {
-        this.sourceDataRead = true;
+    public void markDataRead(boolean sourceDataProcessed) {
+        this.sourceDataRead = sourceDataProcessed;
     }
 
-    public boolean isSourceDataRead() {
-        return sourceDataRead;
+    public boolean getAndResetIsSourceDataRead() {
+        boolean val = sourceDataRead;
+        sourceDataRead = false;
+        return val;
     }
 
     public void writeSampleData(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info, Long originalBytes) {
@@ -213,33 +215,37 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
         int trackCount = trackFormats.size();
 
-        if (queuedData.isEmpty() && trackCount == 2) {
+        if (!isMediaMuxerStarted()) {
+            // if not started, we must be waiting for a track to be configured
             ByteBuffer data = IOUtils.deepCopyVisible(encodedData);
             queuedData.add(new Sample(outputTrackIndex, data, info));
+            lastWrittenDataTimeUs = info.presentationTimeUs;
         } else {
-            boolean canWrite = trackCount != 2;
-            Sample firstItem;
-            if (canWrite) {
-                // there's only this track in the muxer to write - lets write all items in the queue and the new item (ordered correctly)
-                queuedData.add(new Sample(outputTrackIndex, encodedData, info)); // no need to clone it as we're writing it right now
-                do {
-                    firstItem = queuedData.pollFirst();
-                    writeSampleDataToMuxer(firstItem.outputTrackIndex, firstItem.buffer, firstItem.getBufferInfo());
-                } while (!queuedData.isEmpty()); // can finish queue as we're closing down...
-            } else { // queued data has at least one item in it
-                firstItem = queuedData.first();
-                // test this first item against the new one (most likely to be different)
-                canWrite = firstItem.outputTrackIndex != outputTrackIndex;
-                if (canWrite) {
-                    queuedData.add(new Sample(outputTrackIndex, encodedData, info)); // no need to clone it as we're writing it right now
-                    do {
-                        firstItem = queuedData.pollFirst();
-                        writeSampleDataToMuxer(firstItem.outputTrackIndex, firstItem.buffer, firstItem.getBufferInfo());
-                    } while (queuedData.size() > 1); // leave one item since the next rxd may be earlier.
-                } else {
-                    ByteBuffer data = IOUtils.deepCopyVisible(encodedData);
-                    queuedData.add(new Sample(outputTrackIndex, data, info));
+            if (trackCount == 1) {
+                // write the data now.
+                writeSampleDataToMuxer(outputTrackIndex, encodedData, info);
+                lastWrittenDataTimeUs = info.presentationTimeUs;
+            } else {
+                // we need to ensure correct muxing of tracks
+                Sample newSample = new Sample(outputTrackIndex, encodedData, info);
+                boolean newDataForSameTrackAsQueued = queuedData.isEmpty() || queuedData.first().outputTrackIndex == outputTrackIndex;
+                // if no items in queue yet, or all data is same type, or this new item will be left on the queue after.
+                if (newDataForSameTrackAsQueued || queuedData.last().compareTo(newSample) < 0) {
+                    // clone data as item won't be consumed immediately
+                    newSample.setData(IOUtils.deepCopyVisible(encodedData));
                 }
+                queuedData.add(newSample);
+
+                if (!newDataForSameTrackAsQueued) {
+                    while (queuedData.size() > 1) {
+                        Sample firstItem = queuedData.pollFirst();
+                        writeSampleDataToMuxer(firstItem.outputTrackIndex, firstItem.buffer, firstItem.getBufferInfo());
+                    }
+                    if (newSample.buffer == encodedData && queuedData.contains(newSample)) {
+                        throw new RuntimeException("Error - input buffer will remain locked!");
+                    }
+                }
+                lastWrittenDataTimeUs = queuedData.first().bufferPresentationTimeUs;
             }
         }
     }
@@ -247,21 +253,43 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
     private void writeSampleDataToMuxer(int outputTrackIndex, ByteBuffer encodedData, MediaCodec.BufferInfo info) {
         TrackStats thisTrackStats = trackStatistics.get(getTrackName(outputTrackIndex));
         thisTrackStats.addTranscodedBytesWritten(encodedData.remaining());
-        lastWrittenDataTimeUs = info.presentationTimeUs;
-        mediaMuxer.writeSampleData(outputTrackIndex, encodedData, info);
+//        lastWrittenDataTimeUs = info.presentationTimeUs;
+        if (VERBOSE) {
+            Log.d(TAG, "muxing data - " + getTrackName(outputTrackIndex) + " [" + info.presentationTimeUs + ']');
+        }
+        // if there's only one track, write all data to that track otherwise write to appropriate track.
+        int mediaMuxerTrackIdx = trackFormats.size() > 1 ? outputTrackIndex : 0;
+        mediaMuxer.writeSampleData(mediaMuxerTrackIdx, encodedData, info);
     }
 
     public void release() {
+
+        if (mediaMuxerStarted) {
+            flush();
+        }
+
         if (VERBOSE) {
             Log.d(TAG, "Muxer : releasing old muxer");
         }
         if (this.mediaMuxer != null) {
             this.mediaMuxer.release();
         }
+        mediaMuxerStarted = false;
+    }
+
+    private void flush() {
+        while (queuedData.size() > 0) {
+            Sample firstItem = queuedData.pollFirst();
+            writeSampleDataToMuxer(firstItem.outputTrackIndex, firstItem.buffer, firstItem.getBufferInfo());
+        }
     }
 
     private String getTrackName(int outputTrackIndex) {
-        return outputTrackIndex == getVideoTrackId() ? "video" : "audio";
+        try {
+            return outputTrackIndex == getVideoTrackId() ? "video" : "audio";
+        } catch (IllegalStateException e) {
+            return "audio";
+        }
     }
 
     public boolean isFinished() {
@@ -294,7 +322,7 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
     public int getAudioTrackId() {
         if (trackFormats.containsKey("audio")) {
-            return trackFormats.containsKey("video") ? 1 : 0;
+            return 1;
         }
         throw new IllegalStateException("Audio track not added to muxer");
     }
@@ -496,9 +524,25 @@ public class MediaMuxerControl /*implements MetadataOutput*/ {
 
         @Override
         public int compareTo(Sample o) {
+
+            int comparison = compareToBufferPresentationTime(o);
+            if (comparison == 0) {
+                int x = outputTrackIndex;
+                int y = o.outputTrackIndex;
+                comparison = (x < y) ? -1 : ((x == y) ? 0 : 1);
+            }
+            return comparison;
+        }
+
+        public int compareToBufferPresentationTime(Sample o) {
+
             long x = bufferPresentationTimeUs;
             long y = o.bufferPresentationTimeUs;
             return (x < y) ? -1 : ((x == y) ? 0 : 1);
+        }
+
+        public void setData(ByteBuffer data) {
+            this.buffer = data;
         }
     }
 

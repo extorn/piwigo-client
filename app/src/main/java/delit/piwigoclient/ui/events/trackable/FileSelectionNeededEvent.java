@@ -3,7 +3,7 @@ package delit.piwigoclient.ui.events.trackable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by gareth on 13/06/17.
@@ -18,9 +18,10 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent {
     private boolean showFolderContents;
     private boolean allowFolderSelection;
     private boolean allowFileSelection;
-    private ArrayList<String> visibleFileTypes;
+    private Set<String> visibleFileTypes;
     private int fileSortOrder = ALPHABETICAL;
-    private ArrayList<String> initialSelection;
+    private Set<String> initialSelection;
+    private Set<String> visibleMimeTypes;
 
     public FileSelectionNeededEvent(boolean allowFileSelection, boolean allowFolderSelection, boolean multiSelectAllowed) {
         this.allowFileSelection = allowFileSelection;
@@ -37,7 +38,7 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent {
         return withVisibleContent(null, fileSortOrder);
     }
 
-    public FileSelectionNeededEvent withVisibleContent(@Nullable ArrayList<String> visibleFileTypes, int fileSortOrder) {
+    public FileSelectionNeededEvent withVisibleContent(@Nullable Set<String> visibleFileTypes, int fileSortOrder) {
         this.visibleFileTypes = visibleFileTypes;
         this.showFolderContents = true;
         this.fileSortOrder = fileSortOrder;
@@ -64,23 +65,31 @@ public class FileSelectionNeededEvent extends TrackableRequestEvent {
         return allowFolderSelection;
     }
 
-    public ArrayList<String> getVisibleFileTypes() {
+    public Set<String> getVisibleFileTypes() {
         return visibleFileTypes;
+    }
+
+    public Set<String> getVisibleMimeTypes() {
+        return visibleMimeTypes;
     }
 
     public int getFileSortOrder() {
         return fileSortOrder;
     }
 
-    public void withInitialSelection(ArrayList<String> selection) {
+    public void withInitialSelection(Set<String> selection) {
         this.initialSelection = selection;
     }
 
-    public ArrayList<String> getInitialSelection() {
+    public Set<String> getInitialSelection() {
         return initialSelection;
     }
 
     public void setActionId(int actionId) {
         super.setActionId(actionId);
+    }
+
+    public void withVisibleMimeTypes(Set<String> visibleMimeTypes) {
+        this.visibleMimeTypes = visibleMimeTypes;
     }
 }

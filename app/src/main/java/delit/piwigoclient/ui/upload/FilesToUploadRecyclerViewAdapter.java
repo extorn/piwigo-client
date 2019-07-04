@@ -242,7 +242,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
      * @param filesForUpload
      * @return List of all files that were not already present
      */
-    public ArrayList addAll(List<File> filesForUpload) {
+    public ArrayList<File> addAll(List<File> filesForUpload) {
         ArrayList<File> newFiles = uploadProgressModel.addAll(filesForUpload);
         updateUris();
         notifyDataSetChanged();

@@ -19,7 +19,7 @@
             android:title="@string/preference_data_file_selector_showFilenames_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
             app:setDefaultOnAttach="false"
@@ -28,7 +28,7 @@
             android:summary="@string/preference_data_file_selector_preferredFileColumnsLandscape_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
             app:setDefaultOnAttach="false"
@@ -37,7 +37,7 @@
             android:summary="@string/preference_data_file_selector_preferredFileColumnsPortrait_summary"
             android:layout_height="wrap_content"
             android:layout_width="match_parent" />
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
             app:setDefaultOnAttach="false"
@@ -46,7 +46,7 @@
             android:summary="@string/preference_data_file_selector_preferredFolderColumnsLandscape_summary"
             android:layout_height="wrap_content"
             android:layout_width="match_parent" />
-        <delit.piwigoclient.ui.common.preference.NumberPickerPreference
+        <delit.libs.ui.view.preference.NumberPickerPreference
             app:minValue="1"
             app:maxValue="50"
             app:setDefaultOnAttach="false"

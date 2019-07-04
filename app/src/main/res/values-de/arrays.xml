@@ -10,6 +10,14 @@
         <item>Cache in den Speicher</item>
         <item>Cache auf Platte</item>
     </string-array>
+    <string-array name="preference_data_upload_compress_videos_quality_items">
+        <item>sehr niedrig (0,05 b/Pixel*Frame)</item>
+        <item>niedriger (0,1 b/Pixel*Frame)</item>
+        <item>niedrig (0,4 b/Pixel*Frame)</item>
+        <item>mittel (0,65 b/Pixel*Frame)</item>
+        <item>hoch (1 b/pixels*frame)</item>
+        <item>sehr hoch (1,3 b/Pixel*Frame)</item>
+    </string-array>
     <string-array name="preference_gallery_item_slideshow_image_size_array">
         <item>beste Passform</item>
         <item>quadratisch</item>

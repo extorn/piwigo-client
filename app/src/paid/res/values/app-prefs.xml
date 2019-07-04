@@ -57,6 +57,15 @@
         @bool/preference_data_upload_compress_videos_default
     </bool>
 
+
+    <string name="preference_data_upload_automatic_job_allow_upload_of_incompressible_videos_key" translatable="false">preference_data_upload_automatic_job_allow_upload_of_incompressible_videos</string>
+    <string name="preference_data_upload_automatic_job_allow_upload_of_incompressible_videos_summary" translatable="false">@string/preference_data_upload_allow_upload_of_incompressible_videos_summary</string>
+    <string name="preference_data_upload_automatic_job_allow_upload_of_incompressible_videos_title" translatable="false">@string/preference_data_upload_allow_upload_of_incompressible_videos_title</string>
+    <bool name="preference_data_upload_automatic_job_allow_upload_of_incompressible_videos_default">
+        @bool/preference_data_upload_allow_upload_of_incompressible_videos_default
+    </bool>
+
+
     <string name="preference_data_upload_automatic_job_compress_images_key" translatable="false">preference_data_upload_automatic_job_compress_images</string>
     <string name="preference_data_upload_automatic_job_compress_images_summary" translatable="false">@string/preference_data_upload_compress_images_summary</string>
     <string name="preference_data_upload_automatic_job_compress_images_title" translatable="false">@string/preference_data_upload_compress_images_title</string>

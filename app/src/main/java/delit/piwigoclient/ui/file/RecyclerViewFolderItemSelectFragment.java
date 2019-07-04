@@ -1,5 +1,6 @@
 package delit.piwigoclient.ui.file;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,13 +26,15 @@ import com.google.android.gms.common.util.ArrayUtils;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
+import java.util.Set;
+import java.util.SortedSet;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
@@ -60,8 +63,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     private long startedActionAtTime;
     private FolderItemRecyclerViewAdapter.NavigationListener navListener;
     private LinkedHashMap<String, Parcelable> listViewStates; // one state for each level within the list (created and deleted on demand)
-    private ArrayList<String> allPossiblyVisibleFileExts;
-    private ArrayList<String> selectedVisibleFileExts;
+    private Set<String> allPossiblyVisibleFileExts;
+    private Set<String> selectedVisibleFileExts;
     private FlowLayout fileExtFilters;
 
     public static RecyclerViewFolderItemSelectFragment newInstance(FolderItemViewAdapterPreferences prefs, int actionId) {
@@ -97,8 +100,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         BundleUtils.putFile(outState, ACTIVE_FOLDER, getListAdapter().getActiveFolder());
         outState.putLong(STATE_ACTION_START_TIME, startedActionAtTime);
         BundleUtils.writeMap(outState, STATE_LIST_VIEW_STATE, listViewStates);
-        outState.putStringArrayList(STATE_ALL_POSS_VIS_FILE_EXTS, allPossiblyVisibleFileExts);
-        outState.putStringArrayList(STATE_SELECTED_VIS_FILE_EXTS, selectedVisibleFileExts);
+        BundleUtils.putStringSet(outState, STATE_ALL_POSS_VIS_FILE_EXTS, allPossiblyVisibleFileExts);
+        BundleUtils.putStringSet(outState, STATE_SELECTED_VIS_FILE_EXTS, selectedVisibleFileExts);
     }
 
     @Nullable
@@ -114,8 +117,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         if (savedInstanceState != null) {
             startedActionAtTime = savedInstanceState.getLong(STATE_ACTION_START_TIME);
             listViewStates = BundleUtils.readMap(savedInstanceState, STATE_LIST_VIEW_STATE, new LinkedHashMap(), Parcelable.class.getClassLoader());
-            allPossiblyVisibleFileExts = savedInstanceState.getStringArrayList(STATE_ALL_POSS_VIS_FILE_EXTS);
-            selectedVisibleFileExts = savedInstanceState.getStringArrayList(STATE_SELECTED_VIS_FILE_EXTS);
+            allPossiblyVisibleFileExts = BundleUtils.getStringHashSet(savedInstanceState, STATE_ALL_POSS_VIS_FILE_EXTS);
+            selectedVisibleFileExts = BundleUtils.getStringHashSet(savedInstanceState, STATE_SELECTED_VIS_FILE_EXTS);
         }
 
         startedActionAtTime = System.currentTimeMillis();
@@ -162,7 +165,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
             @Override
             public void onPostFolderOpened(File oldFolder, File newFolder) {
-                buildFileExtFilterControls();
+                buildFileExtFilterControls(newFolder);
             }
         };
 
@@ -174,7 +177,6 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         super.onViewCreated(view, savedInstanceState);
 
         bindDataToView(savedInstanceState);
-        buildFileExtFilterControls();
     }
 
     @Override
@@ -182,24 +184,23 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         super.onDestroyView();
     }
 
-    private void buildFileExtFilterControls() {
+    private void buildFileExtFilterControls(File currentFolder) {
         if (allPossiblyVisibleFileExts == null && getViewPrefs().getVisibleFileTypes() != null) {
-            allPossiblyVisibleFileExts = new ArrayList<>(getViewPrefs().getVisibleFileTypes());
+            allPossiblyVisibleFileExts = new HashSet<>(getViewPrefs().getVisibleFileTypes());
         }
+
+
         // initialise local cached set of selected items
         if (selectedVisibleFileExts == null && allPossiblyVisibleFileExts != null) {
-            selectedVisibleFileExts = new ArrayList<>(allPossiblyVisibleFileExts);
+            selectedVisibleFileExts = new HashSet<>(allPossiblyVisibleFileExts);
         }
         // clear all the existing filters
         fileExtFilters.removeAllViews();
 
         FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
-        if (listAdapter == null) {
-            return;
-        }
 
         // get a list of all unique file extensions in the current folder
-        TreeSet<String> visibleFileExts = listAdapter.getFileExtsInCurrentFolder();
+        SortedSet<String> visibleFileExts = listAdapter.getFileExtsInCurrentFolder();
 
         // for each file type visible, show a checkbox and set it according to out local model
         if (visibleFileExts != null && selectedVisibleFileExts != null) {
@@ -210,6 +211,8 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                 if (!checked) {
                     updateViewRequired = true;
                     listAdapter.getAdapterPrefs().getVisibleFileTypes().remove(fileExt);
+                } else if (!listAdapter.getAdapterPrefs().getVisibleFileTypes().contains(fileExt)) {
+                    listAdapter.getAdapterPrefs().getVisibleFileTypes().add(fileExt);
                 }
                 fileExtFilters.addView(createFileExtFilterControl(fileExt, checked), layoutParams);
             }
@@ -281,7 +284,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                         Map.Entry<String, Parcelable> item;
                         while (iter.hasNext()) {
                             item = iter.next();
-                            if (item.getKey() == pathItemFile.getAbsolutePath()) {
+                            if (item.getKey().equals(pathItemFile.getAbsolutePath())) {
                                 getList().getLayoutManager().onRestoreInstanceState(item.getValue());
                                 iter.remove();
                                 while (iter.hasNext()) {
@@ -317,23 +320,15 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         }
     }
 
+    private void applyNewRootsAdapter(MappedArrayAdapter<String, File> mappedArrayAdapter) {
+        folderRootsAdapter = mappedArrayAdapter;
+        folderRootFolderSpinner.setAdapter(folderRootsAdapter);
+        buildBreadcrumbs(getListAdapter().getActiveFolder());
+    }
+
     private void bindDataToView(Bundle savedInstanceState) {
 
-        new AsyncTask<Void, Void, MappedArrayAdapter<String, File>>() {
-
-            @Override
-            protected MappedArrayAdapter<String, File> doInBackground(Void... voids) {
-                return buildFolderRootsAdapter();
-            }
-
-            @Override
-            protected void onPostExecute(MappedArrayAdapter<String, File> mappedArrayAdapter) {
-                // building this stuff is slow - lets do it async!
-                folderRootsAdapter = mappedArrayAdapter;
-                folderRootFolderSpinner.setAdapter(folderRootsAdapter);
-                buildBreadcrumbs(getListAdapter().getActiveFolder());
-            }
-        }.execute();
+        new DataBinderTask(this).execute();
 
 
         File activeFolder = null;
@@ -359,6 +354,9 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
 
             // will restore previous selection from state if any
             setListAdapter(viewAdapter);
+
+            // update the adapter content
+            viewAdapter.changeFolderViewed(getViewPrefs().getInitialFolderAsFile());
         }
 
         // call this here to ensure page reformats if orientation changes for example.
@@ -373,32 +371,6 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         layoutMan.setSpanSizeLookup(new SpanSizeLookup(getListAdapter(), colsOnScreen));
         getList().setLayoutManager(layoutMan);
         getList().setAdapter(getListAdapter());
-    }
-
-    private class FileExtControlListener implements CompoundButton.OnCheckedChangeListener {
-
-        public FileExtControlListener() {
-            //TODO maybe add the ListAdapter here and use that.
-        }
-
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            String fileExt = buttonView.getText().toString();
-            FolderItemRecyclerViewAdapter adapter = getListAdapter();
-            ArrayList<String> visibleFileTypes = adapter.getAdapterPrefs().getVisibleFileTypes();
-            if (isChecked) {
-                // local model used when rebuilding each folder view
-                selectedVisibleFileExts.add(fileExt);
-                // current folder view
-                visibleFileTypes.add(fileExt);
-            } else {
-                // local model used when rebuilding each folder view
-                selectedVisibleFileExts.remove(fileExt);
-                // current folder view
-                visibleFileTypes.remove(fileExt);
-            }
-            adapter.rebuildContentView();
-        }
     }
 
     private MappedArrayAdapter<String, File> buildFolderRootsAdapter() {
@@ -439,9 +411,57 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         rootLabels.add(0, "");
         rootPaths.add(0, null);
 
-        MappedArrayAdapter adapter = new MappedArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, rootLabels, rootPaths);
+        Context context = getContext();
+        if (context == null) {
+            throw new IllegalStateException("Context is null while attempting to build list adapter");
+        }
+
+        MappedArrayAdapter<String, File> adapter = new MappedArrayAdapter<>(context, android.R.layout.simple_spinner_item, rootLabels, rootPaths);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         return adapter;
+    }
+
+    @Override
+    protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
+        FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
+        HashSet<File> selectedItems = listAdapter.getSelectedItems();
+        if (selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
+            selectedItems = new HashSet<>(1);
+            selectedItems.add(listAdapter.getActiveFolder());
+        }
+        long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
+        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems), actionTimeMillis));
+        // now pop this screen off the stack.
+        if (isVisible() && getFragmentManager() != null) {
+            getFragmentManager().popBackStackImmediate();
+        }
+    }
+
+    private static class DataBinderTask extends AsyncTask<Void, Void, MappedArrayAdapter<String, File>> {
+
+        WeakReference<RecyclerViewFolderItemSelectFragment> parentFragmentRef;
+
+        DataBinderTask(RecyclerViewFolderItemSelectFragment parentFragment) {
+            this.parentFragmentRef = new WeakReference<>(parentFragment);
+        }
+
+        @Override
+        protected MappedArrayAdapter<String, File> doInBackground(Void... voids) {
+            RecyclerViewFolderItemSelectFragment parentFragment = parentFragmentRef.get();
+            if (parentFragment != null) {
+                return parentFragment.buildFolderRootsAdapter();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(MappedArrayAdapter<String, File> mappedArrayAdapter) {
+            // building this stuff is slow - lets do it async!
+            RecyclerViewFolderItemSelectFragment parentFragment = parentFragmentRef.get();
+            if (parentFragment != null && mappedArrayAdapter != null) {
+                parentFragment.applyNewRootsAdapter(mappedArrayAdapter);
+            }
+        }
     }
 
     @Override
@@ -460,19 +480,29 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     protected void rerunRetrievalForFailedPages() {
     }
 
-    @Override
-    protected void onSelectActionComplete(HashSet<Long> selectedIdsSet) {
-        FolderItemRecyclerViewAdapter listAdapter = getListAdapter();
-        HashSet<File> selectedItems = listAdapter.getSelectedItems();
-        if(selectedItems.isEmpty() && getViewPrefs().isAllowItemSelection() && !getViewPrefs().isMultiSelectionEnabled()) {
-            selectedItems = new HashSet<>(1);
-            selectedItems.add(listAdapter.getActiveFolder());
+    private class FileExtControlListener implements CompoundButton.OnCheckedChangeListener {
+
+        public FileExtControlListener() {
+            //TODO maybe add the ListAdapter here and use that.
         }
-        long actionTimeMillis = System.currentTimeMillis() - startedActionAtTime;
-        EventBus.getDefault().post(new FileSelectionCompleteEvent(getActionId(), new ArrayList<>(selectedItems), actionTimeMillis));
-        // now pop this screen off the stack.
-        if (isVisible()) {
-            getFragmentManager().popBackStackImmediate();
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            String fileExt = buttonView.getText().toString();
+            FolderItemRecyclerViewAdapter adapter = getListAdapter();
+            SortedSet<String> visibleFileTypes = adapter.getAdapterPrefs().getVisibleFileTypes();
+            if (isChecked) {
+                // local model used when rebuilding each folder view
+                selectedVisibleFileExts.add(fileExt);
+                // current folder view
+                visibleFileTypes.add(fileExt);
+            } else {
+                // local model used when rebuilding each folder view
+                selectedVisibleFileExts.remove(fileExt);
+                // current folder view
+                visibleFileTypes.remove(fileExt);
+            }
+            adapter.rebuildContentView();
         }
     }
 

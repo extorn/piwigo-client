@@ -21,4 +21,7 @@
     <string name="favorites_empty_text">Du hast derzeit keine Favoriten</string>
     <string name="favorites_heading">Ihre Favoriten</string>
     <string name="button_unfavorite">Nicht Favorit</string>
+    <string name="preference_data_upload_automatic_job_category_server_settings">Server Settings</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Local Settings</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Pre-Upload Compression</string>
 </resources>

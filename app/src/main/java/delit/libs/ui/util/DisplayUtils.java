@@ -15,6 +15,7 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
 import android.view.WindowManager;
@@ -246,6 +247,21 @@ public class DisplayUtils {
         ActionBar actionBar = activity.getActionBar();
         if (actionBar != null) {
             actionBar.hide();
+        }
+    }
+
+    public static void toggleHierachyEnabled(ViewGroup viewGroup, boolean enabled) {
+        setViewAndChildrenEnabled(viewGroup, enabled);
+    }
+
+    private static void setViewAndChildrenEnabled(View view, boolean enabled) {
+        view.setEnabled(enabled);
+        if (view instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) view;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                View child = viewGroup.getChildAt(i);
+                setViewAndChildrenEnabled(child, enabled);
+            }
         }
     }
 }

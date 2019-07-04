@@ -31,10 +31,13 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import delit.piwigoclient.BuildConfig;
 
@@ -265,6 +268,11 @@ public class IOUtils {
         }
     }
 
+    public static String getFileNameWithoutExt(String filename) {
+        int extStartAtIdx = filename.lastIndexOf('.');
+        return filename.substring(0, extStartAtIdx);
+    }
+
     public static String getFileExt(String filename) {
         int extStartAtIdx = filename.lastIndexOf('.');
         return filename.substring(extStartAtIdx + 1);
@@ -351,5 +359,17 @@ public class IOUtils {
             }
         }
         return fileSizes.keySet().toArray(new File[0]);
+    }
+
+    public static Set<String> getUniqueFileExts(Collection<File> files) {
+        Set<String> exts = new HashSet<>();
+        for (File f : files) {
+            exts.add(IOUtils.getFileExt(f.getName()).toLowerCase());
+        }
+        return exts;
+    }
+
+    public static File changeFileExt(File file, String fileExt) {
+        return new File(file.getParent(), getFileNameWithoutExt(file.getName()) + '.' + fileExt);
     }
 }

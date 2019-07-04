@@ -200,7 +200,6 @@
     <string name="preference_gallery_recentlyAlteredAgeMillis_summary">%1$d天</string>
 
 
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_key">preference_gallery_slideshow_transparent_extra_info_shadow</string>
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">幻灯片抽屉是透明的</string>
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">幻灯片图像信息抽屉是透明的</string>
 
@@ -235,9 +234,10 @@
     <!-- Data Upload page -->
 
     <string name="preference_page_upload">上传</string>
-    <string name="preference_connections_category_data_upload_display">视觉设置</string>
-    <string name="preference_connections_category_data_upload">数据上传</string>
-    <string name="preference_connections_category_pre_data_upload_compression">预上载压缩</string>
+    <string name="preference_upload_category_data_upload_display">视觉设置</string>
+    <string name="preference_upload_category_data_upload">数据上传</string>
+    <string name="preference_upload_category_pre_data_upload_compression">预上载压缩</string>
+    <string name="preference_upload_category_advanced">Advanced</string>
 
     <!-- prefs -->
 
@@ -284,23 +284,22 @@
     <!-- prefs -->
 
 
-    <string name="preference_data_file_selector_showFilenames_key">preference_data_file_selector_showFilenames</string>
     <string name="preference_data_file_selector_showFilenames_title">显示文件名</string>
     <string name="preference_data_file_selector_showFilenames_summary">显示每个文件的文件名</string>
 
-    <string name="preference_data_file_selector_preferredFileColumnsLandscape_key">preference_data_file_selector_preferredFileColumnsLandscape</string>
+
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">横向：要显示的文件列</string>
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFileColumnsPortrait_key">preference_data_file_selector_preferredFileColumnsPortrait</string>
+
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">纵向：要显示的文件列</string>
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_key">preference_data_file_selector_preferredFolderColumnsLandscape</string>
+
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">横向：要显示的文件夹列</string>
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_key">preference_data_file_selector_preferredFolderColumnsPortrait</string>
+
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">纵向：要显示的文件夹列</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 

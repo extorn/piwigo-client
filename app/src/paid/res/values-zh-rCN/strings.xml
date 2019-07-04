@@ -21,4 +21,7 @@
     <string name="favorites_empty_text">你目前没有收藏夹</string>
     <string name="favorites_heading">你的收藏</string>
     <string name="button_unfavorite">不喜欢</string>
+    <string name="preference_data_upload_automatic_job_category_server_settings">Server Settings</string>
+    <string name="preference_data_upload_automatic_job_category_device_settings">Local Settings</string>
+    <string name="preference_data_upload_automatic_job_category_pre_data_upload_settings">Pre-Upload Compression</string>
 </resources>

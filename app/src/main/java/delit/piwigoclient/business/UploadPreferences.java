@@ -79,6 +79,10 @@ public class UploadPreferences {
         return getString(context, prefs, R.string.preference_data_upload_compress_images_output_format_key, R.string.preference_data_upload_compress_images_output_format_default);
     }
 
+    public static boolean isAllowUploadOfRawVideosIfIncompressible(Context context, SharedPreferences prefs) {
+        return getBoolean(context, prefs, R.string.preference_data_upload_allow_upload_of_incompressible_videos_key, R.bool.preference_data_upload_allow_upload_of_incompressible_videos_default);
+    }
+
     private static String getString(Context context, SharedPreferences prefs, @StringRes int prefKeyResId, @StringRes int prefDefaultResId) {
         return prefs.getString(context.getString(prefKeyResId), context.getString(prefDefaultResId));
     }
@@ -90,4 +94,6 @@ public class UploadPreferences {
     private static int getInt(Context context, SharedPreferences prefs, @StringRes int prefKeyResId, @IntegerRes int prefDefaultResId) {
         return prefs.getInt(context.getString(prefKeyResId), context.getResources().getInteger(prefDefaultResId));
     }
+
+
 }

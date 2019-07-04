@@ -128,6 +128,7 @@ public class FileSelectActivity extends MyActivity {
         // custom settings
         prefs.withInitialFolder(initialFolder);
         prefs.withVisibleContent(event.getVisibleFileTypes(), event.getFileSortOrder());
+        prefs.withVisibleMimeTypes(event.getVisibleMimeTypes());
         // basic settings
         prefs.selectable(event.isMultiSelectAllowed(), false);
         prefs.setInitialSelection(event.getInitialSelection());

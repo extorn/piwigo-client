@@ -243,7 +243,7 @@
     <integer name="preference_gallery_recentlyAlteredAgeMillis_default">604800000</integer> <!--one week (7 days) -->
     <integer name="preference_gallery_recentlyAlteredAgeDays_default">7</integer>
 
-    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_key">preference_gallery_slideshow_transparent_extra_info_shadow</string>
+    <string name="preference_gallery_slideshow_transparent_extra_info_shadow_key" translatable="false">preference_gallery_slideshow_transparent_extra_info_shadow</string>
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Slideshow drawer is transparent</string>
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Slideshow image information drawer is transparent</string>
     <bool name="preference_gallery_slideshow_transparent_extra_info_shadow_default">false</bool>
@@ -282,9 +282,10 @@
     <!-- Data Upload page -->
 
     <string name="preference_page_upload">Upload</string>
-    <string name="preference_connections_category_data_upload_display">Visual settings</string>
-    <string name="preference_connections_category_data_upload">Data Upload</string>
-    <string name="preference_connections_category_pre_data_upload_compression">Pre-Upload Compression</string>
+    <string name="preference_upload_category_data_upload_display">Visual settings</string>
+    <string name="preference_upload_category_data_upload">Data Upload</string>
+    <string name="preference_upload_category_pre_data_upload_compression">Pre-Upload Compression</string>
+    <string name="preference_upload_category_advanced">Advanced</string>
 
     <!-- prefs -->
 
@@ -318,6 +319,11 @@
     <string name="preference_data_upload_compress_videos_title">Compress videos</string>
     <bool name="preference_data_upload_compress_videos_default">true</bool>
 
+    <string name="preference_data_upload_allow_upload_of_incompressible_videos_key" translatable="false">preference_data_upload_allow_upload_of_incompressible_videos</string>
+    <string name="preference_data_upload_allow_upload_of_incompressible_videos_summary" translatable="false">@string/allow_upload_of_incompressible_videos</string>
+    <string name="preference_data_upload_allow_upload_of_incompressible_videos_title" translatable="false">@string/allow_upload_of_incompressible_videos</string>
+    <bool name="preference_data_upload_allow_upload_of_incompressible_videos_default">true</bool>
+
     <string name="preference_data_upload_compress_videos_quality_title">Video Quality</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Video compression quality %1$s</string>
     <string name="preference_data_upload_compress_videos_quality_key" translatable="false">preference_data_upload_compress_videos_quality</string>
@@ -346,23 +352,23 @@
     <!-- prefs -->
 
     <bool name="preference_data_file_selector_showFilenames_default">true</bool>
-    <string name="preference_data_file_selector_showFilenames_key">preference_data_file_selector_showFilenames</string>
+    <string name="preference_data_file_selector_showFilenames_key" translatable="false">preference_data_file_selector_showFilenames</string>
     <string name="preference_data_file_selector_showFilenames_title">Show file names</string>
     <string name="preference_data_file_selector_showFilenames_summary">Filenames shown for each file</string>
 
-    <string name="preference_data_file_selector_preferredFileColumnsLandscape_key">preference_data_file_selector_preferredFileColumnsLandscape</string>
+    <string name="preference_data_file_selector_preferredFileColumnsLandscape_key" translatable="false">preference_data_file_selector_preferredFileColumnsLandscape</string>
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_title">Landscape: Columns of Files to show</string>
     <string name="preference_data_file_selector_preferredFileColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFileColumnsPortrait_key">preference_data_file_selector_preferredFileColumnsPortrait</string>
+    <string name="preference_data_file_selector_preferredFileColumnsPortrait_key" translatable="false">preference_data_file_selector_preferredFileColumnsPortrait</string>
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_title">Portrait: Columns of Files to show</string>
     <string name="preference_data_file_selector_preferredFileColumnsPortrait_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_key">preference_data_file_selector_preferredFolderColumnsLandscape</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsLandscape_key" translatable="false">preference_data_file_selector_preferredFolderColumnsLandscape</string>
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_title">Landscape: Columns of Folders to show</string>
     <string name="preference_data_file_selector_preferredFolderColumnsLandscape_summary">%1$d</string>
 
-    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_key">preference_data_file_selector_preferredFolderColumnsPortrait</string>
+    <string name="preference_data_file_selector_preferredFolderColumnsPortrait_key" translatable="false">preference_data_file_selector_preferredFolderColumnsPortrait</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_title">Portrait: Columns of Folders to show</string>
     <string name="preference_data_file_selector_preferredFolderColumnsPortrait_summary">%1$d</string>
 

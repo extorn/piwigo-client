@@ -988,4 +988,6 @@ SOFTWARE.
     <string name="watch_advert_to_buy_advert_free_time">Would you like to watch an advertisement to buy a short period without any adverts? You can do this multiple times to increase the length of time if wanted.</string>
     <string name="reward_video_not_yet_loaded">Sorry, but the reward video has not yet loaded. Please try again later.</string>
     <string name="bought_time_menu_title_pattern">Adverts in %1$02d:%2$02d</string>
+    <string name="allow_upload_of_incompressible_videos">Upload raw file if unable to compress</string>
+    <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">The server will not accept %1$d files selected for upload. If these are videos, you could enable compression. Remove these files from the upload?</string>
 </resources>

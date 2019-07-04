@@ -137,7 +137,7 @@ public class PicassoFactory {
         public boolean canHandleRequest(Request data) {
             MimeTypeMap map = MimeTypeMap.getSingleton();
             String ext = MimeTypeMap.getFileExtensionFromUrl(data.uri.getPath());
-            String mimeType = map.getMimeTypeFromExtension(ext);
+            String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
             String scheme = data.uri.getScheme();
             boolean mimeTypeMatches = false;
             if (mimeType != null) {

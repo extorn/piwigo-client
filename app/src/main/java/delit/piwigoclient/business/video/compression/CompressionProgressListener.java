@@ -15,7 +15,8 @@ import com.google.android.exoplayer2.Timeline;
 public class CompressionProgressListener implements Runnable {
 
     private static final String TAG = "CompressionListener";
-    private static final boolean VERBOSE = false;
+    private static final boolean VERBOSE = true;
+    private static final long MAX_PROGRESS_REPORT_INTERVAL_DEFAULT = 5000;
     private final ExoPlayer player;
     private final Handler eventHandler;
     private MediaMuxerControl mediaMuxerControl;
@@ -24,12 +25,17 @@ public class CompressionProgressListener implements Runnable {
     private double progressPerSecond;
     private float minReportedChange = 0.03f; // 3%
     private long progressMeasurementPeriod;
+    private long maxProgressReportingIntervalMillis = MAX_PROGRESS_REPORT_INTERVAL_DEFAULT;
 
     public CompressionProgressListener(Handler eventHandler, ExoPlayer player, MediaMuxerControl mediaMuxerControl, ExoPlayerCompression.CompressionListener progressListener) {
         this.player = player;
         this.progressListener = progressListener;
         this.eventHandler = eventHandler;
         this.mediaMuxerControl = mediaMuxerControl;
+    }
+
+    public void setMaxProgressReportingIntervalMillis(long maxProgressReportingIntervalMillis) {
+        this.maxProgressReportingIntervalMillis = maxProgressReportingIntervalMillis;
     }
 
     public void setMinReportedChange(float minReportedChange) {
@@ -70,6 +76,7 @@ public class CompressionProgressListener implements Runnable {
                     progressMeasurementPeriod = (long) Math.rint(minReportedChange / progressPerSecond);
                     progressMeasurementPeriod = Math.max(500, progressMeasurementPeriod);
                 }
+                progressMeasurementPeriod = Math.min(maxProgressReportingIntervalMillis, progressMeasurementPeriod); // never report progress at intervals exceeding x milliseconds
                 eventHandler.postDelayed(this, progressMeasurementPeriod);
             }
         }

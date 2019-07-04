@@ -58,6 +58,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     private Queue<Long> framesQueuedInEncoder = new LinkedList<>();
     private boolean codecNeedsInit = true;
     private HandlerThread ht = new HandlerThread("surface callbacks handler");
+    private boolean processedSourceDataDuringRender;
 
     public VideoTrackMuxerCompressionRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify, MediaMuxerControl mediaMuxerControl, ExoPlayerCompression.VideoCompressionParameters compressionSettings) {
         super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
@@ -129,7 +130,6 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     @Override
     protected void onQueueInputBuffer(DecoderInputBuffer buffer) {
         sampleTimeSizeMap.put(buffer.timeUs, buffer.data.remaining());
-        mediaMuxerControl.markDataRead();
         super.onQueueInputBuffer(buffer);
     }
 
@@ -219,16 +219,22 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
 
     @Override
     protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) throws ExoPlaybackException {
-        if (mediaMuxerControl.isVideoConfigured() && !mediaMuxerControl.isConfigured()) {
-            return false;
-        }
-        if (mediaMuxerControl.isHasAudio() && mediaMuxerControl.hasVideoDataQueued()) {
-            if (bufferPresentationTimeUs > positionUs + compressionSettings.getMaxInterleavingIntervalUs()) {
-                Log.e(TAG, "Video Processor - Giving up render to audio at position " + positionUs);
+        try {
+            if (mediaMuxerControl.isVideoConfigured() && !mediaMuxerControl.isConfigured()) {
+                Log.e(TAG, "Video Processor - deferring render until mediamuxer is configured: position " + positionUs);
                 return false;
             }
+            if (mediaMuxerControl.isHasAudio() && mediaMuxerControl.hasVideoDataQueued()) {
+                if (mediaMuxerControl.getAndResetIsSourceDataRead() && bufferPresentationTimeUs > positionUs + compressionSettings.getMaxInterleavingIntervalUs()) {
+                    Log.e(TAG, "Video Processor - Giving up render to audio at position " + positionUs);
+                    return false;
+                }
+            }
+        } catch (RuntimeException e) {
+            throw ExoPlaybackException.createForRenderer(e, getIndex());
         }
-        return super.processOutputBuffer(positionUs, elapsedRealtimeUs, codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs, shouldSkip && compressionSettings.isAllowSkippingFrames());
+        processedSourceDataDuringRender |= super.processOutputBuffer(positionUs, elapsedRealtimeUs, codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs, shouldSkip && compressionSettings.isAllowSkippingFrames());
+        return processedSourceDataDuringRender;
     }
 
 
@@ -311,6 +317,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
 
     @Override
     public void render(long positionUs, long elapsedRealtimeUs) throws ExoPlaybackException {
+        processedSourceDataDuringRender = false;
         if (isEnded()) {
             return;
         }
@@ -332,6 +339,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
                 Log.d(TAG, "Extractor and decoder have already ended! Nothing to do for position : " + positionUs);
             }
         }
+        mediaMuxerControl.markDataRead(processedSourceDataDuringRender);
     }
 
     private boolean processEncoderOutput() {
@@ -442,7 +450,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             encodedDataBuffer = encoder.getOutputBuffer(encoderOutputBufferId);
         }
-        if (encodedDataBuffer == null && encoderOutputBufferId == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
+        if (encodedDataBuffer == null && encoderOutputBufferId >= 0) {
             ByteBuffer[] encoderOutputBuffers = encoder.getOutputBuffers();
             encodedDataBuffer = encoderOutputBuffers[encoderOutputBufferId];
             if (VERBOSE) {

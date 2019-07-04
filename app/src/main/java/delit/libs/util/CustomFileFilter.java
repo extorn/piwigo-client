@@ -32,7 +32,7 @@ public class CustomFileFilter implements FileFilter {
             return false;
         }
         MimeTypeMap map = MimeTypeMap.getSingleton();
-        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(pathname.getName()));
+        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(pathname.getName()).toLowerCase());
         if (mimeType == null || !mimeType.startsWith("video/") || !allowVideosToExceedLimit) {
             return isFilesizeMatch(pathname);
         }

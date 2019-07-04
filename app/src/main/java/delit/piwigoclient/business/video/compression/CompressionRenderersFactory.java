@@ -58,7 +58,7 @@ public class CompressionRenderersFactory extends DefaultRenderersFactory {
     @Override
     protected void buildAudioRenderers(Context context, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, AudioProcessor[] audioProcessors, Handler eventHandler, AudioRendererEventListener eventListener, int extensionRendererMode, ArrayList<Renderer> out) {
         if (compressionParameters.isAddAudioTrack()) {
-            out.add(new AudioTrackMuxerPassthroughRenderer(context,
+            out.add(new AudioTrackMuxerCompressionRenderer(context,
                     MediaCodecSelector.DEFAULT,
                     drmSessionManager,
                     false,

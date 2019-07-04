@@ -203,11 +203,26 @@ public abstract class UIHelper<T> {
         showDetailedMsg(titleResId, message, Toast.LENGTH_LONG);
     }
 
-    public synchronized void showDetailedMsg(@StringRes int titleResId, String message, int duration) {
-        QueuedSimpleMessage newItem = new QueuedSimpleMessage(titleResId, message, duration);
+    public void showDetailedMsg(@StringRes int titleResId, String message, int duration, int id) {
+        QueuedSimpleMessage msg = new QueuedSimpleMessage(titleResId, message, duration);
+        msg.setId(id);
+        showDetailedMsg(msg);
+    }
+
+    public void showDetailedMsg(@StringRes int titleResId, String message, int duration) {
+        QueuedSimpleMessage msg = new QueuedSimpleMessage(titleResId, message, duration);
+        showDetailedMsg(msg);
+    }
+
+    private synchronized void showDetailedMsg(QueuedSimpleMessage newItem) {
         if(!toastShowing) {
             // do this here in case the queue is already full (will only occur if there is a bug in the display logic really).
             showQueuedMsg();
+        }
+        if (newItem.id >= 0) {
+            if (!simpleMessageQueue.isEmpty()) {
+                simpleMessageQueue.remove(newItem);
+            }
         }
         if(!simpleMessageQueue.contains(newItem)) {
             try {
@@ -1100,6 +1115,7 @@ public abstract class UIHelper<T> {
     }
 
     private static class QueuedSimpleMessage implements Parcelable {
+        private int id = -1;
         private final int duration;
         private final int titleResId;
         private final String message;
@@ -1114,8 +1130,12 @@ public abstract class UIHelper<T> {
             duration = in.readInt();
             titleResId = in.readInt();
             message = in.readString();
+            id = in.readInt();
         }
 
+        public void setId(int id) {
+            this.id = id;
+        }
 
         public static final Creator<QueuedSimpleMessage> CREATOR = new Creator<QueuedSimpleMessage>() {
             @Override
@@ -1139,6 +1159,7 @@ public abstract class UIHelper<T> {
             dest.writeInt(duration);
             dest.writeInt(titleResId);
             dest.writeString(message);
+            dest.writeInt(id);
         }
 
         public int getSnackbarDuration() {
@@ -1156,7 +1177,7 @@ public abstract class UIHelper<T> {
                 return false;
             }
             QueuedSimpleMessage other = (QueuedSimpleMessage) obj;
-            return duration == other.duration && titleResId == other.titleResId && ObjectUtils.areEqual(message, other.message);
+            return (id >= 0 && id == other.id) || (duration == other.duration && titleResId == other.titleResId && ObjectUtils.areEqual(message, other.message));
         }
     }
 

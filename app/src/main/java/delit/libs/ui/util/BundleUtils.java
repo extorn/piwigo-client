@@ -6,6 +6,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
@@ -41,14 +43,28 @@ public class BundleUtils {
     }
 
     public static HashSet<String> getStringHashSet(Bundle bundle, String key) {
+        return getStringSet(bundle, key, null);
+    }
+
+    /**
+     * @param bundle
+     * @param key
+     * @param dest   Set to insert the data into
+     * @param <T>    Set type
+     * @return T if dest is not null, HashSet if destination set is null and key is in the bundle, otherwise null
+     */
+    public static @Nullable
+    <T extends Set<String>> T getStringSet(Bundle bundle, String key, @Nullable T dest) {
         try {
             ArrayList<String> data = bundle.getStringArrayList(key);
-            HashSet<String> retVal = null;
+            Set<String> retVal = dest;
             if (data != null) {
-                retVal = new HashSet<>(data.size());
+                if (retVal == null) {
+                    retVal = new HashSet<>(data.size());
+                }
                 retVal.addAll(data);
             }
-            return retVal;
+            return (T) retVal;
         } catch (RuntimeException e) {
             Crashlytics.logException(e);
             return null;

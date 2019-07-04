@@ -245,6 +245,15 @@
                     android:paddingStart="20dp"
                     android:paddingEnd="20dp">
 
+                    <CheckBox
+                        android:id="@+id/allow_upload_of_incompressible_videos_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="9dp"
+                        android:text="@string/allow_upload_of_incompressible_videos" />
+
                     <TextView
                         android:id="@+id/compress_videos_quality_label"
                         android:layout_width="match_parent"

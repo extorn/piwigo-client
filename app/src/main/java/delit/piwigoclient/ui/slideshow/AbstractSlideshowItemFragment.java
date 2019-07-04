@@ -830,7 +830,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         MimeTypeMap map = MimeTypeMap.getSingleton();
         String ext = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(downloadedFile).toString());
-        String mimeType = map.getMimeTypeFromExtension(ext);
+        String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
         intent.setType(mimeType);
         ArrayList<Uri> files = new ArrayList<>(1);
         files.add(uri);
@@ -857,7 +857,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 Uri selectedUri = Uri.fromFile(downloadedFile);
                 MimeTypeMap map = MimeTypeMap.getSingleton();
                 String ext = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
-                String mimeType = map.getMimeTypeFromExtension(ext);
+                String mimeType = map.getMimeTypeFromExtension(ext.toLowerCase());
                 //notificationIntent.setDataAndType(selectedUri, mimeType);
 
                 Uri apkURI = FileProvider.getUriForFile(

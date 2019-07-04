@@ -38,6 +38,8 @@
     <string name="preference_server_connection_retries_title">Verbindungsversuche vor dem Ausfall</string>
     <string name="preference_server_connection_retries_summary">%1$d</string>
 
+    <string name="preference_server_response_timeout_secs_title">Response timeout (seconds)</string>
+    <string name="preference_server_response_timeout_secs_summary">%1$d seconds</string>
 
     <string name="preference_server_basic_auth_username_title">Basic Authentication Benutzername</string>
 
@@ -233,9 +235,10 @@
     <!-- Data Upload page -->
 
     <string name="preference_page_upload">Hochladen</string>
-    <string name="preference_connections_category_data_upload_display">Visuelle Einstellungen</string>
-    <string name="preference_connections_category_data_upload">Daten-Upload</string>
-    <string name="preference_connections_category_pre_data_upload_compression">Komprimierung vor dem Hochladen</string>
+    <string name="preference_upload_category_data_upload_display">Visuelle Einstellungen</string>
+    <string name="preference_upload_category_data_upload">Daten-Upload</string>
+    <string name="preference_upload_category_pre_data_upload_compression">Komprimierung vor dem Hochladen</string>
+    <string name="preference_upload_category_advanced">Advanced</string>
 
     <!-- prefs -->
 

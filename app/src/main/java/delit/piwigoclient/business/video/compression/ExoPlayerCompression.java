@@ -186,10 +186,19 @@ public class ExoPlayerCompression {
 
     public static class AudioCompressionParameters {
 
+        private int bitRate = 128000;
         private final long maxInterleavingIntervalUs;
 
         public AudioCompressionParameters(final long maxInterleavingIntervalUs) {
             this.maxInterleavingIntervalUs = maxInterleavingIntervalUs;
+        }
+
+        public int getBitRate() {
+            return bitRate;
+        }
+
+        public void setBitRate(int bitRate) {
+            this.bitRate = bitRate;
         }
 
         public long getMaxInterleavingIntervalUs() {
@@ -337,6 +346,10 @@ public class ExoPlayerCompression {
 
         public AudioCompressionParameters getAudioCompressionParameters() {
             return audioCompressionParameters;
+        }
+
+        public String getOutputFileMimeType() {
+            return "video/mp4";
         }
     }
 

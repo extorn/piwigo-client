@@ -1,9 +1,12 @@
 package delit.piwigoclient.piwigoApi.upload;
 
 import android.content.Context;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.annotation.IntRange;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.io.File;
 import java.io.Serializable;
@@ -26,6 +29,7 @@ import delit.piwigoclient.model.piwigo.ResourceItem;
 
 public class UploadJob implements Serializable {
 
+    private static final String TAG = "UploadJob";
     public static final Integer COMPRESSED = 8; // file has been compressed successfully.
 
     public static final Integer CANCELLED = -1; // file has been removed from the upload job
@@ -37,10 +41,11 @@ public class UploadJob implements Serializable {
     public static final Integer REQUIRES_DELETE = 5; // user cancels upload after file partially uploaded
     public static final Integer DELETED = 6; // file has been deleted from the server
     public static final Integer CORRUPT = 7; // (moves to this state if verification fails)
-    private static final long serialVersionUID = -9200565400491814263L;
+    private static final long serialVersionUID = 4656324080491399638L;
     private final long jobId;
     private final long responseHandlerId;
     private final ArrayList<File> filesForUpload;
+    private HashMap<File, File> compressedFilesMap;
     private final HashMap<File, Integer> fileUploadStatus;
     private final HashMap<File, PartialUploadData> filePartialUploadProgress;
     private final ArrayList<Long> uploadToCategoryParentage;
@@ -60,6 +65,7 @@ public class UploadJob implements Serializable {
     private transient boolean wasLastRunCancelled;
     private VideoCompressionParams videoCompressionParams;
     private ImageCompressionParams imageCompressionParams;
+    private boolean allowUploadOfRawVideosIfIncompressible;
 
     public UploadJob(ConnectionPreferences.ProfilePreferences connectionPrefs, long jobId, long responseHandlerId, ArrayList<File> filesForUpload, CategoryItemStub destinationCategory, byte uploadedFilePrivacyLevel) {
         this.jobId = jobId;
@@ -71,6 +77,7 @@ public class UploadJob implements Serializable {
         this.filesForUpload = new ArrayList<>(filesForUpload);
         this.fileUploadStatus = new HashMap<>(filesForUpload.size());
         this.filePartialUploadProgress = new HashMap<>(filesForUpload.size());
+        this.compressedFilesMap = new HashMap<>();
     }
 
     public void setToRunInBackground() {
@@ -164,6 +171,9 @@ public class UploadJob implements Serializable {
         return getFilesWithStatus(PENDING_APPROVAL);
     }
 
+    public synchronized boolean isUploadProcessNotYetStarted(File fileForUpload) {
+        return null == fileUploadStatus.get(fileForUpload);
+    }
 
     public synchronized boolean needsVerification(File fileForUpload) {
         return UPLOADED.equals(fileUploadStatus.get(fileForUpload));
@@ -501,13 +511,13 @@ public class UploadJob implements Serializable {
 
     public boolean isVideo(File file) {
         MimeTypeMap map = MimeTypeMap.getSingleton();
-        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(file.getName()));
+        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(file.getName()).toLowerCase());
         return mimeType != null && mimeType.startsWith("video/");
     }
 
     public boolean isPhoto(File file) {
         MimeTypeMap map = MimeTypeMap.getSingleton();
-        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(file.getName()));
+        String mimeType = map.getMimeTypeFromExtension(IOUtils.getFileExt(file.getName()).toLowerCase());
         return mimeType != null && mimeType.startsWith("image/");
     }
 
@@ -529,25 +539,41 @@ public class UploadJob implements Serializable {
         return videoFilesToCompress;
     }
 
-    public File getCompressedFile(Context c, File f) {
-        return new File(getCompressedVideosFolder(c), f.getName());
+    public File addCompressedFile(Context c, File rawFileForUpload, String compressedMimeType) {
+        File compressedFile = new File(getCompressedFilesFolder(c), rawFileForUpload.getName());
+        compressedFile = IOUtils.changeFileExt(compressedFile, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressedMimeType));
+        if (compressedFilesMap == null) {
+            compressedFilesMap = new HashMap<>();
+        }
+        compressedFilesMap.put(rawFileForUpload, compressedFile);
+        return compressedFile;
     }
 
-    private File getCompressedVideosFolder(Context c) {
+    public File getCompressedFile(File rawFileForUpload) {
+        if (compressedFilesMap == null) {
+            return null;
+        }
+        return compressedFilesMap.get(rawFileForUpload);
+    }
+
+    private File getCompressedFilesFolder(Context c) {
         File f = new File(c.getExternalCacheDir(), "compressed_vids_for_upload");
         if (!f.exists()) {
-            f.mkdirs();
+            if (!f.mkdirs()) {
+                Crashlytics.log(Log.ERROR, TAG, "Unable to create folder for comrepessed files to be placed");
+            }
         }
         return f;
     }
 
     public boolean canCompressVideoFile(File rawVideo) {
-        String fileExt = IOUtils.getFileExt(rawVideo.getName());
-        if (fileExt == null) {
-            return false;
-        }
-        fileExt = fileExt.toLowerCase();
-        return fileExt.equals("mp4");
+//        String fileExt = IOUtils.getFileExt(rawVideo.getName());
+//        if (fileExt == null) {
+//            return false;
+//        }
+//        fileExt = fileExt.toLowerCase();
+//        return fileExt.equals("mp4");
+        return true;
     }
 
     public void clearCancelUploadAsapFlag() {
@@ -583,6 +609,14 @@ public class UploadJob implements Serializable {
 
     public void setVideoCompressionParams(VideoCompressionParams videoCompressionParams) {
         this.videoCompressionParams = videoCompressionParams;
+    }
+
+    public boolean isAllowUploadOfRawVideosIfIncompressible() {
+        return allowUploadOfRawVideosIfIncompressible;
+    }
+
+    public void setAllowUploadOfRawVideosIfIncompressible(boolean allowUploadOfRawVideosIfIncompressible) {
+        this.allowUploadOfRawVideosIfIncompressible = allowUploadOfRawVideosIfIncompressible;
     }
 
     protected static class PartialUploadData implements Serializable {
