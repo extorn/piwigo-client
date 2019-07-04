@@ -59,6 +59,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
     private boolean codecNeedsInit = true;
     private HandlerThread ht = new HandlerThread("surface callbacks handler");
     private boolean processedSourceDataDuringRender;
+    private int steppedWithoutActionCount;
 
     public VideoTrackMuxerCompressionRenderer(Context context, MediaCodecSelector mediaCodecSelector, long allowedJoiningTimeMs, @Nullable DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, boolean playClearSamplesWithoutKeys, @Nullable Handler eventHandler, @Nullable VideoRendererEventListener eventListener, int maxDroppedFramesToNotify, MediaMuxerControl mediaMuxerControl, ExoPlayerCompression.VideoCompressionParameters compressionSettings) {
         super(context, mediaCodecSelector, allowedJoiningTimeMs, drmSessionManager, playClearSamplesWithoutKeys, eventHandler, eventListener, maxDroppedFramesToNotify);
@@ -219,21 +220,26 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
 
     @Override
     protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec codec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) throws ExoPlaybackException {
+        steppedWithoutActionCount = 0;
         try {
             if (mediaMuxerControl.isVideoConfigured() && !mediaMuxerControl.isConfigured()) {
-                Log.e(TAG, "Video Processor - deferring render until mediamuxer is configured: position " + positionUs);
+                if (VERBOSE) {
+                    Log.e(TAG, "Video Processor - deferring render until mediamuxer is configured: position " + positionUs);
+                }
                 return false;
             }
             if (mediaMuxerControl.isHasAudio() && mediaMuxerControl.hasVideoDataQueued()) {
                 if (mediaMuxerControl.getAndResetIsSourceDataRead() && bufferPresentationTimeUs > positionUs + compressionSettings.getMaxInterleavingIntervalUs()) {
-                    Log.e(TAG, "Video Processor - Giving up render to audio at position " + positionUs);
+                    if (VERBOSE) {
+                        Log.e(TAG, "Video Processor - Giving up render to audio at position " + positionUs);
+                    }
                     return false;
                 }
             }
         } catch (RuntimeException e) {
             throw ExoPlaybackException.createForRenderer(e, getIndex());
         }
-        processedSourceDataDuringRender |= super.processOutputBuffer(positionUs, elapsedRealtimeUs, codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs, shouldSkip && compressionSettings.isAllowSkippingFrames());
+        processedSourceDataDuringRender = super.processOutputBuffer(positionUs, elapsedRealtimeUs, codec, buffer, bufferIndex, bufferFlags, bufferPresentationTimeUs, shouldSkip && compressionSettings.isAllowSkippingFrames());
         return processedSourceDataDuringRender;
     }
 
@@ -317,6 +323,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
 
     @Override
     public void render(long positionUs, long elapsedRealtimeUs) throws ExoPlaybackException {
+        steppedWithoutActionCount++;
         processedSourceDataDuringRender = false;
         if (isEnded()) {
             return;
@@ -340,6 +347,13 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
             }
         }
         mediaMuxerControl.markDataRead(processedSourceDataDuringRender);
+        boolean lastRendererReadDatasource = mediaMuxerControl.getAndResetIsSourceDataRead();
+        if (steppedWithoutActionCount > 300) {
+            if (!lastRendererReadDatasource) {
+                // Compression has crashed. Why?!
+                throw ExoPlaybackException.createForRenderer(new Exception("Compression got stuck for some reason - stopping"), getIndex());
+            }
+        }
     }
 
     private boolean processEncoderOutput() {

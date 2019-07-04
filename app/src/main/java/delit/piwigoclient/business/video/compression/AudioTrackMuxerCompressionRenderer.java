@@ -202,11 +202,11 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
 //        this.renderPositionUs = positionUs;
         super.render(positionUs, elapsedRealtimeUs);
         mediaMuxerControl.markDataRead(processedSourceDataDuringRender);
-        if (steppedWithoutActionCount > 10) {
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        boolean lastRendererReadDatasource = mediaMuxerControl.getAndResetIsSourceDataRead();
+        if (steppedWithoutActionCount > 300) {
+            if (!lastRendererReadDatasource) {
+                // Compression has crashed. Why?!
+                throw ExoPlaybackException.createForRenderer(new Exception("Compression got stuck for some reason - stopping"), getIndex());
             }
         }
     }
@@ -229,12 +229,16 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
     protected boolean processOutputBuffer(long positionUs, long elapsedRealtimeUs, MediaCodec streamDecoderCodec, ByteBuffer buffer, int bufferIndex, int bufferFlags, long bufferPresentationTimeUs, boolean shouldSkip) throws ExoPlaybackException {
         steppedWithoutActionCount = 0;
         if (mediaMuxerControl.isVideoConfigured() && !mediaMuxerControl.isConfigured()) {
-            Log.e(TAG, "Audio Processor - deferring render until mediamuxer is configured: position " + positionUs + " bufferIdx : " + bufferIndex);
+            if (VERBOSE) {
+                Log.e(TAG, "Audio Processor - deferring render until mediamuxer is configured: position " + positionUs + " bufferIdx : " + bufferIndex);
+            }
             return false;
         }
         if (mediaMuxerControl.getAndResetIsSourceDataRead() && mediaMuxerControl.isHasVideo() && mediaMuxerControl.hasAudioDataQueued()) {
             if (bufferPresentationTimeUs > positionUs + compressionSettings.getMaxInterleavingIntervalUs()) {
-                Log.e(TAG, "Audio Processor - Giving up render to video at position " + positionUs + " bufferIdx : " + bufferIndex);
+                if (VERBOSE) {
+                    Log.e(TAG, "Audio Processor - Giving up render to video at position " + positionUs + " bufferIdx : " + bufferIndex);
+                }
                 return false;
             }
             // this will essentially block the reading of data because it will allow all the input buffers on the decoder to fill and prevent them emptying.
