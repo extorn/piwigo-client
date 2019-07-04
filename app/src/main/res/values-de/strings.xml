@@ -605,5 +605,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="bought_time_menu_title_pattern">Anzeigen in %1$02d:%2$02d</string>
     <string name="allow_upload_of_incompressible_videos">Upload raw file if unable to compress</string>
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">The server will not accept %1$d files selected for upload. If these are videos, you could enable compression. Remove these files from the upload?</string>
+    <string name="upload_status_tab_title_details">Details</string>
+    <string name="upload_status_tab_title_errors">Fehler</string>
 </resources>
 

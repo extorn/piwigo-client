@@ -430,19 +430,14 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (filesForUpload.isEmpty()) {
                 return;
             }
+            ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
+            compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(((double) compressVideosQualitySpinner.getSelectedItemId()) / 1000);
+
             File inputVideo = filesForUpload.get(0);
             File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
             File outputVideo = new File(moviesFolder, "compressed_" + inputVideo.getName());
-            /*try*/
-            {
-                //TODO this compressor is very basic - need to use my own.
-//                new YPrestoCompressor().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()));
-                ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
-                compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(((double) compressVideosQualitySpinner.getSelectedItemId()) / 1000);
-                new ExoPlayerCompression().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()), compressionSettings);
-            } /*catch (IOException e) {
-                getUiHelper().showDetailedMsg(R.string.alert_error, "Error compressing video " + e.getMessage());
-            }*/
+            outputVideo = IOUtils.changeFileExt(outputVideo, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressionSettings.getOutputFileMimeType()));
+            new ExoPlayerCompression().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()), compressionSettings);
         }
     }
 

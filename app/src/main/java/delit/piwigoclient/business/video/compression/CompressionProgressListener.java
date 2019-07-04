@@ -15,7 +15,7 @@ import com.google.android.exoplayer2.Timeline;
 public class CompressionProgressListener implements Runnable {
 
     private static final String TAG = "CompressionListener";
-    private static final boolean VERBOSE = true;
+    private static final boolean VERBOSE = false;
     private static final long MAX_PROGRESS_REPORT_INTERVAL_DEFAULT = 5000;
     private final ExoPlayer player;
     private final Handler eventHandler;

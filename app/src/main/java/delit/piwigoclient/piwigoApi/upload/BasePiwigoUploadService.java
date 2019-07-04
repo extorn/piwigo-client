@@ -1036,7 +1036,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
     protected File getCompressedVersionOfFileToUpload(UploadJob uploadJob, File fileForUpload) {
         File compressedFile = uploadJob.getCompressedFile(fileForUpload);
-        if (compressedFile.exists() && !uploadJob.isFileCompressed(fileForUpload)) {
+        if (compressedFile != null && compressedFile.exists() && !uploadJob.isFileCompressed(fileForUpload)) {
             if (!compressedFile.delete()) { // the compression failed - delete file and allow restart
                 onFileDeleteFailed(tag, compressedFile, "compressed file - pre upload");
             }

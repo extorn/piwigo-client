@@ -268,10 +268,14 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
 
         boolean bufferRead = processDecodedAudioData(buffer, bufferFlags, bufferPresentationTimeUs);
         if (bufferRead) {
-            Log.d(TAG, "Releasing output buffer " + bufferIndex);
+            if (VERBOSE) {
+                Log.d(TAG, "Releasing output buffer " + bufferIndex);
+            }
             streamDecoderCodec.releaseOutputBuffer(bufferIndex, false);
         } else {
-            Log.e(TAG, "Not releasing output buffer " + bufferIndex);
+            if (VERBOSE) {
+                Log.e(TAG, "Not releasing output buffer " + bufferIndex);
+            }
         }
         return bufferRead;
     }
