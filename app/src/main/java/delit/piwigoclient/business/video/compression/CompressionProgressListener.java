@@ -21,11 +21,11 @@ public class CompressionProgressListener implements Runnable {
     private final Handler eventHandler;
     private MediaMuxerControl mediaMuxerControl;
     private ExoPlayerCompression.CompressionListener progressListener;
-    private double compressionProgress;
+    private double lastReportedCompressionProgress;
     private double progressPerSecond;
     private float minReportedChange = 0.03f; // 3%
-    private long progressMeasurementPeriod;
     private long maxProgressReportingIntervalMillis = MAX_PROGRESS_REPORT_INTERVAL_DEFAULT;
+    private long millisSinceLastReport;
 
     public CompressionProgressListener(Handler eventHandler, ExoPlayer player, MediaMuxerControl mediaMuxerControl, ExoPlayerCompression.CompressionListener progressListener) {
         this.player = player;
@@ -66,33 +66,52 @@ public class CompressionProgressListener implements Runnable {
         eventHandler.removeCallbacks(this);
 
         if (!mediaMuxerControl.isFinished()) {
-            withProgress(C.usToMs(durationUs));
+            double currentProgress = mediaMuxerControl.getOverallProgress();
+
+            withProgress(C.usToMs(durationUs), currentProgress);
+
 
             int playbackState = player == null ? Player.STATE_IDLE : player.getPlaybackState();
             if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_ENDED) {
-                if (progressMeasurementPeriod == 0) {
-                    progressMeasurementPeriod = 1000; // presume it takes a second to achieve something useful
-                } else {
-                    progressMeasurementPeriod = (long) Math.rint(minReportedChange / progressPerSecond);
-                    progressMeasurementPeriod = Math.max(500, progressMeasurementPeriod);
-                }
-                progressMeasurementPeriod = Math.min(maxProgressReportingIntervalMillis, progressMeasurementPeriod); // never report progress at intervals exceeding x milliseconds
+
+                long progressMeasurementPeriod = getDelayUntilNextProgressCheck(currentProgress);
+                millisSinceLastReport += progressMeasurementPeriod;
                 eventHandler.postDelayed(this, progressMeasurementPeriod);
             }
         }
     }
 
-    private void withProgress(long durationMs) {
-        double progress = mediaMuxerControl.getOverallProgress();
-        if (progressMeasurementPeriod > 0) {
-            progressPerSecond = (progress - compressionProgress) / progressMeasurementPeriod;
+    private long getDelayUntilNextProgressCheck(double currentProgress) {
+        long progressMeasurementPeriod = maxProgressReportingIntervalMillis;
+
+        if (currentProgress < minReportedChange) {
+            // update twice a second.
+            progressMeasurementPeriod = 500;
+        } else {
+            if (progressPerSecond > 0f) {
+                progressMeasurementPeriod = (long) Math.rint(minReportedChange / progressPerSecond);
+                progressMeasurementPeriod = Math.max(500, progressMeasurementPeriod);
+                // adjust to try and ensure the end isn't missed by a long way.
+                long estRemaining = Math.max(0, (long) Math.rint(((double) 1 - currentProgress) * (progressPerSecond / 1000)) - 1000);
+                progressMeasurementPeriod = Math.min(progressMeasurementPeriod, estRemaining);
+            }
+            // update at a sensible rate
+            progressMeasurementPeriod = Math.min(maxProgressReportingIntervalMillis, progressMeasurementPeriod); // never report progress at intervals exceeding x milliseconds
+        }
+        return progressMeasurementPeriod;
+    }
+
+    private void withProgress(long durationMs, double progress) {
+        if (millisSinceLastReport > 0) {
+            progressPerSecond = (progress - lastReportedCompressionProgress) / millisSinceLastReport;
         }
         if (VERBOSE) {
             Log.d(TAG, String.format("%1$02f%%", 100 * progress));
         }
-        if (progress - compressionProgress > minReportedChange || progress + 0.00001 > 1 || mediaMuxerControl.isFinished()) {
-            compressionProgress = progress;
-            progressListener.onCompressionProgress(100 * compressionProgress, durationMs);
+        if (progress < minReportedChange || progress - lastReportedCompressionProgress > minReportedChange || progress + minReportedChange > 1 || mediaMuxerControl.isFinished()) {
+            lastReportedCompressionProgress = progress;
+            millisSinceLastReport = 0;
+            progressListener.onCompressionProgress(100 * lastReportedCompressionProgress, durationMs);
         }
     }
 
