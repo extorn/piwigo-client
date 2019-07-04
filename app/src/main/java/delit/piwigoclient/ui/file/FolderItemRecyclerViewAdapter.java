@@ -104,7 +104,7 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
         }
 
         activeFolder = newContent;
-        getSelectedItemIds().clear();
+        getSelectedItemIds().clear(); // need to clear selection since position in list is used as unique item id
         File[] folderContent = activeFolder.listFiles(getAdapterPrefs().getFileFilter());
         currentDisplayContent = folderContent != null ? ArrayUtils.toArrayList(folderContent) : new ArrayList<File>(0);
         currentVisibleFileExts = getUniqueFileExtsInFolder(currentDisplayContent);

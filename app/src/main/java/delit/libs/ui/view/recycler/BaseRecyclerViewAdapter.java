@@ -122,6 +122,11 @@ public abstract class BaseRecyclerViewAdapter<V extends BaseRecyclerViewAdapterP
         } else {
             holder.redisplayOldValues(getContext(), newItem, prefs.isAllowItemDeletion());
         }
+        try {
+            holder.setChecked(isItemSelected(getItemId(position)));
+        } catch (UnsupportedOperationException e) {
+            // this is fine. Clearly selection is not wished for.
+        }
     }
 
     protected Context getContext() {
