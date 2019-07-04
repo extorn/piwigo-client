@@ -10,7 +10,6 @@ import androidx.annotation.StringRes;
 
 import delit.libs.ui.util.DisplayUtils;
 import delit.piwigoclient.R;
-import delit.piwigoclient.piwigoApi.upload.UploadJob;
 
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
@@ -45,6 +44,7 @@ public class UploadPreferences {
     public static int getUploadChunkMaxRetries(Context context, SharedPreferences prefs) {
         return getInt(context, prefs, R.string.preference_data_upload_chunk_auto_retries_key, R.integer.preference_data_upload_chunk_auto_retries_default);
     }
+/*
 
     public static UploadJob.VideoCompressionParams getVideoCompressionParams(Context context, SharedPreferences prefs) {
         UploadJob.VideoCompressionParams params = new UploadJob.VideoCompressionParams();
@@ -58,6 +58,7 @@ public class UploadPreferences {
         params.setOutputFormat(getImageCompressionOutputFormat(context, prefs));
         return params;
     }
+*/
 
     public static double getVideoCompressionQuality(Context context, SharedPreferences prefs) {
         return ((double) getInt(context, prefs, R.string.preference_data_upload_compress_videos_quality_key, R.integer.preference_data_upload_compress_videos_quality_default)) / 1000;

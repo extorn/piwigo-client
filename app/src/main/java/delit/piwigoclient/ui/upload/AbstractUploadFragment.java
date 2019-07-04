@@ -733,8 +733,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (compressImagesCheckbox.isChecked()) {
                 UploadJob.ImageCompressionParams imageCompParams = new UploadJob.ImageCompressionParams();
                 imageCompParams.setOutputFormat(compressImagesOutputFormatSpinner.getSelectedItem().toString());
-                imageCompParams.setQuality(UploadPreferences.getImageCompressionQuality(getContext(), getPrefs())); //TODO use the user value instead!!!!
                 imageCompParams.setQuality(compressImagesNumberPicker.getValue());
+//                imageCompParams.setMaxHeight(compressImagesMaxHeightNumberPicker.getValue());
+//                imageCompParams.setMaxWidth(compressImagesMaxWidthNumberPicker.getValue());
                 activeJob.setImageCompressionParams(imageCompParams);
             }
         }

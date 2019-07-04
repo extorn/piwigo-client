@@ -677,10 +677,12 @@ public class UploadJob implements Serializable {
     }
 
     public static class ImageCompressionParams implements Serializable {
-        private static final long serialVersionUID = 5917397481875872085L;
+        private static final long serialVersionUID = -646493907951140373L;
         private String outputFormat;
         private @IntRange(from = 0, to = 100)
         int quality;
+        private int maxWidth = -1;
+        private int maxHeight = -1;
 
         public ImageCompressionParams() {
         }
@@ -699,6 +701,22 @@ public class UploadJob implements Serializable {
 
         public void setOutputFormat(String outputFormat) {
             this.outputFormat = outputFormat;
+        }
+
+        public int getMaxHeight() {
+            return maxHeight;
+        }
+
+        public void setMaxHeight(int maxHeight) {
+            this.maxHeight = maxHeight;
+        }
+
+        public int getMaxWidth() {
+            return maxWidth;
+        }
+
+        public void setMaxWidth(int maxWidth) {
+            this.maxWidth = maxWidth;
         }
     }
 

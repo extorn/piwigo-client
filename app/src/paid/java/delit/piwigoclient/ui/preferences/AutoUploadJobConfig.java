@@ -234,6 +234,8 @@ public class AutoUploadJobConfig implements Parcelable {
             UploadJob.ImageCompressionParams params = new UploadJob.ImageCompressionParams();
             params.setOutputFormat(getImageCompressionOutputFormat(c));
             params.setQuality(getImageCompressionQuality(c));
+//            params.setMaxHeight(getImageCompressionMaxHeight(c));
+//            params.setMaxWidth(getImageCompressionMaxWidth(c));
             return params;
         }
         return null;

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -853,7 +854,8 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         File outputPhoto = null;
 
         try {
-            String format = uploadJob.getImageCompressionParams().getOutputFormat();
+            UploadJob.ImageCompressionParams compressionParams = uploadJob.getImageCompressionParams();
+            String format = compressionParams.getOutputFormat();
             Bitmap.CompressFormat outputFormat;
             if ("jpeg".equals(format)) {
                 outputFormat = Bitmap.CompressFormat.JPEG;
@@ -867,11 +869,30 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
 
             outputPhoto = uploadJob.addCompressedFile(this, rawImage, "image/" + format);
 
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(rawImage.getAbsolutePath(), options);
+            int imgWidth = options.outWidth;
+            int imgHeight = options.outHeight;
+
+            int maxWidth = compressionParams.getMaxWidth();
+            int maxHeight = compressionParams.getMaxHeight();
+
+            if (maxWidth < 0) {
+                maxWidth = imgWidth;
+            }
+            if (maxHeight < 0) {
+                maxHeight = imgHeight;
+            }
+
             outputPhoto = new Compressor(this)
+                    .setMaxHeight(maxHeight)
+                    .setMaxWidth(maxWidth)
                     .setQuality(uploadJob.getImageCompressionParams().getQuality())
                     .setCompressFormat(outputFormat)
                     .setDestinationDirectoryPath(outputPhoto.getParent())
                     .compressToFile(rawImage, outputPhoto.getName());
+
             if (outputFormat == Bitmap.CompressFormat.JPEG) {
                 ExifInterface originalExifData = new ExifInterface(rawImage.getAbsolutePath());
                 ExifInterface newExifData = new ExifInterface(outputPhoto.getAbsolutePath());
