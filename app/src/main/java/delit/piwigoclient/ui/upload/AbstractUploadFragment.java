@@ -300,7 +300,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 ArrayUtils.getLongArray(getResources().getIntArray(R.array.preference_data_upload_compress_videos_quality_values)));
         videoQualityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         compressVideosQualitySpinner.setAdapter(videoQualityAdapter);
-        setSpinnerSelectedItem(compressVideosQualitySpinner, UploadPreferences.getVideoCompressionQuality(getContext(), getPrefs()));
+        int compressionQualitySetting = UploadPreferences.getVideoCompressionQualityOption(getContext(), getPrefs());
+        compressVideosQualitySpinner.setSelection(((BiArrayAdapter) compressVideosQualitySpinner.getAdapter()).getPosition(compressionQualitySetting));
 
 
         compressVideosCheckbox = view.findViewById(R.id.compress_videos_button);

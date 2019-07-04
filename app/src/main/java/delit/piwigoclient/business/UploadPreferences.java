@@ -63,6 +63,10 @@ public class UploadPreferences {
         return ((double) getInt(context, prefs, R.string.preference_data_upload_compress_videos_quality_key, R.integer.preference_data_upload_compress_videos_quality_default)) / 1000;
     }
 
+    public static int getVideoCompressionQualityOption(Context context, SharedPreferences prefs) {
+        return getInt(context, prefs, R.string.preference_data_upload_compress_videos_quality_key, R.integer.preference_data_upload_compress_videos_quality_default);
+    }
+
     public static boolean isCompressVideosByDefault(Context context, SharedPreferences prefs) {
         return getBoolean(context, prefs, R.string.preference_data_upload_compress_videos_key, R.bool.preference_data_upload_compress_videos_default);
     }
