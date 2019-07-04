@@ -109,6 +109,20 @@
         @integer/preference_data_upload_compress_images_quality_default
     </integer>
 
+    <string name="preference_data_upload_automatic_job_compress_images_max_height_title" translatable="false">@string/preference_data_upload_compress_images_max_height_title</string>
+    <string name="preference_data_upload_automatic_job_compress_images_max_height_summary" translatable="false">@string/preference_data_upload_compress_images_max_height_summary</string>
+    <string name="preference_data_upload_automatic_job_compress_images_max_height_key" translatable="false">preference_data_upload_automatic_job_compress_images_max_height</string>
+    <integer name="preference_data_upload_automatic_job_compress_images_max_height_default">
+        @integer/preference_data_upload_compress_images_max_height_default
+    </integer>
+
+    <string name="preference_data_upload_automatic_job_compress_images_max_width_title" translatable="false">@string/preference_data_upload_compress_images_max_width_title</string>
+    <string name="preference_data_upload_automatic_job_compress_images_max_width_summary" translatable="false">@string/preference_data_upload_compress_images_max_width_summary</string>
+    <string name="preference_data_upload_automatic_job_compress_images_max_width_key" translatable="false">preference_data_upload_automatic_job_compress_images_max_width</string>
+    <integer name="preference_data_upload_automatic_job_compress_images_max_width_default">
+        @integer/preference_data_upload_compress_images_max_width_default
+    </integer>
+
     <string name="preference_data_upload_automatic_job_compress_images_output_format_title" translatable="false">@string/preference_data_upload_compress_images_output_format_title</string>
     <string name="preference_data_upload_automatic_job_compress_images_output_format_summary" translatable="false">@string/preference_data_upload_compress_images_output_format_summary</string>
     <string name="preference_data_upload_automatic_job_compress_images_output_format_key" translatable="false">preference_data_upload_automatic_job_compress_images_output_format</string>

@@ -280,6 +280,12 @@
     <string name="preference_data_upload_compress_images_quality_title">Bildqualität</string>
     <string name="preference_data_upload_compress_images_quality_summary">Qualität der Bildkompression %1$s</string>
 
+    <string name="preference_data_upload_compress_images_max_height_title">Maximale Höhe</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">Maximale Höhe (%1$s Pixel)</string>
+
+    <string name="preference_data_upload_compress_images_max_width_title">Maximale Breite</string>
+    <string name="preference_data_upload_compress_images_max_width_summary">Maximale Breite (%1$s Pixel)</string>
+
     <string name="preference_data_upload_compress_images_output_format_title">Bildausgabeformat</string>
     <string name="preference_data_upload_compress_images_output_format_summary">Ausgabeformat für die Bildkompression %1$s</string>
 

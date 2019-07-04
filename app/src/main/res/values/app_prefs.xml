@@ -344,6 +344,16 @@
     <string name="preference_data_upload_compress_images_quality_key" translatable="false">preference_data_upload_compress_images_quality</string>
     <integer name="preference_data_upload_compress_images_quality_default">70</integer>
 
+    <string name="preference_data_upload_compress_images_max_height_title">Max Height</string>
+    <string name="preference_data_upload_compress_images_max_height_summary">Max height (%1$s pixels)</string>
+    <string name="preference_data_upload_compress_images_max_height_key" translatable="false">preference_data_upload_compress_images_max_height</string>
+    <integer name="preference_data_upload_compress_images_max_height_default">1024</integer>
+
+    <string name="preference_data_upload_compress_images_max_width_title">Max Width</string>
+    <string name="preference_data_upload_compress_images_max_width_summary">Max width (%1$s pixels)</string>
+    <string name="preference_data_upload_compress_images_max_width_key" translatable="false">preference_data_upload_compress_images_max_width</string>
+    <integer name="preference_data_upload_compress_images_max_width_default">768</integer>
+
     <string name="preference_data_upload_compress_images_output_format_title">Image Output Format</string>
     <string name="preference_data_upload_compress_images_output_format_summary">Image compression output format %1$s</string>
     <string name="preference_data_upload_compress_images_output_format_key" translatable="false">preference_data_upload_compress_images_output_format</string>
