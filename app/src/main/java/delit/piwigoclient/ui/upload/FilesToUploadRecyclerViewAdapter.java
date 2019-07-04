@@ -101,8 +101,6 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
         final ProgressInfo progressInfo = uploadProgressModel.get(position);
 
-        View itemView = holder.mView;
-
         // Configure the progress bar (upload progress)
 
         if (progressInfo != null) {
@@ -118,20 +116,20 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                     holder.itemHeading.setText(getFileSizeStr(progressInfo.fileBeingUploaded));
                 }
             }
+            // Now we've updated the progress bar, we can return, no need to reload the remainder of the fields as they won't have altered.
+            if (holder.getOldPosition() < 0 && holder.mItem != null && progressInfo.isForItem(holder.mItem)) {
+                return;
+            }
+
+            // store the item in this recyclable holder.
+            holder.mItem = progressInfo.rawFile;
+
         } else {
             holder.progressBar.setVisibility(View.GONE);
             holder.progressBar.setIndeterminate(false);
             holder.progressBar.setProgress(0);
             holder.progressBar.setSecondaryProgress(0);
         }
-
-        // Now we've updated the progress bar, we can return, no need to reload the remainder of the fields as they won't have altered.
-        if (holder.getOldPosition() < 0 && holder.mItem != null && progressInfo.isForItem(holder.mItem)) {
-            return;
-        }
-
-        // store the item in this recyclable holder.
-        holder.mItem = progressInfo.rawFile;
 
         // configure the filename field
         holder.fileNameField.setText(holder.mItem.getName());
@@ -269,7 +267,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
          * @param filesForUpload
          * @return List of all files that were not already present
          */
-        public ArrayList addAll(List<File> filesForUpload) {
+        public ArrayList<File> addAll(List<File> filesForUpload) {
             ArrayList<File> newFiles = new ArrayList<>(filesForUpload);
             newFiles.removeAll(filesToUpload);
             filesToUpload.addAll(newFiles);
@@ -280,7 +278,9 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         }
 
         public long getItemUid(int position) {
-            return progressDetails.get(filesToUpload.get(position)).uid;
+            File fileToUpload = filesToUpload.get(position);
+            ProgressInfo info = progressDetails.get(fileToUpload);
+            return info != null ? info.uid : -1;
         }
 
         public void remove(File item) {
@@ -315,7 +315,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
             } else {
                 // we're uploading a compressed file (need to hunt for the original file (Slow but not hundreds of compressed files I hope!)
                 for (ProgressInfo item : progressDetails.values()) {
-                    if (fileBeingUploaded.equals(item.fileBeingUploaded)) {
+                    if (item.fileBeingUploaded.equals(fileBeingUploaded)) {
                         progress = item;
                         break;
                     }
@@ -323,7 +323,8 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
                 if (progress != null) {
                     progress.uploadProgress = percentageComplete;
                 } else {
-                    Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + fileBeingUploaded == null ? null : fileBeingUploaded.getAbsolutePath());
+                    String filename = fileBeingUploaded == null ? null : fileBeingUploaded.getAbsolutePath();
+                    Crashlytics.log(Log.ERROR, TAG, "Unable to locate upload progress object for file : " + filename);
                 }
             }
         }
