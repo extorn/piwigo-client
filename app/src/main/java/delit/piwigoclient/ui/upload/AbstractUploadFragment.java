@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -369,20 +370,21 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         });
 
-//        if (BuildConfig.DEBUG) {
-//            Button compressVideosButton = new Button(getContext());
-//            compressVideosButton.setText("Compress");
-//            compressVideosButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    compressVideos();
-//                }
-//            });
-//            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-//            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
-//            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-//            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
-//        }
+        if (BuildConfig.DEBUG) {
+            Button compressVideosButton = new Button(getContext());
+            compressVideosButton.setText("Compress");
+            compressVideosButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.setEnabled(false);
+                    compressVideos(v);
+                }
+            });
+            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
+            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
+        }
 
         if (savedInstanceState != null) {
             // update view with saved data
@@ -420,7 +422,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
 
-    private void compressVideos() {
+    private void compressVideos(View linkedView) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             getUiHelper().showDetailedMsg(R.string.alert_error, "Video Compression not supported on this version of android");
         } else {
@@ -436,7 +438,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
             File outputVideo = new File(moviesFolder, "compressed_" + inputVideo.getName());
             outputVideo = IOUtils.changeFileExt(outputVideo, MimeTypeMap.getSingleton().getExtensionFromMimeType(compressionSettings.getOutputFileMimeType()));
-            new ExoPlayerCompression().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper()), compressionSettings);
+            new ExoPlayerCompression().invokeFileCompression(getContext(), inputVideo, outputVideo, new DebugCompressionListener(getUiHelper(), linkedView), compressionSettings);
         }
     }
 
@@ -1084,14 +1086,16 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         private final UIHelper uiHelper;
         private final SimpleDateFormat strFormat;
         private long startCompressionAt;
+        private View linkedView;
 
         {
             strFormat = new SimpleDateFormat("HH:mm:ss");
             strFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         }
 
-        public DebugCompressionListener(UIHelper uiHelper) {
+        public DebugCompressionListener(UIHelper uiHelper, View linkedView) {
             this.uiHelper = uiHelper;
+            this.linkedView = linkedView;
         }
 
         @Override
@@ -1103,11 +1107,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         @Override
         public void onCompressionError(Exception e) {
             uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression failed");
+            linkedView.setEnabled(true);
         }
 
         @Override
         public void onCompressionComplete() {
             uiHelper.showDetailedMsg(R.string.alert_information, "Video Compression finished");
+            linkedView.setEnabled(true);
         }
 
         @Override
