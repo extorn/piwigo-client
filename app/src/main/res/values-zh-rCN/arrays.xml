@@ -12,14 +12,13 @@
         <item>缓存到磁盘</item>
     </string-array>
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>非常低（0.05 b /像素*帧）</item>
-        <item>较低（0.1 b /像素*帧）</item>
-        <item>低（0.4 b /像素*帧）</item>
-        <item>中等（0.7 b /像素*帧）</item>
-        <item>高（1 b /像素*帧）</item>
-        <item>非常高（1.3 b /像素*帧）</item>
-        <item>甚至更高（1.6 b /像素*帧）</item>
-        <item>超高（2 b /像素*帧）</item>
+        <item>非常低（0.025 b /像素*帧）</item>
+        <item>较低（0.05 b /像素*帧）</item>
+        <item>低（0.1 b /像素*帧）</item>
+        <item>中等（0.15 b /像素*帧）</item>
+        <item>高（0.2 b /像素*帧）</item>
+        <item>非常高（0.25 b /像素*帧）</item>
+        <item>超高（0.3 b /像素*帧）</item>
     </string-array>
     <string-array name="preference_gallery_item_slideshow_image_size_array">
         <item>最合适</item>

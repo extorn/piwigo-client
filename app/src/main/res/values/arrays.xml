@@ -8,25 +8,34 @@
     </string-array>
 
     <integer-array name="preference_data_upload_compress_videos_quality_values">
+        <item>25</item>
         <item>50</item>
         <item>100</item>
-        <item>400</item>
-        <item>700</item>
-        <item>1000</item>
-        <item>1300</item>
-        <item>1600</item>
-        <item>2000</item>
+        <item>250</item>
+        <item>200</item>
+        <item>250</item>
+        <item>300</item>
     </integer-array>
 
     <string-array name="preference_data_upload_compress_videos_quality_items">
-        <item>very low (0.05 b/pixels*frame)</item>
-        <item>lower (0.1 b/pixels*frame)</item>
-        <item>low (0.4 b/pixels*frame)</item>
-        <item>medium (0.7 b/pixels*frame)</item>
-        <item>high (1 b/pixels*frame)</item>
-        <item>very high (1.3 b/pixels*frame)</item>
-        <item>even higher (1.6 b/pixels*frame)</item>
-        <item>ultra high (2 b/pixels*frame)</item>
+        <item>very low (0.025 b/pixels*frame)</item>
+        <item>lower (0.05 b/pixels*frame)</item>
+        <item>low (0.1 b/pixels*frame)</item>
+        <item>medium (0.15 b/pixels*frame)</item>
+        <item>high (0.2 b/pixels*frame)</item>
+        <item>very high (0.25 b/pixels*frame)</item>
+        <item>ultra high (0.3 b/pixels*frame)</item>
+    </string-array>
+
+    <string-array name="preference_data_upload_compress_videos_audio_bitrate_items">
+        <item>96kbps</item>
+        <item>128kbps</item>
+        <item>196kbps</item>
+    </string-array>
+    <string-array name="preference_data_upload_compress_videos_audio_bitrate_values">
+        <item>96000</item>
+        <item>128000</item>
+        <item>196000</item>
     </string-array>
 
     <integer-array name="preference_album_subalbum_sort_order_values">

@@ -801,7 +801,10 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         ExoPlayerCompression compressor = new ExoPlayerCompression();
         ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
 
-        compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(uploadJob.getVideoCompressionParams().getQuality());
+        double desiredBitratePerPixelPerSec = uploadJob.getVideoCompressionParams().getQuality();
+        int desiredAudioBitrate = uploadJob.getVideoCompressionParams().getAudioBitrate();
+        compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(desiredBitratePerPixelPerSec);
+        compressionSettings.getAudioCompressionParameters().setBitRate(desiredAudioBitrate);
 
         File outputVideo = uploadJob.addCompressedFile(this, rawVideo, compressionSettings.getOutputFileMimeType());
         UploadFileCompressionListener listener = new UploadFileCompressionListener(this, uploadJob.getJobId(), rawVideo, outputVideo);
@@ -1127,6 +1130,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
                     }
 
                 } else {
+                    deleteCompressedVersionIfExists(thisUploadJob, uploadJobKey);
                     bytesOfDataInChunk = -1;
                 }
             } while (bytesOfDataInChunk >= 0);
@@ -1186,12 +1190,22 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             } else if (verifiedUploadedFile) {
                 thisUploadJob.markFileAsVerified(fileForUpload);
                 postNewResponse(thisUploadJob.getJobId(), new PiwigoUploadProgressUpdateResponse(getNextMessageId(), fileForUpload, thisUploadJob.getUploadProgress(fileForUpload)));
+                deleteCompressedVersionIfExists(thisUploadJob, fileForUpload);
             } else {
                 // the file verification failed - this file is corrupt (needs delete but then re-upload).
                 thisUploadJob.markFileAsCorrupt(fileForUpload);
             }
         } else {
             thisUploadJob.markFileAsNeedsDelete(fileForUpload);
+        }
+    }
+
+    private void deleteCompressedVersionIfExists(UploadJob thisUploadJob, File fileForUpload) {
+        File compressedFile = getCompressedVersionOfFileToUpload(thisUploadJob, fileForUpload);
+        if (compressedFile != null && compressedFile.exists()) {
+            if (!compressedFile.delete()) {
+                onFileDeleteFailed(TAG, compressedFile, "compressed file after upload of file (or upload cancelled)");
+            }
         }
     }
 

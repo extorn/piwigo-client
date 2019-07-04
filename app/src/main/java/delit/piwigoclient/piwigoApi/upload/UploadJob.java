@@ -705,6 +705,7 @@ public class UploadJob implements Serializable {
     public static class VideoCompressionParams implements Serializable {
         private static final long serialVersionUID = -4413899202447516873L;
         private double quality = -1;
+        private int audioBitrate = -1;
 
         public VideoCompressionParams() {
 
@@ -717,6 +718,14 @@ public class UploadJob implements Serializable {
 
         public void setQuality(double quality) {
             this.quality = quality;
+        }
+
+        public int getAudioBitrate() {
+            return audioBitrate;
+        }
+
+        public void setAudioBitrate(int audioBitrate) {
+            this.audioBitrate = audioBitrate;
         }
     }
 }

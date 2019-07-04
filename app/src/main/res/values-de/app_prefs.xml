@@ -271,6 +271,9 @@
     <string name="preference_data_upload_compress_videos_quality_title">Videoqualität</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Videokompressionsqualität %1$s</string>
 
+    <string name="preference_data_upload_compress_videos_audio_bitrate_title">Audio Bitrate</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Audio Bitrate %1$s</string>
+
     <string name="preference_data_upload_compress_images_summary">Bilder vor dem Hochladen komprimieren</string>
     <string name="preference_data_upload_compress_images_title">Bilder komprimieren</string>
 

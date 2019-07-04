@@ -95,6 +95,13 @@
         @integer/preference_data_upload_compress_videos_quality_default
     </integer>
 
+    <string name="preference_data_upload_automatic_job_compress_videos_audio_bitrate_title" translatable="false">@string/preference_data_upload_compress_videos_audio_bitrate_title</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_audio_bitrate_summary" translatable="false">@string/preference_data_upload_compress_videos_audio_bitrate_summary</string>
+    <string name="preference_data_upload_automatic_job_compress_videos_audio_bitrate_key" translatable="false">preference_data_upload_automatic_job_compress_videos_audio_bitrate</string>
+    <integer name="preference_data_upload_automatic_job_compress_videos_audio_bitrate_default">
+        @integer/preference_data_upload_compress_videos_audio_bitrate_default
+    </integer>
+
     <string name="preference_data_upload_automatic_job_compress_images_quality_title" translatable="false">@string/preference_data_upload_compress_images_quality_title</string>
     <string name="preference_data_upload_automatic_job_compress_images_quality_summary" translatable="false">@string/preference_data_upload_compress_images_quality_summary</string>
     <string name="preference_data_upload_automatic_job_compress_images_quality_key" translatable="false">preference_data_upload_automatic_job_compress_images_quality</string>

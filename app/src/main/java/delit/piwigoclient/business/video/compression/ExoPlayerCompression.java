@@ -198,7 +198,9 @@ public class ExoPlayerCompression {
         }
 
         public void setBitRate(int bitRate) {
-            this.bitRate = bitRate;
+            if (bitRate > 0) {
+                this.bitRate = bitRate;
+            }
         }
 
         public long getMaxInterleavingIntervalUs() {
@@ -211,8 +213,8 @@ public class ExoPlayerCompression {
         private int wantedHeightPx = -1;
         private int wantedFrameRate = 30; //30
         private int wantedKeyFrameInterval = 3; // 3 in seconds where 0 is every frame and -1 is only a single key frame
-        private double wantedBitRatePerPixelPerSecond = 0.65;
-        private int wantedBitRateModeV21 = android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR;
+        private double wantedBitRatePerPixelPerSecond = 0.1;
+        private int wantedBitRateModeV21 = BITRATE_MODE_CBR;
         private boolean isAllowSkippingFrames;
         private boolean isHardRotateVideo;
 
@@ -304,8 +306,8 @@ public class ExoPlayerCompression {
             isHardRotateVideo = hardRotateVideo;
         }
 
-        public int getWantedBitRate(int width, int height) {
-            long bitRate = Math.round(width * height * wantedBitRatePerPixelPerSecond);
+        public int getWantedBitRate(int width, int height, int fps) {
+            long bitRate = Math.round(width * height * fps * wantedBitRatePerPixelPerSecond);
             return BigInteger.valueOf(bitRate).intValue();
         }
     }

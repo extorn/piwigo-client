@@ -578,7 +578,7 @@ public class VideoTrackMuxerCompressionRenderer extends MediaCodecVideoRenderer 
         }
         int wantedFrameRate = compressionSettings.getWantedFrameRate();
         int wantedKeyFrameInterval = compressionSettings.getWantedKeyFrameInterval();
-        int wantedBitRate = compressionSettings.getWantedBitRate(wantedWidthPx, inputVideoHeight);
+        int wantedBitRate = compressionSettings.getWantedBitRate(wantedWidthPx, inputVideoHeight, wantedFrameRate);
         int wantedBitRateModeV21 = compressionSettings.getWantedBitRateModeV21();
 
         android.media.MediaCodecInfo encoderCodecInfo = selectEncoderCodec(MIME_TYPE);

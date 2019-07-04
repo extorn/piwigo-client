@@ -113,6 +113,15 @@
             android:title="@string/preference_data_upload_compress_videos_quality_title"
             app:entries="@array/preference_data_upload_compress_videos_quality_items"
             app:entryValues="@array/preference_data_upload_compress_videos_quality_values" />
+        <delit.libs.ui.view.preference.IntListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@integer/preference_data_upload_compress_videos_audio_bitrate_default"
+            android:key="@string/preference_data_upload_compress_videos_audio_bitrate_key"
+            android:summary="@string/preference_data_upload_compress_videos_audio_bitrate_summary"
+            android:title="@string/preference_data_upload_compress_videos_audio_bitrate_title"
+            app:entries="@array/preference_data_upload_compress_videos_audio_bitrate_items"
+            app:entryValues="@array/preference_data_upload_compress_videos_audio_bitrate_values" />
 
     </androidx.preference.PreferenceCategory>
 

@@ -19,13 +19,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import delit.libs.util.CollectionUtils;
+import delit.libs.util.IOUtils;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.piwigoApi.upload.UploadJob;
 import delit.piwigoclient.ui.common.preference.ServerAlbumSelectPreference;
-import delit.libs.util.CollectionUtils;
-import delit.libs.util.IOUtils;
 
 public class AutoUploadJobConfig implements Parcelable {
     private int jobId;
@@ -207,6 +207,10 @@ public class AutoUploadJobConfig implements Parcelable {
         return ((double) getIntValue(c, R.string.preference_data_upload_automatic_job_compress_videos_quality_key, R.integer.preference_data_upload_automatic_job_compress_videos_quality_default)) / 1000;
     }
 
+    private int getVideoCompressionAudioBitrate(Context c) {
+        return getIntValue(c, R.string.preference_data_upload_automatic_job_compress_videos_audio_bitrate_key, R.integer.preference_data_upload_automatic_job_compress_videos_audio_bitrate_default);
+    }
+
     private int getImageCompressionQuality(Context c) {
         return getIntValue(c, R.string.preference_data_upload_automatic_job_compress_images_quality_key, R.integer.preference_data_upload_automatic_job_compress_images_quality_default);
     }
@@ -219,6 +223,7 @@ public class AutoUploadJobConfig implements Parcelable {
         if (isCompressVideosBeforeUpload(c)) {
             UploadJob.VideoCompressionParams params = new UploadJob.VideoCompressionParams();
             params.setQuality(getVideoCompressionQuality(c));
+            params.setAudioBitrate(getVideoCompressionAudioBitrate(c));
             return params;
         }
         return null;

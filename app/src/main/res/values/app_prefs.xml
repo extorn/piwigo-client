@@ -327,7 +327,12 @@
     <string name="preference_data_upload_compress_videos_quality_title">Video Quality</string>
     <string name="preference_data_upload_compress_videos_quality_summary">Video compression quality %1$s</string>
     <string name="preference_data_upload_compress_videos_quality_key" translatable="false">preference_data_upload_compress_videos_quality</string>
-    <integer name="preference_data_upload_compress_videos_quality_default">650</integer>
+    <integer name="preference_data_upload_compress_videos_quality_default">700</integer>
+
+    <string name="preference_data_upload_compress_videos_audio_bitrate_title">Audio Bitrate</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">Audio Bitrate %1$s</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_key" translatable="false">preference_data_upload_compress_videos_audio_bitrate</string>
+    <integer name="preference_data_upload_compress_videos_audio_bitrate_default">128000</integer>
 
     <string name="preference_data_upload_compress_images_key" translatable="false">preference_data_upload_compress_images</string>
     <string name="preference_data_upload_compress_images_summary">Compress images before upload</string>

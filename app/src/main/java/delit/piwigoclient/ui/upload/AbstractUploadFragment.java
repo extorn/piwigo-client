@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -130,6 +131,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private LinearLayout compressImagesSettings;
     private LinearLayout compressVideosSettings;
     private Spinner compressVideosQualitySpinner;
+    private Spinner compressVideosAudioBitrateSpinner;
     private NumberPicker compressImagesNumberPicker;
     private Spinner compressImagesOutputFormatSpinner;
 
@@ -301,8 +303,15 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         videoQualityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         compressVideosQualitySpinner.setAdapter(videoQualityAdapter);
         int compressionQualitySetting = UploadPreferences.getVideoCompressionQualityOption(getContext(), getPrefs());
-        compressVideosQualitySpinner.setSelection(((BiArrayAdapter) compressVideosQualitySpinner.getAdapter()).getPosition(compressionQualitySetting));
+        compressVideosQualitySpinner.setSelection(videoQualityAdapter.getPosition(compressionQualitySetting));
 
+        compressVideosAudioBitrateSpinner = compressVideosSettings.findViewById(R.id.compress_videos_audio_bitrate);
+        BiArrayAdapter<String> audioBitrateAdapter = new BiArrayAdapter<>(getContext(), getResources().getStringArray(R.array.preference_data_upload_compress_videos_audio_bitrate_items),
+                ArrayUtils.getLongArray(getResources().getIntArray(R.array.preference_data_upload_compress_videos_audio_bitrate_values)));
+        audioBitrateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        compressVideosAudioBitrateSpinner.setAdapter(audioBitrateAdapter);
+        int defaultAudioBitrate = UploadPreferences.getVideoCompressionAudioBitrate(getContext(), getPrefs());
+        compressVideosAudioBitrateSpinner.setSelection(audioBitrateAdapter.getPosition(defaultAudioBitrate));
 
         compressVideosCheckbox = view.findViewById(R.id.compress_videos_button);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -370,21 +379,21 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         });
 
-//        if (BuildConfig.DEBUG) {
-//            Button compressVideosButton = new Button(getContext());
-//            compressVideosButton.setText("Compress");
-//            compressVideosButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    v.setEnabled(false);
-//                    compressVideos(v);
-//                }
-//            });
-//            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
-//            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
-//            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
-//            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
-//        }
+        if (BuildConfig.DEBUG) {
+            Button compressVideosButton = new Button(getContext());
+            compressVideosButton.setText("Compress");
+            compressVideosButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.setEnabled(false);
+                    compressVideos(v);
+                }
+            });
+            ConstraintLayout.LayoutParams layoutParams = new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.leftToRight = R.id.view_detailed_upload_status_button;
+            layoutParams.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+            ((ConstraintLayout) uploadFilesNowButton.getParent()).addView(compressVideosButton, layoutParams);
+        }
 
         if (savedInstanceState != null) {
             // update view with saved data
@@ -432,7 +441,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 return;
             }
             ExoPlayerCompression.CompressionParameters compressionSettings = new ExoPlayerCompression.CompressionParameters();
-            compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(((double) compressVideosQualitySpinner.getSelectedItemId()) / 1000);
+            long rawVal = compressVideosQualitySpinner.getSelectedItemId();
+            int audioBitrate = (int) compressVideosAudioBitrateSpinner.getSelectedItemId();
+            double bpps = ((double) rawVal) / 1000;
+            compressionSettings.getVideoCompressionParameters().setWantedBitRatePerPixelPerSecond(bpps);
+            compressionSettings.getAudioCompressionParameters().setBitRate(audioBitrate);
 
             File inputVideo = filesForUpload.get(0);
             File moviesFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
@@ -713,6 +726,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (compressVideosCheckbox.isChecked()) {
                 UploadJob.VideoCompressionParams vidCompParams = new UploadJob.VideoCompressionParams();
                 vidCompParams.setQuality(((double) compressVideosQualitySpinner.getSelectedItemId()) / 1000);
+                vidCompParams.setAudioBitrate((int) compressVideosAudioBitrateSpinner.getSelectedItemId());
                 activeJob.setVideoCompressionParams(vidCompParams);
                 activeJob.setAllowUploadOfRawVideosIfIncompressible(allowUploadOfRawVideosIfIncompressibleCheckbox.isChecked());
             }

@@ -273,6 +273,9 @@
     <string name="preference_data_upload_compress_images_quality_title">画面质量</string>
     <string name="preference_data_upload_compress_images_quality_summary">图像压缩质量 %1$s</string>
 
+    <string name="preference_data_upload_compress_videos_audio_bitrate_title">音频比特率</string>
+    <string name="preference_data_upload_compress_videos_audio_bitrate_summary">音频比特率 %1$s</string>
+
     <string name="preference_data_upload_compress_images_output_format_title">图像输出格式</string>
     <string name="preference_data_upload_compress_images_output_format_summary">图像压缩输出格式 %1$s</string>
 

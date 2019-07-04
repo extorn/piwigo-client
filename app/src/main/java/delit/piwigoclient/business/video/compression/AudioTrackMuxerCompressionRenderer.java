@@ -78,7 +78,8 @@ public class AudioTrackMuxerCompressionRenderer extends MediaCodecAudioRenderer 
 
     protected MediaFormat getOutputMediaFormat(MediaFormat inputMediaFormat) {
         if ("audio/raw".equals(inputMediaFormat.getString(MediaFormat.KEY_MIME))) {
-            MediaFormat mediaFormat = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, inputMediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE), inputMediaFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
+            int audioChannelCount = inputMediaFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT);
+            MediaFormat mediaFormat = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, inputMediaFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE), audioChannelCount);
 
             mediaFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, android.media.MediaCodecInfo.CodecProfileLevel.AACObjectLC);
             mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, compressionSettings.getBitRate());

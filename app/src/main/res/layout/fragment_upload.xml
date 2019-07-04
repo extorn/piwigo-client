@@ -273,6 +273,26 @@
                         android:layout_marginBottom="9dp"
                         android:duplicateParentState="true" />
 
+                    <TextView
+                        android:id="@+id/compress_videos_audio_bitrate_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:labelFor="@id/compress_videos_audio_bitrate"
+                        android:padding="5dp"
+                        android:text="@string/preference_data_upload_compress_videos_audio_bitrate_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <Spinner
+                        android:id="@+id/compress_videos_audio_bitrate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="9dp"
+                        android:duplicateParentState="true" />
+
+
                 </LinearLayout>
 
 
