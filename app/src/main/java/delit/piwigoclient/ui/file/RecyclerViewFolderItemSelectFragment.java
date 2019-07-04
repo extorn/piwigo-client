@@ -174,13 +174,17 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             @Override
             public void onPreFolderOpened(File oldFolder, File newFolder) {
 
-                if (allPossiblyVisibleFileExts != null) {
-                    SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(newFolder);
-                    // add any extra that have come from mime types now visible in this folder.
-                    allPossiblyVisibleFileExts.addAll(fileExtsInFolderMatchingMimeTypesWanted);
-                    // this works because the adapter uses a reference to the same preferences.
-                    getViewPrefs().withVisibleContent(allPossiblyVisibleFileExts, getViewPrefs().getFileSortOrder());
+                if (getViewPrefs().getVisibleFileTypes() != null) {
+                    if (allPossiblyVisibleFileExts == null) {
+                        allPossiblyVisibleFileExts = new HashSet<>(getViewPrefs().getVisibleFileTypes());
+                    }
                 }
+
+                SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(newFolder);
+                // add any extra that have come from mime types now visible in this folder.
+                allPossiblyVisibleFileExts.addAll(fileExtsInFolderMatchingMimeTypesWanted);
+                // this works because the adapter uses a reference to the same preferences.
+                getViewPrefs().withVisibleContent(allPossiblyVisibleFileExts, getViewPrefs().getFileSortOrder());
 
                 if(oldFolder != null) {
                     if (listViewStates == null) {
@@ -215,11 +219,6 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     }
 
     private void buildFileExtFilterControls(File currentFolder) {
-        if (getViewPrefs().getVisibleFileTypes() != null) {
-            if (allPossiblyVisibleFileExts == null) {
-                allPossiblyVisibleFileExts = new HashSet<>(getViewPrefs().getVisibleFileTypes());
-            }
-        }
 
         // initialise local cached set of selected items
         if (selectedVisibleFileExts == null && allPossiblyVisibleFileExts != null) {

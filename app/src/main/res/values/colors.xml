@@ -36,6 +36,10 @@
     <color name="rating_indicator">#FFFFFF00</color>
     <color name="toastFrameBackground">@color/primary_material_light</color>
 
+    <color name="transparent">#00000000</color>
+    <color name="primary_progress">@color/accent_material_light</color>
+    <color name="secondary_progress">@color/accent_material_dark</color>
+
     <color name="foreground">@color/foreground_material_dark</color>
     <color name="accent">@color/accent_material_dark</color>
     <color name="primary">@color/primary_material_dark</color>

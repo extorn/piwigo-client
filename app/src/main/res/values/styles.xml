@@ -91,4 +91,10 @@
         <item name="android:spinnerItemStyle">@style/Custom.Widget.AppCompat.TextView.SpinnerItem</item>
     </style>
 
+    <style name="Custom.Widget.AppCompat.ProgressBar.Horizontal" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:minHeight">5dp</item>
+        <item name="android:maxHeight">5dp</item>
+        <item name="android:progressDrawable">@drawable/progress_horizontal_two_stage</item>
+    </style>
+
 </resources>
