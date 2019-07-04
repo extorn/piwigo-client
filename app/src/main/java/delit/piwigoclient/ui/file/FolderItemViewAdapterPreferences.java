@@ -158,7 +158,7 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
     public SortedSet<String> getVisibleFileTypesForMimes(File folder) {
         SortedSet<String> processedExts = new TreeSet<>();
         SortedSet<String> wantedExts = new TreeSet<>();
-        if (visibleMimeTypes != null) {
+        if (visibleMimeTypes != null && folder.listFiles() != null) {
             for (File f : folder.listFiles()) {
                 String ext = IOUtils.getFileExt(f.getName()).toLowerCase();
                 if (processedExts.add(ext)) { // if we didn't check this ext already

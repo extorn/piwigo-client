@@ -990,7 +990,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if (isHaveUploadedCompressedFile && thisUploadJob.isUploadVerified(fileForUpload)) {
                 // delete the temporarily created compressed file.
                 File compressedVideoFile = thisUploadJob.getCompressedFile(fileForUpload);
-                if (!compressedVideoFile.delete()) {
+                if (compressedVideoFile != null && !compressedVideoFile.delete()) {
                     onFileDeleteFailed(tag, compressedVideoFile, "compressed video - post upload");
                 }
             }

@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import android.widget.TextView;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.widget.TextViewCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -39,6 +39,7 @@ import java.util.SortedSet;
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
 import delit.libs.ui.util.MediaScanner;
+import delit.libs.ui.view.FileBreadcrumbsView;
 import delit.libs.ui.view.FlowLayout;
 import delit.libs.ui.view.list.MappedArrayAdapter;
 import delit.libs.util.IOUtils;
@@ -49,15 +50,14 @@ import delit.piwigoclient.ui.common.fragment.LongSelectableSetSelectFragment;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
 import delit.piwigoclient.ui.events.trackable.FileSelectionCompleteEvent;
 
-import static android.view.View.NO_ID;
-
 public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSelectFragment<FolderItemRecyclerViewAdapter, FolderItemViewAdapterPreferences> implements BackButtonHandler {
+    private static final String TAG = "RVFolderSelFrg";
     private static final String ACTIVE_FOLDER = "RecyclerViewFolderItemSelectFragment.activeFolder";
     private static final String STATE_LIST_VIEW_STATE = "RecyclerViewCategoryItemSelectFragment.listViewStates";
     private static final String STATE_ACTION_START_TIME = "RecyclerViewFolderItemSelectFragment.actionStartTime";
     private static final String STATE_ALL_POSS_VIS_FILE_EXTS = "RecyclerViewFolderItemSelectFragment.allPossVisFileExts";
     private static final String STATE_SELECTED_VIS_FILE_EXTS = "RecyclerViewFolderItemSelectFragment.selectedVisFileExts";
-    private FlowLayout folderPathView;
+    private FileBreadcrumbsView folderPathView;
     private Spinner folderRootFolderSpinner;
     private MappedArrayAdapter<String, File> folderRootsAdapter;
     private long startedActionAtTime;
@@ -141,6 +141,31 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
         });
 
         folderPathView = v.findViewById(R.id.folder_path);
+        folderPathView.setNavigationListener(new FileBreadcrumbsView.NavigationListener() {
+            @Override
+            public void onBreadcrumbClicked(File pathItemFile) {
+                getListAdapter().changeFolderViewed(pathItemFile);
+                if (listViewStates != null) {
+                    Iterator<Map.Entry<String, Parcelable>> iter = listViewStates.entrySet().iterator();
+                    Map.Entry<String, Parcelable> item;
+                    while (iter.hasNext()) {
+                        item = iter.next();
+                        if (item.getKey().equals(pathItemFile.getAbsolutePath())) {
+                            if (getList().getLayoutManager() != null) {
+                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
+                            } else {
+                                Crashlytics.log(Log.WARN, TAG, "Unable to update list as layout manager is null");
+                            }
+                            iter.remove();
+                            while (iter.hasNext()) {
+                                iter.next();
+                                iter.remove();
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         fileExtFilters = v.findViewById(R.id.file_ext_filters);
 
@@ -149,8 +174,13 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             @Override
             public void onPreFolderOpened(File oldFolder, File newFolder) {
 
-                // this works because the adapter uses a reference to the same preferences.
-                getViewPrefs().withVisibleContent(allPossiblyVisibleFileExts, getViewPrefs().getFileSortOrder());
+                if (allPossiblyVisibleFileExts != null) {
+                    SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(newFolder);
+                    // add any extra that have come from mime types now visible in this folder.
+                    allPossiblyVisibleFileExts.addAll(fileExtsInFolderMatchingMimeTypesWanted);
+                    // this works because the adapter uses a reference to the same preferences.
+                    getViewPrefs().withVisibleContent(allPossiblyVisibleFileExts, getViewPrefs().getFileSortOrder());
+                }
 
                 if(oldFolder != null) {
                     if (listViewStates == null) {
@@ -185,10 +215,11 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
     }
 
     private void buildFileExtFilterControls(File currentFolder) {
-        if (allPossiblyVisibleFileExts == null && getViewPrefs().getVisibleFileTypes() != null) {
-            allPossiblyVisibleFileExts = new HashSet<>(getViewPrefs().getVisibleFileTypes());
+        if (getViewPrefs().getVisibleFileTypes() != null) {
+            if (allPossiblyVisibleFileExts == null) {
+                allPossiblyVisibleFileExts = new HashSet<>(getViewPrefs().getVisibleFileTypes());
+            }
         }
-
 
         // initialise local cached set of selected items
         if (selectedVisibleFileExts == null && allPossiblyVisibleFileExts != null) {
@@ -247,66 +278,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
             folderRootFolderSpinner.setSelection(folderRootsAdapter.getPosition(item), false);
         }
 
-        File f = newFolder;
-        folderPathView.removeAllViews();
-
-
-        ArrayList<File> pathItems = new ArrayList<>();
-        while (!f.getName().isEmpty()) {
-            pathItems.add(0, f);
-            f = f.getParentFile();
-        }
-        TextView pathItem = null;
-        int idx = 0;
-
-        int paddingPx = DisplayUtils.dpToPx(getContext(), 3);
-
-        for(final File pathItemFile : pathItems) {
-            idx++;
-            int lastId = NO_ID;
-            if(pathItem != null) {
-                lastId = pathItem.getId();
-            }
-            pathItem = new TextView(getContext());
-            pathItem.setId(View.generateViewId());
-            TextViewCompat.setTextAppearance(pathItem, R.style.Custom_TextAppearance_AppCompat_Body2_Clickable);
-            pathItem.setPaddingRelative(0, 0, 0, 0);
-            pathItem.setText(pathItemFile.getName());
-            folderPathView.addView(pathItem);
-
-            pathItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TextView tv = (TextView) v;
-                    getListAdapter().changeFolderViewed(pathItemFile);
-                    if(listViewStates != null) {
-                        Iterator<Map.Entry<String, Parcelable>> iter = listViewStates.entrySet().iterator();
-                        Map.Entry<String, Parcelable> item;
-                        while (iter.hasNext()) {
-                            item = iter.next();
-                            if (item.getKey().equals(pathItemFile.getAbsolutePath())) {
-                                getList().getLayoutManager().onRestoreInstanceState(item.getValue());
-                                iter.remove();
-                                while (iter.hasNext()) {
-                                    iter.next();
-                                    iter.remove();
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            if(idx < pathItems.size()) {
-                TextView pathItemSeperator = new TextView(getContext());
-                TextViewCompat.setTextAppearance(pathItemSeperator, R.style.TextAppearance_AppCompat_Body2);
-                pathItemSeperator.setText("/");
-                pathItemSeperator.setPaddingRelative(paddingPx, 0, paddingPx, 0);
-                pathItemSeperator.setId(View.generateViewId());
-                folderPathView.addView(pathItemSeperator);
-                pathItem = pathItemSeperator;
-            }
-        }
+        folderPathView.populate(newFolder);
     }
 
     @Override

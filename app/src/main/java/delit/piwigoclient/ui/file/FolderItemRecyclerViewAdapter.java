@@ -82,8 +82,6 @@ public class FolderItemRecyclerViewAdapter extends BaseRecyclerViewAdapter<Folde
     }
 
     public void changeFolderViewed(File newContent) {
-        SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getAdapterPrefs().getVisibleFileTypesForMimes(newContent);
-        getAdapterPrefs().getVisibleFileTypes().addAll(fileExtsInFolderMatchingMimeTypesWanted);
         updateContent(newContent, false);
     }
 

@@ -39,11 +39,13 @@
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"/>
 
-    <delit.libs.ui.view.FlowLayout
+    <delit.libs.ui.view.FileBreadcrumbsView
         android:id="@+id/folder_path"
         android:layout_below="@id/folder_root_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:layout_margin="5dp" />
 
     <delit.libs.ui.view.FlowLayout
@@ -51,6 +53,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/folder_path"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:layout_margin="5dp" />
 
     <androidx.recyclerview.widget.RecyclerView
