@@ -417,7 +417,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         selectedGalleryTextView.setText(uploadToAlbum.getName());
 
-        int columnsToShow = UploadPreferences.getColumnsOfFilesListedForUpload(prefs, getActivity());
+        int columnsToShow = UploadPreferences.getColumnsOfFilesListedForUpload(prefs, requireActivity());
 
         GridLayoutManager gridLayoutMan = new GridLayoutManager(getContext(), columnsToShow);
         filesForUploadView.setLayoutManager(gridLayoutMan);
@@ -1100,11 +1100,13 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                 if (activeJob != null) {
                     activeJob.cancelFileUpload(itemToRemove);
                     fragment.getFilesForUploadViewAdapter().remove(itemToRemove);
-                }
-                int countFilesNeedingServerAction = activeJob.getFilesAwaitingUpload().size();
-                if (countFilesNeedingServerAction == 0) {
-                    // no files left to upload. Lets switch the button from upload to finish
-                    fragment.getUploadFilesNowButton().setText(R.string.upload_files_finish_job_button_title);
+                    int countFilesNeedingServerAction = activeJob.getFilesAwaitingUpload().size();
+                    if (countFilesNeedingServerAction == 0) {
+                        // no files left to upload. Lets switch the button from upload to finish
+                        fragment.getUploadFilesNowButton().setText(R.string.upload_files_finish_job_button_title);
+                    }
+                } else {
+                    Crashlytics.log(Log.ERROR, TAG, "Attempt to alter upload job but it was null");
                 }
             }
         }
@@ -1117,7 +1119,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         private View linkedView;
 
         {
-            strFormat = new SimpleDateFormat("HH:mm:ss");
+            strFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
             strFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         }
 
@@ -1169,9 +1171,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
             if (mediaDurationMs > 0) {
                 double compressionRate = ((double) mediaDurationMs) / elapsedTime;
-                uiHelper.showDetailedMsg(R.string.alert_information, String.format("Video Compression\nrate: %5$.02fx\nprogress: %1$.02f%%\nremaining time: %4$s\nElapsted time: %2$s\nEstimate Finish at: %3$tH:%3$tM:%3$tS", compressionProgress, elapsedCompressionTimeStr, endCompressionAt, remainingTimeStr, compressionRate), Toast.LENGTH_SHORT, 1);
+                uiHelper.showDetailedMsg(R.string.alert_information, String.format(Locale.getDefault(), "Video Compression\nrate: %5$.02fx\nprogress: %1$.02f%%\nremaining time: %4$s\nElapsted time: %2$s\nEstimate Finish at: %3$tH:%3$tM:%3$tS", compressionProgress, elapsedCompressionTimeStr, endCompressionAt, remainingTimeStr, compressionRate), Toast.LENGTH_SHORT, 1);
             } else {
-                uiHelper.showDetailedMsg(R.string.alert_information, String.format("Video Compression\nprogress: %1$.02f%%\nremaining time: %4$s\nElapsted time: %2$s\nEstimate Finish at: %3$tH:%3$tM:%3$tS", compressionProgress, elapsedCompressionTimeStr, endCompressionAt, remainingTimeStr), Toast.LENGTH_SHORT, 1);
+                uiHelper.showDetailedMsg(R.string.alert_information, String.format(Locale.getDefault(), "Video Compression\nprogress: %1$.02f%%\nremaining time: %4$s\nElapsted time: %2$s\nEstimate Finish at: %3$tH:%3$tM:%3$tS", compressionProgress, elapsedCompressionTimeStr, endCompressionAt, remainingTimeStr), Toast.LENGTH_SHORT, 1);
             }
         }
     }

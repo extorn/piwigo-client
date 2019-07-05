@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
+import androidx.annotation.NonNull;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,11 +25,11 @@ public class AlbumViewPreferences {
         }
     }
 
-    public static int getDefaultImagesColumnCount(Activity activity, int screenOrientation) {
+    public static int getDefaultImagesColumnCount(@NonNull Activity activity, int screenOrientation) {
         return DisplayUtils.getDefaultColumnCount(activity, screenOrientation, 1);
     }
 
-    public static int getDefaultAlbumColumnCount(Activity activity, int screenOrientation) {
+    public static int getDefaultAlbumColumnCount(@NonNull Activity activity, int screenOrientation) {
         return DisplayUtils.getDefaultColumnCount(activity, screenOrientation, 2);
     }
 

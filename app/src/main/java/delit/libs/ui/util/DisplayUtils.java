@@ -21,6 +21,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -198,7 +199,7 @@ public class DisplayUtils {
         return (float) dm.heightPixels / dm.xdpi;
     }
 
-    public static int getDefaultColumnCount(Activity activity, int screenOrientation, double minWidthInches) {
+    public static int getDefaultColumnCount(@NonNull Activity activity, int screenOrientation, double minWidthInches) {
 
         float screenWidth;
         if (screenOrientation == getCurrentScreenOrientation(activity)) {

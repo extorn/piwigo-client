@@ -134,7 +134,7 @@ public abstract class MyPreferenceFragment extends PreferenceFragmentCompat impl
     // Not needed from API v23 and above
     public Context getContext() {
         // this is sometimes used before the view is initialised.
-        return getActivity().getApplicationContext();
+        return requireActivity().getApplicationContext();
     }
 
     @Override

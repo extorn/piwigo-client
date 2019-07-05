@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 
 import delit.libs.ui.util.DisplayUtils;
@@ -14,7 +15,7 @@ import delit.piwigoclient.R;
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
 public class UploadPreferences {
-    public static int getColumnsOfFilesListedForUpload(SharedPreferences prefs, Activity activity) {
+    public static int getColumnsOfFilesListedForUpload(@NonNull SharedPreferences prefs, @NonNull Activity activity) {
         int orientation = activity.getResources().getConfiguration().orientation;
         int defaultColums = getDefaultFilesColumnCount(activity, orientation);
         if (orientation == ORIENTATION_PORTRAIT) {

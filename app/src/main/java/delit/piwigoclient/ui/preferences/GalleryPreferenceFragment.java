@@ -85,11 +85,6 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         super(pagerIndex);
     }
 
-    // Not needed from API v23 and above
-    public Context getContext() {
-        return getActivity().getApplicationContext();
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(PermissionsWantedResponse event) {
         if (getUiHelper().completePermissionsWantedRequest(event)) {
@@ -115,19 +110,19 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         // guidelines.
 
         NumberPickerPreference pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_albums_preferredColumnsLandscape_key);
-        int defaultVal = AlbumViewPreferences.getDefaultAlbumColumnCount(getActivity(), Configuration.ORIENTATION_LANDSCAPE);
+        int defaultVal = AlbumViewPreferences.getDefaultAlbumColumnCount(requireActivity(), Configuration.ORIENTATION_LANDSCAPE);
         pref.updateDefaultValue(defaultVal);
 
         pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_images_preferredColumnsLandscape_key);
-        defaultVal = AlbumViewPreferences.getDefaultImagesColumnCount(getActivity(), Configuration.ORIENTATION_LANDSCAPE);
+        defaultVal = AlbumViewPreferences.getDefaultImagesColumnCount(requireActivity(), Configuration.ORIENTATION_LANDSCAPE);
         pref.updateDefaultValue(defaultVal);
 
         pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_albums_preferredColumnsPortrait_key);
-        defaultVal = AlbumViewPreferences.getDefaultAlbumColumnCount(getActivity(), Configuration.ORIENTATION_PORTRAIT);
+        defaultVal = AlbumViewPreferences.getDefaultAlbumColumnCount(requireActivity(), Configuration.ORIENTATION_PORTRAIT);
         pref.updateDefaultValue(defaultVal);
 
         pref = (NumberPickerPreference) findPreference(R.string.preference_gallery_images_preferredColumnsPortrait_key);
-        defaultVal = AlbumViewPreferences.getDefaultImagesColumnCount(getActivity(), Configuration.ORIENTATION_PORTRAIT);
+        defaultVal = AlbumViewPreferences.getDefaultImagesColumnCount(requireActivity(), Configuration.ORIENTATION_PORTRAIT);
         pref.updateDefaultValue(defaultVal);
 
         findPreference(R.string.preference_gallery_album_thumbnail_size_key).setOnPreferenceChangeListener(selectedImageSizeNativeSupportCheckListener);
@@ -139,7 +134,7 @@ public class GalleryPreferenceFragment extends MyPreferenceFragment {
         button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                PicassoFactory.getInstance().clearPicassoCache(getContext().getApplicationContext(), true);
+                PicassoFactory.getInstance().clearPicassoCache(getContext(), true);
                 getUiHelper().showDetailedMsg(R.string.cacheCleared_title, getString(R.string.cacheCleared_message));
                 preference.setTitle(suffixCacheSize(getString(R.string.preference_gallery_clearMemoryCache_title), PicassoFactory.getInstance().getCacheSizeBytes()));
                 return true;
