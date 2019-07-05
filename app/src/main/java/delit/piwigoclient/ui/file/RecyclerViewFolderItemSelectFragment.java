@@ -241,7 +241,7 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                 if (!checked) {
                     updateViewRequired = true;
                     listAdapter.getAdapterPrefs().getVisibleFileTypes().remove(fileExt);
-                } else if (!listAdapter.getAdapterPrefs().getVisibleFileTypes().contains(fileExt)) {
+                } else {
                     listAdapter.getAdapterPrefs().getVisibleFileTypes().add(fileExt);
                 }
                 fileExtFilters.addView(createFileExtFilterControl(fileExt, checked), layoutParams);
