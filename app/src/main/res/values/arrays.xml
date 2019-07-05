@@ -27,16 +27,16 @@
         <item>ultra high (0.3 b/pixels*frame)</item>
     </string-array>
 
-    <string-array name="preference_data_upload_compress_videos_audio_bitrate_items">
+    <string-array name="preference_data_upload_compress_videos_audio_bitrate_items" translatable="false">
         <item>96kbps</item>
         <item>128kbps</item>
         <item>196kbps</item>
     </string-array>
-    <string-array name="preference_data_upload_compress_videos_audio_bitrate_values">
+    <integer-array name="preference_data_upload_compress_videos_audio_bitrate_values">
         <item>96000</item>
         <item>128000</item>
         <item>196000</item>
-    </string-array>
+    </integer-array>
 
     <integer-array name="preference_album_subalbum_sort_order_values">
         <item>0</item>
