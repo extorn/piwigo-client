@@ -343,16 +343,22 @@
     <string name="preference_data_upload_compress_images_quality_summary">Image compression quality %1$s</string>
     <string name="preference_data_upload_compress_images_quality_key" translatable="false">preference_data_upload_compress_images_quality</string>
     <integer name="preference_data_upload_compress_images_quality_default">70</integer>
+    <integer name="preference_data_upload_compress_images_quality_max">100</integer>
+    <integer name="preference_data_upload_compress_images_quality_min">10</integer>
 
     <string name="preference_data_upload_compress_images_max_height_title">Max Height</string>
     <string name="preference_data_upload_compress_images_max_height_summary">Max height (%1$s pixels)</string>
     <string name="preference_data_upload_compress_images_max_height_key" translatable="false">preference_data_upload_compress_images_max_height</string>
     <integer name="preference_data_upload_compress_images_max_height_default">1024</integer>
+    <integer name="preference_data_upload_compress_images_max_height_max">3840</integer>
+    <integer name="preference_data_upload_compress_images_max_height_min">120</integer>
 
     <string name="preference_data_upload_compress_images_max_width_title">Max Width</string>
     <string name="preference_data_upload_compress_images_max_width_summary">Max width (%1$s pixels)</string>
     <string name="preference_data_upload_compress_images_max_width_key" translatable="false">preference_data_upload_compress_images_max_width</string>
     <integer name="preference_data_upload_compress_images_max_width_default">768</integer>
+    <integer name="preference_data_upload_compress_images_max_width_max">3840</integer>
+    <integer name="preference_data_upload_compress_images_max_width_min">120</integer>
 
     <string name="preference_data_upload_compress_images_output_format_title">Image Output Format</string>
     <string name="preference_data_upload_compress_images_output_format_summary">Image compression output format %1$s</string>

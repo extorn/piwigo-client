@@ -225,6 +225,65 @@
                         android:layout_marginBottom="9dp"
                         android:duplicateParentState="true" />
 
+                    <TextView
+                        android:id="@+id/compress_images_max_width_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:labelFor="@id/compress_images_max_width"
+                        android:padding="5dp"
+                        android:text="@string/preference_data_upload_compress_images_max_width_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <NumberPicker
+                        android:id="@+id/compress_images_max_width"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="9dp"
+                        android:duplicateParentState="true" />
+                    <!--<EditText
+                        android:id="@+id/compress_images_max_width"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="9dp"
+                        android:duplicateParentState="true"
+                        android:inputType="number"
+                        android:digits="0123456789"/>-->
+
+                    <TextView
+                        android:id="@+id/compress_images_max_height_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:labelFor="@id/compress_images_max_height"
+                        android:padding="5dp"
+                        android:text="@string/preference_data_upload_compress_images_max_height_title"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <NumberPicker
+                        android:id="@+id/compress_images_max_height"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="9dp"
+                        android:duplicateParentState="true" />
+
+                    <!--<EditText
+                        android:id="@+id/compress_images_max_height"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="9dp"
+                        android:duplicateParentState="true"
+                        android:inputType="number"
+                        android:digits="0123456789"/>-->
+
                 </LinearLayout>
 
                 <CheckBox

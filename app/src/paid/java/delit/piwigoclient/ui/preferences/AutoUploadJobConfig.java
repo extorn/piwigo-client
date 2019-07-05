@@ -215,6 +215,14 @@ public class AutoUploadJobConfig implements Parcelable {
         return getIntValue(c, R.string.preference_data_upload_automatic_job_compress_images_quality_key, R.integer.preference_data_upload_automatic_job_compress_images_quality_default);
     }
 
+    private int getImageCompressionMaxWidth(Context c) {
+        return getIntValue(c, R.string.preference_data_upload_automatic_job_compress_images_max_width_key, R.integer.preference_data_upload_automatic_job_compress_images_max_width_default);
+    }
+
+    private int getImageCompressionMaxHeight(Context c) {
+        return getIntValue(c, R.string.preference_data_upload_automatic_job_compress_images_max_height_key, R.integer.preference_data_upload_automatic_job_compress_images_max_height_default);
+    }
+
     private String getImageCompressionOutputFormat(Context c) {
         return getStringValue(c, R.string.preference_data_upload_automatic_job_compress_images_quality_key, R.string.preference_data_upload_automatic_job_compress_images_output_format_default);
     }
@@ -234,8 +242,8 @@ public class AutoUploadJobConfig implements Parcelable {
             UploadJob.ImageCompressionParams params = new UploadJob.ImageCompressionParams();
             params.setOutputFormat(getImageCompressionOutputFormat(c));
             params.setQuality(getImageCompressionQuality(c));
-//            params.setMaxHeight(getImageCompressionMaxHeight(c));
-//            params.setMaxWidth(getImageCompressionMaxWidth(c));
+            params.setMaxHeight(getImageCompressionMaxHeight(c));
+            params.setMaxWidth(getImageCompressionMaxWidth(c));
             return params;
         }
         return null;

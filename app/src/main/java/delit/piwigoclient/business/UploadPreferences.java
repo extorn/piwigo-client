@@ -84,6 +84,14 @@ public class UploadPreferences {
         return getInt(context, prefs, R.string.preference_data_upload_compress_images_quality_key, R.integer.preference_data_upload_compress_images_quality_default);
     }
 
+    public static int getImageCompressionMaxHeight(Context context, SharedPreferences prefs) {
+        return getInt(context, prefs, R.string.preference_data_upload_compress_images_max_height_key, R.integer.preference_data_upload_compress_images_max_height_default);
+    }
+
+    public static int getImageCompressionMaxWidth(Context context, SharedPreferences prefs) {
+        return getInt(context, prefs, R.string.preference_data_upload_compress_images_max_width_key, R.integer.preference_data_upload_compress_images_max_width_default);
+    }
+
     public static String getImageCompressionOutputFormat(Context context, SharedPreferences prefs) {
         return getString(context, prefs, R.string.preference_data_upload_compress_images_output_format_key, R.string.preference_data_upload_compress_images_output_format_default);
     }

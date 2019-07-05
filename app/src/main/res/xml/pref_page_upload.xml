@@ -79,8 +79,8 @@
             android:summary="@string/preference_data_upload_compress_images_quality_summary"
             android:title="@string/preference_data_upload_compress_images_quality_title"
             app:defValue="@integer/preference_data_upload_compress_images_quality_default"
-            app:maxValue="100"
-            app:minValue="10" />
+            app:maxValue="@integer/preference_data_upload_compress_images_quality_max"
+            app:minValue="@integer/preference_data_upload_compress_images_quality_min" />
         <delit.libs.ui.view.preference.NumberPickerPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -88,8 +88,8 @@
             android:summary="@string/preference_data_upload_compress_images_max_height_summary"
             android:title="@string/preference_data_upload_compress_images_max_height_title"
             app:defValue="@integer/preference_data_upload_compress_images_max_height_default"
-            app:maxValue="3840"
-            app:minValue="120" />
+            app:maxValue="@integer/preference_data_upload_compress_images_max_height_max"
+            app:minValue="@integer/preference_data_upload_compress_images_max_height_min" />
         <delit.libs.ui.view.preference.NumberPickerPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -97,8 +97,8 @@
             android:summary="@string/preference_data_upload_compress_images_max_width_summary"
             android:title="@string/preference_data_upload_compress_images_max_width_title"
             app:defValue="@integer/preference_data_upload_compress_images_max_width_default"
-            app:maxValue="3840"
-            app:minValue="120" />
+            app:maxValue="@integer/preference_data_upload_compress_images_max_width_max"
+            app:minValue="@integer/preference_data_upload_compress_images_max_width_min" />
         <androidx.preference.ListPreference
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

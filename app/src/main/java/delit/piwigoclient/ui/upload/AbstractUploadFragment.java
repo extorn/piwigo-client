@@ -108,6 +108,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private static final String SAVED_STATE_UPLOAD_TO_ALBUM = "uploadToAlbum";
     private static final String SAVED_STATE_UPLOAD_JOB_ID = "uploadJobId";
     private static final String ARG_EXTERNALLY_TRIGGERED_SELECT_FILES_ACTION_ID = "externallyTriggeredSelectFilesActionId";
+    private static final boolean ENABLE_COMPRESSION_BUTTON = false;
 
     private Long uploadJobId;
     private long externallyTriggeredSelectFilesActionId;
@@ -132,8 +133,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     private LinearLayout compressVideosSettings;
     private Spinner compressVideosQualitySpinner;
     private Spinner compressVideosAudioBitrateSpinner;
-    private NumberPicker compressImagesNumberPicker;
+    private NumberPicker compressImagesQualityNumberPicker;
     private Spinner compressImagesOutputFormatSpinner;
+    private NumberPicker compressImagesMaxHeightNumberPicker;
+    private NumberPicker compressImagesMaxWidthNumberPicker;
 
     protected Bundle buildArgs(CategoryItemStub uploadToAlbum, int actionId) {
         Bundle args = new Bundle();
@@ -343,10 +346,20 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
         compressImagesOutputFormatSpinner = compressImagesSettings.findViewById(R.id.compress_images_output_format);
         setSpinnerSelectedItem(compressImagesOutputFormatSpinner, UploadPreferences.getImageCompressionOutputFormat(getContext(), getPrefs()));
 
-        compressImagesNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_quality);
-        compressImagesNumberPicker.setMinValue(10);
-        compressImagesNumberPicker.setMaxValue(100);
-        compressImagesNumberPicker.setValue(UploadPreferences.getImageCompressionQuality(getContext(), getPrefs()));
+        compressImagesQualityNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_quality);
+        compressImagesQualityNumberPicker.setMinValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_quality_min));
+        compressImagesQualityNumberPicker.setMaxValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_quality_max));
+        compressImagesQualityNumberPicker.setValue(UploadPreferences.getImageCompressionQuality(getContext(), getPrefs()));
+
+        compressImagesMaxHeightNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_max_height);
+        compressImagesMaxHeightNumberPicker.setMinValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_height_min));
+        compressImagesMaxHeightNumberPicker.setMaxValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_height_max));
+        compressImagesMaxHeightNumberPicker.setValue(UploadPreferences.getImageCompressionMaxHeight(getContext(), getPrefs()));
+
+        compressImagesMaxWidthNumberPicker = compressImagesSettings.findViewById(R.id.compress_images_max_width);
+        compressImagesMaxWidthNumberPicker.setMinValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_width_min));
+        compressImagesMaxWidthNumberPicker.setMaxValue(getResources().getInteger(R.integer.preference_data_upload_compress_images_max_width_max));
+        compressImagesMaxWidthNumberPicker.setValue(UploadPreferences.getImageCompressionMaxWidth(getContext(), getPrefs()));
 
         compressImagesCheckbox = view.findViewById(R.id.compress_images_button);
         boolean compressPics = UploadPreferences.isCompressImagesByDefault(getContext(), getPrefs());
@@ -379,7 +392,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         });
 
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG && ENABLE_COMPRESSION_BUTTON) {
             Button compressVideosButton = new Button(getContext());
             compressVideosButton.setText("Compress");
             compressVideosButton.setOnClickListener(new View.OnClickListener() {
@@ -733,9 +746,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             if (compressImagesCheckbox.isChecked()) {
                 UploadJob.ImageCompressionParams imageCompParams = new UploadJob.ImageCompressionParams();
                 imageCompParams.setOutputFormat(compressImagesOutputFormatSpinner.getSelectedItem().toString());
-                imageCompParams.setQuality(compressImagesNumberPicker.getValue());
-//                imageCompParams.setMaxHeight(compressImagesMaxHeightNumberPicker.getValue());
-//                imageCompParams.setMaxWidth(compressImagesMaxWidthNumberPicker.getValue());
+                imageCompParams.setQuality(compressImagesQualityNumberPicker.getValue());
+                imageCompParams.setMaxHeight(compressImagesMaxHeightNumberPicker.getValue());
+                imageCompParams.setMaxWidth(compressImagesMaxWidthNumberPicker.getValue());
                 activeJob.setImageCompressionParams(imageCompParams);
             }
         }

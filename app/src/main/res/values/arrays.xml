@@ -239,6 +239,10 @@
                 - TODO Added support for MP3 encoding of the audio stream
                 - TODO Added support for setting the desired bitrate of the audio stream"</item>
                 -->
+        <item>1.4.0.18</item>
+        <item>"Changes and Bugfixes:
+                - Lots of improvements in the area of uploads, file selection, compression settings
+                - new app preferences for configuring both image and video compression"</item>
         <item>1.4.0.17</item>
         <item>"Changes:
                 - Added support for the piwigo.com configuration of the community plug-in - Upload now possible"</item>
