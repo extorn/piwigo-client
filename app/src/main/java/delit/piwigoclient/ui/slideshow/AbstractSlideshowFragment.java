@@ -120,12 +120,12 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         long galleryModelId = getArguments().getLong(ARG_GALLERY_ID);
         int rawCurrentGalleryItemPosition = getArguments().getInt(ARG_GALLERY_ITEM_DISPLAYED);
 
-        ViewModelContainer viewModelContainer = ViewModelProviders.of(getActivity()).get("" + galleryModelId, galleryModelClass);
+        ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
         resourceContainer = viewModelContainer.getModel();
         if (resourceContainer == null) {
             Crashlytics.logException(new Exception("creating slideshow but resource container is null : type = " + galleryModelClass));
             // attempt to get back to a working fragment.
-            getFragmentManager().popBackStack(); //TODO - work out why this is occurring!
+            requireFragmentManager().popBackStack(); //TODO - work out why this is occurring!
             return null;
         }
 
@@ -156,10 +156,10 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
 
         viewPager = view.findViewById(R.id.slideshow_viewpager);
-        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, getContext());
+        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
         shouldShowVideos &= AlbumViewPreferences.isVideoPlaybackEnabled(prefs, getContext());
         if (galleryItemAdapter == null) {
-            galleryItemAdapter = new GalleryItemAdapter<>(resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
+            galleryItemAdapter = new GalleryItemAdapter<>(galleryModelClass, resourceContainer, shouldShowVideos, rawCurrentGalleryItemPosition, getChildFragmentManager());
             galleryItemAdapter.setMaxFragmentsToSaveInState(5); //TODO increase to 15 again once keep PiwigoAlbum model separate to the fragments.
         } else {
             // update settings with newest values.
@@ -183,7 +183,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         super.onViewStateRestored(savedInstanceState);
 
         // overrride the gallery item adapter settings restored with up to date user choices
-        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, getContext());
+        boolean shouldShowVideos = AlbumViewPreferences.isIncludeVideosInSlideshow(prefs, requireContext());
         // update settings with newest values.
         galleryItemAdapter.setShouldShowVideos(shouldShowVideos);
 
@@ -200,13 +200,13 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 reloadSlideshowModel();
             } else {
                 // immediately leave this screen.
-                getFragmentManager().popBackStack();
+                requireFragmentManager().popBackStack();
             }
         }
     }
 
     private void reloadSlideshowModel() {
-        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, getContext());
+        String preferredAlbumThumbnailSize = AlbumViewPreferences.getPreferredAlbumThumbnailSize(prefs, requireContext());
         T album = resourceContainer.getContainerDetails();
         reloadSlideshowModel(album, preferredAlbumThumbnailSize);
     }
@@ -281,11 +281,13 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     public void onEvent(AlbumItemDeletedEvent event) {
         if (resourceContainer.getId() == event.item.getParentId()) {
             GalleryItemAdapter adapter = ((GalleryItemAdapter) viewPager.getAdapter());
-            int fullGalleryIdx = adapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
-            adapter.deleteGalleryItem(fullGalleryIdx);
-            if(adapter.getCount() == 0) {
-                // slideshow is now empty close this page.
-                getFragmentManager().popBackStack();
+            if (adapter != null) {
+                int fullGalleryIdx = adapter.getRawGalleryItemPosition(event.getAlbumResourceItemIdx());
+                adapter.deleteGalleryItem(fullGalleryIdx);
+                if (adapter.getCount() == 0) {
+                    // slideshow is now empty close this page.
+                    requireFragmentManager().popBackStack();
+                }
             }
         }
     }
@@ -304,7 +306,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     private void loadAlbumResourcesPage(int pageToLoad) {
         resourceContainer.acquirePageLoadLock();
         try {
-            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, getContext());
+            int pageSize = AlbumViewPreferences.getResourceRequestPageSize(prefs, requireContext());
             int pageToActuallyLoad = getPageToActuallyLoad(pageToLoad, pageSize);
             if (pageToActuallyLoad < 0) {
                 // the sort order is inverted so we know for a fact this page is invalid.
@@ -315,8 +317,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
                 return;
             }
 
-            String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs,getContext());
-            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
+            String sortOrder = AlbumViewPreferences.getResourceSortOrder(prefs, requireContext());
+            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, requireContext());
 
             long loadingMessageId = invokeResourcePageLoader(resourceContainer, sortOrder, pageToActuallyLoad, pageSize, multimediaExtensionList);
             resourceContainer.recordPageBeingLoaded(addNonBlockingActiveServiceCall(R.string.progress_loading_album_content, loadingMessageId, "loadResources"), pageToActuallyLoad);
@@ -326,7 +328,7 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     }
 
     private int getPageToActuallyLoad(int pageRequested, int pageSize) {
-        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, getContext());
+        boolean invertSortOrder = AlbumViewPreferences.getResourceSortOrderInverted(prefs, requireContext());
         resourceContainer.setRetrieveItemsInReverseOrder(invertSortOrder);
         int pageToActuallyLoad = pageRequested;
         if (invertSortOrder) {
@@ -346,18 +348,18 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
     private static class AlbumLoadResponseAction extends UIHelper.Action<AbstractSlideshowFragment, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse> {
 
         @Override
-        public boolean onSuccess(UIHelper uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
+        public boolean onSuccess(UIHelper<AbstractSlideshowFragment> uiHelper, AlbumGetSubAlbumsResponseHandler.PiwigoGetSubAlbumsResponse response) {
             AbstractSlideshowFragment fragment = getActionParent(uiHelper);
             if (response.getAlbums().isEmpty()) {
                 // will occur if the album no longer exists.
-                fragment.getFragmentManager().popBackStack();
+                fragment.requireFragmentManager().popBackStack();
                 return false;
             }
             CategoryItem currentAlbum = response.getAlbums().get(0);
             if (currentAlbum.getId() != fragment.resourceContainer.getId()) {
                 //Something wierd is going on - this should never happen
                 Crashlytics.log(Log.ERROR, fragment.getTag(), "Closing slideshow - reloaded album had different id to that expected!");
-                fragment.getFragmentManager().popBackStack();
+                fragment.requireFragmentManager().popBackStack();
                 return false;
             }
             fragment.setContainerDetails(new PiwigoAlbum(currentAlbum));
@@ -366,9 +368,9 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         }
 
         @Override
-        public boolean onFailure(UIHelper uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
+        public boolean onFailure(UIHelper<AbstractSlideshowFragment> uiHelper, PiwigoResponseBufferingHandler.ErrorResponse response) {
             AbstractSlideshowFragment fragment = getActionParent(uiHelper);
-            fragment.getFragmentManager().popBackStack();
+            fragment.requireFragmentManager().popBackStack();
             return false;
         }
     }

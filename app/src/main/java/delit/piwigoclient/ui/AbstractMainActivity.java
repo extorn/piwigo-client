@@ -442,7 +442,7 @@ public abstract class AbstractMainActivity<T extends AbstractMainActivity<T>> ex
                     newFragment.setArguments(SlideshowFragment.buildArgs(event.getModelType(), albumOpen, selectedItem));
                 } else if (allowVideoPlayback) {
                     newFragment = new AlbumVideoItemFragment();
-                    newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs((VideoResourceItem) selectedItem, 1, 1, 1, true));
+                    newFragment.setArguments(AlbumVideoItemFragment.buildStandaloneArgs(event.getModelType(), albumOpen.getId(), selectedItem.getId(), 1, 1, 1, true));
                     ((AlbumVideoItemFragment) newFragment).onPageSelected();
                 }
             } else if (selectedItem instanceof PictureResourceItem) {

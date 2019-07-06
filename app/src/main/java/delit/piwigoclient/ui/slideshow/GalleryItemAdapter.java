@@ -26,6 +26,7 @@ import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.VideoResourceItem;
 import delit.piwigoclient.ui.events.SlideshowSizeUpdateEvent;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends ViewPager, P extends SlideshowItemFragment<? extends ResourceItem>> extends MyFragmentRecyclerPagerAdapter<P, S> {
 
@@ -33,10 +34,12 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
     private final List<Integer> galleryResourceItems;
     private boolean shouldShowVideos;
     private ResourceContainer<T, GalleryItem> gallery;
+    private Class<? extends ViewModelContainer> galleryModelClass;
     private HashMap<Long, Integer> cachedItemPositions; // id of item, against Slideshow item's position in slideshow pager
 
-    public GalleryItemAdapter(ResourceContainer<T, GalleryItem> gallery, boolean shouldShowVideos, int selectedItem, FragmentManager fm) {
+    public GalleryItemAdapter(Class<? extends ViewModelContainer> galleryModelClass, ResourceContainer<T, GalleryItem> gallery, boolean shouldShowVideos, int selectedItem, FragmentManager fm) {
         super(fm);
+        this.galleryModelClass = galleryModelClass;
         this.gallery = gallery;
         galleryResourceItems = new ArrayList<>(gallery.getResourcesCount());
         this.shouldShowVideos = shouldShowVideos;
@@ -126,10 +129,10 @@ public class GalleryItemAdapter<T extends Identifiable & Parcelable, S extends V
         GalleryItem galleryItem = gallery.getItemByIdx(galleryResourceItems.get(position));
         int totalSlideshowItems = getTotalSlideshowItems();
         if (galleryItem instanceof PictureResourceItem) {
-            Bundle b = AlbumPictureItemFragment.buildArgs((PictureResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems);
+            Bundle b = AlbumPictureItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItems.size(), totalSlideshowItems);
             item.setArguments(b);
         } else if (galleryItem instanceof VideoResourceItem) {
-            Bundle args = AlbumVideoItemFragment.buildArgs((VideoResourceItem) galleryItem, position, galleryResourceItems.size(), totalSlideshowItems, false);
+            Bundle args = AlbumVideoItemFragment.buildArgs(galleryModelClass, gallery.getId(), galleryItem.getId(), position, galleryResourceItems.size(), totalSlideshowItems, false);
             item.setArguments(args);
         }
         return item;

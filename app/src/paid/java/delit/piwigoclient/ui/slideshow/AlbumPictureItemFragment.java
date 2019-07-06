@@ -17,16 +17,16 @@ import org.greenrobot.eventbus.ThreadMode;
 import delit.libs.ui.view.InlineViewPagerAdapter;
 import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
 import delit.piwigoclient.R;
-import delit.piwigoclient.model.piwigo.PictureResourceItem;
 import delit.piwigoclient.ui.events.ExifDataRetrievedEvent;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
 
     private ViewPager resourceDetailsViewPager;
 
-    public static AlbumPictureItemFragment newInstance(PictureResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
+    public static AlbumPictureItemFragment newInstance(Class<? extends ViewModelContainer> modelType, long albumId, long albumItemId, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         AlbumPictureItemFragment fragment = new AlbumPictureItemFragment();
-        fragment.setArguments(AbstractSlideshowItemFragment.buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount));
+        fragment.setArguments(AbstractSlideshowItemFragment.buildArgs(modelType, albumId, albumItemId, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount));
         return fragment;
     }
 

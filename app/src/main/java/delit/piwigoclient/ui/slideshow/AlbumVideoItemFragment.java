@@ -60,6 +60,7 @@ import delit.piwigoclient.ui.common.FragmentUIHelper;
 import delit.piwigoclient.ui.common.UIHelper;
 import delit.piwigoclient.ui.events.AlbumItemDeletedEvent;
 import delit.piwigoclient.ui.events.trackable.PermissionsWantedResponse;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceItem> {
 
@@ -97,14 +98,14 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
     public AlbumVideoItemFragment() {
     }
 
-    public static Bundle buildStandaloneArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
-        Bundle b = buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay);
+    public static Bundle buildStandaloneArgs(Class<? extends ViewModelContainer> modelType, long albumId, long albumItemId, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
+        Bundle b = buildArgs(modelType, albumId, albumItemId, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount, startPlaybackOnFragmentDisplay);
         b.putBoolean(ARG_AND_STATE_SHOWING_STANDALONE, true);
         return b;
     }
 
-    public static Bundle buildArgs(VideoResourceItem galleryItem, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
-        Bundle args = SlideshowItemFragment.buildArgs(galleryItem, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
+    public static Bundle buildArgs(Class<? extends ViewModelContainer> modelType, long albumId, long albumItemId, int albumResourceItemIdx, int albumResourceItemCount, int totalResourceItemCount, boolean startPlaybackOnFragmentDisplay) {
+        Bundle args = SlideshowItemFragment.buildArgs(modelType, albumId, albumItemId, albumResourceItemIdx, albumResourceItemCount, totalResourceItemCount);
         args.putBoolean(ARG_AND_STATE_VIDEO_PLAY_AUTOMATICALLY, startPlaybackOnFragmentDisplay);
         return args;
     }
@@ -233,7 +234,7 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
 
 
         CustomExoPlayerTouchListener customTouchListener = new CustomExoPlayerTouchListener(simpleExoPlayerView);
-        simpleExoPlayerView.setOnTouchListener(customTouchListener);
+        simpleExoPlayerView.getVideoSurfaceView().setOnTouchListener(customTouchListener);
 
         CustomExoPlayerTimeBar timebar = itemContentView.findViewById(R.id.exo_progress);
         cacheListener.setTimebar(timebar);

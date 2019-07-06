@@ -37,6 +37,7 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -69,6 +70,7 @@ import delit.piwigoclient.model.piwigo.CategoryItem;
 import delit.piwigoclient.model.piwigo.CategoryItemStub;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.PiwigoUtils;
+import delit.piwigoclient.model.piwigo.ResourceContainer;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.BasicPiwigoResponseListener;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -96,6 +98,7 @@ import delit.piwigoclient.ui.events.trackable.AlbumItemActionFinishedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumItemActionStartedEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionCompleteEvent;
 import delit.piwigoclient.ui.events.trackable.AlbumSelectionNeededEvent;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
@@ -108,7 +111,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private static final String TAG = "SlideshowItemFragment";
 
-    private static final String ARG_GALLERY_ITEM = "galleryItem";
+    private static final String ARG_GALLERY_TYPE = "containerModelType";
+    private static final String ARG_GALLERY_ID = "containerId";
+    private static final String ARG_GALLERY_ITEM_ID = "itemId";
     private static final String ARG_AND_STATE_ALBUM_ITEM_IDX = "albumItemIndex";
     private static final String ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT = "albumLoadedResourceItemCount";
     private static final String ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT = "albumTotalResourceItemCount";
@@ -157,9 +162,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
     private ViewVisibleControl overlaysVisibilityControl;
     private TextView resourceTitleView;
 
-    public static <S extends ResourceItem> Bundle buildArgs(S model, int albumItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
+    public static <S extends ResourceItem> Bundle buildArgs(Class<? extends ViewModelContainer> modelType, long albumId, long itemId, int albumItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
         Bundle b = new Bundle();
-        b.putParcelable(ARG_GALLERY_ITEM, model);
+        b.putSerializable(ARG_GALLERY_TYPE, modelType);
+        b.putLong(ARG_GALLERY_ID, albumId);
+        b.putLong(ARG_GALLERY_ITEM_ID, itemId);
         b.putInt(ARG_AND_STATE_ALBUM_ITEM_IDX, albumItemIdx);
         b.putInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT, albumResourceItemCount);
         b.putLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT, totalResourceItemCount);
@@ -250,8 +257,8 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         if (model.isResourceDetailsLikelyOutdated() || model.isLikelyOutdated()) {
             // call this quietly in the background to avoid it ruining the slideshow experience.
-            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, getContext());
-            long messageId = new ImageGetInfoResponseHandler(model, multimediaExtensionList).invokeAsync(getContext());
+            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, requireContext());
+            long messageId = new ImageGetInfoResponseHandler<T>(model, multimediaExtensionList).invokeAsync(getContext());
             getUiHelper().addBackgroundServiceCall(messageId);
         }
     }
@@ -265,7 +272,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if (b == null) {
             return;
         }
-        model = b.getParcelable(ARG_GALLERY_ITEM);
+        Class<? extends ViewModelContainer> galleryModelClass = (Class) b.getSerializable(ARG_GALLERY_TYPE);
+        long galleryModelId = b.getLong(ARG_GALLERY_ID);
+        ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
+        model = ((ResourceContainer<?, T>) viewModelContainer.getModel()).getItemById(b.getLong(ARG_GALLERY_ITEM_ID));
         albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
         albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);
@@ -370,7 +380,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             LayerDrawable layerDrawable = (LayerDrawable) averageRatingsBar.getProgressDrawable();
             Drawable progressDrawable = layerDrawable.findDrawableByLayerId(android.R.id.progress).mutate();
-            progressDrawable.setColorFilter(ContextCompat.getColor(getContext(), R.color.rating_indicator), PorterDuff.Mode.SRC_IN);
+            progressDrawable.setColorFilter(ContextCompat.getColor(requireContext(), R.color.rating_indicator), PorterDuff.Mode.SRC_IN);
         }
         ratingsBar = v.findViewById(R.id.slideshow_image_ratingBar);
 
@@ -384,7 +394,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         bottomSheet = v.findViewById(R.id.slideshow_image_bottom_sheet);
 
-        if(AlbumViewPreferences.isSlideshowExtraInfoShadowTransparent(getPrefs(), getContext())) {
+        if (AlbumViewPreferences.isSlideshowExtraInfoShadowTransparent(getPrefs(), requireContext())) {
             bottomSheet.setShadowDrawable(null);
         }
 
@@ -571,7 +581,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         privacyLevelSpinner = v.findViewById(R.id.privacy_level);
 // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> privacyLevelOptionsAdapter = ArrayAdapter.createFromResource(getContext(),
+        ArrayAdapter<CharSequence> privacyLevelOptionsAdapter = ArrayAdapter.createFromResource(requireContext(),
                 R.array.privacy_levels_groups_array, android.R.layout.simple_spinner_item);
 // Specify the layout to use when the list of choices appears
         privacyLevelOptionsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -729,7 +739,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
     private byte getPrivacyLevelValue() {
         int selectedIdx = privacyLevelSpinner.getSelectedItemPosition();
-        return (byte) getContext().getResources().getIntArray(R.array.privacy_levels_values_array)[selectedIdx];
+        return (byte) requireContext().getResources().getIntArray(R.array.privacy_levels_values_array)[selectedIdx];
     }
 
     private int getPrivacyLevelIndexPositionFromValue(int value) {
@@ -823,9 +833,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
 
         //Send multiple seems essential to allow to work with the other apps. Not clear why.
         Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-        ContentResolver contentResolver = getContext().getContentResolver();
+        ContentResolver contentResolver = requireContext().getContentResolver();
         Uri uri = FileProvider.getUriForFile(
-                getContext(),
+                requireContext(),
                 BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
 
         MimeTypeMap map = MimeTypeMap.getSingleton();
@@ -861,7 +871,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 //notificationIntent.setDataAndType(selectedUri, mimeType);
 
                 Uri apkURI = FileProvider.getUriForFile(
-                        getContext(),
+                        requireContext(),
                         BuildConfig.APPLICATION_ID + ".provider", downloadedFile);
                 notificationIntent.setDataAndType(apkURI, mimeType);
                 notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -871,7 +881,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 }
 
 //        } else {
-                // N.B.this only works with a very select few android apps - folder browsing seeminly isn't a standard thing in android.
+                // N.B.this only works with a very select few android apps - folder browsing seemingly isn't a standard thing in android.
 //            notificationIntent = pkg Intent(Intent.ACTION_VIEW);
 //            Uri selectedUri = Uri.fromFile(downloadedFile.getParentFile());
 //            notificationIntent.setDataAndType(selectedUri, "resource/folder");
@@ -880,7 +890,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
                 PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
                         notificationIntent, 0);
 
-                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getContext(), getUiHelper().getDefaultNotificationChannelId())
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(requireContext(), getUiHelper().getDefaultNotificationChannelId())
                         .setLargeIcon(bitmap)
                         .setContentTitle(getString(R.string.notification_download_event))
                         .setContentText(downloadedFile.getAbsolutePath())
@@ -992,22 +1002,9 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         EventBus.getDefault().post(new AlbumAlteredEvent(response.getAlbumParentIdAltered(), response.getAlbumIdAltered()));
     }
 
-    private static class OnDeleteItemAction extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>> {
-        public OnDeleteItemAction(FragmentUIHelper<AbstractSlideshowItemFragment> uiHelper) {
-            super(uiHelper);
-        }
-
-        @Override
-        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
-            if (Boolean.TRUE == positiveAnswer) {
-                AbstractSlideshowItemFragment fragment = getUiHelper().getParent();
-                ResourceItem model = fragment.getModel();
-                AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
-                getUiHelper().setTrackingRequest(event.getActionId());
-                EventBus.getDefault().post(event);
-                getUiHelper().addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler(model));
-            }
-        }
+    private void onResourceInfoRetrieved(final BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse<T> response) {
+        model = response.getResource();
+        populateResourceExtraFields();
     }
 
     public void onGetResource(final PiwigoResponseBufferingHandler.UrlToFileSuccessResponse response) {
@@ -1068,9 +1065,22 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_image_download_cancelled_message));
     }
 
-    private void onResourceInfoRetrieved(final BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse response) {
-        model = (T) response.getResource();
-        populateResourceExtraFields();
+    private static class OnDeleteItemAction<T extends ResourceItem> extends UIHelper.QuestionResultAdapter<FragmentUIHelper<AbstractSlideshowItemFragment>> {
+        public OnDeleteItemAction(FragmentUIHelper<AbstractSlideshowItemFragment> uiHelper) {
+            super(uiHelper);
+        }
+
+        @Override
+        public void onResult(AlertDialog dialog, Boolean positiveAnswer) {
+            if (Boolean.TRUE == positiveAnswer) {
+                AbstractSlideshowItemFragment<T> fragment = getUiHelper().getParent();
+                T model = fragment.getModel();
+                AlbumItemActionStartedEvent event = new AlbumItemActionStartedEvent(model);
+                getUiHelper().setTrackingRequest(event.getActionId());
+                EventBus.getDefault().post(event);
+                getUiHelper().addActiveServiceCall(R.string.progress_delete_resource, new ImageDeleteResponseHandler<T>(model));
+            }
+        }
     }
 
     protected void populateResourceExtraFields() {

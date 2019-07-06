@@ -64,12 +64,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         super.onDetach();
         EventBus.getDefault().unregister(this);
     }
-/*
-
-    public static Bundle buildArgs(ResourceItem model, long albumResourceItemIdx, long albumResourceItemCount, long totalResourceItemCount) {
-        return SlideshowItemFragment.buildArgs(model, albumResourceItemIdx, albumResourceItemCount,totalResourceItemCount);
-    }
-*/
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -78,8 +72,6 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     }
 
     /**
-     * TODO break this code into two pieces - part to make the view and part that populates it (so we can reuse more of the view) DITTO video fragment.
-     *
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -91,7 +83,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
         imageView = createImageViewer();
 
-        loader = new PicassoLoader(imageView, this);
+        loader = new PicassoLoader<>(imageView, this);
         loader.setUsePlaceholderIfError(true);
 
         imageLoadErrorView = container.findViewById(R.id.image_load_error);
@@ -109,15 +101,14 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     }
 
     protected ImageView createImageViewer() {
-        ImageView imageView = createStaticImageViewer();
-        return imageView;
+        return createStaticImageViewer();
     }
 
     protected ImageView createStaticImageViewer() {
         //        imageView = container.findViewById(R.id.slideshow_image);
         final TouchImageView imageView = new TouchImageView(getContext());
-        imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
-        imageView.setMinimumWidth(DisplayUtils.dpToPx(getContext(), 120));
+        imageView.setMinimumHeight(DisplayUtils.dpToPx(requireContext(), 120));
+        imageView.setMinimumWidth(DisplayUtils.dpToPx(requireContext(), 120));
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
         imageView.setScaleType(ImageView.ScaleType.MATRIX);
@@ -150,8 +141,8 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
     protected ImageView createAnimatedGifViewer() {
         final GifImageView imageView = new GifImageView(getContext());
 
-        imageView.setMinimumHeight(DisplayUtils.dpToPx(getContext(), 120));
-        imageView.setMinimumWidth(DisplayUtils.dpToPx(getContext(), 120));
+        imageView.setMinimumHeight(DisplayUtils.dpToPx(requireContext(), 120));
+        imageView.setMinimumWidth(DisplayUtils.dpToPx(requireContext(), 120));
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
         //TODO allow zooming in on the image.... or scrap all of this and load the gif into the ExoPlayer as a movie (probably better!)
@@ -159,6 +150,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         imageView.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 getOverlaysVisibilityControl().runWithDelay(imageView);
@@ -268,7 +260,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
         PictureResourceItem model = getModel();
         if (currentImageUrlDisplayed == null) {
-            String preferredImageSize = AlbumViewPreferences.getPreferredSlideshowImageSize(prefs, getContext());
+            String preferredImageSize = AlbumViewPreferences.getPreferredSlideshowImageSize(prefs, requireContext());
             for (ResourceItem.ResourceFile rf : model.getAvailableFiles()) {
                 if (rf.getName().equals(preferredImageSize)) {
                     currentImageUrlDisplayed = model.getFileUrl(rf.getName());
@@ -280,7 +272,7 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
                 int appHeight = getView().getRootView().getMeasuredHeight();
                 int appWidth = getView().getRootView().getMeasuredWidth();
                 if(appHeight == 0 || appWidth == 0) {
-                    Point p = DisplayUtils.getRealScreenSize(getContext());
+                    Point p = DisplayUtils.getRealScreenSize(requireContext());
                     appHeight = p.y;
                     appWidth = p.x;
                 }
