@@ -567,13 +567,7 @@ public class UploadJob implements Serializable {
     }
 
     public boolean canCompressVideoFile(File rawVideo) {
-//        String fileExt = IOUtils.getFileExt(rawVideo.getName());
-//        if (fileExt == null) {
-//            return false;
-//        }
-//        fileExt = fileExt.toLowerCase();
-//        return fileExt.equals("mp4");
-        return true;
+        return isVideo(rawVideo);
     }
 
     public void clearCancelUploadAsapFlag() {
