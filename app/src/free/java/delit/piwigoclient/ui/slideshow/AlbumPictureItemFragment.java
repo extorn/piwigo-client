@@ -1,6 +1,6 @@
 package delit.piwigoclient.ui.slideshow;
 
-import delit.piwigoclient.model.piwigo.PictureResourceItem;
+import delit.piwigoclient.ui.model.ViewModelContainer;
 
 public class AlbumPictureItemFragment extends AbstractAlbumPictureItemFragment {
     public static AlbumPictureItemFragment newInstance(Class<? extends ViewModelContainer> modelType, long albumId, long albumItemId, int albumResourceItemIdx, int albumResourceItemCount, long totalResourceItemCount) {
