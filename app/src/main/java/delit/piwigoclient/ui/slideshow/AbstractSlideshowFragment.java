@@ -93,7 +93,6 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 //        // Do nothing. This is handled by the items in the slideshow.
 //    }
 
-
     @Override
     protected String buildPageHeading() {
         return null;
