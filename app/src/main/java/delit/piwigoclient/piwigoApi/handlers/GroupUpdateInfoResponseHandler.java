@@ -10,7 +10,6 @@ import java.util.HashSet;
 
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.piwigo.Group;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
@@ -28,11 +27,7 @@ public class GroupUpdateInfoResponseHandler<T extends ResourceItem> extends Abst
 
     @Override
     public RequestParams buildRequestParameters() {
-        String sessionToken = "";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            sessionToken = sessionDetails.getSessionToken();
-        }
+
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
@@ -44,7 +39,7 @@ public class GroupUpdateInfoResponseHandler<T extends ResourceItem> extends Abst
         if (newGroup.isDefault() != originalGroup.isDefault()) {
             params.put("is_default", String.valueOf(newGroup.isDefault()));
         }
-        params.put("pwg_token", sessionToken);
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 

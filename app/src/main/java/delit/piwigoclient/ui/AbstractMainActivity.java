@@ -69,6 +69,7 @@ import delit.piwigoclient.ui.events.MemoryTrimmedRunningAppEvent;
 import delit.piwigoclient.ui.events.NavigationItemSelectEvent;
 import delit.piwigoclient.ui.events.PiwigoLoginSuccessEvent;
 import delit.piwigoclient.ui.events.SlideshowEmptyEvent;
+import delit.piwigoclient.ui.events.StatusBarChangeEvent;
 import delit.piwigoclient.ui.events.ThemeAlteredEvent;
 import delit.piwigoclient.ui.events.ToolbarEvent;
 import delit.piwigoclient.ui.events.ViewGroupEvent;

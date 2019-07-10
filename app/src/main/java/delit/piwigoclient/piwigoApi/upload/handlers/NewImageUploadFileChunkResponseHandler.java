@@ -10,7 +10,6 @@ import java.util.HashSet;
 
 import delit.libs.http.RequestParams;
 import delit.piwigoclient.model.UploadFileChunk;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 import delit.piwigoclient.piwigoApi.handlers.AbstractPiwigoWsResponseHandler;
@@ -28,11 +27,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
 
     @Override
     public RequestParams buildRequestParameters() {
-        String sessionToken = "";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            sessionToken = sessionDetails.getSessionToken();
-        }
+
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
@@ -45,7 +40,7 @@ public class NewImageUploadFileChunkResponseHandler extends AbstractPiwigoWsResp
         params.put("category", fileChunk.getUploadToAlbumId());
         params.put("file", fileChunk.getChunkData(), null, fileChunk.getMimeType(), true);
         params.put("name", fileChunk.getFilenameOnServer().replace('/', '_'));
-        params.put("pwg_token", sessionToken);
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 

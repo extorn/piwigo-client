@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.util.Base64Utils;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.SerializableCookie;
 
@@ -37,7 +38,10 @@ public class PersistentProfileCookieStore implements CookieStore {
      * @param context Context to attach cookie store to
      */
     public PersistentProfileCookieStore(Context context, String profileKey) {
-        String cookiePrefsName = COOKIE_PREFS + "_" + profileKey;
+
+        String cookiesFileId = Base64Utils.encode(profileKey.getBytes());
+        String cookiePrefsName = COOKIE_PREFS + "_" + cookiesFileId;
+
         cookiePrefs = context.getSharedPreferences(cookiePrefsName, 0);
         cookies = new ConcurrentHashMap<>();
 

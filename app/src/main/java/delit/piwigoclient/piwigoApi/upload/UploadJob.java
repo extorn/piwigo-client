@@ -613,6 +613,17 @@ public class UploadJob implements Serializable {
         this.allowUploadOfRawVideosIfIncompressible = allowUploadOfRawVideosIfIncompressible;
     }
 
+    public Set<Long> getIdsOfResourcesForFilesSuccessfullyUploaded() {
+        Set<Long> resourceIds = new HashSet<>();
+        for (File f : getFilesSuccessfullyUploaded()) {
+            ResourceItem r = getUploadedFileResource(f);
+            if (r != null) {
+                resourceIds.add(r.getId());
+            }
+        }
+        return resourceIds;
+    }
+
     protected static class PartialUploadData implements Serializable {
         private static final long serialVersionUID = 3574283238335920169L;
         private final String uploadName;

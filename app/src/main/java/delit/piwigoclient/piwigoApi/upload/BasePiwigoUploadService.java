@@ -54,6 +54,7 @@ import java.util.Set;
 
 import cz.msebera.android.httpclient.HttpStatus;
 import delit.libs.util.IOUtils;
+import delit.libs.util.ObjectUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.AlbumViewPreferences;
@@ -74,6 +75,7 @@ import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumNamesResponseHandle
 import delit.piwigoclient.piwigoApi.handlers.AlbumGetSubAlbumsAdminResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.BaseImageGetInfoResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.CommunityGetSubAlbumNamesResponseHandler;
+import delit.piwigoclient.piwigoApi.handlers.CommunityNotifyUploadCompleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageDeleteResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageFindExistingImagesResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.ImageGetInfoResponseHandler;
@@ -502,6 +504,16 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if (!thisUploadJob.isCancelUploadAsap()) {
                 if (!thisUploadJob.getFilesForUpload().isEmpty()) {
                     uploadFilesInJob(maxChunkUploadAutoRetries, thisUploadJob, availableAlbumsOnServer);
+                }
+            }
+
+            if (!thisUploadJob.isCancelUploadAsap()) {
+                if (sessionDetails.isUseCommunityPlugin() && sessionDetails.isCommunityApiAvailable()) {
+                    Set<Long> ids = thisUploadJob.getIdsOfResourcesForFilesSuccessfullyUploaded();
+                    CommunityNotifyUploadCompleteResponseHandler hndlr = new CommunityNotifyUploadCompleteResponseHandler(ids, thisUploadJob.getUploadToCategory());
+                    if (sessionDetails.isMethodAvailable(hndlr.getPiwigoMethod())) {
+                        invokeWithRetries(thisUploadJob, hndlr, 2);
+                    }
                 }
             }
 
@@ -1342,16 +1354,32 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             Log.w(TAG, "cannot delete uploaded resource from server, as we are missing a reference to it (presumably upload has not been started)!");
             return true;
         }
-        ImageDeleteResponseHandler<ResourceItem> imageDeleteHandler = new ImageDeleteResponseHandler<>(uploadedResource);
-        invokeWithRetries(uploadJob, imageDeleteHandler, 2);
-        return imageDeleteHandler.isSuccess();
+        if (PiwigoSessionDetails.isAdminUser(uploadJob.getConnectionPrefs())) {
+            ImageDeleteResponseHandler<ResourceItem> imageDeleteHandler = new ImageDeleteResponseHandler<>(uploadedResource);
+            invokeWithRetries(uploadJob, imageDeleteHandler, 2);
+            return imageDeleteHandler.isSuccess();
+        } else {
+            // community plugin... can't delete files... have to pretend we did...
+            return true;
+        }
     }
 
     private Boolean verifyFileNotCorrupted(UploadJob uploadJob, ResourceItem uploadedResource) {
 
         ImageCheckFilesResponseHandler<ResourceItem> imageFileCheckHandler = new ImageCheckFilesResponseHandler<>(uploadedResource);
         invokeWithRetries(uploadJob, imageFileCheckHandler, 2);
-        return imageFileCheckHandler.isSuccess() ? imageFileCheckHandler.isFileMatch() : null;
+        Boolean val = imageFileCheckHandler.isSuccess() ? imageFileCheckHandler.isFileMatch() : null;
+        if (Boolean.FALSE.equals(val)) {
+            Set<String> multimediaExtensionList = AlbumViewPreferences.getKnownMultimediaExtensions(prefs, this);
+            ResourceItem uploadedResourceDummy = new ResourceItem(uploadedResource.getId(), uploadedResource.getName(), null, null, null, null);
+            ImageGetInfoResponseHandler<ResourceItem> imageDetailsHandler = new ImageGetInfoResponseHandler<>(uploadedResourceDummy, multimediaExtensionList);
+            invokeWithRetries(uploadJob, imageDetailsHandler, 2);
+            if (imageDetailsHandler.isSuccess()) {
+                BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse rsp = (ImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) imageDetailsHandler.getResponse();
+                val = ObjectUtils.areEqual(uploadedResource.getFileChecksum(), rsp.getResource().getFileChecksum());
+            }
+        }
+        return val;
     }
 
     private PiwigoResponseBufferingHandler.BaseResponse updateImageInfoAndPermissions(UploadJob thisUploadJob, File fileForUpload, ResourceItem uploadedResource, Set<Long> allServerAlbumIds) {

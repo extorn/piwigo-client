@@ -54,6 +54,15 @@ public abstract class AbstractPiwigoWsResponseHandler extends AbstractPiwigoDire
         return piwigoMethod;
     }
 
+    protected String getPwgSessionToken() {
+        String sessionToken = "";
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
+        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
+            sessionToken = sessionDetails.getSessionToken();
+        }
+        return sessionToken;
+    }
+
     protected String getPiwigoMethodOverrideIfPossible(String overrideMethod) {
         if(piwigoMethodToUse == null) {
             piwigoMethodToUse = piwigoMethod;

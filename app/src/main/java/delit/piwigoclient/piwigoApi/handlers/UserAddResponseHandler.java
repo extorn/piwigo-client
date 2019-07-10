@@ -9,7 +9,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 
 import delit.libs.http.RequestParams;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.model.piwigo.ResourceItem;
 import delit.piwigoclient.model.piwigo.User;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
@@ -26,11 +25,7 @@ public class UserAddResponseHandler<T extends ResourceItem> extends AbstractPiwi
 
     @Override
     public RequestParams buildRequestParameters() {
-        String sessionToken = "";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            sessionToken = sessionDetails.getSessionToken();
-        }
+
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
@@ -38,7 +33,7 @@ public class UserAddResponseHandler<T extends ResourceItem> extends AbstractPiwi
         params.put("username", user.getUsername());
         params.put("password", user.getPassword());
         params.put("email", user.getEmail());
-        params.put("pwg_token", sessionToken);
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 

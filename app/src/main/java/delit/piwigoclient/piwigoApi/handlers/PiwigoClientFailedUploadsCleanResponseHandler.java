@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 
 import delit.libs.http.RequestParams;
-import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
 import delit.piwigoclient.piwigoApi.PiwigoResponseBufferingHandler;
 
 public class PiwigoClientFailedUploadsCleanResponseHandler extends AbstractPiwigoWsResponseHandler {
@@ -20,16 +19,12 @@ public class PiwigoClientFailedUploadsCleanResponseHandler extends AbstractPiwig
 
     @Override
     public RequestParams buildRequestParameters() {
-        String sessionToken = "";
-        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(getConnectionPrefs());
-        if (sessionDetails != null && sessionDetails.isLoggedInWithFullSessionDetails()) {
-            sessionToken = sessionDetails.getSessionToken();
-        }
+
         //TODO this will give an unusual error if the user is not logged in.... better way?
 
         RequestParams params = new RequestParams();
         params.put("method", getPiwigoMethod());
-        params.put("pwg_token", sessionToken);
+        params.put("pwg_token", getPwgSessionToken());
         return params;
     }
 
