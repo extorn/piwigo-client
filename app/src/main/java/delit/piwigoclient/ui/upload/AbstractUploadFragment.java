@@ -257,7 +257,8 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             String serverUri = activeProfile.getPiwigoServerAddress(getPrefs(), getContext());
             getUiHelper().invokeActiveServiceCall(getString(R.string.logging_in_to_piwigo_pattern, serverUri), new LoginResponseHandler(), new OnLoginAction());
         } else {
-            String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
+            String list = CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes());
+            String fileTypesStr = String.format("(%1$s)", list == null ? " * " : list);
             uploadableFilesView.setText(fileTypesStr);
         }
 
@@ -1413,6 +1414,11 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
             String message = String.format(context.getString(R.string.alert_items_for_upload_already_exist_message_pattern), response.getExistingFiles().size());
             notifyUser(context, R.string.alert_information, message);
+        }
+
+        @Override
+        protected void onMessageForUser(BasePiwigoUploadService.MessageForUserResponse response) {
+            getUiHelper().showOrQueueDialogMessage(R.string.alert_information, response.getMessage());
         }
 
         @Override

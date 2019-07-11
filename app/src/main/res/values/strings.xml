@@ -992,4 +992,5 @@ SOFTWARE.
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">The server will not accept %1$d files selected for upload. If these are videos, you could enable compression. Remove these files from the upload?</string>
     <string name="upload_status_tab_title_details">Details</string>
     <string name="upload_status_tab_title_errors">Errors</string>
+    <string name="message_piwigo_server_inconsistent_results">Piwigo API Call %1$s reports file checksum doesn\'t match, but API call %2$s reports that it matches. This could be a bug in the PIWIGO server or a plugin you use, and may be worth reporting.</string>
 </resources>

@@ -607,5 +607,6 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">The server will not accept %1$d files selected for upload. If these are videos, you could enable compression. Remove these files from the upload?</string>
     <string name="upload_status_tab_title_details">Details</string>
     <string name="upload_status_tab_title_errors">Fehler</string>
+    <string name="message_piwigo_server_inconsistent_results">Piwigo API Call %1$s reports file checksum stimmt nicht überein, aber API call %2$s berichtet, dass es übereinstimmt. Dies kann ein Fehler im PIWIGO-Server oder ein Plugin sein, das Sie verwenden, und kann es wert sein, gemeldet zu werden.</string>
 </resources>
 

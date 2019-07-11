@@ -17,6 +17,11 @@ public class BackgroundPiwigoFileUploadResponseListener extends PiwigoFileUpload
     }
 
     @Override
+    protected void onMessageForUser(BasePiwigoUploadService.MessageForUserResponse response) {
+
+    }
+
+    @Override
     protected void onErrorResponse(PiwigoResponseBufferingHandler.ErrorResponse response) {
         // do nothing.
     }

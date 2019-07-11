@@ -1377,6 +1377,11 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
             if (imageDetailsHandler.isSuccess()) {
                 BaseImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse rsp = (ImageGetInfoResponseHandler.PiwigoResourceInfoRetrievedResponse) imageDetailsHandler.getResponse();
                 val = ObjectUtils.areEqual(uploadedResource.getFileChecksum(), rsp.getResource().getFileChecksum());
+                if (val) {
+                    String msgStr = String.format(getString(R.string.message_piwigo_server_inconsistent_results), imageFileCheckHandler.getPiwigoMethod(), imageDetailsHandler.getPiwigoMethod());
+                    MessageForUserResponse msg = new MessageForUserResponse(uploadJob.getJobId(), msgStr);
+                    postNewResponse(uploadJob.getJobId(), msg);
+                }
             }
         }
         return val;
@@ -1506,6 +1511,18 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         void onJobReadyToUpload(Context c, UploadJob thisUploadJob);
     }
 
+    public static class MessageForUserResponse extends PiwigoResponseBufferingHandler.BaseResponse {
+        private final String message;
+
+        public MessageForUserResponse(long jobId, String message) {
+            super(jobId, true);
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
 
     public static class PiwigoCleanupPostUploadFailedResponse extends PiwigoResponseBufferingHandler.BaseResponse {
         private final PiwigoResponseBufferingHandler.Response error;

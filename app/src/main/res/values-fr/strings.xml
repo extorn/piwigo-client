@@ -635,4 +635,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_upload_job_contains_files_server_will_not_accept_pattern">The server will not accept %1$d files selected for upload. If these are videos, you could enable compression. Remove these files from the upload?</string>
     <string name="upload_status_tab_title_details">Détails</string>
     <string name="upload_status_tab_title_errors">erreurs</string>
+    <string name="message_piwigo_server_inconsistent_results">"Piwigo API Call %1$s rapporte la somme de contrôle du fichier ne correspond pas, mais API call %2$s rapporte qu'il correspond. Il peut s'agir d'un bogue sur le serveur PIWIGO ou d'un plugin que vous utilisez, et cela peut valoir la peine d'être signalé."</string>
 </resources>

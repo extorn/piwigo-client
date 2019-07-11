@@ -41,7 +41,7 @@ public class UploadJob implements Serializable {
     public static final Integer REQUIRES_DELETE = 5; // user cancels upload after file partially uploaded
     public static final Integer DELETED = 6; // file has been deleted from the server
     public static final Integer CORRUPT = 7; // (moves to this state if verification fails)
-    private static final long serialVersionUID = 4656324080491399638L;
+    private static final long serialVersionUID = -7205508148334729307L;
     private final long jobId;
     private final long responseHandlerId;
     private final ArrayList<File> filesForUpload;
@@ -625,7 +625,7 @@ public class UploadJob implements Serializable {
     }
 
     protected static class PartialUploadData implements Serializable {
-        private static final long serialVersionUID = 3574283238335920169L;
+        private static final long serialVersionUID = -8796546283675576745L;
         private final String uploadName;
         private long totalBytesToUpload;
         private long bytesUploaded;
@@ -726,7 +726,7 @@ public class UploadJob implements Serializable {
     }
 
     public static class VideoCompressionParams implements Serializable {
-        private static final long serialVersionUID = -4413899202447516873L;
+        private static final long serialVersionUID = -2089863017299368689L;
         private double quality = -1;
         private int audioBitrate = -1;
 

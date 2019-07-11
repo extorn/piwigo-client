@@ -110,6 +110,9 @@ public class FolderItemViewAdapterPreferences extends BaseRecyclerViewAdapterPre
         columnsOfFiles = b.getInt("columnsOfFiles");
         showFilenames = b.getBoolean("showFilenames");
         visibleFileTypes = BundleUtils.getStringSet(b, "visibleFileTypes", new TreeSet<String>());
+        if (visibleFileTypes.isEmpty()) {
+            visibleFileTypes = null;
+        }
         visibleMimeTypes = BundleUtils.getStringSet(b, "visibleMimeTypes", new TreeSet<String>());
         initialFolder = b.getString("initialFolder");
         initialSelection = BundleUtils.getStringSet(b, "initialSelection", new TreeSet<String>());
