@@ -127,6 +127,10 @@
          - ? Veuillez m'envoyer un courriel (il y a un lien courriel dans la barre de navigation) pour demander ce dont vous avez besoin ou ce que vous voulez que cette application ne fait pas encore"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
+        <item>1.4.0.18.4</item>
+        <item>"Corrections de bugs :
+                - Quelques corrections de bogues assorties
+                - Amélioration de l'enregistrement dans le code d'affichage des éléments du diaporama pour aider à diagnostiquer un plantage que certains rencontrent."</item>
         <item>1.4.0.18</item>
         <item>"Modifications et corrections de bugs :
                 - Beaucoup d'améliorations dans le domaine des téléchargements, de la sélection des fichiers, des paramètres de compression

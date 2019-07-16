@@ -1,21 +1,24 @@
 
 <en-GB>
-Changes:
-- Added support for the piwigo.com configuration of the community plug-in - Upload now possible
+Bugfixes:
+- A few assorted bug fixes
+- Enhanced logging in slideshow item display code to help diagnose a crash that some are encountering
 </en-GB>
 
 <de-DE>
-Änderungen:
-- Unterstützung für die Konfiguration des Community-Plugins auf piwigo.com hinzugefügt - Upload jetzt möglich
+Fehlerbehebungen:
+- Einige ausgewählte Bugfixes
+- Verbessertes Einloggen in die Slideshow-Artikelanzeige, um einen Absturz zu diagnostizieren, auf den einige stoßen.
 </de-DE>
 
 <fr-FR>
-Correction d'un bug :
-Changements :
-- Ajout du support pour la configuration piwigo.com du plug-in de la communauté - Upload maintenant possible
+Corrections de bugs :
+- Quelques corrections de bogues assorties
+- Amélioration de l'enregistrement dans le code d'affichage des éléments du diaporama pour aider à diagnostiquer un plantage que certains rencontrent.
 </fr-FR>
 
 <zh-CN>
-变化：
-- 增加了对社区插件的piwigo.com配置的支持 - 现在可以上传
+修正：
+- 一些各种错误修复
+- 增强了幻灯片项目显示代码的记录功能，以帮助诊断某些人遇到的崩溃
 </zh-CN>
