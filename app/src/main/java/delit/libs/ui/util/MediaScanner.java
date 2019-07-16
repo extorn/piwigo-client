@@ -141,9 +141,9 @@ public class MediaScanner implements MediaScannerConnection.MediaScannerConnecti
         }
 
         public MediaScannerScanTask(List<File> files, int resultsBatchSize) {
-            this.files = files;
+            this.files = new ArrayList<>(files);
             this.resultsBatchSize = resultsBatchSize;
-            resultsAwaited = files.size();
+            resultsAwaited = this.files.size();
         }
 
         public void setProcessResultsOnBackgroundThread(boolean processResultsOnBackgroundThread) {

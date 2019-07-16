@@ -181,8 +181,10 @@ public class RecyclerViewFolderItemSelectFragment extends RecyclerViewLongSetSel
                 }
                 if (allPossiblyVisibleFileExts != null) {
                     SortedSet<String> fileExtsInFolderMatchingMimeTypesWanted = getViewPrefs().getVisibleFileTypesForMimes(newFolder);
-                    // add any extra that have come from mime types now visible in this folder.
-                    allPossiblyVisibleFileExts.addAll(fileExtsInFolderMatchingMimeTypesWanted);
+                    if (fileExtsInFolderMatchingMimeTypesWanted != null) {
+                        // add any extra that have come from mime types now visible in this folder.
+                        allPossiblyVisibleFileExts.addAll(fileExtsInFolderMatchingMimeTypesWanted);
+                    }
                 }
                 // this works because the adapter uses a reference to the same preferences.
                 getViewPrefs().withVisibleContent(allPossiblyVisibleFileExts, getViewPrefs().getFileSortOrder());

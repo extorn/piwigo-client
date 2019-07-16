@@ -1306,7 +1306,7 @@ public abstract class UIHelper<T> {
                 });
                 detailsVisibleButton.toggle();
             } else {
-                throw new RuntimeException("Unsupported layout for dialog message : " + layoutId);
+                Crashlytics.log(Log.DEBUG, TAG, "Unsupported layout id for dialog message : " + layoutId);
             }
         }
 

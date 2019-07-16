@@ -113,7 +113,7 @@ public class UploadActivity extends MyActivity {
     protected void onNewIntent(Intent intent) {
         if (intent.getBooleanExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB, false)) {
             UploadJob job = ForegroundPiwigoUploadService.getFirstActiveForegroundJob(getApplicationContext());
-            if (job.isRunningNow()) {
+            if (job != null && job.isRunningNow()) {
                 job.cancelUploadAsap();
             }
             intent.removeExtra(ForegroundPiwigoUploadService.ACTION_CANCEL_JOB);

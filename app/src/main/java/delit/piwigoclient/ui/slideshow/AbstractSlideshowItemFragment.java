@@ -39,6 +39,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.wunderlist.slidinglayer.CustomSlidingLayer;
@@ -275,7 +277,15 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         Class<? extends ViewModelContainer> galleryModelClass = (Class) b.getSerializable(ARG_GALLERY_TYPE);
         long galleryModelId = b.getLong(ARG_GALLERY_ID);
         ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
-        model = ((ResourceContainer<?, T>) viewModelContainer.getModel()).getItemById(b.getLong(ARG_GALLERY_ITEM_ID));
+        ResourceContainer<?, T> modelStore = ((ResourceContainer<?, T>) viewModelContainer.getModel());
+        if (modelStore == null) {
+            Bundle errBundle = new Bundle();
+            errBundle.putString("class", galleryModelClass.getName());
+            errBundle.putLong("modelId", galleryModelId);
+            FirebaseAnalytics.getInstance(requireContext()).logEvent("modelNull", errBundle);
+            Crashlytics.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow model is null - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId));
+        }
+        model = modelStore.getItemById(b.getLong(ARG_GALLERY_ITEM_ID));
         albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
         albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);

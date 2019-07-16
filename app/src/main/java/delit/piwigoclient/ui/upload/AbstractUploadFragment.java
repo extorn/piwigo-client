@@ -268,7 +268,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
 
         CharSequence[] privacyLevelsText = getResources().getTextArray(R.array.privacy_levels_groups_array);
         long[] privacyLevelsValues = ArrayUtils.getLongArray(getResources().getIntArray(R.array.privacy_levels_values_array));
-        BiArrayAdapter<CharSequence> privacyLevelOptionsAdapter = new BiArrayAdapter<>(getContext(), privacyLevelsText, privacyLevelsValues);
+        BiArrayAdapter<CharSequence> privacyLevelOptionsAdapter = new BiArrayAdapter<>(requireContext(), privacyLevelsText, privacyLevelsValues);
 //        if(!PiwigoSessionDetails.isAdminUser(ConnectionPreferences.getActiveProfile())) {
 //            // remove the "admin only" privacy option.
 //            privacyLevelOptionsAdapter.remove(privacyLevelOptionsAdapter.getItemById(8)); // Admin ID
@@ -416,6 +416,9 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             }
         }
 
+        if (uploadToAlbum == null) {
+            uploadToAlbum = CategoryItemStub.ROOT_GALLERY;
+        }
         selectedGalleryTextView.setText(uploadToAlbum.getName());
 
         int columnsToShow = UploadPreferences.getColumnsOfFilesListedForUpload(prefs, requireActivity());
@@ -514,16 +517,19 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     }
 
     private void requestFileSelection(Set<String> allowedFileTypes) {
-        FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
-        String initialFolder = getPrefs().getString(getString(R.string.preference_data_upload_default_local_folder_key), Environment.getExternalStorageDirectory().getAbsolutePath());
-        event.withInitialFolder(initialFolder);
-        event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
+        if (getContext() != null) {
+            // context could be null because there is a 3 second delay before the screen opens during which the user could close the app.
+            FileSelectionNeededEvent event = new FileSelectionNeededEvent(true, false, true);
+            String initialFolder = getPrefs().getString(getString(R.string.preference_data_upload_default_local_folder_key), Environment.getExternalStorageDirectory().getAbsolutePath());
+            event.withInitialFolder(initialFolder);
+            event.withVisibleContent(allowedFileTypes, FileSelectionNeededEvent.LAST_MODIFIED_DATE);
 
-        Set<String> visibleMimeTypes = Collections.singleton("video/");
-        event.withVisibleMimeTypes(visibleMimeTypes);
+            Set<String> visibleMimeTypes = Collections.singleton("video/");
+            event.withVisibleMimeTypes(visibleMimeTypes);
 
-        getUiHelper().setTrackingRequest(event.getActionId());
-        EventBus.getDefault().post(event);
+            getUiHelper().setTrackingRequest(event.getActionId());
+            EventBus.getDefault().post(event);
+        }
     }
 
     public Long getUploadJobId() {
@@ -570,7 +576,7 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
                         fileSelectButton.setEnabled(true);
                         requestFileSelection(null); // show all files... I hope the user is sensible!
                     }
-                }, 5000);
+                }, 3000);
             } else {
                 requestFileSelection(sessionDetails.getAllowedFileTypes());
             }
