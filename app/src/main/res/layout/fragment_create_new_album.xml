@@ -72,7 +72,7 @@
             android:importantForAutofill="no"
             android:text="" />
 
-        <androidx.appcompat.widget.SwitchCompat
+        <Switch
             android:id="@+id/createGallery_galleryCommentsAllowed"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:layout_margin="5dp"
@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:text="@string/createGallery_galleryCommentsAllowed" />
 
-        <androidx.appcompat.widget.SwitchCompat
+        <Switch
             android:id="@+id/createGallery_galleryIsPrivate"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:layout_margin="5dp"

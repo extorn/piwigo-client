@@ -7,9 +7,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Switch;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.SwitchCompat;
 
 import java.io.Serializable;
 
@@ -25,7 +25,7 @@ class SelectImageRenderDetailsDialog {
     private final Context context;
     private int[] rotationValues;
     private Spinner imageRotation;
-    private SwitchCompat maxZoomPicker;
+    private Switch maxZoomPicker;
     private DownloadItemsListAdapter adapter;
     private ListView fileSelectList;
 
