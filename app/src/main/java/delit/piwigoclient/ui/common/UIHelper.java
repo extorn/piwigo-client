@@ -554,29 +554,34 @@ public abstract class UIHelper<T> {
     }
 
     public void onRestoreSavedInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
-            if (thisBundle != null) {
-                synchronized (activeServiceCalls) {
-                    BundleUtils.readMap(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls, null);
-                }
-                trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
-                runWithPermissions = BundleUtils.readMap(thisBundle, STATE_RUN_WITH_PERMS_LIST, PermissionsWantedRequestEvent.class.getClassLoader());
-                actionOnServerCallComplete = BundleUtils.readMap(thisBundle, STATE_ACTIONS_ON_RESPONSES, new ConcurrentHashMap<Long, Action>(), Action.class.getClassLoader());
-                permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
+        try {
+            if (savedInstanceState != null) {
+                Bundle thisBundle = savedInstanceState.getBundle(STATE_UIHELPER);
+                if (thisBundle != null) {
+                    synchronized (activeServiceCalls) {
+                        BundleUtils.readMap(thisBundle, ACTIVE_SERVICE_CALLS, activeServiceCalls, null);
+                    }
+                    trackedRequest = thisBundle.getInt(STATE_TRACKED_REQUESTS);
+                    runWithPermissions = BundleUtils.readMap(thisBundle, STATE_RUN_WITH_PERMS_LIST, PermissionsWantedRequestEvent.class.getClassLoader());
+                    actionOnServerCallComplete = BundleUtils.readMap(thisBundle, STATE_ACTIONS_ON_RESPONSES, new ConcurrentHashMap<Long, Action>(), Action.class.getClassLoader());
+                    permissionsNeededReason = thisBundle.getInt(STATE_PERMS_FOR_REASON);
 
-                BundleUtils.readQueue(savedInstanceState, STATE_SIMPLE_MESSAGE_QUEUE, simpleMessageQueue);
-                BundleUtils.readQueue(savedInstanceState, STATE_DIALOG_MESSAGE_QUEUE, dialogMessageQueue);
+                    BundleUtils.readQueue(savedInstanceState, STATE_SIMPLE_MESSAGE_QUEUE, simpleMessageQueue);
+                    BundleUtils.readQueue(savedInstanceState, STATE_DIALOG_MESSAGE_QUEUE, dialogMessageQueue);
 
 
-                piwigoResponseListener.onRestoreInstanceState(thisBundle);
+                    piwigoResponseListener.onRestoreInstanceState(thisBundle);
 
-                for(QueuedDialogMessage message : dialogMessageQueue) {
-                    if(message.getListener() != null) {
-                        message.getListener().setUiHelper(this);
+                    for (QueuedDialogMessage message : dialogMessageQueue) {
+                        if (message.getListener() != null) {
+                            message.getListener().setUiHelper(this);
+                        }
                     }
                 }
             }
+        } catch (RuntimeException e) {
+            Crashlytics.log(Log.WARN, TAG, "Ditching all saved instance state due to error loading");
+            Crashlytics.logException(e);
         }
     }
 
@@ -1475,6 +1480,7 @@ public abstract class UIHelper<T> {
                             dialogMessageQueue.remove();
                             nextMessage = null;
                         }
+
                     } while (nextMessage == null && dialogMessageQueue.size() > 0);
                     if (nextMessage instanceof QueuedQuestionMessage) {
                         showDialog((QueuedQuestionMessage) nextMessage);
