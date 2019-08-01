@@ -270,7 +270,7 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         getUiHelper().addBackgroundServiceCall(activeDownloadActionId);
     }
 
-    private void loadArgsFromBundle(Bundle b) {
+    private void loadArgsFromBundle(Bundle b) throws ModelUnavailableException {
         if (b == null) {
             return;
         }
@@ -284,8 +284,10 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
             errBundle.putLong("modelId", galleryModelId);
             FirebaseAnalytics.getInstance(requireContext()).logEvent("modelNull", errBundle);
             Crashlytics.log(Log.ERROR, TAG, String.format(Locale.UK, "slideshow model is null - %1$s(%2$d)", galleryModelClass.getName(), galleryModelId));
+            throw new ModelUnavailableException();
         }
-        model = modelStore.getItemById(b.getLong(ARG_GALLERY_ITEM_ID));
+        long galleryItemId = b.getLong(ARG_GALLERY_ITEM_ID);
+        model = modelStore.getItemById(galleryItemId);
         albumItemIdx = b.getInt(ARG_AND_STATE_ALBUM_ITEM_IDX);
         albumLoadedItemCount = b.getInt(ARG_AND_STATE_ALBUM_LOADED_RESOURCE_ITEM_COUNT);
         albumTotalItemCount = b.getLong(ARG_AND_STATE_ALBUM_TOTAL_RESOURCE_ITEM_COUNT);

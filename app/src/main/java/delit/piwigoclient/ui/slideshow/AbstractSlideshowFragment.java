@@ -108,7 +108,11 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        try {
+            super.onCreate(savedInstanceState);
+        } catch (ModelUnavailableException e) {
+            Crashlytics.log(Log.ERROR, getTag(), "Unable to create fragment as model isn't available.");
+        }
     }
 
     @Override
