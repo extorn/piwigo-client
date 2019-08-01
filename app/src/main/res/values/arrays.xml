@@ -239,6 +239,9 @@
                 - TODO Added support for MP3 encoding of the audio stream
                 - TODO Added support for setting the desired bitrate of the audio stream"</item>
                 -->
+        <item>1.4.0.19</item>
+        <item>"Bugfix:
+            - A few assorted bug fixes impacting on app stability"</item>
         <item>1.4.0.18.4</item>
         <item>"Bugfixes:
                 - A few assorted bug fixes

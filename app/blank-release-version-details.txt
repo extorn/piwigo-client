@@ -1,24 +1,20 @@
 
 <en-GB>
-Bugfixes:
-- A few assorted bug fixes
-- Enhanced logging in slideshow item display code to help diagnose a crash that some are encountering
+Bugfix:
+- A few assorted bug fixes impacting on app stability
 </en-GB>
 
 <de-DE>
-Fehlerbehebungen:
-- Einige ausgewählte Bugfixes
-- Verbessertes Einloggen in die Slideshow-Artikelanzeige, um einen Absturz zu diagnostizieren, auf den einige stoßen.
+Fehlerbehebung:
+- Ein paar verschiedene Bugfixes, die sich auf die Stabilität der App auswirken.
 </de-DE>
 
 <fr-FR>
-Corrections de bugs :
-- Quelques corrections de bogues assorties
-- Amélioration de l'enregistrement dans le code d'affichage des éléments du diaporama pour aider à diagnostiquer un plantage que certains rencontrent.
+Correction d'un bug :
+- Quelques corrections de bogues qui ont un impact sur la stabilité de l'application
 </fr-FR>
 
 <zh-CN>
 修正：
-- 一些各种错误修复
-- 增强了幻灯片项目显示代码的记录功能，以帮助诊断某些人遇到的崩溃
+- 一些影响应用稳定性的各种错误修复
 </zh-CN>
