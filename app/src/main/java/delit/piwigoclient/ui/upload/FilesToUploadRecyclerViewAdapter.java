@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import delit.libs.ui.util.MediaScanner;
@@ -132,18 +133,28 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         }
 
         // configure the filename field
-        holder.fileNameField.setText(holder.mItem.getName());
-
-        Uri itemUri = currentDisplayContentUris.get(holder.mItem);
-        if (itemUri != null) {
-            holder.imageLoader.setUriToLoad(itemUri.toString());
-        } else {
-            holder.imageLoader.setFileToLoad(holder.mItem);
+        File item = holder.mItem;
+        if (item == null) {
+            item = uploadProgressModel.getKey(position);
         }
 
-        holder.itemHeading.setVisibility(View.VISIBLE);
-        holder.itemHeading.setText(getFileSizeStr(holder.mItem));
+        if (item != null) {
+            holder.fileNameField.setText(item.getName());
+            holder.itemHeading.setText(getFileSizeStr(item));
 
+            Uri itemUri = currentDisplayContentUris.get(item);
+            if (itemUri != null) {
+                holder.imageLoader.setUriToLoad(itemUri.toString());
+            } else {
+                holder.imageLoader.setFileToLoad(item);
+            }
+            holder.itemHeading.setVisibility(View.VISIBLE);
+        } else {
+            // theoretically this shouldn't happen I think
+            holder.imageLoader.setFileToLoad(item);
+            holder.itemHeading.setVisibility(View.INVISIBLE);
+            Crashlytics.log(Log.ERROR, TAG, "file to upload cannot be rendered as is null");
+        }
     }
 
     @NonNull
@@ -199,7 +210,7 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
     private String getFileSizeStr(File f) {
         long bytes = f.length();
         double sizeMb = ((double) bytes) / 1024 / 1024;
-        return String.format("%1$.2fMB", sizeMb);
+        return String.format(Locale.getDefault(), "%1$.2fMB", sizeMb);
     }
 
     protected void onDeleteButtonClicked(ViewHolder viewHolder, boolean longClick) {
@@ -289,11 +300,15 @@ public class FilesToUploadRecyclerViewAdapter extends RecyclerView.Adapter<Files
         }
 
         public ProgressInfo get(int position) {
-            File key = filesToUpload.get(position);
+            File key = getKey(position);
             if (key == null) {
                 return null;
             }
             return progressDetails.get(key);
+        }
+
+        public File getKey(int position) {
+            return filesToUpload.get(position);
         }
 
         public int size() {
