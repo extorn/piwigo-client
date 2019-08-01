@@ -11,7 +11,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.MyPicasso;
@@ -171,7 +171,7 @@ public class PicassoFactory {
         }
 
         public Result load(Request data, int networkPolicy) {
-            Drawable d = ContextCompat.getDrawable(context, data.resourceId);
+            Drawable d = AppCompatResources.getDrawable(context, data.resourceId);
             return new Result(drawableToBitmap(d), Picasso.LoadedFrom.DISK);
         }
 

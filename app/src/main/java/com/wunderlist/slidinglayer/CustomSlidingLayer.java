@@ -43,14 +43,15 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 
-import java.util.Random;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.view.MotionEventCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.ViewConfigurationCompat;
+
+import java.util.Random;
+
 import delit.piwigoclient.R;
 
 
@@ -419,7 +420,7 @@ public class CustomSlidingLayer extends FrameLayout {
      * @param resId Resource ID of a drawable
      */
     public void setShadowDrawable(int resId) {
-        setShadowDrawable(ContextCompat.getDrawable(getContext(),resId));
+        setShadowDrawable(AppCompatResources.getDrawable(getContext(), resId));
     }
 
     /**

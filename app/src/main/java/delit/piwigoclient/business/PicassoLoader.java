@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.annotation.DrawableRes;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.picasso.Callback;
@@ -280,7 +280,7 @@ public class PicassoLoader<T extends ImageView> implements Callback, DownloaderL
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 rc.placeholder(placeholderPlaceholderId);
             } else {
-                rc.placeholder(ContextCompat.getDrawable(loadInto.getContext(), placeholderPlaceholderId));
+                rc.placeholder(AppCompatResources.getDrawable(loadInto.getContext(), placeholderPlaceholderId));
             }
         }
 

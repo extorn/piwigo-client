@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -51,7 +51,7 @@ public class CustomSnackbar extends BaseTransientBottomBar<CustomSnackbar> {
     public CustomSnackbar setIcon(@DrawableRes int drawableId) {
         ImageView imageView = getView().findViewById(R.id.snackbar_icon);
         imageView.setVisibility(View.VISIBLE);
-        imageView.setImageDrawable(ContextCompat.getDrawable(imageView.getContext(), drawableId));
+        imageView.setImageDrawable(AppCompatResources.getDrawable(imageView.getContext(), drawableId));
         return this;
     }
 

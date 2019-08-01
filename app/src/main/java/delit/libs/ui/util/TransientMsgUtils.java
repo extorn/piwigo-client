@@ -8,7 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import delit.libs.util.CustomSnackbar;
 import delit.piwigoclient.R;
@@ -26,19 +26,19 @@ public class TransientMsgUtils {
         ImageView icon = v.findViewById(R.id.toast_icon);
         switch(titleResId) {
             case R.string.alert_error:
-                icon.setImageDrawable(ContextCompat.getDrawable(c,android.R.drawable.stat_notify_error));
+                icon.setImageDrawable(AppCompatResources.getDrawable(c, android.R.drawable.stat_notify_error));
                 icon.setVisibility(View.VISIBLE);
                 break;
             case R.string.alert_warning:
-                icon.setImageDrawable(ContextCompat.getDrawable(c,R.drawable.ic_warning_black_24dp));
+                icon.setImageDrawable(AppCompatResources.getDrawable(c, R.drawable.ic_warning_black_24dp));
                 icon.setVisibility(View.VISIBLE);
                 break;
             case R.string.alert_information:
-                icon.setImageDrawable(ContextCompat.getDrawable(c, android.R.drawable.ic_menu_info_details));
+                icon.setImageDrawable(AppCompatResources.getDrawable(c, android.R.drawable.ic_menu_info_details));
                 icon.setVisibility(View.VISIBLE);
                 break;
             case R.string.alert_success:
-                icon.setImageDrawable(ContextCompat.getDrawable(c,android.R.drawable.btn_star_big_on));
+                icon.setImageDrawable(AppCompatResources.getDrawable(c, android.R.drawable.btn_star_big_on));
                 icon.setVisibility(View.VISIBLE);
                 break;
             default:
