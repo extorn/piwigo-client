@@ -34,6 +34,7 @@ public class FragmentUIHelper<T extends Fragment> extends UIHelper<T> {
                 if(activity != null) {
                     UIHelper activityUiHelper = activity.getUiHelper();
                     canShowDialog = !activityUiHelper.isDialogShowing();
+                    canShowDialog &= !activity.isFinishing();
                     canShowDialog &= (!blockDialogsFromShowing) && getParent().isResumed();
                 }
             }

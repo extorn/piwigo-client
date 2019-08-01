@@ -1464,25 +1464,28 @@ public abstract class UIHelper<T> {
                 buildAlertDialog();
             }
 
-            if (dialogMessageQueue.size() > 0 && canShowDialog()) {
-                QueuedDialogMessage nextMessage;
-                do {
-                    nextMessage = dialogMessageQueue.peek();
-                    if (nextMessage.isHasListener() && nextMessage.getListener() == null) {
-                        Crashlytics.log(Log.WARN, TAG, "Discarding corrupt message");
-                        dialogMessageQueue.remove();
-                        nextMessage = null;
+            if (canShowDialog()) {
+
+                if (dialogMessageQueue.size() > 0 && canShowDialog()) {
+                    QueuedDialogMessage nextMessage;
+                    do {
+                        nextMessage = dialogMessageQueue.peek();
+                        if (nextMessage.isHasListener() && nextMessage.getListener() == null) {
+                            Crashlytics.log(Log.WARN, TAG, "Discarding corrupt message");
+                            dialogMessageQueue.remove();
+                            nextMessage = null;
+                        }
+                    } while (nextMessage == null && dialogMessageQueue.size() > 0);
+                    if (nextMessage instanceof QueuedQuestionMessage) {
+                        showDialog((QueuedQuestionMessage) nextMessage);
+                    } else if (nextMessage != null) {
+                        showDialog(nextMessage);
+                    } else {
+                        onNoDialogToShow();
                     }
-                } while(nextMessage == null && dialogMessageQueue.size() > 0);
-                if (nextMessage instanceof QueuedQuestionMessage) {
-                    showDialog((QueuedQuestionMessage) nextMessage);
-                } else if (nextMessage != null) {
-                    showDialog(nextMessage);
                 } else {
                     onNoDialogToShow();
                 }
-            } else {
-                onNoDialogToShow();
             }
         }
 
