@@ -20,6 +20,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
@@ -168,9 +169,16 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     @Override
     public void startActivityForResult(Intent intent, int requestCode, @Nullable Bundle options) {
         try {
+            if (requestCode < -1) {
+                // don't track this because we can't process a negative code anyway.
+//                setTrackedIntent(Long.valueOf(requestCode), -1);
+                requestCode = -1;
+                // record the event
+                recordInvalidRequestCodeEvent(intent, requestCode);
+            }
             super.startActivityForResult(intent, requestCode, options);
         } catch(IllegalArgumentException e) {
-            Crashlytics.log(String.format("Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode <= Short.MAX_VALUE, requestCode));
+            Crashlytics.log(String.format(Locale.getDefault(), "Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode > -2 && requestCode <= Short.MAX_VALUE, requestCode));
             throw e;
         }
     }
@@ -178,11 +186,26 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
     @Override
     public void startActivityForResult(Intent intent, int requestCode) {
         try {
+            if (requestCode < -1) {
+                // don't track this because we can't process a negative code anyway.
+//                setTrackedIntent(Long.valueOf(requestCode), -1);
+                requestCode = -1;
+                // record the event
+                recordInvalidRequestCodeEvent(intent, requestCode);
+            }
             super.startActivityForResult(intent, requestCode);
         } catch(IllegalArgumentException e) {
-            Crashlytics.log(String.format("Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode <= Short.MAX_VALUE, requestCode));
+            Crashlytics.log(String.format(Locale.getDefault(), "Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode > -2 && requestCode <= Short.MAX_VALUE, requestCode));
             throw e;
         }
+    }
+
+    private void recordInvalidRequestCodeEvent(Intent intent, int requestCode) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("requestCode", requestCode);
+        bundle.putString("intent", intent.toString());
+        bundle.putString("intentClass", intent.getClass().getName());
+        FirebaseAnalytics.getInstance(this).logEvent("invalidRequestCode", bundle);
     }
 
     @Override
