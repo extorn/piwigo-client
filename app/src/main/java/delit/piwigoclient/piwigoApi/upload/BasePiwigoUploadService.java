@@ -1100,7 +1100,7 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
         UploadJob.PartialUploadData skipChunksData = thisUploadJob.getChunksAlreadyUploadedData(uploadJobKey);
         if (skipChunksData != null) {
             thisUploadJob.deleteChunksAlreadyUploadedData(uploadJobKey);
-            if (skipChunksData.getFileChecksum().equals(newChecksum)) {
+            if (ObjectUtils.areEqual(skipChunksData.getFileChecksum(), newChecksum)) {
                 // If the checksums still match (file to upload hasn't been altered)
                 chunksUploadedAlready = skipChunksData.getCountChunksUploaded();
                 chunkId = chunksUploadedAlready;
