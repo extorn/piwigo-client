@@ -125,22 +125,23 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
 
         ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
         resourceContainer = viewModelContainer.getModel();
-        if (resourceContainer == null) {
-            // attempt to get back to a working fragment.
-            requireFragmentManager().popBackStack(); //TODO - work out why this is needed!
-            return null;
-        }
 
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_slideshow, container, false);
+
+        if (resourceContainer == null) {
+            // attempt to get back to a working fragment.
+            requireFragmentManager().popBackStackImmediate(); //TODO - work out why resource container can be null - after app kill and restore?
+            return null;
+        }
 
         progressIndicator = view.findViewById(R.id.slideshow_page_loadingIndicator);
         hideProgressIndicator();
 
         boolean largeEnoughScreenSizeForAdvert = false;
         DisplayMetrics metrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         float yInches= metrics.heightPixels/metrics.ydpi;
         if (yInches>=3) {
             largeEnoughScreenSizeForAdvert = true;
