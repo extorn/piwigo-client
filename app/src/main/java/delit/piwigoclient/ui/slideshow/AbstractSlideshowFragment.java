@@ -126,9 +126,8 @@ public abstract class AbstractSlideshowFragment<T extends Identifiable & Parcela
         ViewModelContainer viewModelContainer = ViewModelProviders.of(requireActivity()).get("" + galleryModelId, galleryModelClass);
         resourceContainer = viewModelContainer.getModel();
         if (resourceContainer == null) {
-            Crashlytics.logException(new Exception("creating slideshow but resource container is null : type = " + galleryModelClass));
             // attempt to get back to a working fragment.
-            requireFragmentManager().popBackStack(); //TODO - work out why this is occurring!
+            requireFragmentManager().popBackStack(); //TODO - work out why this is needed!
             return null;
         }
 
