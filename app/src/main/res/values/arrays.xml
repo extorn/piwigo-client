@@ -239,51 +239,8 @@
                 - TODO Added support for MP3 encoding of the audio stream
                 - TODO Added support for setting the desired bitrate of the audio stream"</item>
                 -->
-        <item>1.4.0.19</item>
+        <item>1.4.0.20</item>
         <item>"Bugfix:
-            - A few assorted bug fixes impacting on app stability"</item>
-        <item>1.4.0.18.4</item>
-        <item>"Bugfixes:
-                - A few assorted bug fixes
-                - Enhanced logging in slideshow item display code to help diagnose a crash that some are encountering"</item>
-        <item>1.4.0.18</item>
-        <item>"Changes and Bugfixes:
-                - Lots of improvements in the area of uploads, file selection, compression settings
-                - new app preferences for configuring both image and video compression"</item>
-        <item>1.4.0.17</item>
-        <item>"Changes:
-                - Added support for the piwigo.com configuration of the community plug-in - Upload now possible"</item>
-        <item>1.4.0.16.3</item>
-        <item>"Bugfix:
-                - Video not able to start playing after navigation to new view and then returning with back button
-                - Don't presume the user's current app version when upgrading preferences at app start"</item>
-        <item>1.4.0.16</item>
-        <item>"Bugfix:
-                - Video not able to start playing after navigation to new view and then returning with back button"</item>
-        <item>1.4.0.15</item>
-        <item>"Changes:
-                - You can hide adverts for a short period by watching a reward video
-               Bugfix:
-                - Login status wasn't correct after clearing all cached data"</item>
-        <item>1.4.0.14</item>
-        <item>"Changes:
-            - More error reporting to help diagnose issues
-            Bugfix:
-            - Corrected several important issues including video playback for non privacy plugin users"</item>
-        <item>1.4.0.13</item>
-        <item>"Changes:
-                - New - image compression as an upload option
-                - New - PAID: Automatic upload job image compression as an upload option"</item>
-        <item>1.4.0.12</item>
-        <item>"Bugfix:
-                - Added error handling to upload
-                - Removed code causing preventing viewing of images for some server and app configurations
-              Changes:
-                - Upload - Removed dialog asking about video compression - replaced with checkbox
-                - Use android media store to retrieve thumbnails for videos on device
-                - Add files downloaded to your device to the android media store
-                - Preference to select compression quality (high, medium, low)
-                - PAID: Automatic upload job - Individual preference to select compression quality (high, medium, low)
-                - PAID: Automatic upload job - files to upload list is now limited to what your server allows"</item>
+            - A couple of assorted bug fixes impacting on app stability"</item>
     </string-array>
 </resources>

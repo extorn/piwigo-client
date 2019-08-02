@@ -1,7 +1,7 @@
 
 <en-GB>
 Bugfix:
-- A few assorted bug fixes impacting on app stability
+- A couple of assorted bug fixes impacting on app stability
 </en-GB>
 
 <de-DE>
