@@ -469,9 +469,11 @@ public abstract class AbstractSlideshowItemFragment<T extends ResourceItem> exte
         }
 
         public synchronized void runWithDelay(View v) {
-            timerStarted = System.currentTimeMillis();
-            setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
-            v.postDelayed(this, 2000);
+            if (v != null) {
+                timerStarted = System.currentTimeMillis();
+                setVisibility(visibilityOnRun == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+                v.postDelayed(this, 2000);
+            }
         }
 
         public synchronized void addView(View v) {
