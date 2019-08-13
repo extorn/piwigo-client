@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
@@ -508,8 +509,8 @@ public abstract class UIHelper<T> {
         invokeActiveServiceCall(context.getString(progressMsgId), worker, actionOnResponse);
     }
 
-    public void addActiveServiceCall(int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
-        addActiveServiceCall(context.getString(titleStringId), worker);
+    public long addActiveServiceCall(int titleStringId, AbstractPiwigoDirectResponseHandler worker) {
+        return addActiveServiceCall(context.getString(titleStringId), worker);
     }
 
     public BasicPiwigoResponseListener getPiwigoResponseListener() {
@@ -1013,6 +1014,8 @@ public abstract class UIHelper<T> {
         void setUiHelper(S uiHelper);
 
         void chainResult(QuestionResultListener listener);
+
+        void onPopulateDialogView(LinearLayout dialogView, @LayoutRes int layoutId);
     }
 
     public Action getActionOnResponse(PiwigoResponseBufferingHandler.Response response) {
@@ -1111,6 +1114,11 @@ public abstract class UIHelper<T> {
         @Override
         public void onDismiss(AlertDialog dialog) {
 
+        }
+
+        @Override
+        public void onPopulateDialogView(LinearLayout dialogView, @LayoutRes int layoutId) {
+            Crashlytics.log(Log.DEBUG, TAG, "Unsupported layout id for dialog message : " + layoutId);
         }
 
         @Override
@@ -1311,7 +1319,7 @@ public abstract class UIHelper<T> {
                 });
                 detailsVisibleButton.toggle();
             } else {
-                Crashlytics.log(Log.DEBUG, TAG, "Unsupported layout id for dialog message : " + layoutId);
+                listener.onPopulateDialogView(dialogView, layoutId);
             }
         }
 

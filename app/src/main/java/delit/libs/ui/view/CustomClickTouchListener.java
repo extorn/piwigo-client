@@ -5,13 +5,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ScrollView;
 
+import androidx.core.view.GestureDetectorCompat;
+
 /**
  * Created by gareth on 04/07/17.
  */
 
 public abstract class CustomClickTouchListener implements View.OnTouchListener {
 
-    private final GestureDetector detector;
+    private final GestureDetectorCompat detector;
     private boolean allowScrollWhenNested;
 
     public CustomClickTouchListener(final View linkedView) {
@@ -61,7 +63,7 @@ public abstract class CustomClickTouchListener implements View.OnTouchListener {
                 onLongClick();
             }
         };
-        detector = new GestureDetector(linkedView.getContext(), listener);
+        detector = new GestureDetectorCompat(linkedView.getContext(), listener);
     }
 
     public boolean onClick() {

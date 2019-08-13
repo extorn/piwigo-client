@@ -485,4 +485,6 @@
     <string name="upload_status_tab_title_details">细节</string>
     <string name="upload_status_tab_title_errors">错误</string>
     <string name="message_piwigo_server_inconsistent_results">Piwigo API调用 %1$s 报告文件校验和不匹配，但API调用 %2$s 报告它匹配。 这可能是PIWIGO服务器或您使用的插件中的错误，可能值得报告。</string>
+    <string name="alert_bulk_image_permissions_title">设置访问权限</string>
+    <string name="alert_bulk_image_permissions_message">设置%1$d所选资源的访问权限级别</string>
 </resources>

@@ -42,7 +42,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
-import delit.libs.ui.view.CustomClickTouchListener;
 import delit.libs.util.IOUtils;
 import delit.piwigoclient.BuildConfig;
 import delit.piwigoclient.R;
@@ -232,9 +231,25 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
         downloadedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_downloaded);
         cachedByteCountView = simpleExoPlayerView.findViewById(R.id.exo_cached_summary);
 
-
-        CustomExoPlayerTouchListener customTouchListener = new CustomExoPlayerTouchListener(simpleExoPlayerView);
-        simpleExoPlayerView.getVideoSurfaceView().setOnTouchListener(customTouchListener);
+        simpleExoPlayerView.getVideoSurfaceView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getOverlaysVisibilityControl().runWithDelay(getView());
+            }
+        });
+        simpleExoPlayerView.getVideoSurfaceView().setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (!isUseCache()) {
+                    stopVideoDownloadAndPlay();
+                    player.stop(); // this is terminal.
+                    videoPlaybackPosition = 0; // ensure it starts at the beginning again
+                    configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
+                }
+                getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new ClearCachedContentAction(getUiHelper()));
+                return true;
+            }
+        });
 
         CustomExoPlayerTimeBar timebar = itemContentView.findViewById(R.id.exo_progress);
         cacheListener.setTimebar(timebar);
@@ -571,29 +586,6 @@ public class AlbumVideoItemFragment extends SlideshowItemFragment<VideoResourceI
                     }
                 });
             }
-        }
-    }
-
-    private class CustomExoPlayerTouchListener extends CustomClickTouchListener {
-        public CustomExoPlayerTouchListener(View linkedView) {
-            super(linkedView);
-        }
-
-        @Override
-        public boolean onClick() {
-            getOverlaysVisibilityControl().runWithDelay(getView());
-            return super.onClick();
-        }
-
-        @Override
-        public void onLongClick() {
-            if (!isUseCache()) {
-                stopVideoDownloadAndPlay();
-                player.stop(); // this is terminal.
-                videoPlaybackPosition = 0; // ensure it starts at the beginning again
-                configureDatasourceAndPlayerRequestingPermissions(videoIsPlayingWhenVisible);
-            }
-            getUiHelper().showOrQueueDialogQuestion(R.string.alert_information, getString(R.string.alert_clear_cached_content), R.string.button_cancel, R.string.button_ok, new ClearCachedContentAction(getUiHelper()));
         }
     }
 

@@ -25,7 +25,7 @@ public abstract class AbstractBaseResourceItem extends GalleryItem {
     private float myRating = 0;
     private float averageRating = 0;
     private int ratingsGiven = 0;
-    private byte privacyLevel = 0;
+    private byte privacyLevel = -1;
     private ArrayList<ResourceFile> availableFiles = new ArrayList<>();
     private HashSet<Long> linkedAlbums;
     private String fileChecksum;

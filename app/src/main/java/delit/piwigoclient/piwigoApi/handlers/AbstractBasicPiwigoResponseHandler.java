@@ -549,7 +549,12 @@ public abstract class AbstractBasicPiwigoResponseHandler extends AsyncHttpRespon
     }
 
     public String getPiwigoWsApiUri() {
-        return getPiwigoServerUrl() + "/ws.php?format=json";
+        String url = getPiwigoServerUrl();
+        if (!url.endsWith("/")) {
+            url += '/';
+        }
+        url += "ws.php?format=json";
+        return url;
     }
 
     public boolean isRunning() {
