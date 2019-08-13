@@ -235,12 +235,17 @@
             - Please email me (there is an email link in the navigation bar) to request things you need or want that this app doesn't yet do"</item>
     </string-array>
     <string-array name="release_history" translatable="true">
-        <!--"Changes:
-                - TODO Added support for MP3 encoding of the audio stream
-                - TODO Added support for setting the desired bitrate of the audio stream"</item>
-                -->
-        <item>1.4.0.20</item>
-        <item>"Bugfix:
-            - A couple of assorted bug fixes impacting on app stability"</item>
+        <!--
+        Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
+        -->
+        <item>1.4.0.21</item>
+        <item>"Changes:
+            - Added extra bulk action (key) for album resources to set resource privacy for selected items
+            - TODO register app to accept sharing of mixed items of video and image type from other apps
+            Bugfix:
+            - Corrected detection of long click to clear video from cache (slideshow)
+            - TODO update slideshow count when deleting an item in the slideshow
+            - TODO fix bug when deleting in slideshow ?of a tag?
+            - Connection profile settings such as server uri, username, and password are not saved correctly when using multiple profiles"</item>
     </string-array>
 </resources>

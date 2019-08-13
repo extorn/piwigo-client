@@ -127,8 +127,8 @@ public class EditableListPreference extends DialogPreference {
                 persistString(value);
                 notifyChanged();
                 if (listener != null) {
-                    boolean olsSelectionStillValid = SetUtils.difference(oldValues, currentValues).size() == 0;
-                    listener.onItemSelectionChange(oldValues, currentValues, olsSelectionStillValid);
+                    boolean oldSelectionNotDeleted = SetUtils.difference(oldValues, entries).size() == 0;
+                    listener.onItemSelectionChange(oldValues, currentValues, oldSelectionNotDeleted);
                 }
             }
         } else {
@@ -167,8 +167,8 @@ public class EditableListPreference extends DialogPreference {
             persistStringSet(currentValues);
             notifyChanged();
             if (listener != null) {
-                boolean olsSelectionStillValid = SetUtils.difference(oldValues, currentValues).size() == 0;
-                listener.onItemSelectionChange(oldValues, currentValues, olsSelectionStillValid);
+                boolean oldSelectionNotDeleted = SetUtils.difference(oldValues, entries).size() == 0;
+                listener.onItemSelectionChange(oldValues, currentValues, oldSelectionNotDeleted);
             }
         }
     }
