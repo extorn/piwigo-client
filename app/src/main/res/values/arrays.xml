@@ -237,14 +237,21 @@
     <string-array name="release_history" translatable="true">
         <!--
         Add option to allow sharing access to a folder as a uri in an email - it will incorporate creating a normal user, giving them permission to the folder, and adding the credentials into that link somehow.
+        Add option to show password field contents in preferences (new preference type?)
+        investigate background loading of images in slideshow even if don't bitmap them immediately - if local caching enabled
         -->
-        <item>1.4.0.21</item>
+        <item>1.4.0.20</item>
         <item>"Changes:
             - Added extra bulk action (key) for album resources to set resource privacy for selected items
             - relaxed restrictions on file mime types shared by other apps to this one
+            - TODO hide android buttons and notification bar until swipe from top of screen
+            - TODO change default thumbnail size to square
+            - TODO check all files for upload against acceptable files and compression settings enabled when upload clicked
+            - TODO show current piwigo username and server hostname in navigation bar
             Bugfix:
             - Corrected detection of long click to clear video from cache (slideshow)
             - TODO fix crash when deleting tag content!?
+            - TODO fix for android 4.2.2 not starting!
             - notify parent album of change when deleting album or album content
             - Connection profile settings such as server uri, username, and password are not saved correctly when using multiple profiles"</item>
     </string-array>
