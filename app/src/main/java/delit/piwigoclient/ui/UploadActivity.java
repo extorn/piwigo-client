@@ -258,14 +258,20 @@ public class UploadActivity extends MyActivity {
         try {
 
             if (Intent.ACTION_SEND.equals(action) && type != null) {
-                if (type.startsWith("image/") || type.startsWith("video/")) {
+                if (!type.startsWith("*/")) {
                     return handleSendMultipleImages(intent); // Handle single image being sent
+                } else {
+                    getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
                 }
             } else if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
                 // type is */* if it contains a mixture of file types
-                if (type.equals("*/*") || type.startsWith("image/") || type.startsWith("video/")) {
+                if (type.equals("*/*") || type.startsWith("image/") || type.startsWith("video/") || type.startsWith("application/pdf") || type.startsWith("application/zip")) {
                     return handleSendMultipleImages(intent); // Handle multiple images being sent
+                } else {
+                    getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
                 }
+            } else if ("application/octet-stream".equals(type)) {
+                getUiHelper().showDetailedMsg(R.string.alert_error, getString(R.string.alert_error_unable_to_handle_shared_mime_type, type));
             }
             return null;
 
@@ -302,20 +308,13 @@ public class UploadActivity extends MyActivity {
         if(clipData != null && clipData.getItemCount() > 0) {
             // process clip data
             filesToUpload = new ArrayList<>(clipData.getItemCount());
-            boolean hasImages = clipData.getDescription().hasMimeType("image/*");
-            boolean hasVideos = clipData.getDescription().hasMimeType("video/*");
-            boolean mightHaveImagesOrVideos = clipData.getDescription().hasMimeType("*/*");
 //            String mimeType = clipData.getDescription().getMimeTypeCount() == 1 ? clipData.getDescription().getMimeType(0) : null;
             for(int i = 0; i < clipData.getItemCount(); i++) {
                 ClipData.Item sharedItem = clipData.getItemAt(i);
                 Uri sharedUri = sharedItem.getUri();
                 String mimeType = getContentResolver().getType(sharedUri);
-                if(hasImages || hasVideos || mightHaveImagesOrVideos) {
-                    if (sharedUri != null) {
-                        handleSentImage(sharedUri, mimeType, filesToUpload);
-                    }
-                } else {
-                    Crashlytics.log("Unable to process received data with mime type : " + mimeType);
+                if (sharedUri != null) {
+                    handleSentImage(sharedUri, mimeType, filesToUpload);
                 }
             }
             intent.setClipData(null);
@@ -397,6 +396,8 @@ public class UploadActivity extends MyActivity {
             // download a local copy of the file.
             File tmp_upload_folder = getTmpUploadFolder();
             File localTmpFile = File.createTempFile("tmp-piwigo-client-dnlded-file-for-upload", '.' + fileExt, tmp_upload_folder);
+            //TODO if this is an image - try and extract a nicer filename based on exif info from the image itself!
+
             //TODO the file should be deleted after the upload is complete and not before!!!! BUG!!!!
             localTmpFile.deleteOnExit(); // ensure this definitely doesn't hang about!
             AssetFileDescriptor fileDescriptor = getContentResolver().openAssetFileDescriptor(sharedUri, "r"); // only need read only access

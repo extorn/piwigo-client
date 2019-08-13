@@ -610,5 +610,7 @@ Die Veröffentlichungen erfolgen derzeit auf Ad-hoc-Basis. Es wird erwartet, das
     <string name="message_piwigo_server_inconsistent_results">Piwigo API Call %1$s reports file checksum stimmt nicht überein, aber API call %2$s berichtet, dass es übereinstimmt. Dies kann ein Fehler im PIWIGO-Server oder ein Plugin sein, das Sie verwenden, und kann es wert sein, gemeldet zu werden.</string>
     <string name="alert_bulk_image_permissions_title">Zugriffsberechtigung festlegen</string>
     <string name="alert_bulk_image_permissions_message">Setzt Zugriffsberechtigungsstufen für die ausgewählten Ressourcen %1$d</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">Es können keine Dateien verarbeitet werden, die mit einem %1$s Mime-Typ geteilt werden.</string>
+    <string name="alert_error_unsupported_file_extensions_pattern">Files with the following extensions cannot be uploaded and have been removed: %1$s</string>
 </resources>
 

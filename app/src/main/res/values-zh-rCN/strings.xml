@@ -487,4 +487,6 @@
     <string name="message_piwigo_server_inconsistent_results">Piwigo API调用 %1$s 报告文件校验和不匹配，但API调用 %2$s 报告它匹配。 这可能是PIWIGO服务器或您使用的插件中的错误，可能值得报告。</string>
     <string name="alert_bulk_image_permissions_title">设置访问权限</string>
     <string name="alert_bulk_image_permissions_message">设置%1$d所选资源的访问权限级别</string>
+    <string name="alert_error_unable_to_handle_shared_mime_type">无法处理与%1$s类型共享的文件</string>
+    <string name="alert_error_unsupported_file_extensions_pattern">具有以下扩展名的文件无法上载且已被忽略：%1$s</string>
 </resources>

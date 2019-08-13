@@ -241,7 +241,7 @@
         <item>1.4.0.21</item>
         <item>"Changes:
             - Added extra bulk action (key) for album resources to set resource privacy for selected items
-            - TODO register app to accept sharing of mixed items of video and image type from other apps
+            - relaxed restrictions on file mime types shared by other apps to this one
             Bugfix:
             - Corrected detection of long click to clear video from cache (slideshow)
             - TODO update slideshow count when deleting an item in the slideshow

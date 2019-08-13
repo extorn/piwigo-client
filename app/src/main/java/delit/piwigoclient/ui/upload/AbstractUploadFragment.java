@@ -177,9 +177,29 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED, sticky = true)
     public void onEvent(FileSelectionCompleteEvent stickyEvent) {
         if (externallyTriggeredSelectFilesActionId == stickyEvent.getActionId() || getUiHelper().isTrackingRequest(stickyEvent.getActionId())) {
-            EventBus.getDefault().removeStickyEvent(stickyEvent);
-            mViewPager.setCurrentItem(TAB_IDX_FILES);
-            updateFilesForUploadList(stickyEvent.getSelectedFiles());
+            ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
+            if (PiwigoSessionDetails.getInstance(activeProfile) != null) {
+                EventBus.getDefault().removeStickyEvent(stickyEvent);
+                mViewPager.setCurrentItem(TAB_IDX_FILES);
+                Set<String> allowedFileTypes = PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes();
+                Iterator<File> iter = stickyEvent.getSelectedFiles().iterator();
+                Set<String> unsupportedExts = new HashSet<>();
+                while (iter.hasNext()) {
+                    File f = iter.next();
+                    String fileExt = IOUtils.getFileExt(f.getName().toLowerCase());
+                    if (!allowedFileTypes.contains(fileExt)) {
+                        String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExt);
+                        if (mimeType == null || !mimeType.startsWith("video/")) {
+                            iter.remove();
+                            unsupportedExts.add(fileExt);
+                        }
+                    }
+                }
+                if (!unsupportedExts.isEmpty()) {
+                    getUiHelper().showDetailedMsg(R.string.alert_information, getString(R.string.alert_error_unsupported_file_extensions_pattern, CollectionUtils.toCsvList(unsupportedExts)));
+                }
+                updateFilesForUploadList(stickyEvent.getSelectedFiles());
+            }
             AdsManager.getInstance().showFileToUploadAdvertIfAppropriate();
         }
     }
@@ -1066,6 +1086,10 @@ public abstract class AbstractUploadFragment extends MyFragment implements Files
             ConnectionPreferences.ProfilePreferences activeProfile = ConnectionPreferences.getActiveProfile();
             String fileTypesStr = String.format("(%1$s)", CollectionUtils.toCsvList(PiwigoSessionDetails.getInstance(activeProfile).getAllowedFileTypes()));
             fragment.getUploadableFilesView().setText(fileTypesStr);
+            FileSelectionCompleteEvent evt = EventBus.getDefault().getStickyEvent(FileSelectionCompleteEvent.class);
+            if (evt != null) {
+                fragment.onEvent(evt);
+            }
             return super.onSuccess(uiHelper, response);
         }
     }
