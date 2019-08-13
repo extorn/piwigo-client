@@ -244,8 +244,8 @@
             - relaxed restrictions on file mime types shared by other apps to this one
             Bugfix:
             - Corrected detection of long click to clear video from cache (slideshow)
-            - TODO update slideshow count when deleting an item in the slideshow
-            - TODO fix bug when deleting in slideshow ?of a tag?
+            - TODO fix crash when deleting tag content!?
+            - notify parent album of change when deleting album or album content
             - Connection profile settings such as server uri, username, and password are not saved correctly when using multiple profiles"</item>
     </string-array>
 </resources>
