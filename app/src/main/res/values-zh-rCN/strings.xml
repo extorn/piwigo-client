@@ -489,4 +489,5 @@
     <string name="alert_bulk_image_permissions_message">设置%1$d所选资源的访问权限级别</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">无法处理与%1$s类型共享的文件</string>
     <string name="alert_error_unsupported_file_extensions_pattern">具有以下扩展名的文件无法上载且已被忽略：%1$s</string>
+    <string name="please_select_a_parent_album">请选择父相册</string>
 </resources>

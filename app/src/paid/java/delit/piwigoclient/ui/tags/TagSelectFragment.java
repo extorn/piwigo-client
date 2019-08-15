@@ -20,12 +20,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashSet;
 
+import delit.libs.ui.util.BundleUtils;
 import delit.libs.ui.util.DisplayUtils;
+import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
+import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
+import delit.libs.ui.view.recycler.RecyclerViewMargin;
 import delit.piwigoclient.R;
 import delit.piwigoclient.business.ConnectionPreferences;
 import delit.piwigoclient.model.piwigo.PiwigoSessionDetails;
@@ -38,10 +43,6 @@ import delit.piwigoclient.piwigoApi.handlers.TagAddResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetAdminListResponseHandler;
 import delit.piwigoclient.piwigoApi.handlers.TagsGetListResponseHandler;
 import delit.piwigoclient.ui.common.fragment.RecyclerViewLongSetSelectFragment;
-import delit.libs.ui.view.recycler.EndlessRecyclerViewScrollListener;
-import delit.libs.ui.view.recycler.RecyclerViewMargin;
-import delit.libs.ui.view.recycler.BaseRecyclerViewAdapterPreferences;
-import delit.libs.ui.util.BundleUtils;
 import delit.piwigoclient.ui.events.trackable.TagSelectionCompleteEvent;
 import delit.piwigoclient.ui.model.PiwigoTagModel;
 
@@ -373,7 +374,7 @@ public class TagSelectFragment extends RecyclerViewLongSetSelectFragment<TagRecy
         TagRecyclerViewAdapter listAdapter = getListAdapter();
         HashSet<Long> tagsNeededToBeLoaded = listAdapter.getItemsSelectedButNotLoaded();
         if(tagsNeededToBeLoaded.size() > 0) {
-            throw new UnsupportedOperationException("Paging not supported for tags");
+            FirebaseAnalytics.getInstance(requireContext()).logEvent("non_existent_tags", null);
         }
         HashSet<Tag> selectedItems = listAdapter.getSelectedItems();
         EventBus.getDefault().post(new TagSelectionCompleteEvent(getActionId(), selectedIdsSet, selectedItems));

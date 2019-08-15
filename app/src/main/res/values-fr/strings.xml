@@ -640,4 +640,5 @@ Pour l'instant, les sorties sont ponctuelles. On s'attend à ce que la fréquenc
     <string name="alert_bulk_image_permissions_message">Définir les niveaux d\'autorisation d\'accès pour les ressources sélectionnées %1$d</string>
     <string name="alert_error_unable_to_handle_shared_mime_type">Impossible de gérer les fichiers partagés avec une %1$s de type mime</string>
     <string name="alert_error_unsupported_file_extensions_pattern">Les fichiers avec les extensions suivantes ne peuvent pas être téléchargés et ont été ignorés : %1$s</string>
+    <string name="please_select_a_parent_album">Veuillez sélectionner un album parent</string>
 </resources>

@@ -137,9 +137,14 @@ public class RecyclerViewCategoryItemSelectFragment extends RecyclerViewLongSetS
         newItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlbumCreateNeededEvent event = new AlbumCreateNeededEvent(getListAdapter().getActiveItem().toStub());
-                getUiHelper().setTrackingRequest(event.getActionId());
-                EventBus.getDefault().post(event);
+                CategoryItem selectedAlbum = getListAdapter().getActiveItem();
+                if (selectedAlbum != null) {
+                    AlbumCreateNeededEvent event = new AlbumCreateNeededEvent(selectedAlbum.toStub());
+                    getUiHelper().setTrackingRequest(event.getActionId());
+                    EventBus.getDefault().post(event);
+                } else {
+                    getUiHelper().showDetailedShortMsg(R.string.alert_error, R.string.please_select_a_parent_album);
+                }
             }
         });
 
