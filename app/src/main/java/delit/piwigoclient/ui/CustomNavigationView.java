@@ -59,6 +59,8 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     private ViewGroupUIHelper<CustomNavigationView> uiHelper;
     private ViewGroup headerView;
     private boolean refreshSessionInProgress;
+    private TextView currentUsernameField;
+    private TextView currentServerField;
 
     public CustomNavigationView(Context context) {
         this(context, null);
@@ -113,6 +115,9 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
                 sendEmail(((TextView) v).getText().toString());
             }
         });
+
+        currentUsernameField = headerView.findViewById(R.id.current_user_name);
+        currentServerField = headerView.findViewById(R.id.current_server);
 
         return headerView;
     }
@@ -296,6 +301,20 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void onEvent(final PiwigoLoginSuccessEvent event) {
         markRefreshSessionComplete();
+        updateServerConnectionDetails();
+    }
+
+    private void updateServerConnectionDetails() {
+        PiwigoSessionDetails sessionDetails = PiwigoSessionDetails.getInstance(ConnectionPreferences.getActiveProfile());
+        if (sessionDetails != null) {
+            currentServerField.setText(sessionDetails.getServerUrl());
+            currentServerField.setVisibility(VISIBLE);
+            currentUsernameField.setText(sessionDetails.getUsername());
+            currentUsernameField.setVisibility(VISIBLE);
+        } else {
+            currentServerField.setVisibility(INVISIBLE);
+            currentUsernameField.setVisibility(INVISIBLE);
+        }
     }
 
     private void showLockDialog() {
@@ -321,6 +340,7 @@ public class CustomNavigationView extends NavigationView implements NavigationVi
         public boolean onSuccess(UIHelper<CustomNavigationView> uiHelper, LogoutResponseHandler.PiwigoOnLogoutResponse response) {
             ConnectionPreferences.ProfilePreferences connectionPrefs = ConnectionPreferences.getActiveProfile();
             uiHelper.getParent().runHttpClientCleanup(connectionPrefs);
+            uiHelper.getParent().updateServerConnectionDetails();
             return false;
         }
 
