@@ -244,14 +244,14 @@
         <item>"Changes:
             - Added extra bulk action (key) for album resources to set resource privacy for selected items
             - relaxed restrictions on file mime types shared by other apps to this one
+            - increased size of the album photos in proportion to the text
             - TODO hide android buttons and notification bar until swipe from top of screen
-            - TODO change default thumbnail size to square
-            - TODO check all files for upload against acceptable files and compression settings enabled when upload clicked
             - TODO show current piwigo username and server hostname in navigation bar
             Bugfix:
             - Corrected detection of long click to clear video from cache (slideshow)
-            - TODO fix crash when deleting tag content!?
-            - TODO fix for android 4.2.2 not starting!
+            - fix crash when deleting tag content
+            - Fix for android 4.2.2 not starting
+            - fixed crash caused by changing an automatic upload job preference type
             - notify parent album of change when deleting album or album content
             - Connection profile settings such as server uri, username, and password are not saved correctly when using multiple profiles"</item>
     </string-array>
