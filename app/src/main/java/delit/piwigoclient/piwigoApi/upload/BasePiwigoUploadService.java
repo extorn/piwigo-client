@@ -282,18 +282,20 @@ public abstract class BasePiwigoUploadService extends JobIntentService {
     }
 
     private static void onFileDeleteFailed(String tag, File f, String fileDesc) {
-        if (BuildConfig.DEBUG) {
-            Log.e(tag, "Unable to delete " + fileDesc + " : " + f.getAbsolutePath());
-        } else {
-            Crashlytics.log(Log.WARN, tag, "\"Unable to delete " + fileDesc);
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            try {
-                Files.delete(f.toPath());
-            } catch (IOException e) {
-                Crashlytics.logException(e);
-                if (BuildConfig.DEBUG) {
-                    Log.e(tag, "Really unable to delete " + fileDesc + " : " + f.getAbsolutePath(), e);
+        if (f.exists()) {
+            if (BuildConfig.DEBUG) {
+                Log.e(tag, "Unable to delete " + fileDesc + " : " + f.getAbsolutePath());
+            } else {
+                Crashlytics.log(Log.WARN, tag, "\"Unable to delete " + fileDesc);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                try {
+                    Files.delete(f.toPath());
+                } catch (IOException e) {
+                    Crashlytics.logException(e);
+                    if (BuildConfig.DEBUG) {
+                        Log.e(tag, "Really unable to delete " + fileDesc + " : " + f.getAbsolutePath(), e);
+                    }
                 }
             }
         }
