@@ -35,7 +35,8 @@ public class SquareLinearLayout extends LinearLayoutCompat {
                 width = ((ViewGroup)getParent()).getLayoutParams().width;
             }
             height = width;
-        } if(LayoutParams.MATCH_PARENT == getLayoutParams().height) {
+        }
+        if (LayoutParams.MATCH_PARENT == getLayoutParams().height) {
             if(height == 0) {
                 // match parent will always be 0.
                 height = ((ViewGroup)getParent()).getMeasuredHeight();
