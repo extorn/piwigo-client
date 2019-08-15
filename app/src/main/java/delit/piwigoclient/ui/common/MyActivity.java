@@ -193,7 +193,7 @@ public abstract class MyActivity<T extends MyActivity<T>> extends AppCompatActiv
                 // record the event
                 recordInvalidRequestCodeEvent(intent, requestCode);
             }
-            super.startActivityForResult(intent, requestCode);
+            super.startActivityForResult(intent, requestCode & 0xFFFF);
         } catch(IllegalArgumentException e) {
             Crashlytics.log(String.format(Locale.getDefault(), "Failed to start activity for result : %1$s (requestCode %3$d - valid: %2$s)", intent.toString(), requestCode > -2 && requestCode <= Short.MAX_VALUE, requestCode));
             throw e;
