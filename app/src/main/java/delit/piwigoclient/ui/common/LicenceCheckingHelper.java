@@ -71,6 +71,22 @@ public class LicenceCheckingHelper {
         });
     }
 
+    private synchronized void forceCheck() {
+        lastChecked = null;
+        doCheck();
+    }
+
+    public void doSilentCheck() {
+        doCheck();
+    }
+
+    private void doVisualCheck(Context applicationContext) {
+        if (BuildConfig.DEBUG) {
+            activity.getUiHelper().showDetailedShortMsg(R.string.alert_information, applicationContext.getString(R.string.checking_license));
+        }
+        doCheck();
+    }
+
     private static class LicenceCheckAction<T extends ActivityUIHelper<MyActivity>> extends UIHelper.QuestionResultAdapter<T> {
         private final boolean allowRetry;
 
@@ -84,7 +100,7 @@ public class LicenceCheckingHelper {
             MyActivity activity = getUiHelper().getParent();
             if (Boolean.TRUE == positiveAnswer) {
                 if (allowRetry) {
-                    activity.getLicencingHelper().doCheck();
+                    activity.getLicencingHelper().forceCheck();
                 } else {
                     Crashlytics.log(Log.DEBUG, TAG, "Starting Market Intent");
                     Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(
@@ -95,17 +111,6 @@ public class LicenceCheckingHelper {
                 activity.finish();
             }
         }
-    }
-
-    public void doSilentCheck() {
-        doCheck();
-    }
-
-    private void doVisualCheck(Context applicationContext) {
-        if(BuildConfig.DEBUG) {
-            activity.getUiHelper().showDetailedShortMsg(R.string.alert_information, applicationContext.getString(R.string.checking_license));
-        }
-        doCheck();
     }
 
     private synchronized void doCheck() {
