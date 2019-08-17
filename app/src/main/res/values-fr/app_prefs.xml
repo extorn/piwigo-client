@@ -207,6 +207,9 @@
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_title">Le tiroir du diaporama est transparent</string>
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Le tiroir d\'information d\'image du diaporama est transparent</string>
 
+    <string name="preference_gallery_slideshow_image_scaletype_title">Type de mise à l\'échelle de l\'image du diaporama</string>
+    <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
+
     <string name="preference_groups_request_pagesize_title">Groupes de la taille d\'une page de demande de serveur</string>
     <string name="preference_groups_request_pagesize_summary">%1$d articles</string>
 

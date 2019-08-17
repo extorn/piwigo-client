@@ -10,6 +10,12 @@
         <item>Cache in den Speicher</item>
         <item>Cache auf Platte</item>
     </string-array>
+    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+        <item>Standard</item>
+        <item>An Bildschirmgröße anpassen</item>
+        <item>vergrößern und auf Bildschirmgröße zuschneiden</item>
+        <item>auf dem Bildschirm zentrieren</item>
+    </string-array>
     <string-array name="preference_data_upload_compress_videos_quality_items">
         <item>sehr niedrig (0,025 b/Pixel*Frame)</item>
         <item>niedriger (0,05 b/Pixel*Frame)</item>
@@ -119,6 +125,7 @@
     <string-array name="release_history" translatable="true">
         <item>1.4.0.20</item>
         <item>"Änderungen:
+            - Einstellungen hinzufügen, um die Skalierung von Bildern in der Diashow zu ändern (Vollbild)
             - Zusätzliche Massenaktion (Schlüssel) für Albumressourcen hinzugefügt, um den Ressourcenschutz für ausgewählte Elemente festzulegen.
             - entspannte Einschränkungen für Datei-Mime-Typen, die von anderen Anwendungen zu diesem Typ verwendet werden.
             - Vergrößerung der Albumfotos im Verhältnis zum Text

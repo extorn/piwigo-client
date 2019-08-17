@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 
@@ -112,5 +113,10 @@ public class AlbumViewPreferences {
 
     public static int getAlbumChildAlbumsSortOrder(SharedPreferences prefs, Context context) {
         return prefs.getInt(context.getString(R.string.preference_album_subalbum_sort_order_key), context.getResources().getInteger(R.integer.preference_album_subalbum_sort_order_default));
+    }
+
+    public static ImageView.ScaleType getSlideshowImageScalingType(SharedPreferences prefs, Context context) {
+        String scaleTypeName = prefs.getString(context.getString(R.string.preference_gallery_slideshow_image_scaletype_key), context.getResources().getString(R.string.preference_gallery_slideshow_image_scaletype_default));
+        return ImageView.ScaleType.valueOf(scaleTypeName);
     }
 }

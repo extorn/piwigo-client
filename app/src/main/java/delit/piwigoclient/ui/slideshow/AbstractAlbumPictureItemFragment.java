@@ -106,12 +106,12 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
 
     protected ImageView createStaticImageViewer() {
         //        imageView = container.findViewById(R.id.slideshow_image);
-        final TouchImageView imageView = new TouchImageView(getContext());
+        final TouchImageView imageView = new TouchImageView(requireContext());
         imageView.setMinimumHeight(DisplayUtils.dpToPx(requireContext(), 120));
         imageView.setMinimumWidth(DisplayUtils.dpToPx(requireContext(), 120));
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         imageView.setLayoutParams(layoutParams);
-        imageView.setScaleType(ImageView.ScaleType.MATRIX);
+        imageView.setScaleType(AlbumViewPreferences.getSlideshowImageScalingType(prefs, requireContext()));
         imageView.setOnTouchImageViewListener(new TouchImageView.OnTouchImageViewListener() {
             @Override
             public void onMove() {
@@ -172,6 +172,16 @@ public class AbstractAlbumPictureItemFragment extends SlideshowItemFragment<Pict
         if (success) {
             // hide the placeholder marker if appropriate.
             imageView.setBackgroundColor(Color.TRANSPARENT);
+            if (imageView instanceof TouchImageView) {
+                TouchImageView touchImageView = ((TouchImageView) imageView);
+                touchImageView.setMinZoom(TouchImageView.AUTOMATIC_MIN_ZOOM);
+//                float width = Math.abs(((TouchImageView)imageView).getZoomedRect().width());
+//                float height = Math.abs(((TouchImageView)imageView).getZoomedRect().height());
+//                int pictureOrientation = width < height ? Configuration.ORIENTATION_PORTRAIT : Configuration.ORIENTATION_LANDSCAPE;
+//                if(pictureOrientation != DisplayUtils.getCurrentScreenOrientation(imageView.getContext())) {
+//                    touchImageView.setRotation(90f);
+//                }
+            }
             if (loader.hasPlaceholder()) {
                 // placeholder loaded
                 if (loader.isImageLoaded()) {

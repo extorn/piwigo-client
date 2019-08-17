@@ -248,6 +248,12 @@
     <string name="preference_gallery_slideshow_transparent_extra_info_shadow_summary">Slideshow image information drawer is transparent</string>
     <bool name="preference_gallery_slideshow_transparent_extra_info_shadow_default">false</bool>
 
+    <string name="preference_gallery_slideshow_image_scaletype_title">Slideshow image scaling type</string>
+    <string name="preference_gallery_slideshow_image_scaletype_key" translatable="false">preference_gallery_slideshow_image_scaletype</string>
+    <string name="preference_gallery_slideshow_image_scaletype_summary">%1$s</string>
+    <string name="preference_gallery_slideshow_image_scaletype_default" translatable="false">MATRIX</string>
+
+
     <string name="preference_groups_request_pagesize_key" translatable="false">preference_groups_request_pagesize</string>
     <string name="preference_groups_request_pagesize_title">Groups server request page-size</string>
     <string name="preference_groups_request_pagesize_summary">%1$d items</string>

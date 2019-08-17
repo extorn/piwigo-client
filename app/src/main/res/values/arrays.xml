@@ -59,6 +59,22 @@
         <item>Cache to Memory</item>
         <item>Cache to Disk</item>
     </string-array>
+
+
+    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+        <item>Default</item>
+        <item>fit to screen size</item>
+        <item>enlarge and crop to fit screen</item>
+        <item>center on screen</item>
+    </string-array>
+
+    <string-array name="preference_gallery_slideshow_image_scaletype_array_values" translatable="false">
+        <item>MATRIX</item>
+        <item>FIT_XY</item>
+        <item>CENTER_CROP</item>
+        <item>CENTER</item>
+    </string-array>
+
     <string-array name="preference_gallery_item_slideshow_image_size_array">
         <item>best-fit</item>
         <item>square</item>
@@ -242,6 +258,7 @@
         -->
         <item>1.4.0.20</item>
         <item>"Changes:
+            - Add preference to allow changing scaling of pictures in slideshow (full screen)
             - Added extra bulk action (key) for album resources to set resource privacy for selected items
             - relaxed restrictions on file mime types shared by other apps to this one
             - increased size of the album photos in proportion to the text

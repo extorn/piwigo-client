@@ -156,6 +156,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <androidx.preference.ListPreference
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:defaultValue="@string/preference_gallery_slideshow_image_scaletype_default"
+            android:entries="@array/preference_gallery_slideshow_image_scaletype_array"
+            android:entryValues="@array/preference_gallery_slideshow_image_scaletype_array_values"
+            android:key="@string/preference_gallery_slideshow_image_scaletype_key"
+            android:summary="@string/preference_gallery_slideshow_image_scaletype_summary"
+            android:title="@string/preference_gallery_slideshow_image_scaletype_title" />
+
         <androidx.preference.SwitchPreference
             android:defaultValue="@bool/preference_gallery_include_videos_in_slideshow_default"
             android:key="@string/preference_gallery_include_videos_in_slideshow_key"

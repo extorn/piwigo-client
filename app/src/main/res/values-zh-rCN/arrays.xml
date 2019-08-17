@@ -11,6 +11,12 @@
         <item>缓存到内存</item>
         <item>缓存到磁盘</item>
     </string-array>
+    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+        <item>默认</item>
+        <item>适合屏幕尺寸</item>
+        <item>放大并裁剪以适应屏幕</item>
+        <item>在屏幕上居中</item>
+    </string-array>
     <string-array name="preference_data_upload_compress_videos_quality_items">
         <item>非常低（0.025 b /像素*帧）</item>
         <item>较低（0.05 b /像素*帧）</item>
@@ -129,6 +135,7 @@
     <string-array name="release_history">
         <item>1.4.0.20</item>
         <item>"变化：
+              - 添加首选项以允许在幻灯片中更改图片缩放（全屏）
               - 为专辑资源添加了额外的批量操作（键），以便为所选项目设置资源隐私
               - 放宽对其他应用程序共享的文件mime类型的限制
               - 增加相册照片的大小与文本成比例

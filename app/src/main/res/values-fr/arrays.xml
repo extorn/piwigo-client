@@ -11,6 +11,12 @@
         <item>Cache en mémoire</item>
         <item>Cache sur disque</item>
     </string-array>
+    <string-array name="preference_gallery_slideshow_image_scaletype_array">
+        <item>Défaut</item>
+        <item>ajustement à la taille de l\'écran</item>
+        <item>agrandir et recadrer pour s\'adapter à l\'écran</item>
+        <item>centre à l\'écran</item>
+    </string-array>
     <string-array name="preference_data_upload_compress_videos_quality_items">
         <item>très faible (0,025 b/pixels*frame)</item>
         <item>inférieur (0,05 b/pixels*cadre)</item>
@@ -129,6 +135,7 @@
     <string-array name="release_history" translatable="true">
         <item>1.4.0.20</item>
         <item>"Changements :
+            - Ajouter une préférence pour permettre de changer la mise à l'échelle des images dans un diaporama (plein écran)
             - Ajout d'une action de masse supplémentaire (clé) pour les ressources de l'album afin de définir la confidentialité des ressources pour les éléments sélectionnés.
             - restrictions assouplies sur les types de mimes de fichiers partagés par d'autres applications à celle-ci
             - augmentation de la taille des photos de l'album en proportion du texte
